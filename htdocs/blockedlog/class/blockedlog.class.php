@@ -840,10 +840,11 @@ class BlockedLog
 	/**
 	 *	Check if current signature still correct compared to the value in chain
 	 *
-	 *	@param	string		$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
-	 *	@return	boolean							True if OK, False if KO
+	 *	@param	string			$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
+	 *  @param	int				$returnarray		1=Return array of details, 0=Boolean
+	 *	@return	boolean|array						True if OK, False if KO
 	 */
-	public function checkSignature($previoushash = '')
+	public function checkSignature($previoushash = '', $returnarray = 0)
 	{
 		if (empty($previoushash))
 		{
@@ -852,7 +853,7 @@ class BlockedLog
 		// Recalculate hash
 		$keyforsignature = $this->buildKeyForSignature();
 
-		$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
+		//$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
 		$signature = dol_hash($previoushash.$keyforsignature, '5');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
 
@@ -862,7 +863,11 @@ class BlockedLog
 			$this->error = 'Signature KO';
 		}
 
-		return $res;
+		if ($returnarray) {
+			return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature'=>$keyforsignature);
+		} else {
+			return $res;
+		}
 	}
 
 	/**

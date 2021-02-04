@@ -261,7 +261,7 @@ if (GETPOST('withtab', 'alpha'))
 
 llxHeader('', $langs->trans("BrowseBlockedLog"));
 
-$MAXLINES = 10000;
+$MAXLINES = 100000;
 
 $blocks = $block_static->getLog('all', 0, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (!is_array($blocks))
@@ -433,12 +433,18 @@ if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 	// This is version that optimize the memory (but will not report errors that are outside the filter range)
 	$loweridinerror = 0;
 	$checkresult = array();
+	$checkdetail = array();
 	if (is_array($blocks))
 	{
 		foreach ($blocks as &$block)
 		{
-			$checksignature = $block->checkSignature(); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+			$tmpcheckresult = $block->checkSignature('', 1); // Note: this make a sql request at each call, we can't avoid this as the sorting order is various
+
+			$checksignature = $tmpcheckresult['checkresult'];
+
 			$checkresult[$block->id] = $checksignature; // false if error
+			$checkdetail[$block->id] = $tmpcheckresult;
+
 			if (!$checksignature)
 			{
 				if (empty($loweridinerror)) $loweridinerror = $block->id;
@@ -488,7 +494,11 @@ if (is_array($blocks))
 
 		   	// Fingerprint
 		   	print '<td class="nowrap">';
-		   	print $form->textwithpicto(dol_trunc($block->signature, '8'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
+		   	$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("Saved").':<br>'.$block->signature;
+		   	$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256(previoushash * data):<br>'.$checkdetail[$block->id]['calculatedsignature'];
+		   	$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';
+		   	//$texttoshow .= '<br>keyforsignature='.$checkdetail[$block->id]['keyforsignature'];
+		   	print $form->textwithpicto(dol_trunc($block->signature, '8'), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
 		   	print '</td>';
 
 		   	// Status
@@ -500,7 +510,6 @@ if (is_array($blocks))
 		   	} else {
 		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
 		   	}
-
 		   	print '</td>';
 
 		   	// Note
@@ -519,6 +528,10 @@ if (is_array($blocks))
 
 			print '</tr>';
 		}
+	}
+
+	if (count($blocks) == 0) {
+		print '<tr><td colspan="12"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 }
 

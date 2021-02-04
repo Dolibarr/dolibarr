@@ -3363,6 +3363,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			} else {
 				$fakey = 'fa-'.$pictowithouttext;
 			}
+			if ($pictowithouttext == 'payment') {
+				$fasize = '0.9em';
+			}
+			if ($pictowithouttext == 'loan') {
+				$fasize = '0.95em';
+			}
 
 			// Define $marginleftonlyshort
 			$arrayconvpictotomarginleftonly = array(
