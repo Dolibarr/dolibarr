@@ -1935,6 +1935,11 @@ span.widthpictotitle.pictotitle {
 .tagtdnote span.pictoedit {
     opacity: 0.4;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 16px;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;

@@ -1866,6 +1866,11 @@ div.nopadding {
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 16px;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
