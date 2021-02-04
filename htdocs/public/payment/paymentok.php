@@ -614,7 +614,7 @@ if ($ispaymentok)
 				$ispostactionok = -1;
 			}
 		} else {
-			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription payed was not found';
+			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription paid was not found';
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('INV', $tmptag) && $tmptag['INV'] > 0)
@@ -718,7 +718,7 @@ if ($ispaymentok)
 				$ispostactionok = -1;
 			}
 		} else {
-			$postactionmessages[] = 'Invoice payed '.$tmptag['INV'].' was not found';
+			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
 	} else {

@@ -534,7 +534,6 @@ if ($id > 0 || !empty($ref))
 		print "</table>";
 
 		print "</form>";
-
 	} else {
 		print "ErrorRecordNotFound";
 	}

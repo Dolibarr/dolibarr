@@ -122,6 +122,7 @@ CREATE TABLE llx_c_transport_mode (
   label     varchar(255) NOT NULL,
   active    tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
@@ -567,3 +568,13 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
 
 ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
+
+UPDATE llx_c_action_trigger SET elementtype = 'expensereport' where elementtype = 'expense_report' AND code like 'EXPENSE_%';
+UPDATE llx_c_action_trigger SET code = 'EXPENSE_REPORT_PAID' where code = 'EXPENSE_REPORT_PAYED';
+UPDATE llx_c_action_trigger SET code = 'EXPENSE_REPORT_DELETE' where code = 'EXPENSE_DELETE';
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_APPROVE','Expense report approved','Executed when an expense report is approved','expensereport',203);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_PAID','Expense report billed','Executed when an expense report is set as billed','expensereport',204);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',205);
+
