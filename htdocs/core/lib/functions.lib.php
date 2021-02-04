@@ -5793,8 +5793,8 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
 		$temp = preg_replace($pattern, "", $temp); // pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
 		$temp = preg_replace($pattern, "", $temp); // pass 2 - $temp after pass 2: 0000-021
-		// removed '<' into non closing html tags like '<a'
-		$temp = preg_replace('/<(\w+)/', '\1', $temp);
+		// Remove '<' into remainging, so non closing html tags like '<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
+		$temp = preg_replace('/<([a-z]+)/i', '\1', $temp);
 	}
 
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
