@@ -677,6 +677,7 @@ if ($resql)
 	if ($option)                $param .= "&option=".urlencode($option);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
