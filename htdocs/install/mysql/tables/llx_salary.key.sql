@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2021 Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,11 +18,11 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_ref (num_payment);
-ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_user (fk_user, entity);
-ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_datep (datep);
-ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_datesp (datesp);
-ALTER TABLE llx_payment_salary ADD INDEX idx_payment_salary_dateep (dateep);
+ALTER TABLE llx_salary ADD INDEX idx_salary_ref (num_payment);
+ALTER TABLE llx_salary ADD INDEX idx_salary_user (fk_user, entity);
+ALTER TABLE llx_salary ADD INDEX idx_salary_datep (datep);
+ALTER TABLE llx_salary ADD INDEX idx_salary_datesp (datesp);
+ALTER TABLE llx_salary ADD INDEX idx_salary_dateep (dateep);
 
-ALTER TABLE llx_payment_salary ADD CONSTRAINT fk_payment_salary_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+ALTER TABLE llx_salary ADD CONSTRAINT fk_salary_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
 

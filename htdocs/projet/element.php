@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ if (!empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class/
 if (!empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (!empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (!empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-if (!empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+if (!empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 if (!empty($conf->categorie->enabled))		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->mrp->enabled))		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
@@ -487,7 +488,7 @@ $listofreferent = array(
 'salaries'=>array(
 	'name'=>"Salaries",
 	'title'=>"ListSalariesAssociatedProject",
-	'class'=>'PaymentSalary',
+	'class'=>'Salary',
 	'table'=>'payment_salary',
 	'datefieldname'=>'datev',
 	'margin'=>'minus',

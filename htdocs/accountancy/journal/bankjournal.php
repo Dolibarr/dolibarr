@@ -10,6 +10,7 @@
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -145,7 +146,7 @@ $bankaccountstatic = new Account($db);
 $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
 $paymentvatstatic = new TVA($db);
-$paymentsalstatic = new PaymentSalary($db);
+$paymentsalstatic = new Salary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $paymentloanstatic = new PaymentLoan($db);
@@ -954,7 +955,7 @@ if (empty($action) || $action == 'view') {
 	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
 	$loanstatic = new Loan($db);
-	$salarystatic = new PaymentSalary($db);
+	$salarystatic = new Salary($db);
 	$variousstatic = new PaymentVarious($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));

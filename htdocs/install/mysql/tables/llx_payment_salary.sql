@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2011-2018 Alexandre Spangaro <aspangaro@open-dsi.fr>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,23 +20,16 @@
 create table llx_payment_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
+  fk_salary       integer,
+  datec           datetime,           -- date de creation
   tms             timestamp,
-  datec           datetime,                   -- Create date
-  fk_user         integer NOT NULL,
-  datep           date,                       -- payment date
-  datev           date,                       -- value date (this field should not be here, only into bank tables)
-  salary          double(24,8),               -- salary of user when payment was done
-  amount          double(24,8) NOT NULL DEFAULT 0,
-  fk_projet       integer DEFAULT NULL,
-  fk_typepayment  integer NOT NULL,
-  num_payment     varchar(50),                -- num cheque or other
-  label           varchar(255),
-  datesp          date,                       -- date start period
-  dateep          date,                       -- date end period
-  entity          integer DEFAULT 1 NOT NULL, -- multi company id
+  datep           datetime,           -- payment date
+  amount          double(24,8) DEFAULT 0,
+  fk_typepaiement integer NOT NULL,
+  num_paiement    varchar(50),
   note            text,
-  fk_bank         integer,
-  fk_user_author  integer,                    -- user creating
-  fk_user_modif   integer                     -- user making last change
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- creation user
+  fk_user_modif   integer             -- last modification user
+
 )ENGINE=innodb;

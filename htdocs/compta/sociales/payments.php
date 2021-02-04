@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
@@ -64,7 +65,7 @@ if (!$sortorder) $sortorder = "DESC";
 $tva_static = new Tva($db);
 $socialcontrib = new ChargeSociales($db);
 $payment_sc_static = new PaymentSocialContribution($db);
-$sal_static = new PaymentSalary($db);
+$sal_static = new Salary($db);
 
 llxHeader('', $langs->trans("SpecialExpensesArea"));
 
@@ -403,7 +404,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 {
     if (!$mode || $mode != 'sconly')
     {
-        $sal = new PaymentSalary($db);
+        $sal = new Salary($db);
 
         print "<br>";
 

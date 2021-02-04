@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 if (!empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 if (!empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
@@ -243,7 +244,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
 		)
 	{
-		$salary = new PaymentSalary($db);
+		$salary = new Salary($db);
 
 		$sql = "SELECT ps.rowid, ps.datesp, ps.dateep, ps.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";

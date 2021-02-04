@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2019      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+-- Copyright (C) 2021      Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,5 +17,10 @@
 --
 -- ===================================================================
 
-
-ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
+create table llx_salary_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- salary payment id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;

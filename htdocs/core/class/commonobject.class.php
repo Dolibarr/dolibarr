@@ -14,6 +14,7 @@
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2042,6 +2043,7 @@ abstract class CommonObject
 			$fieldname = 'fk_mode_reglement';
 			if ($this->element == 'societe') $fieldname = 'mode_reglement';
 			if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
+			if (get_class($this) == 'Salary') $fieldname = 'fk_typepayment';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
