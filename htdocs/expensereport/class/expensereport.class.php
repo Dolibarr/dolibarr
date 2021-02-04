@@ -2454,10 +2454,11 @@ class ExpenseReport extends CommonObject
 		if ($option == 'topay' && $this->status != 5) return false;
 
 		$now = dol_now();
-		if ($option == 'toapprove')
-		{
+		if ($option == 'toapprove') {
 			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
-		} else return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+		} else {
+			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+		}
 	}
 
 	/**
