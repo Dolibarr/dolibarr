@@ -847,7 +847,7 @@ class BlockedLog
 	 *	Check if current signature still correct compared to the value in chain
 	 *
 	 *	@param	string			$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
-	 *  @param	int				$returnarray		1=Return array of details, 0=Boolean
+	 *  @param	int				$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Boolean
 	 *	@return	boolean|array						True if OK, False if KO
 	 */
 	public function checkSignature($previoushash = '', $returnarray = 0)
@@ -870,8 +870,14 @@ class BlockedLog
 		}
 
 		if ($returnarray) {
-			return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature'=>$keyforsignature);
+			if ($returnarray == 1) {
+				unset($keyforsignature);
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
+			} else {	// Consume much memory ($keyforsignature is a large var)
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature'=>$keyforsignature);
+			}
 		} else {
+			unset($keyforsignature);
 			return $res;
 		}
 	}
