@@ -408,7 +408,7 @@ class BlockedLog
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) continue; // Discard if not into a dedicated list
-				if (!is_object($value)) $this->object_data->thirdparty->{$key} = $value;
+				if (!is_object($value) && !is_null($value) && $value !== '') $this->object_data->thirdparty->{$key} = $value;
 			}
 		}
 
@@ -424,7 +424,7 @@ class BlockedLog
 				'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 				))) continue; // Discard if not into a dedicated list
-				if (!is_object($value)) $this->object_data->mycompany->{$key} = $value;
+				if (!is_object($value) && !is_null($value) && $value !== '') $this->object_data->mycompany->{$key} = $value;
 			}
 		}
 
@@ -460,10 +460,12 @@ class BlockedLog
 								$this->object_data->invoiceline[$lineid] = new stdClass();
 							}
 
-							$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
+							if (!is_object($valueline) && !is_null($valueline) && $valueline !== '') {
+								$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
+							}
 						}
 					}
-				} elseif (!is_object($value)) $this->object_data->{$key} = $value;
+				} elseif (!is_object($value) && !is_null($value) && $value !== '') $this->object_data->{$key} = $value;
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
@@ -475,7 +477,7 @@ class BlockedLog
 				if (!in_array($key, array(
 				'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
 				))) continue; // Discard if not into a dedicated list
-				if (!is_object($value)) $this->object_data->{$key} = $value;
+				if (!is_object($value) && !is_null($value) && $value !== '') $this->object_data->{$key} = $value;
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
@@ -487,9 +489,10 @@ class BlockedLog
 			$this->object_data->ref = $object->ref;
 			$this->object_data->date = $datepayment;
 			$this->object_data->type_code = dol_getIdFromCode($this->db, $paymenttypeid, 'c_paiement', 'id', 'code');
-			$this->object_data->payment_num = $object->num_payment;
+
+			if (!empty($object->num_payment)) $this->object_data->payment_num = $object->num_payment;
+			if (!empty($object->note_private)) $this->object_data->note_private = $object->note_private;
 			//$this->object_data->fk_account = $object->fk_account;
-			$this->object_data->note = $object->note;
 			//var_dump($this->object_data);exit;
 
 			$totalamount = 0;
@@ -567,7 +570,7 @@ class BlockedLog
 						'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 						))) continue; // Discard if not into a dedicated list
-						if (!is_object($value)) $paymentpart->thirdparty->{$key} = $value;
+						if (!is_object($value) && !is_null($value) && $value !== '') $paymentpart->thirdparty->{$key} = $value;
 					}
 				}
 
@@ -583,8 +586,7 @@ class BlockedLog
 						if (!in_array($key, array(
 						'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
 						))) continue; // Discard if not into a dedicated list
-						if (!is_object($value))
-						{
+						if (!is_object($value) && !is_null($value) && $value !== '') {
 							if ($this->element == 'payment_donation') $paymentpart->donation->{$key} = $value;
 							elseif ($this->element == 'payment_various') $paymentpart->various->{$key} = $value;
 							else $paymentpart->invoice->{$key} = $value;
@@ -612,7 +614,7 @@ class BlockedLog
 				if (!in_array($key, array(
 					'id', 'datec', 'dateh', 'datef', 'fk_adherent', 'amount', 'import_key', 'statut', 'note'
 				))) continue; // Discard if not into a dedicated list
-				if (!is_object($value)) $this->object_data->{$key} = $value;
+				if (!is_object($value) && !is_null($value) && $value !== '') $this->object_data->{$key} = $value;
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
@@ -621,7 +623,7 @@ class BlockedLog
 			foreach ($object as $key=>$value)
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue; // Discard some properties
-				if (!is_object($value)) $this->object_data->{$key} = $value;
+				if (!is_object($value) && !is_null($value) && $value !== '') $this->object_data->{$key} = $value;
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
