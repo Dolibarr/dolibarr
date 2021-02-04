@@ -465,6 +465,8 @@ if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 
 if (is_array($blocks))
 {
+	$nbshown = 0;
+
 	foreach ($blocks as &$block)
 	{
 		$object_link = $block->getObjectLink();
@@ -472,6 +474,8 @@ if (is_array($blocks))
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id])
 		{
+			$nbshown++;
+
 		   	print '<tr class="oddeven">';
 
 		   	// ID
@@ -539,7 +543,7 @@ if (is_array($blocks))
 		}
 	}
 
-	if (count($blocks) == 0) {
+	if ($nbshown == 0) {
 		print '<tr><td colspan="12"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 }
