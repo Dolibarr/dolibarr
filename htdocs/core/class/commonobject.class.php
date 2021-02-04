@@ -222,6 +222,12 @@ abstract class CommonObject
 	public $statut;
 
 	/**
+	 * @var int The object's status
+	 * @see setStatut()
+	 */
+	public $status;
+
+	/**
 	 * @var string
 	 * @see getFullAddress()
 	 */
@@ -1054,7 +1060,6 @@ abstract class CommonObject
 				{
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					echo 'err rollback';
 					return -2;
 				} else {
 					$this->error = $this->db->error();
@@ -5298,6 +5303,7 @@ abstract class CommonObject
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
 			   		if ($this->array_options[$key] === '') $mandatorypb = true;
+					if ($attributeType == 'sellist' && $this->array_options[$key] == '0') $mandatorypb = true;
 			   		if ($mandatorypb)
 			   		{
 			   			dol_syslog("Mandatory extra field ".$key." is empty");

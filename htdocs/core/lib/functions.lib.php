@@ -2209,9 +2209,10 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+	//print 'gm:'.$gm.' gm==auto:'.($gm == 'auto').'<br>';
 
-	if ($gm == 'auto') {
-		$gm = $conf->tzuserinputkey;
+	if ($gm === 'auto') {
+		$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
 
 	// Clean parameters
@@ -2273,7 +2274,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'auto'
+ *  @param	string		$mode	'auto' => for backward compatibility (avoid this),
  *  							'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone. Not implemented.
@@ -2284,8 +2285,8 @@ function dol_now($mode = 'auto')
 {
 	$ret = 0;
 
-	if ($mode == 'auto') {
-		$mode = 'tzserver';
+	if ($mode === 'auto') {
+		$mode = 'gmt';
 	}
 
 	if ($mode == 'gmt') $ret = time(); // Time for now at greenwich.

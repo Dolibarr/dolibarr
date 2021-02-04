@@ -2074,6 +2074,81 @@ class Holiday extends CommonObject
 
 
 	/**
+	 *  Load information on object
+	 *
+	 *  @param  int     $id      Id of object
+	 *  @return void
+	 */
+	public function info($id)
+	{
+		global $conf;
+
+		$sql = "SELECT f.rowid,";
+		$sql .= " f.date_create as datec,";
+		$sql .= " f.tms as date_modification,";
+		$sql .= " f.date_valid as datev,";
+		//$sql .= " f.date_approve as datea,";
+		$sql .= " f.date_refuse as dater,";
+		$sql .= " f.fk_user_create as fk_user_creation,";
+		$sql .= " f.fk_user_modif as fk_user_modification,";
+		$sql .= " f.fk_user_valid,";
+		$sql .= " f.fk_validator as fk_user_approve,";
+		$sql .= " f.fk_user_refuse as fk_user_refuse";
+		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
+		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " AND f.entity = ".$conf->entity;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->id = $obj->rowid;
+
+				$this->date_creation = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				$this->date_validation = $this->db->jdate($obj->datev);
+				$this->date_approbation = $this->db->jdate($obj->datea);
+
+				$cuser = new User($this->db);
+				$cuser->fetch($obj->fk_user_author);
+				$this->user_creation = $cuser;
+
+				if ($obj->fk_user_creation)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_creation);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
+				if ($obj->fk_user_modification)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modification);
+					$this->user_modification = $muser;
+				}
+				if ($obj->fk_user_approve)
+				{
+					$auser = new User($this->db);
+					$auser->fetch($obj->fk_user_approve);
+					$this->user_approve = $auser;
+				}
+			}
+			$this->db->free($resql);
+		} else {
+			dol_print_error($this->db);
+		}
+	}
+
+
+	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.

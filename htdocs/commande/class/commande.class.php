@@ -1824,6 +1824,8 @@ class Commande extends CommonOrder
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->statut = $obj->fk_statut;
+				$this->status = $obj->fk_statut;
+
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
 				$this->total_ht				= $obj->total_ht;
