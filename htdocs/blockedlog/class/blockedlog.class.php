@@ -124,9 +124,17 @@ class BlockedLog
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
-
 		$this->db = $db;
+	}
+
+
+	/**
+	 * Load list of tracked events into $this->trackedevents.
+	 *
+	 * @return int			Always 1
+	 */
+	public function loadTrackedEvents() {
+		global $conf;
 
 		$this->trackedevents = array();
 
@@ -140,15 +148,15 @@ class BlockedLog
 		if ($conf->facture->enabled) $this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = 'logPAYMENT_CUSTOMER_DELETE';
 
 		/* Supplier
-		if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
-		if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
-		if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
-		if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
-		if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
+		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
+		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
+		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
+		 if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
+		 if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
 
-		if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
-		if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
-		*/
+		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
+		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
+		 */
 
 		if ($conf->don->enabled) $this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
 		if ($conf->don->enabled) $this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
@@ -158,10 +166,10 @@ class BlockedLog
 		if ($conf->don->enabled) $this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
 
 		/*
-		if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
-		if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
-		if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
-		*/
+		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
+		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
+		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+		 */
 
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
@@ -176,17 +184,21 @@ class BlockedLog
 		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
 		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
 
+		// Add more action to track from a conf variable
 		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
 			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
 			foreach ($tmparrayofmoresupportedevents as $val) {
 				$this->trackedevents[$val] = 'log'.$val;
 			}
 		}
+
+		return 1;
 	}
 
 	/**
-	 *  Try to retrieve source object (it it still exists)
-	 * @return string
+	 * Try to retrieve source object (it it still exists).
+	 *
+	 * @return string		URL string of source object
 	 */
 	public function getObjectLink()
 	{
@@ -626,10 +638,7 @@ class BlockedLog
 	 */
 	public function fetch($id)
 	{
-
 		global $langs;
-
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
 		if (empty($id))
 		{
@@ -637,20 +646,16 @@ class BlockedLog
 			return -1;
 		}
 
-		$langs->load("blockedlog");
-
 		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.signature_line, b.amounts, b.action, b.element, b.fk_object, b.entity,";
 		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.object_data, b.object_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
-		if ($id) $sql .= " WHERE b.rowid = ".$id;
+		if ($id) $sql .= " WHERE b.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
-
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
 				$this->id = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->ref				= $obj->rowid;
@@ -678,6 +683,7 @@ class BlockedLog
 
 				return 1;
 			} else {
+				$langs->load("blockedlog");
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
@@ -946,10 +952,11 @@ class BlockedLog
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
 	{
-		global $conf, $cachedlogs;
+		global $conf;
+		//global $cachedlogs;
 
 		/* $cachedlogs allow fastest search */
-		if (empty($cachedlogs)) $cachedlogs = array();
+		//if (empty($cachedlogs)) $cachedlogs = array();
 
 		if ($element == 'all') {
 	 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
@@ -962,7 +969,7 @@ class BlockedLog
 	         WHERE entity=".$conf->entity." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE entity=".$conf->entity." AND element='".$element."' AND fk_object=".(int) $fk_object;
+	         WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."' AND fk_object=".(int) $fk_object;
 		}
 
 		if ($search_fk_user > 0)  $sql .= natural_search("fk_user", $search_fk_user, 2);
@@ -989,15 +996,16 @@ class BlockedLog
 					return -2;
 				}
 
-				if (!isset($cachedlogs[$obj->rowid]))
-				{
-					$b = new BlockedLog($this->db);
-					$b->fetch($obj->rowid);
+				//if (!isset($cachedlogs[$obj->rowid]))
+				//{
+				$b = new BlockedLog($this->db);
+				$b->fetch($obj->rowid);
+				//$b->loadTrackedEvents();
+				//$cachedlogs[$obj->rowid] = $b;
+				//}
 
-					$cachedlogs[$obj->rowid] = $b;
-				}
-
-				$results[] = $cachedlogs[$obj->rowid];
+				//$results[] = $cachedlogs[$obj->rowid];
+				$results[] = $b;
 			}
 
 			return $results;

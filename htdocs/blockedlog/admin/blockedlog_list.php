@@ -68,7 +68,7 @@ if (empty($sortfield)) $sortfield = 'rowid';
 if (empty($sortorder)) $sortorder = 'DESC';
 
 $block_static = new BlockedLog($db);
-
+$block_static->loadTrackedEvents();
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
@@ -270,7 +270,7 @@ if (GETPOST('withtab', 'alpha'))
 
 llxHeader('', $langs->trans("BrowseBlockedLog"));
 
-$MAXLINES = 100000;
+$MAXLINES = 50000;
 
 $blocks = $block_static->getLog('all', 0, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (!is_array($blocks))
