@@ -975,9 +975,10 @@ class BlockedLog
 	         WHERE entity=".$conf->entity." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."' AND fk_object=".(int) $fk_object;
+	         WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."'";
 		}
 
+		if ($fk_object)	          $sql .= natural_search("rowid", $fk_object, 1);
 		if ($search_fk_user > 0)  $sql .= natural_search("fk_user", $search_fk_user, 2);
 		if ($search_start > 0)    $sql .= " AND date_creation >= '".$this->db->idate($search_start)."'";
 		if ($search_end > 0)      $sql .= " AND date_creation <= '".$this->db->idate($search_end)."'";

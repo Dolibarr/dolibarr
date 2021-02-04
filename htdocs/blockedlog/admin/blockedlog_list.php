@@ -43,6 +43,7 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
 if ($search_showonlyerrors < 0) $search_showonlyerrors = 0;
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
 if (GETPOST('search_startyear') != '') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
@@ -89,6 +90,7 @@ if ($max_time && $max_time < $max_execution_time_for_importexport)
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
+	$search_id = '';
 	$search_fk_user = '';
 	$search_start = -1;
 	$search_end = -1;
@@ -272,7 +274,7 @@ llxHeader('', $langs->trans("BrowseBlockedLog"));
 
 $MAXLINES = 50000;
 
-$blocks = $block_static->getLog('all', 0, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
+$blocks = $block_static->getLog('all', $search_id, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (!is_array($blocks))
 {
 	if ($blocks == -2)
@@ -305,6 +307,7 @@ print '<br>';
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($search_id != '')       $param .= '&search_id='.urlencode($search_id);
 if ($search_fk_user > 0)    $param .= '&search_fk_user='.urlencode($search_fk_user);
 if ($search_startyear > 0)  $param .= '&search_startyear='.urlencode(GETPOST('search_startyear', 'int'));
 if ($search_startmonth > 0) $param .= '&search_startmonth='.urlencode(GETPOST('search_startmonth', 'int'));
@@ -364,7 +367,7 @@ print '<table class="noborder centpercent">';
 // Line of filters
 print '<tr class="liste_titre_filter">';
 
-print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.dol_escape_htmltag($search_id).'"></td>';
 
 print '<td class="liste_titre">';
 //print $langs->trans("from").': ';
