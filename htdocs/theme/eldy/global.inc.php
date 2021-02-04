@@ -3397,13 +3397,13 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-div.pagination li a:hover,
-div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
+/*div.pagination li a:hover,
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
-div.pagination li:not(.paginationafterarrows,.title-button) span:focus {
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
+}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
