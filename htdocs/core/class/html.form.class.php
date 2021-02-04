@@ -1800,10 +1800,10 @@ class Form
 					}
 					$out .= ' data-html="';
 					$outhtml = '';
-					if (!empty($obj->photo))
-					{
+//					if (!empty($obj->photo))
+//					{
 						$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
-					}
+//					}
 					if ($showstatus >= 0 && $obj->status == 0) $outhtml .= '<strike class="opacitymediumxxx">';
 					$outhtml .= $labeltoshow;
 					if ($showstatus >= 0 && $obj->status == 0) $outhtml .= '</strike>';

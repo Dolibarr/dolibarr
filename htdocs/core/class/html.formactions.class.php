@@ -130,7 +130,7 @@ class FormActions
 			//var_dump($selected);
 			if ($selected == 'done') $selected = '100';
 			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
-			if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'></option>';
+			if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			foreach ($listofstatus as $key => $val)
 			{
 				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
@@ -141,6 +141,8 @@ class FormActions
 			}
 			print '</select>';
 			if ($selected == 0 || $selected == 100) $canedit = 0;
+
+			print ajax_combobox('select'.$htmlname);
 
 			if (empty($onlyselect))
 			{
