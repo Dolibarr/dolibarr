@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Si aquesta funció està habilitada, podeu triar un col
 BankColorizeMovementName1=Color de fons pel moviment de dèbit
 BankColorizeMovementName2=Color de fons pel moviment de crèdit
 IfYouDontReconcileDisableProperty=Si no feu cap conciliació bancària en alguns comptes bancaris, desactiveu la propietat "%s" per a eliminar aquest advertiment.
+NoBankAccountDefined=No s'ha definit cap compte bancari

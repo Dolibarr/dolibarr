@@ -138,7 +138,7 @@ if ($action == 'setlevel')
 	$res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
 	dol_syslog("admin/syslog: level ".$level);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -146,7 +146,7 @@ if ($action == 'setlevel')
 		$res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
 		dol_syslog("admin/syslog: file saves  ".$file_saves);
 
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	}
 
 	if (!$error)

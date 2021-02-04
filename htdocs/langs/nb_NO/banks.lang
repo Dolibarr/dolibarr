@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Hvis denne funksjonen er aktivert, kan du velge spesifi
 BankColorizeMovementName1=Bakgrunnsfarge for debetbevegelse
 BankColorizeMovementName2=Bakgrunnsfarge for kredittbevegelse
 IfYouDontReconcileDisableProperty=Hvis du ikke foretar bankavstemninger på noen bankkontoer, deaktiverer du egenskapen"%s" for å fjerne denne advarselen.
+NoBankAccountDefined=Ingen bankkonto definert

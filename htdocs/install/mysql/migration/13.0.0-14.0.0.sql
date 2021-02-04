@@ -123,3 +123,6 @@ ALTER TABLE llx_societe MODIFY COLUMN fk_typent integer DEFAULT NULL;
 UPDATE llx_societe SET fk_typent=NULL WHERE fk_typent=0;
 DELETE FROM llx_c_typent WHERE code='TE_UNKNOWN';
 
+ALTER TABLE llx_socpeople MODIFY poste varchar(255);
+
+ALTER TABLE llx_chargesociales ADD COLUMN fk_user integer DEFAULT NULL;

@@ -686,7 +686,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
-		case 'alphawithlgt':		// No " and no ../ but we keep < > tags. Can be used for email string like "Name <email>"
+		case 'alphawithlgt':		// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email>"
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
@@ -1984,8 +1984,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
-	if ($tzoutput == 'auto' && property_exists($conf, 'tzuserinputkey')) {
-		$tzoutput = $conf->tzuserinputkey;
+	if ($tzoutput === 'auto') {
+		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
 
 	// Clean parameters
@@ -2209,9 +2209,10 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+	//print 'gm:'.$gm.' gm==auto:'.($gm == 'auto').'<br>';
 
-	if ($gm == 'auto') {
-		$gm = $conf->tzuserinputkey;
+	if ($gm === 'auto') {
+		$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
 
 	// Clean parameters
@@ -2273,7 +2274,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'auto'
+ *  @param	string		$mode	'auto' => for backward compatibility (avoid this),
  *  							'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone. Not implemented.
@@ -2284,8 +2285,8 @@ function dol_now($mode = 'auto')
 {
 	$ret = 0;
 
-	if ($mode == 'auto') {
-		$mode = 'tzserver';
+	if ($mode === 'auto') {
+		$mode = 'gmt';
 	}
 
 	if ($mode == 'gmt') $ret = time(); // Time for now at greenwich.
@@ -3279,7 +3280,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_recruitmentjobposition', 'object_recruitmentcandidature',
 				'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
+				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement',
 				'off', 'on', 'order',
 				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
@@ -3316,7 +3317,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
 				'member'=>'users', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
-				'trip'=>'wallet', 'group'=>'users',
+				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
@@ -3405,7 +3406,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
-				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
+				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
 				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa',
@@ -4830,13 +4831,13 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *  should be roundtext2num().
  *
  *	@param	string|float	$amount			Amount to convert/clean or round
- *	@param	string			$rounding		''=No rounding
+ *	@param	string|int		$rounding		''=No rounding
  * 											'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *											'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *											'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
  *      		                            'CU'=Round to Max unit price of foreign currency accuracy
  *      		                            'CT'=Round to Max for totals with Tax of foreign currency accuracy
- *											Numeric = Nb of digits for rounding
+ *											Numeric = Nb of digits for rounding (For example 2 for a percentage)
  * 	@param	int				$option			Put 1 if you know that content is already universal format number (so no correction on decimal will be done)
  * 											Put 2 if you know that number is a user input (so we know we don't have to fix decimal separator).
  *	@return	string							Amount with universal numeric format (Example: '99.99999').
@@ -4911,7 +4912,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		elseif ($rounding == 'CT') {
 			$nbofdectoround = max($conf->global->MAIN_MAX_DECIMALS_TOT, 8);		// TODO Use param of currency
 		}
-		elseif (is_numeric($rounding))  $nbofdectoround = $rounding;
+		elseif (is_numeric($rounding))  $nbofdectoround = (int) $rounding;
 		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) $amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
@@ -5652,7 +5653,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[] = 'product';
 	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
-		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
+		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i', '', $num);
 		else $num = preg_replace('/^.*\-/i', '', $num);
 		$num = substr("000".$num, -$level);
@@ -5762,7 +5763,7 @@ function picto_required()
  *	@param	string	$stringtoclean		String to clean
  *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=Ending new lines are removed but others are kept with a same number of \n than nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
- *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
+ *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag or when tags is not closed like '<img onload=aaa')
  *  @param	integer	$removedoublespaces	Replace double space into one space
  *	@return string	    				String cleaned
  *
@@ -5783,10 +5784,10 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	} else {
 		$pattern = "/<[^<>]+>/";
 		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-		$temp = preg_replace($pattern, "", $temp); // pass 1
-		// $temp after pass 1: <a href="/myurl" title="A title">0000-021
-		$temp = preg_replace($pattern, "", $temp); // pass 2
-		// $temp after pass 2: 0000-021
+		$temp = preg_replace($pattern, "", $temp); // pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
+		$temp = preg_replace($pattern, "", $temp); // pass 2 - $temp after pass 2: 0000-021
+		// removed '<' into non closing html tags like '<a'
+		$temp = preg_replace('/<(\w+)/', '\1', $temp);
 	}
 
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
@@ -7144,7 +7145,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
- *  @param      int			$natsort			1=use "natural" sort (natsort), 0=use "standard" sort (asort)
+ *  @param      int			$natsort			1=use "natural" sort (natsort) for a search criteria thats is strings or unknown, 0=use "standard" sort (asort) for numbers
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
@@ -7170,9 +7171,17 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 			}
 
 			if (!$natsort) {
-				($order == 'asc') ? asort($temp) : arsort($temp);
+				if ($order == 'asc') {
+					asort($temp);
+				} else {
+					arsort($temp);
+				}
 			} else {
-				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if ($case_sensitive) {
+					natsort($temp);
+				} else {
+					natcasesort($temp);	// natecasesort is not sensible to case
+				}
 				if ($order != 'asc') $temp = array_reverse($temp, true);
 			}
 
@@ -7391,6 +7400,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		'da_DA' => 'dk',
 		'fr_CA' => 'mq',
 		'sv_SV' => 'se',
+		'sw_SW' => 'unknown',
 		'AQ' => 'unknown',
 		'CW' => 'unknown',
 		'IM' => 'unknown',
@@ -9230,4 +9240,17 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 		fclose($handle1);
 		fclose($handle2);
 	}
+}
+
+/**
+ * Create a button to copy $valuetoprint in the clipboard
+ *
+ * @param 	string 	$valuetoprint 		The value to print
+ * @param	int		$showonlyonhover	Show the copypaste button only on hover
+ * @return 	string 						The string to print for the button
+ */
+function showValueWithClipboardCPButton($valuetoprint, $showonlyonhover = 1)
+{
+	$result = '<span class="clipboardCP'.($showonlyonhover ? ' clipboardCPShowOnHover' : '').'"><span class="clipboardCPValue">'.$valuetoprint.'</span><span class="clipboardCPButton far fa-clipboard opacitymedium paddingleft paddingright"></span><span class="clipboardCPText opacitymedium"></span></span>';
+	return $result;
 }

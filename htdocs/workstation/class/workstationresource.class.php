@@ -22,10 +22,10 @@
  * \brief       This file is a CRUD class file for WorkstationResource (Create/Read/Update/Delete)
  */
 
-/**
- * Class for WorkstationResource
- */
 
+/**
+ * Class to link resource with Workstations
+ */
 class WorkstationResource extends CommonObject
 {
 	/** @var string $table_element Table name in SQL */
@@ -34,17 +34,34 @@ class WorkstationResource extends CommonObject
 	/** @var string $element Name of the element (tip for better integration in Dolibarr: this value should be the reflection of the class name with ucfirst() function) */
 	public $element = 'workstationresource';
 
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields = array(
 		'fk_workstation' => array ('type' => 'integer'),
 		'fk_resource' => array ('type' => 'integer')
 	);
 
 	/**
+	 * @var int ID of workstation
+	 */
+	public $fk_workstation;
+
+	/**
+	 * @var int ID of dolresource
+	 */
+	public $fk_resource;
+
+
+	/**
 	 * WorkstationResource constructor.
+	 *
 	 * @param DoliDB    $db    Database connector
 	 */
 	public function __construct($db)
 	{
+		global $langs;
+
 		$this->db = $db;
 
 		// Unset fields that are disabled
@@ -74,8 +91,9 @@ class WorkstationResource extends CommonObject
 
 	/**
 	 * Function used to get an array with all resources linked to a workstation
-	 * @param	int		$fk_workstation		id of workstation we need to get linked resources
-	 * @return array
+	 *
+	 * @param	int		$fk_workstation		Id of workstation we need to get linked resources
+	 * @return 	array						Array of record
 	 */
 	static public function getAllResourcesOfWorkstation($fk_workstation)
 	{
@@ -86,8 +104,9 @@ class WorkstationResource extends CommonObject
 
 	/**
 	 * Function used to remove all resources linked to a workstation
-	 * @param	int		$fk_workstation		id of workstation we need to remove linked resources
-	 * @return int
+	 *
+	 * @param	int		$fk_workstation		Id of workstation we need to remove linked resources
+	 * @return 	int							<0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
 	static public function deleteAllResourcesOfWorkstation($fk_workstation)
 	{

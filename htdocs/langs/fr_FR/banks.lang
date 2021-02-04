@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Si cette fonction est activée, vous pouvez choisir une
 BankColorizeMovementName1=Couleur de fond pour les mouvements de débit
 BankColorizeMovementName2=Couleur de fond pour le mouvement de crédit
 IfYouDontReconcileDisableProperty=Si vous ne réalisez pas le rapprochement bancaire sur certains comptes bancaires, désactivez la fonctionnalité "%s" pour ne plus afficher cette alerte.
+NoBankAccountDefined=Aucun compte bancaire défini

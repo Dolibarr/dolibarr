@@ -122,7 +122,7 @@ SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for 
 UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
 NoUpdateAttempt=No update attempt was performed, only insert
 ImportDataset_user_1=Users (employees or not) and properties
-ComputedField=Computed field
+ComputedField=Laskettu kenttä
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
 FilteredFields=Filtered fields

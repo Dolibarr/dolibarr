@@ -757,7 +757,7 @@ class Website extends CommonObject
 			// Restore id of home page
 			$object->fk_default_home = $newidforhome;
 			$res = $object->update($user);
-			if (!$res > 0)
+			if (!($res > 0))
 			{
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1300,7 +1300,7 @@ class Website extends CommonObject
 		$object = $this;
 		if (empty($object->ref))
 		{
-			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
+			$this->error = 'Function rebuildWebSiteFiles called on object not loaded (object->ref is empty)';
 			return -1;
 		}
 
@@ -1316,6 +1316,7 @@ class Website extends CommonObject
 
 		$num = $this->db->num_rows($resql);
 
+		// Loop on each container/page
 		$i = 0;
 		while ($i < $num) {
 			$obj = $this->db->fetch_object($resql);
@@ -1333,13 +1334,15 @@ class Website extends CommonObject
 				$error++;
 			}
 
-			// Regenerate alternative aliases pages
-			if (is_array($aliasesarray))
-			{
-				foreach ($aliasesarray as $aliasshortcuttocreate)
-				{
-					if (trim($aliasshortcuttocreate))
-					{
+			// Add main alias to list of alternative aliases
+			if (!empty($objectpagestatic->pageurl) && !in_array($objectpagestatic->pageurl, $aliasesarray)) {
+				$aliasesarray[] = $objectpagestatic->pageurl;
+			}
+
+			// Regenerate all aliases pages (pages with a natural name)
+			if (is_array($aliasesarray)) {
+				foreach ($aliasesarray as $aliasshortcuttocreate) {
+					if (trim($aliasshortcuttocreate)) {
 						$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
 						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
 						if (!$result) {

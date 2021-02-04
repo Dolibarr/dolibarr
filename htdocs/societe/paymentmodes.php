@@ -6,7 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      ptibogxiv            <support@ptibogxiv.net>
+ * Copyright (C) 2018 -2021Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -957,12 +957,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 						try {
 							if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-								$paymentmethodobjs = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
+								$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
+								$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"));
 							} else {
-								$paymentmethodobjs = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
+								$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
+								$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"), array("stripe_account" => $stripeacc));
 							}
 
-							$listofsources = $paymentmethodobjs->data;
+							if ($paymentmethodobjsA->data != null && $paymentmethodobjsB->data != null) { $listofsources = array_merge((array) $paymentmethodobjsA->data, (array) $paymentmethodobjsB->data);
+							} elseif ($paymentmethodobjsB->data != null) { $listofsources = $paymentmethodobjsB->data; }
+							else { $listofsources = $paymentmethodobjsA->data; }
 						} catch (Exception $e)
 						{
 							$error++;
@@ -1181,7 +1185,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print getCountry($src->card->country, 1);
 					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 				} elseif ($src->object == 'source' && $src->type == 'sepa_debit') {
-					print 'SEPA debit';
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
 					print '</td><td>';
 					if ($src->sepa_debit->country) {
 							$img = picto_from_langcode($src->sepa_debit->country);
@@ -1198,7 +1202,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print getCountry($src->card->country, 1);
 					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
-					print 'SEPA debit';
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
 					print '</td><td>';
 					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);

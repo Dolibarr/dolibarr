@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Noliktavas vērtība
 UserWarehouseAutoCreate=Lietotāja noliktavas izveide, izveidojot lietotāju
 AllowAddLimitStockByWarehouse=Pārvaldiet arī minimālā un vēlamā krājuma vērtību pārī (produkta noliktava), papildus minimālā un vēlamā krājuma vērtībai vienam produktam
 RuleForWarehouse=Noteikumi noliktavām
+WarehouseAskWarehouseDuringPropal=Set a warehouse on Sale propal
 WarehouseAskWarehouseDuringOrder=Iestatiet noliktavu pārdošanas pasūtījumiem
 UserDefaultWarehouse=Iestatiet noliktavu lietotājiem
 MainDefaultWarehouse=Noklusētā noliktava

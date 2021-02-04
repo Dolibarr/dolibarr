@@ -175,3 +175,5 @@ Answered=已回覆
 IsNotAnAnswer=未回應（原始電子郵件）
 IsAnAnswer=是一封原始電子郵件的回應
 RecordCreatedByEmailCollector=由電子郵件收集器%s從電子郵件%s建立的記錄
+DefaultBlacklistMailingStatus=Default contact status for refuse bulk emailing
+DefaultStatusEmptyMandatory=Empty but mandatory

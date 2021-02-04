@@ -149,3 +149,4 @@ InfoRejectMessage=Hej, <br> <br> Betalningsordern för fakturan %s relaterad til
 ModeWarning=Alternativ på riktigt läget inte var satt, sluta vi efter denna simulering
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

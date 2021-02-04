@@ -283,7 +283,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	$out = '';
 	$histo = array();
 	$numaction = 0;
-	$now = dol_now('tzuser');
+	$now = dol_now();
 
 	// Open DSI -- Fix order by -- Begin
 	$sortfield_list = explode(',', $sortfield);
@@ -622,7 +622,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out .= '<!-- timeline time label -->';
 				$out .= '<li class="time-label">';
 				$out .= '<span class="timeline-badge-date">';
-				$out .= dol_print_date($histo[$key]['datestart'], 'daytext', 'tzserver', $langs);
+				$out .= dol_print_date($histo[$key]['datestart'], 'daytext', 'tzuserrel', $langs);
 				$out .= '</span>';
 				$out .= '</li>';
 				$out .= '<!-- /.timeline-label -->';
@@ -660,14 +660,14 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 			$out .= '</span>';
 			// Date
 			$out .= '<span class="time"><i class="fa fa-clock-o"></i> ';
-			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour');
+			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
 			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
 				$tmpb = dol_getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour');
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
 				} else {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour');
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 				}
 			}
 			$late = 0;

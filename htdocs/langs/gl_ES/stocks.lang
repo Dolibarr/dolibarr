@@ -62,6 +62,7 @@ EnhancedValueOfWarehouses=Valor de stocks en almacén
 UserWarehouseAutoCreate=Crea automáticamente un almacén de usuarios ao crear un usuario
 AllowAddLimitStockByWarehouse=Xestionar tamén o valor do stock mínimo e desexado por emparellamento (produto-almacén) ademais do valor do stock mínimo e stock desexado por produto
 RuleForWarehouse=Regras para almacén
+WarehouseAskWarehouseDuringPropal=Establecer un almacén en orzamento a cliente
 WarehouseAskWarehouseDuringOrder=Establecer un almacén para pedimentos de provedor
 UserDefaultWarehouse=Establecer un almacén para usuarios
 MainDefaultWarehouse=Almacén por defecto

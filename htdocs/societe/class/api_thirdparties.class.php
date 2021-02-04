@@ -1068,7 +1068,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Return list of invoices qualified to be corrected by a credit note.
 	 * Invoices matching the following rules are returned
-	 * (validated + payment on process) or classified (payed completely or payed partialy) + not already replaced + not already a credit note
+	 * (validated + payment on process) or classified (paid completely or paid partialy) + not already replaced + not already a credit note
 	 *
 	 * @param int   $id             Id of thirdparty
 	 *

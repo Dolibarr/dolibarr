@@ -46,8 +46,14 @@ class Cchargesociales
 
 	/**
 	 * @var string Label
+	 * @deprecated
 	 */
 	public $libelle;
+
+	/**
+	 * @var string Label
+	 */
+	public $label;
 
 	public $deductible;
 	public $active;
@@ -107,7 +113,6 @@ class Cchargesociales
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
-
 		$sql .= 'libelle,';
 		$sql .= 'deductible,';
 		$sql .= 'active,';
@@ -115,10 +120,7 @@ class Cchargesociales
 		$sql .= 'fk_pays,';
 		$sql .= 'module';
 		$sql .= 'accountancy_code';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : $this->deductible).',';
 		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
@@ -126,8 +128,6 @@ class Cchargesociales
 		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : $this->fk_pays).',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -179,7 +179,7 @@ class Cchargesociales
 
 		$sql = 'SELECT';
 		$sql .= " t.id,";
-		$sql .= " t.libelle,";
+		$sql .= " t.libelle as label,";
 		$sql .= " t.deductible,";
 		$sql .= " t.active,";
 		$sql .= " t.code,";
@@ -201,7 +201,8 @@ class Cchargesociales
 
 				$this->id = $obj->id;
 
-				$this->libelle = $obj->libelle;
+				$this->libelle = $obj->label;
+				$this->label = $obj->label;
 				$this->deductible = $obj->deductible;
 				$this->active = $obj->active;
 				$this->code = $obj->code;
@@ -501,6 +502,7 @@ class Cchargesociales
 		$this->id = 0;
 
 		$this->libelle = '';
+		$this->label = '';
 		$this->deductible = '';
 		$this->active = '';
 		$this->code = '';

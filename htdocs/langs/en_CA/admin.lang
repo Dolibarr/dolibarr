@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
+Module59000Desc=Module to follow margins
 LocalTax1Management=PST Management
 CompanyZip=Postal code
-YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 LDAPFieldZip=Postal code
 ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 FormatZip=Postal code

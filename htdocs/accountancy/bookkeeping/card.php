@@ -63,9 +63,11 @@ $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
 
 $subledger_account = GETPOST('subledger_account', 'alphanohtml');
-if ($subledger_account == - 1) {
+if ($subledger_account == -1) {
 	$subledger_account = null;
 }
+$subledger_label = GETPOST('subledger_label', 'alphanohtml');
+
 $label_operation = GETPOST('label_operation', 'alphanohtml');
 $debit = price2num(GETPOST('debit', 'alpha'));
 $credit = price2num(GETPOST('credit', 'alpha'));
@@ -108,6 +110,7 @@ if ($action == "confirm_update") {
 		} else {
 			$object->numero_compte = $accountingaccount_number;
 			$object->subledger_account = $subledger_account;
+			$object->subledger_label = $subledger_label;
 			$object->label_compte = $accountingaccount_label;
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
@@ -160,6 +163,7 @@ if ($action == "confirm_update") {
 
 		$object->numero_compte = $accountingaccount_number;
 		$object->subledger_account = $subledger_account;
+		$object->subledger_label = $subledger_label;
 		$object->label_compte = $accountingaccount_label;
 		$object->label_operation = $label_operation;
 		$object->debit = $debit;
@@ -578,7 +582,7 @@ if ($action == 'create')
 
 		print '<br>';
 
-		$result = $object->fetchAllPerMvt($piece_num, $mode);
+		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -630,9 +634,10 @@ if ($action == 'create')
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
 						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 						}
-						// TODO Add also the label
+						// Add also input for subledger label
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 						print '</td>';
 						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
@@ -644,20 +649,24 @@ if ($action == 'create')
 					} else {
 						$accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 0).'</td>';
-						print '<td>'.length_accounta($line->subledger_account).'</td>';
+						print '<td>'.length_accounta($line->subledger_account);
+						if ($line->subledger_label) {
+							print ' - <span class="opacitymedium">'.$line->subledger_label.'</span>';
+						}
+						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
 						print '<td class="nowrap right">'.price($line->debit).'</td>';
 						print '<td class="nowrap right">'.price($line->credit).'</td>';
 
 						print '<td class="center">';
-						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.$line->piece_num.'&mode='.$mode.'">';
+						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
 						print img_edit('', 0, 'class="marginrightonly"');
 						print '</a> &nbsp;';
 
 						$actiontodelete = 'delete';
 						if ($mode == '_tmp' || $action != 'delmouv') $actiontodelete = 'confirm_delete';
 
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action='.$actiontodelete.'&id='.$line->id.'&piece_num='.$line->piece_num.'&mode='.$mode.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action='.$actiontodelete.'&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
 						print img_delete();
 
 						print '</a>';
@@ -688,9 +697,9 @@ if ($action == 'create')
 					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
 					} else {
-						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
 					}
-					// TODO Add also the label
+					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
 					print '</td>';
 					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
 					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';

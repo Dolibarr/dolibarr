@@ -80,7 +80,7 @@ $_SESSION["commandbackuptorun"] = '';
 $_SESSION["commandbackupresult"] = '';
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit = 600;
+$ExecTimeLimit = 600;	// Set it to 0 to not use a forced time limit
 if (!empty($ExecTimeLimit))
 {
 	$err = error_reporting();
@@ -95,8 +95,6 @@ if (!empty($MemoryLimit))
 	@ini_set('memory_limit', $MemoryLimit);
 }
 
-$form = new Form($db);
-$formfile = new FormFile($db);
 
 //$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 //llxHeader('','',$help_url);
@@ -222,16 +220,7 @@ if ($errormsg)
 }
 
 
-/*
-$filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
-$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,($langs->trans("NoBackupFileAvailable").'<br>'.$langs->trans("ToBuildBackupFileClickHere",DOL_URL_ROOT.'/admin/tools/dolibarr_export.php')),0,$langs->trans("PreviousDumpFiles"));
-
-print '<br>';
-*/
-
 // Redirect to backup page
 header("Location: dolibarr_export.php".(GETPOST('page_y', 'int') ? '?page_y='.GETPOST('page_y', 'int') : ''));
-
-$time_end = time();
 
 $db->close();

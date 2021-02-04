@@ -246,7 +246,7 @@ MultipriceRules=Preus automàtics per segment
 UseMultipriceRules=Utilitzeu les regles del segment de preus (definides a la configuració del mòdul de producte) per calcular automàticament els preus de tots els altres segments segons el primer segment
 PercentVariationOver=%% variació sobre %s
 PercentDiscountOver=%% descompte sobre %s
-KeepEmptyForAutoCalculation=Mantingueu-lo buit per obtenir-ho calculat automàticament pel pes o el volum dels productes
+KeepEmptyForAutoCalculation=Mantingueu-lo buit per a calcular-ho automàticament a partir del pes o volum dels productes
 VariantRefExample=Exemples: COL, TALLA
 VariantLabelExample=Exemples: Color, Talla
 ### composition fabrication
