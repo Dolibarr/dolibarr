@@ -232,6 +232,8 @@ TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
 ErrorTicketRefRequired=Ticket reference name is required
+ChartTicketType=Number of tickets by type
+ChartTicketSeverity=Number of tickets by severity
 
 #
 # Logs

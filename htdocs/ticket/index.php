@@ -279,6 +279,110 @@ print '</div>';
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
+/*
+ * Chart of Ticket by Severity
+ */
+
+ $listofopplabel = array();
+$listofoppcode = array();
+$colorseriesstat = array();
+
+$sql = "SELECT cts.rowid, cts.label, cts.code";
+$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
+$sql .= " WHERE cts.active = 1";
+$sql .= $db->order('cts.rowid','ASC');
+$resql = $db->query($sql);
+
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$listofoppcode[$objp->rowid] = $objp->code;
+		$listofopplabel[$objp->rowid] = $objp->label;
+		switch ($objp->code) {
+			case 'LOW':
+				$colorseriesstat[$objp->rowid] = $badgeStatus4;
+				break;
+			case 'NORMAL':
+				$colorseriesstat[$objp->rowid] = $badgeStatus2;
+				break;
+			case 'HIGH':
+				$colorseriesstat[$objp->rowid] = $badgeStatus1;
+				break;
+			case 'BLOCKING':
+				$colorseriesstat[$objp->rowid] = $badgeStatus8;
+				break;
+			default:
+				break;
+		}
+		$i++;
+	}
+}else{
+	dol_print_error($db);
+}
+
+$transChartTicketSeverity = $langs->trans('ChartTicketSeverity');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">'.$transChartTicketSeverity.'</th></tr>';
+print '<td class="center">';
+
+$dataseries = array();
+$data;
+$sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " GROUP BY t.severity_code";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$data[$objp->severity_code]=$objp->nb;
+		$i++;
+	}
+	foreach ($listofoppcode as $rowid => $code) {
+		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketSeverityShort'.$code, 'c_ticket_category', 'code', 'label', $code),'data'=>$data[$code]);
+	}
+}else{
+	dol_print_error($db);
+}
+if(!empty($dataseries) && count($dataseries)>0){
+	$px1 = new DolGraph();
+	$mesg = $px1->isGraphKo();
+	$totalnb = 0;
+	if (!$mesg) {
+		$px1->SetDataColor(array_values($colorseriesstat));
+		$data = array();
+		$legend = array();
+		foreach ($dataseries as $value) {
+			$data[] = array($value['label'],$value['data']);
+			$totalnb += $value['data'];
+		}
+		$px1->SetData($data);
+		$px1->setShowLegend(2);
+		$px1->SetType(array('pie'));
+		$px1->SetLegend($legend);
+		$px1->SetMaxValue($px1->GetCeilMaxValue());
+		$px1->SetHeight($HEIGHT);
+		$px1->SetShading(3);
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetCssPrefix("cssboxes");
+		$px1->mode = 'depth';
+
+		$px1->draw('idgraphticketseverity');
+		print $px1->show($totalnb ? 0 : 1);
+	}
+}else{
+	print '<tr class="oddeven">';
+	print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+	print '</tr>';
+}
+
+print '</td>';
+print "</table>";
+print '</div>';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -397,6 +501,114 @@ if ($result) {
 } else {
 	dol_print_error($db);
 }
+
+/*
+ * Chart of Ticket Type
+ */
+
+$listofopplabel = array();
+$listofoppcode = array();
+$colorseriesstat = array();
+
+$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
+$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
+$sql .= " WHERE ctt.active = 1";
+$sql .= $db->order('ctt.rowid','ASC');
+$resql = $db->query($sql);
+
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$listofoppcode[$objp->rowid] = $objp->code;
+		$listofopplabel[$objp->rowid] = $objp->label;
+		switch ($objp->code) {
+			case 'COM':
+				$colorseriesstat[$objp->rowid] = $badgeStatus1;
+				break;
+			case 'HELP':
+				$colorseriesstat[$objp->rowid] = $badgeStatus2;
+				break;
+			case 'ISSUE':
+				$colorseriesstat[$objp->rowid] = $badgeStatus3;
+				break;
+			case 'REQUEST':
+				$colorseriesstat[$objp->rowid] = $badgeStatus4;
+				break;
+			case 'OTHER':
+				$colorseriesstat[$objp->rowid] = $badgeStatus5;
+				break;
+			default:
+				break;
+		}
+		$i++;
+	}
+}else{
+	dol_print_error($db);
+}
+
+$transChartTicketType = $langs->trans('ChartTicketType');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">'.$transChartTicketType.'</th></tr>';
+print '<td class="center">';
+
+$dataseries = array();
+$data;
+$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " GROUP BY t.type_code";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$data[$objp->type_code]=$objp->nb;
+		$i++;
+	}
+	foreach ($listofoppcode as $rowid => $code) {
+		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketTypeShort'.$code, 'c_ticket_category', 'code', 'label', $code),'data'=>$data[$code]);
+	}
+}else{
+	dol_print_error($db);
+}
+if(!empty($dataseries) && count($dataseries)>0){
+	$px1 = new DolGraph();
+	$mesg = $px1->isGraphKo();
+	$totalnb = 0;
+	if (!$mesg) {
+		$px1->SetDataColor(array_values($colorseriesstat));
+		$data = array();
+		$legend = array();
+		foreach ($dataseries as $value) {
+			$data[] = array($value['label'],$value['data']);
+			$totalnb += $value['data'];
+		}
+		$px1->SetData($data);
+		$px1->setShowLegend(2);
+		$px1->SetType(array('pie'));
+		$px1->SetLegend($legend);
+		$px1->SetMaxValue($px1->GetCeilMaxValue());
+		$px1->SetHeight($HEIGHT);
+		$px1->SetShading(3);
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetCssPrefix("cssboxes");
+		$px1->mode = 'depth';
+
+		$px1->draw('idgraphtickettype');
+		print $px1->show($totalnb ? 0 : 1);
+	}
+}else{
+	print '<tr class="oddeven">';
+	print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+	print '</tr>';
+}
+
+print '</td>';
+print "</table>";
+print '</div>';
 
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
