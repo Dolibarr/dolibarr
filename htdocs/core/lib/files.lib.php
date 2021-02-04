@@ -1513,6 +1513,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
  * @param   Object  $object                 Object used to set 'src_object_*' fields
  * @return	int                             <=0 if KO, >0 if OK
+ * @see dol_remove_file_process()
  */
 function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
@@ -1673,6 +1674,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
  * @param   int		$donotdeletefile        1=Do not delete physically file
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
+ * @see dol_add_file_process()
  */
 function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
