@@ -970,7 +970,7 @@ if (empty($reshook))
 		if ($ret < 0) $error++;
 
 		// Replacement invoice
-		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
+		if (GETPOST('type') == Facture::TYPE_REPLACEMENT)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice)) {
@@ -1253,7 +1253,7 @@ if (empty($reshook))
 		}
 
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0)
+		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice)) {
@@ -1299,7 +1299,7 @@ if (empty($reshook))
 		}
 
 		// Standard or deposit or proforma invoice, not from a Predefined template invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT || $_POST['type'] == Facture::TYPE_PROFORMA || ($_POST['type'] == Facture::TYPE_SITUATION && empty($_POST['situations']))) && GETPOST('fac_rec') <= 0)
+		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT || GETPOST('type') == Facture::TYPE_PROFORMA || (GETPOST('type') == Facture::TYPE_SITUATION && !GETPOST('situations'))) && GETPOST('fac_rec') <= 0)
 		{
 			if (GETPOST('socid', 'int') < 1)
 			{
@@ -1319,7 +1319,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 
 			if (!$error)
 			{
@@ -1717,12 +1717,12 @@ if (empty($reshook))
 					$id = $object->create($user);
 
 					for ($i = 1; $i <= $NBLINES; $i++) {
-						if ($_POST['idprod'.$i]) {
+						if (GETPOST('idprod'.$i, 'int')) {
 							$product = new Product($db);
-							$product->fetch($_POST['idprod'.$i]);
-							$startday = dol_mktime(12, 0, 0, $_POST['date_start'.$i.'month'], $_POST['date_start'.$i.'day'], $_POST['date_start'.$i.'year']);
-							$endday = dol_mktime(12, 0, 0, $_POST['date_end'.$i.'month'], $_POST['date_end'.$i.'day'], $_POST['date_end'.$i.'year']);
-							$result = $object->addline($product->description, $product->price, $_POST['qty'.$i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+							$product->fetch(GETPOST('idprod'.$i, 'int'));
+							$startday = dol_mktime(12, 0, 0, GETPOST('date_start'.$i.'month'), GETPOST('date_start'.$i.'day'), GETPOST('date_start'.$i.'year'));
+							$endday = dol_mktime(12, 0, 0, GETPOST('date_end'.$i.'month'), GETPOST('date_end'.$i.'day'), GETPOST('date_end'.$i.'year'));
+							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST['idprod'.$i], $_POST['remise_percent'.$i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
 						}
 					}
 				}
@@ -1730,7 +1730,7 @@ if (empty($reshook))
 		}
 
 		// Situation invoices
-		if (GETPOST('type') == Facture::TYPE_SITUATION && (!empty($_POST['situations'])))
+		if (GETPOST('type') == Facture::TYPE_SITUATION && GETPOST('situations'))
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice)) {
@@ -1743,9 +1743,9 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
 
-			if (!($_POST['situations'] > 0)) {
+			if (!(GETPOST('situations', 'int') > 0)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("InvoiceSituation"));
 				setEventMessages($mesg, null, 'errors');
@@ -1753,8 +1753,8 @@ if (empty($reshook))
 			}
 
 			if (!$error) {
-				$result = $object->fetch($_POST['situations']);
-				$object->fk_facture_source = $_POST['situations'];
+				$result = $object->fetch(GETPOST('situations', 'int'));
+				$object->fk_facture_source = GETPOST('situations', 'int');
 				$object->type = Facture::TYPE_SITUATION;
 
 				if (!empty($origin) && !empty($originid))
