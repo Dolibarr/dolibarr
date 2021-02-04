@@ -427,7 +427,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary thirdparty accounts
+	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   $selectid       Preselected pcg_type
 	 * @param string   $htmlname       Name of field in html form
@@ -435,24 +435,27 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth200')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250')
 	{
 		// phpcs:enable
 
 		$aux_account = array();
 
-		// Auxiliary customer account
-		$sql = "SELECT DISTINCT code_compta, nom ";
+		// Auxiliary thirdparties account
+		$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " ORDER BY code_compta";
+		$sql .= " AND client IN (1,3) OR fournisseur = 1";
 
 		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->code_compta)) {
-					$aux_account[$obj->code_compta] = $obj->code_compta.' ('.$obj->nom.')';
+					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
+				}
+				if (!empty($obj->code_compta_fournisseur)) {
+					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
 				}
 			}
 		} else {
@@ -460,26 +463,9 @@ class FormAccounting extends Form
 			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
 			return -1;
 		}
-		$this->db->free($resql);
 
-		// Auxiliary supplier account
-		$sql = "SELECT DISTINCT code_compta_fournisseur, nom ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " ORDER BY code_compta_fournisseur";
-		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if ($obj->code_compta_fournisseur != "") {
-					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
-				}
-			}
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
-			return -1;
-		}
+		ksort($aux_account);
+
 		$this->db->free($resql);
 
 		// Auxiliary user account
@@ -492,7 +478,7 @@ class FormAccounting extends Form
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!empty($obj->accountancy_code)) {
-					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' ('.dolGetFirstLastname($obj->firstname, $obj->lastname).')';
+					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
 				}
 			}
 		} else {

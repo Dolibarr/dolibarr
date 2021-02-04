@@ -236,7 +236,7 @@ $tabsqlsort[3] = "country ASC, code ASC";
 $tabsqlsort[4] = "code ASC";
 $tabsqlsort[5] = "label ASC";
 $tabsqlsort[6] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
-$tabsqlsort[7] = "country ASC, code ASC, a.libelle ASC";
+$tabsqlsort[7] = "c.label ASC, a.code ASC, a.libelle ASC";
 $tabsqlsort[8] = "country DESC,".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ' t.position ASC,' : '')." libelle ASC";
 $tabsqlsort[9] = "label ASC";
 $tabsqlsort[10] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
@@ -1069,6 +1069,7 @@ if ($id)
 	elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
 	elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id == 3)     $sql .= natural_search("r.code_region", $search_code);
+	elseif ($search_code != '' && $id == 7)     $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id != 9)     $sql .= natural_search("code", $search_code);
 
 	if ($sortfield)
@@ -1107,7 +1108,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
 		$withentity = null;
 
 		$fieldlist = explode(',', $tabfield[$id]);
@@ -1214,7 +1214,6 @@ if ($id)
 				else $tdsoffields .= $valuetoshow;
 				$tdsoffields .= '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		if ($id == 4) $tdsoffields .= '<td></td>';

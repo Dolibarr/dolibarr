@@ -125,6 +125,4 @@ SEPAMandate=Mandato de la SEPA
 YourSEPAMandate=Su mandato de SEPA
 FindYourSEPAMandate=Este es su mandato de SEPA para autorizar a nuestra empresa a realizar un pedido de débito directo a su banco. Devuélvalo firmado (escaneo del documento firmado) o envíelo por correo a
 AutoReportLastAccountStatement=Rellene automáticamente el campo &#39;número de extracto bancario&#39; con el último número de extracto al realizar la conciliación
-CashControl=Cerca de efectivo POS
-NewCashFence=Nueva valla de efectivo
 BankColorizeMovementDesc=Si esta función está habilitada, puede elegir un color de fondo específico para los movimientos de débito o crédito

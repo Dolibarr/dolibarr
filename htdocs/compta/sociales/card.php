@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin            <regis.houssin@inodbox.com>
  * Copyright (C) 2016-2018 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro       <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,13 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+if (!empty($conf->projet->enabled))
+{
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -40,7 +44,7 @@ if (!empty($conf->accounting->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'banks'));
+$langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -51,6 +55,7 @@ $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), 
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
+$fk_user = GETPOST('userid', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -92,6 +97,12 @@ if ($action == 'classin' && $user->rights->tax->charges->creer)
 {
 	$object->fetch($id);
 	$object->setProject(GETPOST('projectid'));
+}
+
+if ($action == 'setfk_user' && $user->rights->tax->charges->creer) {
+	$object->fetch($id);
+	$object->fk_user = $fk_user;
+	$object->update($user);
 }
 
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
@@ -163,6 +174,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		$object->date_ech = $dateech;
 		$object->periode = $dateperiod;
 		$object->amount = $amount;
+		$object->fk_user			= $fk_user;
 		$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
 		$object->fk_account = (int) GETPOST('fk_account', 'int');
 		$object->fk_project = (int) GETPOST('fk_project', 'int');
@@ -182,8 +194,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->cre
 
 	if (!$dateech)
 	{
-		setEventMessages($langs->trans("ErrorFieldReqrequire_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-uired", $langs->transnoentities("Date")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$action = 'edit';
 	} elseif (!$dateperiod)
 	{
@@ -203,6 +214,7 @@ uired", $langs->transnoentities("Date")), null, 'errors');
 		$object->date_ech = $dateech;
 		$object->periode = $dateperiod;
 		$object->amount = $amount;
+		$object->fk_user	= $fk_user;
 
 		$result = $object->update($user);
 		if ($result <= 0) {
@@ -343,6 +355,12 @@ if ($action == 'create')
 	print '<td><input type="text" size="6" name="amount" class="flat" value="'.dol_escape_htmltag(GETPOST('amount', 'alpha')).'"></td>';
 	print '</tr>';
 
+	// Employee
+	print '<tr><td>';
+	print $langs->trans('Employee');
+	print '</td>';
+	print '<td>'.$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
+
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
@@ -443,6 +461,26 @@ if ($id > 0)
 		// Ref customer
 		$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+
+		// Employee
+		if ($action != 'editfk_user') {
+			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+
+			if (!empty($object->fk_user)) {
+				$userstatic = new User($db);
+				$userstatic->fetch($object->fk_user);
+				$morehtmlref .= $userstatic->getNomUrl(1);
+			}
+		} else {
+			$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
+			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
+			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$morehtmlref .= $form->select_dolusers($object->fk_user, 'userid', 1);
+			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$morehtmlref .= '</form>';
+		}
+
 		// Project
 		if (!empty($conf->projet->enabled))
 		{

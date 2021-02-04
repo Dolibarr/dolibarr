@@ -435,9 +435,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
-		$var = false;
-
 		$fieldlist = explode(',', $tabfield[$id]);
 
 		// Line for title
@@ -461,7 +458,6 @@ if ($id)
 		   		} else print $valuetoshow;
 				print '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		print '<td colspan="4">';
@@ -469,7 +465,7 @@ if ($id)
 		print '</tr>';
 
 		// Line to enter new values
-		print "<tr ".$bcnd[$var].">";
+		print '<tr class="oddeven">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -570,7 +566,7 @@ if ($id)
 					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 				  	$tmpaction = 'view';
-					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error; $errors = $hookmanager->errors;

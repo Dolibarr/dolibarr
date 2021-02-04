@@ -389,6 +389,15 @@ $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsm
 
 $viewmode .= '<span class="marginrightonly"></span>';
 
+// Add more views from hooks
+$parameters = array(); $object = null;
+$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+if (empty($reshook)) {
+	$viewmode .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$viewmode = $hookmanager->resPrint;
+}
+
 
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)

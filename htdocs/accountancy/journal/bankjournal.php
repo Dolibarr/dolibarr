@@ -150,7 +150,7 @@ $userstatic = new User($db);
 $bankaccountstatic = new Account($db);
 $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
-$paymentvatstatic = new TVA($db);
+$paymentvatstatic = new Tva($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -549,7 +549,7 @@ if (!$error && $action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
 					$bookkeeping->credit = ($mt < 0 ? -$mt : 0);
 					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->date_creation = $now;
 
@@ -605,7 +605,7 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt < 0 ? -$mt : 0);
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->date_creation = $now;
 
@@ -737,7 +737,7 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt < 0 ? -$mt : 0);
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->label_compte = '';

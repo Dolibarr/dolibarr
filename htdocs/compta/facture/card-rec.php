@@ -439,7 +439,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
 		{
@@ -450,8 +450,8 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -801,7 +801,7 @@ if (empty($reshook))
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))))
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent', 2)) / 100) < price2num($price_min))))
 			{
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
@@ -837,7 +837,7 @@ if (empty($reshook))
 				$localtax1_rate,
 				$localtax1_rate,
 				GETPOST('productid'),
-				GETPOST('remise_percent'),
+				price2num(GETPOST('remise_percent'), 2),
 				'HT',
 				$info_bits,
 				0,
@@ -923,7 +923,8 @@ if (empty($reshook))
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-facture-rec');
+$help_url = '';
+llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);

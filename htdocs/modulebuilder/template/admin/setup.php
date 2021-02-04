@@ -83,10 +83,9 @@ if ($action == 'updateMask') {
 
 	if ($maskconstorder) {
 		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
-	}
-
-	if (!$res > 0) {
-		$error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -145,7 +144,9 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
+			if ($conf->global->$constforval == "$value") {
+				dolibarr_del_const($db, $constforval, $conf->entity);
+			}
 		}
 	}
 } elseif ($action == 'setdoc') {
@@ -338,9 +339,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 									$htmltooltip .= ''.$langs->trans("NextValue").': ';
 									if ($nextval) {
-										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 											$nextval = $langs->trans($nextval);
-											$htmltooltip .= $nextval.'<br>';
+										}
+										$htmltooltip .= $nextval.'<br>';
 									} else {
 										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}

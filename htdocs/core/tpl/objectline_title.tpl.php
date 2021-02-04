@@ -65,6 +65,7 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 } else {
 	print $langs->trans('VAT');
 }
+
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT)
 {
 	global $mysoc;

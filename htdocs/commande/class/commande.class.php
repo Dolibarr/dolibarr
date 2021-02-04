@@ -200,6 +200,8 @@ class Commande extends CommonOrder
 	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
+	public $warehouse_id;
+
 	public $extraparams = array();
 
 	public $linked_objects = array();
@@ -230,11 +232,6 @@ class Commande extends CommonOrder
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
-	/**
-	 * @var Commande clone of order object
-	 */
-	public $oldcopy;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	public $module_source;
@@ -1824,6 +1821,8 @@ class Commande extends CommonOrder
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
 				$this->statut = $obj->fk_statut;
+				$this->status = $obj->fk_statut;
+
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
 				$this->total_ht				= $obj->total_ht;
@@ -2896,18 +2895,19 @@ class Commande extends CommonOrder
 	 * Classify the order as invoiced
 	 *
 	 * @param	User    $user       Object user making the change
-	 * @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 * @return	int                 <0 if KO, >0 if OK
+	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+	 * @return	int                 <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user, $notrigger = 0)
 	{
 		$error = 0;
 
-		$this->db->begin();
 		if ($this->billed)
 		{
 			return 0;
 		}
+
+		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;

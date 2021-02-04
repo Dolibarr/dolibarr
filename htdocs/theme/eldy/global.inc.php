@@ -125,6 +125,10 @@ th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decora
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
 /* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
+
+input {
+	font-size: unset;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
@@ -174,8 +178,11 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
     line-height: 1.3em;
-	padding: 5px;
+	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	padding: 5px;
 }
 select {
 	padding-top: 5px;
@@ -440,8 +447,12 @@ input:-webkit-autofill {
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px #FDFFF0 inset;
 }
-::-webkit-input-placeholder { color:#ccc; }
-input:-moz-placeholder { color:#ccc; }
+
+/* CSS for placeholder */
+.placeholder { color: #ccc; }
+::-webkit-input-placeholder { color: #ccc; }
+input:-moz-placeholder { color: #ccc; }
+
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
@@ -669,6 +680,15 @@ textarea.centpercent {
 }
 .nounderline {
     text-decoration: none;
+}
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -1304,11 +1324,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -2568,6 +2588,9 @@ img.userphotosmall {			/* size for user photo in lists */
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
     background: #fff;
 }
+form[name="addtime"] img.userphoto {
+    border: 1px solid #444;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
@@ -3042,6 +3065,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
     padding: 4px !important;
+}
+input.button.smallpaddingimp {
+    font-size: 0.8em;
 }
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
@@ -4127,7 +4153,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
-td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+td.widthpictotitle { width: 38px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
@@ -4371,6 +4397,16 @@ div.ui-tooltip.mytooltip {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+/*div.divfordateinput img.ui-datepicker-trigger {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 10px;
+}
+.hasDatepicker {
+    padding-bottom: 6px;
+}*/
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
 .ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
@@ -5629,6 +5665,8 @@ a span.select2-chosen
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
+}
+span#select2-boxbookmark-container {
     opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
@@ -6537,6 +6575,15 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
     font-weight: 400;
     writing-mode: vertical-rl;
     white-space: nowrap;
+}
+
+
+/* ============================================================================== */
+/* For copypaste feature                                                          */
+/* ============================================================================== */
+
+.clipboardCPShowOnHover .clipboardCPButton {
+	display: none;
 }
 
 

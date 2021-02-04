@@ -99,9 +99,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
-		$tooltip .= '020{000000000} (for internal use)<br>';
-		$tooltip .= '9771234{00000} (example of ISSN code with prefix 1234)<br>';
-		$tooltip .= '9791234{00000} (example of ISMN code with prefix 1234)<br>';
+		$tooltip .= '020{000000000}? (for internal use)<br>';
+		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
+		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Mask parameter
@@ -140,7 +140,37 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		return $examplebarcode;
 	}
+    /**
+     *  Return literal barcode type code from numerical rowid type of barcode
+     *
+	 *	@param	Database    $db         Database
+     *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
+     *  @return string
+     */
+    public function literalBarcodeType($db, $type = '')
+    {
+        global $conf;
+        $out = '';
 
+        $sql = "SELECT rowid, code, libelle as label";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+        $sql .= " WHERE rowid = '".$db->escape($type)."'";
+        $sql .= " AND entity = ".((int) $conf->entity);
+        $result = $db->query($sql);
+        if ($result) {
+            $num = $db->num_rows($result);
+
+            if ($num > 0) {
+                $obj = $db->fetch_object($result);
+                $out .= $obj->label; //take the label corresponding to the type rowid in the database
+            }
+        }
+        else {
+            dol_print_error($db);
+        }
+
+        return $out;
+    }
 	/**
 	 * Return next value
 	 *
@@ -153,6 +183,11 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
+
+		if (empty($type)) {
+			$type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+		} //get barcode type configuration for products if $type not set
 
 		// TODO
 
@@ -171,7 +206,28 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$now = dol_now();
 
 		$numFinal = get_next_value($db, $mask, 'product', $field, $where, '', $now);
-
+		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
+		if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
+		{
+			$literaltype = '';
+			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
+			switch ($literaltype)
+			{
+				case 'EAN13': //EAN13 rowid = 2
+					if (strlen($numFinal)==13)// be sure that the mask length is correct for EAN13
+					{
+							$ean = substr($numFinal, 0, 12); //take first 12 digits
+							$eansum = barcode_gen_ean_sum($ean);
+							$ean .= $eansum; //substitute the las character by the key
+							$numFinal = $ean;
+					}
+					break;
+				// Other barcode cases with key could be written here
+				default:
+					break;
+			}
+		}
+		//End barcode with key
 		return  $numFinal;
 	}
 

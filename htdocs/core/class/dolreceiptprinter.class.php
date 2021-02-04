@@ -634,13 +634,13 @@ class dolReceiptPrinter extends Printer
 							if ($line->fk_product)
 							{
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
-								$spaces = str_repeat(' ', $spacestoadd);
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
 							}
 							else {
 								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
-								$spaces = str_repeat(' ', $spacestoadd);
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
 						}
@@ -653,7 +653,7 @@ class dolReceiptPrinter extends Printer
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
 							 $spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
-							 $spaces = str_repeat(' ', $spacestoadd);
+							 $spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 							 $this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
 						}
 						break;
@@ -680,15 +680,15 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_TOTAL':
 						$title = $langs->trans('TotalHT');
 						$spacestoadd = $nbcharactbyline - strlen($title) - 10;
-						$spaces = str_repeat(' ', $spacestoadd);
+						$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ht), 10, ' ', STR_PAD_LEFT)."\n");
 						$title = $langs->trans('TotalVAT');
 						$spacestoadd = $nbcharactbyline - strlen($title) - 10;
-						$spaces = str_repeat(' ', $spacestoadd);
+						$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 						$this->printer->text($title.$spaces.str_pad(price($object->total_tva), 10, ' ', STR_PAD_LEFT)."\n");
 						$title = $langs->trans('TotalTTC');
 						$spacestoadd = $nbcharactbyline - strlen($title) - 10;
-						$spaces = str_repeat(' ', $spacestoadd);
+						$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 						$this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 						break;
 					case 'DOL_LINE_FEED':
@@ -778,7 +778,7 @@ class dolReceiptPrinter extends Printer
 							if ($line->special_code == $this->orderprinter)
 							{
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
-								$spaces = str_repeat(' ', $spacestoadd);
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
 							}
@@ -799,14 +799,14 @@ class dolReceiptPrinter extends Printer
 							while ($i < $num) {
 								$row = $this->db->fetch_object($resql);
 								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
-								$spaces = str_repeat(' ', $spacestoadd);
+								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) // Print change only in cash payments
 								{
 									$spacestoadd = $nbcharactbyline - strlen($langs->trans("Change")) - 12;
-									$spaces = str_repeat(' ', $spacestoadd);
+									$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 									$this->printer->text($spaces.$langs->trans("Change").' '.str_pad(price($row->pos_change), 10, ' ', STR_PAD_LEFT)."\n");
 								}
 								$i++;

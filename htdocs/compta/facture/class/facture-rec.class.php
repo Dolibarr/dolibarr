@@ -2072,6 +2072,8 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2091,13 +2093,18 @@ class FactureLigneRec extends CommonInvoiceLine
 				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
 				if ($result < 0)
 				{
-					$this->db->rollback();
-					return -2;
+					$error++;
 				}
 				// End call triggers
 			}
-			$this->db->commit();
-			return 1;
+
+			if ($error) {
+				$this->db->rollback();
+				return -2;
+			} else {
+				$this->db->commit();
+				return 1;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();

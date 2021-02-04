@@ -125,6 +125,17 @@ $coldisplay++;
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">'.$line->description.'</textarea>';
 	}
 
+	//Line extrafield
+	if (!empty($extrafields))
+	{
+		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+		if (!empty($temps)) {
+			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+			print $temps;
+			print '</div>';
+		}
+	}
+
 	// Show autofill date for recuring invoices
 	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec')
 	{
@@ -269,14 +280,6 @@ $coldisplay++;
 		<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
-
-<?php
-//Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', 1);
-}
-?>
 
 <?php if (!empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">

@@ -122,6 +122,7 @@ CREATE TABLE llx_c_transport_mode (
   label     varchar(255) NOT NULL,
   active    tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
+ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('MAR', 'Transport maritime (y compris camions ou wagons sur bateau)', 1);
 INSERT INTO llx_c_transport_mode (code, label, active) VALUES ('TRA', 'Transport par chemin de fer (y compris camions sur wagon)', 1);
@@ -419,8 +420,10 @@ ALTER TABLE llx_website_page ADD COLUMN fk_object varchar(255);
 
 DELETE FROM llx_const WHERE name in ('MAIN_INCLUDE_ZERO_VAT_IN_REPORTS');
 
-UPDATE llx_projet_task_time SET tms = null WHERE tms = 0;
-ALTER TABLE llx_projet_task_time MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+-- VMYSQL4.1 UPDATE llx_projet_task_time SET tms = null WHERE tms = 0;
+
+ALTER TABLE llx_projet_task_time CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_projet_task_time MODIFY COLUMN datec datetime;
 
@@ -436,12 +439,19 @@ CREATE TABLE llx_c_product_nature (
       active tinyint DEFAULT 1  NOT NULL
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code, active);
+
+ALTER TABLE llx_product DROP FOREIGN KEY fk_product_finished;
+
+-- VMYSQL4.1 DROP INDEX uk_c_product_nature on llx_c_product_nature;
+-- VPGSQL8.2 DROP INDEX uk_c_product_nature;
+
+ALTER TABLE llx_c_product_nature ADD UNIQUE INDEX uk_c_product_nature(code);
 
 INSERT INTO llx_c_product_nature (code, label, active) VALUES (0, 'RowMaterial', 1);
 INSERT INTO llx_c_product_nature (code, label, active) VALUES (1, 'Finished', 1);
 
 ALTER TABLE llx_product MODIFY COLUMN finished tinyint DEFAULT NULL;
+
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_finished FOREIGN KEY (finished) REFERENCES llx_c_product_nature (code);
 
 -- MIGRATION TO DO AFTER RENAMING AN OBJECT
@@ -559,3 +569,5 @@ ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64);
 
 ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
 
+
+UPDATE llx_c_action_trigger SET code = 'EXPENSE_REPORT_PAID' where code = 'EXPENSE_REPORT_PAYED';

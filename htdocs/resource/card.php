@@ -320,10 +320,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		print '<td>';
 		print $object->description;
 		print '</td>';
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
 		print '</tr>';
 
 		// Origin country code
@@ -332,6 +328,11 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		print '<td>';
 		print getCountry($object->country_id, 0, $db);
 		print '</td>';
+
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 		print '</tr>';
 
 		print '</table>';

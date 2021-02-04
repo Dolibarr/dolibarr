@@ -14,6 +14,7 @@
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021      Gauthier VERDOL   	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -220,6 +221,12 @@ abstract class CommonObject
 	 * @see setStatut()
 	 */
 	public $statut;
+
+	/**
+	 * @var int The object's status
+	 * @see setStatut()
+	 */
+	public $status;
 
 	/**
 	 * @var string
@@ -1054,7 +1061,6 @@ abstract class CommonObject
 				{
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					echo 'err rollback';
 					return -2;
 				} else {
 					$this->error = $this->db->error();
@@ -3661,6 +3667,62 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Function used to get an array with all items linked to an object id in association table
+	 *
+	 * @param	int		$fk_object_where		id of object we need to get linked items
+	 * @param	string	$field_select			name of field we need to get a list
+	 * @param	string	$field_where			name of field of object we need to get linked items
+	 * @param	string	$table_element			name of association table
+	 * @return 	array							Array of record
+	 */
+	static public function getAllItemsLinkedByObjectID($fk_object_where, $field_select, $field_where, $table_element)
+	{
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
+
+		global $db;
+
+		$sql = 'SELECT '.$field_select.' FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.((int) $fk_object_where);
+		$resql = $db->query($sql);
+
+		$TRes = array();
+		if (!empty($resql)) {
+			while ($res = $db->fetch_object($resql)) {
+				$TRes[] = $res->{$field_select};
+			}
+		}
+
+		return $TRes;
+	}
+
+	/**
+	 * Function used to remove all items linked to an object id in association table
+	 *
+	 * @param	int		$fk_object_where		id of object we need to remove linked items
+	 * @param	string	$field_where			name of field of object we need to delete linked items
+	 * @param	string	$table_element			name of association table
+	 * @return 	int								<0 if KO, 0 if nothing done, >0 if OK and something done
+	 */
+	static public function deleteAllItemsLinkedByObjectID($fk_object_where, $field_where, $table_element)
+	{
+		if (empty($fk_object_where) || empty($field_where) || empty($table_element)) {
+			return -1;
+		}
+
+		global $db;
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$resql = $db->query($sql);
+
+		if (empty($resql)) {
+			return 0;
+		}
+
+		return 1;
+	}
+
+	/**
 	 *      Set status of an object
 	 *
 	 *      @param	int		$status			Status to set
@@ -5371,6 +5433,7 @@ abstract class CommonObject
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
 			   		if ($this->array_options[$key] === '') $mandatorypb = true;
+					if ($attributeType == 'sellist' && $this->array_options[$key] == '0') $mandatorypb = true;
 			   		if ($mandatorypb)
 			   		{
 			   			dol_syslog("Mandatory extra field ".$key." is empty");
@@ -5947,8 +6010,14 @@ abstract class CommonObject
 		} elseif (preg_match('/^(integer|link):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'link';
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
-			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+		} elseif (preg_match('/^(sellist):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^(sellist):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^(sellist):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
 		} elseif (preg_match('/varchar\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
@@ -5979,8 +6048,7 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		if ($computed)
-		{
+		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
 			else return '';
 		}
@@ -5989,26 +6057,20 @@ abstract class CommonObject
 		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
 		} elseif (empty($morecss)) {
-			if ($type == 'date')
-			{
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {	// link means an foreign key to another primary id
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type)) {
 				$morecss = 'maxwidth75';
 			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -6115,24 +6177,20 @@ abstract class CommonObject
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4]))
-				{
-					if (strpos($InfoFieldList[4], 'extra.') !== false)
-					{
+				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3]))
-				{
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 
 				$fields_label = explode('|', $InfoFieldList[1]);
-				if (is_array($fields_label))
-				{
+				if (is_array($fields_label)) {
 					$keyList .= ', ';
 					$keyList .= implode(', ', $fields_label);
 				}
@@ -6409,13 +6467,13 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				}
@@ -6527,12 +6585,17 @@ abstract class CommonObject
 		$param['options'] = array();
 
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
-		{
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
 		}
 
@@ -6624,8 +6687,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3)
-			{
+			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -6819,9 +6881,10 @@ abstract class CommonObject
 	 * @param 	string      $keysuffix      Suffix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
+	 * @param	string		$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @return 	string
 	 */
-	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
+	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0, $display_type = 'card')
 	{
 		global $db, $conf, $langs, $action, $form, $hookmanager;
 
@@ -6876,7 +6939,7 @@ abstract class CommonObject
 					}
 
 					$colspan = '';
-					if (is_array($params) && count($params) > 0) {
+					if (is_array($params) && count($params) > 0 && $display_type=='card') {
 						if (array_key_exists('cols', $params)) {
 							$colspan = $params['cols'];
 						} elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
@@ -6935,7 +6998,7 @@ abstract class CommonObject
 							}
 						}
 
-						$out .= $extrafields->showSeparator($key, $this, ($colspan + 1));
+						$out .= $extrafields->showSeparator($key, $this, ($colspan + 1), $display_type);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -6954,10 +7017,11 @@ abstract class CommonObject
 						$domData .= ' data-targetid="'.$this->id.'"';
 
 						$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
+						if ($display_type=='card') {
+							if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
 
-						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
-
-						if ($action == 'selectlines') { $colspan++; }
+							if ($action == 'selectlines') { $colspan++; }
+						}
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime')))
@@ -6984,11 +7048,13 @@ abstract class CommonObject
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
-						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
-						if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && $action == 'view') {
-							$out .= '<td></td>';
+						if ($display_type == 'card') {
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<td class="wordbreak';
+						} elseif ($display_type == 'line') {
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
-						$out .= '<td class="wordbreak';
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
 						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
@@ -7004,11 +7070,15 @@ abstract class CommonObject
 							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
 							else $out .= $labeltoshow;
 						}
-						$out .= '</td>';
+
+						$out .= ($display_type == 'card' ? '</td>' : '</div>');
 
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-
-						$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').'class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						if ($display_type == 'card') {
+							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+						} elseif ($display_type == 'line') {
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';
+						}
 
 						switch ($mode) {
 							case "view":
@@ -7022,15 +7092,18 @@ abstract class CommonObject
 								break;
 						}
 
-						$out .= '</td>';
+						$out .= ($display_type=='card' ? '</td>' : '</div>');
 
 						/*for($ii = 0; $ii < ($colspan - 1); $ii++)
 						{
 							$out .='<td class="'.$this->element.'_extras_'.$key.'"></td>';
 						}*/
 
-						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
-						else $out .= '</tr>';
+						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) {
+							$out .= ($display_type=='card' ? '</tr>' : '</div>');
+						} else {
+							$out .= ($display_type=='card' ? '</tr>' : '</div>');
+						}
 						$e++;
 					}
 				}
@@ -7044,7 +7117,17 @@ abstract class CommonObject
 						{
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
-							if(val > 0) {
+							if(typeof val == "string"){
+				    		    if(val != "") {
+					    			var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
+									$("select[name=\""+child_list+"\"] option[parent]").remove();
+									$("select[name=\""+child_list+"\"]").append(options);
+								} else {
+									var options = orig_select.find("option[parent]").clone();
+									$("select[name=\""+child_list+"\"] option[parent]").remove();
+									$("select[name=\""+child_list+"\"]").append(options);
+								}
+				    		} else if(val > 0) {
 								var options = orig_select.find("option[parent=\""+parentVal+"\"]").clone();
 								$("select[name=\""+child_list+"\"] option[parent]").remove();
 								$("select[name=\""+child_list+"\"]").append(options);
@@ -7062,12 +7145,36 @@ abstract class CommonObject
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
+
+								//Hide daughters lists
+								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
+								    $("#"+child_list).hide();
+								//Show mother lists
+								} else if ($("#"+parent_list).val() != 0){
+								    $("#"+parent_list).show();
+								}
+								//Show the child list if the parent list value is selected
+								$("select[name=\""+parent_list+"\"]").click(function() {
+								    if ($(this).val() != 0){
+								        $("#"+child_list).show()
+									}
+								});
+
+								//When we change parent list
+								$("select[name=\""+parent_list+"\"]").change(function() {
+									showOptions(child_list, parent_list, orig_select[child_list]);
+									//Select the value 0 on child list after a change on the parent list
+									$("#"+child_list).val(0).trigger("change");
+									//Hide child lists if the parent value is set to 0
+									if ($(this).val() == 0){
+								   		$("#"+child_list).hide();
+									}
+
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list, orig_select[child_list]);
 								});
 							});
 						}
-
 						setListDependencies();
 					});
 					</script>'."\n";

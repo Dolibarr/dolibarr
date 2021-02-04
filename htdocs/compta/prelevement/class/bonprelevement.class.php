@@ -371,7 +371,7 @@ class BonPrelevement extends CommonObject
 				$num = count($facs);
 				for ($i = 0; $i < $num; $i++)
 				{
-					/* Tag invoice as payed */
+					/* Tag invoice as paid */
 					dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
 					$fac = new Facture($this->db);
 					$fac->fetch($facs[$i]);
@@ -1704,7 +1704,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
-				fputs($this->file, '						<Id>'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'</Id>'.$CrLf);
+				fputs($this->file, '						<Id>'.$this->emetteur_ics.'</Id>'.$CrLf);
 				fputs($this->file, '					</Othr>'.$CrLf);
 				fputs($this->file, '				    </PrvtId>'.$CrLf);
 				fputs($this->file, '				</Id>'.$CrLf);

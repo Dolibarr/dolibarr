@@ -419,10 +419,10 @@ if (empty($reshook))
 		// Récupération des variables
 		$rowid = GETPOST('rowid', 'int');
 		$priceid = GETPOST('priceid', 'int');
-		$newprice = price2num(GETPOST("price", 'alpha'), 'MU');
+		$newprice = price2num(GETPOST("price"), 'MU');
 		// $newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
-		$quantity = GETPOST('quantity', 'int');
-		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
+		$quantity = price2num(GETPOST('quantity'), 'MS');
+		$remise_percent = price2num(GETPOST('remise_percent'), 2);
 		$remise = 0; // TODO : allow discount by amount when available on documents
 
 		if (empty($quantity)) {
@@ -507,6 +507,7 @@ if (empty($reshook))
 
 		// add price by customer
 		$prodcustprice->fk_soc = GETPOST('socid', 'int');
+		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
 		$prodcustprice->fk_product = $object->id;
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
@@ -608,6 +609,7 @@ if (empty($reshook))
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		// update price by customer
+		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
 		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
 		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
 		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
@@ -1667,6 +1669,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td>';
 		print '</tr>';
 
+		// Ref. Customer
+		print '<tr><td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<td><input name="ref_customer" size="12"></td></tr>';
+
 		// VAT
 		print '<tr><td class="fieldrequired">'.$langs->trans("DefaultTaxRate").'</td><td>';
 		print $form->load_tva("tva_tx", $object->default_vat_code ? $object->tva_tx.' ('.$object->default_vat_code.')' : $object->tva_tx, $mysoc, '', $object->id, $object->tva_npr, $object->type, false, 1);
@@ -1752,6 +1758,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$staticsoc->fetch($prodcustprice->fk_soc);
 		print "<td colspan='2'>".$staticsoc->getNomUrl(1)."</td>";
 		print '</tr>';
+
+		// Ref. Customer
+		print '<tr><td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
 
 		// VAT
 		print '<tr><td>'.$langs->trans("DefaultTaxRate").'</td><td colspan="2">';
@@ -1859,6 +1869,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
+			print '<td>'.$langs->trans('RefCustomer').'</td>';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 			print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 			print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
@@ -1906,6 +1917,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td>' . $line->ref_customer . '</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				print '<td class="right">';
@@ -1974,7 +1986,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
-			$colspan = 8;
+			$colspan = 9;
 			//if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") $colspan++;
 
 			print '<tr class="liste_titre">';
@@ -1990,6 +2002,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
+		print '<td>' . $langs->trans('RefCustomer') . '</td>';
 		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 		print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
@@ -2028,8 +2041,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		$total_ttc = $resultarray[2];
 
 		print '<tr class="oddeven">';
-		print "<td>".$langs->trans("Default")."</td>";
-		print "<td></td>";
+		print '<td colspan="3">' . $langs->trans('Default') . '</td>';
 
 		print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 		print '<td class="right">';
@@ -2107,6 +2119,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
+				print '<td>' . $line->ref_customer . '</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
 
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";

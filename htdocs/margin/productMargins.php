@@ -99,31 +99,23 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
-if ($id > 0) {
-	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-	print '<td class="maxwidthonsmartpone" colspan="4">';
-	$form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-	print '</td></tr>';
-
-	if (!$sortorder) $sortorder = "DESC";
-	if (!$sortfield) $sortfield = "f.datef";
-} else {
-	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-	print '<td class="maxwidthonsmartphone" colspan="4">';
-	$form->select_produits('', 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-	print '</td></tr>';
-}
+// Product
+print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
+print '<td class="maxwidthonsmartphone" colspan="4">';
+print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All', 0, '', 0, '', null, 1);
+print '</td></tr>';
 
 // Categories
 $TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
 
 print '<tr>';
-print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
 print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
@@ -350,15 +342,10 @@ $db->free($result);
 print '
 <script type="text/javascript">
 $(document).ready(function() {
-
-  $("#id").change(function() {
-     $("div.fiche form").submit();
-  });
-
+  console.log("Init some values");
   $("#totalMargin").html("'.price(price2num($totalMargin, 'MT')).'");
   $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
   $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
-
 });
 </script>
 ';

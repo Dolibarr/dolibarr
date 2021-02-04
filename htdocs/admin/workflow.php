@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (!$user->admin) accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors"));
+$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors", 'sendings'));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -130,6 +130,14 @@ $workflowcodes = array(
 		'enabled'=>(!empty($conf->reception->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
 		'picto'=>'bill'
 	),
+
+	// Automatic classification shipping
+	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
+		'family' => 'classify_shipping',
+		'position' => 66,
+		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
+		'picto' => 'shipment'
+	)
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
@@ -190,6 +198,7 @@ foreach ($workflowcodes as $key => $params) {
 			if ($reg[1] == 'supplier_proposal')	$header .= ' - '.$langs->trans('SupplierProposal');
 			if ($reg[1] == 'supplier_order')	$header .= ' - '.$langs->trans('SupplierOrder');
 			if ($reg[1] == 'reception')			$header .= ' - '.$langs->trans('Reception');
+			if ($reg[1] == 'shipping')			$header .= ' - '.$langs->trans('Shipment');
 		} else {
 			$header = $langs->trans("Description");
 		}
