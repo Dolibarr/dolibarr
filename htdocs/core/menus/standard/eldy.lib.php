@@ -1140,7 +1140,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Salaries
 			if (!empty($conf->salaries->enabled)) {
 				$langs->load("salaries");
-				$newmenu->add("/salaries/list.php?leftmenu=tax_salary&amp;mainmenu=billing", $langs->trans("Salaries"), 0, $user->rights->salaries->read, '', $mainmenu, 'tax_salary', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
+				$newmenu->add("/salaries/list.php?leftmenu=tax_salary&amp;mainmenu=billing", $langs->trans("Salaries"), 0, $user->rights->salaries->read, '', $mainmenu, 'tax_salary', 0, '', '', '', img_picto('', 'salary', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i', $leftmenu)) {
 					$newmenu->add("/salaries/card.php?leftmenu=tax_salary&action=create", $langs->trans("NewPayment"), 1, $user->rights->salaries->write);
 					$newmenu->add("/salaries/list.php?leftmenu=tax_salary", $langs->trans("Payments"), 1, $user->rights->salaries->read);
