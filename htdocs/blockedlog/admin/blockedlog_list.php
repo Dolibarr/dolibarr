@@ -272,7 +272,7 @@ if (GETPOST('withtab', 'alpha'))
 
 llxHeader('', $langs->trans("BrowseBlockedLog"));
 
-$MAXLINES = 50000;
+$MAXLINES = 10000;
 
 $blocks = $block_static->getLog('all', $search_id, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (!is_array($blocks))
@@ -469,15 +469,21 @@ if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 if (is_array($blocks))
 {
 	$nbshown = 0;
+	$MAXFORSHOWLINK = 100;
+	$object_link = '';
 
 	foreach ($blocks as &$block)
 	{
-		$object_link = $block->getObjectLink();
-
 		//if (empty($search_showonlyerrors) || ! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id])
 		{
 			$nbshown++;
+
+			if ($nbshown < $MAXFORSHOWLINK) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
+				$object_link = $block->getObjectLink();
+			} else {
+				$object_link = $block->element.'/'.$block->fk_object;
+			}
 
 		   	print '<tr class="oddeven">';
 
@@ -497,7 +503,9 @@ if (is_array($blocks))
 		   	print '<td>'.$langs->trans('log'.$block->action).'</td>';
 
 		   	// Ref
-		   	print '<td class="nowrap">'.$block->ref_object.'</td>';
+		   	print '<td class="nowraponall">';
+		   	print $block->ref_object;
+		   	print '</td>';
 
 		   	// Link to source object
 		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
@@ -521,10 +529,14 @@ if (is_array($blocks))
 		   	print '<td class="center">';
 		   	if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
 		   	{
-		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut4');
-		   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
+		   		if ($checkresult[$block->id]) {
+		   			print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidityButChainIsKo').'">OK</span>';
+		   		}
+		   		else {
+		   			print '<span class="badge badge-status8 badge-status" title="'.$langs->trans('KoCheckFingerprintValidity').'">KO</span>';
+		   		}
 		   	} else {
-		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
+		   		print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
 		   	}
 		   	print '</td>';
 
