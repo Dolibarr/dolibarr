@@ -269,16 +269,19 @@ dol_fiche_end();
  */
 
 print "<div class='tabsAction'>\n";
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook)) {
+	if ($user->rights->categorie->creer)
+	{
+		$socid = ($object->socid ? "&amp;socid=".$object->socid : "");
+		print "<a class='butAction' href='edit.php?id=".$object->id.$socid."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
+	}
 
-if ($user->rights->categorie->creer)
-{
-	$socid = ($object->socid ? "&amp;socid=".$object->socid : "");
-	print "<a class='butAction' href='edit.php?id=".$object->id.$socid."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
-}
-
-if ($user->rights->categorie->supprimer)
-{
-	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$object->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
+	if ($user->rights->categorie->supprimer)
+	{
+		print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$object->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
+	}
 }
 
 print "</div>";
