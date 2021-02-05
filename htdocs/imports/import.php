@@ -1269,6 +1269,14 @@ if ($step == 4 && $datatoimport)
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport)
 {
+	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_time = @ini_get("max_execution_time");
+	if ($max_time && $max_time < $max_execution_time_for_importexport)
+	{
+		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+	}
+
 	$model = $format;
 	$liste = $objmodelimport->liste_modeles($db);
 
@@ -1545,14 +1553,6 @@ if ($step == 5 && $datatoimport)
     }
     else
     {
-    	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
-    	$max_time = @ini_get("max_execution_time");
-    	if ($max_time && $max_time < $max_execution_time_for_importexport)
-    	{
-    		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
-    		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
-    	}
-
         // Launch import
         $arrayoferrors = array();
         $arrayofwarnings = array();
@@ -1726,6 +1726,14 @@ if ($step == 5 && $datatoimport)
 // STEP 6: Real import
 if ($step == 6 && $datatoimport)
 {
+	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_time = @ini_get("max_execution_time");
+	if ($max_time && $max_time < $max_execution_time_for_importexport)
+	{
+		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+	}
+
 	$model = $format;
 	$liste = $objmodelimport->liste_modeles($db);
 	$importid = $_REQUEST["importid"];
