@@ -126,6 +126,33 @@ class Societe extends CommonObject
 	 */
 	public $restrictiononfksoc = 1;
 
+
+	/**
+	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
+	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
@@ -152,17 +179,8 @@ class Societe extends CommonObject
 		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'email' =>array('type'=>'varchar(128)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
-		/*'skype' =>array('type'=>'varchar(255)', 'label'=>'Skype', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'whatsapp' =>array('type'=>'varchar(255)', 'label'=>'Whatsapp', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
-		'linkedin' =>array('type'=>'varchar(255)', 'label'=>'Linkedin', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
-		'youtube' =>array('type'=>'varchar(255)', 'label'=>'Youtube', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'googleplus' =>array('type'=>'varchar(255)', 'label'=>'Googleplus', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
-		'snapchat' =>array('type'=>'varchar(255)', 'label'=>'Snapchat', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'instagram' =>array('type'=>'varchar(255)', 'label'=>'Instagram', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'facebook' =>array('type'=>'varchar(255)', 'label'=>'Facebook', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
-		'twitter' =>array('type'=>'varchar(255)', 'label'=>'Twitter', 'enabled'=>1, 'visible'=>-1, 'position'=>165),*/
 		'fk_effectif' =>array('type'=>'integer', 'label'=>'Workforce', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'fk_typent' =>array('type'=>'integer', 'label'=>'TypeOfCompany', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'fk_typent' =>array('type'=>'integer', 'label'=>'TypeOfCompany', 'enabled'=>1, 'visible'=>-1, 'position'=>175, 'csslist'=>'minwidth200'),
 		'fk_forme_juridique' =>array('type'=>'integer', 'label'=>'JuridicalStatus', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'siren' =>array('type'=>'varchar(128)', 'label'=>'Idprof1', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
@@ -2590,6 +2608,41 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 *    	Return link(s) on type of thirdparty (with picto)
+	 *
+	 *		@param	int		$withpicto		          Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+	 *		@param	string	$option					  ''=All
+	 *      @param	int  	$notooltip		          1=Disable tooltip
+	 *		@return	string					          String with URL
+	 */
+	public function getTypeUrl($withpicto = 0, $option = '', $notooltip = 0)
+	{
+		global $conf, $langs;
+
+		$s = '';
+		if (empty($option) || preg_match('/prospect/', $option)) {
+			if (($this->client == 2 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+			{
+				$s .= '<a class="customer-back opacitymedium" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</a>';
+			}
+		}
+		if (empty($option) || preg_match('/customer/', $option)) {
+			if (($this->client == 1 || $this->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+			{
+				$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
+			}
+		}
+		if (empty($option) || preg_match('/supplier/', $option)) {
+			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $this->fournisseur)
+			{
+				$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
+			}
+		}
+		return $s;
+	}
+
+
+	/**
 	 *    Return label of status (activity, closed)
 	 *
 	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
@@ -4348,6 +4401,7 @@ class Societe extends CommonObject
 	 * Return label of status customer is prospect/customer
 	 *
 	 * @return   string        	Label
+	 * @see getTypeUrl()
 	 */
 	public function getLibCustProspStatut()
 	{
