@@ -317,11 +317,11 @@ class Stripe extends CommonObject
 	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @param   string  $payment_method                     'pm_....' (if known)
-	 * @param   string  $off_session                        If we use an already known payment method to pay off line.
+	 * @param   string  $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1)
 	{
 		global $conf, $user;
 
@@ -430,7 +430,8 @@ class Stripe extends CommonObject
 			if ($off_session)
 			{
 				unset($dataforintent['setup_future_usage']);
-				$dataforintent["setup_future_usage"] = "off_session";
+				//$dataforintent["setup_future_usage"] = "off_session";
+				$dataforintent["off_session"] = true;
 			}
 			if (!is_null($payment_method))
 			{
@@ -922,7 +923,7 @@ class Stripe extends CommonObject
 					dol_syslog("* createPaymentStripe get stripeacc", LOG_DEBUG);
 					$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account if it exists (no network access here)
 
-					dol_syslog("* createPaymentStripe Create payment on card ".$stripecard->id.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
+					dol_syslog("* createPaymentStripe Create payment for customer ".$customer->id." on source card ".$stripecard->id.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
 
 					// Create payment intent and charge payment (confirmnow = true)
 					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);

@@ -248,9 +248,9 @@ Following changes may create regressions for some external modules, but were nec
 * Function showStripePaymentUrl, getStripePaymentUrl, showPaypalPaymentUrl and getPaypalPaymentUrl has been removed. The generic one showOnlinePaymentUrl and getOnlinePaymentUrl are always used.
 * Context for hook showSocinfoOnPrint has been moved from "showsocinfoonprint" to "main"
 * Library htdocs/includes/phpoffice/phpexcel as been removed (replaced with htdocs/includes/phpoffice/PhpSpreadsheet)
-* Databse transaction in your triggers must be correctly balanced (one close for one open). If not, an error will be returned by the trigger, even if trigger did return error code.
+* Database transaction in your triggers must be correctly balanced (one close for one open). If not, an error will be returned by the trigger, even if trigger did return error code.
 * Dolibarr v13 is still compatible with any PHP version between 5.6.0 and 7.4.*; Unit tests are OK with PHP 8.0 but some warnings or troubles may appears with PHP 8.0.
-
+* All your Ajax services must contains such a line at begin of file:  if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
 
 ***** ChangeLog for 12.0.4 compared to 12.0.3 *****
 FIX: make formConfirm an addreplace-type hook

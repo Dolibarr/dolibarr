@@ -66,14 +66,14 @@ class ExpenseReport extends CommonObject
 	public $date_fin;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
 	 */
 	public $status;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int		Status
 	 * @deprecated
@@ -256,6 +256,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ",date_debut";
 		$sql .= ",date_fin";
 		$sql .= ",date_create";
+		$sql .= ",fk_user_creat";
 		$sql .= ",fk_user_author";
 		$sql .= ",fk_user_validator";
 		$sql .= ",fk_user_approve";
@@ -274,6 +275,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date_debut)."'";
 		$sql .= ", '".$this->db->idate($this->date_fin)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
+		$sql .= ", ".$user->id;
 		$sql .= ", ".$fuserid;
 		$sql .= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator : "null");
 		$sql .= ", ".($this->fk_user_approve > 0 ? $this->fk_user_approve : "null");
@@ -419,6 +421,7 @@ class ExpenseReport extends CommonObject
 		$this->fk_statut = 0; // deprecated
 
 		// Clear fields
+		$this->fk_user_creat      = $user->id;
 		$this->fk_user_author     = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 		$this->fk_user_valid      = '';
 		$this->date_create = '';
@@ -548,7 +551,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
 		$sql .= " d.total_ht, d.total_ttc, d.total_tva,"; // TOTAUX (int)
 		$sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve,"; // DATES (datetime)
-		$sql .= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
+		$sql .= " d.fk_user_creat, d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
 		$sql .= " d.fk_user_valid, d.fk_user_approve,";
 		$sql .= " d.fk_statut as status, d.fk_c_paiement, d.paid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
@@ -585,6 +588,7 @@ class ExpenseReport extends CommonObject
 				$this->date_refuse      = $this->db->jdate($obj->date_refuse);
 				$this->date_cancel      = $this->db->jdate($obj->date_cancel);
 
+				$this->fk_user_creat            = $obj->fk_user_creat;
 				$this->fk_user_author           = $obj->fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 				$this->fk_user_modif            = $obj->fk_user_modif;
 				$this->fk_user_validator        = $obj->fk_user_validator;
@@ -733,7 +737,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.tms as date_modification,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approve as datea,";
-		//$sql.= " f.fk_user_author as fk_user_creation,";      // This is not user of creation but user the expense is for.
+		$sql .= " f.fk_user_creat as fk_user_creation,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
 		$sql .= " f.fk_user_valid,";
 		$sql .= " f.fk_user_approve";
@@ -2319,7 +2323,7 @@ class ExpenseReport extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($result);
-				$ret[$obj->code] = (($langs->trans($obj->code) != $obj->code) ? $langs->trans($obj->code) : $obj->label);
+				$ret[$obj->code] = (($langs->transnoentitiesnoconv($obj->code) != $obj->code) ? $langs->transnoentitiesnoconv($obj->code) : $obj->label);
 				$i++;
 			}
 		} else {
@@ -2454,10 +2458,11 @@ class ExpenseReport extends CommonObject
 		if ($option == 'topay' && $this->status != 5) return false;
 
 		$now = dol_now();
-		if ($option == 'toapprove')
-		{
+		if ($option == 'toapprove') {
 			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
-		} else return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+		} else {
+			return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+		}
 	}
 
 	/**

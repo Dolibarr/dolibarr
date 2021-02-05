@@ -1283,7 +1283,7 @@ while ($i < min($num, $limit))
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked']))
 	{
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax100">';
 		if ($companystatic->fk_parent > 0)
 		{
 			$companyparent->fetch($companystatic->fk_parent);

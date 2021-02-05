@@ -1927,7 +1927,7 @@ class Form
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
 	 *  @param		int			$selected				Preselected products
-	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
+	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
 	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
@@ -1949,7 +1949,7 @@ class Form
 	 *  @param		string		$nooutput				No print, return the output into a string
 	 *  @return		void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array(), $nooutput = 0)
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -1997,10 +1997,13 @@ class Form
 			}
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (!empty($conf->variants->enabled)) {
+			if (!empty($conf->variants->enabled) && is_array($selected_combinations)) {
+				// Code to automatically insert with javascript the select of attributes under the select of product
+				// when a parent of variant has been selected.
 				$out .= '
+				<!-- script to auto show attributes select tags if a variant was selected -->
 				<script>
-
+					// auto show attributes fields
 					selected = '.json_encode($selected_combinations).';
 					combvalues = {};
 
@@ -2019,6 +2022,8 @@ class Form
 								return;
 							}
 
+							console.log("A change has started. We get variants fields to inject html select");
+
 							jQuery.getJSON("'.DOL_URL_ROOT.'/variants/ajax/getCombinations.php", {
 								id: jQuery(this).val()
 							}, function (data) {
@@ -2035,8 +2040,7 @@ class Form
 									span.append(
 										jQuery(document.createElement(\'div\')).text(val.label).css({
 											\'font-weight\': \'bold\',
-											\'display\': \'table-cell\',
-											\'text-align\': \'right\'
+											\'display\': \'table-cell\'
 										})
 									);
 
@@ -4170,7 +4174,7 @@ class Form
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value)
 				{
-					if ($cate_arbo[$key]['id'] == $selected || ($selected == 'auto' && count($cate_arbo) == 1))
+					if ($cate_arbo[$key]['id'] == $selected || ($selected === 'auto' && count($cate_arbo) == 1))
 					{
 						$add = 'selected ';
 					} else {
@@ -5536,7 +5540,7 @@ class Form
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 *  @param	string 		$placeholder    Placeholder
-	 *  @param	mixed		$gm				'auto', 'gmt' or 'tzserver' or 'tzuserrel'
+	 *  @param	mixed		$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -5544,8 +5548,8 @@ class Form
 	{
 		global $conf, $langs;
 
-		if ($gm == 'auto') {
-			$gm = $conf->tzuserinputkey;
+		if ($gm === 'auto') {
+			$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 		}
 
 		$retstring = '';

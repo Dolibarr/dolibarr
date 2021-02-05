@@ -413,7 +413,7 @@ $formcompany = new FormCompany($db);
 $thirdpartystatic = new Societe($db);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';

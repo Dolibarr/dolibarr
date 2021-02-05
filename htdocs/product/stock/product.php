@@ -636,13 +636,13 @@ if ($id > 0 || $ref)
 			// Real stock
 			$text_stock_options = $langs->trans("RealStockDesc").'<br>';
 			$text_stock_options .= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? $langs->trans("DeStockOnShipment").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? $langs->trans("DeStockOnValidateOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? $langs->trans("DeStockOnBill").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? $langs->trans("ReStockOnBill").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? $langs->trans("ReStockOnValidateOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? $langs->trans("ReStockOnDispatchOrder").'<br>' : '');
-	   		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? $langs->trans("StockOnReception").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
+			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
 
 			print '<tr><td>';
 			print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);

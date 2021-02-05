@@ -3132,13 +3132,12 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
-			if ($ret < 0)
-			{
+			if ($ret < 0) {
 				$this->error = $supplierorderdispatch->error; $this->errors = $supplierorderdispatch->errors;
 				return $ret;
 			} else {
-				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0)
-				{
+				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$date_liv = dol_now();
 
 					// Build array with quantity deliverd by product
@@ -3146,13 +3145,17 @@ class CommandeFournisseur extends CommonOrder
 						$qtydelivered[$line->fk_product] += $line->qty;
 					}
 					foreach ($this->lines as $line) {
+						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $line->product_type > 0) continue;
 						$qtywished[$line->fk_product] += $line->qty;
 					}
+
 					//Compare array
 					$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
 					/*var_dump(array_keys($qtydelivered));
+
     				var_dump(array_keys($qtywished));
     				var_dump($diff_array);
     				var_dump($keysinwishednotindelivered);

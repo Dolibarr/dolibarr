@@ -1984,7 +1984,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 {
 	global $conf, $langs;
 
-	if ($tzoutput == 'auto') {
+	if ($tzoutput === 'auto') {
 		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
 
@@ -2209,9 +2209,10 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 {
 	global $conf;
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+	//print 'gm:'.$gm.' gm==auto:'.($gm == 'auto').'<br>';
 
-	if ($gm == 'auto') {
-		$gm = $conf->tzuserinputkey;
+	if ($gm === 'auto') {
+		$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
 	}
 
 	// Clean parameters
@@ -2273,7 +2274,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 /**
  *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- *  @param	string		$mode	'auto'
+ *  @param	string		$mode	'auto' => for backward compatibility (avoid this),
  *  							'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone. Not implemented.
@@ -2284,8 +2285,8 @@ function dol_now($mode = 'auto')
 {
 	$ret = 0;
 
-	if ($mode == 'auto') {
-		$mode = 'tzserver';
+	if ($mode === 'auto') {
+		$mode = 'gmt';
 	}
 
 	if ($mode == 'gmt') $ret = time(); // Time for now at greenwich.
@@ -3279,7 +3280,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_recruitmentjobposition', 'object_recruitmentcandidature',
 				'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
+				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement',
 				'off', 'on', 'order',
 				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
@@ -3316,7 +3317,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
 				'member'=>'users', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
-				'trip'=>'wallet', 'group'=>'users',
+				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
@@ -3405,7 +3406,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
-				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944',
+				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
 				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa',
@@ -5652,7 +5653,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) $arrayforoldpath[] = 'product';
 	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
-		// This part should be removed once all code is using "get_exdir" to forge path, with all parameters provided.
+		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($alpha)) $num = preg_replace('/([^0-9])/i', '', $num);
 		else $num = preg_replace('/^.*\-/i', '', $num);
 		$num = substr("000".$num, -$level);
@@ -5785,8 +5786,8 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
 		$temp = preg_replace($pattern, "", $temp); // pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
 		$temp = preg_replace($pattern, "", $temp); // pass 2 - $temp after pass 2: 0000-021
-		// removed '<' into non closing html tags like '<a'
-		$temp = preg_replace('/<(\w+)/', '\1', $temp);
+		// Remove '<' into remainging, so non closing html tags like '<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
+		$temp = preg_replace('/<([a-z]+)/i', '\1', $temp);
 	}
 
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
@@ -7391,6 +7392,7 @@ function picto_from_langcode($codelang, $moreatt = '')
 		'da_DA' => 'dk',
 		'fr_CA' => 'mq',
 		'sv_SV' => 'se',
+		'sw_SW' => 'unknown',
 		'AQ' => 'unknown',
 		'CW' => 'unknown',
 		'IM' => 'unknown',

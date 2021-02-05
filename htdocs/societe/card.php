@@ -1199,9 +1199,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<table class="border centpercent">';
 
 		// Name, firstname
-		print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate tdtop">';
-		if ($object->particulier || $private)
-		{
+		print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">';
+		if ($object->particulier || $private) {
 			print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
 		} else {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';

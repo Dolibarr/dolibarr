@@ -69,13 +69,13 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
 
 
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 $ErrorPicturePath = "../../theme/eldy/img/error.png";
 $WarningPicturePath = "../../theme/eldy/img/warning.png";
 $OkayPicturePath = "../../theme/eldy/img/tick.png";
 
-print '<tr><td width="220">'.$langs->trans("Version").'</td><td>';
+print '<tr><td>'.$langs->trans("Version").'</td><td>';
 
 $arrayphpminversionerror = array(5, 5, 0);
 $arrayphpminversionwarning = array(5, 6, 0);
@@ -129,11 +129,8 @@ $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td width="200">'.$langs->trans("Extension").'</td>';
-//print '<td align="center">'.$langs->trans("EnabledInSetup").'</td>';
-print '<td align="center">'.$langs->trans("Loaded").'</td>';
-print '<td align="center">'.$langs->trans("FunctionTest").'</td>';
-print '<td>'.$langs->trans("Result").'</td>';
+print '<td class="titlefield">'.$langs->trans("Extension").'</td>';
+print '<td>'.$langs->trans("Test").'</td>';
 print '</tr>';
 
 $functions = ["mb_check_encoding"];
@@ -141,9 +138,6 @@ $name      = "MBString";
 
 print "<tr>";
 print "<td>".$name."</td>";
-//print getTableColumn($name, $activatedExtensions);
-print getTableColumn($name, $loadedExtensions);
-print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
@@ -152,9 +146,6 @@ $name      = "JSON";
 
 print "<tr>";
 print "<td>".$name."</td>";
-//print getTableColumn($name, $activatedExtensions);
-print getTableColumn($name, $loadedExtensions);
-print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
@@ -163,8 +154,6 @@ $name      = "GD";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $loadedExtensions);
-print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
@@ -173,8 +162,6 @@ $name      = "Curl";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $loadedExtensions);
-print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
@@ -185,8 +172,6 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 	print "<tr>";
 	print "<td>".$name."</td>";
-	print getTableColumn($name, $loadedExtensions);
-	print getTableColumnFunction($functions);
 	print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 	print "</tr>";
 }
@@ -196,8 +181,6 @@ $name      = "IMAP";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $loadedExtensions);
-print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
@@ -206,8 +189,6 @@ $name      = "xDebug";
 
 print "<tr>";
 print "<td>".$name."</td>";
-print getTableColumn($name, $loadedExtensions);
-print getTableColumnFunction($functions);
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
@@ -222,7 +203,7 @@ foreach ($phparray as $key => $value)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder">';
 	print '<tr class="liste_titre">';
-	print '<td width="220px">'.$key.'</td>';
+	print '<td class="titlefield">'.$key.'</td>';
 	print '<td colspan="2">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
@@ -270,76 +251,12 @@ $db->close();
 
 
 /**
- * Return a table column with a indicator (okay or warning), based on the given name and list
- *
- * @param string $name		The name to check inside the given list
- * @param array  $list      A list that should contains the given name
- *
- * @return string
- */
-function getTableColumn($name, array $list)
-{
-	global $langs;
-
-	$name = strtolower($name);
-	$html = "<td align='center'>";
-
-	if (in_array($name, $list))
-	{
-		if ($name == 'xdebug') $html .= '<img src="../../theme/eldy/img/warning.png" title="'.$langs->trans("ModuleActivated", "xdebug").'">';
-		else $html .= '<img src="../../theme/eldy/img/tick.png" title="Ok">';
-	} else {
-		if ($name == 'xdebug') $html .= yn(0);
-		else $html .= '<img src="../../theme/eldy/img/warning.png" title="Warning">';
-	}
-
-	$html .= "</td>";
-
-	return $html;
-}
-
-/**
- * Return a table column with a indicator (okay or warning), based on the given functions to check
- *
- * @param array $functions	A list with functions to check
- *
- * @return string
- */
-function getTableColumnFunction(array $functions)
-{
-	if (count($functions) < 1)
-	{
-		return "<td align='center'>-</td>";
-	}
-
-	$result = true;
-	$html   = "<td align='center'>";
-
-	foreach ($functions as $function)
-	{
-		$result = $result && function_exists($function);
-	}
-
-	if ($result)
-	{
-		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
-	} else {
-		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
-	}
-
-	$html .= "</td>";
-
-	return $html;
-}
-
-/**
  * Return a result column with a translated result text
  *
  * @param string $name			The name of the PHP extension
  * @param array $activated		A list with all activated PHP extensions. Deprecated.
  * @param array $loaded			A list with all loaded PHP extensions
  * @param array $functions		A list with all PHP functions to check
- *
  * @return string
  */
 function getResultColumn($name, array $activated, array $loaded, array $functions)
@@ -347,6 +264,7 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	global $langs;
 
 	$result = true;
+
 	//$result = $result && in_array(strtolower($name), $activated);
 	$result = $result && in_array(strtolower($name), $loaded);
 
@@ -356,7 +274,29 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 	}
 
 	$html = "<td>";
-	$html .= $result ? $langs->trans("PHPSupport", $name) : $langs->trans("ErrorPHPDoesNotSupport", $name);
+	if ($result) {
+		if (strtolower($name) == 'xdebug') $html .= img_warning($langs->trans("ModuleActivated", "xdebug"));
+		else $html .= img_picto($langs->trans("Ok"), 'tick');
+		if (in_array(strtolower($name), $loaded)) {
+			$html .= ' '.$langs->trans("Loaded").' - ';
+		} else {
+			//$html .= ' '.$langs->trans("NotLoaded").' - ';
+		}
+		if (strtolower($name) == 'xdebug') {
+			$html .= ' '.$langs->trans("ModuleActivated", "xdebug");
+		} else {
+			$html .= ' '.$langs->trans("PHPSupport", $name);
+		}
+	} else {
+		if (strtolower($name) == 'xdebug') $html .= yn(0).' - ';
+		else $html .= img_warning($langs->trans("ModuleActivated", "xdebug"));
+		if (in_array(strtolower($name), $loaded)) {
+			$html .= ' '.$langs->trans("Loaded").' - ';
+		} else {
+			//$html .= ' '.$langs->trans("NotLoaded").' - ';
+		}
+		$html .= ' '.$langs->trans("ErrorPHPDoesNotSupport", $name);
+	}
 	$html .= "</td>";
 
 	return $html;

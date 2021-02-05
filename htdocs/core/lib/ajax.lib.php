@@ -144,10 +144,10 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
-    						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
+    						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							//console.log(ui.item);
+							console.log("Propagate before some properties");
 							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -155,6 +155,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
 
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+
     						// Disable an element
     						if (options.option_disabled) {
     							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
@@ -170,6 +171,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
+
     						if (options.disabled) {
     							console.log("Make action disabled on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
@@ -182,6 +184,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     								$("#" + value).show().trigger("show");
     							});
     						}
+
     						// Update an input
     						if (ui.item.update) {
     							console.log("Make action update on each ui.item.update")
@@ -202,7 +205,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 									}
     							});
     						}
-    						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+    						console.log("ajax_autocompleter new value selected, we trigger change also on original component so on field #search_'.$htmlname.'");
 
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
