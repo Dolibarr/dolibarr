@@ -542,7 +542,7 @@ class Salary extends CommonObject
 
         $result = '';
 
-        $label = '<u>'.$langs->trans("ShowSalaryPayment").'</u>';
+        $label = '<u>'.$langs->trans("Salary").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 

@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -384,7 +384,7 @@ $memberstatic = new Adherent($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $paymentvatstatic = new TVA($db);
-$paymentsalstatic = new Salary($db);
+$paymentsalstatic = new PaymentSalary($db);
 $paymentvariousstatic = new PaymentVarious($db);
 $donstatic = new Don($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
@@ -1307,6 +1307,9 @@ if ($resql)
     	        elseif ($links[$key]['type'] == 'sc')
     	        {
     	        }
+		elseif ($links[$key]['type'] == 'salary')
+                {
+                }
     	        else
     	        {
     	            // Show link with label $links[$key]['label']
