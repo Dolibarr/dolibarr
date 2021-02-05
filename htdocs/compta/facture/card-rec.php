@@ -933,7 +933,7 @@ $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
 
 $now = dol_now();
-$nowlasthour = dol_last_hour($now);
+$nowlasthour = dol_get_last_hour($now);
 
 
 /*
