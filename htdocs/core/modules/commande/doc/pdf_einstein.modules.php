@@ -252,8 +252,8 @@ class pdf_einstein extends ModelePDFCommandes
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				// Possibility to use suffix for proforma
-				if(isset($conf->global->PROFORMA_PDF_WITH_SUFFIX)){
-					$suffix = (GETPOST('model',2)=='proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
+				if (isset($conf->global->PROFORMA_PDF_WITH_SUFFIX)){
+					$suffix = (GETPOST('model', 2)=='proforma') ? $conf->global->PROFORMA_PDF_WITH_SUFFIX : '';
 				}
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->commande->dir_output . "/" . $objectref;
