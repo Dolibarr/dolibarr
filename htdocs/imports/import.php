@@ -1604,8 +1604,8 @@ if ($step == 5 && $datatoimport)
 		if (!count($arrayoferrors) && !count($arrayofwarnings)) {
 			print '<div class="center">'.img_picto($langs->trans("OK"), 'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
 			print '<div class="ok">';
-			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
 			print '</div>';
 		} else print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
 
@@ -1982,8 +1982,8 @@ if ($step == 6 && $datatoimport)
 	print '<br>';
 	print '<div class="ok">';
 	print $langs->trans("NbOfLinesImported", $nbok).'</b><br>';
-	print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
-	print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+	print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+	print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
 	print '</div>';
 	print '<div class="center">';
 	print $langs->trans("FileWasImported", $importid).'<br>';
