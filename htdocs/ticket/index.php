@@ -322,16 +322,11 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-$transChartTicketSeverity = $langs->trans('ChartTicketSeverity');
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketSeverity . '</th></tr>';
-print '<td class="center">';
-
 $dataseries = array();
 $data = array();
 $sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
 $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE t.fk_statut <> 8";
 $sql .= " GROUP BY t.severity_code";
 $resql = $db->query($sql);
 if ($resql) {
@@ -348,6 +343,11 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
+$transChartTicketSeverity = $langs->trans('ChartTicketSeverity');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketSeverity . '</th></tr>';
+print '<td class="center">';
 if (!empty($dataseries) && count($dataseries) > 0) {
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
@@ -645,16 +645,11 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-$transChartTicketType = $langs->trans('ChartTicketType');
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
-print '<td class="center">';
-
 $dataseries = array();
-$data;
+$data = array();
 $sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
 $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE t.fk_statut <> 8";
 $sql .= " GROUP BY t.type_code";
 $resql = $db->query($sql);
 if ($resql) {
@@ -671,6 +666,11 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
+$transChartTicketType = $langs->trans('ChartTicketType');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
+print '<td class="">';
 if (!empty($dataseries) && count($dataseries) > 0) {
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
@@ -695,6 +695,76 @@ if (!empty($dataseries) && count($dataseries) > 0) {
 		$px1->mode = 'depth';
 
 		$px1->draw('idgraphtickettype');
+		print $px1->show($totalnb ? 0 : 1);
+	}
+}
+
+print '</td>';
+print "</table>";
+print '</div>';
+
+
+$dataseries = array();
+$data = array();
+$totalnb = 0;
+$sql = "SELECT COUNT(t.datec) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE CAST(t.datec AS DATE) = CURRENT_DATE";
+$sql .= " AND t.fk_statut <> 8";
+$sql .= " GROUP BY CAST(t.datec AS DATE)";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	if ($num==1) {
+		$objp = $db->fetch_object($resql);
+		$data[] = array($langs->trans('TicketCreatedToday'),$objp->nb);
+		$totalnb += $objp->nb;
+	}
+} else {
+	dol_print_error($db);
+}
+$sql = "SELECT COUNT(t.date_close) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE CAST(t.date_close AS DATE) = CURRENT_DATE";
+$sql .= " AND t.fk_statut = 8";
+$sql .= " GROUP BY CAST(t.date_close AS DATE)";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	if ($num==1) {
+		$objp = $db->fetch_object($resql);
+		$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+		$totalnb += $objp->nb;
+	}
+} else {
+	dol_print_error($db);
+}
+$colorseries = array();
+$colorseries[]= $badgeStatus8;
+$colorseries[]= $badgeStatus2;
+$transChartTicketType = $langs->trans('ChartNewTicketVSClose');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
+print '<td class="center">';
+
+if (!empty($data) && count($data) > 0) {
+	$px1 = new DolGraph();
+	$mesg = $px1->isGraphKo();
+	if (!$mesg) {
+		$px1->SetDataColor(array_values($colorseries));
+		$px1->SetData($data);
+		$px1->setShowLegend(2);
+		$px1->SetType(array('pie'));
+		$px1->SetLegend($legend);
+		$px1->SetMaxValue($px1->GetCeilMaxValue());
+		$px1->SetHeight($HEIGHT);
+		$px1->SetShading(3);
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetCssPrefix("cssboxes");
+		$px1->mode = 'depth';
+
+		$px1->draw('idgraphticketnewvsclosetoday');
 		print $px1->show($totalnb ? 0 : 1);
 	}
 }

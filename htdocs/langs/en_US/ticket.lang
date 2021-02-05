@@ -236,6 +236,10 @@ ChartTicketType=Number of tickets by type
 ChartTicketSeverity=Number of tickets by severity
 ChartTicketLastXDays=Number of new tickets by days the last %s days
 NumberOfTicketByDay=Number of new tickets by day
+ChartNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+
 #
 # Logs
 #
