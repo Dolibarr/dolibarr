@@ -78,7 +78,7 @@ $search_zip = trim(GETPOST("search_zip", 'alpha'));
 $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
-$search_phone = trim(GETPOST('search_phone', 'alpha'));
+$search_phone = trim(GETPOST('search_phone', 'ahttps://wiki.dolibarr.org/index.php?title=Migrer_mon_Dolibarr_vers_une_offre_Cloudlpha'));
 $search_fax = trim(GETPOST('search_fax', 'alpha'));
 $search_url = trim(GETPOST('search_url', 'alpha'));
 $search_idprof1 = trim(GETPOST('search_idprof1', 'alpha'));
@@ -444,7 +444,7 @@ if (empty($user->rights->societe->client->voir) && !$socid)	$sql .= " AND s.rowi
 if ($search_sale && $search_sale != -2)    $sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 if (!$user->rights->fournisseur->lire) $sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 if ($search_sale == -2)    $sql .= " AND sc.fk_user IS NULL";
-elseif ($search_sale)          $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
+elseif ($search_sale > 0)  $sql .= " AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_categ_cus > 0) $sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_sup > 0) $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
 if ($search_categ_cus == -2)   $sql .= " AND cc.fk_categorie IS NULL";
@@ -682,7 +682,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-	 	$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
+	 	$moreforfilter .= img_picto('', 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
 	 	$moreforfilter .= '</div>';
 	}
@@ -693,8 +693,8 @@ if (empty($type) || $type == 'f')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1);
+		$moreforfilter .= img_picto('', 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $langs->trans('SuppliersCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
 }
@@ -703,8 +703,8 @@ if (empty($type) || $type == 'f')
 if ($user->rights->societe->client->voir || $socid)
 {
  	$moreforfilter .= '<div class="divsearchfield">';
- 	$moreforfilter .= $langs->trans('SalesRepresentatives').': ';
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300', 1);
+ 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+ 	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), 'maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
 if ($moreforfilter)
