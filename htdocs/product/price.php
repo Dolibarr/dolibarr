@@ -1442,11 +1442,11 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
     		// Il doit au moins y avoir la ligne de prix initial.
     		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
     		//$object->updatePrice($object->price, $object->price_base_type, $user, $object->tva_tx, $object->price_min);
-            if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-            	$object->updatePrice($object->multiprices[1], $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), $object->multiprices_min[1], 1);
-            } else {
-                $object->updatePrice($object->price, $object->price_base_type, $user, $object->tva_tx, $object->price_min);
-            }
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				$object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);
+			} else {
+				$object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min));
+			}
 
     		$result = $db->query($sql);
     		$num = $db->num_rows($result);
