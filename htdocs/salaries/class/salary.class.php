@@ -694,7 +694,8 @@ class Salary extends CommonObject
     /**
      * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
      *
-     * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     * @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      * @return  string				Libelle
      */
     public function getLibStatut($mode = 0, $alreadypaid = -1)
