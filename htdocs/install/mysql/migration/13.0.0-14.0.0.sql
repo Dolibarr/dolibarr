@@ -122,3 +122,36 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_user integer DEFAULT NULL;
+
+RENAME TABLE llx_payment_salary TO llx_salary;
+RENAME TABLE llx_payment_salary_extrafields TO llx_salary_extrafields;
+
+ALTER TABLE llx_salary RENAME INDEX idx_payment_salary_ref TO idx_salary_ref;
+ALTER TABLE llx_salary RENAME INDEX idx_payment_salary_user TO idx_salary_user;
+ALTER TABLE llx_salary RENAME INDEX idx_payment_salary_datep TO idx_salary_datep;
+ALTER TABLE llx_salary RENAME INDEX idx_payment_salary_datesp TO idx_salary_datesp;
+ALTER TABLE llx_salary RENAME INDEX idx_payment_salary_dateep TO idx_salary_dateep;
+ALTER TABLE llx_salary DROP CONSTRAINT fk_payment_salary_user, ADD CONSTRAINT fk_salary_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+ALTER TABLE llx_salary_extrafields RENAME INDEX idx_payment_salary_extrafields TO idx_salary_extrafields;
+
+ALTER TABLE llx_salary ADD paye smallint default 1 NOT NULL;
+ALTER TABLE llx_salary ADD fk_account integer;
+
+ALTER TABLE llx_salary ALTER COLUMN paye SET DEFAULT 0;
+
+create table llx_payment_salary
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_salary       integer,
+  datec           datetime,           -- date de creation
+  tms             timestamp,
+  datep           datetime,           -- payment date
+  amount          double(24,8) DEFAULT 0,
+  fk_typepaiement integer NOT NULL,
+  num_paiement    varchar(50),
+  note            text,
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- creation user
+  fk_user_modif   integer             -- last modification user
+
+)ENGINE=innodb;

@@ -448,27 +448,16 @@ class Salary extends CommonObject
 
             if ($this->id > 0)
             {
-                if (!empty($conf->banque->enabled) && !empty($this->amount))
-                {
-                    // Insert into llx_bank
-                    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-                    $acc = new Account($this->db);
-                    $result = $acc->fetch($this->accountid);
-                    if ($result <= 0) dol_print_error($this->db);
-
-                    // Update extrafield
-                    if (!$error) {
-                        if (!$error)
+                // Update extrafield
+                if (!$error) {
+                    if (!$error)
+                    {
+                        $result = $this->insertExtraFields();
+                        if ($result < 0)
                         {
-                            $result = $this->insertExtraFields();
-                            if ($result < 0)
-                            {
-                                $error++;
-                            }
+                            $error++;
                         }
                     }
-
                 }
 
                 // Call trigger

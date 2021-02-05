@@ -25,7 +25,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
@@ -577,7 +577,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 
-	if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+//	if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 
 	// Amount
 	print '<td class="nowrap right">'.price($obj->amount).'</td>';
@@ -588,6 +588,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 	}
 	$totalarray['val']['totalttcfield'] += $obj->amount;
+
+	print '<td class="nowrap right">'.$salstatic->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+	if (!$i) $totalarray['nbfield']++;
 
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

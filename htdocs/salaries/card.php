@@ -25,7 +25,6 @@
  *  \ingroup    salaries
  *  \brief      Page of salaries payments
  */
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -493,6 +492,16 @@ if ($action == 'create')
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
+        // Project
+        if (!empty($conf->projet->enabled))
+        {
+            $formproject = new FormProjets($db);
+
+            print '<tr><td>'.$langs->trans("Project").'</td><td>';
+            $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+            print '</td></tr>';
+        }
+
 	// Bank
 	if (!empty($conf->banque->enabled))
 	{
@@ -503,9 +512,9 @@ if ($action == 'create')
 	}
 
 	// Type payment
-	print '<tr><td>';
+	print '<tr><td id="label_type_payment">';
 	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '', 2);
+	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
 
 	// Auto create payment
@@ -513,13 +522,13 @@ if ($action == 'create')
 	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" '.($_REQUEST['action'] === 'add' ? (empty($auto_create_paiement) ? '' : 'checked="checked"') : 'checked="checked"').' value="1"></td></tr>'."\n";
 
 	// Date payment
-	print '<tr><td>';
+	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
 	print $form->selectDate((empty($datep) ? '' : $datep), "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
-	print '<tr><td>';
+	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
 	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
@@ -532,16 +541,6 @@ if ($action == 'create')
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
-	}
-
-	// Project
-	if (!empty($conf->projet->enabled))
-	{
-	    $formproject = new FormProjets($db);
-
-	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
-	    $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-	    print '</td></tr>';
 	}
 
 	// Comments
@@ -646,7 +645,7 @@ if ($id)
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
