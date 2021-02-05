@@ -70,8 +70,7 @@ if ($fielvalue)
 	if ($user->socid) $socid = $user->socid;
 	$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 }
-else
-{
+else {
 	if ($user->socid) $socid = $user->socid;
 	$result = restrictedArea($user, 'banque');
 }
@@ -243,15 +242,13 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
                 }
             }
         }
-        else
-        {
+        else {
             $error++;
             $langs->load("errors");
             setEventMessages($langs->trans("NoRecordSelected"), null, 'errors');
         }
     }
-    else
-    {
+    else {
         $error++;
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorPleaseTypeBankTransactionReportName"), null, 'errors');
@@ -288,8 +285,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
     {
         $amount = price2num($_POST["addcredit"]);
     }
-    else
-    {
+    else {
         $amount = - price2num($_POST["adddebit"]);
     }
 
@@ -339,13 +335,11 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
             header("Location: ".$_SERVER['PHP_SELF'].($id ? "?id=".$id : ''));
             exit;
         }
-        else
-        {
+        else {
             setEventMessages($object->error, $object->errors, 'errors');
         }
     }
-    else
-    {
+    else {
         $action = 'addline';
     }
 }
@@ -470,8 +464,7 @@ if ($id > 0 || !empty($ref))
         }
     }
 }
-else
-{
+else {
 	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
 
@@ -676,8 +669,7 @@ if ($resql)
 	        print $liste;
 	        if ($numr <= 0) print '<b>'.$langs->trans("None").'</b>';
 	    }
-	    else
-	    {
+	    else {
 	        dol_print_error($db);
 	    }
 
@@ -794,13 +786,12 @@ if ($resql)
 			{
 			    $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
 			}
-			else												// If direct entries is not done using miscellaneous payments
+			else // If direct entries is not done using miscellaneous payments
 			{
                 $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', $user->rights->banque->modifier);
 			}
 		}
-		else
-		{
+		else {
             $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', -1);
 		}
 	}
@@ -1042,8 +1033,7 @@ if ($resql)
                 		$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
                 	}
                 	// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
-                	else
-                	{
+                	else {
                 		$balance = $objforbalance->previoustotal;
                 	}
                 }
@@ -1130,8 +1120,7 @@ if ($resql)
         	$balance = price2num($balancebefore, 'MT'); // balance = balancebefore of previous line (sort is desc)
         	$balancebefore = price2num($balancebefore - ($sign * $objp->amount), 'MT');
         }
-		else
-		{
+		else {
 			$balancebefore = price2num($balance, 'MT'); // balancebefore = balance of previous line (sort is asc)
 			$balance = price2num($balance + ($sign * $objp->amount), 'MT');
 		}
@@ -1143,8 +1132,7 @@ if ($resql)
             $cachebankaccount[$objp->bankid] = $bankaccounttmp;
             $bankaccount = $bankaccounttmp;
         }
-        else
-        {
+        else {
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
@@ -1280,8 +1268,7 @@ if ($resql)
     	                print $bankstatic->getNomUrl(1, '');
     	                print ')';
     	            }
-    	            else
-    	            {
+    	            else {
     	                $bankstatic->id = $objp->bankid;
     	                $bankstatic->label = $objp->bankref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
@@ -1307,11 +1294,10 @@ if ($resql)
     	        elseif ($links[$key]['type'] == 'sc')
     	        {
     	        }
-		elseif ($links[$key]['type'] == 'salary')
+				elseif ($links[$key]['type'] == 'salary')
                 {
-                }
-    	        else
-    	        {
+				}
+    	        else {
     	            // Show link with label $links[$key]['label']
     	            if (!empty($objp->label) && !empty($links[$key]['label'])) print ' - ';
     	            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
@@ -1321,8 +1307,7 @@ if ($resql)
     	                if ($reg[1] == 'paiement') $reg[1] = 'Payment';
     	                print ' '.$langs->trans($reg[1]);
     	            }
-    	            else
-    	            {
+    	            else {
     	                print ' '.$links[$key]['label'];
     	            }
     	            print '</a>';
@@ -1400,8 +1385,7 @@ if ($resql)
 				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 				print $companystatic->getNomUrl(1);
 			}
-			else
-			{
+			else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -1454,13 +1438,11 @@ if ($resql)
     			{
     				print '<td class="nowrap right">&nbsp;'.price($balancebefore).'</td>';
     			}
-    			else
-    			{
+    			else {
     				print '<td class="error nowrap right">&nbsp;'.price($balancebefore).'</td>';
     			}
     		}
-    		else
-    		{
+    		else {
     			print '<td class="right">-</td>';
     		}
     		if (!$i) $totalarray['nbfield']++;
@@ -1474,13 +1456,11 @@ if ($resql)
     			{
     				print '<td class="nowrap right">&nbsp;'.price($balance).'</td>';
     			}
-    			else
-    			{
+    			else {
     				print '<td class="error nowrap right">&nbsp;'.price($balance).'</td>';
     			}
     		}
-    		else
-    		{
+    		else {
     			print '<td class="right">-</td>';
     		}
     		if (!$i) $totalarray['nbfield']++;
@@ -1527,16 +1507,14 @@ if ($resql)
     	    print img_edit();
     	    print '</a>';
     	}
-    	else
-    	{
+    	else {
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
     	        print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_edit();
     	        print '</a>';
     	    }
-    	    else
-    	    {
+    	    else {
     	        print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_view();
     	        print '</a>';
@@ -1614,8 +1592,7 @@ if ($resql)
     print '</form>';
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

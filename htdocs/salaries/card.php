@@ -243,7 +243,7 @@ if ($action == 'add' && empty($cancel))
 			}
 		}
 
-		if(empty($error)) {
+		if (empty($error)) {
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
@@ -253,7 +253,6 @@ if ($action == 'add' && empty($cancel))
 				exit;
 			}
 		}
-
 	}
 
 	$action = 'create';
@@ -493,14 +492,14 @@ if ($action == 'create')
 	print '</td></tr>';
 
         // Project
-        if (!empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
         {
-            $formproject = new FormProjets($db);
+		$formproject = new FormProjets($db);
 
-            print '<tr><td>'.$langs->trans("Project").'</td><td>';
-            $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-            print '</td></tr>';
-        }
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		print '</td></tr>';
+	}
 
 	// Bank
 	if (!empty($conf->banque->enabled))
@@ -712,7 +711,6 @@ if ($id)
 		print '<tr><td>'.$langs->trans("DateEndPeriod")."</td><td>";
 		print $form->selectDate($object->dateep, 'dateep', 0, 0, 0, 'dateep', 1);
 		print "</td></tr>";
-
 	} else {
 		print "<tr>";
 		print '<td>' . $langs->trans("DateEndPeriod") . '</td><td>';
