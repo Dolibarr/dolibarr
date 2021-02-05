@@ -4914,7 +4914,7 @@ abstract class CommonObject
 						    $this->result['filename']=$ecmfile->filename;*/
 							//var_dump($obj->update_main_doc_field);exit;
 
-							// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
+							// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
 							$update_main_doc_field = 0;
 							if (!empty($obj->update_main_doc_field)) $update_main_doc_field = 1;
 							if ($update_main_doc_field && !empty($this->table_element))
