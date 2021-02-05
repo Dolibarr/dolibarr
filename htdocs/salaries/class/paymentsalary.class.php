@@ -576,9 +576,9 @@ class PaymentSalary extends CommonObject
                 {
                     if ($mode == 'payment_salary')
                     {
-                        $socialcontrib = new Salary($this->db);
-                        $socialcontrib->fetch($key);
-                        $result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'salary');
+                        $salary = new Salary($this->db);
+                        $salary->fetch($key);
+                        $result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
