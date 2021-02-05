@@ -85,6 +85,7 @@ PaymentCustomerInvoice=Customer invoice payment
 PaymentSupplierInvoice=vendor invoice payment
 PaymentSocialContribution=Social/fiscal tax payment
 PaymentVat=VAT payment
+AutomaticCreationPayment=Automatically create a total payment
 ListPayment=List of payments
 ListOfCustomerPayments=List of customer payments
 ListOfSupplierPayments=List of vendor payments
