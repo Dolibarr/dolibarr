@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/salaries/class/paymentsalary.class.php
  *  \ingroup    salaries
- *  \brief      Class for salaries module payment
+ *  \brief      File of class to manage payment of salaries
  */
 
 // Put here all includes required by your class file
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 
 /**
- *	Class to manage payments of social contributions
+ *	Class to manage payments of salaries
  */
 class PaymentSalary extends CommonObject
 {
@@ -108,7 +108,7 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *  Create payment of social contribution into database.
+	 *  Create payment of salary into database.
      *  Use this->amounts to have list of lines for the payment
      *
 	 *  @param      User	$user   				User making payment
@@ -128,7 +128,7 @@ class PaymentSalary extends CommonObject
 		// Validate parametres
 		if (!$this->datepaye)
 		{
-			$this->error = 'ErrorBadValueForParameterCreatePaymentSocialContrib';
+			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
 		}
 
@@ -208,7 +208,7 @@ class PaymentSalary extends CommonObject
 			}
 		}
 
-		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE', $user);
+		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
 		if ($result < 0) $error++;
 
 		if ($totalamount != 0 && !$error)
@@ -437,7 +437,7 @@ class PaymentSalary extends CommonObject
 	{
 		$error = 0;
 
-		$object = new PaymentSocialContribution($this->db);
+		$object = new PaymentSalary($this->db);
 
 		$this->db->begin();
 
@@ -705,17 +705,31 @@ class PaymentSalary extends CommonObject
 		$result = '';
 
 		if (empty($this->ref)) $this->ref = $this->lib;
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
 
-        if (!empty($this->id)) {
-            $link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $linkend = '</a>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SalaryPayment").'</u>';
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->label)) {
+			$labeltoshow = $this->label;
+			$reg = array();
+			if (preg_match('/^\((.*)\)$/i', $this->label, $reg))
+			{
+				// Label generique car entre parentheses. On l'affiche en le traduisant
+				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
+				$labeltoshow = $langs->trans($reg[1]);
+			}
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
+		}
+		if ($this->datep) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
 
-            if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-            if ($withpicto && $withpicto != 2) $result .= ' ';
-            if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
-        }
+		if (!empty($this->id)) {
+			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend = '</a>';
 
-        return $result;
-    }
+			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+			if ($withpicto && $withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+		}
+
+		return $result;
+	}
 }
