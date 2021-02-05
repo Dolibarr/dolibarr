@@ -472,21 +472,21 @@ if ($nbofactivatedmodules <= 1) {
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
 // Start to show page
+$deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
-	print '<span class="opacitymedium hideonsmartphone">'.$desc."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$desc."<br><br></span>\n";
 }
 if ($mode == 'marketplace') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br><br></span>\n";
 }
 if ($mode == 'deploy') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br><br></span>\n";
 }
 if ($mode == 'develop') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br><br></span>\n";
 }
-
 
 $head = modules_prepare_head();
 
@@ -511,6 +511,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	print dol_get_fiche_head($head, 'modules', '', -1);
+
+	print $deschelp;
 
 	$moreforfilter = '<div class="valignmiddle">';
 
@@ -937,6 +939,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 if ($mode == 'marketplace') {
 	print dol_get_fiche_head($head, $mode, '', -1);
 
+	print $deschelp;
+
 	print '<br>';
 
 	// Marketplace
@@ -1021,6 +1025,8 @@ if ($mode == 'marketplace') {
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
+
+	print $deschelp;
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
@@ -1191,6 +1197,8 @@ if ($mode == 'deploy') {
 
 if ($mode == 'develop') {
 	print dol_get_fiche_head($head, $mode, '', -1);
+
+	print $deschelp;
 
 	print '<br>';
 
