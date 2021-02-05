@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2019      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+-- Copyright (C) 2021      Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
 --
 -- ===================================================================
 
-create table llx_payment_salary_extrafields
+create table llx_salary_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

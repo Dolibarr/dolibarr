@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Charlie BENKE        <charlie@patas-monkey.com>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -46,7 +47,7 @@ $result = restrictedArea($user, 'salaries', '', '', '');
 
 llxHeader("", $langs->trans("SalaryPayment"));
 
-$object = new PaymentSalary($db);
+$object = new Salary($db);
 $object->fetch($id);
 $object->info($id);
 

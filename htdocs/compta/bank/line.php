@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,6 +356,11 @@ if ($result)
 					print img_object($langs->trans('SocialContribution'), 'bill').' ';
 					print $langs->trans("SocialContribution").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
 					print '</a>';
+				} elseif ($links[$key]['type'] == 'salary') {
+					print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('Salary'), 'bill').' ';
+					print $langs->trans("Salary").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
+					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_sc') {
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('Payment'), 'payment').' ';
@@ -366,7 +372,7 @@ if ($result)
 					print $langs->trans("VATPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_salary') {
-					print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('PaymentSalary'), 'payment').' ';
 					print $langs->trans("SalaryPayment");
 					print '</a>';
