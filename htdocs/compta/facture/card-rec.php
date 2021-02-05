@@ -1245,7 +1245,9 @@ if ($action == 'create')
 
 		print '<table class="border centpercent tableforfield">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
+		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>';
+		print $author->getNomUrl(-1);
+		print "</td></tr>";
 
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
