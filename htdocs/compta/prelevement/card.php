@@ -85,16 +85,21 @@ if (empty($reshook))
         }
     }
 
-    // Seems to no be used and replaced with $action == 'infocredit'
-    if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
-    {
-        $res=$object->set_credite();
-        if ($res >= 0)
-        {
-            header("Location: card.php?id=".$id);
-            exit;
-        }
-    }
+	// Seems to no be used and replaced with $action == 'infocredit'
+	if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
+	{
+		if ($object->statut == 2) {
+			$res = -1;
+			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
+		} else {
+			$res=$object->set_credite();
+		}
+		if ($res >= 0)
+		{
+			header("Location: card.php?id=".$id);
+			exit;
+		}
+	}
 
     if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
     {
@@ -135,14 +140,19 @@ if (empty($reshook))
 	{
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-        $error = $object->set_infocredit($user, $dt);
+		if ($object->statut == 2) {
+			$error = 1;
+			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
+		} else {
+			$error = $object->set_infocredit($user, $dt);
+		}
 
-        if ($error)
-        {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
-        }
-    }
+		if ($error)
+		{
+			header("Location: card.php?id=".$id."&error=$error");
+			exit;
+		}
+	}
 }
 
 
