@@ -68,8 +68,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->salaries-
         header("Location: ".DOL_URL_ROOT."/salaries/payments.php");
         exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
@@ -244,8 +243,7 @@ if ($resql)
 	print "</table>\n";
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -277,8 +275,7 @@ if ($action == '')
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
-		else
-		{
+		else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentSalaryPaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}

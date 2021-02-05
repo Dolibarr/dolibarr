@@ -187,8 +187,7 @@ class Salary extends CommonObject
             $this->db->commit();
             return 1;
         }
-        else
-        {
+        else {
             $this->db->rollback();
             return -1;
         }
@@ -270,8 +269,7 @@ class Salary extends CommonObject
 
             return 1;
         }
-        else
-        {
+        else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -388,7 +386,7 @@ class Salary extends CommonObject
             $this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
             return -5;
         }
-       /* if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
+		/* if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
         {
             $this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
             return -6;
@@ -472,14 +470,12 @@ class Salary extends CommonObject
                 $this->db->commit();
                 return $this->id;
             }
-            else
-            {
+            else {
                 $this->db->rollback();
                 return -2;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             $this->db->rollback();
             return -1;
@@ -503,8 +499,7 @@ class Salary extends CommonObject
         {
             return 1;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -611,8 +606,7 @@ class Salary extends CommonObject
 			$this->db->free($resql);
 			return $amount;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -648,8 +642,7 @@ class Salary extends CommonObject
             }
             $this->db->free($result);
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
         }
     }

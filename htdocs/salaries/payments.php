@@ -105,8 +105,7 @@ elseif ($mysoc->localtax2_assuj == "1")
 	$j = 2;
 	$numlt = 3;
 }
-else
-{
+else {
 	$j = 0;
 	$numlt = 0;
 }
@@ -124,7 +123,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid = s.fk_user)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ps.fk_typepaiement = pct.id";
         $sql .= " WHERE s.entity IN (".getEntity('user').")";
-       /* if ($year > 0)
+		/* if ($year > 0)
         {
             $sql .= " AND (s.datesp between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
             $sql .= " OR s.dateep between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."')";
@@ -208,8 +207,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 
             print "<br>";
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
     }
