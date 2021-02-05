@@ -22,10 +22,10 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticketstats.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 $hookmanager = new HookManager($db);
 
@@ -81,8 +81,8 @@ print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
 
 
 $dir = '';
-$filenamenb = $dir."/".$prefix."ticketinyear-".$endyear.".png";
-$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=ticket&amp;file=ticketinyear-'.$endyear.'.png';
+$filenamenb = $dir . "/" . $prefix . "ticketinyear-" . $endyear . ".png";
+$fileurlnb = DOL_URL_ROOT . '/viewimage.php?modulepart=ticket&amp;file=ticketinyear-' . $endyear . '.png';
 
 $stats = new TicketStats($db, $socid, $userid);
 $param_year = 'DOLUSERCOOKIE_ticket_by_status_year';
@@ -129,24 +129,24 @@ $tick = array(
 );
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
-$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 }
-$sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
+$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
 }
 
 // External users restriction
 if ($user->socid > 0) {
-	$sql .= " AND t.fk_soc= ".((int) $user->socid);
+	$sql .= " AND t.fk_soc= " . ((int) $user->socid);
 } else {
 	// For internals users,
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign = ".$user->id;
+		$sql .= " AND t.fk_user_assign = " . $user->id;
 	}
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -181,13 +181,13 @@ if ($result) {
 		}
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include_once DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 
 	$dataseries = array();
 	$colorseries = array();
 
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
-	$colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
+	$colorseries[Ticket::STATUS_NOT_READ] = '-' . $badgeStatus0;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
 	$colorseries[Ticket::STATUS_READ] = $badgeStatus1;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
@@ -195,9 +195,9 @@ if ($result) {
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
-	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
+	$colorseries[Ticket::STATUS_WAITING] = '-' . $badgeStatus4;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
-	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
+	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-' . $badgeStatus3;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
 	$colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
@@ -214,18 +214,18 @@ $stringtoshow = '<script type="text/javascript" language="javascript">
     });
     </script>';
 $stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_by_status">'; // hideobject is to start hidden
-$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+$stringtoshow .= '<input type="hidden" name="token" value="' . newToken() . '">';
 $stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
-$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+$stringtoshow .= $langs->trans("Year") . ' <input class="flat" size="4" type="text" name="' . $param_year . '" value="' . $endyear . '">';
+$stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src="' . img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1) . '">';
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
+print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . $endyear . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"') . '</th></tr>';
 
 print '<tr><td class="center">';
 print $stringtoshow;
@@ -283,14 +283,14 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
  * Chart of Ticket by Severity
  */
 
- $listofopplabel = array();
+$listofopplabel = array();
 $listofoppcode = array();
 $colorseriesstat = array();
 
 $sql = "SELECT cts.rowid, cts.label, cts.code";
 $sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
 $sql .= " WHERE cts.active = 1";
-$sql .= $db->order('cts.rowid','ASC');
+$sql .= $db->order('cts.rowid', 'ASC');
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -318,18 +318,18 @@ if ($resql) {
 		}
 		$i++;
 	}
-}else{
+} else {
 	dol_print_error($db);
 }
 
 $transChartTicketSeverity = $langs->trans('ChartTicketSeverity');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th colspan="5">'.$transChartTicketSeverity.'</th></tr>';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketSeverity . '</th></tr>';
 print '<td class="center">';
 
 $dataseries = array();
-$data;
+$data = array();
 $sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
 $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 $sql .= " GROUP BY t.severity_code";
@@ -339,16 +339,16 @@ if ($resql) {
 	$i = 0;
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
-		$data[$objp->severity_code]=$objp->nb;
+		$data[$objp->severity_code] = $objp->nb;
 		$i++;
 	}
 	foreach ($listofoppcode as $rowid => $code) {
-		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketSeverityShort'.$code, 'c_ticket_category', 'code', 'label', $code),'data'=>$data[$code]);
+		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
 	}
-}else{
+} else {
 	dol_print_error($db);
 }
-if(!empty($dataseries) && count($dataseries)>0){
+if (!empty($dataseries) && count($dataseries) > 0) {
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
 	$totalnb = 0;
@@ -357,7 +357,7 @@ if(!empty($dataseries) && count($dataseries)>0){
 		$data = array();
 		$legend = array();
 		foreach ($dataseries as $value) {
-			$data[] = array($value['label'],$value['data']);
+			$data[] = array($value['label'], $value['data']);
 			$totalnb += $value['data'];
 		}
 		$px1->SetData($data);
@@ -374,15 +374,112 @@ if(!empty($dataseries) && count($dataseries)>0){
 		$px1->draw('idgraphticketseverity');
 		print $px1->show($totalnb ? 0 : 1);
 	}
-}else{
-	print '<tr class="oddeven">';
-	print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-	print '</tr>';
 }
 
 print '</td>';
 print "</table>";
 print '</div>';
+
+/*
+ * Graph of nb daily Tickets the last X days
+ */
+
+$param_day = 'DOLUSERCOOKIE_ticket_last_days';
+if ($_POST[$param_day]) {
+	if ($_POST[$param_day] >= 15) {
+		$days = 14;
+	} else {
+		$days = $_POST[$param_day];
+	}
+} else {
+	$days = 7;
+}
+$today = date_time_set(date_create(), 0, 0);
+$intervaltosub = new DateInterval('P' . dol_escape_htmltag($days - 1) . 'D');
+$intervaltoadd = new DateInterval('P1D');
+$minimumdatec = date_sub($today, $intervaltosub);
+$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+
+$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL " . $days . " DAY)";
+$sql .= " GROUP BY CAST(t.datec AS DATE)";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$dataseries = array();
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		while ($minimumdatecformated < $objp->datec) {
+			$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+			$minimumdatec = date_add($minimumdatec, $intervaltoadd);
+			$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+		}
+		$dataseries[] = array('label' => dol_print_date($objp->datec, 'day'), 'data' => $objp->nb);
+		$minimumdatec = date_add($minimumdatec, $intervaltoadd);
+		$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+$stringtoshow = '<script type="text/javascript" language="javascript">
+    jQuery(document).ready(function() {
+        jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
+            jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();
+        });
+    });
+    </script>';
+$stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_last_days">'; // hideobject is to start hidden
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+$stringtoshow .= '<input type="hidden" name="token" value="' . newToken() . '">';
+$stringtoshow .= '<input type="hidden" name="action" value="refresh">';
+$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_last_days:days">';
+$stringtoshow .= ' <input class="flat" size="4" type="text" name="' . $param_day . '" value="' . $days . '">' . $langs->trans("Days");
+$stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src="' . img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1) . '">';
+$stringtoshow .= '</form>';
+$stringtoshow .= '</div>';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th>' . $langs->trans('ChartTicketLastXDays', $days) . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_last_days" class="linkobject"') . '</th></tr>';
+
+print '<td class="center">';
+
+print $stringtoshow;
+
+$px1 = new DolGraph();
+$mesg = $px1->isGraphKo();
+$totalnb = 0;
+if (!$mesg) {
+	//$px1->SetDataColor(array_values($colorseriesstat));
+	$data = array();
+	foreach ($dataseries as $value) {
+		$data[] = array($value['label'], $value['data']);
+		$totalnb += $value['data'];
+	}
+	$px1->SetData($data);
+	$px1->setShowLegend(2);
+	$px1->SetType(array('bar'));
+	$px1->SetLegend(array($langs->trans('NumberOfTicketByDay')));
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetHeight($HEIGHT);
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->SetCssPrefix("cssboxes");
+	$px1->mode = 'depth';
+
+	$px1->draw('idgraphticketlastxdays');
+	print $px1->show($totalnb ? 0 : 1);
+}
+
+
+print '</td>';
+print "</table>";
+print '</div>';
+
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -396,26 +493,26 @@ $sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.ca
 $sql .= " type.code as type_code, type.label as type_label,";
 $sql .= " category.code as category_code, category.label as category_label,";
 $sql .= " severity.code as severity_code, severity.label as severity_label";
-$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_type as type ON type.code=t.type_code";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_category as category ON category.code=t.category_code";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_severity as severity ON severity.code=t.severity_code";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 }
 
-$sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
+$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
 $sql .= " AND t.fk_statut=0";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
 }
 
 if ($user->socid > 0) {
-	$sql .= " AND t.fk_soc= ".((int) $user->socid);
+	$sql .= " AND t.fk_soc= " . ((int) $user->socid);
 } else {
 	// Restricted to assigned user only
 	if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign=".$user->id;
+		$sql .= " AND t.fk_user_assign=" . $user->id;
 	}
 }
 $sql .= $db->order("t.datec", "DESC");
@@ -432,8 +529,8 @@ if ($result) {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th colspan="5">'.$transRecordedType.'</th>';
-	print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
+	print '<tr class="liste_titre"><th colspan="5">' . $transRecordedType . '</th>';
+	print '<th class="right" colspan="2"><a href="' . DOL_URL_ROOT . '/ticket/list.php?search_fk_statut[]=' . Ticket::STATUS_NOT_READ . '">' . $langs->trans("FullList") . '</th>';
 	print '</tr>';
 	if ($num > 0) {
 		while ($i < $num) {
@@ -460,26 +557,26 @@ if ($result) {
 
 			// Subject
 			print '<td class="nowrap">';
-			print '<a href="card.php?track_id='.$objp->track_id.'">'.dol_trunc($objp->subject, 30).'</a>';
+			print '<a href="card.php?track_id=' . $objp->track_id . '">' . dol_trunc($objp->subject, 30) . '</a>';
 			print "</td>\n";
 
 			// Type
 			print '<td class="nowrap tdoverflowmax100">';
-			$s = $langs->getLabelFromKey($db, 'TicketTypeShort'.$objp->type_code, 'c_ticket_type', 'code', 'label', $objp->type_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			$s = $langs->getLabelFromKey($db, 'TicketTypeShort' . $objp->type_code, 'c_ticket_type', 'code', 'label', $objp->type_code);
+			print '<span title="' . dol_escape_htmltag($s) . '">' . $s . '</span>';
 			print '</td>';
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort' . $objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+			print '<span title="' . dol_escape_htmltag($s) . '">' . $s . '</span>';
 			//print $objp->category_label;
 			print "</td>";
 
 			// Severity
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketSeverityShort'.$objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			$s = $langs->getLabelFromKey($db, 'TicketSeverityShort' . $objp->severity_code, 'c_ticket_severity', 'code', 'label', $objp->severity_code);
+			print '<span title="' . dol_escape_htmltag($s) . '">' . $s . '</span>';
 			//print $objp->severity_label;
 			print "</td>";
 
@@ -493,7 +590,7 @@ if ($result) {
 
 		$db->free($result);
 	} else {
-		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
+		print '<tr><td colspan="6" class="opacitymedium">' . $langs->trans('NoUnreadTicketsFound') . '</td></tr>';
 	}
 
 	print "</table>";
@@ -513,7 +610,7 @@ $colorseriesstat = array();
 $sql = "SELECT ctt.rowid, ctt.label, ctt.code";
 $sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
 $sql .= " WHERE ctt.active = 1";
-$sql .= $db->order('ctt.rowid','ASC');
+$sql .= $db->order('ctt.rowid', 'ASC');
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -544,14 +641,14 @@ if ($resql) {
 		}
 		$i++;
 	}
-}else{
+} else {
 	dol_print_error($db);
 }
 
 $transChartTicketType = $langs->trans('ChartTicketType');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th colspan="5">'.$transChartTicketType.'</th></tr>';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
 print '<td class="center">';
 
 $dataseries = array();
@@ -565,16 +662,16 @@ if ($resql) {
 	$i = 0;
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
-		$data[$objp->type_code]=$objp->nb;
+		$data[$objp->type_code] = $objp->nb;
 		$i++;
 	}
 	foreach ($listofoppcode as $rowid => $code) {
-		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketTypeShort'.$code, 'c_ticket_category', 'code', 'label', $code),'data'=>$data[$code]);
+		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
 	}
-}else{
+} else {
 	dol_print_error($db);
 }
-if(!empty($dataseries) && count($dataseries)>0){
+if (!empty($dataseries) && count($dataseries) > 0) {
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
 	$totalnb = 0;
@@ -583,7 +680,7 @@ if(!empty($dataseries) && count($dataseries)>0){
 		$data = array();
 		$legend = array();
 		foreach ($dataseries as $value) {
-			$data[] = array($value['label'],$value['data']);
+			$data[] = array($value['label'], $value['data']);
 			$totalnb += $value['data'];
 		}
 		$px1->SetData($data);
@@ -600,10 +697,6 @@ if(!empty($dataseries) && count($dataseries)>0){
 		$px1->draw('idgraphtickettype');
 		print $px1->show($totalnb ? 0 : 1);
 	}
-}else{
-	print '<tr class="oddeven">';
-	print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
-	print '</tr>';
 }
 
 print '</td>';

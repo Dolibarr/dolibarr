@@ -234,7 +234,8 @@ TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from p
 ErrorTicketRefRequired=Ticket reference name is required
 ChartTicketType=Number of tickets by type
 ChartTicketSeverity=Number of tickets by severity
-
+ChartTicketLastXDays=Number of new tickets by days the last %s days
+NumberOfTicketByDay=Number of new tickets by day
 #
 # Logs
 #
