@@ -121,4 +121,6 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);
 
+ALTER TABLE llx_menu ADD COLUMN prefix varchar(255) NULL AFTER titre;
+
 ALTER TABLE llx_chargesociales ADD COLUMN fk_user integer DEFAULT NULL;
