@@ -1637,7 +1637,7 @@ class FormFile
 					'banque'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
-					$parameters = array('modulepart'=>$modulepart,'fullname'=>$file['fullname']);
+					$parameters = array('modulepart'=>$modulepart,'fileinfo'=>$file);
 					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0)
 					{
