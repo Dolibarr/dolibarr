@@ -112,6 +112,7 @@ class modStripe extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=bank',
 			'type'=>'left',
 			'titre'=>'StripeAccount',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'bank',
 			'leftmenu'=>'stripe',
 			'url' => '',
