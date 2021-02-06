@@ -221,6 +221,7 @@ class modAgenda extends DolibarrModules
 			'fk_menu'=>'r=0',
 			'type'=>'left',
 			'titre'=>'Actions',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'agenda',
 			'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
