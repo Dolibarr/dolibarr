@@ -285,16 +285,19 @@ print dol_get_fiche_end();
  */
 
 print "<div class='tabsAction'>\n";
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook)) {
+	if ($user->rights->categorie->creer)
+	{
+		$socid = ($object->socid ? "&socid=".$object->socid : "");
+		print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.$type.'">'.$langs->trans("Modify").'</a>';
+	}
 
-if ($user->rights->categorie->creer)
-{
-	$socid = ($object->socid ? "&socid=".$object->socid : "");
-	print '<a class="butAction" href="edit.php?id='.$object->id.$socid.'&type='.$type.'">'.$langs->trans("Modify").'</a>';
-}
-
-if ($user->rights->categorie->supprimer)
-{
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans("Delete").'</a>';
+	if ($user->rights->categorie->supprimer)
+	{
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans("Delete").'</a>';
+	}
 }
 
 print "</div>";
