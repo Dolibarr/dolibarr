@@ -107,7 +107,7 @@ class modMargin extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=billing', // Put 0 if this is a top menu
 			'type'=>'left', // This is a Top menu entry
 			'titre'=>'Margins',
-			'prefix' => '<span class="fas fa-money-check-alt infobox-bank_account paddingright pictofixedwidth" style="font-size: 0.85em;"></span>',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'billing',
 			'leftmenu'=>'margins',
 			'url'=>'/margin/index.php',

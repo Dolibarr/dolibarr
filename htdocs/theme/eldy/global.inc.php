@@ -1937,7 +1937,8 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
     text-align: left;
-    width: 16px;
+    width: 18px;
+    padding-right: 0;
 }
 
 .colorthumb {
