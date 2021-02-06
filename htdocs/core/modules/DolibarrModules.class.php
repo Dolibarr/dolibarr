@@ -1867,7 +1867,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->mainmenu = isset($this->menu[$key]['mainmenu']) ? $this->menu[$key]['mainmenu'] : (isset($menu->fk_mainmenu) ? $menu->fk_mainmenu : '');
 			$menu->leftmenu = isset($this->menu[$key]['leftmenu']) ? $this->menu[$key]['leftmenu'] : '';
 			$menu->title = $this->menu[$key]['titre'];
-			$menu->prefix = $this->menu[$key]['prefix'];
+			if (array_key_exists('prefix', $this->menu[$key])) $menu->prefix = $this->menu[$key]['prefix'];
 			$menu->url = $this->menu[$key]['url'];
 			$menu->langs = $this->menu[$key]['langs'];
 			$menu->position = $this->menu[$key]['position'];
