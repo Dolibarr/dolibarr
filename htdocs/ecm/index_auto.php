@@ -338,7 +338,6 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
 		$sectionauto[]=$hookmanager->resArray;
 		$rowspan += count($hookmanager->resArray);
 	}
-
 }
 
 $head = ecm_prepare_dasboard_head('');
