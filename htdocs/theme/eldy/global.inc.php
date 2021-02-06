@@ -807,6 +807,10 @@ span.fa.fa-plus-circle.paddingleft {
 {
 	border-right: 1px solid #DDD;
 }
+.borderleftlight
+{
+	border-left: 1px solid #DDD;
+}
 #formuserfile {
 	margin-top: 4px;
 }
@@ -3300,6 +3304,12 @@ td.borderright {
 	border-right-width: 1px !important;
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
+}
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
 }
 
 

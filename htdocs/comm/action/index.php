@@ -1231,11 +1231,11 @@ if (empty($action) || $action == 'show_month')      // View by month
 	print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
 	print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
-	echo '  <td align="center">#</td>';
+	echo '  <td class="center">#</td>';
 	$i = 0;
 	while ($i < 7)
 	{
-		print '  <td class="center bold uppercase tdfordaytitle">';
+		print '  <td class="center bold uppercase tdfordaytitle'.($i == 0 ? ' borderleft' : '').'">';
 		$numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
 		if (!empty($conf->dol_optimize_smallscreen))
 		{

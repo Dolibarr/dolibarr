@@ -3363,7 +3363,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			} else {
 				$fakey = 'fa-'.$pictowithouttext;
 			}
-			if (in_array($pictowithouttext, array('payment', 'loan'))) {
+			if (in_array($pictowithouttext, array('contract'))) {
+				$fasize = '0.92em';
+			}
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan'))) {
 				$fasize = '0.80em';
 			}
 
