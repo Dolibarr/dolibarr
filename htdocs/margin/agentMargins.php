@@ -106,6 +106,7 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
@@ -113,7 +114,7 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
@@ -333,10 +334,7 @@ $db->free($result);
 
 print "\n".'<script type="text/javascript">
 $(document).ready(function() {
-  	$("#agentid").change(function() {
-    	$("div.fiche form").submit();
-  	});
-
+	console.log("Init some values");
   	$("#totalMargin").html("'.price(price2num($totalMargin, 'MT')).'");
 	$("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
 	$("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");

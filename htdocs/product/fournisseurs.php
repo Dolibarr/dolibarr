@@ -160,7 +160,7 @@ if (empty($reshook))
 		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
 		$quantity = price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
-		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0;
+		$npr = preg_match('/\*/', GETPOST('tva_tx', 'alpha')) ? 1 : 0;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
 		$tva_tx = price2num($tva_tx);
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
@@ -697,14 +697,14 @@ END;
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 					print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price') ? price(GETPOST('price')) : (isset($object->fourn_price) ? price($object->fourn_price) : '')).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 				}
 
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOST('remise_percent') ?vatrate(GETPOST('remise_percent')) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), 2)) : (isset($object->fourn_remise_percent) ?vatrate($object->fourn_remise_percent) : '')).'"> %';
 				print '</td>';
 				print '</tr>';
 

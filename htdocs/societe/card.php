@@ -1235,9 +1235,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<table class="border centpercent">';
 
 		// Name, firstname
-		print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate tdtop">';
-		if ($object->particulier || $private)
-		{
+		print '<tr class="tr-field-thirdparty-name"><td class="titlefieldcreate">';
+		if ($object->particulier || $private) {
 			print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
 		} else {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
@@ -2021,7 +2020,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td colspan="3">';
 			print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 widthcentpercentminusx');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
 
@@ -2048,9 +2047,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
 			// EMail / Web
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-			print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" name="email" id="email" class="maxwidth200onsmartphone widthcentpercentminusx" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td></tr>';
+			print '<td colspan="3">'.img_picto('', 'object_email').' <input type="text" name="email" id="email" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td></tr>';
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
+			print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
 			if (!empty($conf->socialnetworks->enabled)) {
 				foreach ($socialnetworks as $key => $value) {
@@ -2399,23 +2398,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield" width="100%">';
 
-		// Prospect/Customer
-		print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
-		print $object->getLibCustProspStatut();
+		// Type Prospect/Customer/Supplier
+		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+		print $object->getTypeUrl(1);
 		print '</td></tr>';
-
-		// Supplier
-   		if (!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled))
-		{
-			print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-			print yn($object->fournisseur);
-			print '</td></tr>';
-		}
 
 		// Prefix
 		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
-			print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
+			print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.dol_escape_htmltag($object->prefix_comm).'</td>';
 			print '</tr>';
 		}
 
@@ -2423,8 +2414,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($object->client)
 		{
 			print '<tr><td>';
-			print $langs->trans('CustomerCode').'</td><td>';
-			print $object->code_client;
+			print $langs->trans('CustomerCode');
+			print '</td>';
+			print '<td>';
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+			print '</td>';
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -2438,7 +2432,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		{
 			print '<tr><td>';
 			print $langs->trans('SupplierCode').'</td><td>';
-			print $object->code_fournisseur;
+			print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 			$tmpcheck = $object->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -2451,7 +2445,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->barcode->enabled))
 		{
 			print '<tr><td>';
-			print $langs->trans('Gencod').'</td><td>'.dol_escape_htmltag($object->barcode);
+			print $langs->trans('Gencod').'</td><td>'.showValueWithClipboardCPButton(dol_escape_htmltag($object->barcode));
 			print '</td>';
 			print '</tr>';
 		}
@@ -2467,7 +2461,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<tr>';
 				print '<td>'.$idprof.'</td><td>';
 				$key = 'idprof'.$i;
-				print $object->$key;
+				print showValueWithClipboardCPButton(dol_escape_htmltag($object->$key));
 				if ($object->$key)
 				{
 					if ($object->id_prof_check($i, $object) > 0) print ' &nbsp; '.$object->id_prof_url($i, $object);
@@ -2935,7 +2929,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
 // End of page
 llxFooter();
 $db->close();

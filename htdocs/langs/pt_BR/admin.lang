@@ -467,7 +467,6 @@ Module50400Name=Contabilidade (entrada dupla)
 Module54000Name=ImprimirIPP
 Module55000Name=Pesquisa Aberta
 Module55000Desc=Criar pesquisas, enquetes ou votos on-line (como Doodle, Studs, RDVz etc ...)
-Module59000Desc=Módulo para gerenciar margens
 Module60000Desc=Módulo para gerenciar comissão
 Module63000Desc=Gerenciar recursos (impressoras, carros, salas, ...) para alocar eventos
 Permission11=Ler Faturas de Clientes

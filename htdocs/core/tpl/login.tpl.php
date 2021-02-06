@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2015 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2021 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Need global variable $title to be defined by caller (like dol_loginfunction)
+// Need global variable $urllogo, $title and $titletruedolibarrversion to be defined by caller (like dol_loginfunction in security2.lib.php)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
 

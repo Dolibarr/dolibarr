@@ -297,6 +297,9 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; fo
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
 a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; }
 
+input {
+	font-size: unset;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FDFDFD;
 }
@@ -568,11 +571,15 @@ input:-webkit-autofill {
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
+
+/* CSS for placeholder */
+.placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
@@ -770,6 +777,15 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -859,6 +875,11 @@ body[class*="colorblind-"] .text-success{
 {
 	border-right: 1px solid #f4f4f4;
 }
+.borderleftlight
+{
+	border-left: 1px solid #f4f4f4;
+}
+
 #formuserfile {
 	margin-top: 4px;
 }
@@ -1850,6 +1871,11 @@ div.nopadding {
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 16px;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -2559,6 +2585,9 @@ img.userphotosmall {			/* size for user photo in lists */
 img.userphoto[alt="Gravatar avatar"] {
     background: #fff;
 }
+form[name="addtime"] img.userphoto {
+    border: 1px solid #444;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
@@ -3229,6 +3258,12 @@ td.borderright {
 	border-right-width: 1px !important;
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
+}
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
 }
 
 /* For table with no filter before */

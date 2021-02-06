@@ -175,3 +175,5 @@ Answered=Beantwortet
 IsNotAnAnswer=Ist keine Antwort (Initial-E-Mail)
 IsAnAnswer=Ist eine Antwort auf eine Initial-E-Mail
 RecordCreatedByEmailCollector=Datensatz, der vom E-Mail-Sammler %s aus der E-Mail %s erstellt wurde
+DefaultBlacklistMailingStatus=Standardkontaktstatus für das Ablehnen von Massen-E-Mails
+DefaultStatusEmptyMandatory=Leer aber erforderlich

@@ -149,3 +149,4 @@ InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s rel
 ModeWarning=انتخاب برای حالت واقعی تنظیم نشده بود، ما بعد از این شبیه سازی را متوقف کند
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

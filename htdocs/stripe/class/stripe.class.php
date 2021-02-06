@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018-2019 	Thibault FOUCART       <support@ptibogxiv.net>
+/* Copyright (C) 2018-2021 	Thibault FOUCART       <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,15 +317,15 @@ class Stripe extends CommonObject
 	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @param   string  $payment_method                     'pm_....' (if known)
-	 * @param   string  $off_session                        If we use an already known payment method to pay off line.
+	 * @param   string  $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1)
 	{
 		global $conf, $user;
 
-		dol_syslog("getPaymentIntent", LOG_INFO, 1);
+		dol_syslog(get_class($this)."::getPaymentIntent", LOG_INFO, 1);
 
 		$error = 0;
 
@@ -397,6 +397,7 @@ class Stripe extends CommonObject
 
 		if (empty($paymentintent))
 		{
+			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
 			if (is_object($object))
@@ -409,7 +410,10 @@ class Stripe extends CommonObject
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal"; //&& ($object->thirdparty->isInEEC())
+			if (!empty($conf->global->STRIPE_BANCONTACT)) $paymentmethodtypes[] = "bancontact";
+			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal";
+			if (!empty($conf->global->STRIPE_GIROPAY)) $paymentmethodtypes[] = "giropay";
+			if (!empty($conf->global->STRIPE_SOFORT)) $paymentmethodtypes[] = "sofort";
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -430,8 +434,13 @@ class Stripe extends CommonObject
 			if ($off_session)
 			{
 				unset($dataforintent['setup_future_usage']);
+				// We can't use both "setup_future_usage" = "off_session" and "off_session" = true.
+				// Because $off_session parameter is dedicated to create paymentintent off_line (and not future payment), we need to use "off_session" = true.
+				//$dataforintent["setup_future_usage"] = "off_session";
 				$dataforintent["off_session"] = true;
 			}
+			if (!empty($conf->global->STRIPE_GIROPAY)) unset($dataforintent['setup_future_usage']);
+
 			if (!is_null($payment_method))
 			{
 				$dataforintent["payment_method"] = $payment_method;
@@ -460,6 +469,9 @@ class Stripe extends CommonObject
 				if (!empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					$arrayofoptions["stripe_account"] = $key;
 				}
+
+				dol_syslog("dataforintent to create paymentintent = ".var_export($dataforintent, true));
+
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
 				// Store the payment intent
@@ -522,10 +534,9 @@ class Stripe extends CommonObject
 			}
 		}
 
-		dol_syslog("getPaymentIntent return error=".$error." this->error=".$this->error, LOG_INFO, -1);
+		dol_syslog(get_class($this)."::getPaymentIntent return error=".$error." this->error=".$this->error, LOG_INFO, -1);
 
-		if (!$error)
-		{
+		if (!$error) {
 			return $paymentintent;
 		} else {
 			return null;
@@ -578,7 +589,10 @@ class Stripe extends CommonObject
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			// iDEAL not supported with setupIntent
+			if (!empty($conf->global->STRIPE_BANCONTACT)) $paymentmethodtypes[] = "bancontact";
+			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal";
+			// Giropay not possible for setup intent
+			if (!empty($conf->global->STRIPE_SOFORT)) $paymentmethodtypes[] = "sofort";
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -922,7 +936,7 @@ class Stripe extends CommonObject
 					dol_syslog("* createPaymentStripe get stripeacc", LOG_DEBUG);
 					$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account if it exists (no network access here)
 
-					dol_syslog("* createPaymentStripe Create payment on card ".$stripecard->id.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
+					dol_syslog("* createPaymentStripe Create payment for customer ".$customer->id." on source card ".$stripecard->id.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
 
 					// Create payment intent and charge payment (confirmnow = true)
 					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);

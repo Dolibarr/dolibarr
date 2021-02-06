@@ -75,7 +75,7 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql = array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.position, f.status FROM ".MAIN_DB_PREFIX.'website as f WHERE f.entity IN ('.getEntity('website').')';
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.position, f.status, f.date_creation FROM ".MAIN_DB_PREFIX.'website as f WHERE f.entity IN ('.getEntity('website').')';
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -83,7 +83,7 @@ $tabsqlsort[1] = "ref ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield = array();
-$tabfield[1] = "ref,description,virtualhost,position";
+$tabfield[1] = "ref,description,virtualhost,position,date_creation";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue = array();
@@ -139,8 +139,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			$fieldnamekey = $listfield[$f];
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 			break;
-		} elseif ($value == 'ref' && !preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
-		{
+		} elseif ($value == 'ref' && !preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST($value))) {
 			$ok = 0;
 			$fieldnamekey = $listfield[$f];
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities($fieldnamekey)), null, 'errors');
@@ -149,9 +148,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	}
 
 	// Clean parameters
-	if (!empty($_POST['ref']))
-	{
-		$websitekey = strtolower($_POST['ref']);
+	if (GETPOST('ref')) {
+		$websitekey = strtolower(GETPOST('ref'));
 	}
 
 	// Si verif ok et action add, on ajoute la ligne
@@ -435,15 +433,14 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
-		$var = false;
-
 		$fieldlist = explode(',', $tabfield[$id]);
 
 		// Line for title
 		print '<tr class="liste_titre">';
 		foreach ($fieldlist as $field => $value)
 		{
+			if ($fieldlist[$field] == 'date_creation') continue;
+
 			// Determine le nom du champ par rapport aux noms possibles
 			// dans les dictionnaires de donnees
 			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
@@ -461,7 +458,6 @@ if ($id)
 		   		} else print $valuetoshow;
 				print '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		print '<td colspan="4">';
@@ -469,7 +465,7 @@ if ($id)
 		print '</tr>';
 
 		// Line to enter new values
-		print "<tr ".$bcnd[$var].">";
+		print '<tr class="oddeven">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -538,6 +534,7 @@ if ($id)
 				if ($fieldlist[$field] == 'lang') { $valuetoshow = $langs->trans("Language"); }
 				if ($fieldlist[$field] == 'type') { $valuetoshow = $langs->trans("Type"); }
 				if ($fieldlist[$field] == 'code') { $valuetoshow = $langs->trans("Code"); }
+				if ($fieldlist[$field] == 'date_creation') { $valuetoshow = $langs->trans("DateCreation"); }
 
 				// Affiche nom du champ
 				if ($showfield)
@@ -570,7 +567,7 @@ if ($id)
 					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 				  	$tmpaction = 'view';
-					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 					$error = $hookmanager->error; $errors = $hookmanager->errors;
@@ -601,7 +598,7 @@ if ($id)
 					print "</td>";
 
 					// Modify link
-					print '<td align="center"><a class="reposition" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
+					print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 
 					// Delete link
 					if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
@@ -650,6 +647,7 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 	foreach ($fieldlist as $field => $value)
 	{
 		$fieldname = $fieldlist[$field];
+
 		if ($fieldlist[$field] == 'lang')
 		{
 			print '<td>';
@@ -658,6 +656,8 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->$fieldname) ? $obj->$fieldname : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
 		} else {
+			if ($fieldlist[$field] == 'date_creation') continue;
+
 			print '<td>';
 			$size = '';
 			if ($fieldlist[$field] == 'code') $size = 'size="8" ';

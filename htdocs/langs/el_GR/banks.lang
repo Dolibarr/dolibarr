@@ -180,3 +180,4 @@ BankColorizeMovementDesc=Εάν αυτή η λειτουργία είναι εν
 BankColorizeMovementName1=Χρώμα φόντου για την κίνηση χρέωσης
 BankColorizeMovementName2=Χρώμα φόντου για την πιστωτική κίνηση
 IfYouDontReconcileDisableProperty=If you don't make the bank reconciliations on some bank accounts, disable the property "%s" on them to remove this warning.
+NoBankAccountDefined=No bank account defined

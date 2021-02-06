@@ -286,8 +286,9 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 	$cat1      = GETPOST("cat1", 'alpha');
 
 	$bankaccountid = $id;
-	if (GETPOST('add_account', 'int') > 0) $bankaccountid = GETPOST('add_account', 'int');
-
+	if (GETPOST('add_account', 'int') > 0) {
+		$bankaccountid = GETPOST('add_account', 'int');
+	}
 	if (!$dateop) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -304,8 +305,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 	}
-	if (!$bankaccountid > 0)
-	{
+	if (!$bankaccountid > 0) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 	}
@@ -315,8 +315,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
     	$error++;
     }*/
 
-	if (!$error && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))
-	{
+	if (!$error && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)) {
 		$objecttmp = new Account($db);
 		$objecttmp->fetch($bankaccountid);
 		$insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
@@ -368,7 +367,7 @@ $donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $paymentscstatic = new PaymentSocialContribution($db);
-$paymentvatstatic = new TVA($db);
+$paymentvatstatic = new Tva($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);

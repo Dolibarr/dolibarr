@@ -175,3 +175,5 @@ Answered=Answered
 IsNotAnAnswer=Non è risposta (email iniziale)
 IsAnAnswer=È la risposta di una prima email
 RecordCreatedByEmailCollector=Record creato da Email Collector %s dall'email %s
+DefaultBlacklistMailingStatus=Default contact status for refuse bulk emailing
+DefaultStatusEmptyMandatory=Empty but mandatory

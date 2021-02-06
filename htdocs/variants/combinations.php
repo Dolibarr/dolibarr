@@ -107,7 +107,9 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$features = $_SESSION['addvariant_'.$object->id];
 
 	if (!$features) {
-		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+		if ($action == 'create') {
+			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
+		}
 	} else {
 		$reference = trim($reference);
 		if (empty($reference)) {
@@ -763,11 +765,11 @@ if (!empty($id) || !empty($ref))
 
 		print '	<div class="inline-block divButAction">';
 
-		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
+		print '<a href="combinations.php?id='.$object->id.'&action=add&token='.newToken().'" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 
 		if ($productCombinations)
 		{
-			print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
+			print '<a href="combinations.php?id='.$object->id.'&action=copy&token='.newToken().'" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 
 		print '	</div>';

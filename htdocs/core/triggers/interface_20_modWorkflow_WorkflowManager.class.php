@@ -271,9 +271,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 				}
 
-				//Build array of quantity ordered by product
+				//Build array of quantity ordered to be shipped
 				if (is_array($order->lines) && count($order->lines) > 0) {
 					foreach ($order->lines as $orderline) {
+						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
 						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) continue;
 						$qtyordred[$orderline->fk_product] += $orderline->qty;
 					}

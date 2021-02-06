@@ -38,6 +38,31 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class pdf_timespent extends ModelePDFProjects
 {
 	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
+
+	/**
+	 * @var string model name
+	 */
+	public $name;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
 	 * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
@@ -48,6 +73,41 @@ class pdf_timespent extends ModelePDFProjects
 	 * @var string
 	 */
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
+	 */
+	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
 
 	/**
 	 * Issuer
@@ -70,6 +130,7 @@ class pdf_timespent extends ModelePDFProjects
 		$this->db = $db;
 		$this->name = "timespent";
 		$this->description = $langs->trans("DocumentModelTimeSpent");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';

@@ -149,3 +149,4 @@ InfoRejectMessage=Olá, <br> <br> a ordem de pagamento de débito directo da fac
 ModeWarning=Opção para o modo real não foi definido, nós paramos depois desta simulação
 ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
 ErrorICSmissing=Missing ICS in Bank account %s
+TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Total amount of direct debit order differs from sum of lines

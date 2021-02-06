@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +108,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $fk_project;
 
+	/**
+	 * @var int ID
+	 */
+	public $fk_user;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -133,8 +139,8 @@ class ChargeSociales extends CommonObject
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
-		$sql .= ", cs.fk_account, cs.fk_mode_reglement";
-		$sql .= ", c.libelle";
+        $sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user";
+		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
@@ -157,13 +163,14 @@ class ChargeSociales extends CommonObject
 				$this->lib					= $obj->label;
 				$this->label				= $obj->label;
 				$this->type					= $obj->fk_type;
-				$this->type_label			= $obj->libelle;
+				$this->type_label			= $obj->type_label;
 				$this->fk_account			= $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
 				$this->mode_reglement = $obj->mode_reglement_libelle;
 				$this->amount = $obj->amount;
 				$this->fk_project = $obj->fk_project;
+				$this->fk_user = $obj->fk_user;
 				$this->paye = $obj->paye;
 				$this->periode = $this->db->jdate($obj->periode);
 				$this->import_key = $this->import_key;
@@ -222,7 +229,7 @@ class ChargeSociales extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, date_creation)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
 		$sql .= " VALUES (".$this->type;
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : "NULL");
@@ -233,6 +240,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 'NULL');
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".$user->id;
+		$sql .= ", ".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : 'NULL');
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
@@ -346,6 +354,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", periode='".$this->db->idate($this->periode)."'";
 		$sql .= ", amount='".price2num($this->amount, 'MT')."'";
 		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "NULL");
+		$sql .= ", fk_user=".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : "NULL");
 		$sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$this->id;
 
@@ -421,7 +430,7 @@ class ChargeSociales extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Tag social contribution as payed completely
+	 *    Tag social contribution as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					<0 if KO, >0 if OK
@@ -439,7 +448,7 @@ class ChargeSociales extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Remove tag payed on social contribution
+	 *    Remove tag paid on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
 	 *    @return	int					<0 if KO, >0 if OK
@@ -459,7 +468,7 @@ class ChargeSociales extends CommonObject
 	 *  Retourne le libelle du statut d'une charge (impaye, payee)
 	 *
 	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
 	 *  @return	string        			Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -473,7 +482,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)

@@ -743,7 +743,7 @@ if (empty($reshook))
 			if (GETPOST('propalid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+				if (($result = $propal->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), 2), $object->id)) < 0)
 				{
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
@@ -754,12 +754,12 @@ if (empty($reshook))
 				$result = $propal->addline(
 					$desc,
 					$pu_ht,
-					GETPOST('qty'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					GETPOST('remise_percent'),
+					price2num(GETPOST('remise_percent'), 2),
 					$price_base_type,
 					$pu_ttc,
 					0,
@@ -784,7 +784,7 @@ if (empty($reshook))
 			} elseif (GETPOST('commandeid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+				if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent', 2), $object->id)) < 0)
 				{
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
@@ -795,12 +795,12 @@ if (empty($reshook))
 				$result = $commande->addline(
 					$desc,
 					$pu_ht,
-					GETPOST('qty'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					GETPOST('remise_percent'),
+					price2num(GETPOST('remise_percent'), 2),
 					'',
 					'',
 					$price_base_type,
@@ -825,7 +825,7 @@ if (empty($reshook))
 			} elseif (GETPOST('factureid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+				if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent', 2), $object->id)) < 0)
 				{
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
@@ -836,12 +836,12 @@ if (empty($reshook))
 				$result = $facture->addline(
 					$desc,
 					$pu_ht,
-					GETPOST('qty'),
+					price2nm(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$object->id,
-					GETPOST('remise_percent'),
+					price2num(GETPOST('remise_percent'), 2),
 					'',
 					'',
 					'',

@@ -332,13 +332,13 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param   integer	$selected     	Preselected value
-	 * @param   string	$htmlname      	Name of combo list
-	 * @param	int		$nocateg		Show also an entry "Not categorized"
-	 * @param   int     $showempty      Add also an empty line
-	 * @param   string  $morecss        More CSS
-	 * @return  string		        	Html combo list code
+	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param   integer		$selected     	Preselected value
+	 * @param   string		$htmlname      	Name of combo list
+	 * @param	int			$nocateg		Show also an entry "Not categorized"
+	 * @param   int|string  $showempty      Add also an empty line
+	 * @param   string  	$morecss        More CSS
+	 * @return  string			        	Html combo list code
 	 * @see	select_all_categories()
 	 */
 	public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
@@ -368,7 +368,13 @@ class FormOther
 
 		// Print a select with each of them
 		$moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) $moreforfilter .= '<option value="0">&nbsp;</option>'; // Should use -1 to say nothing
+		if ($showempty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) $textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			if (!is_numeric($showempty)) $textforempty = $showempty;
+			$moreforfilter .= '<option class="optiongrey" '.($moreparamonempty ? $moreparamonempty.' ' : '').'value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
+		}
 
 		if (is_array($tab_categs))
 		{
@@ -394,14 +400,14 @@ class FormOther
 	/**
 	 *  Return select list for categories (to use in form search selectors)
 	 *
-	 *  @param	string	$selected     		Preselected value
-	 *  @param  string	$htmlname      		Name of combo list (example: 'search_sale')
-	 *  @param  User	$user           	Object user
-	 *  @param	int		$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	int		$showempty			1=show also an empty value
-	 *  @param	string	$morecss			More CSS
-	 *  @param	int		$norepresentative	Show also an entry "Not categorized"
-	 *  @return string						Html combo list code
+	 *  @param	string		$selected     		Preselected value
+	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
+	 *  @param  User		$user           	Object user
+	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 *  @param	int|string	$showempty			1=show also an empty value
+	 *  @param	string		$morecss			More CSS
+	 *  @param	int			$norepresentative	Show also an entry "Not categorized"
+	 *  @return string							Html combo list code
 	 */
 	public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
 	{
@@ -427,7 +433,12 @@ class FormOther
 
 		// Select each sales and print them in a select input
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) $out .= '<option value="0">&nbsp;</option>';
+		if ($showempty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) $textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			if (!is_numeric($showempty)) $textforempty = $showempty;
+			$out .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+		}
 
 		// Get list of users allowed to be viewed
 		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
@@ -499,11 +510,7 @@ class FormOther
 				$out .= '<option value="'.$obj_usr->rowid.'"';
 				if ($obj_usr->rowid == $selected) $out .= ' selected';
 				$out .= ' data-html="';
-				$outhtml = '';
-				if (!empty($obj_usr->photo))
-				{
-					$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
-				}
+				$outhtml = $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
 				if ($showstatus >= 0 && $obj_usr->status == 0) $outhtml .= '<strike class="opacitymediumxxx">';
 				$outhtml .= $labeltoshow;
 				if ($showstatus >= 0 && $obj_usr->status == 0) $outhtml .= '</strike>';

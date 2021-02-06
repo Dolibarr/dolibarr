@@ -1952,12 +1952,12 @@ class ExtraFields
 				$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 				if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
 					// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'')]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'')] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
 					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-					$out .= '<!-- Add js script to manage the collpase/uncollapse of extrafields separators '.$key.' -->';
-					$out .= '<script type="text/javascript">';
-					$out .= 'jQuery(document).ready(function(){';
+					$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+					$out .= '<script type="text/javascript">'."\n";
+					$out .= 'jQuery(document).ready(function(){'."\n";
 					if ($collapse_display === false) {
 						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
 						$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
@@ -1966,18 +1966,19 @@ class ExtraFields
 						$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					}
 					$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+					$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
 					$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(300, function(){'."\n";
 					$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
 					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'').'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					$out .= '           } else {'."\n";
 					$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.(!empty($object->id)?'_'.$object->id:'').'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+					$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 					$out .= '           }'."\n";
-					$out .= '       });';
-					$out .= '   });';
-					$out .= '});';
-					$out .= '</script>';
+					$out .= '       });'."\n";
+					$out .= '   });'."\n";
+					$out .= '});'."\n";
+					$out .= '</script>'."\n";
 				}
 			}
 		}
@@ -2030,9 +2031,12 @@ class ExtraFields
 
 				if ($this->attributes[$object->table_element]['required'][$key])	// Value is required
 				{
-					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
-					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
+					// technically non-empty value may be treated as empty functionally).
+					// value can be alpha, int, array, etc...
+				    if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
+				        || (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+				        || (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];

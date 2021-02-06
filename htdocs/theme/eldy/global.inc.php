@@ -125,6 +125,10 @@ th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decora
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
 /* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
+
+input {
+	font-size: unset;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
@@ -174,8 +178,11 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
     line-height: 1.3em;
-	padding: 5px;
+	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	padding: 5px;
 }
 select {
 	padding-top: 5px;
@@ -440,8 +447,12 @@ input:-webkit-autofill {
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px #FDFFF0 inset;
 }
-::-webkit-input-placeholder { color:#ccc; }
-input:-moz-placeholder { color:#ccc; }
+
+/* CSS for placeholder */
+.placeholder { color: #ccc; }
+::-webkit-input-placeholder { color: #ccc; }
+input:-moz-placeholder { color: #ccc; }
+
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
@@ -670,6 +681,15 @@ textarea.centpercent {
 .nounderline {
     text-decoration: none;
 }
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -786,6 +806,10 @@ span.fa.fa-plus-circle.paddingleft {
 .borderrightlight
 {
 	border-right: 1px solid #DDD;
+}
+.borderleftlight
+{
+	border-left: 1px solid #DDD;
 }
 #formuserfile {
 	margin-top: 4px;
@@ -1304,11 +1328,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, span.widthcentpercentminusx, input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, span.widthcentpercentminusxx, input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1915,6 +1939,12 @@ span.widthpictotitle.pictotitle {
 .tagtdnote span.pictoedit {
     opacity: 0.4;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 18px;
+    padding-right: 0;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -2568,6 +2598,9 @@ img.userphotosmall {			/* size for user photo in lists */
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
     background: #fff;
 }
+form[name="addtime"] img.userphoto {
+    border: 1px solid #444;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
@@ -3043,6 +3076,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
     padding: 4px !important;
 }
+input.button.smallpaddingimp {
+    font-size: 0.8em;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
@@ -3269,6 +3305,12 @@ td.borderright {
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
 }
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
+}
 
 
 /* For table with no filter before */
@@ -3388,13 +3430,13 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-div.pagination li a:hover,
-div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
+/*div.pagination li a:hover,
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
-div.pagination li:not(.paginationafterarrows,.title-button) span:focus {
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
+}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -4127,7 +4169,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
-td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+td.widthpictotitle { width: 38px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
@@ -5639,6 +5681,8 @@ a span.select2-chosen
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
+}
+span#select2-boxbookmark-container {
     opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
@@ -6547,6 +6591,15 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
     font-weight: 400;
     writing-mode: vertical-rl;
     white-space: nowrap;
+}
+
+
+/* ============================================================================== */
+/* For copypaste feature                                                          */
+/* ============================================================================== */
+
+.clipboardCPShowOnHover .clipboardCPButton {
+	display: none;
 }
 
 

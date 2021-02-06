@@ -353,15 +353,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Enables a module.
-	 * Inserts all informations into database
+	 * Inserts all informations into database.
 	 *
-	 * @param array  $array_sql SQL requests to be executed when enabling module
-	 * @param string $options   String with options when disabling module:
-	 *                          - 'noboxes' = Do not insert boxes -
-	 *                          'newboxdefonly' = For boxes, insert def of
-	 *                          boxes only and not boxes activation
-	 *
-	 * @return int                         1 if OK, 0 if KO
+	 * @param array  $array_sql 	SQL requests to be executed when enabling module
+	 * @param string $options   	String with options when disabling module:
+	 *                          	- 'noboxes' = Do not insert boxes
+	 *                          	- 'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 * @return int                  1 if OK, 0 if KO
 	 */
 	protected function _init($array_sql, $options = '')
 	{
@@ -1869,6 +1867,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->mainmenu = isset($this->menu[$key]['mainmenu']) ? $this->menu[$key]['mainmenu'] : (isset($menu->fk_mainmenu) ? $menu->fk_mainmenu : '');
 			$menu->leftmenu = isset($this->menu[$key]['leftmenu']) ? $this->menu[$key]['leftmenu'] : '';
 			$menu->title = $this->menu[$key]['titre'];
+			$menu->prefix = $this->menu[$key]['prefix'];
 			$menu->url = $this->menu[$key]['url'];
 			$menu->langs = $this->menu[$key]['langs'];
 			$menu->position = $this->menu[$key]['position'];

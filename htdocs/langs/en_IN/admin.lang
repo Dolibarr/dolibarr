@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - admin
 Module20Name=Quotations
 Module20Desc=Management of quotations
+Module59000Desc=Module to follow margins
 Permission21=Read quotations
 Permission22=Create/modify quotations
 Permission24=Validate quotations
@@ -8,7 +9,6 @@ Permission25=Send quotations
 Permission26=Close quotations
 Permission27=Delete quotations
 Permission28=Export quotations
-YouHaveXObjectUseSearchOptim=You have %s %s in the database. You should add the constant %s to 1 in Home-Setup-Other. Limit the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
 PropalSetup=Quotation module setup
 ProposalsNumberingModules=Quotation numbering models
 ProposalsPDFModules=Quotation documents models

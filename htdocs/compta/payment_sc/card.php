@@ -162,7 +162,7 @@ print dol_get_fiche_end();
 
 
 /*
- * List of social contributions payed
+ * List of social contributions paid
  */
 
 $disable_delete = 0;
@@ -213,7 +213,7 @@ if ($resql)
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
 			print '<td class="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete

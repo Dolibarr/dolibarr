@@ -177,6 +177,7 @@ class modTicket extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'manage';
 
+		/* Seems not used and in conflict with societe->client->voir (see all thirdparties)
 		$r++;
 		$this->rights[$r][0] = 56005; // id de la permission
 		$this->rights[$r][1] = 'See all tickets, even if not assigned to (not effective for external users, always restricted to the thirdpardy they depends on)'; // libelle de la permission
@@ -184,6 +185,7 @@ class modTicket extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'view';
 		$this->rights[$r][5] = 'all';
+		*/
 
 		// Main menu entries
 		$this->menus = array(); // List of menus to add

@@ -112,7 +112,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
-			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num;
+			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.(!empty($object->id)?'_'.$object->id:'');
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
 			}*/
