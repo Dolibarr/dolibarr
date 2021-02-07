@@ -157,7 +157,7 @@ if ($result > 0)
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Prefix
 	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
