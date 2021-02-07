@@ -1369,24 +1369,24 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add')
 
 				print '<tr>';
 				print '<td>'.$langs->trans('DateCreation').'</td>';
-				print '<td>'.dol_print_date($object->date_create, 'dayhour').'</td>';
+				print '<td>'.dol_print_date($object->date_create, 'dayhour', 'tzuser').'</td>';
 				print '</tr>';
 				if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
 					print '<tr>';
 					print '<td>'.$langs->trans('DateValidCP').'</td>';
-					print '<td>'.dol_print_date($object->date_valid, 'dayhour').'</td>'; // warning: date_valid is approval date on holiday module
+					print '<td>'.dol_print_date($object->date_valid, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
 					print '</tr>';
 				}
 				if ($object->statut == Holiday::STATUS_CANCELED) {
 					print '<tr>';
 					print '<td>'.$langs->trans('DateCancelCP').'</td>';
-					print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td>';
+					print '<td>'.dol_print_date($object->date_cancel, 'dayhour', 'tzuser').'</td>';
 					print '</tr>';
 				}
 				if ($object->statut == Holiday::STATUS_REFUSED) {
 					print '<tr>';
 					print '<td>'.$langs->trans('DateRefusCP').'</td>';
-					print '<td>'.dol_print_date($object->date_refuse, 'dayhour').'</td>';
+					print '<td>'.dol_print_date($object->date_refuse, 'dayhour', 'tzuser').'</td>';
 					print '</tr>';
 				}
 				print '</tbody>';

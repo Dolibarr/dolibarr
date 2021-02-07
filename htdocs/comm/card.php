@@ -273,9 +273,9 @@ if ($object->id > 0)
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Prospect/Customer
-	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
-	print $object->getLibCustProspStatut();
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
 	// Prefix

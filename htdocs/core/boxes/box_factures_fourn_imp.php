@@ -26,7 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show not payed suppliers invoices
+ * Class to manage the box to show not paid suppliers invoices
  */
 class box_factures_fourn_imp extends ModeleBoxes
 {

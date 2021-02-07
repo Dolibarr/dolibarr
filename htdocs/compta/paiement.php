@@ -373,6 +373,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             			function setPaiementCode()
             			{
             				var code = $("#selectpaiementcode option:selected").val();
+							console.log("setPaiementCode code="+code);
 
                             if (code == \'CHQ\' || code == \'VIR\')
             				{

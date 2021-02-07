@@ -277,7 +277,6 @@ if ($canreadperms)
 	}
 }
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array

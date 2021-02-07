@@ -875,6 +875,11 @@ body[class*="colorblind-"] .text-success{
 {
 	border-right: 1px solid #f4f4f4;
 }
+.borderleftlight
+{
+	border-left: 1px solid #f4f4f4;
+}
+
 #formuserfile {
 	margin-top: 4px;
 }
@@ -1866,6 +1871,11 @@ div.nopadding {
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 16px;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -3248,6 +3258,12 @@ td.borderright {
 	border-right-width: 1px !important;
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
+}
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
 }
 
 /* For table with no filter before */

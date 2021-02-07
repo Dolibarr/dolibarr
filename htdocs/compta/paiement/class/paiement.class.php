@@ -192,6 +192,7 @@ class Paiement extends CommonObject
 				$this->amount         = $obj->amount;
 				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->type_label = $obj->type_label;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;

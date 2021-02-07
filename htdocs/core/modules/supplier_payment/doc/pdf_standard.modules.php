@@ -748,7 +748,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
-			// Payed
+			// Paid
 			$thirdparty = $object->thirdparty;
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);

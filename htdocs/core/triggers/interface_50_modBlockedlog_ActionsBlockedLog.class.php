@@ -69,6 +69,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
+		$b->loadTrackedEvents();
 
 		// Tracked events
 		if (!in_array($action, array_keys($b->trackedevents))) {
