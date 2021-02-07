@@ -5586,9 +5586,11 @@ class Form
 	 */
 	public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0)
 	{
-		$ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty);
-		$ret .= '<br/>';
-		$ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty);
+		global $langs;
+
+		$ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"), 'tzuserrel');
+		$ret .= '<br>';
+		$ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"), 'tzuserrel');
 		return $ret;
 	}
 
@@ -5703,7 +5705,7 @@ class Form
 				if (strval($set_time) != '' && $set_time != -1)
 				{
 					//$formated_date=dol_print_date($set_time,$conf->format_date_short);
-					$formated_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput")); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formated_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 				}
 
 				// Calendrier popup version eldy
