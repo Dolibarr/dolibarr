@@ -322,10 +322,8 @@ if ($result > 0)
 
 	// List of notifications enabled for fixed email
 	/*
-    foreach($conf->global as $key => $val)
-    {
+    foreach($conf->global as $key => $val) {
     	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-    	$var = ! $var;
 		print '<tr class="oddeven"><td>';
 		$listtmp=explode(',',$val);
 		$first=1;
