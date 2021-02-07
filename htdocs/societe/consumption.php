@@ -433,15 +433,15 @@ if ($sql_select)
 
 		// Status
 		print '<td class="center">';
-		if ($type_element == 'contract')
-		{
-			print $documentstaticline->getLibStatut(2);
+		if ($type_element == 'contract') {
+			print $documentstaticline->getLibStatut(5);
 		} else {
-			print $documentstatic->getLibStatut(2);
+			print $documentstatic->getLibStatut(5);
 		}
 		print '</td>';
 
-		print '<td>';
+		// Label
+		print '<td class="tdoverflowmax300">';
 
 		// Define text, description and type
 		$text = ''; $description = ''; $type = 0;

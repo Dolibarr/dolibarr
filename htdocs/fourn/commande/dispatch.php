@@ -925,7 +925,7 @@ if ($id > 0 || !empty($ref)) {
 								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, '', '', 1, '');
 								print '</td>';
 							}
-							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
+							print '<td colspan="3">&nbsp;</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
 							$type = 'dispatch';
 							$colspan = 7;

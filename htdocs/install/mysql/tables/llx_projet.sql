@@ -44,10 +44,11 @@ create table llx_projet
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
   budget_amount    double(24,8),
-  usage_opportunity    integer DEFAULT 0,			-- Set to 1 if project is used to follow an opportunity
-  usage_task           integer DEFAULT 1,			-- Set to 1 if project is used to manage tasks and/or record timesheet
-  usage_bill_time      integer DEFAULT 0,			-- Set to 1 if time spent must be converted into invoices
-  usage_organize_event integer DEFAULT 0,			-- Set to 1 if you want to use project to organize an event, receive attendees subscription				
+  usage_opportunity    integer DEFAULT 0,		-- Set to 1 if project is used to follow an opportunity
+  usage_task           integer DEFAULT 1,		-- Set to 1 if project is used to manage tasks and/or record timesheet
+  usage_bill_time      integer DEFAULT 0,		-- Set to 1 if time spent must be converted into invoices
+  usage_organize_event integer DEFAULT 0,		-- Set to 1 if you want to use project to organize an event, receive attendees subscription				
   model_pdf        varchar(255),
+  last_main_doc	   varchar(255),				-- relative filepath+filename of last main generated document
   import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

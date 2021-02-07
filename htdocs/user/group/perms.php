@@ -340,7 +340,7 @@ if ($object->id > 0)
 						print img_picto($langs->trans("Add"), 'switch_off');
 						print '</a></td>';
 					}
-					print '<td>&nbsp</td>';
+					print '<td>&nbsp;</td>';
 				}
 			} else {
 				// Do not own permission
@@ -351,7 +351,7 @@ if ($object->id > 0)
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
 				}
-				print '<td>&nbsp</td>';
+				print '<td>&nbsp;</td>';
 			}
 
 			$permlabel = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));

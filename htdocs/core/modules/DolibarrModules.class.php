@@ -316,7 +316,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
 	public $phpmin;
 
@@ -1867,9 +1867,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->mainmenu = isset($this->menu[$key]['mainmenu']) ? $this->menu[$key]['mainmenu'] : (isset($menu->fk_mainmenu) ? $menu->fk_mainmenu : '');
 			$menu->leftmenu = isset($this->menu[$key]['leftmenu']) ? $this->menu[$key]['leftmenu'] : '';
 			$menu->title = $this->menu[$key]['titre'];
-			$menu->prefix = $this->menu[$key]['prefix'];
+			$menu->prefix = isset($this->menu[$key]['prefix']) ? $this->menu[$key]['prefix'] : '';
 			$menu->url = $this->menu[$key]['url'];
-			$menu->langs = $this->menu[$key]['langs'];
+			$menu->langs = isset($this->menu[$key]['langs']) ? $this->menu[$key]['langs'] : '';
 			$menu->position = $this->menu[$key]['position'];
 			$menu->perms = $this->menu[$key]['perms'];
 			$menu->target = isset($this->menu[$key]['target']) ? $this->menu[$key]['target'] : '';

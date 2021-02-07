@@ -74,7 +74,7 @@ class modAdherent extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("members", "companies");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array();

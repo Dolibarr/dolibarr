@@ -133,19 +133,33 @@ class BlockedLog
 	 *
 	 * @return int			Always 1
 	 */
-	public function loadTrackedEvents() {
+	public function loadTrackedEvents()
+	{
 		global $conf;
 
 		$this->trackedevents = array();
 
-		if ($conf->facture->enabled) $this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
-		if ($conf->facture->enabled) $this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
-		if ($conf->facture->enabled) $this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
-		if ($conf->facture->enabled) $this->trackedevents['DOC_DOWNLOAD'] = 'BlockedLogBillDownload';
-		if ($conf->facture->enabled) $this->trackedevents['DOC_PREVIEW'] = 'BlockedLogBillPreview';
-
-		if ($conf->facture->enabled) $this->trackedevents['PAYMENT_CUSTOMER_CREATE'] = 'logPAYMENT_CUSTOMER_CREATE';
-		if ($conf->facture->enabled) $this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = 'logPAYMENT_CUSTOMER_DELETE';
+		if ($conf->facture->enabled) {
+			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
+		}
+		if ($conf->facture->enabled) {
+			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
+		}
+		if ($conf->facture->enabled) {
+			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
+		}
+		if ($conf->facture->enabled) {
+			$this->trackedevents['DOC_DOWNLOAD'] = 'BlockedLogBillDownload';
+		}
+		if ($conf->facture->enabled) {
+			$this->trackedevents['DOC_PREVIEW'] = 'BlockedLogBillPreview';
+		}
+		if ($conf->facture->enabled) {
+			$this->trackedevents['PAYMENT_CUSTOMER_CREATE'] = 'logPAYMENT_CUSTOMER_CREATE';
+		}
+		if ($conf->facture->enabled) {
+			$this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = 'logPAYMENT_CUSTOMER_DELETE';
+		}
 
 		/* Supplier
 		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
@@ -158,12 +172,20 @@ class BlockedLog
 		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
 		 */
 
-		if ($conf->don->enabled) $this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
-		if ($conf->don->enabled) $this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
+		if ($conf->don->enabled) {
+			$this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
+		}
+		if ($conf->don->enabled) {
+			$this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
+		}
 		//if ($conf->don->enabled) $this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
 
-		if ($conf->don->enabled) $this->trackedevents['DONATION_PAYMENT_CREATE'] = 'logDONATION_PAYMENT_CREATE';
-		if ($conf->don->enabled) $this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
+		if ($conf->don->enabled) {
+			$this->trackedevents['DONATION_PAYMENT_CREATE'] = 'logDONATION_PAYMENT_CREATE';
+		}
+		if ($conf->don->enabled) {
+			$this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
+		}
 
 		/*
 		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
@@ -171,18 +193,29 @@ class BlockedLog
 		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
 		 */
 
-		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
-		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
-		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
-
-
-		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
-		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
-		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
-
+		if ($conf->adherent->enabled) {
+			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
+		}
+		if ($conf->adherent->enabled) {
+			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
+		}
+		if ($conf->adherent->enabled) {
+			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
+		}
+		if ($conf->banque->enabled) {
+			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
+		}
+		if ($conf->banque->enabled) {
+			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
+		}
+		if ($conf->banque->enabled) {
+			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
+		}
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
 		$moduleposenabled = (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->BANK_ENABLE_POS_CASHCONTROL));
-		if ($moduleposenabled) $this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
+		if ($moduleposenabled) {
+			$this->trackedevents['CASHCONTROL_VALIDATE'] = 'logCASHCONTROL_VALIDATE';
+		}
 
 		// Add more action to track from a conf variable
 		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
@@ -968,16 +1001,16 @@ class BlockedLog
 
 		if ($element == 'all') {
 	 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE entity=".$conf->entity;
+			 WHERE entity=".$conf->entity;
 		} elseif ($element == 'not_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE entity=".$conf->entity." AND certified = 0";
+			 WHERE entity=".$conf->entity." AND certified = 0";
 		} elseif ($element == 'just_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE entity=".$conf->entity." AND certified = 1";
+			 WHERE entity=".$conf->entity." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-	         WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."'";
+			 WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object)	          $sql .= natural_search("rowid", $fk_object, 1);
