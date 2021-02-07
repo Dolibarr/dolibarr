@@ -801,7 +801,15 @@ span.fa.fa-plus-circle.paddingleft {
 }
 #formuserfile input[type='file'] {
     font-size: 1em;
+    /* opacity: 0.5em; */
 }
+/*#formuserfile input[type='file']:valid {
+	color: #a00;
+}
+#formuserfile input[type='file']:empty {
+	color: #0a0;
+}*/
+
 #formuserfile_link {
 	margin-left: 1px;
 }
