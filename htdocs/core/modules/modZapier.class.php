@@ -123,7 +123,7 @@ class modZapier extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("zapier");
 		// Minimum version of PHP required by module
-		//$this->phpmin = array(5, 5);
+		//$this->phpmin = array(5, 6);
 		// Minimum version of Dolibarr required by module
 		$this->need_dolibarr_version = array(10, 0);
 		// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)

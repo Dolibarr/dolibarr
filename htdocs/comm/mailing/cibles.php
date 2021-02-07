@@ -575,17 +575,17 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		// Source
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '&nbsp;';
 		print '</td>';
 
 		// Date last update
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '&nbsp;';
 		print '</td>';
 
 		// Date sending
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '&nbsp;';
 		print '</td>';
 
 		//Statut

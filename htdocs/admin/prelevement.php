@@ -287,9 +287,7 @@ foreach ($dirmodels as $reldir)
                             if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
                             if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-                            if ($modulequalified)
-                            {
-                                $var = !$var;
+                            if ($modulequalified) {
                                 print '<tr class="oddeven"><td width="100">';
                                 print (empty($module->name)?$name:$module->name);
                                 print "</td><td>\n";
