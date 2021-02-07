@@ -4107,21 +4107,21 @@ function dol_print_error($db = '', $error = '', $errors = null)
 
 		$out .= "<b>".$langs->trans("Date").":</b> ".dol_print_date(time(), 'dayhourlog')."<br>\n";
 		$out .= "<b>".$langs->trans("Dolibarr").":</b> ".DOL_VERSION." - https://www.dolibarr.org<br>\n";
-		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out .= "<b>".$langs->trans("LevelOfFeature").":</b> ".$conf->global->MAIN_FEATURES_LEVEL."<br>\n";
+		if (isset($conf->global->MAIN_FEATURES_LEVEL)) $out .= "<b>".$langs->trans("LevelOfFeature").":</b> ".dol_htmlentities($conf->global->MAIN_FEATURES_LEVEL, ENT_COMPAT)."<br>\n";
 		if (function_exists("phpversion"))
 		{
 			$out .= "<b>".$langs->trans("PHP").":</b> ".phpversion()."<br>\n";
 		}
-		$out .= "<b>".$langs->trans("Server").":</b> ".dol_htmlentities($_SERVER["SERVER_SOFTWARE"])."<br>\n";
+		$out .= "<b>".$langs->trans("Server").":</b> ".(isset($_SERVER["SERVER_SOFTWARE"]) ? dol_htmlentities($_SERVER["SERVER_SOFTWARE"], ENT_COMPAT) : '')."<br>\n";
 		if (function_exists("php_uname"))
 		{
 			$out .= "<b>".$langs->trans("OS").":</b> ".php_uname()."<br>\n";
 		}
-		$out .= "<b>".$langs->trans("UserAgent").":</b> ".dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT, 'UTF-8')."<br>\n";
+		$out .= "<b>".$langs->trans("UserAgent").":</b> ".(isset($_SERVER["HTTP_USER_AGENT"]) ? dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT) : '')."<br>\n";
 		$out .= "<br>\n";
-		$out .= "<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8')."<br>\n";
-		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8') : '')."<br>\n";
-		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu) : '')."<br>\n";
+		$out .= "<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT)."<br>\n";
+		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
+		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu, ENT_COMPAT) : '')."<br>\n";
 		$out .= "<br>\n";
 		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
 		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
