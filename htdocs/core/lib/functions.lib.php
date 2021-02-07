@@ -4507,7 +4507,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
 
 	print "\n";
-	print "<!-- Begin title '".$titre."' -->\n";
+	print "<!-- Begin title '".dol_trunc($titre, 25)."' -->\n";
 	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss ? ' '.$morecss : '').'"><tr>'; // maring bottom must be same than into load_fiche_tire
 
 	// Left
