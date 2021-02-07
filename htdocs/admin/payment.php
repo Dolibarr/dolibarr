@@ -157,9 +157,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						if ($module->isEnabled())
-						{
-							$var = !$var;
+						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td width="100">';
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_payment_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
