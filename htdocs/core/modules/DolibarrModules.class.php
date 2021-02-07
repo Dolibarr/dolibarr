@@ -316,7 +316,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
 	public $phpmin;
 
