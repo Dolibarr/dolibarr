@@ -209,14 +209,15 @@ if ($result > 0)
 	print "\n";
 
 	// Help
-	print '<div class="opacitymedium">';
+	print '<div class="opacitymedium hideonsmartphone">';
 	print $langs->trans("NotificationsDesc");
 	print '<br>'.$langs->trans("NotificationsDescUser");
 	print '<br>'.$langs->trans("NotificationsDescContact");
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
+	print '<br>';
 	print '</div>';
 
-	print '<br><br>'."\n";
+	print '<br>'."\n";
 
 
 	// List of notifications enabled for contacts
@@ -249,7 +250,8 @@ if ($result > 0)
 	$param = "&socid=".$socid;
 
 	// Line with titles
-	print '<table width="100%" class="noborder">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, 'width="45%"', $sortfield, $sortorder);
 	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
@@ -272,15 +274,16 @@ if ($result > 0)
  			$label = ($langs->trans("Notify_".$managedeventfornotification['code']) != "Notify_".$managedeventfornotification['code'] ? $langs->trans("Notify_".$managedeventfornotification['code']) : $managedeventfornotification['label']);
 			$actions[$managedeventfornotification['rowid']] = $label;
 		}
-		print '<tr class="oddeven nohover"><td class="maxwidthonsmartphone">';
-		print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright').$form->selectarray("contactid", $listofemails, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
+		print '<tr class="oddeven nohover">';
+		print '<td class="nowraponall">';
+		print img_picto('', 'contact', '', false, 0, 0, '', 'paddingright').$form->selectarray("contactid", $listofemails, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 		print '</td>';
-		print '<td class="maxwidthonsmartphone">';
-		print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
+		print '<td class="nowraponall">';
+		print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidthonsmartphone');
 		print '</td>';
 		print '<td>';
 		$type = array('email'=>$langs->trans("EMail"));
-		print $form->selectarray("typeid", $type);
+		print $form->selectarray("typeid", $type, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 		print '</td>';
 		print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
@@ -318,7 +321,7 @@ if ($result > 0)
 				}
 			}
 			print '</td>';
-			print '<td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($label).'">';
 			$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
 			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
 			print '</td>';
@@ -384,7 +387,8 @@ if ($result > 0)
     }*/
 
 	print '</table>';
-
+	print '</div>';
+	print '</form>';
 
 	print '<br><br>'."\n";
 
@@ -440,7 +444,8 @@ if ($result > 0)
 	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	// Line with titles
-	print '<table width="100%" class="noborder">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder);
@@ -499,6 +504,7 @@ if ($result > 0)
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print '</form>';
 } else dol_print_error('', 'RecordNotFound');
