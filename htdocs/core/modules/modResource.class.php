@@ -188,6 +188,7 @@ class modResource extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=tools',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',

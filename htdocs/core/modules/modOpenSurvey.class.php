@@ -126,6 +126,7 @@ class modOpenSurvey extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',
 			'titre'=>'Survey',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'tools',
 			'leftmenu'=>'opensurvey',
 			'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
