@@ -170,10 +170,8 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 	print '</tr>';
 
 	$arrayglobalvars = $price_globals->listGlobalVariables();
-	if (!empty($arrayglobalvars))
-	{
+	if (!empty($arrayglobalvars)) {
 		foreach ($arrayglobalvars as $i=>$entry) {
-			$var = !$var;
 			print '<tr class="oddeven">';
 			print '<td>'.$entry->code.'</td>';
 			print '<td>'.$entry->description.'</td>';
