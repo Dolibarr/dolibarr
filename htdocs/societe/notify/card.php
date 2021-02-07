@@ -139,6 +139,7 @@ $result = $object->fetch($socid);
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Notification");
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
 llxHeader('', $title, $help_url);
 
 
@@ -323,7 +324,9 @@ if ($result > 0)
 			$contactstatic->id = $obj->contact_id;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
-			print '<tr class="oddeven"><td>'.$contactstatic->getNomUrl(1);
+
+			print '<tr class="oddeven">';
+			print '<td>'.$contactstatic->getNomUrl(1);
 			if ($obj->type == 'email')
 			{
 				if (isValidEmail($obj->email))
@@ -331,7 +334,7 @@ if ($result > 0)
 					print ' &lt;'.$obj->email.'&gt;';
 				} else {
 					$langs->load("errors");
-					print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
+					print ' '.img_warning().' <span class="warning">'.$langs->trans("ErrorBadEMail", $obj->email).'</span>';
 				}
 			}
 			print '</td>';
@@ -372,7 +375,8 @@ if ($result > 0)
 			}
 			else
 			{
-				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
+				$langs->load("errors");
+				print ' '.img_warning().' <span class="warning">'.$langs->trans("ErrorBadEMail",$valemail).'</span>;
 			}
 		}
 		print '</td>';
