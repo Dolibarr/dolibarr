@@ -485,7 +485,7 @@ if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if ($search_status != '' && $search_status >= 0) $sql .= natural_search("s.status", $search_status, 2);
 if (!empty($conf->barcode->enabled) && $search_barcode) $sql .= natural_search("s.barcode", $search_barcode);
 if ($search_prive_level && $search_prive_level != '-1') $sql .= natural_search("s.price_level", $search_prive_level, 2);
-if ($search_type_thirdparty && $search_type_thirdparty != '-1') $sql .= natural_search("s.fk_typent", $search_type_thirdparty, 2);
+if ($search_type_thirdparty && $search_type_thirdparty > 0) $sql .= natural_search("s.fk_typent", $search_type_thirdparty, 2);
 if (!empty($search_staff) && $search_staff != '-1')            $sql .= natural_search("s.fk_effectif", $search_staff, 2);
 if ($search_level)  $sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
 if ($search_parent_name)   $sql .= natural_search("s2.nom", $search_parent_name);
@@ -582,7 +582,7 @@ if ($search_idprof5 != '') $param .= '&search_idprof5='.urlencode($search_idprof
 if ($search_idprof6 != '') $param .= '&search_idprof6='.urlencode($search_idprof6);
 if ($search_vat != '')     $param .= '&search_vat='.urlencode($search_vat);
 if ($search_prive_level != '')    $param .= '&search_prive_level='.urlencode($search_prive_level);
-if ($search_type_thirdparty != '')    $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)    $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($search_type != '')    $param .= '&search_type='.urlencode($search_type);
 if (is_array($search_level) && count($search_level)) foreach ($search_level as $slevel) $param .= '&search_level[]='.urlencode($slevel);
 if ($search_status != '')  $param .= '&search_status='.urlencode($search_status);
