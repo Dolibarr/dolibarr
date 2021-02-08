@@ -663,15 +663,14 @@ print '</td>';
 print '</tr>';
 
 // Activate propal merge produt card
-/* Kept as hidden feature only. PRODUIT_PDF_MERGE_PROPAL can be added manually. Still did not understand how this feature works.
-
+// When a product have PDF files as attachements, when propal is generated, the PDF files will be concatened at the end of the propal
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
+print $form->selectyesno("activate_mergePropalProductCard", $conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
 print '</td>';
 print '</tr>';
-*/
+
 
 // Use units
 /* Kept as hidden feature only. PRODUCT_USE_UNITS is hidden for the moment. Because it seems to be a duplicated feature with already existing field to store unit of product
