@@ -400,7 +400,7 @@ if ($conf->product->enabled)
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
 					} else {
-						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducto&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Disabled"), 'switch_off');
 						print '</a></td>';
 					}
