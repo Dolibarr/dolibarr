@@ -712,10 +712,11 @@ class Tva extends CommonObject
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
      *  @param	int  	$notooltip		1=Disable tooltip
-     *  @param	string	$morecss			More CSS
+     *  @param	string	$morecss		More CSS
+	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string					Chaine with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf;
 
@@ -730,6 +731,14 @@ class Tva extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 
         $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
+
+        if ($option != 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+        }
 
         $linkclose = '';
         if (empty($notooltip))
