@@ -799,11 +799,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $value;
 
-			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($value == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($value == 'price' || preg_match('/^amount/i', $value)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            }
+            elseif ($value == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 
@@ -823,11 +827,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		}
 		$sql .= ",1)";
 
-		dol_syslog("actionadd", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result)	// Add is ok
-		{
-			setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
+        dol_syslog("actionadd", LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)	// Add is ok
+        {
+            setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 			// Clean $_POST array, we keep only id of dictionary
 			if ($id == 10 && GETPOST('country', 'int') > 0) {
@@ -862,11 +866,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $field;
 
-			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($field == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($field == 'price' || preg_match('/^amount/i', $field)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            }
+            elseif ($field == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 			$sql .= $field."=";
