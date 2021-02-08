@@ -667,7 +667,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_mergePropalProductCard", $conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
+print $form->selectyesno("activate_mergePropalProductCard", $conf->global->PRODUIT_PDF_MERGE_PROPAL, 1);
 print '</td>';
 print '</tr>';
 
