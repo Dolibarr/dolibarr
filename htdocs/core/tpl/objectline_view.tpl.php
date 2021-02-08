@@ -166,7 +166,7 @@ else
 	}
 }
 
-if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
+if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES))
 {
     require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
