@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2020 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
 
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 * @var string model description (short text)
 	 */
 	public $description;
+
+	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
 
 	/**
 	 * @var string document type
@@ -126,6 +131,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->db = $db;
 		$this->name = "Typhon";
 		$this->description = $langs->trans("DocumentModelTyphon");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';

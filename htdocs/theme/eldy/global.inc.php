@@ -807,12 +807,24 @@ span.fa.fa-plus-circle.paddingleft {
 {
 	border-right: 1px solid #DDD;
 }
+.borderleftlight
+{
+	border-left: 1px solid #DDD;
+}
 #formuserfile {
 	margin-top: 4px;
 }
 #formuserfile input[type='file'] {
     font-size: 1em;
+    /* opacity: 0.5em; */
 }
+/*#formuserfile input[type='file']:valid {
+	color: #a00;
+}
+#formuserfile input[type='file']:empty {
+	color: #0a0;
+}*/
+
 #formuserfile_link {
 	margin-left: 1px;
 }
@@ -1935,6 +1947,12 @@ span.widthpictotitle.pictotitle {
 .tagtdnote span.pictoedit {
     opacity: 0.4;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 18px;
+    padding-right: 0;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -3066,6 +3084,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
     padding: 4px !important;
 }
+input.button.smallpaddingimp {
+    font-size: 0.8em;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
@@ -3292,6 +3313,12 @@ td.borderright {
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
 }
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
+}
 
 
 /* For table with no filter before */
@@ -3411,13 +3438,13 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-div.pagination li a:hover,
-div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
+/*div.pagination li a:hover,
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
-div.pagination li:not(.paginationafterarrows,.title-button) span:focus {
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
+}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -5662,6 +5689,8 @@ a span.select2-chosen
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
+}
+span#select2-boxbookmark-container {
     opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {

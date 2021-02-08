@@ -657,7 +657,7 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			// TODO Use a cache for this string
 			print $socstatic->getNomUrl(1, '');
@@ -746,7 +746,7 @@ while ($i < min($num, $limit))
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
 		} else {
-			print '&nbsp';
+			print '&nbsp;';
 		}
 		print '</td>';
 	}

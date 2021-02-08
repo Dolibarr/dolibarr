@@ -148,7 +148,7 @@ if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 
 llxHeader('', $langs->trans("SocialContributions"));
 
-$sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user, ";
+$sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
 $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
 if (!empty($conf->projet->enabled)) $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " c.libelle as type_label,";
@@ -185,7 +185,7 @@ if ($filtre) {
 if ($search_typeid) {
 	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
 if (!empty($conf->projet->enabled)) $sql .= ", p.rowid, p.ref, p.title";
 $sql .= $db->order($sortfield, $sortorder);
 

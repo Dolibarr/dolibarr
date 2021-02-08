@@ -923,7 +923,8 @@ if (empty($reshook))
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-facture-rec');
+$help_url = '';
+llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -932,8 +933,7 @@ $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
 
 $now = dol_now();
-$tmparray = dol_getdate($now);
-$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
+$nowlasthour = dol_get_last_hour($now);
 
 
 /*
@@ -1245,7 +1245,9 @@ if ($action == 'create')
 
 		print '<table class="border centpercent tableforfield">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
+		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>';
+		print $author->getNomUrl(-1);
+		print "</td></tr>";
 
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
@@ -1667,8 +1669,7 @@ if ($action == 'create')
 				{
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
 				} else {
-					if (empty($object->frequency) || $object->date_when <= $today)
-					{
+					if (empty($object->frequency) || $object->date_when <= $nowlasthour) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';

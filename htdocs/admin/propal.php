@@ -383,9 +383,7 @@ foreach ($dirmodels as $reldir)
 							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
 							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
 
-							if ($modulequalified)
-							{
-								$var = !$var;
+							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
 								print (empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
@@ -654,7 +652,7 @@ if ($conf->banque->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp</td><td class="right">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL');

@@ -3137,7 +3137,7 @@ class CommandeFournisseur extends CommonOrder
 				return $ret;
 			} else {
 				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/htdocs/product/class/product.class.php';
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$date_liv = dol_now();
 
 					// Build array with quantity deliverd by product

@@ -210,7 +210,7 @@ llxHeader("", $langs->trans("Categories"), $helpurl);
 if ($user->rights->categorie->creer)
 {
 	// Create or add
-	if ($action == 'create' || $_POST["addcat"] == 'addcat')
+	if ($action == 'create' || GETPOST("addcat") == 'addcat')
 	{
 		dol_set_focus('#label');
 
