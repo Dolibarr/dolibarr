@@ -705,6 +705,8 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 							} ?>
 							<?php
 						} ?>
+						each(data.array_options) {
+						}
 					},
 					'json'
 				);

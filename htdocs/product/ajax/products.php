@@ -192,7 +192,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 			'tva_tx' => $outtva_tx,
 			'qty' => $outqty,
 			'discount' => $outdiscount,
-			'array_option'=>$object->array_options);
+			'array_options'=>$object->array_options);
 	}
 
 	echo json_encode($outjson);
