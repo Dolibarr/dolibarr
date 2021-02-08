@@ -7169,9 +7169,6 @@ abstract class CommonObject
 									if ($(this).val() == 0){
 								   		$("#"+child_list).hide();
 									}
-
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select[child_list]);
 								});
 							});
 						}
