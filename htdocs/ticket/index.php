@@ -715,10 +715,12 @@ $sql .= " GROUP BY CAST(t.datec AS DATE)";
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
-	if ($num==1) {
+	if ($num > 0) {
 		$objp = $db->fetch_object($resql);
-		$data[] = array($langs->trans('TicketCreatedToday'),$objp->nb);
+		$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
 		$totalnb += $objp->nb;
+	} else {
+		$data[] = array($langs->trans('TicketCreatedToday'), 0);
 	}
 } else {
 	dol_print_error($db);
@@ -731,43 +733,45 @@ $sql .= " GROUP BY CAST(t.date_close AS DATE)";
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
-	if ($num==1) {
+	if ($num > 0) {
 		$objp = $db->fetch_object($resql);
 		$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
 		$totalnb += $objp->nb;
+	} else {
+		$data[] = array($langs->trans('TicketClosedToday'), 0);
 	}
 } else {
 	dol_print_error($db);
 }
 $colorseries = array();
-$colorseries[]= $badgeStatus8;
-$colorseries[]= $badgeStatus2;
+$colorseries[] = $badgeStatus8;
+$colorseries[] = $badgeStatus2;
 $transChartTicketType = $langs->trans('ChartNewTicketVSClose');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
 print '<td class="center">';
 
-if (!empty($data) && count($data) > 0) {
-	$px1 = new DolGraph();
-	$mesg = $px1->isGraphKo();
-	if (!$mesg) {
-		$px1->SetDataColor(array_values($colorseries));
-		$px1->SetData($data);
-		$px1->setShowLegend(2);
-		$px1->SetType(array('pie'));
-		$px1->SetLegend($legend);
-		$px1->SetMaxValue($px1->GetCeilMaxValue());
-		$px1->SetHeight($HEIGHT);
-		$px1->SetShading(3);
-		$px1->SetHorizTickIncrement(1);
-		$px1->SetCssPrefix("cssboxes");
-		$px1->mode = 'depth';
 
-		$px1->draw('idgraphticketnewvsclosetoday');
-		print $px1->show($totalnb ? 0 : 1);
-	}
+$px1 = new DolGraph();
+$mesg = $px1->isGraphKo();
+if (!$mesg) {
+	$px1->SetDataColor(array_values($colorseries));
+	$px1->SetData($data);
+	$px1->setShowLegend(2);
+	$px1->SetType(array('pie'));
+	$px1->SetLegend($legend);
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetHeight($HEIGHT);
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->SetCssPrefix("cssboxes");
+	$px1->mode = 'depth';
+
+	$px1->draw('idgraphticketnewvsclosetoday');
+	print $px1->show($totalnb ? 0 : 1);
 }
+
 
 print '</td>';
 print "</table>";
