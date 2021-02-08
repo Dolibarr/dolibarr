@@ -4426,4 +4426,3 @@ class PropaleLigne extends CommonObjectLine
 		}
 	}
 }
-
