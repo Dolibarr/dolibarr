@@ -66,14 +66,6 @@ $search_societe = GETPOST('search_societe');
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 if ($mine) { $search_task_user = $user->id; $mine = 0; }
 
-// --------- A dégager ---------- //
-$search_sday	= GETPOST('search_sday', 'int');
-$search_smonth	= GETPOST('search_smonth', 'int');
-$search_syear	= GETPOST('search_syear', 'int');
-$search_eday	= GETPOST('search_eday', 'int');
-$search_emonth	= GETPOST('search_emonth', 'int');
-$search_eyear	= GETPOST('search_eyear', 'int');
-// ----------------------------- //
 $search_dateo_start = dol_mktime(0, 0, 0, GETPOST('search_dateo_startmonth', 'int'), GETPOST('search_dateo_startday', 'int'), GETPOST('search_dateo_startyear', 'int'));
 $search_dateo_end = dol_mktime(23, 59, 59, GETPOST('search_dateo_endmonth', 'int'), GETPOST('search_dateo_endday', 'int'), GETPOST('search_dateo_endyear', 'int'));
 $search_datee_start = dol_mktime(0, 0, 0, GETPOST('search_datee_startmonth', 'int'), GETPOST('search_datee_startday', 'int'), GETPOST('search_datee_startyear', 'int'));
@@ -184,14 +176,6 @@ if (empty($reshook))
 		$search_task_ref_parent = "";
 		$search_task_user = -1;
 		$search_project_user = -1;
-		// --------- A dégager ---------- //
-		$search_sday = '';
-		$search_smonth = '';
-		$search_syear = '';
-		$search_eday = '';
-		$search_emonth = '';
-		$search_eyear = '';
-		// ------------------------------ //
 		$search_dateo_start = '';
 		$search_dateo_end = '';
 		$search_datee_start = '';
@@ -325,10 +309,6 @@ if ($search_task_label)    $sql .= natural_search('t.label', $search_task_label)
 if ($search_task_description)    $sql .= natural_search('t.description', $search_task_description);
 if ($search_task_ref_parent)    $sql .= ' AND t.fk_task_parent IN (SELECT ipt.rowid FROM '.MAIN_DB_PREFIX.'projet_task  as ipt WHERE '.natural_search('ipt.ref', $search_task_ref_parent, 0, 1).')';
 if ($search_societe)       $sql .= natural_search('s.nom', $search_societe);
-// --------- A dégager ---------- //
-$sql .= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
-$sql .= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
-// ----------------------------- //
 
 if ($search_dateo_start)             $sql .= " AND t.dateo >= '".$db->idate($search_dateo_start)."'";
 if ($search_dateo_end)               $sql .= " AND t.dateo <= '".$db->idate($search_dateo_end)."'";
@@ -405,14 +385,6 @@ llxHeader("", $title, $help_url);
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-// --------- A dégager ---------- //
-if ($search_sday)                 		$param .= '&search_sday='.urlencode($search_sday);
-if ($search_smonth)              		$param .= '&search_smonth='.urlencode($search_smonth);
-if ($search_syear)               		$param .= '&search_syear='.urlencode($search_syear);
-if ($search_eday)               		$param .= '&search_eday='.urlencode($search_eday);
-if ($search_emonth)              		$param .= '&search_emonth='.urlencode($search_emonth);
-if ($search_eyear)               		$param .= '&search_eyear='.urlencode($search_eyear);
-// ----------------------------- //
 
 if ($search_dateo_start)				$param .= '&search_dateo_startday='.GETPOST('search_dateo_startday').'&search_dateo_startmonth='.GETPOST('search_dateo_startmonth').'&search_dateo_startyear='.GETPOST('search_dateo_startyear');
 if ($search_dateo_end)					$param .= '&search_dateo_endday='.GETPOST('search_dateo_endday').'&search_dateo_endmonth='.GETPOST('search_dateo_endmonth').'&search_dateo_endyear='.GETPOST('search_dateo_endyear');
@@ -559,11 +531,6 @@ if (!empty($arrayfields['t.description']['checked']))
 if (!empty($arrayfields['t.dateo']['checked']))
 {
 	print '<td class="liste_titre center minwidth150">';
-	// --------- A dégager ---------- //
-//	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
-//	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
-//	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5);
-	// ----------------------------- //
 	print '<div class="nowrap">';
 	print $langs->trans('From').' ';
 	print $form->selectDate($search_dateo_start ? $search_dateo_start : -1, 'search_dateo_start', 0, 0, 1);
@@ -578,11 +545,6 @@ if (!empty($arrayfields['t.dateo']['checked']))
 if (!empty($arrayfields['t.datee']['checked']))
 {
 	print '<td class="liste_titre center minwidth150">';
-	// --------- A dégager ---------- //
-//	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
-//	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
-//	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5);
-	// --------- A dégager ---------- //
 	print '<div class="nowrap">';
 	print $langs->trans('From').' ';
 	print $form->selectDate($search_datee_start ? $search_datee_start : -1, 'search_datee_start', 0, 0, 1);
