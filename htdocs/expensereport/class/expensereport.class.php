@@ -2949,5 +2949,3 @@ function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0,
     }
     print '</select>';
 }
-
-
