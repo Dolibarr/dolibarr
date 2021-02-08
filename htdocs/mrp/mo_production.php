@@ -89,7 +89,7 @@ $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
-$permissiontoupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
+$permissiontoupdatecost = $user->rights->bom->read; // User who can define cost must have knowledge of pricing
 
 
 /*
