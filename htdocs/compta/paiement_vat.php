@@ -300,11 +300,13 @@ if ($action == 'create')
 		{
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
-			if (!empty($conf->use_javascript_ajax))
+			/* Disabled, we autofil the amount with remain to pay by default
+			if (!empty($conf->use_javascript_ajax)) {
 					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+			} */
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
+			print '<input type="text" class="right width100" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
 		}
 		else {
 			print '-';
