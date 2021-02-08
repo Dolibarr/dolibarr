@@ -73,8 +73,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		print '<div class="divsearchfield">';
 		// Type
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
-		print '<span class="hideonsmartphone">'.$langs->trans("Type").'</span>';
+		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("Type").'"></span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
@@ -85,13 +84,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 		// Assigned to
 		print '<div class="divsearchfield">';
-		print img_picto('', 'user', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ActionsToDoBy").'</span>';
+		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="fawidth30 inline-block"');
 		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 		print '<div class="divsearchfield">';
-		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ToUserOfGroup").'</span>';
+		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="fawidth30 inline-block"');
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
 		print '</div>';
 
@@ -102,8 +99,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 			// Resource
 			print '<div class="divsearchfield">';
-			print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
-			print '<span class="hideonsmartphone">'.$langs->trans("Resource").'</span>';
+			print img_picto($langs->trans("Resource"), 'object_resource', 'class="fawidth30 inline-block"');
 			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
 			print '</div>';
 		}
@@ -112,8 +108,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		print '<div class="divsearchfield">';
-		print img_picto('', 'company', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ThirdParty").'</span>';
+		print img_picto($langs->trans("ThirdParty"), 'company', 'class="fawidth30 inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</div>';
 	}
@@ -124,8 +119,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		$formproject = new FormProjets($db);
 
 		print '<div class="divsearchfield">';
-		print img_picto('', 'project', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("Project").'</span>';
+		print img_picto($langs->trans("Project"), 'project', 'class="fawidth30 inline-block"');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</div>';
 	}
@@ -134,8 +128,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto('', 'setup', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("Status").'</span>';
+		print img_picto($langs->trans("Status"), 'setup', 'class="fawidth30 inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}

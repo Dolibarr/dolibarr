@@ -1391,7 +1391,7 @@ if ($resql)
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
 			} else {
-				print '&nbsp';
+				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -1491,11 +1491,10 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-
 } else {
 		dol_print_error($db);
 }
 
-	// End of page
-	llxFooter();
-	$db->close();
+// End of page
+llxFooter();
+$db->close();

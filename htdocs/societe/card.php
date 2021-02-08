@@ -2398,18 +2398,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield" width="100%">';
 
-		// Prospect/Customer
-		print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
-		print $object->getLibCustProspStatut();
+		// Type Prospect/Customer/Supplier
+		print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+		print $object->getTypeUrl(1);
 		print '</td></tr>';
-
-		// Supplier
-   		if (!empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled))
-		{
-			print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-			print yn($object->fournisseur);
-			print '</td></tr>';
-		}
 
 		// Prefix
 		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field

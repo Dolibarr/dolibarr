@@ -179,6 +179,11 @@ if ($object->id > 0)
 	print '<div class="underbanner clearboth"></div>';
 	print '<table width="100%" class="border">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	{
 		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';

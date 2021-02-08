@@ -53,6 +53,11 @@ class pdf_merou extends ModelePdfExpedition
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -123,6 +128,7 @@ class pdf_merou extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "merou";
 		$this->description = $langs->trans("DocumentModelMerou");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();

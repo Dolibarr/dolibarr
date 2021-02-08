@@ -203,7 +203,7 @@ class MyModuleApi extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->myobject->$field = $value;
 		}
-		if (!$this->myobject->create(DolibarrApiAccess::$user)) {
+		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
 		return $this->myobject->id;
