@@ -2002,6 +2002,7 @@ class Commande extends CommonOrder
 			else
 			{
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}

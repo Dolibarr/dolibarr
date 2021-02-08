@@ -318,6 +318,7 @@ class ExpenseReport extends CommonObject
         	            if ($result < 0)
         	            {
         	                $this->error = $newndfline->error;
+							$this->errors = $newndfline->errors;
         	                $error++;
         	                break;
         	            }
@@ -2948,3 +2949,5 @@ function select_type_fees_id($selected = '', $htmlname = 'type', $showempty = 0,
     }
     print '</select>';
 }
+
+
