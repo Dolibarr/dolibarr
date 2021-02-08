@@ -82,9 +82,8 @@ if ($permission)
 
 	?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").' | '.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
 		<div class="tagtd liste_titre">&nbsp;</div>
 		<div class="tagtd liste_titre">&nbsp;</div>
@@ -96,14 +95,15 @@ if ($permission)
 	{
 		?>
 	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
-	<input type="hidden" name="action" value="addcontact" />
-	<input type="hidden" name="source" value="internal" />
+		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
+		<input type="hidden" name="action" value="addcontact" />
+		<input type="hidden" name="source" value="internal" />
 	    <?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
-		<div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div>
+
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
-		<div class="tagtd maxwidthonsmartphone"><?php echo $form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
+		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
+		<div class="tagtd maxwidthonsmartphone"><?php echo img_object('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($user->id, 'userid', 0, (!empty($userAlreadySelected) ? $userAlreadySelected : null), 0, null, null, 0, 56, '', 0, '', 'minwidth200imp'); ?></div>
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject = $object;
@@ -121,12 +121,12 @@ if ($permission)
 		?>
 
 	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
-	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
-	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
-	<input type="hidden" name="action" value="addcontact" />
-	<input type="hidden" name="source" value="external" />
+		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
+		<input type="hidden" name="action" value="addcontact" />
+		<input type="hidden" name="source" value="external" />
 	    <?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
-		<div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>
+
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
 			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : $object->socid; ?>
 			<?php
@@ -138,9 +138,10 @@ if ($permission)
 			?>
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
+		<!--  <div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>-->
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			print $form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
@@ -277,9 +278,9 @@ print '<table class="tagtable nobottomiftotal liste">';
 //print '</tr>';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre($arrayfields['nature']['label'], $_SERVER["PHP_SELF"], "nature", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -289,9 +290,9 @@ foreach ($list as $entry)
 {
 	print '<tr class="oddeven">';
 
-	print '<td class="nowrap">'.$entry->nature.'</td>';
 	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
 	print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
+	print '<td class="nowrap"><span class="opacitymedium">'.$entry->nature.'</span></td>';
 	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
 	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
 

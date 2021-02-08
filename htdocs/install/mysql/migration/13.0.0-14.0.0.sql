@@ -121,7 +121,12 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);
 
+ALTER TABLE llx_menu ADD COLUMN prefix varchar(255) NULL AFTER titre;
+
 ALTER TABLE llx_chargesociales ADD COLUMN fk_user integer DEFAULT NULL;
+
+ALTER TABLE llx_fichinter ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+ALTER TABLE llx_projet ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
 RENAME TABLE llx_payment_salary TO llx_salary;
 RENAME TABLE llx_payment_salary_extrafields TO llx_salary_extrafields;

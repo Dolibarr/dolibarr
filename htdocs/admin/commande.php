@@ -668,7 +668,7 @@ Whet is definition of "shippable" according to all different STOCK_CALCULATE_...
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&amp;token='.newToken().'&amp;value=0">';
@@ -687,7 +687,7 @@ if ($conf->banque->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td class="center">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
@@ -717,7 +717,7 @@ if ($conf->stock->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td class="center">';
+    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');

@@ -45,6 +45,7 @@ WithdrawRequestsDone=%s demandes de prélèvements enregistrées
 BankTransferRequestsDone=%s demande de prélèvement enregistrée
 ThirdPartyBankCode=Code banque du tiers
 NoInvoiceCouldBeWithdrawed=Aucune facture traitée avec succès. Vérifiez que les factures sont sur les sociétés avec un BAN par défaut valide et que le BAN a un RUM avec le mode <strong> %s </strong>.
+WithdrawalCantBeCreditedTwice=Ce bon de prélèvement est déjà classé crédité ; cette opération ne peut pas être réalisée deux fois, car cela pourrait engendrer des doublons dans les paiements et les écritures bancaires.
 ClassCredited=Classer crédité
 ClassCreditedConfirm=Êtes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?
 TransData=Date de transmission

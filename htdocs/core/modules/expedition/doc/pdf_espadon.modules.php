@@ -52,6 +52,11 @@ class pdf_espadon extends ModelePdfExpedition
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -122,6 +127,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "espadon";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();

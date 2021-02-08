@@ -185,7 +185,7 @@ if ($id > 0)
 	{
 		print '<br>';
 		print '<div class="center"><input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}

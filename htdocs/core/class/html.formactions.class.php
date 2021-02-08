@@ -204,7 +204,7 @@ class FormActions
 			$newcardbutton = '';
 			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create))
 			{
-			    $url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'), 'tzuser').'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
+			    $url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
 			    $newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 

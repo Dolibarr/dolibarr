@@ -265,7 +265,7 @@ $next_month = $month;
 $next_day   = $day;
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
+$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'tzuserrel');
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow,'dayhour');
@@ -482,14 +482,14 @@ if ($filtert > 0 || $usergroup > 0) $sql .= " AND ar.fk_actioncomm = a.id AND ar
 if ($action == 'show_day')
 {
 	$sql .= " AND (";
-	$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
+	$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
 	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
 	$sql .= " OR ";
-	$sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
+	$sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
 	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
 	$sql .= " OR ";
 	$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
-	$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
+	$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
 	$sql .= ')';
 } else {
 	// To limit array
@@ -599,9 +599,9 @@ if ($resql)
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y');
-			$mois = dol_print_date($daycursor, '%m');
-			$jour = dol_print_date($daycursor, '%d');
+			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true; $j = 0;
@@ -858,9 +858,9 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused)
 	{
-		$annee = dol_print_date($daykey, '%Y', 'gmt');
-		$mois =  dol_print_date($daykey, '%m', 'gmt');
-		$jour =  dol_print_date($daykey, '%d', 'gmt');
+		$annee = dol_print_date($daykey, '%Y');
+		$mois =  dol_print_date($daykey, '%m');
+		$jour =  dol_print_date($daykey, '%d');
 
 		if ($day == $jour && $month == $mois && $year == $annee)	// Is it the day we are looking for when calling function ?
 		{
@@ -931,9 +931,9 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 					$newcolor = ''; //init
 					if (empty($event->fulldayevent))
 					{
-						$a = dol_mktime((int) $h, 0, 0, $month, $day, $year, 'auto', 0);
-						$b = dol_mktime((int) $h, 30, 0, $month, $day, $year, 'auto', 0);
-						$c = dol_mktime((int) $h + 1, 0, 0, $month, $day, $year, 'auto', 0);
+						$a = dol_mktime((int) $h, 0, 0, $month, $day, $year, 'tzuserrel', 0);
+						$b = dol_mktime((int) $h, 30, 0, $month, $day, $year, 'tzuserrel', 0);
+						$c = dol_mktime((int) $h + 1, 0, 0, $month, $day, $year, 'tzuserrel', 0);
 
 						$dateendtouse = $event->date_end_in_calendar;
 						if ($dateendtouse == $event->date_start_in_calendar) $dateendtouse++;
@@ -944,13 +944,13 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 						{
 							$busy = $event->transparency;
 							$cases1[$h][$event->id]['busy'] = $busy;
-							$cases1[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour');
+							$cases1[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzuserrel');
 							if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
 							{
 								$tmpa = dol_getdate($event->date_start_in_calendar, true);
 								$tmpb = dol_getdate($event->date_end_in_calendar, true);
-								if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
-								else $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
+								if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+								else $cases1[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzuserrel');
 							}
 							if ($event->label) $cases1[$h][$event->id]['string'] .= ' - '.$event->label;
 							$cases1[$h][$event->id]['typecode'] = $event->type_code;
@@ -990,13 +990,13 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 						{
 							$busy = $event->transparency;
 							$cases2[$h][$event->id]['busy'] = $busy;
-							$cases2[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour');
+							$cases2[$h][$event->id]['string'] = dol_print_date($event->date_start_in_calendar, 'dayhour', 'tzuserrel');
 							if ($event->date_end_in_calendar && $event->date_end_in_calendar != $event->date_start_in_calendar)
 							{
 								$tmpa = dol_getdate($event->date_start_in_calendar, true);
 								$tmpb = dol_getdate($event->date_end_in_calendar, true);
-								if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour');
-								else $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour');
+								if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
+								else $cases2[$h][$event->id]['string'] .= '-'.dol_print_date($event->date_end_in_calendar, 'dayhour', 'tzuserrel');
 							}
 							if ($event->label) $cases2[$h][$event->id]['string'] .= ' - '.$event->label;
 							$cases2[$h][$event->id]['typecode'] = $event->type_code;

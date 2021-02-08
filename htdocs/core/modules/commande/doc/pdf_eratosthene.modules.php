@@ -84,9 +84,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 	 */
 	public $version = 'dolibarr';
 
-	 /**
-	  * @var int page_largeur
-	  */
+	/**
+	 * @var int page_largeur
+	 */
 	public $page_largeur;
 
 	/**
@@ -126,7 +126,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	public $emetteur;
 
 	/**
-	 * @var array of document table collumns
+	 * @var array of document table columns
 	 */
 	public $cols;
 
