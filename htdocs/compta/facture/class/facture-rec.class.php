@@ -280,7 +280,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".(!empty($facsrc->remise) ? $this->remise : '0');
 			$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
-			$sql .= ", ".(!empty($this->modelpdf) ? ("'".$this->db->escape($this->modelpdf)."'") : "NULL");
+			$sql .= ", ".(!empty($this->model_pdf) ? ("'".$this->db->escape($this->model_pdf)."'") : "NULL");
 			$sql .= ", '".$this->db->escape($user->id)."'";
 			$sql .= ", ".(!empty($facsrc->fk_project) ? "'".$this->db->escape($facsrc->fk_project)."'" : "null");
 			$sql .= ", ".(!empty($facsrc->fk_account) ? "'".$this->db->escape($facsrc->fk_account)."'" : "null");
@@ -347,7 +347,7 @@ class FactureRec extends CommonInvoice
 						{
 							// Extrafields
 							if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
-								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
+								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->id);
 								$objectline->array_options = $facsrc->lines[$i]->array_options;
 							}
 
@@ -562,7 +562,7 @@ class FactureRec extends CommonInvoice
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
-				$this->modelpdf               = $obj->model_pdf; // deprecatd
+				$this->modelpdf               = $obj->model_pdf; // deprecated
 				$this->model_pdf              = $obj->model_pdf;
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;
@@ -1280,9 +1280,8 @@ class FactureRec extends CommonInvoice
 					{
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
-						$result = $facture->generateDocument($facturerec->modelpdf, $langs);
-						if ($result <= 0)
-						{
+						$result = $facture->generateDocument($facturerec->model_pdf, $langs);
+						if ($result <= 0) {
 							$this->errors = $facture->errors;
 							$this->error = $facture->error;
 							$error++;
@@ -1873,7 +1872,7 @@ class FactureRec extends CommonInvoice
 		dol_syslog(get_class($this)."::setModelPdf", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			$this->modelpdf = $model;
+			$this->model_pdf = $model;
 			return 1;
 		} else {
 			dol_print_error($this->db);

@@ -304,7 +304,7 @@ if (!$error && $massaction == 'confirm_presend')
 				if ($_POST['addmaindocfile'])
 				{
 					// TODO Use future field $objectobj->fullpathdoc to know where is stored default file
-					// TODO If not defined, use $objectobj->modelpdf (or defaut invoice config) to know what is template to use to regenerate doc.
+					// TODO If not defined, use $objectobj->model_pdf (or defaut invoice config) to know what is template to use to regenerate doc.
 					$filename = dol_sanitizeFileName($objectobj->ref).'.pdf';
 					$subdir = '';
 					// TODO Set subdir to be compatible with multi levels dir trees
@@ -1281,7 +1281,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread)
 			if (empty($hideref)) $hideref = 0;
 			if (empty($moreparams)) $moreparams = null;
 
-			$result = $objecttmp->generateDocument($objecttmp->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 
 			if ($result <= 0)
 			{
