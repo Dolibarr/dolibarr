@@ -960,7 +960,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->set_unpaid(DolibarrApiAccess::$user);
+		$result = $this->invoice->setUnpaid(DolibarrApiAccess::$user);
 		if ($result == 0) {
 			throw new RestException(304, 'Nothing done');
 		}

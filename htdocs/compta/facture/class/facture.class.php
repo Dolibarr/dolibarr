@@ -2301,6 +2301,21 @@ class Facture extends CommonInvoice
 	public function set_paid($user, $close_code = '', $close_note = '')
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		$this->setPaid($user, $close_code, $close_note);
+	}
+
+	/**
+	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
+	 *  or partialy (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
+	 *
+	 *  @param	User	$user      	Object user that modify
+	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
+	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+	 *  @return int         		<0 if KO, >0 if OK
+	 */
+	public function setPaid($user, $close_code = '', $close_note = '')
+	{
 		$error = 0;
 
 		if ($this->paye != 1)
@@ -2352,12 +2367,28 @@ class Facture extends CommonInvoice
 	 *	Fonction utilisee quand un paiement prelevement est refuse,
 	 * 	ou quand une facture annulee et reouverte.
 	 *
+	 *	@deprecated
+	 *  @see setUnpaid()
 	 *  @param	User	$user       Object user that change status
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		$this->setUnpaid($user);
+	}
+
+	/**
+	 *  Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+	 *	Fonction utilisee quand un paiement prelevement est refuse,
+	 * 	ou quand une facture annulee et reouverte.
+	 *
+	 *  @param	User	$user       Object user that change status
+	 *  @return int         		<0 if KO, >0 if OK
+	 */
+	public function setUnpaid($user)
+	{
 		$error = 0;
 
 		$this->db->begin();
