@@ -184,24 +184,24 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 			if ($conf->global->MAIN_SUPPLIER_PROPOSAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
 				// Model for creation
-				$liste = ModelePDFSupplierProposal::liste_modeles($this->db);
+				$list = ModelePDFSupplierProposal::liste_modeles($this->db);
 				$texte .= '<table width="50%;">';
 				$texte .= '<tr>';
 				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelSupplierProposalCreate").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value2', $liste, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT);
+				$texte .= $form->selectarray('value2', $list, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT);
 				$texte .= "</td></tr>";
 
 				$texte .= '<tr>';
 				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelSupplierProposalToBill").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value3', $liste, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL);
+				$texte .= $form->selectarray('value3', $list, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL);
 				$texte .= "</td></tr>";
 				$texte .= '<tr>';
 
 				$texte .= '<td width="60%;">'.$langs->trans("DefaultModelSupplierProposalClosed").'</td>';
 				$texte .= '<td colspan="">';
-				$texte .= $form->selectarray('value4', $liste, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED);
+				$texte .= $form->selectarray('value4', $list, $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED);
 				$texte .= "</td></tr>";
 				$texte .= '</table>';
 			}
