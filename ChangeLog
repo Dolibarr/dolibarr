@@ -52,6 +52,7 @@ FIX: Trigger on expense report was not fired
 FIX: User creation of expense report not visible
 FIX: warning when adding a line if $remise_percent is an empty string
 FIX: status late on purchase orders
+FIX: ODT generation very slow
 
 
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****
