@@ -710,8 +710,8 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 							jQuery.each(data.array_options, function( key, value ) {
 								jQuery('div[class$="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 							});
-						<?php
-						}?>
+							<?php
+						} ?>
 					},
 					'json'
 				);
