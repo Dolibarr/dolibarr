@@ -758,9 +758,10 @@ class FormCompany extends Form
 	 *  @param  int			$showempty      1=Add en empty line
 	 *  @param  string      $morecss        Add more css to select component
 	 *  @param  int      	$output         0=return HTML, 1= direct print
+	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
 	 *  @return	void
 	 */
-	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1)
+	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		global $user, $langs;
 		$out = '';
@@ -777,7 +778,7 @@ class FormCompany extends Form
 				$out .= '>'.$value.'</option>';
 			}
 			$out .= "</select>";
-			if ($user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if ($user->admin && empty($forcehidetooltip)) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
 			$out .= ajax_combobox($htmlname);
 
