@@ -295,8 +295,8 @@ class Salary extends CommonObject
         if ($result < 0) return -1;
         // End call triggers
 
-        // Delete donation
-        if (!$error)
+        // Delete extrafields
+        /*if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
             $sql .= " WHERE fk_object=".$this->id;
@@ -307,7 +307,7 @@ class Salary extends CommonObject
                 $this->errors[] = $this->db->lasterror();
                 $error++;
             }
-        }
+        }*/
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."salary";
         $sql .= " WHERE rowid=".$this->id;
