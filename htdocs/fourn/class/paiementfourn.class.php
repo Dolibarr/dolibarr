@@ -241,7 +241,7 @@ class PaiementFourn extends Paiement
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0)
 								{
-									$result = $invoice->set_paid($user, '', '');
+									$result = $invoice->setPaid($user, '', '');
 								} else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}
 

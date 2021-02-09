@@ -778,7 +778,7 @@ function updateInvoice($authentication, $invoice)
 					}
 				}
 				if ($invoice['status'] == Facture::STATUS_CLOSED) {
-					$result = $object->set_paid($fuser, $invoice['close_code'], $invoice['close_note']);
+					$result = $object->setPaid($fuser, $invoice['close_code'], $invoice['close_note']);
 				}
 				if ($invoice['status'] == Facture::STATUS_ABANDONED)
 					$result = $object->set_canceled($fuser, $invoice['close_code'], $invoice['close_note']);

@@ -637,14 +637,30 @@ class ExpenseReport extends CommonObject
 	/**
 	 *    Classify the expense report as paid
 	 *
+	 *	@deprecated
+	 *  @see setPaid()
+	 *  @param    int     $id                 Id of expense report
+	 *  @param    user    $fuser              User making change
+	 *  @param    int     $notrigger          Disable triggers
+	 *  @return   int                         <0 if KO, >0 if OK
+	 */
+	public function set_paid($id, $fuser, $notrigger = 0)
+	{
+		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($id, $fuser, $notrigger);
+	}
+
+	/**
+	 *    Classify the expense report as paid
+	 *
 	 *    @param    int     $id                 Id of expense report
 	 *    @param    user    $fuser              User making change
 	 *    @param    int     $notrigger          Disable triggers
 	 *    @return   int                         <0 if KO, >0 if OK
 	 */
-	public function set_paid($id, $fuser, $notrigger = 0)
+	public function setPaid($id, $fuser, $notrigger = 0)
 	{
-		// phpcs:enable
 		$error = 0;
 		$this->db->begin();
 

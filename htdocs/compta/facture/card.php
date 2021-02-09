@@ -747,7 +747,7 @@ if (empty($reshook))
 	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercanissuepayment)
 	{
 		$object->fetch($id);
-		$result = $object->set_paid($user);
+		$result = $object->setPaid($user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	} // Classif "paid partialy"
 	elseif ($action == 'confirm_paid_partially' && $confirm == 'yes' && $usercanissuepayment)
@@ -756,7 +756,7 @@ if (empty($reshook))
 		$close_code = GETPOST("close_code", 'restricthtml');
 		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
-			$result = $object->set_paid($user, $close_code, $close_note);
+			$result = $object->setPaid($user, $close_code, $close_note);
 			if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -921,7 +921,7 @@ if (empty($reshook))
 			{
 				if ($object->type != Facture::TYPE_DEPOSIT) {
 					// Classe facture
-					$result = $object->set_paid($user);
+					$result = $object->setPaid($user);
 					if ($result >= 0)
 					{
 						$db->commit();
