@@ -1479,7 +1479,7 @@ class Form
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql .= " AND sp.statut <> 0";
 		$sql .= " ORDER BY sp.lastname ASC";
 
-		dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
