@@ -388,7 +388,7 @@ class Loan extends CommonObject
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		$this->setPaid($user);
+		return $this->setPaid($user);
 	}
 
 	/**
@@ -424,7 +424,7 @@ class Loan extends CommonObject
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_started is deprecated, use setStarted instead", LOG_NOTICE);
-		$this->setStarted($user);
+		return $this->setStarted($user);
 	}
 
 	/**
@@ -459,7 +459,7 @@ class Loan extends CommonObject
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
-		$this->setUnpaid($user);
+		return $this->setUnpaid($user);
 	}
 
 	/**

@@ -2293,6 +2293,8 @@ class Facture extends CommonInvoice
 	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
 	 *  or partialy (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
+	 *	@deprecated
+	 *  @see setPaid()
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
@@ -2302,7 +2304,7 @@ class Facture extends CommonInvoice
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		$this->setPaid($user, $close_code, $close_note);
+		return $this->setPaid($user, $close_code, $close_note);
 	}
 
 	/**
@@ -2376,7 +2378,7 @@ class Facture extends CommonInvoice
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
-		$this->setUnpaid($user);
+		return $this->setUnpaid($user);
 	}
 
 	/**
