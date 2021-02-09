@@ -483,6 +483,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -727,6 +728,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error = $this->line->error;
+				$this->errors = $this->line->errors;
                 $this->db->rollback();
                 return -2;
             }
@@ -924,7 +926,7 @@ class Propal extends CommonObject
 			else
 			{
 				$this->error = $this->line->error;
-
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -1;
 			}
