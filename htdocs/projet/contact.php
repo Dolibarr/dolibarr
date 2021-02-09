@@ -76,7 +76,7 @@ if ($action == 'addcontact') {
 	$affect_to = (GETPOST('userid') ? 'userid='.$personToAffect : 'contactid='.$personToAffect);
 	$url_redirect='?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
 
-	if (empty($conf->global->PROJECT_HIDE_TASKS) || $nbTasks > 0) {
+	if ($personToAffect > 0 && (empty($conf->global->PROJECT_HIDE_TASKS) || $nbTasks > 0)) {
 		$text = $langs->trans('AddPersonToTask');
 		$textbody = $text.' (<a href="#" class="selectall">'.$langs->trans("SelectAll").'</a>)';
 		$formquestion = array('text' => $textbody);
@@ -142,14 +142,20 @@ if ($action == 'addcontact') {
 // Add new contact
 if ($action == 'addcontact_confirm' && $user->rights->projet->creer)
 {
+	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+
+	if (! ($contactid > 0)) {
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
+	}
+
 	$result = 0;
 	$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0)
+	if (!$error && $result > 0 && $id > 0)
 	{
-  		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-
   		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
   		if ($result == 0) {
