@@ -501,7 +501,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremise' && $usercancreate) {
-		$result = $object->set_remise($user, GETPOST('remise'));
+		$result = $object->setDiscount($user, GETPOST('remise'));
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -607,7 +607,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise($user, price2num(GETPOST('remise_percent'), 2));
+		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU'));
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha')) {

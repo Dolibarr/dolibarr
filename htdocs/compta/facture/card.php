@@ -483,7 +483,7 @@ if (empty($reshook))
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->set_remise($user, price2num(GETPOST('remise_percent'), 2));
+		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), 2));
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		// POST[remise_id] or POST[remise_id_for_payment]
 

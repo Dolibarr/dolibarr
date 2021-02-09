@@ -3617,6 +3617,8 @@ class Facture extends CommonInvoice
 	/**
 	 *	Set percent discount
 	 *
+	 *  @deprecated
+	 *  @see setDiscount()
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -3625,6 +3627,20 @@ class Facture extends CommonInvoice
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		return $this->setDiscount($user, $remise, $notrigger);
+	}
+
+	/**
+	 *	Set percent discount
+	 *
+	 *	@param     	User	$user		User that set discount
+	 *	@param     	double	$remise		Discount
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int 		<0 if ko, >0 if ok
+	 */
+	public function setDiscount($user, $remise, $notrigger = 0)
+	{
 		// Clean parameters
 		if (empty($remise)) $remise = 0;
 
