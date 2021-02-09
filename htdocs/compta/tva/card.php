@@ -111,14 +111,14 @@ if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes')
 {
 	$object->fetch($id);
-	$result = $object->set_paid($user);
+	$result = $object->setPaid($user);
 }
 
 if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 	$result = $object->fetch($id);
 	if ($object->paye)
 	{
-		$result = $object->set_unpaid($user);
+		$result = $object->setUnpaid($user);
 		if ($result > 0)
 		{
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
