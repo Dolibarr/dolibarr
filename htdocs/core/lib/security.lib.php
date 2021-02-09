@@ -590,9 +590,9 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$objectid.")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".$user->socid;
-			} elseif (!empty($conf->societe->enabled)) {
+			} elseif (!empty($conf->societe->enabled) && !$user->rights->societe->client->voir) {
 				// If internal user: Check permission for internal users that are restricted on their objects
-				if ($feature != 'ticket' && !$user->rights->societe->client->voir) {
+				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) dol_print_error('', 'Param dbt_keyfield is required but not defined');
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -601,9 +601,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
 					$sql .= " AND sc.fk_user = ".$user->id;
-				}
+				} else {
 				// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
-				if ($feature == 'ticket' && !$user->rights->societe->client->voir) {
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".$user->id;
