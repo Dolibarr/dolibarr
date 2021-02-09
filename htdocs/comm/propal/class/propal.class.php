@@ -485,6 +485,7 @@ class Propal extends CommonObject
 				}
 			} else {
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -711,8 +712,8 @@ class Propal extends CommonObject
 
 				// Mise a jour informations denormalisees au niveau de la propale meme
 				$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
-				if ($result > 0)
-				{
+
+				if ($result > 0) {
 					$this->db->commit();
 					return $this->line->id;
 				} else {
@@ -722,6 +723,7 @@ class Propal extends CommonObject
 				}
 			} else {
 				$this->error = $this->line->error;
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -914,7 +916,7 @@ class Propal extends CommonObject
 				return $result;
 			} else {
 				$this->error = $this->line->error;
-
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -1;
 			}
