@@ -1,6 +1,5 @@
 -- ===================================================================
 -- Copyright (C) 2019      Alexandre Spangaro	<aspangaro@open-dsi.fr>
--- Copyright (C) 2021      Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_salary_extrafields ADD INDEX idx_salary_extrafields (fk_object);
+ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
