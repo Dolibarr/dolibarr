@@ -780,13 +780,13 @@ function updateInvoice($authentication, $invoice)
 				if ($invoice['status'] == Facture::STATUS_CLOSED) {
 					$result = $object->setPaid($fuser, $invoice['close_code'], $invoice['close_note']);
 				}
-				if ($invoice['status'] == Facture::STATUS_ABANDONED)
-					$result = $object->set_canceled($fuser, $invoice['close_code'], $invoice['close_note']);
+				if ($invoice['status'] == Facture::STATUS_ABANDONED) {
+					$result = $object->setCanceled($fuser, $invoice['close_code'], $invoice['close_note']);
+				}
 			}
 		}
 
-		if ((!$error) && ($objectfound))
-		{
+		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -794,9 +794,7 @@ function updateInvoice($authentication, $invoice)
 					'ref'=>$object->ref,
 					'ref_ext'=>$object->ref_ext
 			);
-		}
-		elseif ($objectfound)
-		{
+		} elseif ($objectfound) {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';

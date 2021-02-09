@@ -506,7 +506,7 @@ if (empty($reshook))
 	} elseif ($action == 'classifybilled')
 	{
 		$object->fetch($id);
-		$result = $object->set_billed();
+		$result = $object->setBilled();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();

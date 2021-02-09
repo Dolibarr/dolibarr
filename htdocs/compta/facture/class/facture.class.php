@@ -2432,6 +2432,8 @@ class Facture extends CommonInvoice
 	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
 	 *  of no payment even if merchandises were sent).
 	 *
+	 *	@deprecated
+	 *  @see setCanceled()
 	 *	@param	User	$user        	Object user making change
 	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
@@ -2440,8 +2442,23 @@ class Facture extends CommonInvoice
 	public function set_canceled($user, $close_code = '', $close_note = '')
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_canceled is deprecated, use setCanceled instead", LOG_NOTICE);
+		return $this->setCanceled($user, $close_code, $close_note);
+	}
 
-		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
+	/**
+	 *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_CANCEL
+	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
+	 *  of no payment even if merchandises were sent).
+	 *
+	 *	@param	User	$user        	Object user making change
+	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
+	 *	@param	string	$close_note		Comment
+	 *	@return int         			<0 if KO, >0 if OK
+	 */
+	public function setCanceled($user, $close_code = '', $close_note = '')
+	{
+		dol_syslog(get_class($this)."::setCanceled rowid=".$this->id, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -2575,7 +2592,7 @@ class Facture extends CommonInvoice
 				return -12;
 			}
 
-			$result = $facreplaced->set_canceled($user, self::CLOSECODE_REPLACED, '');
+			$result = $facreplaced->setCanceled($user, self::CLOSECODE_REPLACED, '');
 			if ($result < 0)
 			{
 				$this->error = $facreplaced->error;
