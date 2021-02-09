@@ -780,13 +780,13 @@ if ($id)
 	/*
 	 * Payments
 	 */
-	$sql = "SELECT p.rowid, p.num_paiement as num_payment, p.datep as dp, p.amount,";
+	$sql = "SELECT p.rowid, p.num_payment as num_payment, p.datep as dp, p.amount,";
 	$sql .= " c.code as type_code,c.libelle as paiement_type,";
 	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.currency_code as bacurrency_code, ba.fk_accountancy_journal';
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 	$sql .= ", ".MAIN_DB_PREFIX."salary as salaire";
 	$sql .= " WHERE p.fk_salary = ".$id;
 	$sql .= " AND p.fk_salary = salaire.rowid";

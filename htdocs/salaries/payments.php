@@ -122,7 +122,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
         $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid = s.fk_user)";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ps.fk_typepaiement = pct.id";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ps.fk_typepayment = pct.id";
         $sql .= " WHERE s.entity IN (".getEntity('user').")";
        /* if ($year > 0)
         {
@@ -149,7 +149,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "s.dateep", "", $param, 'width="140px"', $sortfield, $sortorder);
             print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, '', $sortfield, $sortorder);
             print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-            print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+            print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ps.amount", "", $param, 'class="right"', $sortfield, $sortorder);
             print "</tr>\n";
 
             while ($i < $num)
