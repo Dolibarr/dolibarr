@@ -1517,7 +1517,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					// To use external ckeditor 4 js lib
 					$pathckeditor = constant('JS_CKEDITOR');
 				}
-				print '<script><!-- enable ckeditor by main.inc.php -->';
+				print '<script>';
+                print '/* enable ckeditor by main.inc.php */';
 				print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
 				print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext ? '?'.$ext : ''), 1).'\';'."\n"; // $themesubdir='' in standard usage
 				print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
@@ -1525,8 +1526,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '</script>'."\n";
 				print '<script src="'.$pathckeditor.$jsckeditor.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script>';
-				if (GETPOST('mode', 'aZ09') == 'Full_inline')
-				{
+				if (GETPOST('mode', 'aZ09') == 'Full_inline') {
 					print 'CKEDITOR.disableAutoInline = false;'."\n";
 				} else {
 					print 'CKEDITOR.disableAutoInline = true;'."\n";
