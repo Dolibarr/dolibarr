@@ -252,7 +252,7 @@ if ($modecompta == 'BOOKKEEPING')
 	$sql .= " AND f.entity = ".$conf->entity;
 	if (!empty($date_start) && !empty($date_end))
 		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
-	$sql .= " GROUP BY pcg_type, name, socid";
+	$sql .= " GROUP BY pcg_type DESC, name, socid";
 	$sql .= $db->order($sortfield, $sortorder);
 
 	$oldpcgtype = '';
@@ -283,6 +283,15 @@ if ($modecompta == 'BOOKKEEPING')
 
 				$total_ht += (isset($objp->amount) ? $objp->amount : 0);
 				$total_ttc += (isset($objp->amount) ? $objp->amount : 0);
+
+				if ($objp->pcg_type == 'INCOME') {
+					$total_ht_income += (isset($objp->amount) ? $objp->amount : 0);
+					$total_ttc_income += (isset($objp->amount) ? $objp->amount : 0);
+				}
+				if ($objp->pcg_type == 'EXPENSE') {
+					$total_ht_outcome -= (isset($objp->amount) ? $objp->amount : 0);
+					$total_ttc_outcome -= (isset($objp->amount) ? $objp->amount : 0);
+				}
 
 				// Loop on detail of all accounts
 				// This make 14 calls for each detail of account (NP, N and month m)
@@ -323,9 +332,6 @@ if ($modecompta == 'BOOKKEEPING')
 			print '<tr><td colspan="4" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 		}
 	} else dol_print_error($db);
-
-	$total_ht_income += $total_ht;
-	$total_ttc_income += $total_ttc;
 } else {
 	/*
 	 * Factures clients
@@ -1300,19 +1306,22 @@ print '<tr>';
 print '<td colspan="4">&nbsp;</td>';
 print '</tr>';
 
-print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
-if ($modecompta == 'CREANCES-DETTES')
-	print '<td class="liste_total right">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
-print '<td class="liste_total right">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
-print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Income").'</td>';
-if ($modecompta == 'CREANCES-DETTES')
+if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht_income, 'MT')).'</td>';
+}
 print '<td class="liste_total right">'.price(price2num($total_ttc_income, 'MT')).'</td>';
 print '</tr>';
+print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
+if ($modecompta == 'CREANCES-DETTES') {
+	print '<td class="liste_total right">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
+}
+print '<td class="liste_total right">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
+print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
-if ($modecompta == 'CREANCES-DETTES')
+if ($modecompta == 'CREANCES-DETTES') {
 	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
+}
 print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';
 print '</tr>';
 
