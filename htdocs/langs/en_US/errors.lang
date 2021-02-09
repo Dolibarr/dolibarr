@@ -227,6 +227,7 @@ ErrorDuringChartLoad=Error when loading chart of accounts. If few accounts were 
 ErrorBadSyntaxForParamKeyForContent=Bad syntax for param keyforcontent. Must have a value starting with %s or %s
 ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text content to show) or %s (with external url to show) must be set.
 ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
+ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 ErrorSearchCriteriaTooSmall=Search criteria too small.
