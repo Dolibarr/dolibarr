@@ -2229,6 +2229,7 @@ class Form
 		{
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid ";
 			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$soc = new Societe($db);
 				$result = $soc->fetch($socid);
 				if ($result > 0 && !empty($soc->default_lang)) {

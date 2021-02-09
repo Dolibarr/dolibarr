@@ -274,7 +274,7 @@ if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_tracking)   $sql .= natural_search("e.tracking_number", $search_tracking);
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
 if ($search_user > 0)
 {
@@ -339,6 +339,7 @@ if ($resql)
 	if ($search_tracking)   $param .= "&amp;search_tracking=".urlencode($search_tracking);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 
 	if ($search_datedelivery_start)	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
 	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
@@ -490,7 +491,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Weight
