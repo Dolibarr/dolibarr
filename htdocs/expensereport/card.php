@@ -953,7 +953,7 @@ if (empty($reshook))
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
-		$result = $object->set_unpaid($user);
+		$result = $object->setUnpaid($user);
 
 		if ($result > 0)
 		{
@@ -981,7 +981,7 @@ if (empty($reshook))
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
-		$result = $object->set_paid($id, $user);
+		$result = $object->setPaid($id, $user);
 
 		if ($result > 0)
 		{

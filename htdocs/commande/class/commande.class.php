@@ -2359,6 +2359,8 @@ class Commande extends CommonOrder
 	/**
 	 * 	Applique une remise relative
 	 *
+	 *  @deprecated
+	 *  @see setDiscount()
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -2367,6 +2369,20 @@ class Commande extends CommonOrder
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		return $this->setDiscount($user, $remise, $notrigger);
+	}
+
+	/**
+	 * 	Applique une remise relative
+	 *
+	 * 	@param     	User		$user		User qui positionne la remise
+	 * 	@param     	float		$remise		Discount (percent)
+	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int 					<0 if KO, >0 if OK
+	 */
+	public function setDiscount($user, $remise, $notrigger = 0)
+	{
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if ($user->rights->commande->creer)

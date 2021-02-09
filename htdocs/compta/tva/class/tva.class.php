@@ -246,14 +246,14 @@ class Tva extends CommonObject
 	 *    @param    User    $user       Object user making change
 	 *    @return   int					<0 if KO, >0 if OK
 	 */
-	public function set_paid($user)
+	public function setPaid($user)
 	{
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".$this->id;
-		$return = $this->db->query($sql);
-		if ($return) return 1;
+		$resql = $this->db->query($sql);
+		if ($resql) return 1;
 		else return -1;
 	}
 
@@ -263,14 +263,14 @@ class Tva extends CommonObject
 	 *    @param	User	$user       Object user making change
 	 *    @return	int					<0 if KO, >0 if OK
 	 */
-	public function set_unpaid($user)
+	public function setUnpaid($user)
 	{
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".$this->id;
-		$return = $this->db->query($sql);
-		if ($return) return 1;
+		$resql = $this->db->query($sql);
+		if ($resql) return 1;
 		else return -1;
 	}
 

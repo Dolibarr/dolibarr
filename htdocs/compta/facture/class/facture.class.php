@@ -2293,6 +2293,8 @@ class Facture extends CommonInvoice
 	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
 	 *  or partialy (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
+	 *	@deprecated
+	 *  @see setPaid()
 	 *  @param	User	$user      	Object user that modify
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
@@ -2301,6 +2303,21 @@ class Facture extends CommonInvoice
 	public function set_paid($user, $close_code = '', $close_note = '')
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user, $close_code, $close_note);
+	}
+
+	/**
+	 *  Tag the invoice as paid completely (if close_code is filled) => this->fk_statut=2, this->paye=1
+	 *  or partialy (if close_code filled) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
+	 *
+	 *  @param	User	$user      	Object user that modify
+	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
+	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
+	 *  @return int         		<0 if KO, >0 if OK
+	 */
+	public function setPaid($user, $close_code = '', $close_note = '')
+	{
 		$error = 0;
 
 		if ($this->paye != 1)
@@ -2352,12 +2369,28 @@ class Facture extends CommonInvoice
 	 *	Fonction utilisee quand un paiement prelevement est refuse,
 	 * 	ou quand une facture annulee et reouverte.
 	 *
+	 *	@deprecated
+	 *  @see setUnpaid()
 	 *  @param	User	$user       Object user that change status
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		return $this->setUnpaid($user);
+	}
+
+	/**
+	 *  Tag la facture comme non payee completement + appel trigger BILL_UNPAYED
+	 *	Fonction utilisee quand un paiement prelevement est refuse,
+	 * 	ou quand une facture annulee et reouverte.
+	 *
+	 *  @param	User	$user       Object user that change status
+	 *  @return int         		<0 if KO, >0 if OK
+	 */
+	public function setUnpaid($user)
+	{
 		$error = 0;
 
 		$this->db->begin();
@@ -2399,6 +2432,8 @@ class Facture extends CommonInvoice
 	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
 	 *  of no payment even if merchandises were sent).
 	 *
+	 *	@deprecated
+	 *  @see setCanceled()
 	 *	@param	User	$user        	Object user making change
 	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
 	 *	@param	string	$close_note		Comment
@@ -2407,8 +2442,23 @@ class Facture extends CommonInvoice
 	public function set_canceled($user, $close_code = '', $close_note = '')
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_canceled is deprecated, use setCanceled instead", LOG_NOTICE);
+		return $this->setCanceled($user, $close_code, $close_note);
+	}
 
-		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
+	/**
+	 *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_CANCEL
+	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
+	 *  of no payment even if merchandises were sent).
+	 *
+	 *	@param	User	$user        	Object user making change
+	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
+	 *	@param	string	$close_note		Comment
+	 *	@return int         			<0 if KO, >0 if OK
+	 */
+	public function setCanceled($user, $close_code = '', $close_note = '')
+	{
+		dol_syslog(get_class($this)."::setCanceled rowid=".$this->id, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -2542,7 +2592,7 @@ class Facture extends CommonInvoice
 				return -12;
 			}
 
-			$result = $facreplaced->set_canceled($user, self::CLOSECODE_REPLACED, '');
+			$result = $facreplaced->setCanceled($user, self::CLOSECODE_REPLACED, '');
 			if ($result < 0)
 			{
 				$this->error = $facreplaced->error;
@@ -3567,6 +3617,8 @@ class Facture extends CommonInvoice
 	/**
 	 *	Set percent discount
 	 *
+	 *  @deprecated
+	 *  @see setDiscount()
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -3575,6 +3627,20 @@ class Facture extends CommonInvoice
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		return $this->setDiscount($user, $remise, $notrigger);
+	}
+
+	/**
+	 *	Set percent discount
+	 *
+	 *	@param     	User	$user		User that set discount
+	 *	@param     	double	$remise		Discount
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int 		<0 if ko, >0 if ok
+	 */
+	public function setDiscount($user, $remise, $notrigger = 0)
+	{
 		// Clean parameters
 		if (empty($remise)) $remise = 0;
 

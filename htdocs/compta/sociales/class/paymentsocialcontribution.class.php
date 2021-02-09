@@ -197,7 +197,7 @@ class PaymentSocialContribution extends CommonObject
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0)
 							{
-								$result = $contrib->set_paid($user);
+								$result = $contrib->setPaid($user);
 							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
