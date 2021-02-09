@@ -323,6 +323,9 @@ if ($modecompta == 'BOOKKEEPING')
 			print '<tr><td colspan="4" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 		}
 	} else dol_print_error($db);
+
+	$total_ht_income += $total_ht;
+	$total_ttc_income += $total_ttc;
 } else {
 	/*
 	 * Factures clients
@@ -446,6 +449,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 	$total_ht_income += $total_ht;
 	$total_ttc_income += $total_ttc;
+
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
 		print '<td colspan="3" class="right">'.price($total_ht).'</td>';
@@ -525,11 +529,12 @@ if ($modecompta == 'BOOKKEEPING')
 
 		$total_ht_income += $subtotal_ht;
 		$total_ttc_income += $subtotal_ttc;
+
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES')
 			print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
-			print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
-			print '</tr>';
+		print '<td colspan="3" class="right">'.price($subtotal_ttc).'</td>';
+		print '</tr>';
 	}
 
 	/*
@@ -609,6 +614,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 	$total_ht_outcome += $subtotal_ht;
 	$total_ttc_outcome += $subtotal_ttc;
+
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
 		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
@@ -686,6 +692,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 	$total_ht_outcome += $subtotal_ht;
 	$total_ttc_outcome += $subtotal_ttc;
+
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
 		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
@@ -764,6 +771,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 	$total_ht_outcome += $subtotal_ht;
 	$total_ttc_outcome += $subtotal_ttc;
+
 	print '<tr class="liste_total">';
 	if ($modecompta == 'CREANCES-DETTES')
 		print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
@@ -841,6 +849,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 		$total_ht_outcome += $subtotal_ht;
 		$total_ttc_outcome += $subtotal_ttc;
+
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES')
 			print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
@@ -926,6 +935,7 @@ if ($modecompta == 'BOOKKEEPING')
 
 		$total_ht_outcome += $subtotal_ht;
 		$total_ttc_outcome += $subtotal_ttc;
+
 		print '<tr class="liste_total">';
 		if ($modecompta == 'CREANCES-DETTES') print '<td colspan="3" class="right">'.price(-$subtotal_ht).'</td>';
 		print '<td colspan="3" class="right">'.price(-$subtotal_ttc).'</td>';
@@ -963,6 +973,7 @@ if ($modecompta == 'BOOKKEEPING')
 			{
 				$subtotal_ht += -$obj->amount;
 				$subtotal_ttc += -$obj->amount;
+
 				$total_ht_outcome += $obj->amount;
 				$total_ttc_outcome += $obj->amount;
 			}
@@ -978,6 +989,7 @@ if ($modecompta == 'BOOKKEEPING')
 			{
 				$subtotal_ht += $obj->amount;
 				$subtotal_ttc += $obj->amount;
+
 				$total_ht_income += $obj->amount;
 				$total_ttc_income += $obj->amount;
 			}
@@ -1038,8 +1050,10 @@ if ($modecompta == 'BOOKKEEPING')
 			}
 			$total_ht += $subtotal_ht;
 			$total_ttc += $subtotal_ttc;
+
 			$total_ht_income += $subtotal_ht;
 			$total_ttc_income += $subtotal_ttc;
+
 			print '<tr class="liste_total">';
 			if ($modecompta == 'CREANCES-DETTES')
 				print '<td colspan="3" class="right">'.price($subtotal_ht).'</td>';
@@ -1101,8 +1115,10 @@ if ($modecompta == 'BOOKKEEPING')
 			} else {
 				dol_print_error($db);
 			}
+
 			$total_ht_outcome -= 0;
 			$total_ttc_outcome -= $amount;
+
 			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print "<td>".$langs->trans("VATToPay")."</td>\n";
 			print '<td class="right">&nbsp;</td>'."\n";
@@ -1151,6 +1167,7 @@ if ($modecompta == 'BOOKKEEPING')
 			} else {
 				dol_print_error($db);
 			}
+
 			$total_ht_income += 0;
 			$total_ttc_income += $amount;
 
@@ -1197,8 +1214,10 @@ if ($modecompta == 'BOOKKEEPING')
 			} else {
 				dol_print_error($db);
 			}
+
 			$total_ht_outcome -= 0;
 			$total_ttc_outcome -= $amount;
+
 			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print "<td>".$langs->trans("VATPaid")."</td>\n";
 			if ($modecompta == 'CREANCES-DETTES')
@@ -1243,8 +1262,10 @@ if ($modecompta == 'BOOKKEEPING')
 			} else {
 				dol_print_error($db);
 			}
+
 			$total_ht_income += 0;
 			$total_ttc_income += $amount;
+
 			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print "<td>".$langs->trans("VATCollected")."</td>\n";
 			if ($modecompta == 'CREANCES-DETTES')
