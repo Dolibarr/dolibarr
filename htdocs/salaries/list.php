@@ -257,7 +257,7 @@ if ($filtre) {
 if ($search_type_id) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;
 }
-$sql .= " GROUP BY s.rowid, s.amount, s.dateep, s.datesp, s.label, s.paye, pst.code";
+$sql .= " GROUP BY u.rowid, ba.rowid, s.rowid, s.amount, s.dateep, s.datesp, s.label, s.paye, pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
