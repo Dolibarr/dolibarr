@@ -498,7 +498,7 @@ class Facture extends CommonInvoice
 			$this->fk_project        = GETPOST('projectid', 'int') > 0 ? ((int) GETPOST('projectid', 'int')) : $_facrec->fk_project;
 			$this->note_public       = GETPOST('note_public', 'none') ? GETPOST('note_public', 'restricthtml') : $_facrec->note_public;
 			$this->note_private      = GETPOST('note_private', 'none') ? GETPOST('note_private', 'restricthtml') : $_facrec->note_private;
-			$this->modelpdf          = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->modelpdf;
+			$this->model_pdf          = GETPOST('model', 'alpha') ? GETPOST('model', 'alpha') : $_facrec->model_pdf;
 			$this->cond_reglement_id = GETPOST('cond_reglement_id', 'int') > 0 ? ((int) GETPOST('cond_reglement_id', 'int')) : $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = GETPOST('mode_reglement_id', 'int') > 0 ? ((int) GETPOST('mode_reglement_id', 'int')) : $_facrec->mode_reglement_id;
 			$this->fk_account        = GETPOST('fk_account') > 0 ? ((int) GETPOST('fk_account')) : $_facrec->fk_account;
@@ -1062,8 +1062,8 @@ class Facture extends CommonInvoice
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
-		$facture->modelpdf          = $this->modelpdf; // deprecated
-		$facture->model_pdf         = $this->modelpdf;
+		$facture->modelpdf          = $this->model_pdf; // deprecated
+		$facture->model_pdf         = $this->model_pdf;
 		$facture->fk_project        = $this->fk_project;
 		$facture->cond_reglement_id = $this->cond_reglement_id;
 		$facture->mode_reglement_id = $this->mode_reglement_id;
@@ -3370,8 +3370,8 @@ class Facture extends CommonInvoice
 			}
 
 			$this->line->id = $rowid;
-			$this->line->rowid				= $rowid;
-			$this->line->label				= $label;
+			$this->line->rowid = $rowid;
+			$this->line->label = $label;
 			$this->line->desc = $desc;
 			$this->line->ref_ext = $ref_ext;
 			$this->line->qty = ($this->type == self::TYPE_CREDIT_NOTE ?abs($qty) : $qty); // For credit note, quantity is always positive and unit price negative
@@ -3732,7 +3732,7 @@ class Facture extends CommonInvoice
 		}
 
 		if (!empty($addon)) {
-			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->nom.", type=".$soc->typent_code, LOG_DEBUG);
+			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->name.", type=".$soc->typent_code, LOG_DEBUG);
 
 			$mybool = false;
 
