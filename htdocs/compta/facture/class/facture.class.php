@@ -797,6 +797,7 @@ class Facture extends CommonInvoice
 					if ($result < 0)
 					{
 						$this->error = $newinvoiceline->error;
+						$this->errors = $newinvoiceline->errors;
 						$error++;
 						break;
 					}
@@ -3202,6 +3203,7 @@ class Facture extends CommonInvoice
 				}
 			} else {
 				$this->error = $this->line->error;
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -2;
 			}
