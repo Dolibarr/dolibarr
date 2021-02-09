@@ -163,7 +163,7 @@ abstract class ModeleProductCode
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		$liste = array();
+		$list = array();
 		$sql = "";
 
 		$resql = $db->query($sql);
@@ -172,13 +172,13 @@ abstract class ModeleProductCode
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
-				$liste[$row[0]] = $row[1];
+				$list[$row[0]] = $row[1];
 				$i++;
 			}
 		} else {
 			return -1;
 		}
-		return $liste;
+		return $list;
 	}
 
 	/**
