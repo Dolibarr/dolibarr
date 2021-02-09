@@ -1492,6 +1492,8 @@ class ExpenseReport extends CommonObject
 	/**
 	 * set_unpaid
 	 *
+	 *	@deprecated
+	 *  @see setUnpaid()
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
 	 * @return  int                 <0 if KO, >0 if OK
@@ -1499,6 +1501,19 @@ class ExpenseReport extends CommonObject
 	public function set_unpaid($fuser, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		return $this->setUnpaid($fuser, $notrigger);
+	}
+
+	/**
+	 * set_unpaid
+	 *
+	 * @param   User    $fuser      User
+	 * @param   int     $notrigger  Disable triggers
+	 * @return  int                 <0 if KO, >0 if OK
+	 */
+	public function setUnpaid($fuser, $notrigger = 0)
+	{
 		$error = 0;
 
 		if ($this->paid)

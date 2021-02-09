@@ -1261,7 +1261,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		$this->setPaid($user, $close_code, $close_note);
+		return $this->setPaid($user, $close_code, $close_note);
 	}
 
 	/**
@@ -1322,7 +1322,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		// phpcs:enable
 		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
-		$this->setUnpaid($user);
+		return $this->setUnpaid($user);
 	}
 
 	/**
