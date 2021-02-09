@@ -1250,6 +1250,8 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 *  Tag invoice as a paid invoice
 	 *
+	 *	@deprecated
+	 *  @see setPaid()
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
 	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
@@ -1258,6 +1260,20 @@ class FactureFournisseur extends CommonInvoice
 	public function set_paid($user, $close_code = '', $close_note = '')
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user, $close_code, $close_note);
+	}
+
+	/**
+	 *  Tag invoice as a paid invoice
+	 *
+	 *	@param  User	$user       Object user
+	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
+	 *	@param  string	$close_note	Comment informs if the class has been paid while payment is incomplete. Not implementd yet.
+	 *	@return int         		<0 si ko, >0 si ok
+	 */
+	public function setPaid($user, $close_code = '', $close_note = '')
+	{
 		global $conf, $langs;
 		$error = 0;
 
@@ -1291,8 +1307,24 @@ class FactureFournisseur extends CommonInvoice
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Tag the invoice as not fully paid + trigger call BILL_UNPAYED
+	 *	Function used when a direct debit payment is refused,
+	 *	or when the invoice was canceled and reopened.
+	 *
+	 *	@deprecated
+	 *  @see setUnpaid()
+	 *	@param      User	$user       Object user that change status
+	 *	@return     int         		<0 si ok, >0 si ok
+	 */
+	public function set_unpaid($user)
+	{
+		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		return $this->setUnpaid($user);
+	}
+
 	/**
 	 *	Tag the invoice as not fully paid + trigger call BILL_UNPAYED
 	 *	Function used when a direct debit payment is refused,
@@ -1301,9 +1333,8 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      User	$user       Object user that change status
 	 *	@return     int         		<0 si ok, >0 si ok
 	 */
-	public function set_unpaid($user)
+	public function setUnpaid($user)
 	{
-		// phpcs:enable
 		global $conf, $langs;
 		$error = 0;
 

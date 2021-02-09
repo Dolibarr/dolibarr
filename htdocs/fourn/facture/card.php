@@ -277,7 +277,7 @@ if (empty($reshook))
 		$discount->unlink_invoice();
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->set_paid($user);
+		$result = $object->setPaid($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -605,7 +605,7 @@ if (empty($reshook))
 			{
 				if ($object->type != FactureFournisseur::TYPE_DEPOSIT) {
 					// Classe facture
-					$result = $object->set_paid($user);
+					$result = $object->setPaid($user);
 					if ($result >= 0)
 					{
 						$db->commit();
@@ -1545,7 +1545,7 @@ if (empty($reshook))
 		if ($object->statut == FactureFournisseur::STATUS_CLOSED
 		|| ($object->statut == FactureFournisseur::STATUS_ABANDONED && $object->close_code != 'replaced'))
 		{
-			$result = $object->set_unpaid($user);
+			$result = $object->setUnpaid($user);
 			if ($result > 0)
 			{
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);

@@ -184,7 +184,7 @@ class RejetPrelevement
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 
-			$fac->set_unpaid($user);
+			$fac->setUnpaid($user);
 
 			//TODO: Must be managed by notifications module
 			// Send email to sender of the standing order request

@@ -138,13 +138,12 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("VATPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("VATPayment"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
  */
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -213,7 +212,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

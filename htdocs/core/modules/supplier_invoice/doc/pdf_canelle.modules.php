@@ -133,6 +133,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->db = $db;
 		$this->name = "canelle";
 		$this->description = $langs->trans('SuppliersInvoiceModel');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page dimensions
 		$this->type = 'pdf';
