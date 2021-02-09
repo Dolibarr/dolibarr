@@ -53,11 +53,11 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 		global $conf;
 
 		$type = 'product';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
-		return $liste;
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+		return $list;
 	}
 }
 
