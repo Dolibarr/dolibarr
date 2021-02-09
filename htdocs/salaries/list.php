@@ -141,7 +141,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND s.fk_typepayment=".$typeid;
 }
-$sql .= " GROUP BY s.rowid, s.amount, s.dateep, s.datesp, s.label, s.paye, pst.code";
+$sql .= " GROUP BY u.rowid, ba.rowid, s.rowid, s.amount, s.dateep, s.datesp, s.label, s.paye, pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
 $totalnboflines = 0;
