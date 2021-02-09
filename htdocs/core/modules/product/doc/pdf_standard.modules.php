@@ -172,7 +172,11 @@ class pdf_standard extends ModelePDFProduct
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
-		$nblines = count($object->lines);
+		if (is_array($object->lines)) {
+			$nblines = count($object->lines);
+		} else {
+			$nblines = 0;
+		}
 
 		if ($conf->product->dir_output)
 		{

@@ -212,7 +212,6 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '</td>';
 				print "</tr>\n";
 			}
-
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
@@ -303,7 +302,6 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 				print '</td>';
 				print "</tr>\n";
 			}
-
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
@@ -395,7 +393,6 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</td>';
 				print "</tr>\n";
 			}
-
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");
@@ -487,7 +484,6 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '</td>';
 				print "</tr>\n";
 			}
-
 		}
 
 		addSummaryTableLine(3, $num, $nbofloop, $total, "NoProposal");

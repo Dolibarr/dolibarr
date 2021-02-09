@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
- * Copyright (C) 2015-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -206,23 +206,24 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'</span>',
 						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
+						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'</span>',
 						'asis' => 1
 					);
 
 					$line++;
 				}
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoTooLowStockProducts"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

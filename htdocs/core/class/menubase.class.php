@@ -112,6 +112,11 @@ class Menubase
 	public $title;
 
 	/**
+	 * @var string Prefix
+	 */
+	public $prefix;
+
+	/**
 	 * @var string Lang file to load for translation
 	 */
 	public $langs;
@@ -248,6 +253,7 @@ class Menubase
 				$sql .= "url,";
 				$sql .= "target,";
 				$sql .= "titre,";
+				$sql .= "prefix,";
 				$sql .= "langs,";
 				$sql .= "perms,";
 				$sql .= "enabled,";
@@ -266,6 +272,7 @@ class Menubase
 				$sql .= " '".$this->db->escape($this->url)."',";
 				$sql .= " '".$this->db->escape($this->target)."',";
 				$sql .= " '".$this->db->escape($this->title)."',";
+				$sql .= " '".$this->db->escape($this->prefix)."',";
 				$sql .= " '".$this->db->escape($this->langs)."',";
 				$sql .= " '".$this->db->escape($this->perms)."',";
 				$sql .= " '".$this->db->escape($this->enabled)."',";
@@ -319,6 +326,7 @@ class Menubase
 		$this->url = trim($this->url);
 		$this->target = trim($this->target);
 		$this->title = trim($this->title);
+		$this->prefix = trim($this->prefix);
 		$this->langs = trim($this->langs);
 		$this->perms = trim($this->perms);
 		$this->enabled = trim($this->enabled);
@@ -341,6 +349,7 @@ class Menubase
 		$sql .= " url='".$this->db->escape($this->url)."',";
 		$sql .= " target='".$this->db->escape($this->target)."',";
 		$sql .= " titre='".$this->db->escape($this->title)."',";
+		$sql .= " prefix='".$this->db->escape($this->prefix)."',";
 		$sql .= " langs='".$this->db->escape($this->langs)."',";
 		$sql .= " perms='".$this->db->escape($this->perms)."',";
 		$sql .= " enabled='".$this->db->escape($this->enabled)."',";
@@ -385,6 +394,7 @@ class Menubase
 		$sql .= " t.url,";
 		$sql .= " t.target,";
 		$sql .= " t.titre as title,";
+		$sql .= " t.prefix,";
 		$sql .= " t.langs,";
 		$sql .= " t.perms,";
 		$sql .= " t.enabled,";
@@ -416,6 +426,7 @@ class Menubase
 				$this->url = $obj->url;
 				$this->target = $obj->target;
 				$this->title = $obj->title;
+				$this->prefix = $obj->prefix;
 				$this->langs = $obj->langs;
 				$this->perms = $obj->perms;
 				$this->enabled = str_replace("\"", "'", $obj->enabled);
@@ -505,8 +516,7 @@ class Menubase
 		$leftmenu = $myleftmenu; // To export to dol_eval function
 
 		$newTabMenu = array();
-		foreach ($tabMenu as $val)
-		{
+		foreach ($tabMenu as $val) {
 			if ($val['type'] == 'top') $newTabMenu[] = $val;
 		}
 
@@ -554,15 +564,13 @@ class Menubase
 		// Now complete $this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
 		foreach ($tabMenu as $key => $val)
 		{
-			//var_dump($tabMenu);
 			if ($val['fk_menu'] == -1 && $val['fk_mainmenu'] == $mainmenu)    // We found a menu entry not linked to parent with good mainmenu
 			{
 				//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
 				//var_dump($this->newmenu->liste);exit;
 
-				if (empty($val['fk_leftmenu']))
-				{
-					$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
+				if (empty($val['fk_leftmenu'])) {
+					$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
 					//var_dump($this->newmenu->liste);
 				} else {
 					// Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
@@ -579,8 +587,7 @@ class Menubase
 								break;
 							}
 						}
-						if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu'])
-						{
+						if ($valparent['mainmenu'] == $val['fk_mainmenu'] && $valparent['leftmenu'] == $val['fk_leftmenu']) {
 							//print "We found parent: keyparent='.$keyparent.' - level=".$valparent['level'].' - '.join(',',$valparent).'<br>';
 							// Now we look to find last subelement of this parent (we add at end)
 							$searchlastsub = ($valparent['level'] + 1);
@@ -589,8 +596,9 @@ class Menubase
 						}
 					}
 					//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
-					if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
-					else {
+					if ($found) {
+						$this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
+					} else {
 						dol_syslog("Error. Modules ".$val['module']." has defined a menu entry with a parent='fk_mainmenu=".$val['fk_leftmenu'].",fk_leftmenu=".$val['fk_leftmenu']."' and position=".$val['position'].'. The parent was not found. May be you forget it into your definition of menu, or may be the parent has a "position" that is after the child (fix field "position" of parent or child in this case).', LOG_WARNING);
 						//print "Parent menu not found !!<br>";
 					}
@@ -620,7 +628,7 @@ class Menubase
 		$mainmenu = $mymainmenu; // To export to dol_eval function
 		$leftmenu = $myleftmenu; // To export to dol_eval function
 
-		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
+		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
@@ -700,12 +708,15 @@ class Menubase
 					$tabMenu[$b]['module']      = $menu['module'];
 					$tabMenu[$b]['fk_menu']     = $menu['fk_menu'];
 					$tabMenu[$b]['url']         = $menu['url'];
-					if (!preg_match("/^(http:\/\/|https:\/\/)/i", $tabMenu[$b]['url']))
-					{
-						if (preg_match('/\?/', $tabMenu[$b]['url'])) $tabMenu[$b]['url'] .= '&amp;idmenu='.$menu['rowid'];
-						else $tabMenu[$b]['url'] .= '?idmenu='.$menu['rowid'];
+					if (!preg_match("/^(http:\/\/|https:\/\/)/i", $tabMenu[$b]['url'])) {
+						if (preg_match('/\?/', $tabMenu[$b]['url'])) {
+							$tabMenu[$b]['url'] .= '&amp;idmenu='.$menu['rowid'];
+						} else {
+							$tabMenu[$b]['url'] .= '?idmenu='.$menu['rowid'];
+						}
 					}
 					$tabMenu[$b]['titre']       = $title;
+					$tabMenu[$b]['prefix'] = $menu['prefix'];
 					$tabMenu[$b]['target']      = $menu['target'];
 					$tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
 					$tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
@@ -750,9 +761,8 @@ class Menubase
 		for ($x = 0; $x < $num; $x++)
 		{
 			//si un element a pour pere : $pere
-			if ((($tab[$x]['fk_menu'] >= 0 && $tab[$x]['fk_menu'] == $pere)) && $tab[$x]['enabled'])
-			{
-				$this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level - 1), $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu']);
+			if ((($tab[$x]['fk_menu'] >= 0 && $tab[$x]['fk_menu'] == $pere)) && $tab[$x]['enabled']) {
+				$this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level - 1), $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu'], 0, '', '', '', $tab[$x]['prefix']);
 				$this->recur($tab, $tab[$x]['rowid'], ($level + 1));
 			}
 		}

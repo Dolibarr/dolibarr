@@ -119,6 +119,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
 MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
+PAIDInDolibarr=%s paid
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date

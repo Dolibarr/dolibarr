@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2019 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
 
@@ -55,15 +55,20 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -127,6 +132,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->db = $db;
 		$this->name = "Storm";
 		$this->description = $langs->trans("DocumentModelStorm");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';

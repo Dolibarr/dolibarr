@@ -223,6 +223,12 @@ abstract class CommonObject
 	public $statut;
 
 	/**
+	 * @var int The object's status
+	 * @see setStatut()
+	 */
+	public $status;
+
+	/**
 	 * @var string
 	 * @see getFullAddress()
 	 */
@@ -1055,7 +1061,6 @@ abstract class CommonObject
 				{
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					echo 'err rollback';
 					return -2;
 				} else {
 					$this->error = $this->db->error();
@@ -2066,6 +2071,7 @@ abstract class CommonObject
 			$fieldname = 'fk_mode_reglement';
 			if ($this->element == 'societe') $fieldname = 'mode_reglement';
 			if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
+			if (get_class($this) == 'Tva') $fieldname = 'fk_typepayment';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
@@ -4909,7 +4915,7 @@ abstract class CommonObject
 						    $this->result['filename']=$ecmfile->filename;*/
 							//var_dump($obj->update_main_doc_field);exit;
 
-							// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
+							// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
 							$update_main_doc_field = 0;
 							if (!empty($obj->update_main_doc_field)) $update_main_doc_field = 1;
 							if ($update_main_doc_field && !empty($this->table_element))
@@ -7164,9 +7170,6 @@ abstract class CommonObject
 									if ($(this).val() == 0){
 								   		$("#"+child_list).hide();
 									}
-
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select[child_list]);
 								});
 							});
 						}

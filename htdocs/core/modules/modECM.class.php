@@ -123,59 +123,68 @@ class modECM extends DolibarrModules
 		$r = 0;
 
 		// Top menu
-		$this->menu[$r] = array('fk_menu'=>0,
-							  'type'=>'top',
-							  'titre'=>'MenuECM',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index.php',
-							  'langs'=>'ecm',
-							  'position'=>82,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
-							  'enabled'=>'$conf->ecm->enabled',
-							  'target'=>'',
-							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = array(
+			'fk_menu'=>0,
+			'type'=>'top',
+			'titre'=>'MenuECM',
+			'mainmenu'=>'ecm',
+			'url'=>'/ecm/index.php',
+			'langs'=>'ecm',
+			'position'=>82,
+			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
+			'enabled'=>'$conf->ecm->enabled',
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 
 		// Left menu linked to top menu
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=ecm',
-							  'type'=>'left',
-							  'titre'=>'ECMArea',
-							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'ecm',
-							  'url'=>'/ecm/index.php?mainmenu=ecm&leftmenu=ecm',
-							  'langs'=>'ecm',
-							  'position'=>101,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'target'=>'',
-							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=ecm',
+			'type'=>'left',
+			'titre'=>'ECMArea',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'mainmenu'=>'ecm',
+			'leftmenu'=>'ecm',
+			'url'=>'/ecm/index.php?mainmenu=ecm&leftmenu=ecm',
+			'langs'=>'ecm',
+			'position'=>101,
+			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
-							  'type'=>'left',
-							  'titre'=>'ECMSectionsManual',
-							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'ecm_manual',
-							  'url'=>'/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
-							  'langs'=>'ecm',
-							  'position'=>102,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'target'=>'',
-							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
+			'type'=>'left',
+			'titre'=>'ECMSectionsManual',
+			'mainmenu'=>'ecm',
+			'leftmenu'=>'ecm_manual',
+			'url'=>'/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
+			'langs'=>'ecm',
+			'position'=>102,
+			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
-							  'type'=>'left',
-							  'titre'=>'ECMSectionsAuto',
-							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
-							  'langs'=>'ecm',
-							  'position'=>103,
-							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-							  'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && ! empty($conf->global->ECM_AUTO_TREE_ENABLED)',
-							  'target'=>'',
-							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
+			'type'=>'left',
+			'titre'=>'ECMSectionsAuto',
+			'mainmenu'=>'ecm',
+			'url'=>'/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
+			'langs'=>'ecm',
+			'position'=>103,
+			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && ! empty($conf->global->ECM_AUTO_TREE_ENABLED)',
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 	}
 }

@@ -315,7 +315,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) print '</td><td>';
 		else print ': ';
 		print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzserver').' &nbsp;'.$langs->trans("ClientHour");
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -349,7 +349,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) print '</td><td>';
 		else print ': ';
 		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzserver').' &nbsp;'.$langs->trans("ClientHour");
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -377,7 +377,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) print '</td><td>';
 		else print ': ';
 		print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzserver').' &nbsp;'.$langs->trans("ClientHour");
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -413,7 +413,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) print '</td><td>';
 		else print ': ';
 		print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzserver').' &nbsp;'.$langs->trans("ClientHour");
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -447,7 +447,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) print '</td><td>';
 		else print ': ';
 		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzserver').' &nbsp;'.$langs->trans("ClientHour");
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -460,7 +460,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) print '</td><td>';
 		else print ': ';
 		print dol_print_date($object->date_envoi, 'dayhour', 'tzserver');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzserver').' &nbsp;'.$langs->trans("ClientHour");
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}

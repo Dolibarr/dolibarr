@@ -424,7 +424,7 @@ if ($result)
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
 				}
-				print '<td>&nbsp</td>';
+				print '<td>&nbsp;</td>';
 			}
 		} else {
 			// Do not own permission
@@ -435,7 +435,7 @@ if ($result)
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';
 			}
-			print '<td>&nbsp</td>';
+			print '<td>&nbsp;</td>';
 		}
 
 		// Label of permission

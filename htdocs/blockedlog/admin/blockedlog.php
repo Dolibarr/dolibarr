@@ -77,6 +77,7 @@ if (preg_match('/del_(.*)/', $action, $reg))
 
 $form = new Form($db);
 $block_static = new BlockedLog($db);
+$block_static->loadTrackedEvents();
 
 llxHeader('', $langs->trans("BlockedLogSetup"));
 

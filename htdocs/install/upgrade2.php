@@ -477,6 +477,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
+			'MAIN_MODULE_MARGIN'=>'menuonly',
 			'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
 			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
 			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
@@ -4205,6 +4206,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/modules/facture/pdf_crabe.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/export/export_excel.modules.php',
+		'/core/modules/export/export_excel2007new.modules.php',
 
 		'/api/class/api_generic.class.php',
 		'/categories/class/api_category.class.php',

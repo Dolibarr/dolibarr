@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/export/export_excel2007new.modules.php
+ *	\file       htdocs/core/modules/export/export_excel2007.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
  */
@@ -32,7 +32,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 /**
  *	Class to build export files with Excel format
  */
-class ExportExcel2007new extends ModeleExports
+class ExportExcel2007 extends ModeleExports
 {
 	/**
 	 * @var string ID
@@ -79,7 +79,7 @@ class ExportExcel2007new extends ModeleExports
 		global $conf, $langs;
 		$this->db = $db;
 
-		$this->id = 'excel2007new'; // Same value then xxx in file name export_xxx.modules.php
+		$this->id = 'excel2007'; // Same value then xxx in file name export_xxx.modules.php
 		$this->label = 'Excel 2007'; // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
@@ -199,7 +199,7 @@ class ExportExcel2007new extends ModeleExports
 		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 
-		if ($this->id == 'excel2007new')
+		if ($this->id == 'excel2007')
 		{
 			if (!class_exists('ZipArchive'))	// For Excel2007, PHPSpreadSheet may need ZipArchive
 			{

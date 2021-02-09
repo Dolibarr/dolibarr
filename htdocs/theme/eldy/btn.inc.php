@@ -58,7 +58,9 @@ div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefuse
 span.butAction, span.butActionDelete {
     cursor: pointer;
 }
-
+.paginationafterarrows .butAction {
+    font-size: 0.9em;
+}
 .butAction {
     background: var(--butactionbg);
     color: #FFF !important;

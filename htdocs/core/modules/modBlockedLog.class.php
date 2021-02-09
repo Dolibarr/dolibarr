@@ -47,7 +47,7 @@ class modBlockedLog extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "base";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '75';
+		$this->module_position = '76';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
@@ -124,18 +124,20 @@ class modBlockedLog extends DolibarrModules
 		// -----------------
 		$r = 0;
 		$this->menu[$r] = array(
-		'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		'mainmenu'=>'tools',
-		'leftmenu'=>'blockedlogbrowser',
-		'type'=>'left', // This is a Left menu entry
-		'titre'=>'BrowseBlockedLog',
-		'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
-		'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		'position'=>200,
-		'enabled'=>'$conf->blockedlog->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		'perms'=>'$user->rights->blockedlog->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-		'target'=>'',
-		'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'mainmenu'=>'tools',
+			'leftmenu'=>'blockedlogbrowser',
+			'type'=>'left', // This is a Left menu entry
+			'titre'=>'BrowseBlockedLog',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
+			'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>200,
+			'enabled'=>'$conf->blockedlog->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->rights->blockedlog->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 	}
 
