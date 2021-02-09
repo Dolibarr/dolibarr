@@ -502,8 +502,8 @@ if ($step == 2 && $datatoimport)
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
-	$liste = $objmodelimport->liste_modeles($db);
-	foreach ($liste as $key)
+	$list = $objmodelimport->liste_modeles($db);
+	foreach ($list as $key)
 	{
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
