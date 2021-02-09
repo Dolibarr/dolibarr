@@ -375,7 +375,7 @@ class BonPrelevement extends CommonObject
 					dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
 					$fac = new Facture($this->db);
 					$fac->fetch($facs[$i]);
-					$result = $fac->set_paid($user);
+					$result = $fac->setPaid($user);
 				}
 			}
 
@@ -482,7 +482,7 @@ class BonPrelevement extends CommonObject
 
 					// @TODO Move this after creation of payment
 					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
-						$result = $fac->set_paid($user);
+						$result = $fac->setPaid($user);
 						if ($result < 0) {
 							$this->error = $fac->error;
 							$this->errors = $fac->errors;

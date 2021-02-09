@@ -319,7 +319,7 @@ switch ($action)
 							&& $obj_facturation->getSetPaymentMode() != 'DIFF')
 						{
 							// We set status to paid
-							$result = $invoice->set_paid($user);
+							$result = $invoice->setPaid($user);
 				  			//print 'set paid';exit;
 						}
 					}

@@ -337,6 +337,7 @@ class ExpenseReport extends CommonObject
 						if ($result < 0)
 						{
 							$this->error = $newndfline->error;
+							$this->errors = $newndfline->errors;
 							$error++;
 							break;
 						}
@@ -637,14 +638,30 @@ class ExpenseReport extends CommonObject
 	/**
 	 *    Classify the expense report as paid
 	 *
+	 *	@deprecated
+	 *  @see setPaid()
+	 *  @param    int     $id                 Id of expense report
+	 *  @param    user    $fuser              User making change
+	 *  @param    int     $notrigger          Disable triggers
+	 *  @return   int                         <0 if KO, >0 if OK
+	 */
+	public function set_paid($id, $fuser, $notrigger = 0)
+	{
+		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($id, $fuser, $notrigger);
+	}
+
+	/**
+	 *    Classify the expense report as paid
+	 *
 	 *    @param    int     $id                 Id of expense report
 	 *    @param    user    $fuser              User making change
 	 *    @param    int     $notrigger          Disable triggers
 	 *    @return   int                         <0 if KO, >0 if OK
 	 */
-	public function set_paid($id, $fuser, $notrigger = 0)
+	public function setPaid($id, $fuser, $notrigger = 0)
 	{
-		// phpcs:enable
 		$error = 0;
 		$this->db->begin();
 
@@ -1492,6 +1509,8 @@ class ExpenseReport extends CommonObject
 	/**
 	 * set_unpaid
 	 *
+	 *	@deprecated
+	 *  @see setUnpaid()
 	 * @param   User    $fuser      User
 	 * @param   int     $notrigger  Disable triggers
 	 * @return  int                 <0 if KO, >0 if OK
@@ -1499,6 +1518,19 @@ class ExpenseReport extends CommonObject
 	public function set_unpaid($fuser, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		return $this->setUnpaid($fuser, $notrigger);
+	}
+
+	/**
+	 * set_unpaid
+	 *
+	 * @param   User    $fuser      User
+	 * @param   int     $notrigger  Disable triggers
+	 * @return  int                 <0 if KO, >0 if OK
+	 */
+	public function setUnpaid($fuser, $notrigger = 0)
+	{
 		$error = 0;
 
 		if ($this->paid)

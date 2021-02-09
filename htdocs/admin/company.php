@@ -215,8 +215,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	if ($_POST["optionlocaltax1"] == "localtax1on")
 	{
-		if (!isset($_REQUEST['lt1']))
-		{
+		if (!GETPOSTISSET('lt1')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0, 'chaine', 0, '', $conf->entity);
 		} else {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1', 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -225,8 +224,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 	if ($_POST["optionlocaltax2"] == "localtax2on")
 	{
-		if (!isset($_REQUEST['lt2']))
-		{
+		if (!GETPOSTISSET('lt2')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0, 'chaine', 0, '', $conf->entity);
 		} else {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2', 'aZ09'), 'chaine', 0, '', $conf->entity);
@@ -236,7 +234,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	if (!$error)
 	{
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		if (GETPOST('save')) {	// To avoid to show message when we juste switch the country that resubmit the form.
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		}
 		$db->commit();
 	} else {
 		$db->rollback();

@@ -1973,6 +1973,7 @@ class Commande extends CommonOrder
 				}
 			} else {
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -2359,6 +2360,8 @@ class Commande extends CommonOrder
 	/**
 	 * 	Applique une remise relative
 	 *
+	 *  @deprecated
+	 *  @see setDiscount()
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -2367,6 +2370,20 @@ class Commande extends CommonOrder
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		return $this->setDiscount($user, $remise, $notrigger);
+	}
+
+	/**
+	 * 	Applique une remise relative
+	 *
+	 * 	@param     	User		$user		User qui positionne la remise
+	 * 	@param     	float		$remise		Discount (percent)
+	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int 					<0 if KO, >0 if OK
+	 */
+	public function setDiscount($user, $remise, $notrigger = 0)
+	{
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if ($user->rights->commande->creer)
@@ -3271,7 +3288,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 
 		$sql .= " WHERE rowid=".$this->id;
@@ -3921,7 +3938,7 @@ class Commande extends CommonOrder
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// dperecated
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;
