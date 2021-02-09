@@ -742,11 +742,11 @@ class Commande extends CommonOrder
 
 		if ($usercanclose)
 		{
-			$this->db->begin();
 			if ($this->statut == self::STATUS_CLOSED)
 			{
 				return 0;
 			}
+			$this->db->begin();
 
 			$now = dol_now();
 
