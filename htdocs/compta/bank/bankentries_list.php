@@ -1010,6 +1010,7 @@ if ($resql)
     while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
+		$links = $bankaccountstatic->get_url($objp->rowid);
 
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && $mode_balance_ok)
@@ -1200,7 +1201,6 @@ if ($resql)
     	    //print "</a>&nbsp;";
 
     	    // Add links after description
-    	    $links = $bankaccountstatic->get_url($objp->rowid);
     	    $cachebankaccount = array();
     	    foreach ($links as $key=>$val)
     	    {
