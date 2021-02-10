@@ -1220,7 +1220,7 @@ class Setup extends DolibarrApi
 	}
 
 	/**
-	 * Get the list of shipping methods. This operation is deprecated, use
+	 * Get the list of shipping methods. This operation is deprecated, use list of shipment methods
 	 * /setup/dictionary/shipment_methods instead.
 	 *
 	 * @param int       $limit      Number of items per page
