@@ -88,7 +88,7 @@ $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), G
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_dv_start = dol_mktime(0, 0, 0, GETPOST('search_start_dvmonth', 'int'), GETPOST('search_start_dvday', 'int'), GETPOST('search_start_dvyear', 'int'));
 $search_dv_end = dol_mktime(0, 0, 0, GETPOST('search_end_dvmonth', 'int'), GETPOST('search_end_dvday', 'int'), GETPOST('search_end_dvyear', 'int'));
-$search_thirdparty = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
+$search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
 $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
@@ -145,7 +145,7 @@ $arrayfields = array(
     'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
     'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
     'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
-    'bu.label'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>500),
+    'bu.label'=>array('label'=>$langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked'=>1, 'position'=>500),
     'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || !empty($ref)) ? 0 : 1), 'position'=>1000),
     'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
@@ -194,7 +194,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = "";
 	$search_req_nb = '';
 	$search_description = '';
-	$search_thirdparty = '';
+	$search_thirdparty_user = '';
 	$search_num_releve = '';
 	$search_conciliated = '';
 	$thirdparty = '';
@@ -262,7 +262,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		$param .= '&search_conciliated='.urlencode($search_conciliated);
 		if ($page) $param .= '&page='.urlencode($page);
 		if ($offset) $param .= '&offset='.urlencode($offset);
-		if ($search_thirdparty) $param .= '&search_thirdparty='.urlencode($search_thirdparty);
+		if ($search_thirdparty_user) $param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
 		if ($search_num_releve) $param .= '&search_num_releve='.urlencode($search_num_releve);
 		if ($search_description) $param .= '&search_description='.urlencode($search_description);
 		if ($search_start_dt) $param .= '&search_start_dt='.urlencode($search_start_dt);
@@ -403,7 +403,7 @@ if (!empty($ref)) $param .= '&ref='.urlencode($ref);
 if (!empty($search_ref)) $param .= '&search_ref='.urlencode($search_ref);
 if (!empty($search_description)) $param .= '&search_description='.urlencode($search_description);
 if (!empty($search_type)) $param .= '&type='.urlencode($search_type);
-if (!empty($search_thirdparty)) $param .= '&search_thirdparty='.urlencode($search_thirdparty);
+if (!empty($search_thirdparty_user)) $param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
 if (!empty($search_debit)) $param .= '&search_debit='.urlencode($search_debit);
 if (!empty($search_credit)) $param .= '&search_credit='.urlencode($search_credit);
 if (!empty($search_account)) $param .= '&search_account='.urlencode($search_account);
@@ -510,7 +510,7 @@ if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".$search_conciliated;
-if ($search_thirdparty) $sql .= natural_search("s.nom", $search_thirdparty);
+if ($search_thirdparty_user) $sql .= natural_search(array("s.nom", "u.firstname", "u.lastname"), $search_thirdparty_user);
 if ($search_description)
 {
 	$search_description_to_use = $search_description;
@@ -585,7 +585,7 @@ if (!empty($search_description)) $mode_balance_ok = false;
 if (!empty($search_type)) $mode_balance_ok = false;
 if (!empty($search_debit)) $mode_balance_ok = false;
 if (!empty($search_credit)) $mode_balance_ok = false;
-if (!empty($search_thirdparty)) $mode_balance_ok = false;
+if (!empty($search_thirdparty_user)) $mode_balance_ok = false;
 if ($search_conciliated != '' && $search_conciliated != '-1') $mode_balance_ok = false;
 if (!empty($search_num_releve)) $mode_balance_ok = false;
 
@@ -917,7 +917,7 @@ if ($resql)
 	}
 	if (!empty($arrayfields['bu.label']['checked']))
 	{
-	    print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
+	    print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty_user).'"></td>';
 	}
 	if (!empty($arrayfields['ba.ref']['checked']))
 	{
