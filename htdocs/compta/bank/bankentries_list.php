@@ -373,6 +373,7 @@ $formaccounting = new FormAccounting($db);
 
 $companystatic = new Societe($db);
 $bankaccountstatic = new Account($db);
+$userstatic= new User($db);
 
 $banktransferstatic = new BonPrelevement($db);
 $societestatic = new Societe($db);
@@ -477,8 +478,9 @@ else
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref,";
-$sql .= " bu.url_id,";
-$sql .= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " bu.url_id, bu.type as type_url,";
+$sql .= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+$sql .= " u.lastname as user_lastname, u.firstname as user_firstname, u.email as user_email, u.statut as user_statut";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -492,8 +494,9 @@ if ($search_bid > 0) $sql .= MAIN_DB_PREFIX."bank_class as l,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND (type = 'company' OR type = 'user')";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid AND bu.type = 'company'";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON bu.url_id = u.rowid AND bu.type = 'user'";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) $sql .= " AND b.fk_account = ".$search_account;
@@ -1381,20 +1384,29 @@ if ($resql)
 		// Third party
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
-        	print '<td class="tdoverflowmax150">';
+    		print '<td class="tdoverflowmax150">';
 			if ($objp->url_id)
 			{
-				$companystatic->id = $objp->url_id;
-				$companystatic->name = $objp->nom;
-				$companystatic->name_alias = $objp->name_alias;
-				$companystatic->client = $objp->client;
-				$companystatic->email = $objp->email;
-				$companystatic->fournisseur = $objp->fournisseur;
-				$companystatic->code_client = $objp->code_client;
-				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->code_compta = $objp->code_compta;
-				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-				print $companystatic->getNomUrl(1);
+				if($objp->type_url == 'company') {
+					$companystatic->id = $objp->url_id;
+					$companystatic->name = $objp->nom;
+					$companystatic->name_alias = $objp->name_alias;
+					$companystatic->client = $objp->client;
+					$companystatic->email = $objp->email;
+					$companystatic->fournisseur = $objp->fournisseur;
+					$companystatic->code_client = $objp->code_client;
+					$companystatic->code_fournisseur = $objp->code_fournisseur;
+					$companystatic->code_compta = $objp->code_compta;
+					$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+					print $companystatic->getNomUrl(1);
+				} elseif ($objp->type_url == 'user') {
+					$userstatic->id = $objp->url_id;
+					$userstatic->firstname = $objp->user_firstname;
+					$userstatic->name = $objp->user_lastname;
+					$userstatic->email = $objp->user_email;
+					$userstatic->statut = $objp->user_statut;
+					print $userstatic->getNomUrl(1);
+				}
 			}
 			else
 			{
