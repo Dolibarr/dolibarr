@@ -337,6 +337,7 @@ class ExpenseReport extends CommonObject
 						if ($result < 0)
 						{
 							$this->error = $newndfline->error;
+							$this->errors = $newndfline->errors;
 							$error++;
 							break;
 						}

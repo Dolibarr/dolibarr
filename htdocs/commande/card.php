@@ -646,6 +646,9 @@ if (empty($reshook))
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha')) : 0);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);

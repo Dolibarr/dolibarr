@@ -720,7 +720,9 @@ if (empty($reshook))
 
 				$fk_unit = GETPOST('units', 'alpha');
 
-				$tva_tx = price2num($tva_tx); // When vat is text input field
+				if (!preg_match('/\((.*)\)/', $tva_tx)) {
+					$tva_tx = price2num($tva_tx); // When vat is text input field
+				}
 
 				// Local Taxes
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);

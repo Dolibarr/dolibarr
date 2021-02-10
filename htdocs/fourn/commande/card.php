@@ -564,7 +564,9 @@ if (empty($reshook))
 
 			$fk_unit = GETPOST('units', 'alpha');
 
-			$tva_tx = price2num($tva_tx); // When vat is text input field
+			if (!preg_match('/\((.*)\)/', $tva_tx)) {
+				$tva_tx = price2num($tva_tx); // When vat is text input field
+			}
 
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
@@ -2147,6 +2149,12 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
+	// Delivery delay (in days)
+	print '<tr>';
+	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
+	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
+	print '</tr>';
+
 	// Delivery date planed
 	print '<tr><td>';
 	print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -2174,12 +2182,6 @@ if ($action == 'create')
 		}
 	}
 	print '</td></tr>';
-
-	// Delivery delay (in days)
-	print '<tr>';
-	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
-	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
-	print '</tr>';
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))

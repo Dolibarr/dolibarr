@@ -574,3 +574,5 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_PAID','Expense report billed','Executed when an expense report is set as billed','expensereport',204);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',205);
 
+-- Removed no more used function
+-- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m CASCADE;

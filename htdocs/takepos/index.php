@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');

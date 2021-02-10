@@ -839,7 +839,7 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,printable,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) $sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element

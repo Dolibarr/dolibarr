@@ -147,7 +147,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties");
+							console.log("Propagate before some properties retrieved into data-xxx properties");
 							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -190,6 +190,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							console.log("Make action update on each ui.item.update")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
+									console.log("Set value "+value+" into #"+key);
     								$("#" + key).val(value).trigger("change");
     							});
     						}

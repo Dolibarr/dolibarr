@@ -575,7 +575,8 @@ class Account extends CommonObject
 
 			return $accline->id;
 		} else {
-			$this->error = $this->db->lasterror();
+			$this->error = $accline->error;
+			$this->errors = $accline->errors;
 			$this->db->rollback();
 
 			return -2;

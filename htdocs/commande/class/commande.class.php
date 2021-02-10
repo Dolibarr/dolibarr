@@ -742,11 +742,11 @@ class Commande extends CommonOrder
 
 		if ($usercanclose)
 		{
-			$this->db->begin();
 			if ($this->statut == self::STATUS_CLOSED)
 			{
 				return 0;
 			}
+			$this->db->begin();
 
 			$now = dol_now();
 
@@ -1976,6 +1976,7 @@ class Commande extends CommonOrder
 				}
 			} else {
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}

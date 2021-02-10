@@ -157,7 +157,7 @@ if ($result > 0)
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Prefix
 	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -230,9 +230,9 @@ if ($result > 0)
 	// Line with titles
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '"width="45%"', $sortfield, $sortorder);
-	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
+	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, 'width="45%"', $sortfield, $sortorder);
+	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, 'width="10%"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -296,14 +296,14 @@ if ($result > 0)
 	}
 
 	// List of active notifications
-	print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
+	print load_fiche_titre($langs->trans("ListOfActiveNotifications").' <span class="opacitymedium colorblack paddingleft">('.$num.')</span>', '', '');
 
 	// Line with titles
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, '"width="45%"', $sortfield, $sortorder);
-	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, '"width="35%"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, '"width="10%"', $sortfield, $sortorder);
+	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, 'width="45%"', $sortfield, $sortorder);
+	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "n.type", '', $param, 'width="10%"', $sortfield, $sortorder);
 	print_liste_field_titre('', '', '');
 	print '</tr>';
 

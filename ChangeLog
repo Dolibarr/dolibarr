@@ -3,6 +3,60 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 13.0.1 compared to 13.0.0 *****
+
+FIX: 10.0 before crediting a withdrawal receipt, check whether it has been credited already.
+FIX: 11.0 when a mandatory extrafield of type sellist contains '0' it should be considered empty and trigger an error message upon insertion
+FIX: 11.0 when a new intervention is created from an object, a new $extrafields object is instantiated but not initialized
+FIX: create MO, Column 'tms' cannot be null
+FIX: #14290 #15900
+FIX: #16076
+FIX: #16077
+FIX: #16079
+FIX: #16080
+FIX: 16084
+FIX: #16107
+FIX: #16118 Timezone problem on some fields
+FIX: #16131
+FIX: #16135
+FIX: #16143
+FIX: #16156
+FIX: #16160
+FIX: #16185
+FIX: #16189, fix download/see check deposit PDF
+FIX: #16215
+FIX: Accountancy - label_operation is used instead of label_compte
+FIX: Add critical price patch
+FIX: Assignement of actors on tasks
+FIX: Bad dates on info tabs
+FIX: cash fence for takepos with multientity
+FIX: CSRF errors on margin forms
+FIX: encoding status in graph of vendor proposals
+FIX: Fix detect dispached product and set to received completely when the supplier order have services (support STOCK_SUPPORTS_SERVICES)
+FIX: Hide/Unhide external ICSS calendars
+FIX: link to create event when task is in a project with a thirdparty
+FIX: Localtax must be converted with price2num
+FIX: manage price min for PRODUIT_CUSTOMER_PRICES
+FIX: Missing language ico
+FIX: Must not be able to edit vat of all lines if not draft
+FIX: Bad "htdocs" found into a path
+FIX: removed no more used proc update_modified_column_date_m on pgsql (its presence triggered errors)
+FIX: Vulnerability report by Ricardo Matias
+FIX: select default mail template
+FIX: Select transport mode function when creating a supplier invoice and add unique key to the table llx_c_transport_mode in migrate sql
+FIX: Merge of thirdparties : "unknow column fk_soc" + "Delivery" label
+FIX: SQL Error in group by with postgres or mysql strict mode
+FIX: takepos : load date function
+FIX: Timeout during import
+FIX: Trigger on expense report was not fired
+FIX: User creation of expense report not visible
+FIX: warning when adding a line if $remise_percent is an empty string
+FIX: status late on purchase orders
+FIX: ODT generation very slow
+FIX: amount in summary of report
+FIX: vat value when code contains number
+
+
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****
 
 For users:

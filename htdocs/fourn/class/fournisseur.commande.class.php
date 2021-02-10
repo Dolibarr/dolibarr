@@ -1562,8 +1562,6 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $langs, $mysoc, $conf;
 
-		$error = 0;
-
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -3069,8 +3067,10 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Is the supplier order delayed?
+	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
+	 * If order has not been sent, we use the order date.
 	 *
-	 * @return bool
+	 * @return 	bool					True if object is delayed
 	 */
 	public function hasDelay()
 	{
@@ -3078,14 +3078,28 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		$now = dol_now();
-		$date_to_test = empty($this->delivery_date) ? $this->date_commande : $this->delivery_date;
+		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
+			$now = dol_now();
+			if (!empty($this->delivery_date)) {
+				$date_to_test = $this->delivery_date;
+				return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+			} else {
+				//$date_to_test = $this->date_commande;
+				//return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+				return false;
+			}
+		} else {
+			$now = dol_now();
+			$date_to_test = $this->date_commande;
 
-		return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+			return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+		}
 	}
 
 	/**
-	 * Show the customer delayed info
+	 * Show the customer delayed info.
+	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
+	 * If order has not been sent, we use the order date.
 	 *
 	 * @return string       Show delayed information
 	 */
@@ -3095,12 +3109,20 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		if (empty($this->delivery_date)) {
-			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+		$text = '';
+
+		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
+			if (!empty($this->delivery_date)) {
+				$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			} else {
+				$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+			}
 		} else {
-			$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		}
-		$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+		if ($text) {
+			$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+		}
 
 		return $text;
 	}
