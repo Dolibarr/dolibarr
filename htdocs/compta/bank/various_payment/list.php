@@ -148,7 +148,7 @@ if ($result)
 	if ($typeid > 0)            $param.='&typeid='.urlencode($typeid);
 	if ($search_amount_deb)     $param.='&search_amount_deb='.urlencode($search_amount_deb);
 	if ($search_amount_cred)    $param.='&search_amount_cred='.urlencode($search_amount_cred);
-	if ($search_account > 0)			$param.='&search_amount='.urlencode($search_account);
+	if ($search_account > 0)			$param.='&search_account='.urlencode($search_account);
 	//if ($search_date)					$param.='&search_date='.$search_date;
 	if ($search_accountancy_code > 0)	$param.='&search_accountancy_code='.urlencode($search_accountancy_code);
 
