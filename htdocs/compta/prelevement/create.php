@@ -124,6 +124,7 @@ if (empty($reshook)) {
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
 			exit;
 		}
+	}
 	$objectclass = "BonPrelevement";
 	$uploaddir = $conf->prelevement->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
