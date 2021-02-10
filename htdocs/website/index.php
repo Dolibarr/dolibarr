@@ -3836,24 +3836,24 @@ if ($action == 'generatesitemaps') {
 				$i++;
 			}
 		}
-	}else{
+	}else {
 		dol_print_error($db);
 	}
 
 	if (!is_dir($tempdir)) {
 		mkdir($tempdir);
 	}
-	$domtree = new DOMDocument('1.0','UTF-8');
+	$domtree = new DOMDocument('1.0', 'UTF-8');
 	$domtree->formatOutput = true;
-	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9','urlset');
+	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
 	foreach ($container_array as $container) {
 		$url = $domtree->createElement('url');
 		$pageurl = $container->pageurl;
 		if ($container->lang) {
 			$pageurl = $container->lang.'/'.$pageurl;
 		}
-		$loc = $domtree->createElement('loc','http://'.$domainname.'/'.$pageurl);
-		$lastmod = $domtree->createElement('lastmod',$container->tms);
+		$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
+		$lastmod = $domtree->createElement('lastmod', $container->tms);
 
 		$url->appendChild($loc);
 		$url->appendChild($lastmod);
@@ -3862,8 +3862,7 @@ if ($action == 'generatesitemaps') {
 	$domtree->appendChild($root);
 	$domtree->save($tempdir.'sitemaps.'.$websitekey.'.xml');
 	print '<br>';
-	print $formfile->showdocuments('website', 'temp/'.$websitekey, $tempdir, $_SERVER["PHP_SELF"].'?action=""', $liste, 0,'', 1, 1, 0, 0, 0, '', $langs->trans("GeneratedSitemapsFiles"));
-
+	print $formfile->showdocuments('website', 'temp/'.$websitekey, $tempdir, $_SERVER["PHP_SELF"].'?action=""', $liste, 0, '', 1, 1, 0, 0, 0, '', $langs->trans("GeneratedSitemapsFiles"));
 }
 
 if ($action == 'editfile' || $action == 'file_manager')
