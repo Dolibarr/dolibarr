@@ -2709,13 +2709,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (!empty($conf->stock->enabled)) $original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 	} // Wrapping pour les contrats
-	elseif ($modulepart == 'contract' && !empty($conf->contrat->dir_output))
+	elseif ($modulepart == 'contract' && !empty($conf->contrat->multidir_output[$entity]))
 	{
 		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed = 1;
 		}
-		$original_file = $conf->contrat->dir_output.'/'.$original_file;
+		$original_file = $conf->contrat->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} // Wrapping pour les dons
 	elseif ($modulepart == 'donation' && !empty($conf->don->dir_output))
