@@ -514,7 +514,7 @@ class PaymentSocialContribution extends CommonObject
      */
     public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
-        global $conf;
+        global $conf, $langs;
 
 		// Clean data
         $this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
@@ -578,6 +578,24 @@ class PaymentSocialContribution extends CommonObject
                         $socialcontrib->fetch($key);
                         $result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
                         if ($result <= 0) dol_print_error($this->db);
+
+						$fuser = new User($this->db);
+						$fuser->fetch($socialcontrib->fk_user);
+
+						// Add link 'user' in bank_url between operation and bank transaction
+						$result = $acc->add_url_line(
+							$bank_line_id,
+							$socialcontrib->fk_user,
+							DOL_URL_ROOT.'/user/card.php?id=',
+							$fuser->getFullName($langs),
+							'user'
+						);
+
+						if ($result <= 0)
+						{
+							$this->error = $acc->error;
+							$error++;
+						}
                     }
                 }
             }
