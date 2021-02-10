@@ -1082,6 +1082,7 @@ if ($action == 'remove_file')
 	$action = '';
 }
 
+
 // Validate records
 if (!$error && $massaction == 'validate' && $permissiontoadd)
 {

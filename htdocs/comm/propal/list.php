@@ -111,6 +111,11 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'p.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
+$permissiontoread = $user->rights->propal->lire;
+$permissiontoadd = $user->rights->propal->write;
+$permissiontodelete = $user->rights->propal->supprimer;
+$permissiontoclose = $user->rights->propal->cloturer;
+
 // Security check
 $module = 'propal';
 $dbtable = '';
@@ -246,15 +251,81 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 if ($object_statut != '') $search_status = $object_statut;
 
+
 if (empty($reshook))
 {
 	$objectclass = 'Propal';
 	$objectlabel = 'Proposals';
-	$permissiontoread = $user->rights->propal->lire;
-	$permissiontodelete = $user->rights->propal->supprimer;
-	$permissiontoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+}
+
+// Mass action validate (after a confirmation question, it is $action that is used).
+if ($action == 'validate') {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_DRAFT) {
+					if ($tmpproposal->valid($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+					} else {
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
+				}
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+
+// Mass action sign (after a confirmation question, it is $action that is used).
+if ($action == "sign") {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
+
+					if ($tmpproposal->update($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+					} else {
+						dol_print_error($db);
+						$error++;
+					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+					$error++;
+				}
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
 }
 
 
@@ -1299,72 +1370,10 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-
-	if ($action == 'validate') {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 0) {
-						if ($tmpproposal->valid($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
-						} else {
-							setEventMessage($langs->trans('CantBeValidated'), 'errors');
-							$error++;
-						}
-					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
-						$error++;
-					}
-				}
-				dol_print_error($db);
-				$error++;
-			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
-		}
-	}
-
-	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 1) {
-						$tmpproposal->statut = 2;
-						if ($tmpproposal->update($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
-						} else {
-							dol_print_error($db);
-							$error++;
-						}
-					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
-						$error++;
-					}
-				} else {
-					dol_print_error($db);
-					$error++;
-				}
-			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
-		}
-	}
 } else {
-		dol_print_error($db);
+	dol_print_error($db);
 }
 
-	// End of page
-	llxFooter();
-	$db->close();
+// End of page
+llxFooter();
+$db->close();
