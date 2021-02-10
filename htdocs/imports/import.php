@@ -502,8 +502,8 @@ if ($step == 2 && $datatoimport)
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
-	$liste = $objmodelimport->liste_modeles($db);
-	foreach ($liste as $key)
+	$list = $objmodelimport->liste_modeles($db);
+	foreach ($list as $key)
 	{
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
@@ -533,7 +533,7 @@ if ($step == 3 && $datatoimport)
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 
 	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
@@ -731,7 +731,7 @@ if ($step == 3 && $datatoimport)
 if ($step == 4 && $datatoimport)
 {
 	$model = $format;
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -1264,7 +1264,7 @@ if ($step == 5 && $datatoimport)
 	}
 
 	$model = $format;
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -1703,7 +1703,7 @@ if ($step == 6 && $datatoimport)
 	}
 
 	$model = $format;
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 
 

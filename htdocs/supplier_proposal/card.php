@@ -1216,9 +1216,9 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
-	$liste = ModelePDFSupplierProposal::liste_modeles($db);
+	$list = ModelePDFSupplierProposal::liste_modeles($db);
 	$preselected = ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
-	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
 	// Project
