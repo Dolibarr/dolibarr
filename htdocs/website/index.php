@@ -2471,7 +2471,10 @@ if (!GETPOST('hide_websitemenu'))
 
 			print ' &nbsp; ';
 
-			print dolButtonToOpenUrlInDialogPopup('generate_sitemap', $langs->transnoentitiesnoconv("GenerateSitemaps"), '<span class="fa fa-sitemap"><span>', '/website/index.php?action=generatesitemaps&website='.$website->ref, $disabled);
+			if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
+			{
+				print dolButtonToOpenUrlInDialogPopup('generate_sitemap', $langs->transnoentitiesnoconv("GenerateSitemaps"), '<span class="fa fa-sitemap"><span>', '/website/index.php?action=generatesitemapsdomainname&website='.$website->ref, $disabled);
+			}
 
 			print ' &nbsp; ';
 
@@ -3800,8 +3803,24 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 $domainname = '0.0.0.0:8080';
 $tempdir = $conf->website->dir_temp.'/'.$websitekey.'/';
 
+if ($action == 'generatesitemapsdomainname'){
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="text/plain">';
+	print '<input type="hidden" name="token" value="'.$token.'">';
+	print '<input type="hidden" name="action" value="generatesitemaps">';
+	print '<input type="hidden" name="website" value="'.$website->ref.'">';
+	print '<div class="fiche center"><br>';
+	print '<div class="titre inline-block">'.$langs->trans('EnterWebsiteUrl').'</div><br>';
+	print '<input id ="domainname" type="text" name="domainname" value="">'.$form->textwithpicto('', $langs->trans("Exemple").': www.exemple.com').'<br><br>';
+	print '<input type="submit" class="button" name="buttonreplacesitesearch" value="'.dol_escape_htmltag($langs->trans("Next")).'">';
+	print '</div>';
+	print '</form>';
+}
+
 // Generate web site sitemaps
 if ($action == 'generatesitemaps') {
+	if (!empty($_POST['domainname'])) {
+		$domainname = $_POST['domainname'];
+	}
 	$container_array = array();
 	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, DATE(wp.tms) as tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";
