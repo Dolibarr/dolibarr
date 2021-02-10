@@ -5040,7 +5040,7 @@ class Form
 				}
 			}
 			print $langs->trans($translationKey, price($amount, 0, $langs, 0, 0, -1, $conf->currency));
-			if (empty($hidelist)) print ': ';
+			if (empty($hidelist)) print ' ';
 			print '</div>';
 			if (empty($hidelist))
 			{

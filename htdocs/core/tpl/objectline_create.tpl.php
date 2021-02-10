@@ -293,10 +293,10 @@ if ($nolinesbefore) {
 			}
 		}
 		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			echo '<br>';
 			if (!empty($conf->variants->enabled)) {
 				echo '<div id="attributes_box"></div>';
 			}
-			echo '<br>';
 		}
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
