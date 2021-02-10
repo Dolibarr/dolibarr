@@ -1384,6 +1384,12 @@ if ($resql)
 		// Third party
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
+    		//payment line type to define user display
+    		foreach($links as $key=>$value){
+				if($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
+				if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+			}
+
     		print '<td class="tdoverflowmax150">';
 			if ($objp->url_id)
 			{
@@ -1399,7 +1405,10 @@ if ($resql)
 					$companystatic->code_compta = $objp->code_compta;
 					$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					print $companystatic->getNomUrl(1);
-				} elseif ($objp->type_url == 'user') {
+				} elseif ($objp->type_url == 'user' &&
+					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
+						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))
+				) {
 					$userstatic->id = $objp->url_id;
 					$userstatic->firstname = $objp->user_firstname;
 					$userstatic->name = $objp->user_lastname;
