@@ -6350,7 +6350,7 @@ class Form
 		// Add where from hooks
         $parameters = array();
         $reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
-        if(!empty($hookmanager->resPrint)) $sql .= $hookmanager->resPrint;
+        if (!empty($hookmanager->resPrint)) $sql .= $hookmanager->resPrint;
 		else {
 		    $sql .= " WHERE 1=1";
             if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
