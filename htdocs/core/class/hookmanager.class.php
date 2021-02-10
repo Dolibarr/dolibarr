@@ -161,6 +161,7 @@ class HookManager
 				'addMoreMassActions',
 				'addSearchEntry',
 				'addStatisticLine',
+				'addSectionECMAuto',
 				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',

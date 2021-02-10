@@ -774,7 +774,6 @@ foreach ($listofreferent as $key => $value)
 			// Each element with at least one line is output
 			$qualifiedforfinalprofit = true;
 			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit = false;
-			if ($key == 'propal' && $element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedforfinalprofit = false;
 			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
@@ -783,7 +782,7 @@ foreach ($listofreferent as $key => $value)
 					$total_revenue_ht += $total_ht;
 				}
 
-				if ($margin != "add")	{ // Revert sign
+				if ($margin != "add") {	// Revert sign
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
 				}

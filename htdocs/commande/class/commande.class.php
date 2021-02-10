@@ -11,6 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +127,10 @@ class Commande extends CommonOrder
 	 * @var int Draft Status of the order
 	 */
 	public $brouillon;
+
+	/**
+	 * @var string Condition payment code
+	 */
 	public $cond_reglement_code;
 
 	/**
@@ -166,8 +171,16 @@ class Commande extends CommonOrder
 	 */
 	public $availability;
 
-	public $demand_reason_id; // Source reason. Why we receive order (after a phone campaign, ...)
+	/**
+	 * @var int Source demand reason Id
+	 */
+	public $demand_reason_id;
+
+	/**
+	 * @var string Source reason code. Why we receive order (after a phone campaign, ...)
+	 */
 	public $demand_reason_code;
+
 	/**
 	 * @var int Date of order
 	 */
@@ -182,11 +195,15 @@ class Commande extends CommonOrder
 
 	/**
 	 * @var int	Date expected for delivery
+	 * @see delivery_date
 	 * @deprecated
 	 */
-	public $date_livraison; // deprecated; Use delivery_date instead.
+	public $date_livraison;
 
-	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	/**
+	 * @var int	Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	 */
+	public $delivery_date;
 
 	/**
 	 * @var int ID
@@ -200,6 +217,9 @@ class Commande extends CommonOrder
 	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
+	/**
+	 * @var int Warehouse Id
+	 */
 	public $warehouse_id;
 
 	public $extraparams = array();
@@ -227,6 +247,9 @@ class Commande extends CommonOrder
 	 */
 	public $fk_multicurrency;
 
+	/**
+	 * @var string multicurrency code
+	 */
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
@@ -739,11 +762,11 @@ class Commande extends CommonOrder
 
 		if ($usercanclose)
 		{
-			$this->db->begin();
 			if ($this->statut == self::STATUS_CLOSED)
 			{
 				return 0;
 			}
+			$this->db->begin();
 
 			$now = dol_now();
 
@@ -1973,6 +1996,7 @@ class Commande extends CommonOrder
 				}
 			} else {
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -2359,6 +2383,8 @@ class Commande extends CommonOrder
 	/**
 	 * 	Applique une remise relative
 	 *
+	 *  @deprecated
+	 *  @see setDiscount()
 	 * 	@param     	User		$user		User qui positionne la remise
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -2367,6 +2393,20 @@ class Commande extends CommonOrder
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_remise is deprecated, use setDiscount instead", LOG_NOTICE);
+		return $this->setDiscount($user, $remise, $notrigger);
+	}
+
+	/**
+	 * 	Applique une remise relative
+	 *
+	 * 	@param     	User		$user		User qui positionne la remise
+	 * 	@param     	float		$remise		Discount (percent)
+	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return		int 					<0 if KO, >0 if OK
+	 */
+	public function setDiscount($user, $remise, $notrigger = 0)
+	{
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if ($user->rights->commande->creer)
@@ -3271,7 +3311,7 @@ class Commande extends CommonOrder
 		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 
 		$sql .= " WHERE rowid=".$this->id;
@@ -3921,7 +3961,7 @@ class Commande extends CommonOrder
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($this->modelpdf)) {	// dperecated
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->COMMANDE_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_ADDON_PDF;

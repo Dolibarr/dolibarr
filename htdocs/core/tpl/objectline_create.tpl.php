@@ -293,10 +293,10 @@ if ($nolinesbefore) {
 			}
 		}
 		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			echo '<br>';
 			if (!empty($conf->variants->enabled)) {
 				echo '<div id="attributes_box"></div>';
 			}
-			echo '<br>';
 		}
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -703,6 +703,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 						jQuery('#dp_desc').text(proddesc);
 								<?php
 							} ?>
+							<?php
+						} ?>
+						<?php
+						if (!empty($conf->global->PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES)) { ?>
+							jQuery.each(data.array_options, function( key, value ) {
+								jQuery('div[class$="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+							});
 							<?php
 						} ?>
 					},

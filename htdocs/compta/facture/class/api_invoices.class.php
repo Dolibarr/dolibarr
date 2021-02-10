@@ -910,7 +910,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->set_paid(DolibarrApiAccess::$user, $close_code, $close_note);
+		$result = $this->invoice->setPaid(DolibarrApiAccess::$user, $close_code, $close_note);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -960,7 +960,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->set_unpaid(DolibarrApiAccess::$user);
+		$result = $this->invoice->setUnpaid(DolibarrApiAccess::$user);
 		if ($result == 0) {
 			throw new RestException(304, 'Nothing done');
 		}
@@ -1167,7 +1167,7 @@ class Invoices extends DolibarrApi
 			{
 				if ($this->invoice->type != Facture::TYPE_DEPOSIT) {
 					// Classe facture
-					$result = $this->invoice->set_paid(DolibarrApiAccess::$user);
+					$result = $this->invoice->setPaid(DolibarrApiAccess::$user);
 					if ($result >= 0)
 					{
 						$this->db->commit();

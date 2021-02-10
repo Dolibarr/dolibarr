@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Gauthier VERDOL       <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,13 +138,12 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("VATPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("VATPayment"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
  */
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -213,7 +212,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

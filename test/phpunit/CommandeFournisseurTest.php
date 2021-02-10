@@ -272,7 +272,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeFournisseurValid
 	 *
-	 * @param   Object $localobject     Supplier order
+	 * @param   CommandeFournisseur $localobject     Supplier order
 	 * @return  CommandeFournisseur		Supplier order
 	 *
 	 * @depends testCommandeFournisseurFetch
@@ -296,7 +296,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeFournisseurApprove
 	 *
-	 * @param   Object $localobject 	Supplier order
+	 * @param   CommandeFournisseur $localobject 	Supplier order
 	 * @return  CommandeFournisseur		Supplier order
 	 *
 	 * @depends testCommandeFournisseurValid
@@ -320,7 +320,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeFournisseurCancel
 	 *
-	 * @param   Object  $localobject    Supplier order
+	 * @param   CommandeFournisseur  $localobject    Supplier order
 	 * @return  CommandeFournisseur		Supplier order
 	 *
 	 * @depends testCommandeFournisseurApprove
@@ -344,7 +344,7 @@ class CommandeFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeFournisseurOther
 	 *
-	 * @param   Object $localobject     Supplier order
+	 * @param   CommandeFournisseur $localobject     Supplier order
 	 * @return  int						Id of purchase order
 	 *
 	 * @depends testCommandeFournisseurCancel

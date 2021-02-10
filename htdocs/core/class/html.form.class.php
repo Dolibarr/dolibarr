@@ -1479,7 +1479,7 @@ class Form
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql .= " AND sp.statut <> 0";
 		$sql .= " ORDER BY sp.lastname ASC";
 
-		dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -4308,7 +4308,7 @@ class Form
 	 *     @param	string			$question    	   	Question
 	 *     @param 	string			$action      	   	Action
 	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>))
-	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
+	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', 'other' or 'onecolumn'...
 	 * 	   @param  	string			$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
 	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
@@ -4422,6 +4422,8 @@ class Form
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['value'];
 						$moreonecolumn .= '</div>'."\n";
+					} else {
+						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}
 				}
 			}
@@ -4449,16 +4451,24 @@ class Form
 			}
 			$pageyes = $page.(preg_match('/\?/', $page) ? '&' : '?').'action='.$action.'&confirm=yes';
 			$pageno = ($useajax == 2 ? $page.(preg_match('/\?/', $page) ? '&' : '?').'confirm=no' : '');
+
 			// Add input fields into list of fields to read during submit (inputok and inputko)
-			if (is_array($formquestion))
-			{
-				foreach ($formquestion as $key => $input)
-				{
+			if (is_array($formquestion)) {
+				foreach ($formquestion as $key => $input) {
 					//print "xx ".$key." rr ".is_array($input)."<br>\n";
-					if (is_array($input) && isset($input['name'])) array_push($inputok, $input['name']);
+					// Add name of fields to propagate with the GET when submitting the form with button OK.
+					if (is_array($input) && isset($input['name'])) {
+						if (strpos($input['name'], ',') > 0) {
+							$inputok = array_merge($inputok, explode(',', $input['name']));
+						} else {
+							array_push($inputok, $input['name']);
+						}
+					}
+					// Add name of fields to propagate with the GET when submitting the form with button KO.
 					if (isset($input['inputko']) && $input['inputko'] == 1) array_push($inputko, $input['name']);
 				}
 			}
+
 			// Show JQuery confirm box.
 			$formconfirm .= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
 			if (is_array($formquestion) && !empty($formquestion['text'])) {
@@ -5030,7 +5040,7 @@ class Form
 				}
 			}
 			print $langs->trans($translationKey, price($amount, 0, $langs, 0, 0, -1, $conf->currency));
-			if (empty($hidelist)) print ': ';
+			if (empty($hidelist)) print ' ';
 			print '</div>';
 			if (empty($hidelist))
 			{

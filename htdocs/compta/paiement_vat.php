@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->load("bills");
+$langs->loadLangs(array("banks", "bills"));
 
 $chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'alpha');
@@ -58,9 +58,9 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 
-	if (!$_POST["paiementtype"] > 0)
+	if (!(GETPOST("paiementtype", 'int') > 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
@@ -72,9 +72,9 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
         $action = 'create';
 	}
-    if (!empty($conf->banque->enabled) && !($_POST["accountid"] > 0))
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0))
     {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
         $error++;
         $action = 'create';
     }
@@ -89,7 +89,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			if (substr($key, 0, 7) == 'amount_')
 			{
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$other_chid] = price2num(GETPOST($key));
 			}
 		}
 
@@ -111,11 +111,10 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$paiement->amounts      = $amounts; // Tableau de montant
     		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
     		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$paiement->note         = GETPOST("note", 'none');
-    		$paiement->note_private = GETPOST("note", 'none');
+    		$paiement->note         = (string) GETPOST("note", 'restricthtml');
+    		$paiement->note_private = (string) GETPOST("note", 'restricthtml');
 
-    		if (!$error)
-    		{
+    		if (!$error) {
     		    $paymentid = $paiement->create($user, (GETPOST('closepaidvat') == 'on' ? 1 : 0));
                 if ($paymentid < 0)
                 {
@@ -187,18 +186,13 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
 
-	if ($mesg)
-	{
-		print "<div class=\"error\">$mesg</div>";
-	}
-
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 
@@ -213,8 +207,7 @@ if ($action == 'create')
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_vat as p";
 	$sql .= " WHERE p.fk_tva = ".$chid;
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
 		$db->free();
@@ -223,21 +216,21 @@ if ($action == 'create')
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : 0;
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth", 'int') ? $datepaye : -1) : 0;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(isset($_POST["paiementtype"]) ? $_POST["paiementtype"] : $tva->paiementtype, "paiementtype");
+	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype", "int") : $tva->paiementtype, "paiementtype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $tva->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	$form->select_comptes(GETPOST("accountid") ? GETPOST("accountid", "int") : $tva->accountid, "accountid", 0, '', 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -253,7 +246,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
  	 * Autres charges impayees
@@ -300,11 +293,13 @@ if ($action == 'create')
 		{
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
-			if (!empty($conf->use_javascript_ajax))
+			/* Disabled, we autofil the amount with remain to pay by default
+			if (!empty($conf->use_javascript_ajax)) {
 					print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+			} */
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
+			print '<input type="text" class="right width100" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
 		}
 		else {
 			print '-';
@@ -317,8 +312,7 @@ if ($action == 'create')
 		$totalrecu += $objp->am;
 		$i++;
 	}
-	if ($i > 1)
-	{
+	if ($i > 1) {
 		// Print total
 		print '<tr class="oddeven">';
 		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';

@@ -152,15 +152,10 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		return $result;
 	}
 
-
-
-
-
-
 	/**
 	 * Edit an object to test updates
 	 *
-	 * @param 	mixed	$localobject		Object Facture
+	 * @param 	Facture	$localobject		Object Facture
 	 * @return	void
 	 */
 	public function changeProperties(&$localobject)

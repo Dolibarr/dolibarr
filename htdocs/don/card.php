@@ -255,7 +255,7 @@ if ($action == 'set_cancel') {
 }
 if ($action == 'set_paid') {
 	$object->fetch($id);
-	if ($object->set_paid($id, $modepayment) >= 0) {
+	if ($object->setPaid($id, $modepayment) >= 0) {
 		$action = '';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
