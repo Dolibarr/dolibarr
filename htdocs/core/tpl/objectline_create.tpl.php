@@ -32,6 +32,7 @@
  * $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
@@ -239,18 +240,18 @@ if ($nolinesbefore) {
 					<?php
 				}
 			} else {
-				// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
+				// $senderissupplier=2 is the same as 1 but disables test on minimum qty, disable autofill qty with minimum and autofill unit price
 				if ($senderissupplier != 2)
 				{
 					$ajaxoptions = array(
-					'update' => array('qty'=>'qty', 'remise_percent' => 'discount', 'idprod' => 'idprod'), // html id tags that will be edited with each ajax json response key
-					'option_disabled' => 'idthatdoesnotexists', // html id to disable once select is done
-					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
+						'update' => array('qty'=>'qty', 'remise_percent' => 'discount', 'idprod' => 'idprod'), // html id tags that will be edited with each ajax json response key
+						'option_disabled' => 'idthatdoesnotexists', // html id to disable once select is done
+						'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
 					);
 					$alsoproductwithnosupplierprice = 0;
 				} else {
 					$ajaxoptions = array(
-					'update' => array('remise_percent' => 'discount')			// html id tags that will be edited with each ajax json response key
+						'update' => array('remise_percent' => 'discount', 'price_ht' => 'up')			// html id tags that will be edited with each ajax json response key
 					);
 					$alsoproductwithnosupplierprice = 1;
 				}
@@ -531,47 +532,47 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	/* TODO This does not work for number with thousand separator that is , */
 	function checkFreeLine(e, npRate)
 	{
-	var buying_price = $("input[name='buying_price']:first");
-	var remise = $("input[name='remise_percent']:first");
+		var buying_price = $("input[name='buying_price']:first");
+		var remise = $("input[name='remise_percent']:first");
 
-	var rate = $("input[name='"+npRate+"']:first");
-	if (rate.val() == '')
-	return true;
+		var rate = $("input[name='"+npRate+"']:first");
+		if (rate.val() == '')
+			return true;
 
-	if (! $.isNumeric(rate.val().replace(',','.')))
-	{
-	alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
-	e.stopPropagation();
-	setTimeout(function () { rate.focus() }, 50);
-	return false;
-	}
-	if (npRate == "np_markRate" && rate.val() >= 100)
-	{
-	alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
-	e.stopPropagation();
-	setTimeout(function () { rate.focus() }, 50);
-	return false;
-	}
+		if (! $.isNumeric(rate.val().replace(',','.')))
+		{
+			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
+			e.stopPropagation();
+			setTimeout(function () { rate.focus() }, 50);
+			return false;
+		}
+		if (npRate == "np_markRate" && rate.val() >= 100)
+		{
+			alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
+			e.stopPropagation();
+			setTimeout(function () { rate.focus() }, 50);
+			return false;
+		}
 
-	var price = 0;
-	remisejs=price2numjs(remise.val());
+		var price = 0;
+		remisejs=price2numjs(remise.val());
 
-	if (remisejs != 100)	// If a discount not 100 or no discount
-	{
-	if (remisejs == '') remisejs=0;
+		if (remisejs != 100)	// If a discount not 100 or no discount
+		{
+			if (remisejs == '') remisejs=0;
 
-	bpjs=price2numjs(buying_price.val());
-	ratejs=price2numjs(rate.val());
+			bpjs=price2numjs(buying_price.val());
+			ratejs=price2numjs(rate.val());
 
-	if (npRate == "np_marginRate")
-	price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-	else if (npRate == "np_markRate")
-	price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
-	}
+			if (npRate == "np_marginRate")
+				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
+			else if (npRate == "np_markRate")
+				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+		}
 
-	$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
 
-	return true;
+		return true;
 	}
 
 	<?php
@@ -603,39 +604,39 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	});
 
 	$("#prod_entry_mode_free").on( "click", function() {
-	setforfree();
+		setforfree();
 	});
 	$("#select_type").change(function()
 	{
-	setforfree();
-	if (jQuery('#select_type').val() >= 0)
-	{
-	/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-	jQuery('#dp_desc').focus();
-	/* focus if CKEDITOR */
-	if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-	{
-	var editor = CKEDITOR.instances['dp_desc'];
-	if (editor) { editor.focus(); }
-	}
-	}
-	console.log("Hide/show date according to product type");
-	if (jQuery('#select_type').val() == '0')
-	{
-	jQuery('#trlinefordates').hide();
-	jQuery('.divlinefordates').hide();
-	}
-	else
-	{
-	jQuery('#trlinefordates').show();
-	jQuery('.divlinefordates').show();
-	}
+		setforfree();
+		if (jQuery('#select_type').val() >= 0)
+		{
+			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+			jQuery('#dp_desc').focus();
+			/* focus if CKEDITOR */
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+				if (editor) { editor.focus(); }
+			}
+		}
+		console.log("Hide/show date according to product type");
+		if (jQuery('#select_type').val() == '0')
+		{
+			jQuery('#trlinefordates').hide();
+			jQuery('.divlinefordates').hide();
+		}
+		else
+		{
+			jQuery('#trlinefordates').show();
+			jQuery('.divlinefordates').show();
+		}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
-	console.log("click prod_entry_mode_predef");
-	setforpredef();
-	jQuery('#trlinefordates').show();
+		console.log("click prod_entry_mode_predef");
+		setforpredef();
+		jQuery('#trlinefordates').show();
 	});
 
 	<?php
@@ -648,7 +649,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
-		console.log("Call method change() after change on #idprod or #idprodfournprice. this.val = "+$(this).val());
+		console.log("Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
