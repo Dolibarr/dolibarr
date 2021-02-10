@@ -195,7 +195,7 @@ class pdf_strato extends ModelePDFContract
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->contrat->dir_output."/".$objectref;
+				$dir = $conf->contrat->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
