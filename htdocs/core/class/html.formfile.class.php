@@ -1570,6 +1570,20 @@ class FormFile
 		{
 			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 			$object_instance = new Mo($this->db);
+		} else {
+			$parameters = array('modulepart'=>$modulepart);
+			$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
+			if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0)
+			{
+				if (array_key_exists('classpath', $hookmanager->resArray) && !empty($hookmanager->resArray['classpath'])) {
+					dol_include_once($hookmanager->resArray['classpath']);
+					if (array_key_exists('classname', $hookmanager->resArray) && !empty($hookmanager->resArray['classname'])) {
+						if (class_exists($hookmanager->resArray['classname'])) {
+							$object_instance = new ${$hookmanager->resArray['classname']}($this->db);
+						}
+					}
+				}
+			}
 		}
 
 		//var_dump($filearray);
@@ -1623,6 +1637,17 @@ class FormFile
 					'banque'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
+					$parameters = array('modulepart'=>$modulepart,'fileinfo'=>$file);
+					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
+					if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0)
+					{
+						if (array_key_exists('ref', $hookmanager->resArray) && !empty($hookmanager->resArray['ref'])) {
+							$ref = $hookmanager->resArray['ref'];
+						}
+						if (array_key_exists('id', $hookmanager->resArray) && !empty($hookmanager->resArray['id'])) {
+							$id = $hookmanager->resArray['id'];
+						}
+					}
 					//print 'Error: Value for modulepart = '.$modulepart.' is not yet implemented in function list_of_autoecmfiles'."\n";
 				}
 
