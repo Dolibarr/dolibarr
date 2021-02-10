@@ -177,13 +177,23 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 	{
 		print "\n";
 		print '
-				<script type="text/javascript">
+				<script>
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    		var val = $("select[name="+parent_list+"]").val();
+				    	    var params = new URLSearchParams(window.location.href);
+							var infos = parent_list.split("_");
+							//Selection of the DOM element
+				    		var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
 				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
+				    		if(typeof val == "string"){
+				    		    if(val != "") {
+					    			$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+								} else {
+									$("select[name=\""+child_list+"\"] option").show();
+								}
+				    		} else if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
 					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
 							} else {
@@ -196,12 +206,14 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
-								showOptions(child_list, parent_list);
-
-								/* Activate the handler to call showOptions on each future change */
-								$("select[name=\""+parent_list+"\"]").change(function() {
+								var code_parent = parent_list.split("-")
+								console.log(child_list)
+								console.log(parent_list)
+								$("#propal_extras_type3_23").val("")
+								var searchparams = new URLSearchParams(window.location.href);
+								if (searchparams.get("action") == "edit_extras"){
 									showOptions(child_list, parent_list);
-								});
+								}
 					    	});
 						}
 						setListDependencies();
