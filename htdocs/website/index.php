@@ -3803,6 +3803,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 $domainname = '0.0.0.0:8080';
 $tempdir = $conf->website->dir_temp.'/'.$websitekey.'/';
 
+// Form URL for generate web site sitemaps
 if ($action == 'generatesitemapsdomainname'){
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="text/plain">';
 	print '<input type="hidden" name="token" value="'.$token.'">';
