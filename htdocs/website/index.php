@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -2254,6 +2255,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
 
@@ -2469,6 +2471,10 @@ if (!GETPOST('hide_websitemenu'))
 
 			print ' &nbsp; ';
 
+			print dolButtonToOpenUrlInDialogPopup('generate_sitemap', $langs->transnoentitiesnoconv("GenerateSitemaps"), '<span class="fa fa-sitemap"><span>', '/website/index.php?action=generatesitemaps&website='.$website->ref, $disabled);
+
+			print ' &nbsp; ';
+
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
 		}
 
@@ -2570,7 +2576,7 @@ if (!GETPOST('hide_websitemenu'))
 	// Toolbar for pages
 	//
 
-	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager)
+	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm', 'generatesitemaps')) && !$file_manager)
 	{
 		print '</div>'; // Close current websitebar to open a new one
 
@@ -3789,6 +3795,56 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 	print '</div>';
 
 	print '<br>';
+}
+
+$domainname = '0.0.0.0:8080';
+$tempdir = $conf->website->dir_temp.'/'.$websitekey.'/';
+
+// Generate web site sitemaps
+if ($action == 'generatesitemaps') {
+	$container_array = array();
+	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, DATE(wp.tms) as tms";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";
+	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num_rows = $db->num_rows($resql);
+		if ($num_rows > 0) {
+			$i = 0;
+			while ($i < $num_rows) {
+				$objp = $db->fetch_object($resql);
+				$container_array[] = $objp;
+				$i++;
+			}
+		}
+	}else{
+		dol_print_error($db);
+	}
+
+	if (!is_dir($tempdir)) {
+		mkdir($tempdir);
+	}
+	$domtree = new DOMDocument('1.0','UTF-8');
+	$domtree->formatOutput = true;
+	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9','urlset');
+	foreach ($container_array as $container) {
+		$url = $domtree->createElement('url');
+		$pageurl = $container->pageurl;
+		if ($container->lang) {
+			$pageurl = $container->lang.'/'.$pageurl;
+		}
+		$loc = $domtree->createElement('loc','http://'.$domainname.'/'.$pageurl);
+		$lastmod = $domtree->createElement('lastmod',$container->tms);
+
+		$url->appendChild($loc);
+		$url->appendChild($lastmod);
+		$root->appendChild($url);
+	}
+	$domtree->appendChild($root);
+	$domtree->save($tempdir.'sitemaps.'.$websitekey.'.xml');
+	print '<br>';
+	print $formfile->showdocuments('website', 'temp/'.$websitekey, $tempdir, $_SERVER["PHP_SELF"].'?action=""', $liste, 0,'', 1, 1, 0, 0, 0, '', $langs->trans("GeneratedSitemapsFiles"));
+
 }
 
 if ($action == 'editfile' || $action == 'file_manager')
