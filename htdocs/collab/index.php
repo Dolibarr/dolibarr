@@ -114,7 +114,7 @@ if ($action == 'delete')
 	if ($res > 0)
 	{
 		$res = $objectpage->delete($user);
-		if (!$res > 0)
+		if (!($res > 0))
 		{
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');

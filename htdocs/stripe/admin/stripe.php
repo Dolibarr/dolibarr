@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
- * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2021  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -387,6 +387,21 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print '</td></tr>';
 }
 
+// Activate Bancontact
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_BANCONTACT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_BANCONTACT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_BANCONTACT", $arrval, $conf->global->STRIPE_BANCONTACT);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForBECustomers").'</span>';
+	print '</td></tr>';
+}
+
 // Activate iDEAL
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
@@ -399,6 +414,36 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 		print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForNLCustomers").'</span>';
+	print '</td></tr>';
+}
+
+// Activate Giropay
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_GIROPAY").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_GIROPAY');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_GIROPAY", $arrval, $conf->global->STRIPE_GIROPAY);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForDECustomers").'</span>';
+	print '</td></tr>';
+}
+
+// Activate Sofort
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_SOFORT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_SOFORT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_SOFORT", $arrval, $conf->global->STRIPE_SOFORT);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForATBEDEITNLESCustomers").'</span>';
 	print '</td></tr>';
 }
 
@@ -493,7 +538,7 @@ $token = '';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
-print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required the off-seesion allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
 
 if (!empty($conf->use_javascript_ajax))
 {

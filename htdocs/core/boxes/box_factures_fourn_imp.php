@@ -26,7 +26,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show not payed suppliers invoices
+ * Class to manage the box to show not paid suppliers invoices
  */
 class box_factures_fourn_imp extends ModeleBoxes
 {
@@ -130,7 +130,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
-					//$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->fournisseur = $objp->fournisseur;

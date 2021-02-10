@@ -88,9 +88,7 @@ print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
-	$var = !$var;
-
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key);

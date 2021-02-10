@@ -31,10 +31,8 @@ TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Sévérités
 TicketDictResolution=Ticket - Résolution
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Question commerciale
 
+TicketTypeShortCOM=Question commerciale
 TicketTypeShortHELP=Demande d'aide fonctionnelle
 TicketTypeShortISSUE=Problème ou bogue
 TicketTypeShortREQUEST=Demande de changement ou d'amélioration
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Autre
 TicketSeverityShortLOW=Faible
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
-TicketSeverityShortBLOCKING=Critique/Bloquant
+TicketSeverityShortBLOCKING=Critique, bloquant
 
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
@@ -125,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=L'interface publique permet à tous les visit
 TicketsAutoAssignTicket=Affecter automatiquement l'utilisateur qui a créé le ticket
 TicketsAutoAssignTicketHelp=Lors de la création d'un ticket, l'utilisateur peut être automatiquement affecté au ticket.
 TicketNumberingModules=Module de numérotation des tickets
+TicketsModelModule=Modèles de documents pour les tickets
 TicketNotifyTiersAtCreation=Notifier le tiers à la création
 TicketsDisableCustomerEmail=Toujours désactiver les courriels lorsqu'un ticket est créé depuis l'interface publique
 TicketsPublicNotificationNewMessage=Envoyer un (des) courriel (s) lorsqu’un nouveau message est ajouté
@@ -230,8 +229,8 @@ TicketChangeStatus=Changer l'état
 TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
 TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
+Unread=Non lu
 TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
-PublicInterfaceNotEnabled=L’interface publique n’a pas été activée
 ErrorTicketRefRequired=La référence du ticket est requise
 
 #

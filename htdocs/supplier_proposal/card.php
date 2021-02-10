@@ -263,8 +263,8 @@ if (empty($reshook))
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
 					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->remise_percent = GETPOST('remise_percent');
-					$object->remise_absolue = GETPOST('remise_absolue');
+					$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
+					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU');
 					$object->socid = GETPOST('socid');
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->model_pdf = GETPOST('model');
@@ -555,9 +555,9 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
-		$remise_percent = GETPOST('remise_percent'.$predef);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -869,7 +869,7 @@ if (empty($reshook))
 		}
 
 		$price_base_type = 'HT';
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
@@ -929,10 +929,10 @@ if (empty($reshook))
 			$fk_unit = GETPOST('units');
 
 			$result = $object->updateline(
-				GETPOST('lineid'),
+				GETPOST('lineid', 'int'),
 				$ht,
-				GETPOST('qty'),
-				GETPOST('remise_percent'),
+				price2num(GETPOST('qty'), 'MS'),
+				price2num(GETPOST('remise_percent'), 2),
 				$vat_rate,
 				$localtax1_rate,
 				$localtax2_rate,
@@ -940,7 +940,7 @@ if (empty($reshook))
 				$price_base_type,
 				$info_bits,
 				$special_code,
-				GETPOST('fk_parent_line'),
+				GETPOST('fk_parent_line', 'int'),
 				0,
 				$fournprice,
 				$buyingprice,
@@ -1018,9 +1018,9 @@ if (empty($reshook))
 	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise_percent($user, GETPOST('remise_percent', 'alpha'));
+		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent'), 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, GETPOST('remise_absolue', 'alpha'));
+		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU'));
 	}
 
 	// Payment mode
@@ -1151,7 +1151,7 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1216,8 +1216,9 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
-	$liste = ModelePDFSupplierProposal::liste_modeles($db);
-	print $form->selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
+	$list = ModelePDFSupplierProposal::liste_modeles($db);
+	$preselected = ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
+	print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
 	// Project
@@ -1231,8 +1232,7 @@ if ($action == 'create')
 
 		print '<tr>';
 		print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
-
-		$numprojet = $formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print img_picto('', 'project').$formproject->select_projects(($soc->id > 0 ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 
 		print '</td>';

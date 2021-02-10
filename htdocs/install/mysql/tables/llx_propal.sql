@@ -66,6 +66,7 @@ create table llx_propal
   
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id
+  fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   fk_incoterms          integer,										-- for incoterms

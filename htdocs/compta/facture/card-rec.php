@@ -439,7 +439,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
 		{
@@ -450,8 +450,8 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -801,7 +801,7 @@ if (empty($reshook))
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))))
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT) && $price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent', 2)) / 100) < price2num($price_min))))
 			{
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
@@ -837,7 +837,7 @@ if (empty($reshook))
 				$localtax1_rate,
 				$localtax1_rate,
 				GETPOST('productid'),
-				GETPOST('remise_percent'),
+				price2num(GETPOST('remise_percent'), 2),
 				'HT',
 				$info_bits,
 				0,
@@ -923,7 +923,8 @@ if (empty($reshook))
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableInvoices"), 'ch-facture.html#s-fac-facture-rec');
+$help_url = '';
+llxHeader('', $langs->trans("RepeatableInvoices"), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -932,8 +933,7 @@ $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
 
 $now = dol_now();
-$tmparray = dol_getdate($now);
-$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
+$nowlasthour = dol_get_last_hour($now);
 
 
 /*
@@ -1245,7 +1245,9 @@ if ($action == 'create')
 
 		print '<table class="border centpercent tableforfield">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
+		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>';
+		print $author->getNomUrl(-1);
+		print "</td></tr>";
 
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td>'.price($object->total_ht, '', $langs, 1, -1, -1, $conf->currency).'</td>';
@@ -1667,8 +1669,7 @@ if ($action == 'create')
 				{
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
 				} else {
-					if (empty($object->frequency) || $object->date_when <= $today)
-					{
+					if (empty($object->frequency) || $object->date_when <= $nowlasthour) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->thirdparty->id.'&fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';

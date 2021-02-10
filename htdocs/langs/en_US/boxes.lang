@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxDolibarrStateBoard=Statistics on main business objects in database
 BoxLoginInformation=Login Information
 BoxLastRssInfos=RSS Information
 BoxLastProducts=Latest %s Products/Services
@@ -95,8 +96,8 @@ LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Add widget to your dashboard
 BoxAdded=Widget was added in your dashboard
 BoxTitleUserBirthdaysOfMonth=Birthdays of this month (users)
-BoxLastManualEntries=Last manual entries in accountancy
-BoxTitleLastManualEntries=%s latest manual entries
+BoxLastManualEntries=Latest record in accountancy entered manually or without source document
+BoxTitleLastManualEntries=%s latest record entered manually or without source document
 NoRecordedManualEntries=No manual entries record in accountancy
 BoxSuspenseAccount=Count accountancy operation with suspense account
 BoxTitleSuspenseAccount=Number of unallocated lines

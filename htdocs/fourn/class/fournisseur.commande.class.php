@@ -891,11 +891,17 @@ class CommandeFournisseur extends CommonOrder
 	 *	Class invoiced the supplier order
 	 *
 	 *  @param      User        $user       Object user making the change
-	 *	@return     int     	            <0 if KO, >0 if KO
+	 *	@return     int     	            <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user)
 	{
 		$error = 0;
+
+		if ($this->billed)
+		{
+			return 0;
+		}
+
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
@@ -3063,8 +3069,10 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Is the supplier order delayed?
+	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
+	 * If order has not been sent, we use the order date.
 	 *
-	 * @return bool
+	 * @return 	bool					True if object is delayed
 	 */
 	public function hasDelay()
 	{
@@ -3072,14 +3080,28 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		$now = dol_now();
-		$date_to_test = empty($this->delivery_date) ? $this->date_commande : $this->delivery_date;
+		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
+			$now = dol_now();
+			if (!empty($this->delivery_date)) {
+				$date_to_test = $this->delivery_date;
+				return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+			} else {
+				//$date_to_test = $this->date_commande;
+				//return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+				return false;
+			}
+		} else {
+			$now = dol_now();
+			$date_to_test = $this->date_commande;
 
-		return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+			return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+		}
 	}
 
 	/**
-	 * Show the customer delayed info
+	 * Show the customer delayed info.
+	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
+	 * If order has not been sent, we use the order date.
 	 *
 	 * @return string       Show delayed information
 	 */
@@ -3089,12 +3111,20 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		if (empty($this->delivery_date)) {
-			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+		$text = '';
+
+		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
+			if (!empty($this->delivery_date)) {
+				$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			} else {
+				$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+			}
 		} else {
-			$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		}
-		$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+		if ($text) {
+			$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+		}
 
 		return $text;
 	}
@@ -3126,13 +3156,12 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
-			if ($ret < 0)
-			{
+			if ($ret < 0) {
 				$this->error = $supplierorderdispatch->error; $this->errors = $supplierorderdispatch->errors;
 				return $ret;
 			} else {
-				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0)
-				{
+				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$date_liv = dol_now();
 
 					// Build array with quantity deliverd by product
@@ -3140,13 +3169,17 @@ class CommandeFournisseur extends CommonOrder
 						$qtydelivered[$line->fk_product] += $line->qty;
 					}
 					foreach ($this->lines as $line) {
+						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $line->product_type > 0) continue;
 						$qtywished[$line->fk_product] += $line->qty;
 					}
+
 					//Compare array
 					$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
 					/*var_dump(array_keys($qtydelivered));
+
     				var_dump(array_keys($qtywished));
     				var_dump($diff_array);
     				var_dump($keysinwishednotindelivered);

@@ -198,11 +198,21 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
-					if (empty($user->socid) && empty($user->email)) {
-							  $object->fetch_thirdparty();
-							  $sendto = $object->thirdparty->email;
-					} else {
-						$sendto = $user->email;
+
+					//if contact selected send to email's contact else send to email's thirdparty
+
+					$contactid = GETPOST('contactid', 'alpha');
+
+					if (!empty($contactid)) {
+						$contact = new Contact($this->db);
+						$res = $contact->fetch($contactid);
+					}
+
+					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
+						$sendto = $contact->email;
+					} elseif (!empty($object->fk_soc)) {
+						$object->fetch_thirdparty();
+						$sendto = $object->thirdparty->email;
 					}
 
 					if ($sendto) {

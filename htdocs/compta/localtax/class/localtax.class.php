@@ -381,7 +381,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	localtax payed
+	 *	Total of localtax paid in invoice
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -419,8 +419,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	localtax payed
-	 *  Total de la localtax payed
+	 *  Total of localtax paid
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???

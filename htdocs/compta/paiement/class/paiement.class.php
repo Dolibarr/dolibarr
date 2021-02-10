@@ -192,6 +192,7 @@ class Paiement extends CommonObject
 				$this->amount         = $obj->amount;
 				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->type_label = $obj->type_label;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
@@ -397,10 +398,11 @@ class Paiement extends CommonObject
 								// Set invoice to paid
 								if (!$error)
 								{
-									$result = $invoice->set_paid($user, '', '');
+									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0)
 									{
 										$this->error = $invoice->error;
+										$this->errors = $invoice->errors;
 										$error++;
 									}
 								}
@@ -423,7 +425,7 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 							$ret = $invoice->fetch($facid); // Reload to get new records
-							$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 							if ($result < 0) {
 								setEventMessages($invoice->error, $invoice->errors, 'errors');
 								$error++;
@@ -578,9 +580,10 @@ class Paiement extends CommonObject
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
+	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
 	{
 		global $conf, $langs, $user;
 
@@ -625,7 +628,8 @@ class Paiement extends CommonObject
 				'',
 				$user,
 				$emetteur_nom,
-				$emetteur_banque
+				$emetteur_banque,
+				$accountancycode
 			);
 
 			// Mise a jour fk_bank dans llx_paiement

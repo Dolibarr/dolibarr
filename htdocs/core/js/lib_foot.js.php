@@ -65,29 +65,29 @@ print "jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
 	print 'jQuery(".classfortooltip").tooltip({
-				show: { collision: "flipfit", effect:"toggle", delay:75, duration:150 },
-				hide: { delay: 250, duration: 20 },
-				tooltipClass: "mytooltip",
-				content: function () {
-                    console.log("Return title for popup");
-            		return $(this).prop("title");		/* To force to get title as is */
-          		}
-			});'."\n";
+		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
+		hide: { delay: 250, duration: 20 },
+		tooltipClass: "mytooltip",
+		content: function () {
+    		console.log("Return title for popup");
+            return $(this).prop("title");		/* To force to get title as is */
+   		}
+	});'."\n";
 }
 
 print '
-jQuery(".classfortooltiponclicktext").dialog(
-    { closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+jQuery(".classfortooltiponclicktext").dialog({
+    closeOnEscape: true, classes: { "ui-dialog": "highlight" },
     maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
     modal: true,
-    autoOpen: false }).css("z-index: 5000");
+    autoOpen: false
+    }).css("z-index: 5000");
 jQuery(".classfortooltiponclick").click(function () {
     console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-    if ($(this).attr(\'dolid\'))
-    {
+    if ($(this).attr(\'dolid\')) {
         obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
         obj.dialog("open");
-		return false;
+        return false;
     }
 });'."\n";
 
@@ -210,3 +210,36 @@ print '
 					}
 				});
 			});'."\n";
+
+print "\n/* JS CODE TO ENABLE ClipBoard copy paste*/\n";
+print 'jQuery(\'.clipboardCPShowOnHover\').hover(
+			function() {
+			console.log("We hover a value with a copy paste feature");
+				$(this).children(".clipboardCPButton, .clipboardCPText").show();
+			},
+			function() {
+			console.log("We hover out the value with a copy paste feature");
+				$(this).children(".clipboardCPButton, .clipboardCPText").hide();
+			}
+		);';
+print 'jQuery(\'.clipboardCPButton\').click(function() {
+		/* console.log(this.parentNode); */
+		console.log("We click on a clipboardCPButton tag");
+		if (window.getSelection) {
+			selection = window.getSelection();
+
+			range = document.createRange();
+			range.selectNodeContents(this.parentNode.firstChild);
+
+			selection.removeAllRanges();
+			selection.addRange( range );
+		}
+		document.execCommand( \'copy\' );
+		window.getSelection().removeAllRanges();
+
+		/* Show message */
+		var lastchild = this.parentNode.lastChild;
+		var tmp = lastchild.innerHTML
+		lastchild.innerHTML = \''.dol_escape_js($langs->trans('CopiedToClipboard')).'\';
+		setTimeout(() => { lastchild.innerHTML = tmp; }, 1000);
+	})'."\n";

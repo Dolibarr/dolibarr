@@ -34,6 +34,7 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
+$form = new Form($db);
 
 
 /*
@@ -49,20 +50,23 @@ if ($action == 'setvalue')
 	$checkread = GETPOST('value', 'alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
 	$mailingdelay = GETPOST('MAILING_DELAY', 'int');
+	$contactbulkdefault = GETPOST('MAILING_CONTACT_DEFAULT_BULK_STATUS', 'int');
 
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	$res = dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
+	$res = dolibarr_set_const($db, "MAILING_CONTACT_DEFAULT_BULK_STATUS", $contactbulkdefault, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) $error++;
 
 	// Create temporary encryption key if nedded
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
-	if (!$error)
-	{
+
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -70,7 +74,17 @@ if ($action == 'setvalue')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
+if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
+	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) $error++;
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 /*
  *	View
@@ -135,6 +149,16 @@ print $langs->trans("ActivateCheckReadKey").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
 if (!empty($conf->use_javascript_ajax)) print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
+
+// default blacklist from mailing
+print '<tr class="oddeven">';
+print '<td>' . $langs->trans("DefaultBlacklistMailingStatus") . '</td>';
+print '<td>';
+$blacklist_setting=array(0=>$langs->trans('No'),1=>$langs->trans('Yes'),-1=>$langs->trans('DefaultStatusEmptyMandatory'));
+print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS);
+print '</td>';
+print '</tr>';
+
 
 if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print '<tr class="oddeven"><td>';

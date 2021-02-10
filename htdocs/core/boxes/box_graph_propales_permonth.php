@@ -112,15 +112,16 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
-				$endyear = $tmparray['year'];
-				$shownb = $tmparray['shownb'];
-				$showtot = $tmparray['showtot'];
+			    $tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+			    $endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
+			    $shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
+			    $showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) { $shownb = 1; $showtot = 1; }
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) $endyear = $nowarray['year'];
-			$startyear = $endyear - 1;
+			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 1 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
 
@@ -176,8 +177,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 				//$datatype2 = array('lines','bars');
 
 				$filenamenb = $dir."/".$prefix."propalsamountinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$endyear.'.png';
+				if (!empty($mode)) {
+				    if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
+				    if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$endyear.'.png';
+				}
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();

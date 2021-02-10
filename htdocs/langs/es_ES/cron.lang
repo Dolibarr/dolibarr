@@ -7,13 +7,14 @@ Permission23103 = Borrar Tarea Programada
 Permission23104 = Ejecutar Taraea programada
 # Admin
 CronSetup=Configuración del módulo Programador
-URLToLaunchCronJobs=URL para combrobar y ejecutar tareas
-OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
+URLToLaunchCronJobs=URL para verificar e iniciar tareas cron calificados desde un navegador
+OrToLaunchASpecificJob=O para verificar e iniciar una tarea específica desde un navegador
 KeyForCronAccess=Clave para la URL para ejecutar tareas Cron
 FileToLaunchCronJobs=Comando para ejecutar tareas Cron
 CronExplainHowToRunUnix=En entornos Unix se debe utilizar la siguiente entrada crontab para ejecutar el comando cada 5 minutos
 CronExplainHowToRunWin=En entornos Microsoft (tm) Windows, puede utilizar las herramienta  tareas programadas para ejecutar el comando cada 5 minutos
 CronMethodDoesNotExists=La clase %s no contiene ningún método %s
+CronMethodNotAllowed=El método %s de la clase %s está en la lista negra de métodos prohibidos
 CronJobDefDesc=Los perfiles de trabajo de Cron se definen en el archivo descriptor del módulo. Cuando el módulo está activado, se cargan y están disponibles para que pueda administrar los trabajos desde el menú de herramientas de administración %s.
 CronJobProfiles=Lista de perfiles de trabajos cron predefinidos
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Número de ejecuciones
 CronMaxRun=Número máximo ejecuciones
 CronEach=Toda(s)
 JobFinished=Tareas lanzadas y finalizadas
+Scheduled=Programada
 #Page card
 CronAdd= Tarea Nueva
 CronEvery=Ejecutar la tarea cada
@@ -56,7 +58,7 @@ CronNote=Comentario
 CronFieldMandatory=campos %s son obligatorios
 CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
 StatusAtInstall=Estado en la instalación del módulo
-CronStatusActiveBtn=Activo
+CronStatusActiveBtn=Calendario
 CronStatusInactiveBtn=Inactivo
 CronTaskInactive=Esta tarea esta inactiva
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Copia local de la base de datos
 MakeLocalDatabaseDump=Crear una copia local de la base de datos. Los parámetros son: compresión ('gz' o 'bz' o 'ninguno'), tipo de copia de seguridad ('mysql' o 'pgsql'), 1, 'auto' o nombre de archivo para construir, nº de archivos de copia de seguridad a mantener
 WarningCronDelayed=Atención: para mejorar el rendimiento, cualquiera que sea la próxima fecha de ejecución de las tareas activas, sus tareas pueden retrasarse un máximo de %s horas antes de ejecutarse
 DATAPOLICYJob=Limpiador de datos y anonimizador
+JobXMustBeEnabled=La tarea %s debe estar habilitada
+# Cron Boxes
+LastExecutedScheduledJob=Última tarea programada ejecutada
+NextScheduledJobExecute=Siguiente tarea programada para ejecutar
+NumberScheduledJobError=Número de tareas programadas con error

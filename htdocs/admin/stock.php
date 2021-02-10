@@ -96,7 +96,7 @@ if ($action == 'warehouse')
 	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 
 if ($action == 'specimen')
@@ -707,7 +707,15 @@ if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	print "</td>\n";
 	print "</tr>\n";
 }
-
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringPropal").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL);
+}
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringOrder").'</td>';
 print '<td class="right">';

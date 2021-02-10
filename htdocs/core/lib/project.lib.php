@@ -476,6 +476,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->usage_bill_time = $lines[$i]->usage_bill_time;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = $lines[$i]->ref;
@@ -881,6 +882,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			$projectstatic->ref = $lines[$i]->project_ref;
 			$projectstatic->title = $lines[$i]->project_label;
 			$projectstatic->public = $lines[$i]->public;
+			$projectstatic->status = $lines[$i]->project_status;
 
 			$taskstatic->id = $lines[$i]->task_id;
 			$taskstatic->ref = ($lines[$i]->task_ref ? $lines[$i]->task_ref : $lines[$i]->task_id);
@@ -1116,6 +1118,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$projectstatic->ref = $lines[$i]->projectref;
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -1489,6 +1492,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->thirdparty_name = $lines[$i]->thirdparty_name;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -1843,6 +1847,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$projectstatic->title = $lines[$i]->projectlabel;
 				$projectstatic->public = $lines[$i]->public;
 				$projectstatic->thirdparty_name = $lines[$i]->thirdparty_name;
+				$projectstatic->status = $lines[$i]->projectstatus;
 
 				$taskstatic->id = $lines[$i]->id;
 				$taskstatic->ref = ($lines[$i]->ref ? $lines[$i]->ref : $lines[$i]->id);
@@ -2180,7 +2185,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql2 .= " WHERE p.rowid IN (".join(',', $arrayidofprojects).")";
-	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
+	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur,";
+	$sql2 .= " s.logo, s.email, s.entity, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
 	$sql2 .= " ORDER BY p.title, p.ref";
 
 	$resql = $db->query($sql2);

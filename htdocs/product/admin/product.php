@@ -89,12 +89,12 @@ if ($action == 'setcodeproduct')
 if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'), 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'), 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 if ($action == 'other')
 {
@@ -144,6 +144,9 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
 	if ($value) {
 		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
@@ -249,7 +252,7 @@ if ($action == 'set')
 	$value = GETPOST('value');
 	if (GETPOST('value', 'alpha')) $res = dolibarr_set_const($db, $const, $value, 'chaine', 0, '', $conf->entity);
 	else $res = dolibarr_del_const($db, $const, $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 
 //if ($action == 'other')
@@ -577,7 +580,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule = 'PRODUIT_MULTIPR
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
+print $form->selectarray("princingrule", $select_pricing_rules, $current_rule, 0, 0, 0, '', 1, 0, 0, '', 'maxwidth400', 1);
 print '</td>';
 print '</tr>';
 
@@ -628,6 +631,28 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
 	print '</tr>';
 }
+
+// Do Not Add Product description on add lines
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
+print '<td class="right">';
+print $form->selectarray(
+	"activate_FillProductDescAuto",
+	array(1=>'AutoFillFormFieldBeforeSubmit', 0=>'DoNotAutofillButAutoConcat', -1=>'DoNotUseDescriptionOfProdut'),
+	empty($conf->global->PRODUIT_AUTOFILL_DESC) ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
+	0,
+	0,
+	0,
+	'',
+	1,
+	0,
+	0,
+	'',
+	'maxwidth400',
+	1
+);
+print '</td>';
+print '</tr>';
 
 // Visualiser description produit dans les formulaires activation/desactivation
 print '<tr class="oddeven">';

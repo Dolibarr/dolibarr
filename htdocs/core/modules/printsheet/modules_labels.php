@@ -54,12 +54,12 @@ class ModelePDFLabels
 		global $conf;
 
 		$type = 'members_labels';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -150,6 +150,27 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0)
 		{
 			$outputlangs->charset_output = $sav_charset_output;
+
+			$fullpath = $obj->result['fullpath'];
+
+			// Output to http stream
+			clearstatcache();
+
+			$attachment = true;
+			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
+			$type = dol_mimetype($filename);
+
+			//if ($encoding)   header('Content-Encoding: '.$encoding);
+			if ($type)		 header('Content-Type: '.$type);
+			if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+			else header('Content-Disposition: inline; filename="'.$filename.'"');
+
+			// Ajout directives pour resoudre bug IE
+			header('Cache-Control: Public, must-revalidate');
+			header('Pragma: public');
+
+			readfile($fullpath);
+
 			return 1;
 		} else {
 			$outputlangs->charset_output = $sav_charset_output;

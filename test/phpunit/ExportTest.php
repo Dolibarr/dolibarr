@@ -30,16 +30,36 @@ require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/exports/class/export.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
+}
+if (! defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+if (! defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (! defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (! defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (! defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (! defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no menu to show
+}
+if (! defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (! defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (! defined("NOLOGIN")) {
+	define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
+}
 
 
 /**
@@ -79,296 +99,293 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		//$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
 
-    /**
-     * Other tests
-     *
-     * @return void
-     */
-    public function testExportOther()
-    {
-        global $conf,$user,$langs,$db;
-
-        $model='csv';
-
-        $conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
-        print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
-
-        // Creation of class to export using model ExportXXX
-        $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
-        $file = "export_".$model.".modules.php";
-        $classname = "Export".$model;
-        require_once $dir.$file;
-        $objmodel = new $classname($db);
-
-        // First test without option USE_STRICT_CSV_RULES
-        unset($conf->global->USE_STRICT_CSV_RULES);
-
-        $valtotest='A simple string';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'A simple string');
-
-        $valtotest='A string with , and ; inside';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
-
-        $valtotest='A string with " inside';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with "" inside"');
-
-        $valtotest='A string with " inside and '."\r\n".' carriage returns';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
-
-        $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
-
-        // Same tests with strict mode
-        $conf->global->USE_STRICT_CSV_RULES = 1;
-
-        $valtotest='A simple string';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, 'A simple string');
-
-        $valtotest='A string with , and ; inside';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with , and ; inside"');
-
-        $valtotest='A string with " inside';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with "" inside"');
-
-        $valtotest='A string with " inside and '."\r\n".' carriage returns';
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
-
-        $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
-        print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
-        print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
-    }
-
-    /**
-     * Test export function for a personalized dataset
-     *
-     * @depends	testExportOther
+	/**
+	 * Other tests
+	 *
 	 * @return void
-     */
-    public function testExportPersonalizedExport()
-    {
-        global $conf,$user,$langs,$db;
+	 */
+	public function testExportOther()
+	{
+		global $conf,$user,$langs,$db;
 
-        $sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+		$model='csv';
 
-        $objexport=new Export($db);
-        //$objexport->load_arrays($user,$datatoexport);
+		$conf->global->EXPORT_CSV_SEPARATOR_TO_USE = ',';
+		print 'EXPORT_CSV_SEPARATOR_TO_USE = '.$conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
 
-        // Define properties
-        $datatoexport='test';
-        $array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
-        $array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
-        $array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
-        $objexport->array_export_fields[0]=$array_export_fields;
-        $objexport->array_export_alias[0]=$array_alias;
+		// Creation of class to export using model ExportXXX
+		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
+		$file = "export_".$model.".modules.php";
+		$classname = "Export".$model;
+		require_once $dir.$file;
+		$objmodel = new $classname($db);
 
-        dol_mkdir($conf->export->dir_temp);
+		// First test without option USE_STRICT_CSV_RULES
+		unset($conf->global->USE_STRICT_CSV_RULES);
 
-        $model='csv';
+		$valtotest='A simple string';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A simple string');
 
-        // Build export file
-        print "Process build_file for model = ".$model."\n";
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+		$valtotest='A string with , and ; inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with , and ; inside"', 'Error in csvClean for '.$file);
+
+		$valtotest='A string with " inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with "" inside"');
+
+		$valtotest='A string with " inside and '."\r\n".' carriage returns';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
+
+		$valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
+
+		// Same tests with strict mode
+		$conf->global->USE_STRICT_CSV_RULES = 1;
+
+		$valtotest='A simple string';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'A simple string');
+
+		$valtotest='A string with , and ; inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with , and ; inside"');
+
+		$valtotest='A string with " inside';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with "" inside"');
+
+		$valtotest='A string with " inside and '."\r\n".' carriage returns';
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
+
+		$valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
+		print __METHOD__." valtotest=".$valtotest."\n";
+		$result = $objmodel->csvClean($valtotest, $langs->charset_output);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
+	}
+
+	/**
+	 * Test export function for a personalized dataset
+	 *
+	 * @depends	testExportOther
+	 * @return void
+	 */
+	public function testExportPersonalizedExport()
+	{
+		global $conf,$user,$langs,$db;
+
+		$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+
+		$objexport=new Export($db);
+		//$objexport->load_arrays($user,$datatoexport);
+
+		// Define properties
+		$datatoexport='test';
+		$array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+		$array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+		$array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
+		$objexport->array_export_fields[0]=$array_export_fields;
+		$objexport->array_export_alias[0]=$array_alias;
+
+		dol_mkdir($conf->export->dir_temp);
+
+		$model='csv';
+
+		// Build export file
+		print "Process build_file for model = ".$model."\n";
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult = 1;
-        $this->assertEquals($expectedresult, $result, 'Error in CSV export');
+		$this->assertEquals($expectedresult, $result, 'Error in CSV export');
 
-        $model='tsv';
+		$model='tsv';
 
-        // Build export file
-        print "Process build_file for model = ".$model."\n";
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+		// Build export file
+		print "Process build_file for model = ".$model."\n";
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result, 'Error in TSV export');
+		$this->assertEquals($expectedresult, $result, 'Error in TSV export');
 
-        $model='excel2007new';
+        $model='excel2007';
 
-        // Build export file
-        /* ko on php 7.4 on travis (zip not available) */
-        print "Process build_file for model = ".$model."\n";
-        $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
+		// Build export file
+		/* ko on php 7.4 on travis (zip not available) */
+		print "Process build_file for model = ".$model."\n";
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result, 'Error in Excel2007new export');
+        $this->assertEquals($expectedresult, $result, 'Error in Excel2007 export');
 
+		return true;
+	}
 
-        return true;
-    }
-
-    /**
-     * Test export function for a personalized dataset with filters
-     *
-     * @depends	testExportPersonalizedExport
-     * @return void
-     */
-    public function testExportPersonalizedWithFilter()
-    {
-    	global $conf,$user,$langs,$db;
-        /*
-    	$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
-
-    	$objexport=new Export($db);
-    	//$objexport->load_arrays($user,$datatoexport);
-
-    	// Define properties
-    	$datatoexport='test_filtered';
-    	$array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
-    	$array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
-    	$array_filtervalue = array("f.total" => ">100");
-    	$array_filtered = array("f.total" => 1);
-    	$array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
-    	$objexport->array_export_fields[0]=$array_export_fields;
-    	$objexport->array_export_alias[0]=$array_alias;
-
-    	dol_mkdir($conf->export->dir_temp);
-
-    	$model='csv';
-
-    	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
-    	$expectedresult=1;
-    	$this->assertEquals($expectedresult,$result);
-
-    	$model='tsv';
-
-    	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
-    	$expectedresult=1;
-    	$this->assertEquals($expectedresult,$result);
-
-    	$model='excel';
-
-    	// Build export file
-    	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
-    	$expectedresult=1;
-    	$this->assertEquals($expectedresult,$result);
-        */
-    	$this->assertEquals(true, true);
-    	return true;
-    }
-
-    /**
-     * Test export function for all dataset predefined into modules
-     *
-     * @depends	testExportPersonalizedWithFilter
+	/**
+	 * Test export function for a personalized dataset with filters
+	 *
+	 * @depends	testExportPersonalizedExport
 	 * @return void
-     */
-    public function testExportModulesDatasets()
-    {
-        global $conf,$user,$langs,$db;
+	 */
+	public function testExportPersonalizedWithFilter()
+	{
+		global $conf,$user,$langs,$db;
+		/*
+		$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
-        $model='csv';
+		$objexport=new Export($db);
+		//$objexport->load_arrays($user,$datatoexport);
 
-        $filterdatatoexport='';
-        //$filterdatatoexport='';
-        //$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
+		// Define properties
+		$datatoexport='test_filtered';
+		$array_selected = array("f.ref"=>1, "f.total"=>2, "f.tva"=>3);
+		$array_export_fields = array("f.ref"=>"FacNumber", "f.total"=>"FacTotal", "f.tva"=>"FacVat");
+		$array_filtervalue = array("f.total" => ">100");
+		$array_filtered = array("f.total" => 1);
+		$array_alias = array("f_ref"=>"ref", "f_total"=>"total", "f_tva"=>"tva");
+		$objexport->array_export_fields[0]=$array_export_fields;
+		$objexport->array_export_alias[0]=$array_alias;
 
-        // Load properties of arrays to make export
-        $objexport=new Export($db);
-        $result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
+		dol_mkdir($conf->export->dir_temp);
 
-        // Loop on each dataset
-        foreach ($objexport->array_export_code as $key => $datatoexport)
-        {
-        	$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
-	        print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
-	        dol_delete_file($exportfile);
+		$model='csv';
 
-	        // Generate $array_selected
-	        $i=0;
-	        $array_selected=array();
-			foreach ($objexport->array_export_fields[$key] as $key => $val)
-			{
+		// Build export file
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
+		$expectedresult=1;
+		$this->assertEquals($expectedresult,$result);
+
+		$model='tsv';
+
+		// Build export file
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
+		$expectedresult=1;
+		$this->assertEquals($expectedresult,$result);
+
+		$model='excel';
+
+		// Build export file
+		$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
+		$expectedresult=1;
+		$this->assertEquals($expectedresult,$result);
+		*/
+		$this->assertEquals(true, true);
+		return true;
+	}
+
+	/**
+	 * Test export function for all dataset predefined into modules
+	 *
+	 * @depends	testExportPersonalizedWithFilter
+	 * @return void
+	 */
+	public function testExportModulesDatasets()
+	{
+		global $conf,$user,$langs,$db;
+
+		$model='csv';
+
+		$filterdatatoexport='';
+		//$filterdatatoexport='';
+		//$array_selected = array("s.rowid"=>1, "s.nom"=>2);	// Mut be fields found into declaration of dataset
+
+		// Load properties of arrays to make export
+		$objexport=new Export($db);
+		$result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
+
+		// Loop on each dataset
+		foreach ($objexport->array_export_code as $key => $datatoexport) {
+			$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
+			print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
+			dol_delete_file($exportfile);
+
+			// Generate $array_selected
+			$i=0;
+			$array_selected=array();
+			foreach ($objexport->array_export_fields[$key] as $key => $val) {
 				$array_selected[$key]=$i++;
 			}
 			//var_dump($array_selected);
 
-	        // Build export file
-        	$sql = "";
+			// Build export file
+			$sql = "";
 			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 			$expectedresult = 1;
-	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed: '.$objexport->error);
-	        $result=dol_is_file($exportfile);
-	        $this->assertTrue($result, 'File '.$exportfile.' not found');
-        }
+			$this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed: '.$objexport->error);
+			$result=dol_is_file($exportfile);
+			$this->assertTrue($result, 'File '.$exportfile.' not found');
+		}
 
-        return true;
-    }
+		return true;
+	}
 }

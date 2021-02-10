@@ -100,7 +100,7 @@ if ($action == 'update') {
 if ($action == 'setlistsorttodo') {
 	$setlistsorttodo = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -114,9 +114,10 @@ if ($action == 'setlistsorttodo') {
 if ($action == 'setlistsortdone') {
 	$setlistsortdone = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -127,9 +128,10 @@ if ($action == 'setlistsortdone') {
 if ($action == 'setmanagezero') {
 	$setmanagezero = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -140,9 +142,10 @@ if ($action == 'setmanagezero') {
 if ($action == 'setdisabledirectinput') {
 	$setdisabledirectinput = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -153,9 +156,10 @@ if ($action == 'setdisabledirectinput') {
 if ($action == 'setenabledraftexport') {
 	$setenabledraftexport = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -166,9 +170,10 @@ if ($action == 'setenabledraftexport') {
 if ($action == 'setenablesubsidiarylist') {
 	$setenablesubsidiarylist = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTANCY_COMBO_FOR_AUX", $setenablesubsidiarylist, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -179,9 +184,10 @@ if ($action == 'setenablesubsidiarylist') {
 if ($action == 'setdisablebindingonsales') {
 	$setdisablebindingonsales = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -192,9 +198,10 @@ if ($action == 'setdisablebindingonsales') {
 if ($action == 'setdisablebindingonpurchases') {
 	$setdisablebindingonpurchases = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -205,9 +212,10 @@ if ($action == 'setdisablebindingonpurchases') {
 if ($action == 'setdisablebindingonexpensereports') {
 	$setdisablebindingonexpensereports = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -215,9 +223,11 @@ if ($action == 'setdisablebindingonexpensereports') {
 	}
 }
 
+
 /*
  * View
  */
+
 $form = new Form($db);
 
 $title = $langs->trans('ConfigAccountingExpert');

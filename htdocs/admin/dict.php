@@ -236,7 +236,7 @@ $tabsqlsort[3] = "country ASC, code ASC";
 $tabsqlsort[4] = "code ASC";
 $tabsqlsort[5] = "label ASC";
 $tabsqlsort[6] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
-$tabsqlsort[7] = "country ASC, code ASC, a.libelle ASC";
+$tabsqlsort[7] = "c.label ASC, a.code ASC, a.libelle ASC";
 $tabsqlsort[8] = "country DESC,".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ' t.position ASC,' : '')." libelle ASC";
 $tabsqlsort[9] = "label ASC";
 $tabsqlsort[10] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
@@ -621,6 +621,7 @@ if ($id == 11)
 		// 'contract' => $langs->trans('Contract'),
 		'project' => $langs->trans('Project'),
 		'project_task' => $langs->trans('Task'),
+        'ticket' => $langs->trans('Ticket'),
 		'agenda' => $langs->trans('Agenda'),
 		'dolresource' => $langs->trans('Resource'),
 		// old deprecated
@@ -798,11 +799,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $value;
 
-			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($value == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($value == 'price' || preg_match('/^amount/i', $value)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            }
+            elseif ($value == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 
@@ -822,11 +827,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		}
 		$sql .= ",1)";
 
-		dol_syslog("actionadd", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result)	// Add is ok
-		{
-			setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
+        dol_syslog("actionadd", LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)	// Add is ok
+        {
+            setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 			// Clean $_POST array, we keep only id of dictionary
 			if ($id == 10 && GETPOST('country', 'int') > 0) {
@@ -861,11 +866,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $field;
 
-			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($field == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($field == 'price' || preg_match('/^amount/i', $field)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            }
+            elseif ($field == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 			$sql .= $field."=";
@@ -1068,6 +1077,7 @@ if ($id)
 	elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
 	elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id == 3)     $sql .= natural_search("r.code_region", $search_code);
+	elseif ($search_code != '' && $id == 7)     $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id != 9)     $sql .= natural_search("code", $search_code);
 
 	if ($sortfield)
@@ -1106,7 +1116,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
 		$withentity = null;
 
 		$fieldlist = explode(',', $tabfield[$id]);
@@ -1213,7 +1222,6 @@ if ($id)
 				else $tdsoffields .= $valuetoshow;
 				$tdsoffields .= '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		if ($id == 4) $tdsoffields .= '<td></td>';
@@ -1492,11 +1500,9 @@ if ($id)
 								continue;
 							}
 
-							if ($value == 'element')
-							{
+							if ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							} elseif ($value == 'source')
-							{
+							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
 							} elseif ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');

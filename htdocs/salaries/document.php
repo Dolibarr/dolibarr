@@ -90,7 +90,7 @@ if ($object->id)
 
 	$head = salaries_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'salary');
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -266,6 +266,18 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 			$object->datev = $newdatepayment;
 		}
 
+        if (GETPOSTISSET("clone_sens")) {
+            $object->sens = GETPOST("clone_sens", 'int');
+        } else {
+            $object->sens = $object->sens;
+        }
+
+        if (GETPOST("clone_amount", "alpha")) {
+            $object->amount = price2num(GETPOST("clone_amount", "alpha"));
+        } else {
+            $object->amount = price2num($object->amount);
+        }
+
 		if ($object->check())
 		{
 			$id = $object->create($user);
@@ -486,14 +498,19 @@ if ($id)
 	// Clone confirmation
 	if ($action === 'clone')
 	{
+        $set_value_help = $form->textwithpicto('', $langs->trans($langs->trans("AccountingDirectionHelp")));
+        $sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+
 		$formquestion = array(
 			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
-		);
-		$formquestion[] = array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1);
-		$formquestion[] = array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($accountid, "accountid", 0, '', 1, '', 0, 'minwidth200', 1));
+            array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1),
+		    array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
+		    array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
+		    array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
+            array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens") . ' ' . $set_value_help, 'values' => $sensarray, 'default' => $object->sens),
+        );
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);

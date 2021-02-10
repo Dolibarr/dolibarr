@@ -409,6 +409,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						}
 						function callForResult(imgId)
 						{
+							console.log("callForResult Calculate total of payment");
 							var json = {};
 							var form = $("#payment_form");
 
@@ -445,6 +446,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								}
 							});
 						}
+						callForResult();
 						$("#payment_form").find("input.amount").change(function() {
 							callForResult();
 						});
@@ -511,7 +513,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			if (empty($reshook))
 			{
 				/*
-	             * All unpayed supplier invoices
+	             * All unpaid supplier invoices
 	             */
 				$sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ht, f.total_ttc,';
 				$sql .= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
@@ -690,10 +692,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								if (!empty($conf->use_javascript_ajax))
 									print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 									print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+									print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';	// class is requied to be used by javascript callForResult();
 							} else {
 								print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
-								print '<input type="hidden" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
+								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';	// class is requied to be used by javascript callForResult();
 							}
 							print "</td>";
 

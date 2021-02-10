@@ -30,6 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "productbatch"));
+$langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "productbatch", "products"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -215,9 +216,9 @@ $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label,
 $sql .= " p.accountancy_code_sell as code_sell, p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 $sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export,";
 $sql .= " p.tosell as status, p.tobuy as status_buy,";
-$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
+$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export, aa4.rowid as aarowid_thirdparty,";
 $sql .= " co.code as country_code, co.label as country_label,";
-$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
+$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur, s.accountancy_code_buy as company_code_buy";
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -229,6 +230,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON p.accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON s.accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND l.product_type <= 2";
 // Define begin binding date
@@ -460,10 +462,12 @@ if ($result) {
 		$facturefourn_static->label = $objp->invoice_label;
 
 		$code_buy_p_notset = '';
+		$code_buy_t_notset = '';
 		$objp->aarowid_suggest = ''; // Will be set later
 
 		$isSellerInEEC = isInEEC($objp);
 
+		// Level 1: Search suggested default account for product/service
 		$suggestedaccountingaccountbydefaultfor = '';
 		if ($objp->type_l == 1) {
 			if ($objp->country_code == $mysoc->country_code || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
@@ -494,7 +498,7 @@ if ($result) {
 		}
 		if ($objp->code_sell_l == -1) $objp->code_sell_l = '';
 
-		// Search suggested account for product/service
+		// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 		$suggestedaccountingaccountfor = '';
 		if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 			$objp->code_buy_p = $objp->code_buy;
@@ -512,6 +516,13 @@ if ($result) {
 			}
 		}
 
+		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
+		if (!empty($objp->company_code_buy)) {
+			$objp->code_buy_t = $objp->company_code_buy;
+			$objp->aarowid_suggest = $objp->aarowid_thirdparty;
+			$suggestedaccountingaccountfor = '';
+		}
+
 		if (!empty($objp->code_buy_p)) {
 			// Value was defined previously
 		} else {
@@ -521,6 +532,7 @@ if ($result) {
 
 		// $objp->code_buy_l is now default code of product/service
 		// $objp->code_buy_p is now code of product/service
+		// $objp->code_buy_t is now code of thirdparty
 
 		print '<tr class="oddeven">';
 
@@ -576,7 +588,7 @@ if ($result) {
 
 		// Found accounts
 		print '<td>';
-		$s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
+		$s = '<span class="small">1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
 		elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp .= $langs->trans("SaleExport");
@@ -585,13 +597,24 @@ if ($result) {
 		if ($objp->product_id > 0)
 		{
 			print '<br>';
-			$s = '<span class="small">'.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
 			$shelp = '';
 			if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
 			elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
 			$s .= (empty($objp->code_buy_p) ? '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_buy_p));
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+		} else {
+			print '<br>';
+			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+			$shelp = '';
+			$s .= $langs->trans("NotDefined");
+			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
+		print '<br>';
+		$s = '<span class="small">3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': </span>';
+		$shelp = '';
+		$s .= ($objp->code_buy_t > 0 ? length_accountg($objp->code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
+		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		print '</td>';
 
 		// Suggested accounting account

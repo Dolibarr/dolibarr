@@ -75,7 +75,7 @@ if ($action == 'updateoptions')
 	{
 		$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		if (!$error)
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -88,7 +88,7 @@ if ($action == 'updateoptions')
 	{
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		if (!$error)
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -101,7 +101,7 @@ if ($action == 'updateoptions')
 	{
 		$customertypedefault = GETPOST('defaultcustomertype', 'int');
 		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		if (!$error)
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -176,7 +176,7 @@ if ($action == 'setdoc')
 if ($action == "setaddrefinlist") {
 	$setaddrefinlist = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ADD_REF_IN_LIST", $setaddrefinlist, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -189,7 +189,7 @@ if ($action == "setaddrefinlist") {
 if ($action == "setaddadressinlist") {
 	$val = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -202,7 +202,7 @@ if ($action == "setaddadressinlist") {
 if ($action == "setaddemailphonetownincontactlist") {
 	$val = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -214,7 +214,7 @@ if ($action == "setaddemailphonetownincontactlist") {
 if ($action == "setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ASK_FOR_SHIPPING_METHOD", $setaskforshippingmet, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -227,7 +227,7 @@ if ($action == "setaskforshippingmet") {
 if ($action == "setdisableprospectcustomer") {
 	$setdisableprospectcustomer = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -297,7 +297,7 @@ if ($action == 'sethideinactivethirdparty')
 if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
 	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -784,7 +784,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
@@ -799,7 +799,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
@@ -814,7 +814,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
@@ -830,7 +830,7 @@ if (!empty($conf->expedition->enabled)) {
 	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
 		print '<tr class="oddeven">';
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
-		print '<td>&nbsp</td>';
+		print '<td>&nbsp;</td>';
 		print '<td class="center">';
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 		{
@@ -848,7 +848,7 @@ if (!empty($conf->expedition->enabled)) {
 // Disable Prospect/Customer thirdparty type
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {

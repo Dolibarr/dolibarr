@@ -371,9 +371,9 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
-		$remise_percent = GETPOST('remise_percent'.$predef);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -475,7 +475,7 @@ if (empty($reshook))
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					$desc = (!empty($productsupplier->multilangs [$outputlangs->defaultlang] ["description"])) ? $productsupplier->multilangs [$outputlangs->defaultlang] ["description"] : $productsupplier->description;
+					$desc = (!empty($productsupplier->multilangs[$outputlangs->defaultlang]["description"])) ? $productsupplier->multilangs[$outputlangs->defaultlang]["description"] : $productsupplier->description;
 				} else {
 					$desc = $productsupplier->description;
 				}
@@ -484,7 +484,13 @@ if (empty($reshook))
 					$desc = $productsupplier->desc_supplier;
 				}
 
-				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc='';
+				}
+
+				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
+				if (!empty($product_desc) && trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$type = $productsupplier->type;
 				if ($price_ht != '' || $price_ht_devise != '') {
@@ -715,21 +721,21 @@ if (empty($reshook))
 
 		$result = $object->updateline(
 			$lineid,
-			$_POST['product_desc'],
+			GETPOST('product_desc', 'restricthtml'),
 			$ht,
-			GETPOST('qty', 'int'),
-			$_POST['remise_percent'],
+			price2num(GETPOST('qty'), 'MS'),
+			price2num(GETPOST('remise_percent'), 2),
 			$vat_rate,
 			$localtax1_rate,
 			$localtax2_rate,
 			$price_base_type,
 			0,
-			isset($_POST["type"]) ? $_POST["type"] : $line->product_type,
+			GETPOSTISSET("type") ? GETPOST("type") : $line->product_type,
 			false,
 			$date_start,
 			$date_end,
 			$array_options,
-			$_POST['units'],
+			GETPOST('units'),
 			$pu_ht_devise,
 			GETPOST('fourn_ref', 'alpha')
 		);
@@ -1604,7 +1610,7 @@ if ($action == 'create')
 		print $societe->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 	} else {
-		print $form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE))
 		{
@@ -1666,6 +1672,7 @@ if ($action == 'create')
 	{
 		$langs->load("bank");
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+		print img_picto('', 'bank_account', 'class="paddingrightonly"');
 		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 		print '</td></tr>';
 	}
@@ -1677,7 +1684,7 @@ if ($action == 'create')
 
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
-		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print img_picto('', 'project').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$societe->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -2146,6 +2153,12 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
+	// Delivery delay (in days)
+	print '<tr>';
+	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
+	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
+	print '</tr>';
+
 	// Delivery date planed
 	print '<tr><td>';
 	print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -2173,12 +2186,6 @@ if ($action == 'create')
 		}
 	}
 	print '</td></tr>';
-
-	// Delivery delay (in days)
-	print '<tr>';
-	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
-	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
-	print '</tr>';
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))

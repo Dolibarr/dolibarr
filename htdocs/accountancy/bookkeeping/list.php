@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy"));
+$langs->loadLangs(array("accountancy", "compta"));
 
 $socid = GETPOST('socid', 'int');
 
@@ -87,7 +87,7 @@ $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
-$search_not_reconciled = GETPOST('search_reconciled_option', 'alpha');
+$search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
@@ -140,6 +140,7 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 
 $arrayfields = array(
 	't.piece_num'=>array('label'=>$langs->trans("TransactionNumShort"), 'checked'=>1),
+	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
 	't.doc_ref'=>array('label'=>$langs->trans("Piece"), 'checked'=>1),
 	't.numero_compte'=>array('label'=>$langs->trans("AccountAccountingShort"), 'checked'=>1),
@@ -148,7 +149,6 @@ $arrayfields = array(
 	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
 	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
-	't.code_journal'=>array('label'=>$langs->trans("Codejournal"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
@@ -661,11 +661,11 @@ if (empty($reshook)) {
 	}
 	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
-	$newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
+	if (!empty($user->rights->accounting->mouvements->export)) $newcardbutton .= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param ? '&'.$param : ''), $user->rights->accounting->mouvements->export);
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php', '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbysubaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
 
 	$url = './card.php?action=create';
 	if (!empty($socid)) $url .= '&socid='.$socid;
@@ -688,10 +688,16 @@ print '<table class="tagtable liste centpercent">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';
+
 // Movement number
 if (!empty($arrayfields['t.piece_num']['checked']))
 {
 	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+}
+// Code journal
+if (!empty($arrayfields['t.code_journal']['checked']))
+{
+	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.(is_array($search_ledger_code) ? join('|', $search_ledger_code) : $search_ledger_code).'"></td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked']))
@@ -778,14 +784,7 @@ if (!empty($arrayfields['t.lettering_code']['checked']))
 {
 	print '<td class="liste_titre center">';
 	print '<input type="text" size="3" class="flat" name="search_lettering_code" value="'.$search_lettering_code.'"/>';
-	print '<br><span class="nowrap"><input type="checkbox" name="search_reconciled_option" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
-	print '</td>';
-}
-// Code journal
-if (!empty($arrayfields['t.code_journal']['checked']))
-{
-	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
 	print '</td>';
 }
 
@@ -839,6 +838,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['t.piece_num']['checked']))			print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.doc_date']['checked']))				print_liste_field_titre($arrayfields['t.doc_date']['label'], $_SERVER['PHP_SELF'], "t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['t.doc_ref']['checked']))				print_liste_field_titre($arrayfields['t.doc_ref']['label'], $_SERVER['PHP_SELF'], "t.doc_ref", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['t.numero_compte']['checked']))		print_liste_field_titre($arrayfields['t.numero_compte']['label'], $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
@@ -847,7 +847,6 @@ if (!empty($arrayfields['t.label_operation']['checked']))		print_liste_field_tit
 if (!empty($arrayfields['t.debit']['checked']))				print_liste_field_titre($arrayfields['t.debit']['label'], $_SERVER['PHP_SELF'], "t.debit", "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['t.credit']['checked']))				print_liste_field_titre($arrayfields['t.credit']['label'], $_SERVER['PHP_SELF'], "t.credit", "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['t.lettering_code']['checked']))		print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['t.code_journal']['checked']))			print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -910,6 +909,16 @@ while ($i < min($num, $limit))
 		$object->piece_num = $line->piece_num;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
+
+	// Journal code
+	if (!empty($arrayfields['t.code_journal']['checked']))
+	{
+		$accountingjournal = new AccountingJournal($db);
+		$result = $accountingjournal->fetch('', $line->code_journal);
+		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+		print '<td class="center">'.$journaltoshow.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
@@ -1037,16 +1046,6 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['t.lettering_code']['checked']))
 	{
 		print '<td class="center">'.$line->lettering_code.'</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-
-	// Journal code
-	if (!empty($arrayfields['t.code_journal']['checked']))
-	{
-		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
-		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">'.$journaltoshow.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 

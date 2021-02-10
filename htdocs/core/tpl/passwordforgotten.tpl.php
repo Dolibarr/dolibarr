@@ -81,9 +81,9 @@ $(document).ready(function () {
 <!-- Title with version -->
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
-if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+if (!empty($disablenofollow)) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 echo dol_escape_htmltag($title);
-if ($disablenofollow) echo '</a>';
+if (!empty($disablenofollow)) echo '</a>';
 ?>
 </div>
 
@@ -113,7 +113,7 @@ if ($disablenofollow) echo '</a>';
 </div>
 
 <?php
-if ($captcha) {
+if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
@@ -126,7 +126,7 @@ if ($captcha) {
 
 	<span class="fa fa-unlock"></span>
 	<span class="nofa inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
@@ -200,7 +200,7 @@ if (!empty($morelogincontent)) {
 
 <br>
 
-<?php if ($message) { ?>
+<?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
 	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
 	</div>
