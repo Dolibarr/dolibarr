@@ -230,7 +230,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_dir_recursive($destdir.'/core/tpl');
 		dol_delete_dir_recursive($destdir.'/core/triggers');
 		dol_delete_dir_recursive($destdir.'/doc');
-		dol_delete_dir_recursive($destdir.'/.tx');
+		//dol_delete_dir_recursive($destdir.'/.tx');
 		dol_delete_dir_recursive($destdir.'/core/boxes');
 
 		dol_delete_file($destdir.'/admin/myobject_extrafields.php');

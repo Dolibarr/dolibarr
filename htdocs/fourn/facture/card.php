@@ -277,7 +277,7 @@ if (empty($reshook))
 		$discount->unlink_invoice();
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->set_paid($user);
+		$result = $object->setPaid($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -489,7 +489,7 @@ if (empty($reshook))
 		$result = $discountcheck->fetch(0, 0, $object->id);
 
 		$canconvert = 0;
-		if ($object->type == FactureFournisseur::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+		if ($object->type == FactureFournisseur::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is paid (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
 		if (($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_STANDARD) && $object->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not refunded completely and not already converted and amount of payment is 0 (see also the real condition used as the condition to show button converttoreduc)
 		if ($canconvert)
 		{
@@ -605,7 +605,7 @@ if (empty($reshook))
 			{
 				if ($object->type != FactureFournisseur::TYPE_DEPOSIT) {
 					// Classe facture
-					$result = $object->set_paid($user);
+					$result = $object->setPaid($user);
 					if ($result >= 0)
 					{
 						$db->commit();
@@ -666,7 +666,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -733,7 +733,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -851,7 +851,7 @@ if (empty($reshook))
 				$action = 'create';
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
-			} elseif ($dateinvoice > (dol_now() + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			} elseif ($dateinvoice > (dol_get_last_hour(dol_now()) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
 				$error++;
 				setEventMessages($langs->trans("ErrorDateIsInFuture"), null, 'errors');
 				$action = 'create';
@@ -1137,8 +1137,8 @@ if (empty($reshook))
 		$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 		$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-		$remise_percent = GETPOST('remise_percent');
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+		$remise_percent = price2num(GETPOST('remise_percent'), 2);
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1150,7 +1150,7 @@ if (empty($reshook))
 			}
 		}
 
-		$result = $object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise, GETPOST('fourn_ref', 'alpha'));
+		$result = $object->updateline(GETPOST('lineid', 'int'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, price2num(GETPOST('qty'), 'MS'), GETPOST('productid', 'int'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, GETPOST('units'), $pu_ht_devise, GETPOST('fourn_ref', 'alpha'));
 		if ($result >= 0)
 		{
 			unset($_POST['label']);
@@ -1206,7 +1206,7 @@ if (empty($reshook))
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
@@ -1545,7 +1545,7 @@ if (empty($reshook))
 		if ($object->statut == FactureFournisseur::STATUS_CLOSED
 		|| ($object->statut == FactureFournisseur::STATUS_ABANDONED && $object->close_code != 'replaced'))
 		{
-			$result = $object->set_unpaid($user);
+			$result = $object->setUnpaid($user);
 			if ($result > 0)
 			{
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
@@ -2114,7 +2114,7 @@ if ($action == 'create')
 	{
 		$langs->loadLangs(array("intracommreport"));
 		print '<tr><td>'.$langs->trans('IntracommReportTransportMode').'</td><td>';
-		$form->selectModeTransport(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
+		$form->selectTransportMode(isset($_POST['transport_mode_id']) ? $_POST['transport_mode_id'] : $transport_mode_id, 'transport_mode_id');
 		print '</td></tr>';
 	}
 

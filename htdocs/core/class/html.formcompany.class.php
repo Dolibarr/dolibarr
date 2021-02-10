@@ -757,30 +757,37 @@ class FormCompany extends Form
 	 *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
 	 *  @param  int			$showempty      1=Add en empty line
 	 *  @param  string      $morecss        Add more css to select component
+	 *  @param  int      	$output         0=return HTML, 1= direct print
+	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
 	 *  @return	void
 	 */
-	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '')
+	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		global $user, $langs;
-
+		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 
-			print '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($showempty) print '<option value="0"></option>';
+			$out .= '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			if ($showempty) $out .= '<option value="0"></option>';
 			foreach ($lesTypes as $key=>$value)
 			{
-				print '<option value="'.$key.'"';
-				if ($key == $selected) print ' selected';
-				print '>'.$value.'</option>';
+				$out .= '<option value="'.$key.'"';
+				if ($key == $selected) $out .= ' selected';
+				$out .= '>'.$value.'</option>';
 			}
-			print "</select>";
-			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= "</select>";
+			if ($user->admin && empty($forcehidetooltip)) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
-			print ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname);
 
-			print "\n";
+			$out .= "\n";
+		}
+		if (empty($output)) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 
@@ -1031,7 +1038,7 @@ class FormCompany extends Form
 			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-			$out .= $this->selectarray($htmlname, $this->typent_array(0, $filter), $selected, 0, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+			$out .= $this->selectarray($htmlname, $this->typent_array(0, $filter), $selected, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {

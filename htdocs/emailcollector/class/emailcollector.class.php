@@ -202,7 +202,6 @@ class EmailCollector extends CommonObject
 
 	public $debuginfo;
 
-
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
 
@@ -252,6 +251,15 @@ class EmailCollector extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		global $langs;
+
+		// Check parameters
+		if ($this->host && preg_match('/^http:/i', trim($this->host))) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorHostMustNotStartWithHttp", $this->host);
+			return -1;
+		}
+
 		$id = $this->createCommon($user, $notrigger);
 
 		if (is_array($this->filters) && count($this->filters)) {
@@ -450,6 +458,15 @@ class EmailCollector extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		global $langs;
+
+		// Check parameters
+		if ($this->host && preg_match('/^http:/i', trim($this->host))) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorHostMustNotStartWithHttp", $this->host);
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -716,11 +733,15 @@ class EmailCollector extends CommonObject
 
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
-		if ($ssl) $flags .= '/ssl'; // '/tls'
+		if (!empty($conf->global->IMAP_FORCE_TLS)) {
+			$flags .= '/tls';
+		} elseif (empty($conf->global->IMAP_FORCE_NOSSL)) {
+			if ($ssl) $flags .= '/ssl';
+		}
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if ($norsh || !empty($conf->global->IMPA_FORCE_NORSH)) $flags .= '/norsh';
+		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) $flags .= '/norsh';
 
 		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
 

@@ -70,7 +70,7 @@ class FormActions
 		global $langs, $conf;
 
 		$listofstatus = array(
-			'-1' => $langs->trans("ActionNotApplicable"),
+			'na' => $langs->trans("ActionNotApplicable"),
 			'0' => $langs->trans("ActionsToDoShort"),
 			'50' => $langs->trans("ActionRunningShort"),
 			'100' => $langs->trans("ActionDoneShort")
@@ -130,7 +130,7 @@ class FormActions
 			//var_dump($selected);
 			if ($selected == 'done') $selected = '100';
 			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
-			if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'></option>';
+			if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			foreach ($listofstatus as $key => $val)
 			{
 				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
@@ -141,6 +141,8 @@ class FormActions
 			}
 			print '</select>';
 			if ($selected == 0 || $selected == 100) $canedit = 0;
+
+			print ajax_combobox('select'.$htmlname);
 
 			if (empty($onlyselect))
 			{
@@ -202,10 +204,9 @@ class FormActions
 			$newcardbutton = '';
 			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create))
 			{
-			    $url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
+			    $url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
 			    $newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
-
 
 			print '<!-- formactions->showactions -->'."\n";
 			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);

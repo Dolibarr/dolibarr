@@ -372,7 +372,7 @@ if (empty($reshook))
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 
 		// Extrafields
@@ -721,21 +721,21 @@ if (empty($reshook))
 
 		$result = $object->updateline(
 			$lineid,
-			$_POST['product_desc'],
+			GETPOST('product_desc', 'restricthtml'),
 			$ht,
-			GETPOST('qty', 'int'),
-			$_POST['remise_percent'],
+			price2num(GETPOST('qty'), 'MS'),
+			price2num(GETPOST('remise_percent'), 2),
 			$vat_rate,
 			$localtax1_rate,
 			$localtax2_rate,
 			$price_base_type,
 			0,
-			isset($_POST["type"]) ? $_POST["type"] : $line->product_type,
+			GETPOSTISSET("type") ? GETPOST("type") : $line->product_type,
 			false,
 			$date_start,
 			$date_end,
 			$array_options,
-			$_POST['units'],
+			GETPOST('units'),
 			$pu_ht_devise,
 			GETPOST('fourn_ref', 'alpha')
 		);
@@ -2153,6 +2153,12 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
+	// Delivery delay (in days)
+	print '<tr>';
+	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
+	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
+	print '</tr>';
+
 	// Delivery date planed
 	print '<tr><td>';
 	print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -2180,12 +2186,6 @@ if ($action == 'create')
 		}
 	}
 	print '</td></tr>';
-
-	// Delivery delay (in days)
-	print '<tr>';
-	print '<td>'.$langs->trans('NbDaysToDelivery').'&nbsp;'.img_picto($langs->trans('DescNbDaysToDelivery'), 'info', 'style="cursor:help"').'</td>';
-	print '<td>'.$object->getMaxDeliveryTimeDay($langs).'</td>';
-	print '</tr>';
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))

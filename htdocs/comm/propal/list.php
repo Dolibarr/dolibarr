@@ -271,6 +271,98 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+if ($action == 'validate') {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == 0) {
+					if ($tmpproposal->valid($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+					} else {
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
+				}
+			}
+			dol_print_error($db);
+			$error++;
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+
+if ($action == "sign") {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == 1) {
+					$tmpproposal->statut = 2;
+					if ($tmpproposal->update($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+					} else {
+						dol_print_error($db);
+						$error++;
+					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+					$error++;
+				}
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+if ($action == "nosign") {
+	if (GETPOST('confirm') == 'yes') {
+		$tmpproposal = new Propal($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($tmpproposal->fetch($checked)) {
+				if ($tmpproposal->statut == 1) {
+					$tmpproposal->statut = 3;
+					if ($tmpproposal->update($user)) {
+						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
+					} else {
+						dol_print_error($db);
+						$error++;
+					}
+				} else {
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeClosed'), 'errors');
+					$error++;
+				}
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
 
 
 /*
@@ -291,7 +383,7 @@ $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos'
 //llxHeader('',$langs->trans('Proposal'),$help_url);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
@@ -344,13 +436,12 @@ if ($search_town)					$sql .= natural_search('s.town', $search_town);
 if ($search_zip)					$sql .= natural_search("s.zip", $search_zip);
 if ($search_state)					$sql .= natural_search("state.nom", $search_state);
 if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
-if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)		$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_ref)					$sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer)			$sql .= natural_search('p.ref_client', $search_refcustomer);
 if ($search_refproject)				$sql .= natural_search('pr.ref', $search_refproject);
 if ($search_project)				$sql .= natural_search('pr.title', $search_project);
 if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
-
 if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
 if ($search_societe_alias)			$sql .= natural_search('s.name_alias', $search_societe_alias);
 if ($search_login)					$sql .= natural_search("u.login", $search_login);
@@ -482,6 +573,12 @@ if ($resql)
 	if ($search_fk_cond_reglement > 0) $param .= '&search_fk_cond_reglement='.$search_fk_cond_reglement;
 	if ($search_fk_shipping_method > 0) $param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
 	if ($search_fk_mode_reglement > 0) $param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
+	if ($search_type_thirdparty > 0) $param .= '&search_type_thirdparty='.$search_type_thirdparty;
+	if ($search_town)					$param .= '&search_town='.$search_town;
+	if ($search_zip)					$param .= '&search_zip='.$search_zip;
+	if ($search_state)					$param .= '&search_state='.$search_state;
+	if ($search_town)					$param .= '&search_town='.$search_town;
+	if ($search_country)					$param .= '&search_country='.$search_country;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -493,6 +590,7 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		'prevalidate'=>$langs->trans("Validate"),
 		'presign'=>$langs->trans("Sign"),
+		'nopresign'=>$langs->trans("NoSign"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if ($user->rights->propal->cloturer) $arrayofmassactions['closed'] = $langs->trans("Close");
@@ -529,6 +627,11 @@ if ($resql)
 	if ($massaction == 'presign')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSignature"), $langs->trans("ConfirmMassSignatureQuestion"), "sign", null, '', 0, 200, 500, 1);
+	}
+
+	if ($massaction == 'nopresign')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassNoSignature"), $langs->trans("ConfirmMassNoSignatureQuestion"), "nosign", null, '', 0, 200, 500, 1);
 	}
 
 	if ($sall)
@@ -652,7 +755,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidth100onsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print ajax_combobox('search_type_thirdparty');
 		print '</td>';
 	}
@@ -1278,7 +1381,7 @@ if ($resql)
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						//print '<div class="float">':
-						print ($nbofsalesrepresentative < 3) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) {
 							print ' ';
@@ -1288,7 +1391,7 @@ if ($resql)
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
 			} else {
-				print '&nbsp';
+				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -1388,72 +1491,10 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-
-	if ($action == 'validate') {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 0) {
-						if ($tmpproposal->valid($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
-						} else {
-							setEventMessage($langs->trans('CantBeValidated'), 'errors');
-							$error++;
-						}
-					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
-						$error++;
-					}
-				}
-				dol_print_error($db);
-				$error++;
-			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
-		}
-	}
-
-	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			$db->begin();
-			$error = 0;
-			foreach ($toselect as $checked) {
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 1) {
-						$tmpproposal->statut = 2;
-						if ($tmpproposal->update($user)) {
-							setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
-						} else {
-							dol_print_error($db);
-							$error++;
-						}
-					} else {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
-						$error++;
-					}
-				} else {
-					dol_print_error($db);
-					$error++;
-				}
-			}
-			if ($error) {
-				$db->rollback();
-			} else {
-				$db->commit();
-			}
-		}
-	}
 } else {
 		dol_print_error($db);
 }
 
-	// End of page
-	llxFooter();
-	$db->close();
+// End of page
+llxFooter();
+$db->close();

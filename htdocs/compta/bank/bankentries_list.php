@@ -9,6 +9,8 @@
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -367,7 +370,7 @@ $donstatic = new Don($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
 $paymentscstatic = new PaymentSocialContribution($db);
-$paymentvatstatic = new Tva($db);
+$paymentvatstatic = new PaymentVAT($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentdonationstatic = new PaymentDonation($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -443,13 +446,32 @@ if ($id > 0 || !empty($ref))
 	{
 		if ($object->canBeConciliated() > 0)
 		{
+			$allowautomaticconciliation = false; // TODO
+			$titletoconciliatemanual = $langs->trans("Conciliate");
+			$titletoconciliateauto = $langs->trans("Conciliate");
+			if ($allowautomaticconciliation) {
+				$titletoconciliatemanual .= ' ('.$langs->trans("Manual").')';
+				$titletoconciliateauto .= ' ('.$langs->trans("Auto").')';
+			}
+
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
 				$newparam = $param;
 				$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliatemanual.'</a>';
 			} else {
-				$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+				$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
+			}
+
+			if ($allowautomaticconciliation) {
+				// If not cash account and can be reconciliate
+				if ($user->rights->banque->consolidate) {
+					$newparam = $param;
+					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+				} else {
+					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
+				}
 			}
 		}
 	}
@@ -1211,7 +1233,8 @@ if ($resql)
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
 					print ' '.$paymentvatstatic->getNomUrl(2);
-				} elseif ($links[$key]['type'] == 'payment_salary')
+    	        }
+    	        elseif ($links[$key]['type'] == 'payment_salary')
 				{
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
@@ -1273,7 +1296,10 @@ if ($resql)
 				{
 				} elseif ($links[$key]['type'] == 'sc')
 				{
-				} else {
+				}
+                elseif ($links[$key]['type'] == 'vat')
+                {
+                } else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) print ' - ';
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';

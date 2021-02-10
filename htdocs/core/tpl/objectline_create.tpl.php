@@ -214,8 +214,7 @@ if ($nolinesbefore) {
 			if (empty($senderissupplier))
 			{
 				$statustoshow = 1;
-				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS))
-				{
+				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 					// hide products in closed warehouse, but show products for internal transfer
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 				} else {
@@ -704,6 +703,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 						jQuery('#dp_desc').text(proddesc);
 								<?php
 							} ?>
+							<?php
+						} ?>
+						<?php
+						if (!empty($conf->global->PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES)) { ?>
+							jQuery.each(data.array_options, function( key, value ) {
+								jQuery('div[class$="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+							});
 							<?php
 						} ?>
 					},

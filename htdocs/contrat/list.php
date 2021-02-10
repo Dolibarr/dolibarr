@@ -33,6 +33,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -175,6 +176,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$sall = "";
 	$search_status = "";
 	$toselect = '';
+	$search_type_thirdparty = '';
 	$search_array_options = array();
 }
 
@@ -198,6 +200,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
+$formcompany = new FormCompany($db);
 $contracttmp = new Contrat($db);
 
 $sql = 'SELECT';
@@ -235,6 +238,7 @@ if ($search_user > 0)
 }
 $sql .= " WHERE c.fk_soc = s.rowid ";
 $sql .= ' AND c.entity IN ('.getEntity('contract').')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 if ($socid) $sql .= " AND s.rowid = ".$db->escape($socid);
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -346,6 +350,7 @@ if ($search_dfyear != '')       $param .= '&search_dfyear='.urlencode($search_df
 if ($search_dfmonth != '')      $param .= '&search_dfmonth='.urlencode($search_dfmonth);
 if ($search_sale != '')         $param .= '&search_sale='.urlencode($search_sale);
 if ($search_user != '')			$param .= '&search_user='.urlencode($search_user);
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($search_product_category != '')	$param .= '&search_product_category='.urlencode($search_product_category);
 if ($show_files)                $param .= '&show_files='.urlencode($show_files);
 if ($optioncss != '')           $param .= '&optioncss='.urlencode($optioncss);
@@ -491,7 +496,7 @@ if (!empty($arrayfields['country.code_iso']['checked']))
 if (!empty($arrayfields['typent.code']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT),  '', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['sale_representative']['checked']))
@@ -657,7 +662,7 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			// TODO Use a cache for this string
 			print $socstatic->getNomUrl(1, '');
@@ -736,7 +741,7 @@ while ($i < min($num, $limit))
 					$userstatic->gender = $val['gender'];
 
 					//print '<div class="float">':
-					print ($nbofsalesrepresentative < 3) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
 					if ($j < $nbofsalesrepresentative) {
 						print ' ';
@@ -746,7 +751,7 @@ while ($i < min($num, $limit))
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
 		} else {
-			print '&nbsp';
+			print '&nbsp;';
 		}
 		print '</td>';
 	}

@@ -443,7 +443,6 @@ if ($mode == 'template' && $user->admin) {
 		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
 		print '<td>';
 		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
-		print GETPOSTISSET('template') ? GETPOST('template', 'alpha') : $printer->listprinterstemplates[$line]['template'];
 		print '</textarea>';
 		print '</td>';
 		print '<td></td>';

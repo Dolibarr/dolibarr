@@ -472,21 +472,21 @@ if ($nbofactivatedmodules <= 1) {
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
 // Start to show page
+$deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
-	print '<span class="opacitymedium hideonsmartphone">'.$desc."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$desc."<br><br></span>\n";
 }
 if ($mode == 'marketplace') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br><br></span>\n";
 }
 if ($mode == 'deploy') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br><br></span>\n";
 }
 if ($mode == 'develop') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br><br></span>\n";
+	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br><br></span>\n";
 }
-
 
 $head = modules_prepare_head();
 
@@ -512,6 +512,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	print dol_get_fiche_head($head, 'modules', '', -1);
 
+	print $deschelp;
+
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination"><ul><li>';
@@ -523,10 +525,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacitymedium"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $langs->trans('Origin').': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
+	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
 	$moreforfilter .= '</div>';
 	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
@@ -540,11 +542,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop">';
-		$moreforfilter .= $langs->trans('Version').': '.$form->selectarray('search_version', $array_version, $search_version, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->trans('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 		$moreforfilter .= '</div>';
 	}
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $langs->trans('Status').': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+	$moreforfilter .= $form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, $langs->trans('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -937,6 +939,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 if ($mode == 'marketplace') {
 	print dol_get_fiche_head($head, $mode, '', -1);
 
+	print $deschelp;
+
+	print '<br>';
+
 	// Marketplace
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
@@ -977,8 +983,8 @@ if ($mode == 'marketplace') {
 		?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
-					<div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
+					<div class="divsearchfield">
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
@@ -1019,6 +1025,8 @@ if ($mode == 'marketplace') {
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
+
+	print $deschelp;
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
@@ -1189,6 +1197,10 @@ if ($mode == 'deploy') {
 
 if ($mode == 'develop') {
 	print dol_get_fiche_head($head, $mode, '', -1);
+
+	print $deschelp;
+
+	print '<br>';
 
 	// Marketplace
 	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";

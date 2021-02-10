@@ -581,7 +581,7 @@ class Expedition extends CommonObject
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
 				$this->model_pdf            = $obj->model_pdf;
-				$this->modelpdf             = $obj->model_pdf;
+				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->shipping_method_id   = $obj->fk_shipping_method;
 				$this->shipping_method = $obj->shipping_method;
 				$this->tracking_number      = $obj->tracking_number;
@@ -1116,7 +1116,7 @@ class Expedition extends CommonObject
 		$sql .= " weight=".(($this->trueWeight != '') ? $this->trueWeight : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " entity=".$conf->entity;
 
 		$sql .= " WHERE rowid=".$this->id;
@@ -2307,11 +2307,24 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
 	 *
+	 *	@deprecated
+	 *  @see setBilled()
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
 	public function set_billed()
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_billed is deprecated, use setBilled instead", LOG_NOTICE);
+		return $this->setBilled();
+	}
+
+	/**
+	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	public function setBilled()
+	{
 		global $user;
 		$error = 0;
 

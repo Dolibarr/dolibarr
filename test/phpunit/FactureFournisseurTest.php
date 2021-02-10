@@ -175,7 +175,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureFournisseurUpdate
 	 *
-	 * @param	Object	$localobject	Supplier invoice
+	 * @param	FactureFournisseur	$localobject	Supplier invoice
 	 * @return	int
 	 *
 	 * @depends	testFactureFournisseurFetch
@@ -200,7 +200,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureFournisseurValid
 	 *
-	 * @param	Object	$localobject	Supplier invoice
+	 * @param	FactureFournisseur	$localobject	Supplier invoice
 	 * @return	void
 	 *
 	 * @depends	testFactureFournisseurUpdate
@@ -224,7 +224,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureFournisseurOther
 	 *
-	 * @param	Object	$localobject		Supplier invoice
+	 * @param	FactureFournisseur	$localobject		Supplier invoice
 	 * @return	void
 	 *
 	 * @depends testFactureFournisseurValid

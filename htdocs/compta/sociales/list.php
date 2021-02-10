@@ -5,7 +5,8 @@
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020      Pierre Ardoin     	<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
-
+ * Copyright (C) 2021      Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -40,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'banks', 'bills'));
+$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm'));
 
 $action				= GETPOST('action', 'aZ09');
 $massaction			= GETPOST('massaction', 'alpha');
@@ -56,7 +57,8 @@ $search_day_lim		= GETPOST('search_day_lim', 'int');
 $search_month_lim = GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_project		= GETPOST('search_project', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
+$search_users = GETPOST('search_users');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
@@ -91,6 +93,7 @@ $arrayfields = array(
 	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	'cs.libelle'	=>array('label'=>"Label", 'checked'=>1, 'position'=>20),
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
+	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>30),
 	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>40, 'enable'=>(!empty($conf->projet->enabled))),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>50),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>60),
@@ -128,6 +131,7 @@ if (empty($reshook)) {
 		$search_month_lim = '';
 		$search_project_ref = '';
 		$search_project = '';
+		$search_users = '';
 		$search_array_options = array();
 	}
 }
@@ -144,8 +148,8 @@ if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 
 llxHeader('', $langs->trans("SocialContributions"));
 
-$sql = "SELECT cs.rowid, cs.fk_type as type, ";
-$sql .= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
+$sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
 if (!empty($conf->projet->enabled)) $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " c.libelle as type_label,";
 $sql .= " SUM(pc.amount) as alreadypayed";
@@ -153,12 +157,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 if (!empty($conf->projet->enabled)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref)	$sql .= " AND cs.rowid=".$db->escape($search_ref);
 if ($search_label) 	$sql .= natural_search("cs.libelle", $search_label);
 if (!empty($conf->projet->enabled)) if ($search_project_ref != '') $sql .= natural_search("p.ref", $search_project_ref);
+if (!empty($search_users)) $sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
 if ($search_amount) $sql .= natural_search("cs.amount", $search_amount, 1);
 if ($search_status != '' && $search_status >= 0) $sql .= " AND cs.paye = ".$db->escape($search_status);
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
@@ -179,7 +185,7 @@ if ($filtre) {
 if ($search_typeid) {
 	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
 if (!empty($conf->projet->enabled)) $sql .= ", p.rowid, p.ref, p.title";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -211,6 +217,9 @@ if ($search_label)  $param .= '&search_label='.urlencode($search_label);
 if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
 if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 if ($search_typeid) $param .= '&search_typeid='.urlencode($search_typeid);
+if ($search_users) {
+	foreach ($search_users as $id_user) $param .= '&search_users[]='.urlencode($id_user);
+}
 if ($search_status != '' && $search_status != '-1') $param .= '&search_status='.urlencode($search_status);
 if ($year)          $param .= '&year='.urlencode($year);
 
@@ -289,6 +298,12 @@ if (!empty($arrayfields['cs.fk_type']['checked'])) {
 	print '</td>';
 }
 
+if (!empty($arrayfields['cs.fk_user']['checked'])) {
+	// Employee
+	print '<td class="liste_titre" align="left">';
+	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
+}
+
 // Filter: Project ref
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -343,6 +358,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST))	print_liste_field_titr
 if (!empty($arrayfields['cs.rowid']['checked']))			print_liste_field_titre($arrayfields['cs.rowid']['label'], $_SERVER["PHP_SELF"], "cs.rowid", '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['cs.libelle']['checked']))			print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle", '', $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($arrayfields['cs.fk_type']['checked']))			print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type", '', $param, 'class="left"', $sortfield, $sortorder);
+if (!empty($arrayfields['cs.fk_user']['checked']))			print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($arrayfields['p.ref']['checked']))				print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['cs.date_ech']['checked']))			print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech", '', $param, 'align="center"', $sortfield, $sortorder);
 if (!empty($arrayfields['cs.periode']['checked']))			print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, 'align="center"', $sortfield, $sortorder);
@@ -358,14 +374,14 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $
 print '</tr>';
 
 $i = 0;
-$totalarray = array();
+		$totalarray = $TLoadedUsers = array();
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
 
 	$chargesociale_static->id = $obj->rowid;
 	$chargesociale_static->ref = $obj->rowid;
-	$chargesociale_static->label = $obj->libelle;
+	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
 	if (!empty($conf->projet->enabled)) {
 		$projectstatic->id = $obj->project_id;
@@ -389,13 +405,29 @@ while ($i < min($num, $limit))
 
 	// Label
 	if (!empty($arrayfields['cs.libelle']['checked'])) {
-		print '<td>'.dol_trunc($obj->libelle, 42).'</td>';
+		print '<td>'.dol_trunc($obj->label, 42).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Type
 	if (!empty($arrayfields['cs.fk_type']['checked'])) {
 		print '<td>'.$obj->type_label.'</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
+
+	if (!empty($arrayfields['cs.fk_user']['checked'])) {
+		// Employee
+		print "<td>";
+		if (!empty($obj->fk_user)) {
+			if (!empty($TLoadedUsers[$obj->fk_user])) $ustatic = $TLoadedUsers[$obj->fk_user];
+			else {
+				$ustatic = new User($db);
+				$ustatic->fetch($obj->fk_user);
+				$TLoadedUsers[$obj->fk_user] = $ustatic;
+			}
+			print $ustatic->getNomUrl(-1);
+		}
+		print "</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 

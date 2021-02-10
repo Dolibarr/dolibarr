@@ -291,10 +291,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 				$boxstat .= '<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
 				$boxstat .= '<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
 
-				$boxstat .= '</td></tr>';
-				$boxstat .= '</table>';
-
 				$this->info_box_contents[0][0] = array(
+					'tr' => 'class="nohover"',
 					'td' => '',
 					'textnoformat' => $boxstat
 				);

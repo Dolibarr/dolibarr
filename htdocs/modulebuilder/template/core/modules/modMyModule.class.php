@@ -144,7 +144,7 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule@mymodule");
 
 		// Prerequisites
-		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation

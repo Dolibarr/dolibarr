@@ -377,14 +377,28 @@ class Loan extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag loan as payed completely
+	 *  Tag loan as paid completely
 	 *
+	 *	@deprecated
+	 *  @see setPaid()
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user);
+	}
+
+	/**
+	 *  Tag loan as paid completely
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function setPaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -399,14 +413,28 @@ class Loan extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag loan as payement started
+	 *  Tag loan as payment started
 	 *
+	 *	@deprecated
+	 *  @see setStarted()
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
 	public function set_started($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_started is deprecated, use setStarted instead", LOG_NOTICE);
+		return $this->setStarted($user);
+	}
+
+	/**
+	 *  Tag loan as payment started
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function setStarted($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -422,13 +450,26 @@ class Loan extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag loan as payement as unpaid
-	 *
+	 *	@deprecated
+	 *  @see setUnpaid()
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		return $this->setUnpaid($user);
+	}
+
+	/**
+	 *  Tag loan as payement as unpaid
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function setUnpaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -445,7 +486,7 @@ class Loan extends CommonObject
 	 *  Return label of loan status (unpaid, paid)
 	 *
 	 *  @param  int		$mode			0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -459,7 +500,7 @@ class Loan extends CommonObject
 	 *
 	 *  @param  int		$status			Id status
 	 *  @param  int		$mode			0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)

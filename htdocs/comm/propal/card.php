@@ -12,7 +12,7 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020	    Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -354,8 +354,8 @@ if (empty($reshook))
 					$object->cond_reglement_id = GETPOST('cond_reglement_id');
 					$object->mode_reglement_id = GETPOST('mode_reglement_id');
 					$object->fk_account = GETPOST('fk_account', 'int');
-					$object->remise_percent = GETPOST('remise_percent');
-					$object->remise_absolue = GETPOST('remise_absolue');
+					$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
+					$object->remise_absolue = price2num(GETPOST('remise_absolue'), 'MU');
 					$object->socid = GETPOST('socid', 'int');
 					$object->contact_id = GETPOST('contactid', 'int');
 					$object->fk_project = GETPOST('projectid', 'int');
@@ -812,7 +812,7 @@ if (empty($reshook))
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
 		if (empty($remise_percent)) $remise_percent = 0;
 
 		// Extrafields
@@ -1210,7 +1210,7 @@ if (empty($reshook))
 				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent'), 2) / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -1243,7 +1243,7 @@ if (empty($reshook))
 
 			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
-			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, $_POST["units"], $pu_ht_devise);
+			$result = $object->updateline(GETPOST('lineid', 'int'), $pu_ht, $qty, price2num(GETPOST('remise_percent'), 2), $vat_rate, $localtax1_rate, $localtax2_rate, $description, 'HT', $info_bits, $special_code, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOST("units"), $pu_ht_devise);
 
 			if ($result >= 0) {
 				$db->commit();
@@ -1557,12 +1557,11 @@ if ($action == 'create')
 	}
 	print '</tr>'."\n";
 
-	if ($socid > 0)
-	{
+	if ($socid > 0) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact');
-		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
 
 		// Third party discounts info line
@@ -1612,8 +1611,9 @@ if ($action == 'create')
 
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod');
-	if (!empty($conf->commande->enabled))
+	if (!empty($conf->commande->enabled)) {
 		print ' ('.$langs->trans('AfterOrder').')';
+	}
 	print '</td><td>';
 	print img_picto('', 'clock').'&ensp;';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);

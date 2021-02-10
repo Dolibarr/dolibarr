@@ -82,13 +82,9 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		$found = false;
 
 		$price_level = 1;
-		if ($socid > 0 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+		if ($socid > 0 ) {
 			$thirdpartytemp = new Societe($db);
 			$thirdpartytemp->fetch($socid);
-
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$price_level = $thirdpartytemp->price_level;
-			}
 
 			//Load translation description and label
 			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
@@ -103,6 +99,10 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 					$outdesc_trans = $object->description;
 					$outlabel_trans = $object->label;
 				}
+			}
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				$price_level = $thirdpartytemp->price_level;
 			}
 		}
 
@@ -191,7 +191,8 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 			'pricebasetype' => $outpricebasetype,
 			'tva_tx' => $outtva_tx,
 			'qty' => $outqty,
-			'discount' => $outdiscount);
+			'discount' => $outdiscount,
+			'array_options'=>$object->array_options);
 	}
 
 	echo json_encode($outjson);

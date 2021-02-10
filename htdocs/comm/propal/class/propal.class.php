@@ -485,6 +485,7 @@ class Propal extends CommonObject
 				}
 			} else {
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -711,8 +712,8 @@ class Propal extends CommonObject
 
 				// Mise a jour informations denormalisees au niveau de la propale meme
 				$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
-				if ($result > 0)
-				{
+
+				if ($result > 0) {
 					$this->db->commit();
 					return $this->line->id;
 				} else {
@@ -722,6 +723,7 @@ class Propal extends CommonObject
 				}
 			} else {
 				$this->error = $this->line->error;
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -914,7 +916,7 @@ class Propal extends CommonObject
 				return $result;
 			} else {
 				$this->error = $this->line->error;
-
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -1;
 			}
@@ -1630,7 +1632,7 @@ class Propal extends CommonObject
 		$sql .= " fk_input_reason=".(isset($this->demand_reason_id) ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 		$sql .= " WHERE rowid=".$this->id;
 

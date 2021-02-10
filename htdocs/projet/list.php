@@ -563,11 +563,10 @@ if (!empty($arrayfields['p.title']['checked']))
 if (!empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
-	if ($socid > 0)
-	{
+	if ($socid > 0) {
 		$tmpthirdparty = new Societe($db);
 		$tmpthirdparty->fetch($socid);
-		$search_societe = $tmpthirdparty->nom;
+		$search_societe = $tmpthirdparty->name;
 	}
 	print '<input type="text" class="flat" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
 	print '</td>';
@@ -800,7 +799,7 @@ while ($i < min($num, $limit))
 						$userstatic->phone = $val['phone'];
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
-						print ($nbofsalesrepresentative < 3) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) {
 							print ' ';
@@ -809,7 +808,7 @@ while ($i < min($num, $limit))
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
 			} else {
-				print '&nbsp';
+				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

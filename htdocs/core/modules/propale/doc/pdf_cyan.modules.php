@@ -78,9 +78,9 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public $version = 'dolibarr';
 
-	 /**
-	  * @var int page_largeur
-	  */
+	/**
+	 * @var int page_largeur
+	 */
 	public $page_largeur;
 
 	/**
@@ -120,7 +120,7 @@ class pdf_cyan extends ModelePDFPropales
 	public $emetteur;
 
 	/**
-	 * @var array of document table collumns
+	 * @var array of document table columns
 	 */
 	public $cols;
 
@@ -242,7 +242,7 @@ class pdf_cyan extends ModelePDFPropales
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
-					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product'); // default
 					$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 				}
 

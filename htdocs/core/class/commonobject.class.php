@@ -223,6 +223,12 @@ abstract class CommonObject
 	public $statut;
 
 	/**
+	 * @var int The object's status
+	 * @see setStatut()
+	 */
+	public $status;
+
+	/**
 	 * @var string
 	 * @see getFullAddress()
 	 */
@@ -348,6 +354,13 @@ abstract class CommonObject
 	 * @see SetDocModel()
 	 */
 	public $model_pdf;
+
+	/**
+	 * @var string
+	 * @deprecated
+	 * @see model_pdf
+	 */
+	public $modelpdf;
 
 	/**
 	 * @var string
@@ -957,7 +970,7 @@ abstract class CommonObject
 	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
 	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 *  @param  int			$notrigger			Disable all triggers
-	 *  @return int         	        		<0 if KO, >0 if OK
+	 *  @return int         	        		<0 if KO, 0 if already added, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1055,7 +1068,6 @@ abstract class CommonObject
 				{
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					echo 'err rollback';
 					return -2;
 				} else {
 					$this->error = $this->db->error();
@@ -1063,7 +1075,9 @@ abstract class CommonObject
 					return -1;
 				}
 			}
-		} else return 0;
+		} else {
+			return 0;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2066,6 +2080,7 @@ abstract class CommonObject
 			$fieldname = 'fk_mode_reglement';
 			if ($this->element == 'societe') $fieldname = 'mode_reglement';
 			if (get_class($this) == 'Fournisseur') $fieldname = 'mode_reglement_supplier';
+			if (get_class($this) == 'Tva') $fieldname = 'fk_typepayment';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
@@ -4909,7 +4924,7 @@ abstract class CommonObject
 						    $this->result['filename']=$ecmfile->filename;*/
 							//var_dump($obj->update_main_doc_field);exit;
 
-							// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
+							// Update the last_main_doc field into main object (if document generator has property ->update_main_doc_field set)
 							$update_main_doc_field = 0;
 							if (!empty($obj->update_main_doc_field)) $update_main_doc_field = 1;
 							if ($update_main_doc_field && !empty($this->table_element))
@@ -5428,6 +5443,7 @@ abstract class CommonObject
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
 			   		if ($this->array_options[$key] === '') $mandatorypb = true;
+					if ($attributeType == 'sellist' && $this->array_options[$key] == '0') $mandatorypb = true;
 			   		if ($mandatorypb)
 			   		{
 			   			dol_syslog("Mandatory extra field ".$key." is empty");
@@ -7042,10 +7058,10 @@ abstract class CommonObject
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
-						if ($display_type=='card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
+						if ($display_type == 'card') {
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							$out .= '<td class="wordbreak';
-						} elseif ($display_type=='line') {
+						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
@@ -7065,12 +7081,12 @@ abstract class CommonObject
 							else $out .= $labeltoshow;
 						}
 
-						$out .= ($display_type=='card' ? '</td>' : '</div>');
+						$out .= ($display_type == 'card' ? '</td>' : '</div>');
 
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-						if ($display_type=='card') {
+						if ($display_type == 'card') {
 							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
-						} elseif ($display_type=='line') {
+						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';
 						}
 
@@ -7163,9 +7179,6 @@ abstract class CommonObject
 									if ($(this).val() == 0){
 								   		$("#"+child_list).hide();
 									}
-
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select[child_list]);
 								});
 							});
 						}

@@ -318,8 +318,8 @@ switch ($action)
 						if ($invoice->total_ttc == $obj_facturation->amountWithTax()
 							&& $obj_facturation->getSetPaymentMode() != 'DIFF')
 						{
-							// We set status to payed
-							$result = $invoice->set_paid($user);
+							// We set status to paid
+							$result = $invoice->setPaid($user);
 				  			//print 'set paid';exit;
 						}
 					}
