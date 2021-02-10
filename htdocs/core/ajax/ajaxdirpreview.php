@@ -201,6 +201,13 @@ if ($type == 'directory')
 		'mrp-mo'
 	);
 
+	$parameters = array('modulepart'=>$module);
+	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0)
+	{
+		$automodules[]=$hookmanager->resArray['module'];
+	}
+
 	// TODO change for multicompany sharing
 	if ($module == 'company') $upload_dir = $conf->societe->dir_output;
 	elseif ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
@@ -220,6 +227,13 @@ if ($type == 'directory')
 	elseif ($module == 'recruitment-recruitmentcandidature') $upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
 	elseif ($module == 'banque') $upload_dir = $conf->bank->dir_output;
 	elseif ($module == 'mrp-mo') $upload_dir = $conf->mrp->dir_output.'/mo';
+	else {
+		$parameters = array('modulepart'=>$module);
+		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
+		if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
+			$upload_dir = $hookmanager->resArray['directory'];
+		}
+	}
 
 	// Automatic list
 	if (in_array($module, $automodules))

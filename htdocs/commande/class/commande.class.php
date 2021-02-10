@@ -11,6 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +127,10 @@ class Commande extends CommonOrder
 	 * @var int Draft Status of the order
 	 */
 	public $brouillon;
+
+	/**
+	 * @var string Condition payment code
+	 */
 	public $cond_reglement_code;
 
 	/**
@@ -166,8 +171,16 @@ class Commande extends CommonOrder
 	 */
 	public $availability;
 
-	public $demand_reason_id; // Source reason. Why we receive order (after a phone campaign, ...)
+	/**
+	 * @var int Source demand reason Id
+	 */
+	public $demand_reason_id;
+
+	/**
+	 * @var string Source reason code. Why we receive order (after a phone campaign, ...)
+	 */
 	public $demand_reason_code;
+
 	/**
 	 * @var int Date of order
 	 */
@@ -182,11 +195,15 @@ class Commande extends CommonOrder
 
 	/**
 	 * @var int	Date expected for delivery
+	 * @see delivery_date
 	 * @deprecated
 	 */
-	public $date_livraison; // deprecated; Use delivery_date instead.
+	public $date_livraison;
 
-	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	/**
+	 * @var int	Date expected of shipment (date starting shipment, not the reception that occurs some days after)
+	 */
+	public $delivery_date;
 
 	/**
 	 * @var int ID
@@ -200,6 +217,9 @@ class Commande extends CommonOrder
 	public $special_code;
 	public $source; // Order mode. How we received order (by phone, by email, ...)
 
+	/**
+	 * @var int Warehouse Id
+	 */
 	public $warehouse_id;
 
 	public $extraparams = array();
@@ -227,6 +247,9 @@ class Commande extends CommonOrder
 	 */
 	public $fk_multicurrency;
 
+	/**
+	 * @var string multicurrency code
+	 */
 	public $multicurrency_code;
 	public $multicurrency_tx;
 	public $multicurrency_total_ht;
@@ -739,11 +762,11 @@ class Commande extends CommonOrder
 
 		if ($usercanclose)
 		{
-			$this->db->begin();
 			if ($this->statut == self::STATUS_CLOSED)
 			{
 				return 0;
 			}
+			$this->db->begin();
 
 			$now = dol_now();
 

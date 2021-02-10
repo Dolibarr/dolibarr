@@ -81,6 +81,9 @@ $error = 0;
  *	Actions
  */
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ecmautocard', 'globalcard'));
+
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -327,6 +330,14 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (!empty($conf->mrp->enabled)) { $langs->load("mrp"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'mrp-mo', 'test'=>$conf->mrp->enabled, 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders"))); }
 	if (!empty($conf->recruitment->enabled)) { $langs->load("recruitment"); $rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'recruitment-recruitmentcandidature', 'test'=>$conf->recruitment->enabled, 'label'=>$langs->trans("Candidatures"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications"))); }
 	$rowspan++; $sectionauto[] = array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0)
+	{
+		$sectionauto[]=$hookmanager->resArray;
+		$rowspan += count($hookmanager->resArray);
+	}
 }
 
 $head = ecm_prepare_dasboard_head('');
