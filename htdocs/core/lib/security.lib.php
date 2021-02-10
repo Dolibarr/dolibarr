@@ -602,7 +602,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
 					$sql .= " AND sc.fk_user = ".$user->id;
 				} else {
-				// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
+					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_keyfield." AND sc.fk_user = ".$user->id;

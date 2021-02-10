@@ -846,7 +846,7 @@ if (!empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 	if (!empty($date_start) && !empty($date_end))
 		$sql .= " AND b.doc_date >= '".$db->idate($date_start)."' AND b.doc_date <= '".$db->idate($date_end)."'";
 	$sql .= " GROUP BY b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, pcg_type, dm";
-//print $sql;
+	//print $sql;
 
 	$subtotal_ht = 0;
 	$subtotal_ttc = 0;
