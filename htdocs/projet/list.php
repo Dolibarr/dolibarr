@@ -563,11 +563,10 @@ if (!empty($arrayfields['p.title']['checked']))
 if (!empty($arrayfields['s.nom']['checked']))
 {
 	print '<td class="liste_titre">';
-	if ($socid > 0)
-	{
+	if ($socid > 0) {
 		$tmpthirdparty = new Societe($db);
 		$tmpthirdparty->fetch($socid);
-		$search_societe = $tmpthirdparty->nom;
+		$search_societe = $tmpthirdparty->name;
 	}
 	print '<input type="text" class="flat" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
 	print '</td>';
