@@ -66,10 +66,10 @@ $search_societe = GETPOST('search_societe');
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 if ($mine) { $search_task_user = $user->id; $mine = 0; }
 
-$search_dateo_start = dol_mktime(0, 0, 0, GETPOST('search_dateo_startmonth', 'int'), GETPOST('search_dateo_startday', 'int'), GETPOST('search_dateo_startyear', 'int'));
-$search_dateo_end = dol_mktime(23, 59, 59, GETPOST('search_dateo_endmonth', 'int'), GETPOST('search_dateo_endday', 'int'), GETPOST('search_dateo_endyear', 'int'));
-$search_datee_start = dol_mktime(0, 0, 0, GETPOST('search_datee_startmonth', 'int'), GETPOST('search_datee_startday', 'int'), GETPOST('search_datee_startyear', 'int'));
-$search_datee_end = dol_mktime(23, 59, 59, GETPOST('search_datee_endmonth', 'int'), GETPOST('search_datee_endday', 'int'), GETPOST('search_datee_endyear', 'int'));
+$search_dateo_start = dol_mktime(0, 0, 0, GETPOST('search_dateo_startmonth', 'int'), GETPOST('search_dateo_startday', 'int'), GETPOST('search_dateo_startyear', 'int'),'tzuserrel');
+$search_dateo_end = dol_mktime(23, 59, 59, GETPOST('search_dateo_endmonth', 'int'), GETPOST('search_dateo_endday', 'int'), GETPOST('search_dateo_endyear', 'int'),'tzuserrel');
+$search_datee_start = dol_mktime(0, 0, 0, GETPOST('search_datee_startmonth', 'int'), GETPOST('search_datee_startday', 'int'), GETPOST('search_datee_startyear', 'int'),'tzuserrel');
+$search_datee_end = dol_mktime(23, 59, 59, GETPOST('search_datee_endmonth', 'int'), GETPOST('search_datee_endday', 'int'), GETPOST('search_datee_endyear', 'int'),'tzuserrel');
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tasklist';
