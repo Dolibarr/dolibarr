@@ -1712,7 +1712,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 					} else {
 						//Case standard admin page
-						$urltouse = dol_buildpath(DOL_URL_ROOT.'/admin/'.$urlpage,1);
+						$urltouse = dol_buildpath(DOL_URL_ROOT.'/admin/'.$urlpage, 1);
 						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 					}
 				}
