@@ -16,5 +16,7 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order 
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
+# Autoclassify project
+descWORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classify project as closed when all its tasks are completed (100%% progress).
 AutomaticCreation=Automatic creation
 AutomaticClassification=Automatic classification
