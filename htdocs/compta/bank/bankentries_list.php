@@ -514,7 +514,7 @@ if (dol_strlen($search_dv_end) > 0) $sql .= " AND b.datev <= '".$db->idate($sear
 if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
-if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".$search_conciliated;
+if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".urlencode($search_conciliated);
 if ($search_thirdparty_user) $sql .= natural_search(array("s.nom", "u.firstname", "u.lastname"), $search_thirdparty_user);
 if ($search_description)
 {
