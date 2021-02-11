@@ -2163,8 +2163,8 @@ $domainname = '0.0.0.0:8080';
 $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 
 // Confirm generation of website sitemaps
-if($action == 'confirmgeneratesitemaps'){
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref),'generatesitemaps', '', "yes", 1);
+if ($action == 'confirmgeneratesitemaps'){
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
 
@@ -2210,7 +2210,7 @@ if ($action == 'generatesitemaps') {
 		}
 	}else {
 		dol_print_error($db);
-	}	
+	}
 	$action = 'preview';
 }
 
@@ -2524,7 +2524,7 @@ if (!GETPOST('hide_websitemenu'))
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
 
 			print ' &nbsp; ';
-			
+
 			// Generate site map
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"><span></a>';
 
@@ -3854,7 +3854,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')	// Edit properties of
 
 // Print formconfirm
 if ($action == 'preview'){
-	print $formconfirm;	
+	print $formconfirm;
 }
 
 if ($action == 'editfile' || $action == 'file_manager')
