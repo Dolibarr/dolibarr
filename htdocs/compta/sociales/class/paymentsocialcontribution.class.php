@@ -568,7 +568,7 @@ class PaymentSocialContribution extends CommonObject
 						$result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
 						if ($result <= 0) dol_print_error($this->db);
 
-                        if($socialcontrib->fk_user) {
+                        if ($socialcontrib->fk_user) {
 							$fuser = new User($this->db);
 							$fuser->fetch($socialcontrib->fk_user);
 

@@ -1376,15 +1376,15 @@ if ($resql)
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
     		//payment line type to define user display
-    		foreach($links as $key=>$value){
-				if($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
-				if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+    		foreach ($links as $key=>$value){
+				if ($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
+				if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
 			}
 
     		print '<td class="tdoverflowmax150">';
 			if ($objp->url_id)
 			{
-				if($objp->type_url == 'company') {
+				if ($objp->type_url == 'company') {
 					$companystatic->id = $objp->url_id;
 					$companystatic->name = $objp->nom;
 					$companystatic->name_alias = $objp->name_alias;
@@ -1408,8 +1408,7 @@ if ($resql)
 					print $userstatic->getNomUrl(1);
 				}
 			}
-			else
-			{
+			else {
 				print '&nbsp;';
 			}
 			print '</td>';
