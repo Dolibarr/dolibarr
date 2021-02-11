@@ -31,7 +31,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (!$user->admin) accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors", 'sendings'));
+$langs->loadLangs(array(
+	"admin",
+	"workflow",
+	"propal",
+	"workflow",
+	"orders",
+	"supplier_proposal",
+	"receptions",
+	"projects",
+	"errors",
+	'sendings'
+));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -137,7 +148,15 @@ $workflowcodes = array(
 		'position' => 66,
 		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
 		'picto' => 'shipment'
-	)
+	),
+
+	// Automatic classification of projects
+	'WORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE' => array(
+		'family' => 'classify_project',
+		'position' => 68,
+		'enabled' => !empty($conf->projet->enabled),
+		'picto' => 'projet'
+	),
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
@@ -199,6 +218,7 @@ foreach ($workflowcodes as $key => $params) {
 			if ($reg[1] == 'supplier_order')	$header .= ' - '.$langs->trans('SupplierOrder');
 			if ($reg[1] == 'reception')			$header .= ' - '.$langs->trans('Reception');
 			if ($reg[1] == 'shipping')			$header .= ' - '.$langs->trans('Shipment');
+			if ($reg[1] == 'project')			$header .= ' - '.$langs->trans('Project');
 		} else {
 			$header = $langs->trans("Description");
 		}

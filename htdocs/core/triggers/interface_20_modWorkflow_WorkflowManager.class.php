@@ -315,6 +315,37 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
+		// classify project as closed when progress of all tasks is 100%
+		if ($action == 'TASK_MODIFY') {
+			//
+			if (!empty($conf->projet->enabled) && !empty($conf->global->WORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE))
+			{
+				/** @var Task $object */
+				require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+				$errors = 0;
+				$project = new Project($this->db);
+				if ($project->fetch($object->fk_project) > 0) {
+					$project->getLinesArray(null); // this method does not return <= 0 if fails
+					// if all tasks are 100% completed, close the project
+					$projectCompleted = array_reduce(
+						$project->lines,
+						function ($allTasksCompleted, $task) { return $allTasksCompleted && $task->progress >= 100; },
+						1
+					);
+					if ($projectCompleted) {
+						if ($project->setClose($user) <= 0) {
+							$errors++;
+						}
+					}
+				} else {
+					$errors++;
+				}
+				if ($errors) {
+					$this->errors[] = $project->error;
+				}
+			}
+		}
+
 		return 0;
 	}
 
