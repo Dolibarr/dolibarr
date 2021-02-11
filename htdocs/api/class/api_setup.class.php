@@ -3,7 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2020   Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2020   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
@@ -1220,7 +1220,8 @@ class Setup extends DolibarrApi
 	}
 
 	/**
-	 * Get the list of shipping methods.
+	 * Get the list of shipping methods. This operation is deprecated, use list of shipment methods
+	 * /setup/dictionary/shipment_methods instead.
 	 *
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number {@min 0}
