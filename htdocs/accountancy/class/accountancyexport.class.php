@@ -332,9 +332,9 @@ class AccountancyExport
 			print length_accountg($line->numero_compte).$separator;
 			print length_accounta($line->subledger_account).$separator;
 			print $line->sens.$separator;
-			print price($line->montant).$separator;
-			print $line->label_operation.$separator;
-			print $line->doc_ref;
+			print price2fec(abs($line->montant)).$separator;
+			print dol_string_unaccent($line->label_operation).$separator;
+			print dol_string_unaccent($line->doc_ref);
 			print $end_line;
 		}
 	}
