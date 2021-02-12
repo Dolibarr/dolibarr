@@ -81,6 +81,9 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('adherent', 'membercard', $canvas);
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('membercard', 'globalcard'));
+
 // Security check
 $result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
@@ -106,9 +109,6 @@ $canaddmember = $user->rights->adherent->creer;
 if ($id) {
 	$caneditfieldmember = $user->rights->adherent->creer;
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membercard', 'globalcard'));
 
 
 
