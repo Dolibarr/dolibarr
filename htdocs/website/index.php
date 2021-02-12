@@ -2317,12 +2317,12 @@ if ($action == 'generatesitemaps') {
 		$robotcontent = $result;
 	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
-	$result = strpos($robotcontent,'Sitemap: ');
+	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result)
 	{
-		$result = preg_replace("/Sitemap.*\n/",$robotsitemap,$robotcontent);
+		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
 		$robotcontent = $result ? $result : $robotcontent;
-	}else{
+	}else {
 		$robotcontent .= $robotsitemap."\n";
 	}
 	$result = dolSaveRobotFile($filerobot, $robotcontent);
