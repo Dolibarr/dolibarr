@@ -140,7 +140,7 @@ if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 		}
 	}
 }
-$levelofmaincategories = $levelofrootcategory + 1;
+$levelofmaincategories = $levelofrootcategory ? $levelofrootcategory : 1;
 
 $maincategories = array();
 $subcategories = array();
