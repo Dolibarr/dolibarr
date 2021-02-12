@@ -179,7 +179,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserUpdate
 	 *
-	 * @param   Object  $localobject     User
+	 * @param   User  $localobject     User
 	 * @return  void
 	 * @depends testUserFetch
 	 * The depends says test is run only if previous is ok
@@ -210,7 +210,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserDisable
 	 *
-	 * @param   Object  $localobject     User
+	 * @param   User  $localobject     User
 	 * @return  void
 	 * @depends testUserUpdate
 	 * The depends says test is run only if previous is ok
@@ -234,7 +234,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserOther
 	 *
-	 * @param   Object  $localobject     User
+	 * @param   User  $localobject     User
 	 * @return  void
 	 * @depends testUserDisable
 	 * The depends says test is run only if previous is ok
@@ -262,7 +262,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserDelete
 	 *
-	 * @param   Object  $id      User
+	 * @param   int  $id      User id
 	 * @return  void
 	 * @depends testUserOther
 	 * The depends says test is run only if previous is ok
@@ -287,7 +287,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserAddPermission
 	 *
-	 * @param   Object  $id      User
+	 * @param   int  $id      User id
 	 * @return  void
 	 * @depends testUserDelete
 	 * The depends says test is run only if previous is ok
@@ -314,7 +314,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Edit an object to test updates
 	 *
-	 * @param   mixed   $localobject        Object User
+	 * @param   Object   $localobject        Object User
 	 * @return  void
 	 */
 	public function changeProperties(&$localobject)
