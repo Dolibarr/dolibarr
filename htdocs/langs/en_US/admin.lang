@@ -1755,6 +1755,7 @@ AGENDA_REMINDER_BROWSER_SOUND=Enable sound notification
 AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (remind option/delay can be defined on each event).
 AGENDA_REMINDER_EMAIL_NOTE=Note: The frequency of the task %s must be enough to be sure that the remind are sent at the correct moment.
 AGENDA_SHOW_LINKED_OBJECT=Show linked object into agenda view
+MAIN_COPY_FILE_IN_EVENT_AUTO=Copy files when an event is automatically created
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).

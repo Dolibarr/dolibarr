@@ -84,6 +84,7 @@ if ($action == 'set')
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'MAIN_COPY_FILE_IN_EVENT_AUTO', GETPOST('MAIN_COPY_FILE_IN_EVENT_AUTO'), 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'specimen')  // For orders
 {
 	$modele = GETPOST('module', 'alpha');
@@ -373,6 +374,20 @@ print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_STATUS").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
+print '</td></tr>'."\n";
+
+// MAIN_COPY_FILE_IN_EVENT_AUTO
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans("MAIN_COPY_FILE_IN_EVENT_AUTO").'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+//print ajax_constantonoff('MAIN_COPY_FILE_IN_EVENT_AUTO');	Do not use ajax here, we need to reload page to change other combo list
+if (empty($conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_COPY_FILE_IN_EVENT_AUTO&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+} else {
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_COPY_FILE_IN_EVENT_AUTO&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+}
 print '</td></tr>'."\n";
 
 print '</table>';

@@ -1750,6 +1750,7 @@ AGENDA_REMINDER_BROWSER_SOUND=Activer les notifications sonores.
 AGENDA_REMINDER_EMAIL=Activer le rappel d'événement <b> par e-mail </b> (l'option de rappel / délai peut être défini pour chaque événement).
 AGENDA_REMINDER_EMAIL_NOTE=Note : la fréquence d'exécution de la tâche %s doit être suffisante pour être sûr que le rappel soit envoyé au bon moment..
 AGENDA_SHOW_LINKED_OBJECT=Afficher l'objet lié dans la vue agenda
+MAIN_COPY_FILE_IN_EVENT_AUTO=Copie les fichiers lorsque un evenement créer automatique
 ##### Clicktodial #####
 ClickToDialSetup=Configuration du module Click To Dial
 ClickToDialUrlDesc=URL appelée quand un clic sur l'icône téléphone est fait. Dans l'URL, vous pouvez utiliser les tags<br><b>__PHONETO__</b> qui sera remplacée par le numéro de téléphone de la personne à appeler<br><b>__PHONEFROM__</b> qui sera remplacée par le numéro de l'appelant (vous)<br><b>__LOGIN__</b> qui sera remplacée par l'identifiant d'accès de l'utilisateur à l'application d'appel (à définir sur la fiche utilisateur) et <br><b>__PASS__</b> qui sera remplacée par le mot de passe d'accès de l'utilisateur à l'application d'appel (également à définir sur la fiche utilisateur).
