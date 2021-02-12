@@ -493,7 +493,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		} elseif (in_array($feature, $checksoc))	// We check feature = checksoc
 		{
 			// If external user: Check permission for external users
-			if ($user->socid > 0)
+			if ($user->socid > 0  && empty($conf->global->MAIN_SHOW_SOCIETE2EXTERN))
 			{
 				if ($user->socid <> $objectid) return false;
 			} // If internal user: Check permission for internal users that are restricted on their objects
