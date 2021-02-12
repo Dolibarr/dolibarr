@@ -2275,7 +2275,7 @@ if ($action == 'generatesitemaps') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
-	$sql .= " AND w.ref = '".$websitekey."'";
+	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num_rows = $db->num_rows($resql);
