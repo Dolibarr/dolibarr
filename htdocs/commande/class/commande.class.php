@@ -3247,6 +3247,7 @@ class Commande extends CommonOrder
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->model_pdf)) $this->model_pdf = trim($this->model_pdf);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -3271,6 +3272,8 @@ class Commande extends CommonOrder
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
+		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
+		$sql .= " fk_shipping_method=".(isset($this->shipping_method_id) ? $this->shipping_method_id : "null").",";
 		$sql .= " fk_account=".($this->fk_account > 0 ? $this->fk_account : "null").",";
 		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
