@@ -1390,38 +1390,32 @@ if ($resql)
 					print $companystatic->getNomUrl(1);
 				}
 			}
-			else									//display user or nothing
+			else //display user or nothing
 			{
 				//payment line type to define user display
-				foreach($links as $key=>$value){
-					if($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
-					if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+				foreach ($links as $key=>$value){
+					if ($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
+					if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
 				}
 
 				$sqlu = "SELECT url_id FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$objp->rowid." AND type='user'";
 				$resqlu = $db->query($sqlu);
 
-				if($resqlu) {
-
-					if($db->num_rows($resqlu) > 0 &&
+				if ($resqlu) {
+					if ($db->num_rows($resqlu) > 0 &&
 						(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
 							|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
-
 						$obj = $db->fetch_object($resqlu);
 						$userstatic->fetch($obj->url_id);
 						print $userstatic->getNomUrl(1);
-
 					}
 
 					else {
 						print '&nbsp;';
 					}
-
-				} else
-				{
+				} else {
 					dol_print_error($db);
 				}
-
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
