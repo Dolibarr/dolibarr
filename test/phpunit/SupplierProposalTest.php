@@ -187,7 +187,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testSupplierProposalAddLine
 	 *
-	 * @param	int		$localobject	Proposal
+	 * @param	SupplierProposal	$localobject	Proposal
 	 * @return	void
 	 *
 	 * @depends	testSupplierProposalFetch

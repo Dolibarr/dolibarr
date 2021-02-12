@@ -260,10 +260,25 @@ class Contact extends CommonObject
 	public $birthday;
 	public $default_lang;
 
-	public $ref_facturation; // Reference number of invoice for which it is contact
-	public $ref_contrat; // Nb de reference contrat pour lequel il est contact
-	public $ref_commande; // Nb de reference commande pour lequel il est contact
-	public $ref_propal; // Nb de reference propal pour lequel il est contact
+	/**
+	 * @var int Number of invoices for which he is contact
+	 */
+	public $ref_facturation;
+
+	/**
+	 * @var int  Number of contracts for which he is contact
+	 */
+	public $ref_contrat;
+
+	/**
+	 * @var int Number of orders for which he is contact
+	 */
+	public $ref_commande;
+
+	/**
+	 * @var int Number of proposals for which he is contact
+	 */
+	public $ref_propal;
 
 	/**
 	 * @var int user ID
@@ -412,9 +427,15 @@ class Contact extends CommonObject
 		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
 		$this->firstname = trim($this->firstname);
 		$this->setUpperOrLowerCase();
-		if (empty($this->socid)) $this->socid = 0;
-		if (empty($this->priv)) $this->priv = 0;
-		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
+		if (empty($this->socid)) {
+			$this->socid = 0;
+		}
+		if (empty($this->priv)) {
+			$this->priv = 0;
+		}
+		if (empty($this->statut)) {
+			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
+		}
 
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
@@ -610,88 +631,72 @@ class Contact extends CommonObject
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
 				$usermustbemodified = 0;
-				if ($tmpobj->office_phone != $this->phone_pro)
-				{
+				if ($tmpobj->office_phone != $this->phone_pro) {
 					$tmpobj->office_phone = $this->phone_pro;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->office_fax != $this->fax)
-				{
+				if ($tmpobj->office_fax != $this->fax) {
 					$tmpobj->office_fax = $this->fax;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->address != $this->address)
-				{
+				if ($tmpobj->address != $this->address) {
 					$tmpobj->address = $this->address;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->town != $this->town)
-				{
+				if ($tmpobj->town != $this->town) {
 					$tmpobj->town = $this->town;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip)
-				{
+				if ($tmpobj->zip != $this->zip) {
 					$tmpobj->zip = $this->zip;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->zip != $this->zip)
-				{
+				if ($tmpobj->zip != $this->zip) {
 					$tmpobj->state_id = $this->state_id;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->country_id != $this->country_id)
-				{
+				if ($tmpobj->country_id != $this->country_id) {
 					$tmpobj->country_id = $this->country_id;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->email != $this->email)
-				{
+				if ($tmpobj->email != $this->email) {
 					$tmpobj->email = $this->email;
 					$usermustbemodified++;
 				}
-				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks)))
-				{
+				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks))) {
 					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				// if ($tmpobj->skype != $this->skype)
-				// {
+				// if ($tmpobj->skype != $this->skype) {
 				// 	$tmpobj->skype = $this->skype;
 				// 	$usermustbemodified++;
 				// }
-				// if ($tmpobj->twitter != $this->twitter)
-				// {
+				// if ($tmpobj->twitter != $this->twitter) {
 				// 	$tmpobj->twitter = $this->twitter;
 				// 	$usermustbemodified++;
 				// }
-				// if ($tmpobj->facebook != $this->facebook)
-				// {
+				// if ($tmpobj->facebook != $this->facebook) {
 				// 	$tmpobj->facebook = $this->facebook;
 				// 	$usermustbemodified++;
 				// }
-				// if ($tmpobj->linkedin != $this->linkedin)
-				// {
+				// if ($tmpobj->linkedin != $this->linkedin) {
 				//     $tmpobj->linkedin = $this->linkedin;
 				//     $usermustbemodified++;
 				// }
-				if ($usermustbemodified)
-				{
+				if ($usermustbemodified) {
 					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) { $error++; }
 				}
 			}
 
-			if (!$error && !$notrigger)
-			{
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTACT_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -723,9 +728,13 @@ class Contact extends CommonObject
 		// phpcs:enable
 		global $conf;
 		$dn = '';
-		if ($mode == 0) $dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-		elseif ($mode == 1) $dn = $conf->global->LDAP_CONTACT_DN;
-		elseif ($mode == 2) $dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		if ($mode == 0) {
+			$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
+		} elseif ($mode == 1) {
+			$dn = $conf->global->LDAP_CONTACT_DN;
+		} elseif ($mode == 2) {
+			$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		}
 		return $dn;
 	}
 

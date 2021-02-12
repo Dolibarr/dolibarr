@@ -638,12 +638,15 @@ abstract class CommonObject
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
+			$this->name_alias = dol_ucwords(dol_strtolower($this->name_alias));
 		}
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
+			$this->name_alias = dol_strtoupper($this->name_alias);
 		}
 		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
 	}

@@ -3,7 +3,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2017	Neil Orley	            <neil.orley@oeris.fr>
- * Copyright (C) 2018-2020   Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2020   Thibault FOUCART        <support@ptibogxiv.net>
  *
  *
@@ -624,63 +624,6 @@ class Setup extends DolibarrApi
 		}
 	}
 
-	/**
-	 * Get the list of shipment methods.
-	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Number of items per page
-	 * @param int       $page       Page number (starting from zero)
-	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-	 *
-	 * @return array List of shipment methods
-	 *
-	 * @url     GET dictionary/shipment_methods
-	 *
-	 * @throws RestException
-	 */
-	public function getListOfShipmentMethods($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
-	{
-		$list = array();
-		$sql = "SELECT t.rowid, t.code, t.libelle as label, t.description, t.tracking";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
-		$sql .= " WHERE t.active = ".$active;
-		// Add sql filters
-		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
-		}
-
-
-		$sql .= $this->db->order($sortfield, $sortorder);
-
-		if ($limit) {
-			if ($page < 0) {
-				$page = 0;
-			}
-			$offset = $limit * $page;
-
-			$sql .= $this->db->plimit($limit, $offset);
-		}
-
-		$result = $this->db->query($sql);
-
-		if ($result) {
-			$num = $this->db->num_rows($result);
-			$min = min($num, ($limit <= 0 ? $num : $limit));
-			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
-			}
-		} else {
-			throw new RestException(503, 'Error when retrieving list of shipment methods : '.$this->db->lasterror());
-		}
-
-		return $list;
-	}
 
 	/**
 	 * Get the list of events types.

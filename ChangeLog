@@ -18,6 +18,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The ICS value for direct debit or credit transfer is now store on each bank account instead of into the global setup.
+* API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 
 
 
