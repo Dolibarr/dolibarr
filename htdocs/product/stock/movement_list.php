@@ -66,8 +66,8 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $result = restrictedArea($user, 'stock');
 
 $idproduct = GETPOST('idproduct', 'int');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'), 'tzuserrel');
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'), 'tzuserrel');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement");
 $search_product_ref = trim(GETPOST("search_product_ref"));
@@ -797,11 +797,11 @@ if ($resql)
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '' , 'tzuserrel');
 		print '</div>';
 		print '<div class="nowrap">';
 		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '' , 'tzuserrel');
 		print '</div>';
 		print '</td>';
 	}
