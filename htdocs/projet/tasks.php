@@ -135,7 +135,7 @@ if ($object->usage_bill_time) {
 }
 
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 

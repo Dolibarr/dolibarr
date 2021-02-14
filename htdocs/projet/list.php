@@ -155,7 +155,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
 
 // Add none object fields to fields for list
 $arrayfields['s.nom'] = array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>21, 'enabled'=>(empty($conf->societe->enabled) ? 0 : 1));

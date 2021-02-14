@@ -155,7 +155,7 @@ $arrayfields = array(
 	'b.conciliated'=>array('label'=>$langs->trans("Conciliated"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>1020),
 );
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');

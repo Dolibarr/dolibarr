@@ -168,7 +168,7 @@ $arrayfields = array(
 	'cf.billed'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>1)
 );
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');

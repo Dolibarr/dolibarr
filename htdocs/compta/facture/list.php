@@ -223,7 +223,7 @@ if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_
 }
 
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
