@@ -185,11 +185,11 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'action');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'eventorganization');
 
 // Configuration header
 $head = eventorganizationAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'action');
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'eventorganization');
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
