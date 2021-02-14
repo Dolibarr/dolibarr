@@ -1,24 +1,27 @@
 <?php
-
-print '<!-- extrafields_list_array_fields.tpl.php -->'."\n";
+// do not use print in this tpl because page has not started
+// print '<!-- extrafields_list_array_fields.tpl.php -->'."\n";
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = $object->table_element;
+if (empty($extrafieldsobjectkey) && is_object($object)) {
+	$extrafieldsobjectkey = $object->table_element;
+}
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
-if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
-{
+if (!empty($extrafieldsobjectkey)) {
+	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']) > 0) {
-		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+		if (empty($extrafieldsobjectprefix)) {
+			$extrafieldsobjectprefix = 'ef.';
+		}
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
-			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key]))
+			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key])) {
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'checked'  => (($extrafields->attributes[$extrafieldsobjectkey]['list'][$key] < 0) ? 0 : 1),
@@ -27,6 +30,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);
+			}
 		}
 	}
 }
