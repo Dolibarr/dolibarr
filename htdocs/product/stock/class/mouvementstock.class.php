@@ -159,6 +159,40 @@ class MouvementStock extends CommonObject
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
+		// start hook at beginning
+                global $action, $hookmanager;
+                $hookmanager->initHooks(array('mouvementstock'));
+                // Hook of thirdparty module
+                if (is_object($hookmanager)) {
+                    $parameters = array(
+                        'currentcontext'   => 'mouvementstock',
+                        'user'             => &$user,
+                        'fk_product'       => &$fk_product,
+                        'entrepot_id'      => &$entrepot_id,
+                        'qty'              => &$qty,
+                        'type'             => &$type,
+                        'price'            => &$price,
+                        'label'            => &$label,
+                        'inventorycode'    => &$inventorycode,
+                        'datem'            => &$datem,
+                        'eatby'            => &$eatby,
+                        'sellby'           => &$sellby,
+                        'batch'            => &$batch,
+                        'skip_batch'       => &$skip_batch,
+                        'id_product_batch' => &$id_product_batch
+                    );
+                    $reshook    = $hookmanager->executeHooks('stockMovementCreate', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+
+                    if ($reshook < 0) {
+                        if (!empty($hookmanager->resPrint))
+                            dol_print_error('', $hookmanager->resPrint);
+                        return $reshook;
+                    } elseif ($reshook > 0) {
+                        return $hookmanager->resPrint;
+                    }
+                }
+                // end hook at beginning
+		
 		// Clean parameters
 		$price = price2num($price, 'MU'); // Clean value for the casse we receive a float zero value, to have it a real zero value.
 		if (empty($price)) $price = 0;

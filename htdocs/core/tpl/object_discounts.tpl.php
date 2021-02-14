@@ -24,6 +24,8 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
+print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
+
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
@@ -109,3 +111,5 @@ if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 		print ' ('.$addabsolutediscount.')';
 	}
 }
+
+print '<!-- END template -->';

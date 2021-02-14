@@ -736,8 +736,8 @@ class CommandeFournisseur extends CommonOrder
 		}
 		if ($status == 5 && $billed) $statusClass = 'status6';
 
-		$statusLong = $langs->trans($this->statuts[$status]).$billedtext;
-		$statusShort = $langs->trans($this->statutshort[$status]);
+		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
+		$statusShort = $langs->transnoentitiesnoconv($this->statutshort[$status]);
 
 		return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
 	}

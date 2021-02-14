@@ -174,7 +174,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserGroupUpdate
 	 *
-	 * @param   Object $localobject Group
+	 * @param   UserGroup $localobject Group
 	 * @return  void
 	 * @depends testUserGroupFetch
 	 * The depends says test is run only if previous is ok
@@ -198,7 +198,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserGroupAddRight
 	 *
-	 * @param   Object $localobject Object to show
+	 * @param   UserGroup $localobject Object to show
 	 * @return  void
 	 * @depends testUserGroupUpdate
 	 * The depends says test is run only if previous is ok
@@ -221,7 +221,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserGroupDelRight
 	 *
-	 * @param   Object $localobject Object
+	 * @param   UserGroup $localobject Object
 	 * @return  void
 	 * @depends testUserGroupAddRight
 	 * The depends says test is run only if previous is ok
@@ -244,7 +244,7 @@ class UserGroupTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserGroupOther
 	 *
-	 * @param   Object $localobject Object
+	 * @param   UserGroup $localobject Object
 	 * @return  void
 	 * @depends testUserGroupDelRight
 	 * The depends says test is run only if previous is ok
