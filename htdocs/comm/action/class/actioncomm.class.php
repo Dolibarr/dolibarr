@@ -1509,6 +1509,34 @@ class ActionComm extends CommonObject
 	}
 
 	/**
+	 *  Return Picto of type of event
+	 *
+	 *  @return	string							HTML String
+	 */
+	public function getTypePicto()
+	{
+		global $conf;
+
+		$imgpicto = '';
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+			if ($this->type_picto) {
+				$imgpicto = img_picto('', $this->type_picto);
+			} else {
+				if ($this->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'meeting', '', false, 0, 0, '', 'paddingright').' ';
+				elseif ($this->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+				elseif ($this->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+				elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+				elseif ($this->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+				elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
+				elseif (!preg_match('/_AUTO/', $this->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
+			}
+		}
+		return $imgpicto;
+	}
+
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.

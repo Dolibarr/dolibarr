@@ -1363,6 +1363,7 @@ if ($id > 0)
 	$now = dol_now();
 	$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
+
 	// Confirmation suppression action
 	if ($action == 'delete')
 	{
@@ -1418,9 +1419,11 @@ if ($id > 0)
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
 			if ($object->type_code != 'AC_OTH_AUTO')
 			{
-				$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto");
+				print $formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ? GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto", 0, 0, 0, 1);
 			} else {
-				print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
+				print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
+				print $object->getTypePicto();
+				print $langs->trans("Action".$object->type_code);
 			}
 			print '</td></tr>';
 		}
@@ -1430,7 +1433,7 @@ if ($id > 0)
 
 		// Full day event
 		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
-		print dol_print_date($object->datep, 'dayhour', 'gmt');
+
 		// Date start - end
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
 		if (GETPOST("afaire") == 1) {
@@ -1510,7 +1513,7 @@ if ($id > 0)
 		// Location
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION))
 		{
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="soixantepercent" value="'.$object->location.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="width500" value="'.$object->location.'"></td></tr>';
 		}
 
 		// Assigned to
@@ -1786,7 +1789,6 @@ if ($id > 0)
 	} else {
 		print dol_get_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
-
 		// Clone event
 		if ($action == 'clone')
 		{
@@ -1873,7 +1875,9 @@ if ($id > 0)
 		// Type
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>'.$langs->trans($object->type).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
+			print $object->getTypePicto();
+			print $langs->trans($object->type).'</td></tr>';
 		}
 
 		// Full day event
