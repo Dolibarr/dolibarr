@@ -1708,11 +1708,10 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 				} else {
 					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs))
 					{
-
 						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
 						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 					} else {
-						// Case standard admin page (not a page provided by the module but a page 
+						// Case standard admin page (not a page provided by the module but a page
 						$urltouse = DOL_URL_ROOT.'/admin/'.$urlpage;
 						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 					}
