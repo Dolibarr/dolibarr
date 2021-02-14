@@ -797,11 +797,11 @@ if ($resql)
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '' , 'tzuserrel');
+		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</div>';
 		print '<div class="nowrap">';
 		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '' , 'tzuserrel');
+		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 		print '</div>';
 		print '</td>';
 	}
