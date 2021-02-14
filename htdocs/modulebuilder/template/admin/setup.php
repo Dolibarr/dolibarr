@@ -216,14 +216,14 @@ if ($action == 'edit') {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-			print '<span id="helplink' . $constname . '" class="spanforparamtooltip">' . $form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips' . $constname) . '</span>';
+			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp,1,'info','',0,3,'tootips'.$constname).'</span>';
 			print '</td><td>';
 
 			if ($val['type'] == 'textarea') {
-				print '<textarea class="flat" name="' . $constname . '" id="' . $constname . '" cols="50" rows="5" wrap="soft">' . "\n";
+				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print $conf->global->{$constname};
 				print "</textarea>\n";
-			} elseif ($val['type'] == 'html') {
+			} elseif ($val['type']== 'html') {
 				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
 				$doleditor->Create();
@@ -234,8 +234,7 @@ if ($action == 'edit') {
 				$formmail = new FormMail($db);
 
 				$tmp = explode(':', $val['type']);
-
-				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, 1); // We set lang=null to get in priority record with no lang
 				//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
 				$arrayofmessagename = array();
 				if (is_array($formmail->lines_model)) {
@@ -246,21 +245,22 @@ if ($action == 'edit') {
 							$moreonlabel = ' <span class="opacitymedium">(' . $langs->trans("SeveralLangugeVariatFound") . ')</span>';
 						}
 						// The 'label' is the key that is unique if we exclude the language
-						$arrayofmessagename[$modelmail->label . ':' . $tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
+						$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
 					}
 				}
 				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 			} elseif (preg_match('/category:/', $val['type'])) {
-				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-				require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 				$formother = new FormOther($db);
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories('customer', $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 
-			} else {
-				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . $conf->global->{$constname} . '">';
+			} else
+			{
+				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
 			print '</td></tr>';
 		}
@@ -278,13 +278,48 @@ if ($action == 'edit') {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-		foreach ($arrayofparameters as $key => $val) {
-			$setupnotempty++;
+		foreach ($arrayofparameters as $constname => $val) {
+			if ($val['enabled']==1) {
+				$setupnotempty++;
+				print '<tr class="oddeven"><td>';
+				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
+				print '</td><td>';
 
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.$conf->global->$key.'</td></tr>';
+				if ($val['type'] == 'textarea') {
+					print dol_nl2br($conf->global->{$constname});
+				} elseif ($val['type']== 'html') {
+					print  $conf->global->{$constname};
+				} elseif ($val['type'] == 'yesno') {
+					print ajax_constantonoff($constname);
+				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
+					include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+
+					$tmp = explode(':', $val['type']);
+
+					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+					if ($template<0) {
+						setEventMessages(null, $formmail->errors, 'errors');
+					}
+					print $langs->trans($template->label);
+				} elseif (preg_match('/category:/', $val['type'])) {
+					$c = new Categorie($db);
+					$result = $c->fetch($conf->global->{$constname});
+					if ($result < 0) {
+						setEventMessages(null, $c->errors, 'errors');
+					}
+					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+					$toprint = array();
+					foreach ($ways as $way) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
+					}
+					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+				} else {
+					print  $conf->global->{$constname};
+				}
+				print '</td></tr>';
+			}
 		}
 
 		print '</table>';
