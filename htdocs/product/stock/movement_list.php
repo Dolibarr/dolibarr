@@ -66,6 +66,12 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $result = restrictedArea($user, 'stock');
 
 $idproduct = GETPOST('idproduct', 'int');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'), 'tzuserrel');
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'), 'tzuserrel');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -105,7 +111,7 @@ $arrayfields = array(
 	'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
 	'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
-	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
+	'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>0),
 	'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled))),
 	'pl.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>0, 'position'=>10, 'enabled'=>(!empty($conf->productbatch->enabled))),
@@ -113,7 +119,7 @@ $arrayfields = array(
 	'm.fk_user_author'=>array('label'=>$langs->trans("Author"), 'checked'=>0),
 	'm.inventorycode'=>array('label'=>$langs->trans("InventoryCodeShort"), 'checked'=>1),
 	'm.label'=>array('label'=>$langs->trans("MovementLabel"), 'checked'=>1),
-	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1),
+	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>0),
 	'origin'=>array('label'=>$langs->trans("Origin"), 'checked'=>1),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1),
 	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'checked'=>0),
@@ -162,6 +168,12 @@ if (empty($reshook))
 	// Do we click on purge search criteria ?
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 	{
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_ref = '';
@@ -461,7 +473,7 @@ $sql .= " m.batch, m.price,";
 $sql .= " m.type_mouvement,";
 $sql .= " m.fk_projet as fk_project,";
 $sql .= " pl.rowid as lotid, pl.eatby, pl.sellby,";
-$sql .= " u.login, u.photo, u.lastname, u.firstname";
+$sql .= " u.login, u.photo, u.lastname, u.firstname, u.email as user_email, u.statut as user_status";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -712,8 +724,12 @@ if ($resql)
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($id > 0)                 $param .= '&id='.urlencode($id);
-	if ($search_date_start)		 $param .= '&search_date_start='.urlencode($search_date_start);
-	if ($search_date_end)		 $param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_date_startday)	 $param .= '&search_date_startday='.urlencode($search_date_startday);
+	if ($search_date_startmonth) $param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	if ($search_date_startyear)	 $param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	if ($search_date_endday)	 $param .= '&search_date_endday='.urlencode($search_date_endday);
+	if ($search_date_endmonth)   $param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	if ($search_date_endyear)	 $param .= '&search_date_endyear='.urlencode($search_date_endyear);
 	if ($search_movement)        $param .= '&search_movement='.urlencode($search_movement);
 	if ($search_inventorycode)   $param .= '&search_inventorycode='.urlencode($search_inventorycode);
 	if ($search_type_mouvement)	 $param .= '&search_type_mouvement='.urlencode($search_type_mouvement);
@@ -796,12 +812,10 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $langs->trans('From') . ' ';
-		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to') . ' ';
-		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'), 'tzuserrel');
 		print '</div>';
 		print '</td>';
 	}
@@ -1017,6 +1031,8 @@ if ($resql)
 		$userstatic->lastname = $objp->lastname;
 		$userstatic->firstname = $objp->firstname;
 		$userstatic->photo = $objp->photo;
+		$userstatic->email = $objp->user_email;
+		$userstatic->statut = $objp->user_status;
 
 		$productstatic->id = $objp->rowid;
 		$productstatic->ref = $objp->product_ref;
@@ -1067,11 +1083,7 @@ if ($resql)
 		if (!empty($arrayfields['p.label']['checked']))
 		{
 			// Product label
-			print '<td>';
-			/*$productstatic->id=$objp->rowid;
-	        $productstatic->ref=$objp->produit;
-	        $productstatic->type=$objp->type;
-	        print $productstatic->getNomUrl(1,'',16);*/
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($productstatic->label).'">';
 			print $productstatic->label;
 			print "</td>\n";
 		}
@@ -1093,7 +1105,7 @@ if ($resql)
 		// Warehouse
 		if (!empty($arrayfields['e.ref']['checked']))
 		{
-			print '<td>';
+			print '<td class="tdoverflowmax100">';
 			print $warehousestatic->getNomUrl(1);
 			print "</td>\n";
 		}
