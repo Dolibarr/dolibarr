@@ -688,13 +688,10 @@ if ($resql)
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
 			print '<td class="nowraponall">';
-
-			$actioncomm = $actionstatic;
 			print $actionstatic->getTypePicto();
-
 			$labeltype = $obj->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
-			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+			if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
