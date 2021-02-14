@@ -139,7 +139,7 @@ $pagenext = $page + 1;
 
 // Security check
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
-if (!empty($user->socid)) $socid = $user->socid;
+if (!empty($user->socid) && empty($conf->global->MAIN_SHOW_SOCIETE2EXTERN)) $socid = $user->socid;
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 $diroutputmassaction = $conf->facture->dir_output.'/temp/massgeneration/'.$user->id;
