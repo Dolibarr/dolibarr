@@ -55,6 +55,10 @@ $permissionnote = $user->rights->adherent->cotisation->creer; // Used by the inc
 $permissiondellink = $user->rights->adherent->cotisation->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the include of actions_lineupdonw.inc.php
 
+$hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
+
+// Security check
+$result = restrictedArea($user, 'subscription', $id, '', '', 'socid', 'rowid');
 
 /*
  * 	Actions
