@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -2480,12 +2480,14 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 
 	$htmllink = $value;
 
-	if (empty($value)) return '&nbsp;';
+	if (empty($value)) {
+		return '&nbsp;';
+	}
 
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
-		// TODO use dictionary definition for picto $dictsocialnetworks[$type]['icon']
-		$htmllink .= img_picto($langs->trans(dol_ucfirst($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
+		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
+		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
 			$htmllink .= $value;
 			$htmllink .= '&nbsp;';
@@ -2501,7 +2503,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
-				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
+					$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				}
 				$htmllink .= ($link ? ' '.$link : '');
 			}
 		} else {
