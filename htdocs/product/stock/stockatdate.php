@@ -243,7 +243,8 @@ $title = $langs->trans('StockAtDate');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
-$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock';
+$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
+$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 if ($fk_warehouse > 0) {
 	$sql .= ', SUM(ps.reel) as stock_reel';
 }
@@ -401,6 +402,8 @@ print '<td class="liste_titre"><input class="flat" type="text" name="search_nom"
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 if ($mode == 'future') {
 	print '<td class="liste_titre"></td>';
 }
@@ -424,6 +427,9 @@ if ($fk_warehouse > 0) {
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
+print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+
 if ($mode == 'future') {
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
@@ -516,6 +522,21 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
 		print '</td>';
 
+		// PMP value
+		print '<td class="right">';
+		if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
+		else print '';
+		print '</td>';
+
+		// Selling value
+		print '<td class="right">';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
+		else {
+			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+		}
+		print'</td>';
+
 		if ($mode == 'future') {
 			// Current stock
 			print '<td class="right">'.$currentstock.'</td>';
@@ -560,7 +581,7 @@ $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // N
 print $hookmanager->resPrint;
 
 if (empty($date) || ! $dateIsValid) {
-	$colspan = 6;
+	$colspan = 8;
 	if ($mode == 'future') $colspan++;
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 }
