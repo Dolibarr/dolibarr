@@ -285,28 +285,32 @@ if ($action == 'edit') {
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-					include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
+					if (!empty($conf->global->{$constname})) {
+						include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+						$formmail = new FormMail($db);
 
-					$tmp = explode(':', $val['type']);
+						$tmp = explode(':', $val['type']);
 
-					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
-					if ($template<0) {
-						setEventMessages(null, $formmail->errors, 'errors');
+						$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+						if ($template < 0) {
+							setEventMessages(null, $formmail->errors, 'errors');
+						}
+						print $langs->trans($template->label);
 					}
-					print $langs->trans($template->label);
 				} elseif (preg_match('/category:/', $val['type'])) {
-					$c = new Categorie($db);
-					$result = $c->fetch($conf->global->{$constname});
-					if ($result < 0) {
-						setEventMessages(null, $c->errors, 'errors');
+					if (!empty($conf->global->{$constname})) {
+						$c = new Categorie($db);
+						$result = $c->fetch($conf->global->{$constname});
+						if ($result < 0) {
+							setEventMessages(null, $c->errors, 'errors');
+						}
+						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+						$toprint = array();
+						foreach ($ways as $way) {
+							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
+						}
+						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
-					$toprint = array();
-					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
-					}
-					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 				} else {
 					print  $conf->global->{$constname};
 				}

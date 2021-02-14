@@ -38,7 +38,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoenti
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'eventorganization_conferenceorbooth';
+$elementtype = 'actioncomm';
 
 if (!$user->admin) accessforbidden();
 
