@@ -43,7 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "mails", "languages"));
+$langsArray=array("errors", "admin", "mails", "languages");
+
+if ($conf->adherent->enabled) {
+	$langsArray[]='members';
+}
+if ($conf->eventorganization->enabled) {
+	$langsArray[]='eventorganization';
+}
+
+$langs->loadLangs($langsArray);
 
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
@@ -209,6 +218,9 @@ if ($conf->ticket->enabled && $user->rights->ticket->read) {
 }
 if ($conf->agenda->enabled) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
+}
+if ($conf->eventorganization->enabled && $user->rights->eventorganization->read) {
+	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 
 $parameters = array('elementList'=>$elementList);
@@ -878,10 +890,14 @@ if ($resql)
 						$class = "tddict";
 						$valuetoshow = $obj->{$fieldlist[$field]};
 						if ($value == 'label' || $value == 'topic') {
+							if ($langs->trans($valuetoshow)!=$valuetoshow) {
+								$valuetoshow = $langs->trans($valuetoshow);
+							}
 							$valuetoshow = dol_escape_htmltag($valuetoshow);
 						}
 						if ($value == 'label') {
 							$class .= ' tdoverflowmax100';
+							$valuetoshow = '<span title="'.$valuetoshow.'">'.$valuetoshow.'</span>';
 						}
 						/*if ($value == 'topic') {
 							$class .= ' tdoverflowmax300';

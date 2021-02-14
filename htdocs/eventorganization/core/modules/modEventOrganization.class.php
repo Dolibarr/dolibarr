@@ -114,7 +114,7 @@ class modEventOrganization extends DolibarrModules
 		// A condition to hide module
 		$this->hidden = false;
 		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-		$this->depends = array('modProjet');
+		$this->depends = array('modProjet','modCategorie');
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
@@ -246,18 +246,15 @@ class modEventOrganization extends DolibarrModules
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of EventOrganization'; // Permission label
-		$this->rights[$r][4] = 'eventorganization'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1->level2)
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1->level2)
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of EventOrganization'; // Permission label
-		$this->rights[$r][4] = 'eventorganization'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1->level2)
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of EventOrganization'; // Permission label
-		$this->rights[$r][4] = 'eventorganization'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1->level2)
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1->level2)
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
@@ -325,90 +322,6 @@ class modEventOrganization extends DolibarrModules
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		*/
-
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=eventorganization',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'List ConferenceOrBooth',
-            'mainmenu'=>'eventorganization',
-            'leftmenu'=>'eventorganization_conferenceorbooth',
-            'url'=>'/eventorganization/conferenceorbooth_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'eventorganization@eventorganization',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->eventorganization->enabled',
-            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=eventorganization_conferenceorbooth',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'New ConferenceOrBooth',
-            'mainmenu'=>'eventorganization',
-            'leftmenu'=>'eventorganization_conferenceorbooth',
-            'url'=>'/eventorganization/conferenceorbooth_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'eventorganization@eventorganization',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->eventorganization->enabled',
-            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2
-        );
-
-		/* */
-
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=eventorganization',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'List ConferenceOrBooth',
-            'mainmenu'=>'eventorganization',
-            'leftmenu'=>'eventorganization_conferenceorbooth',
-            'url'=>'/eventorganization/conferenceorbooth_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'eventorganization@eventorganization',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->eventorganization->enabled',
-            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=eventorganization_conferenceorbooth',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'New ConferenceOrBooth',
-            'mainmenu'=>'eventorganization',
-            'leftmenu'=>'eventorganization_conferenceorbooth',
-            'url'=>'/eventorganization/conferenceorbooth_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'eventorganization@eventorganization',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->eventorganization->enabled',
-            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2
-        );
 
 		/* END MODULEBUILDER LEFTMENU CONFERENCEORBOOTH */
 		// Exports profiles provided by this module

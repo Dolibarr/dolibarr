@@ -52,12 +52,12 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TASK_LABEL'=>array('type'=>'textarea','enabled'=>1),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_RECEIV_PROP_CONF'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_RECEIV_PROP_BOOTH'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_CONF'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 );
 
 $error = 0;
@@ -226,8 +226,7 @@ if ($action == 'edit') {
 				$formmail = new FormMail($db);
 
 				$tmp = explode(':', $val['type']);
-
-				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, 1); // We set lang=null to get in priority record with no lang
 				//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
 				$arrayofmessagename = array();
 				if (is_array($formmail->lines_model)) {
@@ -238,7 +237,7 @@ if ($action == 'edit') {
 							$moreonlabel = ' <span class="opacitymedium">(' . $langs->trans("SeveralLangugeVariatFound") . ')</span>';
 						}
 						// The 'label' is the key that is unique if we exclude the language
-						$arrayofmessagename[$modelmail->label . ':' . $tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
+						$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
 					}
 				}
 				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
@@ -280,24 +279,38 @@ if ($action == 'edit') {
 				print '</td><td>';
 
 				if ($val['type'] == 'textarea') {
-					print '<textarea class="flat" readonly="readonly" name="'.$constname. '[]" cols="50" rows="5" wrap="soft">' . "\n";
-					print $conf->global->{$constname};
-					print "</textarea>\n";
+					print dol_nl2br($conf->global->{$constname});
 				} elseif ($val['type']== 'html') {
-
+					print  $conf->global->{$constname};
 				} elseif ($val['type'] == 'yesno') {
-
+					print ajax_constantonoff($constname);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
+					include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
 
+					$tmp = explode(':', $val['type']);
+
+					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+					if ($template<0) {
+						setEventMessages(null, $formmail->errors, 'errors');
+					}
+					print $langs->trans($template->label);
 				} elseif (preg_match('/category:/', $val['type'])) {
-
-				} else
-				{
-					print '</td><td>' . $conf->global->{$constname} . '</td></tr>';
+					$c = new Categorie($db);
+					$result = $c->fetch($conf->global->{$constname});
+					if ($result < 0) {
+						setEventMessages(null, $c->errors, 'errors');
+					}
+					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+					$toprint = array();
+					foreach ($ways as $way) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
+					}
+					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+				} else {
+					print  $conf->global->{$constname};
 				}
-				print '<tr class="oddeven"><td>';
-
-
+				print '</td></tr>';
 			}
 		}
 
