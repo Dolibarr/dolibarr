@@ -27,6 +27,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module EventOrganization
+ *  This module is base on this specification :
+ *  https://wiki.dolibarr.org/index.php/Draft:Module_Event_Organization
  */
 class modEventOrganization extends DolibarrModules
 {
@@ -76,7 +78,7 @@ class modEventOrganization extends DolibarrModules
 			// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 			'barcode' => 0,
 			// Set this to 1 if module has its own models directory (core/modules/xxx)
-			'models' => 0,
+			'models' => 1,
 			// Set this to 1 if module has its own printing directory (core/modules/printing)
 			'printing' => 0,
 			// Set this to 1 if module has its own theme directory (theme)
@@ -134,7 +136,9 @@ class modEventOrganization extends DolibarrModules
 		// Example: $this->const=array(1 => array('EVENTORGANIZATION_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('EVENTORGANIZATION_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array();
+		$this->const = array(1 => array('EVENTORGANIZATION_TASK_LABEL', 'chaine', '', '', 0));
+
+
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -218,8 +222,8 @@ class modEventOrganization extends DolibarrModules
 			//  0 => array(
 			//      'label' => 'MyJob label',
 			//      'jobtype' => 'method',
-			//      'class' => '/eventorganization/class/myobject.class.php',
-			//      'objectname' => 'MyObject',
+			//      'class' => '/eventorganization/class/conferenceorbooth.class.php',
+			//      'objectname' => 'ConferenceOrBooth',
 			//      'method' => 'doScheduledJob',
 			//      'parameters' => '',
 			//      'comment' => 'Comment',
@@ -272,105 +276,191 @@ class modEventOrganization extends DolibarrModules
 			'langs'=>'eventorganization@eventorganization', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->eventorganization->enabled', // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->eventorganization->myobject->read' if you want your menu with a permission rules
+			'perms'=>'1', // Use 'perms'=>'$user->rights->eventorganization->conferenceorbooth->read' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);*/
 		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
+		/* BEGIN MODULEBUILDER LEFTMENU CONFERENCEORBOOTH
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=eventorganization',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'MyObject',
+			'titre'=>'ConferenceOrBooth',
 			'mainmenu'=>'eventorganization',
-			'leftmenu'=>'myobject',
+			'leftmenu'=>'conferenceorbooth',
 			'url'=>'/eventorganization/eventorganizationindex.php',
 			'langs'=>'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->eventorganization->myobject->read',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->eventorganization->conferenceorbooth->read',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=conferenceorbooth',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_MyObject',
+			'titre'=>'List_ConferenceOrBooth',
 			'mainmenu'=>'eventorganization',
-			'leftmenu'=>'eventorganization_myobject_list',
-			'url'=>'/eventorganization/myobject_list.php',
+			'leftmenu'=>'eventorganization_conferenceorbooth_list',
+			'url'=>'/eventorganization/conferenceorbooth_list.php',
 			'langs'=>'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->eventorganization->myobject->read',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->eventorganization->conferenceorbooth->read',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=conferenceorbooth',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_MyObject',
+			'titre'=>'New_ConferenceOrBooth',
 			'mainmenu'=>'eventorganization',
-			'leftmenu'=>'eventorganization_myobject_new',
-			'url'=>'/eventorganization/myobject_card.php?action=create',
+			'leftmenu'=>'eventorganization_conferenceorbooth_new',
+			'url'=>'/eventorganization/conferenceorbooth_card.php?action=create',
 			'langs'=>'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->eventorganization->myobject->write',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->eventorganization->conferenceorbooth->write',			                // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
 		);
-		END MODULEBUILDER LEFTMENU MYOBJECT */
+		*/
+
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=eventorganization',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List ConferenceOrBooth',
+            'mainmenu'=>'eventorganization',
+            'leftmenu'=>'eventorganization_conferenceorbooth',
+            'url'=>'/eventorganization/conferenceorbooth_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'eventorganization@eventorganization',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->eventorganization->enabled',
+            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=eventorganization_conferenceorbooth',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New ConferenceOrBooth',
+            'mainmenu'=>'eventorganization',
+            'leftmenu'=>'eventorganization_conferenceorbooth',
+            'url'=>'/eventorganization/conferenceorbooth_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'eventorganization@eventorganization',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->eventorganization->enabled',
+            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );
+
+		/* */
+
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=eventorganization',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List ConferenceOrBooth',
+            'mainmenu'=>'eventorganization',
+            'leftmenu'=>'eventorganization_conferenceorbooth',
+            'url'=>'/eventorganization/conferenceorbooth_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'eventorganization@eventorganization',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->eventorganization->enabled',
+            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=eventorganization,fk_leftmenu=eventorganization_conferenceorbooth',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New ConferenceOrBooth',
+            'mainmenu'=>'eventorganization',
+            'leftmenu'=>'eventorganization_conferenceorbooth',
+            'url'=>'/eventorganization/conferenceorbooth_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'eventorganization@eventorganization',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->eventorganization->enabled',
+            // Use 'perms'=>'$user->rights->eventorganization->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );
+
+		/* END MODULEBUILDER LEFTMENU CONFERENCEORBOOTH */
 		// Exports profiles provided by this module
 		$r = 1;
-		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
+		/* BEGIN MODULEBUILDER EXPORT CONFERENCEORBOOTH */
 		/*
 		$langs->load("eventorganization@eventorganization");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@eventorganization';
+		$this->export_label[$r]='ConferenceOrBoothLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]='conferenceorbooth@eventorganization';
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'MyObject'; $keyforclassfile='/eventorganization/class/myobject.class.php'; $keyforelement='myobject@eventorganization';
+		$keyforclass = 'ConferenceOrBooth'; $keyforclassfile='/eventorganization/class/conferenceorbooth.class.php'; $keyforelement='conferenceorbooth@eventorganization';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		//$keyforclass = 'MyObjectLine'; $keyforclassfile='/eventorganization/class/myobject.class.php'; $keyforelement='myobjectline@eventorganization'; $keyforalias='tl';
+		//$keyforclass = 'ConferenceOrBoothLine'; $keyforclassfile='/eventorganization/class/conferenceorbooth.class.php'; $keyforelement='conferenceorboothline@eventorganization'; $keyforalias='tl';
 		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@eventorganization';
+		$keyforselect='conferenceorbooth'; $keyforaliasextra='extra'; $keyforelement='conferenceorbooth@eventorganization';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline@eventorganization';
+		//$keyforselect='conferenceorboothline'; $keyforaliasextra='extraline'; $keyforelement='conferenceorboothline@eventorganization';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r] = array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		//$this->export_dependencies_array[$r] = array('conferenceorboothline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');
 		//$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'conferenceorbooth as t';
+		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'conferenceorbooth_line as tl ON tl.fk_conferenceorbooth = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
+		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('conferenceorbooth').')';
 		$r++; */
-		/* END MODULEBUILDER EXPORT MYOBJECT */
+		/* END MODULEBUILDER EXPORT CONFERENCEORBOOTH */
 
 		// Imports profiles provided by this module
 		$r = 1;
-		/* BEGIN MODULEBUILDER IMPORT MYOBJECT */
+		/* BEGIN MODULEBUILDER IMPORT CONFERENCEORBOOTH */
 		/*
 		 $langs->load("eventorganization@eventorganization");
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
-		 $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		 $this->export_icon[$r]='myobject@eventorganization';
-		 $keyforclass = 'MyObject'; $keyforclassfile='/eventorganization/class/myobject.class.php'; $keyforelement='myobject@eventorganization';
+		 $this->export_label[$r]='ConferenceOrBoothLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		 $this->export_icon[$r]='conferenceorbooth@eventorganization';
+		 $keyforclass = 'ConferenceOrBooth'; $keyforclassfile='/eventorganization/class/conferenceorbooth.class.php'; $keyforelement='conferenceorbooth@eventorganization';
 		 include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		 $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@eventorganization';
+		 $keyforselect='conferenceorbooth'; $keyforaliasextra='extra'; $keyforelement='conferenceorbooth@eventorganization';
 		 include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		 //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		 $this->export_sql_start[$r]='SELECT DISTINCT ';
-		 $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
+		 $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'conferenceorbooth as t';
 		 $this->export_sql_end[$r] .=' WHERE 1 = 1';
-		 $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
+		 $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('conferenceorbooth').')';
 		 $r++; */
-		/* END MODULEBUILDER IMPORT MYOBJECT */
+		/* END MODULEBUILDER IMPORT CONFERENCEORBOOTH */
 	}
 
 	/**
@@ -407,16 +497,16 @@ class modEventOrganization extends DolibarrModules
 		// Document templates
 		$moduledir = 'eventorganization';
 		$myTmpObjects = array();
-		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['ConferenceOrBooth'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') {
+			if ($myTmpObjectKey == 'ConferenceOrBooth') {
 				continue;
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/eventorganization/template_myobjects.odt';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/eventorganization/template_conferenceorbooths.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/eventorganization';
-				$dest = $dirodt.'/template_myobjects.odt';
+				$dest = $dirodt.'/template_conferenceorbooths.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

@@ -30,26 +30,20 @@ function eventorganizationAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("eventorganization@eventorganization");
+	$langs->load("eventorganization");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/eventorganization/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	/*
-	$head[$h][0] = dol_buildpath("/eventorganization/admin/myobject_extrafields.php", 1);
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
-	$h++;
-	*/
 
-	$head[$h][0] = dol_buildpath("/eventorganization/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/eventorganization_confbooth_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields")." (".$langs->trans("EventOrganizationConfOrBooth").")";
+	$head[$h][2] = 'myobject_extrafields';
 	$h++;
 
 	// Show more tabs from modules
@@ -61,6 +55,8 @@ function eventorganizationAdminPrepareHead()
 	//	'entity:-tabname:Title:@eventorganization:/eventorganization/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'eventorganization');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'eventorganization', 'remove');
 
 	return $head;
 }

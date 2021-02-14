@@ -6886,7 +6886,7 @@ abstract class CommonObject
 
 	/**
 	 * Function to show lines of extrafields with output datas.
-	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan']
+	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan'] or <div> according to $display_type
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output ('view') or input ('create' or 'edit') for extrafield

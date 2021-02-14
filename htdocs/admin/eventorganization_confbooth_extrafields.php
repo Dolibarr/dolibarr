@@ -22,7 +22,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/bom/lib/eventorganization.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
@@ -38,7 +38,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoenti
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'eventorganization_eventorganization';
+$elementtype = 'eventorganization_conferenceorbooth';
 
 if (!$user->admin) accessforbidden();
 
@@ -65,7 +65,7 @@ print load_fiche_titre($langs->trans("EventOrganizationSetup"), $linkback, 'titl
 
 $head = eventorganizationAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'eventorganization_extrafields', $langs->trans("ExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'eventorganization_extrafields', $langs->trans("ExtraFields"), -1, 'action');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

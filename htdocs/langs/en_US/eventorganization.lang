@@ -27,8 +27,19 @@ EventOrganizationDescriptionLong= Manage Event organization for conference, atte
 EventOrganizationSetup = Event Organization setup
 Settings = Settings
 EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_MYPARAM1 = My param 1
-EVENTORGANIZATION_MYPARAM1Tooltip = My param 1 tooltip
-EVENTORGANIZATION_MYPARAM2=My param 2
-EVENTORGANIZATION_MYPARAM2Tooltip=My param 2 tooltip
+EVENTORGANIZATION_TASK_LABEL = Task label created when validate
+EVENTORGANIZATION_TASK_LABELTooltip = When validate a Conference or a booth, some tasks will be created in the project<br><br> for example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
+EVENTORGANIZATION_TEMPLATE_EMAIL_RECEIV_PROP_CONF = Template of email to send after receiving a suggestion of a conference.
+EVENTORGANIZATION_TEMPLATE_EMAIL_RECEIV_PROP_BOOTH = Template of email to send after receiving a suggestion of a booth.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_CONF = Template of email to send  after a subscription to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a subscription to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Conference Or Booth
 

@@ -29,6 +29,7 @@ global $langs, $user;
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Translations
 $langs->loadLangs(array("admin", "eventorganization"));
@@ -48,8 +49,15 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
 $arrayofparameters = array(
-	'EVENTORGANIZATION_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'EVENTORGANIZATION_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+	'EVENTORGANIZATION_TASK_LABEL'=>array('type'=>'textarea','enabled'=>1),
+	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	'EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_RECEIV_PROP_CONF'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_RECEIV_PROP_BOOTH'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_CONF'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
 );
 
 $error = 0;
@@ -177,11 +185,11 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_eventorganization@eventorganization');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'action');
 
 // Configuration header
 $head = eventorganizationAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "eventorganization@eventorganization");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'action');
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
@@ -195,11 +203,60 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td>';
-		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
+	foreach ($arrayofparameters as $constname => $val) {
+		if ($val['enabled']==1) {
+			$setupnotempty++;
+			print '<tr class="oddeven"><td>';
+			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp,1,'info','',0,3,'tootips'.$constname).'</span>';
+			print '</td><td>';
+
+			if ($val['type'] == 'textarea') {
+				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
+				print $conf->global->{$constname};
+				print "</textarea>\n";
+			} elseif ($val['type']== 'html') {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+				$doleditor->Create();
+			} elseif ($val['type'] == 'yesno') {
+				print $form->selectyesno($constname, $conf->global->{$constname}, 1);
+			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+				$formmail = new FormMail($db);
+
+				$tmp = explode(':', $val['type']);
+
+				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+				//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+				$arrayofmessagename = array();
+				if (is_array($formmail->lines_model)) {
+					foreach ($formmail->lines_model as $modelmail) {
+						//var_dump($modelmail);
+						$moreonlabel = '';
+						if (!empty($arrayofmessagename[$modelmail->label])) {
+							$moreonlabel = ' <span class="opacitymedium">(' . $langs->trans("SeveralLangugeVariatFound") . ')</span>';
+						}
+						// The 'label' is the key that is unique if we exclude the language
+						$arrayofmessagename[$modelmail->label . ':' . $tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
+					}
+				}
+				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+			} elseif (preg_match('/category:/', $val['type'])) {
+				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+				$formother = new FormOther($db);
+
+				$tmp = explode(':', $val['type']);
+				print img_picto('', 'category', 'class="pictofixedwidth"');
+				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+
+			} else
+			{
+				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+			}
+			print '</td></tr>';
+		}
 	}
 	print '</table>';
 
@@ -214,13 +271,34 @@ if ($action == 'edit') {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-		foreach ($arrayofparameters as $key => $val) {
-			$setupnotempty++;
+		foreach ($arrayofparameters as $constname => $val) {
+			if ($val['enabled']==1) {
+				$setupnotempty++;
+				print '<tr class="oddeven"><td>';
+				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
+				print '</td><td>';
 
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.$conf->global->$key.'</td></tr>';
+				if ($val['type'] == 'textarea') {
+					print '<textarea class="flat" readonly="readonly" name="'.$constname. '[]" cols="50" rows="5" wrap="soft">' . "\n";
+					print $conf->global->{$constname};
+					print "</textarea>\n";
+				} elseif ($val['type']== 'html') {
+
+				} elseif ($val['type'] == 'yesno') {
+
+				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
+
+				} elseif (preg_match('/category:/', $val['type'])) {
+
+				} else
+				{
+					print '</td><td>' . $conf->global->{$constname} . '</td></tr>';
+				}
+				print '<tr class="oddeven"><td>';
+
+
+			}
 		}
 
 		print '</table>';
