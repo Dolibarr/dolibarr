@@ -61,8 +61,11 @@ $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
 $arrayofparameters = array(
-	'MYMODULE_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'MYMODULE_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+	'MYMODULE_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>1),
+	'MYMODULE_MYPARAM2'=>array('type'=>'textarea','enabled'=>1),
+	//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	//'MYMODULE_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
+	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
 );
 
 $error = 0;
@@ -208,11 +211,59 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td>';
-		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
+	foreach ($arrayofparameters as $constname => $val) {
+		if ($val['enabled']==1) {
+			$setupnotempty++;
+			print '<tr class="oddeven"><td>';
+			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+			print '<span id="helplink' . $constname . '" class="spanforparamtooltip">' . $form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips' . $constname) . '</span>';
+			print '</td><td>';
+
+			if ($val['type'] == 'textarea') {
+				print '<textarea class="flat" name="' . $constname . '" id="' . $constname . '" cols="50" rows="5" wrap="soft">' . "\n";
+				print $conf->global->{$constname};
+				print "</textarea>\n";
+			} elseif ($val['type'] == 'html') {
+				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+				$doleditor = new DolEditor($constname, $conf->global->{$constname}, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+				$doleditor->Create();
+			} elseif ($val['type'] == 'yesno') {
+				print $form->selectyesno($constname, $conf->global->{$constname}, 1);
+			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+				$formmail = new FormMail($db);
+
+				$tmp = explode(':', $val['type']);
+
+				$nboftemplates = $formmail->fetchAllEMailTemplate($tmp[1], $user, null, -1); // We set lang=null to get in priority record with no lang
+				//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+				$arrayofmessagename = array();
+				if (is_array($formmail->lines_model)) {
+					foreach ($formmail->lines_model as $modelmail) {
+						//var_dump($modelmail);
+						$moreonlabel = '';
+						if (!empty($arrayofmessagename[$modelmail->label])) {
+							$moreonlabel = ' <span class="opacitymedium">(' . $langs->trans("SeveralLangugeVariatFound") . ')</span>';
+						}
+						// The 'label' is the key that is unique if we exclude the language
+						$arrayofmessagename[$modelmail->label . ':' . $tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
+					}
+				}
+				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+			} elseif (preg_match('/category:/', $val['type'])) {
+				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+				$formother = new FormOther($db);
+
+				$tmp = explode(':', $val['type']);
+				print img_picto('', 'category', 'class="pictofixedwidth"');
+				print $formother->select_categories('customer', $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+
+			} else {
+				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . $conf->global->{$constname} . '">';
+			}
+			print '</td></tr>';
+		}
 	}
 	print '</table>';
 
