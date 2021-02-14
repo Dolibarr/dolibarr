@@ -263,23 +263,7 @@ class FormActions
 
 					// Type
 					print '<td>';
-					// TODO Code common with code into comm/action/list.php
-					$imgpicto = '';
-					if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-					{
-						if ($actioncomm->type_picto) {
-							$imgpicto = img_picto('', $actioncomm->type_picto);
-						} else {
-							if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright');
-							elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright');
-						}
-					}
-					print $imgpicto;
+					print $actioncomm->getTypePicto();
 					if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
 						print $langs->trans("Message");
 					} else {
