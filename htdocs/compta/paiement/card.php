@@ -53,7 +53,7 @@ $object = new Paiement($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 // Security check
-$result = restrictedArea($user, 'payment', $id, '', '', 'socid', 'rowid');
+$result = restrictedArea($user, 'facture', $id, '', '', 'socid', 'rowid');
 
 /*
  * Actions
