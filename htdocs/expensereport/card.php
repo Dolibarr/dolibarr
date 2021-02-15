@@ -225,10 +225,12 @@ if (empty($reshook))
 		if (!($object->fk_user_author > 0)) $object->fk_user_author = $user->id;
 
 		// Check that expense report is for a user inside the hierarchy or advanced permission for all is set
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->writeall_advance))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
 			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
-		} else {
+		}
+		if (!$error) {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
 				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;

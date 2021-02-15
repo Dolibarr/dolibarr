@@ -3109,12 +3109,12 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'up'=>$objp->unitprice,
+						'price_ht'=>price2num($objp->unitprice, 'MT'),
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
 						'duration_unit'=>$outdurationunit,
-						'disabled'=>(empty($objp->idprodfournprice) ?true:false),
+						'disabled'=>(empty($objp->idprodfournprice) ? true : false),
 						'description'=>$objp->description
 					)
 				);
