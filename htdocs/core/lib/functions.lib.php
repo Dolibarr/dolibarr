@@ -3245,7 +3245,6 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
-
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
@@ -3296,7 +3295,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'user-cog',
-				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
+				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'eventorganization', 'object_eventorganization'
 			)
 		)) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
@@ -3341,7 +3341,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'title_agenda'=>'calendar-alt',
 				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas'
+				'website'=>'globe-americas',
+				'eventorganization'=>'id-badge'
 			);
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';

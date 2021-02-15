@@ -38,7 +38,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoenti
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'eventorganization_conferenceorbooth';
+$elementtype = 'actioncomm';
 
 if (!$user->admin) accessforbidden();
 
@@ -60,12 +60,12 @@ llxHeader('', $langs->trans("EventOrganizationSetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("EventOrganizationSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("EventOrganizationSetup"), $linkback, 'eventorganization');
 
 
 $head = eventorganizationAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'eventorganization_extrafields', $langs->trans("ExtraFields"), -1, 'action');
+print dol_get_fiche_head($head, 'eventorganization_extrafields', $langs->trans("ExtraFields"), -1, 'eventorganization');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -185,11 +185,11 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'action');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'eventorganization');
 
 // Configuration header
 $head = eventorganizationAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'action');
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'eventorganization');
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
@@ -208,7 +208,7 @@ if ($action == 'edit') {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp,1,'info','',0,3,'tootips'.$constname).'</span>';
+			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
 			print '</td><td>';
 
 			if ($val['type'] == 'textarea') {
@@ -249,9 +249,7 @@ if ($action == 'edit') {
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
 				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
-
-			} else
-			{
+			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
 			print '</td></tr>';
@@ -285,28 +283,32 @@ if ($action == 'edit') {
 				} elseif ($val['type'] == 'yesno') {
 					print ajax_constantonoff($constname);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-					include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
+					if (!empty($conf->global->{$constname})) {
+						include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+						$formmail = new FormMail($db);
 
-					$tmp = explode(':', $val['type']);
+						$tmp = explode(':', $val['type']);
 
-					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
-					if ($template<0) {
-						setEventMessages(null, $formmail->errors, 'errors');
+						$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, $conf->global->{$constname});
+						if ($template < 0) {
+							setEventMessages(null, $formmail->errors, 'errors');
+						}
+						print $langs->trans($template->label);
 					}
-					print $langs->trans($template->label);
 				} elseif (preg_match('/category:/', $val['type'])) {
-					$c = new Categorie($db);
-					$result = $c->fetch($conf->global->{$constname});
-					if ($result < 0) {
-						setEventMessages(null, $c->errors, 'errors');
+					if (!empty($conf->global->{$constname})) {
+						$c = new Categorie($db);
+						$result = $c->fetch($conf->global->{$constname});
+						if ($result < 0) {
+							setEventMessages(null, $c->errors, 'errors');
+						}
+						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+						$toprint = array();
+						foreach ($ways as $way) {
+							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
+						}
+						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 					}
-					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
-					$toprint = array();
-					foreach ($ways as $way) {
-						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
-					}
-					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 				} else {
 					print  $conf->global->{$constname};
 				}
