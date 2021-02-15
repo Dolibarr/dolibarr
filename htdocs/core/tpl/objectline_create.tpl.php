@@ -175,7 +175,7 @@ if ($nolinesbefore) {
 				echo ((GETPOST('prod_entry_mode', 'alpha') == 'free' || !empty($conf->global->MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT)) ? ' checked' : '');
 				echo '> ';
 				// Show type selector
-				echo $langs->trans("FreeLineOfType");
+				echo '<span class="textradioforitem">'.$langs->trans("FreeLineOfType").'</span>';
 				echo '</label>';
 				echo ' ';
 			} else {
@@ -194,20 +194,25 @@ if ($nolinesbefore) {
 		// Predefined product/service
 		if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 		{
-			if ($forceall >= 0 && $freelines) echo '<br>';
-			echo '<span class="prod_entry_mode_predef">';
+			if ($forceall >= 0 && $freelines) echo '<br><span class="prod_entry_mode_predef paddingtop">';
+			else echo '<span class="prod_entry_mode_predef">';
 			echo '<label for="prod_entry_mode_predef">';
 			echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
-			if (empty($senderissupplier))
-			{
-				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
-				elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
-				else echo $langs->trans('PredefinedProductsAndServicesToSell');
+			$labelforradio = '';
+			if (empty($conf->dol_optimize_smallscreen)) {
+				if (empty($senderissupplier)) {
+					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) $labelforradio = $langs->trans('PredefinedProductsToSell');
+					elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) $labelforradio = $langs->trans('PredefinedServicesToSell');
+					else $labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
+				} else {
+					if (!empty($conf->product->enabled) && empty($conf->service->enabled)) $labelforradio = $langs->trans('PredefinedProductsToPurchase');
+					elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) $labelforradio = $langs->trans('PredefinedServicesToPurchase');
+					else $labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
+				}
 			} else {
-				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToPurchase');
-				elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
-				else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
+				$labelforradio = $langs->trans('PredefinedItem');
 			}
+			print '<span class="textradioforitem">'.$labelforradio.'</span>';
 			echo '</label>';
 			echo ' ';
 			$filtertype = '';
@@ -255,7 +260,7 @@ if ($nolinesbefore) {
 					);
 					$alsoproductwithnosupplierprice = 1;
 				}
-				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'maxwidth500');
+				$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice, 'minwidth300imp maxwidth500');
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
 				{
 					?>
