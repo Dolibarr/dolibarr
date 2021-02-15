@@ -3104,7 +3104,7 @@ class Form
 
 
 				// Add new entry
-				// "key" value of json key array is used by jQuery automatically as selected value
+				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
 				array_push($outarray,
