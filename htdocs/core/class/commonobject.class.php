@@ -6555,24 +6555,109 @@ abstract class CommonObject
 				    	{
 				    		var val = $("select[name=\""+parent_list+"\"]").val();
 				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
+				    		if(typeof val == "string"){
+				    		    if(val != "") {
+					    			$("select[name=\""+child_list+"\"] option[parent]").hide();
+					    			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+								} else {
+									$("select[name=\""+child_list+"\"] option").show();
+								}
+				    		} else if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
 					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
 							} else {
 								$("select[name=\""+child_list+"\"] option").show();
 							}
 				    	}
+				    	function showOptionsOnMultiselect(child_list, parent_list){
+
+				    	    var val = $("select[name=\""+parent_list+"\"]").val();
+				    		var parentVal = parent_list + ":" + val;
+				    		if(typeof val == "string"){
+				    		    if(val != "") {
+				    		        if($("#"+child_list).hasClass("multiselect")){
+								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
+								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
+								        $("#"+child_list).select2();
+								        for (option of allOptionsWithParent){
+								            option.disabled = true;
+								        }
+								        for (option of optionsToShow){
+								            option.disabled = false;
+								        }
+								        $("span.select2-selection.select2-selection--multiple").click(function() {
+								        	var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
+								        	for (li of select2_liToHide){
+								        	    $(li).css("display", "none")
+								        	}
+										});
+					    			}
+		    		    		}
+				    		} else if(val > 0) {
+				    		    if($("#"+child_list).hasClass("multiselect")){
+								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
+								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
+								     	$("#"+child_list).select2();
+								        for (option of allOptionsWithParent){
+								            option.disabled = true;
+								        }
+								        for (option of optionsToShow){
+								            option.disabled = false;
+								        }
+								        $("span.select2-selection.select2-selection--multiple").click(function() {
+								            var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
+								        	for (li of select2_liToHide){
+								        	    $(li).css("display", "none")
+								        	}
+										});
+					    			}
+				    		}
+				    	}
 						function setListDependencies() {
 					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
+					    		var child_list = $(this).attr("id");
 								var parent = $(this).find("option[parent]:first").attr("parent");
 								var infos = parent.split(":");
 								var parent_list = infos[0];
-								showOptions(child_list, parent_list);
+								//Hide daughters lists
+								if ($("#"+child_list).val() == 0 && $("#"+parent_list).val() == 0){
+								    var child = $("#"+child_list)
+								    //Hide children multiselects
+								    if($("#"+child_list).hasClass("multiselect")){
+								        $("span.select2-selection.select2-selection--multiple").hide()
+								    }
+								    $("#"+child_list).hide();
 
-								/* Activate the handler to call showOptions on each future change */
+								//Show mother lists
+								} else if ($("#"+parent_list).val() != 0){
+								    $("#"+parent_list).show();
+								    //show multiselects if its a parent one
+								    if($("#"+child_list).hasClass("multiselect")){
+								        $("span.select2-selection.select2-selection--multiple").show()
+								    }
+								}
+								//show the child list if the parent list value is selected
+								$("select[name=\""+parent_list+"\"]").click(function() {
+								    if ($(this).val() != 0){
+								        $("#"+child_list).show()
+								        //show children multiselects if the parent list value is selected
+								        if($("#"+child_list).hasClass("multiselect")){
+								        	$("span.select2-selection.select2-selection--multiple").show()
+								    	}
+									}
+								});
 								$("select[name=\""+parent_list+"\"]").change(function() {
 									showOptions(child_list, parent_list);
+									showOptionsOnMultiselect(child_list, parent_list)
+									$("#"+child_list).val(0).trigger("change");
+									//Hide child lists if the parent value is set to 0
+									if ($(this).val() == 0){
+								   		$("#"+child_list).hide();
+								   		//Hide children multiselects
+								   		if($("#"+child_list).hasClass("multiselect")){
+								        	$("span.select2-selection.select2-selection--multiple").hide()
+								    	}
+									}
 								});
 					    	});
 						}
@@ -7780,5 +7865,5 @@ abstract class CommonObject
 
 		$this->db->commit();
 		return true;
-	}
+    }
 }
