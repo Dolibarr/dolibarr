@@ -4542,7 +4542,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 
 
 /**
- * Reload menu if dynamic menus, if modified by version
+ * Reload SQL menu file (if dynamic menus, if modified by version)
  *
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
