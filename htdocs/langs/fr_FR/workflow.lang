@@ -18,6 +18,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classer la ou les propositi
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la ou les commande(s) fournisseur(s) de source(s) à facturée(s) lorsque la facture fournisseur est validée (et si le montant de la facture est le même que le montant total des commandes liées)
 descWORKFLOW_BILL_ON_RECEPTION=Classer la/les réception(s) facturée(s) à la validation d'une facture fournisseur
 # Autoclassify project
-descWORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classer le projet à clôturé lorsque toutes les tâches de ce projet sont à 100 %% de progression.
+descWORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classer le projet à clôturé lorsque toutes les tâches de ce projet sont à 100 %% de progression<br/> <small>Non rétroactif : l’activation de cette option ne clôturera pas les projets dont les tâches sont déjà à 100 %%.</small>
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
