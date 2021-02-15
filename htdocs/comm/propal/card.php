@@ -2246,7 +2246,12 @@ if ($action == 'create')
 		print $langs->trans('OutstandingBill');
 		print '</td><td class="right">';
 		$arrayoutstandingbills = $soc->getOutstandingBills();
-		print price($arrayoutstandingbills['opened']).' / ';
+		if ($arrayoutstandingbills['opened'] >= $soc->outstanding_limit)
+		{
+    		print '<span class="right amountremaintopay">'.price($arrayoutstandingbills['opened']).'</span> / ';
+		}else{
+		    print price($arrayoutstandingbills['opened']).' / ';
+		}
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';
 		print '</tr>';
