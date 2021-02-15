@@ -200,7 +200,7 @@ class Project extends CommonObject
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'usage_organize_event' =>array('type'=>'integer', 'label'=>'Usage organize event', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>-2, 'position'=>200),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>205),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>210),
@@ -232,6 +232,8 @@ class Project extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
@@ -248,12 +250,12 @@ class Project extends CommonObject
 			$this->fields['usage_opportunity']['enabled'] = 0;
 		}
 
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!empty($conf->global->PROJECT_HIDE_TASKS)) {
 			$this->fields['usage_bill_time']['visible'] = 0;
 			$this->fields['usage_task']['visible'] = 0;
 		}
 
-		if (empty($conf->global->PROJECT_ORGANIZE_EVENTS)) {
+		if (empty($conf->eventorganization->enabled)) {
 			$this->fields['usage_organize_event']['visible'] = 0;
 		}
 	}
