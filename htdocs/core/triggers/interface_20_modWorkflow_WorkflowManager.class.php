@@ -330,7 +330,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					// if all tasks are 100% completed, close the project
 					$projectCompleted = array_reduce(
 						$project->lines,
-						function ($allTasksCompleted, $task) { return $allTasksCompleted && $task->progress >= 100; },
+						function ($allTasksCompleted, $task) {
+							return $allTasksCompleted && $task->progress >= 100;
+						},
 						1
 					);
 					if ($projectCompleted) {
