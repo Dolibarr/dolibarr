@@ -135,7 +135,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 
 // Security check
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid && empty($conf->global->MAIN_SHOW_SOCIETE2EXTERN)) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
@@ -3676,7 +3676,7 @@ if ($action == 'create')
 	// fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 
-	if ($user->socid > 0 && $user->socid != $object->socid)
+	if ($user->socid > 0 && $user->socid != $object->socid  && empty($conf->global->MAIN_SHOW_SOCIETE2EXTERN))
 	{
 		accessforbidden('', 0, 1);
 	}
