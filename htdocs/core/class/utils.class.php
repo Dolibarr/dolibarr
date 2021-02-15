@@ -63,7 +63,7 @@ class Utils
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if (empty($choices)) {
-			$choices = 'tempfilesold,logfiles';
+			$choices = 'tempfilesold+logfiles';
 		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
