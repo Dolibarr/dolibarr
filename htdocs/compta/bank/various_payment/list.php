@@ -53,6 +53,8 @@ $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) $search_accountancy_account = '';
 $search_accountancy_subledger = GETPOST("search_accountancy_subledger");
 if ($search_accountancy_subledger == - 1) $search_accountancy_subledger = '';
+if (empty($search_date_start)) $search_date_start = GETPOST("search_date_start", 'int');
+if (empty($search_date_end)) $search_date_end = GETPOST("search_date_end", 'int');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
