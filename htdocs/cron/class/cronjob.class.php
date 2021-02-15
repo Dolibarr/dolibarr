@@ -50,8 +50,19 @@ class Cronjob extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string Job type
+	 */
 	public $jobtype;
+
+	/**
+	 * @var string|int     Date for last cron object update
+	 */
 	public $tms = '';
+
+	/**
+	 * @var string|int     Date for cron job create
+	 */
 	public $datec = '';
 
 	/**
@@ -59,6 +70,9 @@ class Cronjob extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string Job command
+	 */
 	public $command;
 	public $classesname;
 	public $objectname;
@@ -67,20 +81,50 @@ class Cronjob extends CommonObject
 	public $md5params;
 	public $module_name;
 	public $priority;
+
 	/**
 	 * @var string|int     Date for last job execution
 	 */
 	public $datelastrun = '';
+
 	/**
 	 * @var string|int     Date for next job execution
 	 */
 	public $datenextrun = '';
+
+	/**
+	 * @var string|int     Date for end job execution
+	 */
 	public $dateend = '';
+
+	/**
+	 * @var string|int     Date for first start job execution
+	 */
 	public $datestart = '';
+
+	/**
+	 * @var string|int     Date for last result job execution
+	 */
 	public $datelastresult = '';
+
+	/**
+	 * @var string Last result from end job execution
+	 */
 	public $lastresult;
+
+	/**
+	 * @var string Last output from end job execution
+	 */
 	public $lastoutput;
+
+	/**
+	 * @var string Unit frequency of job execution
+	 */
 	public $unitfrequency;
+
+	/**
+	 * @var int Frequency of job execution
+	 */
 	public $frequency;
 
 	/**
@@ -88,6 +132,9 @@ class Cronjob extends CommonObject
 	 */
 	public $status;
 
+	/**
+	 * @var int Is job processing
+	 */
 	public $processing;
 
 	/**
@@ -100,9 +147,25 @@ class Cronjob extends CommonObject
 	 */
 	public $fk_user_mod;
 
+	/**
+	 * @var int Number of run job execution
+	 */
 	public $nbrun;
+
+	/**
+	 * @var int Maximum run job execution
+	 */
+	public $maxrun;
+
+	/**
+	 * @var string Libname
+	 */
 	public $libname;
-	public $test; // A test condition to know if job is visible/qualified
+
+	/**
+	 * @var string A test condition to know if job is visible/qualified
+	 */
+	public $test;
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -152,7 +215,12 @@ class Cronjob extends CommonObject
 		if (isset($this->frequency)) $this->frequency = trim($this->frequency);
 		if (isset($this->status)) $this->status = trim($this->status);
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
-		if (isset($this->nbrun)) $this->nbrun = trim($this->nbrun);
+		if (isset($this->nbrun)) {
+			$this->nbrun = (int) $this->nbrun;
+		}
+		if (isset($this->maxrun)) {
+			$this->maxrun = (int) $this->maxrun;
+		}
 		if (isset($this->libname)) $this->libname = trim($this->libname);
 		if (isset($this->test)) $this->test = trim($this->test);
 
@@ -262,7 +330,10 @@ class Cronjob extends CommonObject
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		if (!$error)
 		{
@@ -1253,8 +1324,7 @@ class Cronjob extends CommonObject
 		}
 
 		$result = $this->update($user);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -1289,14 +1359,16 @@ class Cronjob extends CommonObject
 		$this->labelStatus = array(); // Force reset o array because label depends on other fields
 		$this->labelStatusShort = array();
 
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load('users');
 
 			$moretext = '';
-			if ($processing) $moretext = ' ('.$langs->trans("Running").')';
-			elseif ($lastresult) $moretext .= ' ('.$langs->trans("Error").')';
+			if ($processing) {
+				$moretext = ' ('.$langs->trans("Running").')';
+			} elseif ($lastresult) {
+				$moretext .= ' ('.$langs->trans("Error").')';
+			}
 
 			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled').$moretext;
 			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Scheduled').$moretext;

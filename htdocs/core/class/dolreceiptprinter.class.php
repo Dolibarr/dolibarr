@@ -825,7 +825,7 @@ class dolReceiptPrinter extends Printer
 			if ($this->printer->connector instanceof DummyPrintConnector || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 			{
 				$data = $this->printer->connector->getData();
-				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") echo base64_encode($data);
+				if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") echo rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 				dol_syslog($data);
 			}
 			// Close and print
