@@ -6872,19 +6872,25 @@ class Form
 				$array = array_combine($array, $array);
 			}
 
-			if (!empty($array)) {
-				foreach ($array as $key => $value) {
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
-
-					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
-						$out .= ' selected';
+			if (! empty($array))
+			{
+				foreach ($array as $key => $value)
+				{
+					if (sizeof(explode("|", $value)) == 2){
+						$info = explode("|", $value);
+						$out.= '<option value="'.$key.'" parent="'.$info[1].'"';
+					} else {
+						$out .= '<option value="' . $key . '"';
 					}
-					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
-					$out .= '>';
-					$out .= dol_htmlentitiesbr($newval);
-					$out .= '</option>'."\n";
+                    if (is_array($selected) && ! empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
+					{
+						$out.= ' selected';
+					}
+					$out.= '>';
+					$newval = ($translate ? $langs->trans($info[0]) : $info[0]);
+					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+					$out.= dol_htmlentitiesbr($newval);
+					$out.= '</option>'."\n";
 				}
 			}
 		}
