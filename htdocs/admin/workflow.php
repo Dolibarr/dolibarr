@@ -70,7 +70,7 @@ $workflowcodes = array(
 		'picto'=>'bill'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>'aa'),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
