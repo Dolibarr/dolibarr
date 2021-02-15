@@ -58,6 +58,14 @@ $day = GETPOST('day', 'int');
 $month				= GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
+// Security check
+if ($user->socid && empty($conf->global->MAIN_SHOW_SOCIETE2EXTERN)) $socid = $user->socid;
+$result = restrictedArea($user, 'facture', $facid, '');
+
+$paymentstatic = new Paiement($db);
+$accountstatic = new Account($db);
+$companystatic = new Societe($db);
+
 $search_ref = GETPOST("search_ref", "alpha");
 $search_company		= GETPOST("search_company", 'alpha');
 $search_paymenttype	= GETPOST("search_paymenttype");
