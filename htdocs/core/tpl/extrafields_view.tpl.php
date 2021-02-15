@@ -200,6 +200,51 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 								$("select[name=\""+child_list+"\"] option").show();
 							}
 				    	}
+
+				    	function showOptionsOnMultiselect(child_list, parent_list){
+				    		console.log("weshtamr")
+				    	    var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
+				    		var parentVal = parent_list + ":" + val;
+				    		if(typeof val == "string"){
+				    		    if(val != "") {
+				    		        if($("#"+child_list).hasClass("multiselect")){
+								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
+								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
+								        $("#"+child_list).select2();
+								        for (option of allOptionsWithParent){
+								            option.disabled = true;
+								        }
+								        for (option of optionsToShow){
+								            option.disabled = false;
+								        }
+								        $("span.select2-selection.select2-selection--multiple").click(function() {
+								        	var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
+								        	for (li of select2_liToHide){
+								        	    $(li).css("display", "none")
+								        	}
+										});
+					    			}
+		    		    		}
+				    		} else if(val > 0) {
+				    		    if($("#"+child_list).hasClass("multiselect")){
+								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
+								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
+								        for (option of allOptionsWithParent){
+								            option.disabled = true;
+								        }
+								        for (option of optionsToShow){
+								            option.disabled = false;
+								        }
+								        $("span.select2-selection.select2-selection--multiple").click(function() {
+								            var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
+								        	for (li of select2_liToHide){
+								        	    $(li).css("display", "none")
+								        	}
+										});
+					    			}
+				    		}
+				    	}
+
 						function setListDependencies() {
 					    	jQuery("select option[parent]").parent().each(function() {
 					    		var child_list = $(this).attr("name");
@@ -213,6 +258,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 								var searchparams = new URLSearchParams(window.location.href);
 								if (searchparams.get("action") == "edit_extras"){
 									showOptions(child_list, parent_list);
+									showOptionsOnMultiselect(child_list, parent_list);
 								}
 					    	});
 						}
