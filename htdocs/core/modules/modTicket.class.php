@@ -208,7 +208,7 @@ class modTicket extends DolibarrModules
 		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket',
 			'type' => 'left',
 			'titre' => 'Ticket',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticket',
 			'url' => '/ticket/index.php',

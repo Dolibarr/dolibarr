@@ -103,7 +103,7 @@ div.mainmenu.hrm::before {
 }
 
 div.mainmenu.members::before {
-    content: "\f0c0";
+    content: "\f007";
 }
 
 div.mainmenu.products::before {
@@ -199,3 +199,10 @@ div.mainmenu.generic4::before {
 	margin-left: 30px;
 }
 
+.menu_titre .em092 {
+	font-size: 0.92em;
+}
+
+.menu_titre .em080 {
+	font-size: 0.80em;
+}
