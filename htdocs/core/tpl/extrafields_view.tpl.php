@@ -204,7 +204,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 							var infos = parent_list.split("_");
 				    	    var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
 				    		var parentVal = parent_list + ":" + val;
-
 				    		if(typeof val == "string"){
 				    		    if(val != "") {
 				    		        if($("select[name=\""+child_list+"\"]").hasClass("multiselect")){
@@ -217,8 +216,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 								        for (option of optionsToShow){
 								            option.disabled = false;
 								        }
-								        console.log(optionsToShow)
-								        console.log($("span.select2-selection.select2-selection--multiple"))
 								        $("span.select2-selection.select2-selection--multiple").click(function() {
 								        	var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
 								        	for (li of select2_liToHide){
@@ -231,6 +228,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				    		    if($("#"+child_list).hasClass("multiselect")){
 								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
 								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
+								        $("select[name=\""+child_list+"\"]").select2();
 								        for (option of allOptionsWithParent){
 								            option.disabled = true;
 								        }
