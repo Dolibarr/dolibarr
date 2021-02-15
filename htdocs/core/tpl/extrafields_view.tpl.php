@@ -181,7 +181,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    	    var params = new URLSearchParams(window.location.href);
 							var infos = parent_list.split("_");
 							//Selection of the DOM element
 				    		var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
@@ -202,21 +201,24 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				    	}
 
 				    	function showOptionsOnMultiselect(child_list, parent_list){
-				    		console.log("weshtamr")
+							var infos = parent_list.split("_");
 				    	    var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
 				    		var parentVal = parent_list + ":" + val;
+
 				    		if(typeof val == "string"){
 				    		    if(val != "") {
-				    		        if($("#"+child_list).hasClass("multiselect")){
-								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
-								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
-								        $("#"+child_list).select2();
+				    		        if($("select[name=\""+child_list+"\"]").hasClass("multiselect")){
+								     	var allOptionsWithParent = $("select[name=\""+child_list+"\"] option")
+								        var optionsToShow = $("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
+								        $("select[name=\""+child_list+"\"]").select2();
 								        for (option of allOptionsWithParent){
 								            option.disabled = true;
 								        }
 								        for (option of optionsToShow){
 								            option.disabled = false;
 								        }
+								        console.log(optionsToShow)
+								        console.log($("span.select2-selection.select2-selection--multiple"))
 								        $("span.select2-selection.select2-selection--multiple").click(function() {
 								        	var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
 								        	for (li of select2_liToHide){
@@ -252,9 +254,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 								var infos = parent.split(":");
 								var parent_list = infos[0];
 								var code_parent = parent_list.split("-")
-								console.log(child_list)
-								console.log(parent_list)
-								$("#propal_extras_type3_23").val("")
 								var searchparams = new URLSearchParams(window.location.href);
 								if (searchparams.get("action") == "edit_extras"){
 									showOptions(child_list, parent_list);
