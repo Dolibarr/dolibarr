@@ -890,7 +890,7 @@ if ($resql)
 						$class = "tddict";
 						$valuetoshow = $obj->{$fieldlist[$field]};
 						if ($value == 'label' || $value == 'topic') {
-							if ($langs->trans($valuetoshow)!=$valuetoshow) {
+							if ($langs->trans($valuetoshow) != $valuetoshow) {
 								$valuetoshow = $langs->trans($valuetoshow);
 							}
 							$valuetoshow = dol_escape_htmltag($valuetoshow);
