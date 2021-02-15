@@ -1396,7 +1396,7 @@ class Website extends CommonObject
 			'bn'=>'bn_DB',
 			'bs'=>'bs_BA',
 			'ca'=>'ca_ES',
-			'zh'=>'zh_TW',
+			'zh'=>'zh_CN',
 			'cs'=>'cs_CZ',
 			'da'=>'da_DK',
 			'et'=>'et_EE',

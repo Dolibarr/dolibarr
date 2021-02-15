@@ -141,6 +141,7 @@ VATRateForSupplierProduct=VAT Rate (for this vendor/product)
 DiscountQtyMin=Discount for this qty.
 NoPriceDefinedForThisSupplier=No price/qty defined for this vendor/product
 NoSupplierPriceDefinedForThisProduct=No vendor price/qty defined for this product
+PredefinedItem=Predefined item
 PredefinedProductsToSell=Predefined Product
 PredefinedServicesToSell=Predefined Service
 PredefinedProductsAndServicesToSell=Predefined products/services to sell

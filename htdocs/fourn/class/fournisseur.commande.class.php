@@ -139,6 +139,8 @@ class CommandeFournisseur extends CommonOrder
 
 	public $cond_reglement_id;
 	public $cond_reglement_code;
+	public $cond_reglement_label;	// Label
+	public $cond_reglement_doc;		// Label on documents
 
 	/**
 	 * @var int ID
@@ -312,7 +314,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
 		$sql .= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
 		$sql .= " cm.libelle as methode_commande,";
-		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc,";
+		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
 		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
@@ -373,8 +375,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_project = $obj->fk_project;
 			$this->cond_reglement_id = $obj->fk_cond_reglement;
 			$this->cond_reglement_code = $obj->cond_reglement_code;
-			$this->cond_reglement = $obj->cond_reglement_libelle;
-			$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
+			$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
+			$this->cond_reglement_label = $obj->cond_reglement_label;
+			$this->cond_reglement_doc = $obj->cond_reglement_doc;
 			$this->fk_account = $obj->fk_account;
 			$this->mode_reglement_id = $obj->fk_mode_reglement;
 			$this->mode_reglement_code = $obj->mode_reglement_code;
@@ -1561,8 +1564,6 @@ class CommandeFournisseur extends CommonOrder
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0)
 	{
 		global $langs, $mysoc, $conf;
-
-		$error = 0;
 
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
