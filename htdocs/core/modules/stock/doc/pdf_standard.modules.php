@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
+ * Copyright (C) 2021 	Lenin Rivas <lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,8 +290,8 @@ class pdf_standard extends ModelePDFStock
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 80 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top = 65 + $top_shift;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 65 + $top_shift : 10);
 
 				$tab_height = 130;
 
@@ -323,7 +324,7 @@ class pdf_standard extends ModelePDFStock
 					$i = 0;
 					$nblines = $num;
 
-					$this->tabTitleHeight = 0;
+					$this->tabTitleHeight = 12;
 					$nexY = $tab_top + $this->tabTitleHeight;
 
 					for ($i = 0; $i < $nblines; $i++)
