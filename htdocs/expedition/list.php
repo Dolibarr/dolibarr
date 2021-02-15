@@ -133,7 +133,7 @@ $arrayfields = array(
 );
 
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/extrafields_list_array_fields.inc.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');

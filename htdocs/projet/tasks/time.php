@@ -869,7 +869,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled) ? 0 : 1));
 		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((!empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT)) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
+		include DOL_DOCUMENT_ROOT.'/core/extrafields_list_array_fields.inc.php';
 
 		$arrayfields = dol_sort_array($arrayfields, 'position');
 

@@ -120,7 +120,7 @@ foreach ($object->fields as $key => $val)
 	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
 }
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/extrafields_list_array_fields.inc.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');

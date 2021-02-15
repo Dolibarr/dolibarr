@@ -193,7 +193,7 @@ $arrayfields = array(
 	'p.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-include DOL_DOCUMENT_ROOT.'/core/actions_extrafields_list_array_fields.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/extrafields_list_array_fields.inc.php';
 
 
 /*
