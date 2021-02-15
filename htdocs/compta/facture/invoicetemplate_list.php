@@ -268,7 +268,7 @@ if ($search_status != '' && $search_status >= -1)
 	if ($search_status == -1) $sql .= ' AND suspended = 1';
 }
 $sql .= dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
-$sql .= dolSqlDateFilter('f.date_last_gen', $search_day_date_when, $search_month_date_when, $search_year_date_when);
+$sql .= dolSqlDateFilter('f.date_when', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
 $sql .= $db->order($sortfield, $sortorder);
 
