@@ -2103,3 +2103,4 @@ SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show
 AskThisIDToYourBank=Contact your bank to get this ID
 AdvancedModeOnly=Permision available in Advanced permission mode only
 ConfFileIsReadableOrWritableByAnyUsers=The conf file is reabable or writable by any users. Give permission to web server user and group only.
+MailToSendEventOrganization=Event Organization
