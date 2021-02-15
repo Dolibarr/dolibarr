@@ -24,4 +24,4 @@ AutomaticClassification=Classification automatique
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
 # Autoclassify project
-descWORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classer le projet à clôturé lorsque toutes les tâches de ce projet sont à 100 %% de progression.
+descWORKFLOW_PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classer le projet à clôturé lorsque toutes les tâches de ce projet sont à 100 %% de progression<br/> <small>Non rétroactif : l’activation de cette option ne clôturera pas les projets dont les tâches sont déjà à 100 %%.</small>

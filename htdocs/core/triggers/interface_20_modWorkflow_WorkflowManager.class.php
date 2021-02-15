@@ -293,6 +293,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 		}
+
 		 // classify billed reception
 		if ($action == 'BILL_SUPPLIER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id, LOG_DEBUG);
