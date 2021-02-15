@@ -1303,6 +1303,7 @@ class Paiement extends CommonObject
 	{
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 		if (empty($force_thirdparty_id))
 		{
@@ -1312,11 +1313,12 @@ class Paiement extends CommonObject
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $invoice->fk_soc;
+					$force_thirdparty_id = $invoice->socid;
 				}
 			}
 		}
-
-		return parent::fetch_thirdparty($force_thirdparty_id);
+        $soc=new Societe($this->db);
+		$soc->fetch($force_thirdparty_id);
+		return $soc;
 	}
 }
