@@ -3,6 +3,61 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 12.0.5 compared to 12.0.4 *****
+FIX: before crediting a withdrawal receipt, check whether it has been credited already
+FIX: mandatory extrafields of type sellist
+FIX: when a mandatory extrafield of type sellist contains '0' it should be considered empty and trigger an error message upon insertion
+FIX: when a new intervention is created from an object, a new $extrafields object is instantiated but not initialized
+FIX: "openall" filter on ticket list does not include read tickets
+FIX: ticket - extrafields of type 'date' are not saved
+FIX: ticket - the "openall" filter on the ticket list does not include tickets with status READ
+FIX: #14290 #15900
+FIX: #15388 #15891
+FIX: #15465 External user sees last 5 shipments to other customers in the dashboard
+FIX: #15629
+FIX: #15751 Miscellaneous payment type change to 0 after updating subledger account
+FIX: #15946
+FIX: #15966 #15967
+FIX: Accountancy - Fix some problems on CEGID export
+FIX: Accountancy - label_operation is used instead of label_compte
+FIX: Accountancy - Retire entire opening balance feature
+FIX: add autofix of count of email target when data is corrupted
+FIX: add categories params  on llxHeader filter
+FIX: Add critical price patch from 12 to 11.
+FIX: Bad cleaning of VAT rate when numbers are into code
+FIX: Bad dates filtering in the ticket list causes sql error
+FIX: balance starting and ending fiscal month #14197
+FIX: bom line unit display #13831
+FIX: cash fence for takepos with multientity
+FIX: Check of customer/vendor code fails in some cases
+FIX: create ticket : thirdparty/contact notification #15629
+FIX: Creation of thirdparty when setup is empty
+FIX: Dates of sales start in TakePOS
+FIX: dupliacete customer or supplier code must be error dipslayed with new code proposed
+FIX: Export FEC - Force Carriage Return Line Feed
+FIX: Facture Situation Out : status condition
+FIX: Filter on date of next generation on template invoices
+FIX: Fix detect dispatched product and set to received completely when the supplier order have services (support STOCK_SUPPORTS_SERVICES)
+FIX: Invoice Situation Out : status condition
+FIX: issue 15659 : Missing test if supplier conf is enabled
+FIX: link to create event when task is in a project with a thirdparty
+FIX: Localtax must be converted with price2num
+FIX: manage price min for PRODUIT_CUSTOMER_PRICES
+FIX: missing GETPOST parameters on card_presend.tpl.php
+FIX: missing socid into link to create event from project agenda tab
+FIX: Must delete extrafields before main table on product deletion.
+FIX: (path) htdocs removed
+FIX: php alert sms.php
+FIX: right to show VAT rate in product list
+FIX: select default mail template
+FIX: Timeout during import
+FIX: update order by api
+FIX: useless tracking number displayed on pdf if empty issue #14501
+FIX: Visible date of payment
+FIX: warning when adding a line if $remise_percent is an empty string
+FIX: When creating a new POS sell, the creation date must be modified.
+FIX: wrong name for search status param issue #15516
+
 ***** ChangeLog for 12.0.4 compared to 12.0.3 *****
 FIX: make formConfirm an addreplace-type hook
 FIX: regex to remove 'action' parameter: taking feedback from PR#15213 into account
