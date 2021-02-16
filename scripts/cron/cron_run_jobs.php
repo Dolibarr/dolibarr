@@ -125,7 +125,7 @@ if ($result < 0) {
 }
 $user->getrights();
 
-if (isset($argv[3]) || $argv[3]) {
+if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
 }
 
