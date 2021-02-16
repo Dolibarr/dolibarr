@@ -43,7 +43,11 @@ $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
 $confirm = GETPOST('confirm');
 $refund = GETPOST("refund", "int");
-$auto_create_payment = GETPOST("auto_create_paiement", "int");
+if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
+	$auto_create_payment = GETPOST("auto_create_paiement", "int");
+} else {
+	$auto_create_payment = empty($conf->global->CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT);
+}
 
 if (empty($refund)) $refund = 0;
 
@@ -384,17 +388,10 @@ if ($action == 'create')
 	if (!empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript" language="javascript">';
-        print '$(document).ready(function () {
-                $("#radiopayment").click(function() {
-                    $("#label").val($(this).data("label"));
-
-                });
-                $("#radiorefund").click(function() {
-                    $("#label").val($(this).data("label"));
-
-                });
-				$("#auto_create_paiement").click(function() {
-					if($(this).is(":checked")) {
+		print /** @lang JavaScript */'
+			$(document).ready(function () {
+				let onAutoCreatePaiementChange = function () {
+					if($("#auto_create_paiement").is(":checked")) {
 						$("#label_fk_account").addClass("fieldrequired");
 						$("#label_type_payment").addClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").show();
@@ -403,21 +400,21 @@ if ($action == 'create')
 						$("#label_type_payment").removeClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").hide();
 					}
-				});';
+				};
+				$("#radiopayment").click(function() {
+					$("#label").val($(this).data("label"));
+				});
+				$("#radiorefund").click(function() {
+					$("#label").val($(this).data("label"));
 
-		if($_REQUEST['action'] === 'add') { // form has been send but there is at least one error
-			if(empty($auto_create_payment)) {
-				print '$("#label_fk_account").removeClass("fieldrequired");
-					   $("#label_type_payment").removeClass("fieldrequired");
-					   $(".hide_if_no_auto_create_payment").hide();';
-			} else {
-				print '$("#label_fk_account").addClass("fieldrequired");
-					   $("#label_type_payment").addClass("fieldrequired");
-					   $(".hide_if_no_auto_create_payment").show();';
-			}
-		}
+				});
+				$("#auto_create_paiement").click(function () {
+					onAutoCreatePaiementChange();
+				});
+				onAutoCreatePaiementChange();
+			});
+			';
 
-        print '});';
 		print '</script>'."\n";
 	}
 
@@ -482,7 +479,7 @@ if ($action == 'create')
 
 	// Auto create payment
 	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
-	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" '.($_REQUEST['action'] === 'add' ? (empty($auto_create_payment) ? '' : 'checked="checked"') : 'checked="checked"').' value="1"></td></tr>'."\n";
+	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_payment) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";
 
 	// Number
 	print '<tr class="hide_if_no_auto_create_payment"><td>'.$langs->trans('Numero');
