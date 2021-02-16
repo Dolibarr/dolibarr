@@ -1059,9 +1059,9 @@ if ($mode == 'deploy') {
 		} else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
-			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
-			print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("DownloadPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
 		}
 
