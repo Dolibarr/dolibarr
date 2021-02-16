@@ -64,9 +64,10 @@ if ($action == 'getlastversion')
 
 $form = new Form($db);
 
+$help_url = '';
 $title = $langs->trans("InfoDolibarr");
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 print load_fiche_titre($title, '', 'title_setup');
 

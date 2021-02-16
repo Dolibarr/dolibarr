@@ -209,7 +209,8 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-llxHeader('', $langs->trans("ListOfSubscriptions"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $langs->trans("ListOfSubscriptions"), $help_url);
 
 $i = 0;
 

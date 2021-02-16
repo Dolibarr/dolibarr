@@ -61,7 +61,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
  * View
  */
 
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+
+llxHeader('', $langs->trans('Proposal'), $help_url);
 
 $form = new Form($db);
 
