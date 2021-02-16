@@ -76,16 +76,14 @@ if ($refresh===false) {
 		if (empty($q))
 		{
 			if (GETPOST("month", "int")) { $date_start=dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end=dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-			else
-			{
+			else {
 				$date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
 				if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
 				elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
 				elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 			}
 		}
-		else
-		{
+		else {
 			if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
 			if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
 			if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
@@ -418,7 +416,6 @@ if (!is_array($x_coll) || !is_array($x_paye))
                     if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
                         || ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
                     {
-
                     } else {
                         if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
                             $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
@@ -634,7 +631,6 @@ if (!is_array($x_coll) || !is_array($x_paye))
                 if ($modetax != 1) {
                     if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
                         || ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
-
                     } else {
                         if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
                             $ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
