@@ -1742,7 +1742,7 @@ YourCompanyDoesNotUseVAT=Your company has been defined to not use VAT (Home - Se
 AccountancyCode=Accounting Code
 AccountancyCodeSell=Sale account. code
 AccountancyCodeBuy=Purchase account. code
-CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=By default, leave the checkbox “Automatically create a total payment” empty when creating a new tax object
+CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=Keep the checkbox “Automatically create the payment” empty by default when creating a new tax
 ##### Agenda #####
 AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
