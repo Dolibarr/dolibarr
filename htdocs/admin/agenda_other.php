@@ -358,7 +358,7 @@ print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_EVENT_DEFAULT_STATUS").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
-$formactions->form_select_status_action('formaction', $conf->global->AGENDA_EVENT_DEFAULT_STATUS, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
+$formactions->form_select_status_action('agenda', $conf->global->AGENDA_EVENT_DEFAULT_STATUS, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_TYPE
