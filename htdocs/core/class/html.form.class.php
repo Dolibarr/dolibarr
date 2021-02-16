@@ -4365,14 +4365,11 @@ class Form
 					$moreattr = (!empty($input['moreattr']) ? ' '.$input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 
-					if ($input['type'] == 'text')
-					{
+					if ($input['type'] == 'text') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
-					} elseif ($input['type'] == 'password')
-					{
+					} elseif ($input['type'] == 'password')	{
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
-					} elseif ($input['type'] == 'select')
-					{
+					} elseif ($input['type'] == 'select') {
 						if (empty($morecss)) {
 							$morecss = 'minwidth100';
 						}
@@ -4380,8 +4377,7 @@ class Form
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd left">';
 						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
 						$more .= '</div></div>'."\n";
-					} elseif ($input['type'] == 'checkbox')
-					{
+					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
@@ -4390,8 +4386,7 @@ class Form
 						if (isset($input['disabled'])) $more .= ' disabled';
 						$more .= ' /></div>';
 						$more .= '</div>'."\n";
-					} elseif ($input['type'] == 'radio')
-					{
+					} elseif ($input['type'] == 'radio') {
 						$i = 0;
 						foreach ($input['values'] as $selkey => $selval)
 						{
@@ -4406,8 +4401,7 @@ class Form
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
-					} elseif ($input['type'] == 'date')
-					{
+					} elseif ($input['type'] == 'date') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div>';
 						$more .= '<div class="tagtd">';
 						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
@@ -4417,17 +4411,17 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other')
-					{
+					} elseif ($input['type'] == 'other') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd">';
 						$more .= $input['value'];
 						$more .= '</div></div>'."\n";
-					} elseif ($input['type'] == 'onecolumn')
-					{
+					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['value'];
 						$moreonecolumn .= '</div>'."\n";
+					} elseif ($input['type'] == 'hidden') {
+						// Do nothing more, already added by a previous loop
 					} else {
 						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}

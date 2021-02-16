@@ -8206,7 +8206,7 @@ function showDirectDownloadLink($object)
 
 	if ($url)
 	{
-		$out .= img_picto('', 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
 		$out .= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
 		$out .= ajax_autoselect("directdownloadlink", 0);
 	}
