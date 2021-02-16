@@ -610,11 +610,12 @@ if (!is_array($x_coll) || !is_array($x_paye))
 
         if (is_array($x_both[$rate]['paye']['detail']))
         {
-            print "<tr>";
-            print '<td class="tax_rate">';
-            print '<a href="' . dol_buildpath('/compta/tva/quadri_detail.php', 1) . '?invoice_type=supplier&amp;vat_rate_show=' . $rate . '&amp;year=' . $year_start . '&amp;month=' . $month_start . '" title="' . $langs->trans('VATReportShowByRateDetails') . '">' . $langs->trans('Rate') . ' : ' . vatrate($rate) . '%' . '</a>';
-            print '</td><td colspan="' . ($span+1) . '"></td>';
-            print '</tr>'."\n";
+			print "<tr>";
+			print '<td class="tax_rate" colspan="' . ($span+1) . '">';
+			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
+			print ' - <a href="' . dol_buildpath('/compta/tva/quadri_detail.php', 1) . '?invoice_type=supplier&amp;vat_rate_show=' . $rate . '&amp;year=' . $year_start . '&amp;month=' . $month_start . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
+			print '</td>';
+			print '</tr>'."\n";
 
 			foreach ($x_both[$rate]['paye']['detail'] as $index=>$fields) {
 				// Define type
