@@ -2104,3 +2104,4 @@ AskThisIDToYourBank=Contact your bank to get this ID
 AdvancedModeOnly=Permision available in Advanced permission mode only
 ConfFileIsReadableOrWritableByAnyUsers=The conf file is reabable or writable by any users. Give permission to web server user and group only.
 MailToSendEventOrganization=Event Organization
+AGENDA_EVENT_DEFAULT_STATUS=Default event status when event created manually

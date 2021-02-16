@@ -84,6 +84,7 @@ if ($action == 'set')
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'AGENDA_EVENT_DEFAULT_STATUS', GETPOST('AGENDA_EVENT_DEFAULT_STATUS'), 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'specimen')  // For orders
 {
 	$modele = GETPOST('module', 'alpha');
@@ -352,6 +353,13 @@ if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	$formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
 	print '</td></tr>'."\n";
 }
+// AGENDA_EVENT_DEFAULT_STATUS
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans("AGENDA_EVENT_DEFAULT_STATUS").'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right nowrap">'."\n";
+$formactions->form_select_status_action('formaction', $conf->global->AGENDA_EVENT_DEFAULT_STATUS, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
+print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_TYPE
 print '<tr class="oddeven">'."\n";

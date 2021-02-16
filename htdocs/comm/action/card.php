@@ -1050,12 +1050,12 @@ if ($action == 'create')
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
-	$percent = -1;
 	if (GETPOSTISSET('status')) $percent = GETPOST('status');
 	elseif (GETPOSTISSET('percentage')) $percent = GETPOST('percentage');
 	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
+		elseif ($conf->global->AGENDA_EVENT_DEFAULT_STATUS!=='na') $percent = $conf->global->AGENDA_EVENT_DEFAULT_STATUS;
 	}
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
