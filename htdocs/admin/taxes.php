@@ -257,6 +257,18 @@ else
 
 print "<br>\n";
 
+// Options
+echo '<table class="noborder centpercent">';
+echo '<thead>';
+echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '</thead>';
+echo '<tbody>';
+
+$key = 'CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT';
+echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
+
+echo '</tbody>';
+echo '</table>';
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button">';
