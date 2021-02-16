@@ -75,16 +75,18 @@ $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
 $journal_label = $accountingjournalstatic->label;
 
-$year_current = strftime("%Y", dol_now());
-$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonthyear = $year_current;
-if ($pastmonth == 0) {
-	$pastmonth = 12;
-	$pastmonthyear--;
-}
-
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+
+if (empty($date_startmonth) || empty($date_endmonth))
+{
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
+	$date_start = $dates['date_start'];
+	$date_end = $dates['date_end'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
@@ -111,6 +113,10 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already')
 {
@@ -152,8 +158,9 @@ if ($result) {
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
 				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : 'NotDefined';
-			else
+			else {
 				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : 'NotDefined';
+			}
 		}
 
 		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
@@ -226,8 +233,7 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		{
 			$errorforinvoice[$key] = 'somelinesarenotbound';
 		}
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 //var_dump($errorforinvoice);exit;
 
@@ -316,7 +322,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->debit = ($mt <= 0) ? -$mt : 0;
 				$bookkeeping->credit = ($mt > 0) ? $mt : 0;
 				$bookkeeping->code_journal = $journal;
-				$bookkeeping->journal_label = $journal_label;
+				$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 				$bookkeeping->fk_user_author = $user->id;
 				$bookkeeping->entity = $conf->entity;
 
@@ -331,9 +337,7 @@ if ($action == 'writebookkeeping') {
 						$errorforline++;
 						$errorforinvoice[$key] = 'alreadyjournalized';
 						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-					}
-					else
-					{
+					} else {
 						$error++;
 						$errorforline++;
 						$errorforinvoice[$key] = 'other';
@@ -368,7 +372,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->entity = $conf->entity;
 
@@ -383,9 +387,7 @@ if ($action == 'writebookkeeping') {
 							$errorforline++;
 							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-						}
-						else
-						{
+						} else {
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'other';
@@ -431,7 +433,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 						$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->entity = $conf->entity;
 
@@ -446,9 +448,7 @@ if ($action == 'writebookkeeping') {
 								$errorforline++;
 								$errorforinvoice[$key] = 'alreadyjournalized';
 								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-							}
-							else
-							{
+							} else {
 								$error++;
 								$errorforline++;
 								$errorforinvoice[$key] = 'other';
@@ -484,7 +484,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
 					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->entity = $conf->entity;
 
@@ -499,9 +499,7 @@ if ($action == 'writebookkeeping') {
 							$errorforline++;
 							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-						}
-						else
-						{
+						} else {
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'other';
@@ -524,9 +522,7 @@ if ($action == 'writebookkeeping') {
 		if (!$errorforline)
 		{
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 
 			if ($error >= 10)
@@ -541,13 +537,10 @@ if ($action == 'writebookkeeping') {
 
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
-	}
-	elseif (count($tabpay) == $error)
+	} elseif (count($tabpay) == $error)
 	{
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 
@@ -676,7 +669,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 					print '""'.$sep;
-					print '"'.$langs->trans("VAT").' - '.$def_tva[$key].'"'.$sep;
+					print '"'.$langs->trans("VAT").' - '.join(', ', $def_tva[$key][$k]).' %"'.$sep;
 					print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$val["refsuppliersologest"].' - '.$langs->trans("VAT").join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '').'"'.$sep;
 					print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 					print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
@@ -726,8 +719,8 @@ if (empty($action) || $action == 'view') {
 	}
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
-    $period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
-    $period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
+	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal='.$id_journal;
 
@@ -743,8 +736,7 @@ if (empty($action) || $action == 'view') {
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	if (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
-	}
-	else {
+	} else {
 		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
 		else print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
 	}
@@ -871,8 +863,7 @@ if (empty($action) || $action == 'view') {
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
-			}
-			else print $accountoshow;
+			} else print $accountoshow;
 			print '</td>';
 			// Subledger account
 			print "<td>";
@@ -880,8 +871,7 @@ if (empty($action) || $action == 'view') {
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			}
-			else print $accountoshow;
+			} else print $accountoshow;
 			print '</td>';
 			print "<td>".$companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("SubledgerAccount")."</td>";
 			print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
@@ -904,8 +894,7 @@ if (empty($action) || $action == 'view') {
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("ProductAccountNotDefined").'</span>';
-			}
-			else print $accountoshow;
+			} else print $accountoshow;
 			print "</td>";
 			// Subledger account
 			print "<td>";
@@ -937,8 +926,7 @@ if (empty($action) || $action == 'view') {
 					if (($accountoshow == "") || $accountoshow == 'NotDefined')
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')</span>';
-					}
-					else print $accountoshow;
+					} else print $accountoshow;
 					print "</td>";
 					// Subledger account
 					print "<td>";
@@ -968,8 +956,7 @@ if (empty($action) || $action == 'view') {
 					if ($accountoshow == '' || $accountoshow == 'NotDefined')
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account</span>';
-					}
-					else print $accountoshow;
+					} else print $accountoshow;
 					print '</td>';
 					// Subledger account
 					print "<td>";

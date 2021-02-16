@@ -27,29 +27,29 @@
  */
 class FormIntervention
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 
-    /**
-     * Constructor
-     *
-     * @param		DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -62,7 +62,7 @@ class FormIntervention
 	 */
 	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $db, $user, $conf, $langs;
 
 		$out = '';
@@ -80,32 +80,28 @@ class FormIntervention
 		}
 
 		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$out .= '<select id="interventionid" class="flat" name="'.$htmlname.'">';
 			if ($showempty) $out .= '<option value="0">&nbsp;</option>';
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				while ($i < $num)
 				{
-					$obj = $db->fetch_object($resql);
+					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
 					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire)
 					{
 						// Do nothing
-					}
-					else
-					{
+					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
-						}
-						else
-						{
+						} else {
 							$disabled = 0;
 							if (!$obj->fk_statut > 0)
 							{
@@ -121,9 +117,7 @@ class FormIntervention
 							if ($hideunselectables && $disabled)
 							{
 								$resultat = '';
-							}
-							else
-							{
+							} else {
 								$resultat = '<option value="'.$obj->rowid.'"';
 								if ($disabled) $resultat .= ' disabled';
 								$resultat .= '>'.$labeltoshow;
@@ -136,12 +130,10 @@ class FormIntervention
 				}
 			}
 			$out .= '</select>';
-			$db->free($resql);
+			$this->db->free($resql);
 			return $out;
-		}
-		else
-		{
-			dol_print_error($db);
+		} else {
+			dol_print_error($this->db);
 			return '';
 		}
 	}

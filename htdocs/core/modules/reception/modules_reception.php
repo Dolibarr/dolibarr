@@ -29,16 +29,16 @@
  */
 abstract class ModelePdfReception extends CommonDocGenerator
 {
-    public $error = '';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -46,12 +46,12 @@ abstract class ModelePdfReception extends CommonDocGenerator
 		global $conf;
 
 		$type = 'reception';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -61,7 +61,7 @@ abstract class ModelePdfReception extends CommonDocGenerator
  */
 abstract class ModelNumRefReception
 {
-    public $error = '';
+	public $error = '';
 
 	/** Return if a model can be used or not
 	 *

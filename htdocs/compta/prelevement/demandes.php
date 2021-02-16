@@ -40,14 +40,14 @@ $status = GETPOST('status', 'int');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $type = GETPOST('type', 'aZ09');
 
 $search_facture = GETPOST('search_facture', 'alpha');
-$search_societe = trim(GETPOST('search_societe', 'alpha'));
+$search_societe = GETPOST('search_societe', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -89,15 +89,13 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 if ($type != 'bank-transfer') {
-	if (!$status)
-	{
+	if (!$status) {
 		$title = $langs->trans("RequestStandingOrderToTreat");
 	} else {
 		$title = $langs->trans("RequestStandingOrderTreated");
 	}
 } else {
-	if (!$status)
-	{
+	if (!$status) {
 		$title = $langs->trans("RequestPaymentsByBankTransferToTreat");
 	} else {
 		$title = $langs->trans("RequestPaymentsByBankTransferTreated");

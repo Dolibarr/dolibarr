@@ -16,7 +16,7 @@ WEBSITE_ROBOT=Roboterdatei (robots.txt)
 WEBSITE_HTACCESS=Website  .htaccess Datei 
 WEBSITE_MANIFEST_JSON=Website manifest.json Datei 
 WEBSITE_README=Datei README.md
-WEBSITE_KEYWORDSDesc=Use a comma to separate values
+WEBSITE_KEYWORDSDesc=Verwenden Sie ein Komma, um Werte zu trennen
 EnterHereLicenseInformation=Geben Sie hier Metadaten oder Lizenzinformationen ein, um eine README.md-Datei zu füllen. Wenn Sie Ihre Website als Vorlage verteilen, wird die Datei in die Vorlage aufgenommen.
 HtmlHeaderPage=HTML Header (Nur für diese Seite)
 PageNameAliasHelp=Name oder Alias der Seite. <br>Dieser Alias wird auch zum erstellen einer SEO URL verwendet, wenn die Webseite auf einem Virtuellen Webserver läuft. Verwenden Sie der Button "<strong>%s</strong>" um den Alias zu ändern.
@@ -30,8 +30,7 @@ EditInLine=Direktes bearbeiten
 AddWebsite=Website hinzufügen
 Webpage=Webseite / Container
 AddPage=Seite / Container hinzufügen
-HomePage=Startseite
-PageContainer=Seite / Container
+PageContainer=Seite
 PreviewOfSiteNotYetAvailable=Vorschau ihrer Webseite <strong>%s</strong> noch nicht verfügbar. Zuerst muss eine '<strong>Webseiten-Vorlage importiert</strong>' oder '<strong>Seite / Container hinzugefügt</strong>' werden.
 RequestedPageHasNoContentYet=Die Seite mit id %s hat keinen Inhalt oder die Cachedatei .tpl.php wurde gelöscht. Editieren Sie den Inhalt der Seite um das Problem zu lösen.
 SiteDeleted=Website '%s' gelöscht
@@ -58,10 +57,10 @@ NoPageYet=Noch keine Seiten
 YouCanCreatePageOrImportTemplate=Sie können eine neue Seite erstellen oder eine komplette Website-Vorlage importieren
 SyntaxHelp=Hilfe zu bestimmten Syntaxtipps
 YouCanEditHtmlSourceckeditor=Sie können den HTML-Quellcode über die Schaltfläche "Quelle" im Editor bearbeiten.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br> <span class="fa fa-bug"> </span> Sie können PHP-Code mit den Tags <strong>&lt;?php ?&gt;</strong> in diese Quelle einfügen. Die folgenden globalen Variablen sind verfügbar: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $ pagelangs. <br><br> <span class="fa fa-bug"> </span> Mit der folgenden Syntax können Sie auch den Inhalt einer anderen Seite/eines anderen Containers einschließen: <br> <strong> &lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong> <br> <br> <span class="fa fa-bug"></span> Mit der folgenden Syntax können Sie eine Umleitung auf eine andere Seite/einen anderen Container machen (Anmerkung: keinen Inhalt vor einer Umleitung ausgeben): <br> <strong>&lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ?</strong> <br><br><span class="fa fa-link"></span> Um einen Link zu einer anderen Seite hinzuzufügen, benutzen Sie die Syntax:<br> <strong>&lt;a href="alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br><br>  <span class="fa fa-download"> </span> Um einen <strong> Link zum Download </strong> hinzuzufügen, der eine Datei in das Verzeichnis <strong>Dokumente</strong> speichert, nutzen Sie den <strong>document.php</strong>wrapper:<br> Beispiel für eine Datei in Dokumente / ecm (muss aufgezeichnet werden), ist die Syntax: <br> <strong> &lt;a href = "/document.php modulepart = ecm & file = [relative_dir/]filename.ext "&gt; </strong> <br> Für eine Datei in Dokumente / Medien (offenes Verzeichnis für den öffentlichen Zugriff) lautet die Syntax: <br> <strong> &lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br> Für eine mit einem Freigabelink freigegebene Datei ( offener Zugang unter Nutzung des sharing hash key der Datei), lautet die Syntax:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br> <span class="fa fa-picture-o"> </span> Um ein  <strong>Bild </strong> in das <strong>Dokumente </strong> Verzeichnis zu speichern, verwenden Sie die  <strong>viewimage.php</strong>  Wrapper:<br>  Beispiel für ein Bild in Dokumente / Medien (offen Verzeichnis für den Zugang der Öffentlichkeit), Syntax:<br><strong>&lt;img src = "/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource2=Für Bilder, die über einen Link geteilt werden (öffentlicher Zugriff über den geteilten Hash-Schlüssel der Datei) gilt folgende Syntax:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>Weitere Beispiele von HTML- oder dynamischem Code ist in <a href="%s" target="_blank">der Wiki-Dokumentaion</a> verfügbar.<br>
 ClonePage=Seite / Container klonen
 CloneSite=Website klonen
 SiteAdded=Website hinzugefügt 
@@ -101,7 +100,7 @@ EmptyPage=Leere Seite
 ExternalURLMustStartWithHttp=Externe URL muss mit http:// oder https:// beginnen
 ZipOfWebsitePackageToImport=Laden Sie die Zip-Datei der Websseiten-Vorlage hoch
 ZipOfWebsitePackageToLoad=oder wählen Sie eine verfügbare eingebettete Webseiten-Vorlage
-ShowSubcontainers=Dynamische Inhalte einfügen
+ShowSubcontainers=Dynamischen Inhalt anzeigen
 InternalURLOfPage=Interne URL der Seite
 ThisPageIsTranslationOf=Diese Seite/Container ist eine Übersetzung von
 ThisPageHasTranslationPages=Es existieren Übersetzungen dieser Seite/Containers
@@ -124,7 +123,7 @@ ShowSubContainersOnOff=Ausführungs-Modus für 'dynamischen Inhalt' ist %s
 GlobalCSSorJS=Globale CSS / JS / Header-Datei der Website
 BackToHomePage=Zurück zur Startseite...
 TranslationLinks=Übersetzungslinks
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
+YouTryToAccessToAFileThatIsNotAWebsitePage=Sie versuchen, eine Seite aufzurufen, welche nicht vorhanden ist.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Verwende für gute SEO-Ergebnisse einen Text zwischen 5 und 70 Zeichen
 MainLanguage=Hauptsprache
 OtherLanguages=Andere Sprachen
@@ -134,4 +133,7 @@ AvailableLanguagesAreDefinedIntoWebsiteProperties=Verfügbare Sprachen werden in
 ReplacementDoneInXPages=Ersetzt in %s Seiten oder Containern 
 RSSFeed=RSS Feed
 RSSFeedDesc=Über diese URL können Sie einen RSS-Feed mit den neuesten Artikeln vom Typ "Blogpost" abrufen
-PagesRegenerated=%s page(s)/container(s) regenerated
+PagesRegenerated=%s Seite(n) / Container neu generiert
+RegenerateWebsiteContent=Generieren Sie Website-Cache-Dateien neu
+AllowedInFrames=In Frames erlaubt
+DefineListOfAltLanguagesInWebsiteProperties=Definiere eine Liste aller verfügbaren Sprachen in den Website-Eigenschaften.

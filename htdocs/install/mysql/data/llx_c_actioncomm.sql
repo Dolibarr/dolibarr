@@ -30,12 +30,13 @@
 -- Types action comm
 --
 
-delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,10,30,31,40,50);
+delete from llx_c_actioncomm where id in (1,2,3,4,5,6,8,9,10,11,30,31,40,50);
 -- Code used from 3.3+ when type of event is used
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 1,'AC_TEL','system','Phone call',NULL, 1, 2);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 2,'AC_FAX','system','Send Fax',NULL, 1, 3);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 4,'AC_EMAIL','system','Send Email',NULL, 1, 4);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 5,'AC_RDV','system','Rendez-vous',NULL, 1, 1);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 -- Code kept for backward compatibility < 3.3 
 --insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 3,'AC_PROP','systemauto', 'Send commercial proposal by email','propal',0,10);

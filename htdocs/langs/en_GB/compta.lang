@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - compta
 CheckReceipt=Cheque deposit
 CheckReceiptShort=Cheque deposit
+LastCheckReceiptShort=Last %s cheque receipts
 NewCheckDeposit=New cheque deposit
 NewCheckDepositOn=Create receipt for deposit to account: %s
 NoWaitingChecks=No cheques awaiting deposit.
 DateChequeReceived=Cheque reception date
+NbOfCheques=No. of cheques

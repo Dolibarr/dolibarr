@@ -87,7 +87,7 @@ class AssetType extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -100,8 +100,8 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-    public function create($user, $notrigger = 0)
-    {
+	public function create($user, $notrigger = 0)
+	{
 		global $conf;
 
 		$error = 0;
@@ -154,21 +154,17 @@ class AssetType extends CommonObject
 			{
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *  Met a jour en base donnees du type
@@ -177,7 +173,7 @@ class AssetType extends CommonObject
 	 *  @param	int			$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int							>0 if OK, < 0 if KO
 	 */
-    public function update($user, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $conf, $hookmanager;
 
@@ -223,16 +219,12 @@ class AssetType extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -263,9 +255,7 @@ class AssetType extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -303,15 +293,13 @@ class AssetType extends CommonObject
 			}
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of asset's type
 	 *
@@ -319,7 +307,7 @@ class AssetType extends CommonObject
 	 */
 	public function liste_array()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		$assettypes = array();
@@ -344,9 +332,7 @@ class AssetType extends CommonObject
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 		return $assettypes;
@@ -390,8 +376,7 @@ class AssetType extends CommonObject
 							$assetstatic->fetch($obj->rowid);
 						}
 						$ret[$obj->rowid] = $assetstatic;
-					}
-					else $ret[$obj->rowid] = $obj->rowid;
+					} else $ret[$obj->rowid] = $obj->rowid;
 				}
 			}
 
@@ -400,9 +385,7 @@ class AssetType extends CommonObject
 			$this->asset = $ret;
 
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -441,8 +424,8 @@ class AssetType extends CommonObject
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
-    {
+	public function initAsSpecimen()
+	{
 		global $conf, $user, $langs;
 
 		// Initialize parameters
@@ -457,15 +440,15 @@ class AssetType extends CommonObject
 		$this->asset = array(
 			$user->id => $user
 		);
-    }
+	}
 
-    /**
-     *     getLibStatut
-     *
-     *     @return string     Return status of a type of asset
-     */
-    public function getLibStatut()
-    {
-        return '';
-    }
+	/**
+	 *     getLibStatut
+	 *
+	 *     @return string     Return status of a type of asset
+	 */
+	public function getLibStatut()
+	{
+		return '';
+	}
 }

@@ -83,36 +83,36 @@ llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref))
 {
-    /*
+	/*
      * Affichage onglets
      */
-    if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 
-    $head = product_prepare_head($object);
-    $titre = $langs->trans("CardProduct".$object->type);
-    $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+	$head = product_prepare_head($object);
+	$titre = $langs->trans("CardProduct".$object->type);
+	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-    dol_fiche_head($head, 'note', $titre, -1, $picto);
+	print dol_get_fiche_head($head, 'note', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-    $object->next_prev_filter = " fk_product_type = ".$object->type;
+	$object->next_prev_filter = " fk_product_type = ".$object->type;
 
-    $shownav = 1;
-    if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	$shownav = 1;
+	if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-    $cssclass = 'titlefield';
-    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
-    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+	$cssclass = 'titlefield';
+	//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+	//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
 
-    //print '<div class="fichecenter">';
+	//print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
@@ -59,14 +60,14 @@ $id = GETPOST('id', 'int');
 // If we are on the view of a specific user
 if ($id > 0)
 {
-    $canread = 0;
-    if ($id == $user->id) $canread = 1;
-    if (!empty($user->rights->expensereport->readall)) $canread = 1;
-    if (!empty($user->rights->expensereport->lire) && in_array($id, $childids)) $canread = 1;
-    if (!$canread)
-    {
-        accessforbidden();
-    }
+	$canread = 0;
+	if ($id == $user->id) $canread = 1;
+	if (!empty($user->rights->expensereport->readall)) $canread = 1;
+	if (!empty($user->rights->expensereport->lire) && in_array($id, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
 }
 
 $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.$user->id;
@@ -74,8 +75,8 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -116,37 +117,30 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'd.ref'=>'Ref',
-    'd.note_public'=>"NotePublic",
-    'u.lastname'=>'Lastname',
-    'u.firstname'=>"Firstname",
-    'u.login'=>"Login",
+	'd.ref'=>'Ref',
+	'd.note_public'=>"NotePublic",
+	'u.lastname'=>'Lastname',
+	'u.firstname'=>"Firstname",
+	'u.login'=>"Login",
 );
 if (empty($user->socid)) $fieldstosearchall["d.note_private"] = "NotePrivate";
 
 $arrayfields = array(
-    'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'user'=>array('label'=>$langs->trans("User"), 'checked'=>1),
-    'd.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1),
-    'd.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1),
-    'd.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
-    'd.date_approve'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1),
-    'd.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-    'd.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
-    'd.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-    'd.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-    'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-    'd.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+	'user'=>array('label'=>$langs->trans("User"), 'checked'=>1),
+	'd.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1),
+	'd.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1),
+	'd.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
+	'd.date_approve'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1),
+	'd.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
+	'd.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
+	'd.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
+	'd.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'd.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
 
@@ -172,19 +166,19 @@ if (empty($reshook))
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
-	    $search_ref = "";
-	    $search_user = "";
-	    $search_amount_ht = "";
-	    $search_amount_vat = "";
-	    $search_amount_ttc = "";
-	    $search_status = "";
-	    $month_start = "";
-	    $year_start = "";
-	    $month_end = "";
-	    $year_end = "";
-	    $day_end = "";
-	    $toselect = '';
-	    $search_array_options = array();
+		$search_ref = "";
+		$search_user = "";
+		$search_amount_ht = "";
+		$search_amount_vat = "";
+		$search_amount_ttc = "";
+		$search_status = "";
+		$month_start = "";
+		$year_start = "";
+		$month_end = "";
+		$year_end = "";
+		$day_end = "";
+		$toselect = '';
+		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
@@ -193,57 +187,12 @@ if (empty($reshook))
 	}
 
 	// Mass actions
-    $objectclass = 'ExpenseReport';
-    $objectlabel = 'ExpenseReport';
-    $permissiontoread = $user->rights->expensereport->lire;
-    $permissiontodelete = $user->rights->expensereport->supprimer;
-    $uploaddir = $conf->expensereport->dir_output;
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-
-    if ($action == 'update' && !$cancel)
-    {
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-    	if ($canedituser)    // Case we can edit all field
-    	{
-    		$error = 0;
-
-    		if (!$error)
-    		{
-    			$objectuser->fetch($id);
-
-    			$objectuser->oldcopy = clone $objectuser;
-
-    			$db->begin();
-
-    			$objectuser->default_range = GETPOST('default_range');
-    			$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
-
-    			if (!$error) {
-    				$ret = $objectuser->update($user);
-    				if ($ret < 0) {
-    					$error++;
-    					if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-    						$langs->load("errors");
-    						setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
-    					}
-    					else
-    					{
-    						setEventMessages($objectuser->error, $objectuser->errors, 'errors');
-    					}
-    				}
-    			}
-
-    			if (!$error && !count($objectuser->errors)) {
-    				setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-    				$db->commit();
-    			}
-    			else {
-    				$db->rollback();
-    			}
-    		}
-    	}
-    }
+	$objectclass = 'ExpenseReport';
+	$objectlabel = 'ExpenseReport';
+	$permissiontoread = $user->rights->expensereport->lire;
+	$permissiontodelete = $user->rights->expensereport->supprimer;
+	$uploaddir = $conf->expensereport->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -254,6 +203,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formexpensereport = new FormExpenseReport($db);
 
 $fuser = new User($db);
 
@@ -305,10 +255,10 @@ if ($search_amount_ttc != '') $sql .= natural_search('d.total_ttc', $search_amou
 // User
 if ($search_user != '' && $search_user >= 0) $sql .= " AND u.rowid = '".$db->escape($search_user)."'";
 // Status
-if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+if ($search_status != '' && $search_status >= 0) $sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-    && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
+	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
 	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
@@ -325,13 +275,13 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -345,7 +295,7 @@ if ($resql)
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sall)					$param .= "&sall=".urlencode($sall);
 	if ($search_ref)			$param .= "&search_ref=".urlencode($search_ref);
@@ -360,8 +310,8 @@ if ($resql)
 	// List of mass actions available
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	    'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'builddoc'=>$langs->trans("PDFMerge"),
+		'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->expensereport->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
@@ -369,12 +319,12 @@ if ($resql)
 
 	// Lines of title fields
 	print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="'.($action == 'edit' ? 'update' : 'list').'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
@@ -384,67 +334,15 @@ if ($resql)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
-		dol_fiche_head($head, 'expensereport', $title, -1, 'user');
+		print dol_get_fiche_head($head, 'expensereport', $title, -1, 'user');
 
 		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-
-		if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-		{
-			print '<table class="border centpercent">';
-
-			if ($action == 'edit')
-			{
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td>';
-				print $form->selectExpenseCategories($fuser->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($fuser->default_c_exp_tax_cat);
-				print $form->selectarray('default_range', range(0, $maxRangeNum), $fuser->default_range);
-				print '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td class="titlefield">'.$langs->trans("DefaultCategoryCar").'</td>';
-				print '<td class="fk_c_exp_tax_cat">';
-				print dol_getIdFromCode($db, $fuser->default_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
-				print '</td></tr>';
-
-				print '<tr><td>'.$langs->trans("DefaultRangeNumber").'</td>';
-				print '<td>';
-				print $fuser->default_range;
-				print '</td></tr>';
-			}
-
-			print '</table>';
-		}
-
-		print '</div>';
-
-		/*if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
-		{
-			print '<div class="underbanner clearboth"></div>';
-
-			print '<br>';
-
-			showMyBalance($holiday, $user_id);
-		}*/
-
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action != 'edit')
 		{
 			print '<div class="tabsAction">';
-
-			if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$user_id.'" class="butAction">'.$langs->trans("Modify").'</a>';
-			}
 
 			$childids = $user->getAllChildIds(1);
 
@@ -452,29 +350,24 @@ if ($resql)
 				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
 			// Buttons for actions
-			if ($canedit)
-			{
+			if ($canedit) {
 				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
+			} else {
+				print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotEnoughPermission").'">'.$langs->trans("AddTrip").'</a>';
 			}
 
 			print '</div>';
-		}
-		else
-		{
+		} else {
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print '</div><br>';
 		}
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans("ListTripsAndExpenses");
 
-		$newcardbutton = '';
-		if ($user->rights->expensereport->creer)
-		{
-            $newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expensereport/card.php?action=create');
-		}
+		$url = DOL_URL_ROOT.'/expensereport/card.php?action=create';
+		if (!empty($socid)) $url .= '&socid='.$socid;
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
@@ -486,10 +379,10 @@ if ($resql)
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
-    {
-        foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
-    }
+	{
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+	}
 
 	$moreforfilter = '';
 
@@ -500,90 +393,90 @@ if ($resql)
 
 	if (!empty($moreforfilter))
 	{
-	    print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	    print $moreforfilter;
-	    print '</div>';
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+		print $moreforfilter;
+		print '</div>';
 	}
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-    print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Filters
 	print '<tr class="liste_titre_filter">';
 	if (!empty($arrayfields['d.ref']['checked']))
 	{
-    	print '<td class="liste_titre" align="left">';
-    	print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
-        print '</td>';
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" size="15" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '</td>';
 	}
 	// User
 	if (!empty($arrayfields['user']['checked']))
 	{
-        if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous)
-    	{
-    		print '<td class="liste_titre maxwidthonspartphone" align="left">';
-    		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
-    		print '</td>';
-    	} else {
-    		print '<td class="liste_titre">&nbsp;</td>';
-    	}
+		if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous)
+		{
+			print '<td class="liste_titre maxwidthonspartphone" align="left">';
+			print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+			print '</td>';
+		} else {
+			print '<td class="liste_titre">&nbsp;</td>';
+		}
 	}
 	// Date start
 	if (!empty($arrayfields['d.date_debut']['checked']))
 	{
-    	print '<td class="liste_titre" align="center">';
-        if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-            print '<input class="flat width25" type="text" maxlength="2" name="day_start" value="'.dol_escape_htmltag($day_start).'">';
-        }
+		print '<td class="liste_titre" align="center">';
+		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+			print '<input class="flat width25" type="text" maxlength="2" name="day_start" value="'.dol_escape_htmltag($day_start).'">';
+		}
 
-    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
-    	$formother->select_year($year_start, 'year_start', 1, $min_year, $max_year);
-    	print '</td>';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+		$formother->select_year($year_start, 'year_start', 1, $min_year, $max_year);
+		print '</td>';
 	}
 	// Date end
 	if (!empty($arrayfields['d.date_fin']['checked']))
 	{
-    	print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre" align="center">';
 		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 			print '<input class="flat width25" type="text" maxlength="2" name="day_end" value="'.dol_escape_htmltag($day_end).'">';
 		}
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-    	$formother->select_year($year_end, 'year_end', 1, $min_year, $max_year);
-    	print '</td>';
-    }
+		$formother->select_year($year_end, 'year_end', 1, $min_year, $max_year);
+		print '</td>';
+	}
 	// Date valid
 	if (!empty($arrayfields['d.date_valid']['checked']))
 	{
-    	print '<td class="liste_titre" align="center">';
-    	//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-    	//$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
-    	print '</td>';
-    }
+		print '<td class="liste_titre" align="center">';
+		//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+		//$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
+		print '</td>';
+	}
 	// Date approve
 	if (!empty($arrayfields['d.date_approve']['checked']))
 	{
-    	print '<td class="liste_titre" align="center">';
-    	//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-    	//$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
-    	print '</td>';
-    }
-    // Amount with no tax
+		print '<td class="liste_titre" align="center">';
+		//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+		//$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
+		print '</td>';
+	}
+	// Amount with no tax
 	if (!empty($arrayfields['d.total_ht']['checked']))
 	{
-    	print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
+		print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
 	}
 	if (!empty($arrayfields['d.total_vat']['checked']))
 	{
-	    print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_vat" value="'.$search_amount_vat.'"></td>';
+		print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_vat" value="'.$search_amount_vat.'"></td>';
 	}
 	// Amount with all taxes
 	if (!empty($arrayfields['d.total_ttc']['checked']))
 	{
-	    print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
+		print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -595,21 +488,21 @@ if ($resql)
 	// Date creation
 	if (!empty($arrayfields['d.date_create']['checked']))
 	{
-	    print '<td class="liste_titre">';
-	    print '</td>';
+		print '<td class="liste_titre">';
+		print '</td>';
 	}
 	// Date modification
 	if (!empty($arrayfields['d.tms']['checked']))
 	{
-	    print '<td class="liste_titre">';
-	    print '</td>';
+		print '<td class="liste_titre">';
+		print '</td>';
 	}
 	// Status
 	if (!empty($arrayfields['d.fk_statut']['checked']))
 	{
-    	print '<td class="liste_titre right">';
-    	select_expensereport_statut($search_status, 'search_status', 1, 1);
-    	print '</td>';
+		print '<td class="liste_titre right">';
+		$formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1);
+		print '</td>';
 	}
 	// Action column
 	print '<td class="liste_titre maxwidthsearch">';
@@ -650,9 +543,9 @@ if ($resql)
 
 	if ($num > 0)
 	{
-        $i = 0;
-    	$totalarray = array();
- 	    while ($i < min($num, $limit))
+		$i = 0;
+		$totalarray = array();
+ 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
 
@@ -672,130 +565,130 @@ if ($resql)
 			print '<tr class="oddeven">';
 			// Ref
 			if (!empty($arrayfields['d.ref']['checked'])) {
-    			print '<td>';
-                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-                print '<td class="nobordernopadding nowrap">';
-    			print $expensereportstatic->getNomUrl(1);
-    			print '</td>';
-    			// Warning late icon and note
-        		print '<td class="nobordernopadding nowrap">';
-    			if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));
-    			if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) print img_warning($langs->trans("Late"));
-    			if (!empty($obj->note_private) || !empty($obj->note_public))
-    			{
-    			    print ' <span class="note">';
-    			    print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-    			    print '</span>';
-    			}
-    			print '</td>';
-    			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
-    			$filename = dol_sanitizeFileName($obj->ref);
-    			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-    			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-    			print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
-    			print '</td>';
-    			print '</tr></table>';
-    			print '</td>';
-    			if (!$i) $totalarray['nbfield']++;
+				print '<td>';
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td class="nobordernopadding nowrap">';
+				print $expensereportstatic->getNomUrl(1);
+				print '</td>';
+				// Warning late icon and note
+				print '<td class="nobordernopadding nowrap">';
+				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));
+				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) print img_warning($langs->trans("Late"));
+				if (!empty($obj->note_private) || !empty($obj->note_public))
+				{
+					print ' <span class="note">';
+					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+					print '</span>';
+				}
+				print '</td>';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
+				$filename = dol_sanitizeFileName($obj->ref);
+				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+				print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
+				print '</td>';
+				print '</tr></table>';
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// User
 			if (!empty($arrayfields['user']['checked'])) {
-			    print '<td class="left">';
-    			$usertmp->id = $obj->id_user;
-    			$usertmp->lastname = $obj->lastname;
-    			$usertmp->firstname = $obj->firstname;
-    			$usertmp->login = $obj->login;
-    			$usertmp->statut = $obj->statut;
-    			$usertmp->photo = $obj->photo;
-    			$usertmp->email = $obj->email;
-    			print $usertmp->getNomUrl(-1);
-    			print '</td>';
-    			if (!$i) $totalarray['nbfield']++;
+				print '<td class="left">';
+				$usertmp->id = $obj->id_user;
+				$usertmp->lastname = $obj->lastname;
+				$usertmp->firstname = $obj->firstname;
+				$usertmp->login = $obj->login;
+				$usertmp->statut = $obj->statut;
+				$usertmp->photo = $obj->photo;
+				$usertmp->email = $obj->email;
+				print $usertmp->getNomUrl(-1);
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Start date
 			if (!empty($arrayfields['d.date_debut']['checked'])) {
-                print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
-                if (!$i) $totalarray['nbfield']++;
-            }
-            // End date
+				print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			// End date
 			if (!empty($arrayfields['d.date_fin']['checked'])) {
-			    print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
-			    if (!$i) $totalarray['nbfield']++;
+				print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Date validation
 			if (!empty($arrayfields['d.date_valid']['checked'])) {
-			    print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
-			    if (!$i) $totalarray['nbfield']++;
+				print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Date approval
 			if (!empty($arrayfields['d.date_approve']['checked'])) {
-			    print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
-			    if (!$i) $totalarray['nbfield']++;
+				print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
+				if (!$i) $totalarray['nbfield']++;
 			}
 			// Amount HT
-            if (!empty($arrayfields['d.total_ht']['checked']))
-            {
-    		      print '<td class="right">'.price($obj->total_ht)."</td>\n";
-    		      if (!$i) $totalarray['nbfield']++;
-    		      if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'd.total_ht';
-    		      $totalarray['val']['d.total_ht'] += $obj->total_ht;
-            }
-            // Amount VAT
-            if (!empty($arrayfields['d.total_vat']['checked']))
-            {
-                print '<td class="right">'.price($obj->total_tva)."</td>\n";
-                if (!$i) $totalarray['nbfield']++;
-                if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'd.total_tva';
-                $totalarray['val']['d.total_tva'] += $obj->total_tva;
-            }
-            // Amount TTC
-            if (!empty($arrayfields['d.total_ttc']['checked']))
-            {
-                print '<td class="right">'.price($obj->total_ttc)."</td>\n";
-                if (!$i) $totalarray['nbfield']++;
-                if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'd.total_ttc';
-                $totalarray['val']['d.total_ttc'] += $obj->total_ttc;
-            }
+			if (!empty($arrayfields['d.total_ht']['checked']))
+			{
+				  print '<td class="right">'.price($obj->total_ht)."</td>\n";
+				  if (!$i) $totalarray['nbfield']++;
+				  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'd.total_ht';
+				  $totalarray['val']['d.total_ht'] += $obj->total_ht;
+			}
+			// Amount VAT
+			if (!empty($arrayfields['d.total_vat']['checked']))
+			{
+				print '<td class="right">'.price($obj->total_tva)."</td>\n";
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'd.total_tva';
+				$totalarray['val']['d.total_tva'] += $obj->total_tva;
+			}
+			// Amount TTC
+			if (!empty($arrayfields['d.total_ttc']['checked']))
+			{
+				print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+				if (!$i) $totalarray['nbfield']++;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'd.total_ttc';
+				$totalarray['val']['d.total_ttc'] += $obj->total_ttc;
+			}
 
-            // Extra fields
-            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-            // Fields from hook
-            $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-            $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-            print $hookmanager->resPrint;
+			// Extra fields
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+			// Fields from hook
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 
-            // Date creation
-            if (!empty($arrayfields['d.date_create']['checked']))
-            {
-                print '<td class="nowrap center">';
-                print dol_print_date($db->jdate($obj->date_create), 'dayhour');
-                print '</td>';
-                if (!$i) $totalarray['nbfield']++;
-            }
-            // Date modification
-            if (!empty($arrayfields['d.tms']['checked']))
-            {
-                print '<td class="nowrap center">';
-                print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
-                print '</td>';
-                if (!$i) $totalarray['nbfield']++;
-            }
-            // Status
-            if (!empty($arrayfields['d.fk_statut']['checked']))
-            {
-                print '<td class="nowrap right">'.$expensereportstatic->getLibStatut(5).'</td>';
-                if (!$i) $totalarray['nbfield']++;
-            }
-            // Action column
-            print '<td class="nowrap center">';
-            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-            {
-                $selected = 0;
-                if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-                print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-            }
-            print '</td>';
-            if (!$i) $totalarray['nbfield']++;
+			// Date creation
+			if (!empty($arrayfields['d.date_create']['checked']))
+			{
+				print '<td class="nowrap center">';
+				print dol_print_date($db->jdate($obj->date_create), 'dayhour');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			// Date modification
+			if (!empty($arrayfields['d.tms']['checked']))
+			{
+				print '<td class="nowrap center">';
+				print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			// Status
+			if (!empty($arrayfields['d.fk_statut']['checked']))
+			{
+				print '<td class="nowrap right">'.$expensereportstatic->getLibStatut(5).'</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			// Action column
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			{
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 
 			print "</tr>\n";
 
@@ -805,9 +698,7 @@ if ($resql)
 
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		$colspan = 1;
 		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
@@ -823,7 +714,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 
 	print '</table>'."\n";
-    print '</div>';
+	print '</div>';
 
 	print '</form>'."\n";
 
@@ -842,9 +733,7 @@ if ($resql)
 
 		print $formfile->showdocuments('massfilesarea_expensereport', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

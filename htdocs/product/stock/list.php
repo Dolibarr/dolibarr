@@ -27,10 +27,10 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 
 if (!empty($conf->categorie->enabled))
 {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -46,6 +46,8 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'stocklist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$toselect = GETPOST('toselect', 'array');
+
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
@@ -59,8 +61,8 @@ if (!empty($conf->categorie->enabled))
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -84,57 +86,47 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-    't.ref'=>"Ref",
-    't.lieu'=>"LocationSummary",
-    't.description'=>"Description",
-    't.address'=>"Address",
-    't.zip'=>'Zip',
-    't.town'=>'Town',
-	't.phone'=>'Phone',
-	't.fax'=>'Fax',
-);
-
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
 	$search_key = $key;
-	if  ($search_key == 'statut') $search_key = 'status'; // remove this after refactor entrepot.class property statut to status
+	if ($search_key == 'statut') $search_key = 'status'; // remove this after refactor entrepot.class property statut to status
 	if (GETPOST('search_'.$search_key, 'alpha') !== '') $search[$search_key] = GETPOST('search_'.$search_key, 'alpha');
 }
 
-// Definition of fields for list
-$arrayfields = array(
-	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
-	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>-2, 'position'=>71),
-	'estimatedstockvaluesell'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'visible'=>-2, 'position'=>72),
-);
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array();
 foreach ($object->fields as $key => $val)
 {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
+	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
-// Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["ef.".$key] = array(
-				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
-			);
-		}
+
+// Definition of array of fields for columns
+$arrayfields = array(
+	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'checked'=>0, 'position'=>170),
+	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>1, 'checked'=>1, 'position'=>171),
+	'estimatedstockvaluesell'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'checked'=>1, 'visible'=>2, 'position'=>172),
+);
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['t.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=>$val['help']
+		);
 	}
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 
 /*
@@ -160,7 +152,7 @@ if (empty($reshook))
 		{
 			$search[$key] = '';
 		}
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -174,6 +166,7 @@ if (empty($reshook))
 	$objectlabel = 'Warehouse';
 	$permissiontoread = $user->rights->stock->lire;
 	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoadd = $user->rights->stock->creer;
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -184,7 +177,6 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
-$formcategory = new FormCategory($db);
 $warehouse = new Entrepot($db);
 
 $totalarray = array();
@@ -229,14 +221,14 @@ if (!empty($conf->categorie->enabled))
 foreach ($search as $key => $val)
 {
 	$class_key = $key;
-	if  ($class_key == 'status') $class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
-	if (($key == 'status' && $search[$key] == -1) || $key=='entity') continue;
+	if ($class_key == 'status') $class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
+	if (($key == 'status' && $search[$key] == -1) || $key == 'entity') continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
 		if ($search[$key] == '-1') $search[$key] = '';
 		$mode_search = 2;
 	}
-	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : 't.' . $class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : 't.'.$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -296,9 +288,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -346,7 +336,8 @@ $arrayofmassactions = array(
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
+if ($user->rights->stock->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" id="searchFormList" method="POST" name="formulaire">';
@@ -378,8 +369,9 @@ if ($search_all)
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 {
+	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
 
@@ -421,11 +413,10 @@ foreach ($object->fields as $key => $val)
 	if (!empty($arrayfields['t.'.$key]['checked']))
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		elseif (strpos($val['type'], 'integer:') === 0 || strpos($val['type'], 'sellist:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
-		}
-		elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }
@@ -452,7 +443,7 @@ print $hookmanager->resPrint;
 
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre center">';
 	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 }
@@ -503,7 +494,7 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $objec
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 
 // Action column
@@ -533,7 +524,6 @@ if ($num)
 			$warehouse->{$key} = $obj->{$key};
 		}
 
-
 		// Show here line of result
 		print '<tr class="oddeven">';
 
@@ -555,11 +545,9 @@ if ($num)
 				if ($key == 'statut') print $warehouse->getLibStatut(5);
 				if ($key == 'phone') {
 					print dol_print_phone($obj->phone, '', 0, $obj->rowid, 'AC_TEL');
-				}
-				elseif ($key == 'fax') {
+				} elseif ($key == 'fax') {
 					print dol_print_phone($obj->fax, '', 0, $obj->rowid, 'AC_FAX');
-				}
-				else {
+				} else {
 					print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
 				}
 				print '</td>';
@@ -611,7 +599,7 @@ if ($num)
 
 		// Status
 		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+			print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -663,10 +651,10 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->stock->read;
-	$delallowed = $user->rights->stock->create;
+	$genallowed = $user->rights->stock->lire;
+	$delallowed = $user->rights->stock->creer;
 
-	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

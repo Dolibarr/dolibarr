@@ -34,7 +34,7 @@ $langs->loadLangs(array('admin', 'objects', 'companies', 'products'));
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 
@@ -65,7 +65,7 @@ if ($action == 'update') {
 	$db->begin();
 
 	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	switch ($tax_mode)
 	{
@@ -90,13 +90,13 @@ if ($action == 'update') {
 	}
 
 	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', $valuesellproduct, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', $valuebuyproduct, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $valuesellservice, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $valuebuyservice, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva", 'alpha'), 'chaine', 0, '', $conf->entity);
 
@@ -125,14 +125,12 @@ if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
-//dol_fiche_head(null, '', '', -1);
+//print dol_get_fiche_head(null, '', '', -1);
 
 if (empty($mysoc->tva_assuj))
 {
 	print $langs->trans("YourCompanyDoesNotUseVAT").'<br>';
-}
-else
-{
+} else {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -150,9 +148,7 @@ else
 		print '<td class="nowrap right">';
 		print $langs->trans("NotAvailableWhenAjaxDisabled");
 		print "</td>";
-	}
-	else
-	{
+	} else {
 		print '<td width="120">';
 		$listval = array(
 			'0'=>$langs->trans(""),
@@ -205,9 +201,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnDelivery");
 		print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
 	}
@@ -217,9 +211,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnDelivery");
 		print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
 	}
@@ -232,9 +224,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnInvoice");
 		print ' ('.$langs->trans("InvoiceDateUsed").')';
 	}
@@ -244,9 +234,7 @@ else
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
-	}
-	else
-	{
+	} else {
 		print $langs->trans("OnInvoice");
 		print ' ('.$langs->trans("InvoiceDateUsed").')';
 	}

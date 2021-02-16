@@ -7,4 +7,3 @@ ViewSiteInNewTab=Bekijk de site in een nieuwe tab
 ViewPageInNewTab=Bekijk de pagina in een nieuwe tab
 SetAsHomePage=Zet als Homepagina
 ViewWebsiteInProduction=Bekijk website via de home URL's
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)

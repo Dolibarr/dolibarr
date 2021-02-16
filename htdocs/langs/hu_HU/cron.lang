@@ -7,13 +7,14 @@ Permission23103 = Ütemezett feladatok törlése
 Permission23104 = Ütemezett feladat végrehajtása
 # Admin
 CronSetup=Scheduled job management setup
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs
-OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Number of launches
 CronMaxRun=Maximum number of launches
 CronEach=Every
 JobFinished=Job launched and finished
+Scheduled=Scheduled
 #Page card
 CronAdd= Add jobs
 CronEvery=Execute job each
@@ -56,7 +58,7 @@ CronNote=Megjegyzés
 CronFieldMandatory=A %s mezőket kötelező kitölteni
 CronErrEndDateStartDt=A befejezés időpontja nem lehet hamarabb mint a kezdet
 StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Engedélyez
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Letiltás
 CronTaskInactive=Ez a feladat ki van kapcsolva
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

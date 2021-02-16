@@ -163,9 +163,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     {
         print " - Error in create result code = ".$ret." - ".$produit->errorsToString();
         $errorrecord++;
-    }
-	else
-	{
+    } else {
 	    print " - Creation OK with ref ".$produit->ref." - id = ".$ret;
 	}
 
@@ -180,9 +178,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in updatePrice result code = ".$ret1." ".$ret2." - ".$produit->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - updatePrice OK";
     	}
 	}
@@ -200,9 +196,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in setMultiLangs result code = ".$ret." - ".$produit->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - setMultiLangs OK";
     	}
 	}
@@ -227,9 +221,7 @@ if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

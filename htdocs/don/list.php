@@ -58,7 +58,7 @@ if (!$user->rights->don->lire) accessforbidden();
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_all = "";
-    $search_ref = "";
+	$search_ref = "";
 	$search_company = "";
 	$search_name = "";
 	$search_amount = "";
@@ -71,10 +71,10 @@ $hookmanager->initHooks(array('orderlist'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-    'd.rowid'=>'Id',
-    'd.ref'=>'Ref',
-    'd.lastname'=>'Lastname',
-    'd.firstname'=>'Firstname',
+	'd.rowid'=>'Id',
+	'd.ref'=>'Ref',
+	'd.lastname'=>'Lastname',
+	'd.firstname'=>'Firstname',
 );
 
 
@@ -96,23 +96,23 @@ $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS 
 $sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
 if ($search_status != '' && $search_status != '-4')
 {
-	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
 if (trim($search_ref) != '')
 {
-    $sql .= natural_search('d.ref', $search_ref);
+	$sql .= natural_search('d.ref', $search_ref);
 }
 if (trim($search_all) != '')
 {
-    $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (trim($search_company) != '')
 {
-    $sql .= natural_search('d.societe', $search_company);
+	$sql .= natural_search('d.societe', $search_company);
 }
 if (trim($search_name) != '')
 {
-    $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
+	$sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
 if ($search_amount) $sql .= natural_search('d.amount', $search_amount, 1);
 
@@ -151,84 +151,84 @@ if ($resql)
 	$newcardbutton = '';
 	if ($user->rights->don->creer)
 	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
-    print '<input type="hidden" name="type" value="'.$type.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 
 	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if ($search_all)
-    {
-        foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
-    }
+	{
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	}
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-    // Filters lines
-    print '<tr class="liste_titre_filter">';
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
-    print '</td>';
-    if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-        print '<td class="liste_titre">';
-        print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
-        print '</td>';
-    } else {
-        print '<td class="liste_titre">';
-        print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
-        print '</td>';
-    }
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
-    print '</td>';
-    print '<td class="liste_titre left">';
-    print '&nbsp;';
-    print '</td>';
-    if (!empty($conf->projet->enabled))
-    {
-        print '<td class="liste_titre right">';
-        print '&nbsp;';
-        print '</td>';
-    }
-    print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre right">';
-    $liststatus = array(
-    	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
-    	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
-    	Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
-    	Don::STATUS_CANCELED=>$langs->trans("Canceled")
-    );
-    print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
-    print '</td>';
-    print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto = $form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
-    print "</tr>\n";
+	// Filters lines
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '</td>';
+	if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
+		print '</td>';
+	} else {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+		print '</td>';
+	}
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
+	print '</td>';
+	print '<td class="liste_titre left">';
+	print '&nbsp;';
+	print '</td>';
+	if (!empty($conf->projet->enabled))
+	{
+		print '<td class="liste_titre right">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre right">';
+	$liststatus = array(
+		Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
+		Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
+		Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
+		Don::STATUS_CANCELED=>$langs->trans("Canceled")
+	);
+	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	print '</td>';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+	print "</tr>\n";
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
-    if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-        print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
-    } else {
-        print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
-    }
+	if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+	} else {
+		print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
+	}
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($conf->projet->enabled))
 	{
-	    $langs->load("projects");
-	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
+		$langs->load("projects");
+		print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -245,17 +245,17 @@ if ($resql)
 		$donationstatic->lastname = $objp->lastname;
 		$donationstatic->firstname = $objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-        if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-            $company = new Societe($db);
-            $result = $company->fetch($objp->socid);
-            if (!empty($objp->socid) && $company->id > 0) {
-                print "<td>".$company->getNomUrl(1)."</td>";
-            } else {
-                print "<td>".$objp->societe."</td>";
-            }
-        } else {
-            print "<td>".$objp->societe."</td>";
-        }
+		if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+			$company = new Societe($db);
+			$result = $company->fetch($objp->socid);
+			if (!empty($objp->socid) && $company->id > 0) {
+				print "<td>".$company->getNomUrl(1)."</td>";
+			} else {
+				print "<td>".$objp->societe."</td>";
+			}
+		} else {
+			print "<td>".$objp->societe."</td>";
+		}
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (!empty($conf->projet->enabled))
@@ -269,24 +269,21 @@ if ($resql)
 				$projectstatic->public = $objp->public;
 				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';
 		print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
-        print '<td></td>';
+		print '<td></td>';
 		print "</tr>";
 		$i++;
 	}
-    print "</table>";
-    print '</div>';
-    print "</form>\n";
-    $db->free($resql);
-}
-else
-{
-    dol_print_error($db);
+	print "</table>";
+	print '</div>';
+	print "</form>\n";
+	$db->free($resql);
+} else {
+	dol_print_error($db);
 }
 
 llxFooter();

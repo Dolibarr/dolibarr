@@ -35,7 +35,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
 
 
@@ -65,22 +65,21 @@ $storage = new DoliStorage($db, $conf);
 
 // Setup the credentials for the requests
 $credentials = new Credentials(
-    $conf->global->OAUTH_GITHUB_ID,
-    $conf->global->OAUTH_GITHUB_SECRET,
-    $currentUri->getAbsoluteUri()
+	$conf->global->OAUTH_GITHUB_ID,
+	$conf->global->OAUTH_GITHUB_SECRET,
+	$currentUri->getAbsoluteUri()
 );
 
 $requestedpermissionsarray = array();
 if (GETPOST('state')) $requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
 if ($action != 'delete' && empty($requestedpermissionsarray))
 {
-    print 'Error, parameter state is not defined';
-    exit;
+	print 'Error, parameter state is not defined';
+	exit;
 }
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
-/** @var $apiService Service */
 $apiService = $serviceFactory->createService('GitHub', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
@@ -95,12 +94,12 @@ $langs->load("oauth");
 
 if ($action == 'delete')
 {
-    $storage->clearToken('GitHub');
+	$storage->clearToken('GitHub');
 
-    setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
+	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
 
-    header('Location: '.$backtourl);
-    exit();
+	header('Location: '.$backtourl);
+	exit();
 }
 
 if (!empty($_GET['code']))     // We are coming from oauth provider page
@@ -109,58 +108,55 @@ if (!empty($_GET['code']))     // We are coming from oauth provider page
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
 	dol_syslog("We are coming from the oauth provider page");
-    //llxHeader('',$langs->trans("OAuthSetup"));
+	//llxHeader('',$langs->trans("OAuthSetup"));
 
-    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-    //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
+	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
-    //dol_fiche_head();
-    // retrieve the CSRF state parameter
-    $state = isset($_GET['state']) ? $_GET['state'] : null;
-    //print '<table>';
+	//print dol_get_fiche_head();
+	// retrieve the CSRF state parameter
+	$state = isset($_GET['state']) ? $_GET['state'] : null;
+	//print '<table>';
 
-    // This was a callback request from service, get the token
-    try {
-        //var_dump($_GET['code']);
-        //var_dump($state);
-        //var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
+	// This was a callback request from service, get the token
+	try {
+		//var_dump($_GET['code']);
+		//var_dump($state);
+		//var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
 
-        //$token = $apiService->requestAccessToken($_GET['code'], $state);
-        $token = $apiService->requestAccessToken($_GET['code']);
-        // Github is a service that does not need state to be stored.
-        // Into constructor of GitHub, the call
-        // parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
-        // has not the ending parameter to true like the Google class constructor.
+		//$token = $apiService->requestAccessToken($_GET['code'], $state);
+		$token = $apiService->requestAccessToken($_GET['code']);
+		// Github is a service that does not need state to be stored.
+		// Into constructor of GitHub, the call
+		// parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
+		// has not the ending parameter to true like the Google class constructor.
 
-        setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
+		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
-        $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
-        unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
-        header('Location: '.$backtourl);
-        exit();
-    } catch (Exception $e) {
-        print $e->getMessage();
-    }
-}
-else // If entry on page with no parameter, we arrive here
+		header('Location: '.$backtourl);
+		exit();
+	} catch (Exception $e) {
+		print $e->getMessage();
+	}
+} else // If entry on page with no parameter, we arrive here
 {
-    $_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
+	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
-    // This may create record into oauth_state before the header redirect.
-    // Creation of record with state in this tables depend on the Provider used (see its constructor).
-    if (GETPOST('state'))
-    {
-        $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
-    }
-    else
-    {
-        $url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
-    }
+	// This may create record into oauth_state before the header redirect.
+	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	if (GETPOST('state'))
+	{
+		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+	} else {
+		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
+	}
 
-    // we go on oauth provider authorization page
-    header('Location: '.$url);
-    exit();
+	// we go on oauth provider authorization page
+	header('Location: '.$url);
+	exit();
 }
 
 

@@ -41,8 +41,8 @@ $optioncss  = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -63,9 +63,9 @@ $result = restrictedArea($user, 'margins');
 
 // Both test are required to be compatible with all browsers
 if (GETPOST("button_search_x") || GETPOST("button_search")) {
-    $action = 'search';
+	$action = 'search';
 } elseif (GETPOST("button_updatemagins_x") || GETPOST("button_updatemagins")) {
-    $action = 'update';
+	$action = 'update';
 }
 
 
@@ -82,40 +82,40 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    if ($action == 'update') {
-        $datapost = $_POST;
+	if ($action == 'update') {
+		$datapost = $_POST;
 
-        foreach ($datapost as $key => $value) {
-            if (strpos($key, 'buyingprice_') !== false) {
-                $tmp_array = explode('_', $key);
-                if (count($tmp_array) > 0) {
-                    $invoicedet_id = $tmp_array[1];
-                    if (!empty($invoicedet_id)) {
-                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet';
-                        $sql .= ' SET buy_price_ht=\''.price2num($value).'\'';
-                        $sql .= ' WHERE rowid='.$invoicedet_id;
-                        $result = $db->query($sql);
-                        if (!$result) {
-                            setEventMessages($db->lasterror, null, 'errors');
-                        }
-                    }
-                }
-            }
-        }
-    }
+		foreach ($datapost as $key => $value) {
+			if (strpos($key, 'buyingprice_') !== false) {
+				$tmp_array = explode('_', $key);
+				if (count($tmp_array) > 0) {
+					$invoicedet_id = $tmp_array[1];
+					if (!empty($invoicedet_id)) {
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'facturedet';
+						$sql .= ' SET buy_price_ht=\''.price2num($value).'\'';
+						$sql .= ' WHERE rowid='.$invoicedet_id;
+						$result = $db->query($sql);
+						if (!$result) {
+							setEventMessages($db->lasterror, null, 'errors');
+						}
+					}
+				}
+			}
+		}
+	}
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-    {
-        $search_ref = '';
-        $search_array_options = array();
-    }
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	{
+		$search_ref = '';
+		$search_array_options = array();
+	}
 
-    // Mass actions
-    /*
+	// Mass actions
+	/*
     $objectclass='Product';
     if ((string) $type == '1') { $objectlabel='Services'; }
     if ((string) $type == '0') { $objectlabel='Products'; }
@@ -160,7 +160,7 @@ $picto = 'margin';
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
+print dol_get_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
 
 print '<table class="border centpercent">';
 
@@ -178,7 +178,7 @@ print '</td>';
 print '</tr>';
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 $arrayfields = array();
@@ -222,9 +222,9 @@ if ($result) {
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'BuyingPrice';
+	else // value is 'costprice' or 'pmp'
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
@@ -233,8 +233,8 @@ if ($result) {
 	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 	$selectedfields = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre liste_titre_search">';
 	print '<td><input type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
@@ -243,10 +243,10 @@ if ($result) {
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-    print '<td class="liste_titre" align="middle">';
-    $searchpitco = $form->showFilterButtons();
-    print $searchpitco;
-    print '</td>';
+	print '<td class="liste_titre" align="middle">';
+	$searchpitco = $form->showFilterButtons();
+	print $searchpitco;
+	print '</td>';
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -259,10 +259,10 @@ if ($result) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
 
-    $i = 0;
+	$i = 0;
 	while ($i < min($num, $limit))
 	{
-	    $objp = $db->fetch_object($result);
+		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
 		print '<td>';

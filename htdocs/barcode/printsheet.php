@@ -22,6 +22,11 @@
  *	\ingroup	member
  *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
+
+if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must ne renew the token.
+	if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+}
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -36,10 +41,10 @@ $now = dol_now();
 $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');
-$forbarcode = GETPOST('forbarcode');
-$fk_barcode_type = GETPOST('fk_barcode_type');
-$mode = GETPOST('mode');
-$modellabel = GETPOST("modellabel"); // Doc template to use
+$forbarcode = GETPOST('forbarcode', 'alphanohtml');
+$fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+$mode = GETPOST('mode', 'aZ09');
+$modellabel = GETPOST("modellabel", 'aZ09'); // Doc template to use
 $numberofsticker = GETPOST('numberofsticker', 'int');
 
 $mesg = '';
@@ -57,9 +62,11 @@ $thirdpartytmp = new Societe($db);
 if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 {
 	$action = ''; // We reset because we don't want to build doc
-	if (GETPOST('productid') > 0)
-	{
-		$producttmp->fetch(GETPOST('productid'));
+	if (GETPOST('productid', 'int') > 0) {
+		$result = $producttmp->fetch(GETPOST('productid', 'int'));
+		if ($result < 0) {
+			setEventMessage($producttmp->error, 'errors');
+		}
 		$forbarcode = $producttmp->barcode;
 		$fk_barcode_type = $producttmp->barcode_type;
 
@@ -74,9 +81,9 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 {
 	$action = ''; // We reset because we don't want to build doc
-	if (GETPOST('socid') > 0)
+	if (GETPOST('socid', 'int') > 0)
 	{
-		$thirdpartytmp->fetch(GETPOST('socid'));
+		$thirdpartytmp->fetch(GETPOST('socid', 'int'));
 		$forbarcode = $thirdpartytmp->barcode;
 		$fk_barcode_type = $thirdpartytmp->barcode_type_code;
 
@@ -146,7 +153,7 @@ if ($action == 'builddoc')
 		$module = new $classname($db);
 		if ($generator != 'tcpdfbarcode')
 		{
-		    // May be phpbarcode
+			// May be phpbarcode
 			$template = 'standardlabel';
 			$is2d = false;
 			if ($module->encodingIsSupported($encoding))
@@ -161,9 +168,7 @@ if ($action == 'builddoc')
 					setEventMessages('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), null, 'errors');
 					setEventMessages($module->error, null, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 			}
@@ -178,19 +183,19 @@ if ($action == 'builddoc')
 	{
 		// List of values to scan for a replacement
 		$substitutionarray = array(
-		    '%LOGIN%' => $user->login,
-		    '%COMPANY%' => $mysoc->name,
-		    '%ADDRESS%' => $mysoc->address,
-		    '%ZIP%' => $mysoc->zip,
-		    '%TOWN%' => $mysoc->town,
-		    '%COUNTRY%' => $mysoc->country,
-		    '%COUNTRY_CODE%' => $mysoc->country_code,
-		    '%EMAIL%' => $mysoc->email,
-		    '%YEAR%' => $year,
-		    '%MONTH%' => $month,
-		    '%DAY%' => $day,
-		    '%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
-		    '%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
+			'%LOGIN%' => $user->login,
+			'%COMPANY%' => $mysoc->name,
+			'%ADDRESS%' => $mysoc->address,
+			'%ZIP%' => $mysoc->zip,
+			'%TOWN%' => $mysoc->town,
+			'%COUNTRY%' => $mysoc->country,
+			'%COUNTRY_CODE%' => $mysoc->country_code,
+			'%EMAIL%' => $mysoc->email,
+			'%YEAR%' => $year,
+			'%MONTH%' => $month,
+			'%DAY%' => $day,
+			'%DOL_MAIN_URL_ROOT%' => DOL_MAIN_URL_ROOT,
+			'%SERVER%' => "http://".$_SERVER["SERVER_NAME"]."/",
 		);
 		complete_substitutions_array($substitutionarray, $langs);
 
@@ -237,16 +242,22 @@ if ($action == 'builddoc')
 
 			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
 
-			if (!$mesg) $result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+			if (!$mesg) {
+				$outputlangs = $langs;
+
+				// This generates and send PDF to output
+				// TODO Move
+				$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+			}
 		}
 
-		if ($result <= 0)
-		{
-			dol_print_error('', $result);
-		}
+		if ($result <= 0 || $mesg) {
+			if (empty($mesg)) {
+				$mesg = 'Error '.$result;
+			}
 
-		if (!$mesg)
-		{
+			setEventMessages($mesg, null, 'errors');
+		} else {
 			$db->close();
 			exit;
 		}
@@ -275,10 +286,10 @@ dol_htmloutput_errors($mesg);
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';		// The target is for brothers that open the file instead of downloading it
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
-print '<input type="hidden" name="token" value="'.newtoken().'">';
+print '<input type="hidden" name="token" value="'.currentToken().'">';	// The page will not renew the token but force download of a file, so we must use here currentToken
 
 print '<div class="tagtable">';
 
@@ -291,8 +302,8 @@ print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; wh
 $arrayoflabels = array();
 foreach (array_keys($_Avery_Labels) as $codecards)
 {
-    $labeltoshow = $_Avery_Labels[$codecards]['name'];
-    //$labeltoshow.=' ('.$_Avery_Labels[$row['code']]['paper-size'].')';
+	$labeltoshow = $_Avery_Labels[$codecards]['name'];
+	//$labeltoshow.=' ('.$_Avery_Labels[$row['code']]['paper-size'].')';
 	$arrayoflabels[$codecards] = $labeltoshow;
 }
 asort($arrayoflabels);
@@ -378,22 +389,22 @@ print '<br>';
 
 if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire))
 {
-    print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
-    print '<br>';
-    print '<div class="showforproductselector">';
-    $form->select_produits(GETPOST('productid'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
-    print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
-    print '</div>';
+	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").' &nbsp; ';
+	print '<br>';
+	print '<div class="showforproductselector">';
+	$form->select_produits(GETPOST('productid', 'int'), 'productid', '', '', 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth400imp', 1);
+	print ' &nbsp; <input type="submit" id="submitproduct" name="submitproduct" class="button" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+	print '</div>';
 }
 
 if (!empty($user->rights->societe->lire))
 {
-    print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
-    print '<br>';
-    print '<div class="showforthirdpartyselector">';
-    print $form->select_company(GETPOST('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
-    print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
-    print '</div>';
+	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
+	print '<br>';
+	print '<div class="showforthirdpartyselector">';
+	print $form->select_company(GETPOST('socid', 'int'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+	print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
+	print '</div>';
 }
 
 print '<br>';

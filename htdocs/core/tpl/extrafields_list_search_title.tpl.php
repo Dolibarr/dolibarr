@@ -13,9 +13,9 @@ if (!isset($disablesortlink)) $disablesortlink = 0;
 // Loop to show all columns of extrafields for the title line
 if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
-	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
+    if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
-        if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
 		{
@@ -26,10 +26,8 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield = '';
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					print '<th class="liste_titre thseparator"></th>';
-				}
-				else
-				{
-					if (! empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
+				} else {
+					if (!empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
 						$langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
 					}
 

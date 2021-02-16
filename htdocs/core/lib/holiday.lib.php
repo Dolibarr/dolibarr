@@ -34,28 +34,33 @@ function holiday_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Leave");
-    $head[$h][2] = 'card';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Leave");
+	$head[$h][2] = 'card';
+	$h++;
 
-    // Attachments
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    $upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
-    $head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
-    $head[$h][1] = $langs->trans('Documents');
-    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
-    $head[$h][2] = 'documents';
-    $h++;
+	// Attachments
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	$head[$h][2] = 'documents';
+	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday');
+	$head[$h][0] = DOL_URL_ROOT.'/holiday/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'holiday', 'remove');
 
@@ -66,7 +71,7 @@ function holiday_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations
  *
-  *  @return array           		head
+ *  @return array           		head
  */
 function holiday_admin_prepare_head()
 {
@@ -75,21 +80,21 @@ function holiday_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/holiday.php';
-    $head[$h][1] = $langs->trans("Setup");
-    $head[$h][2] = 'holiday';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/admin/holiday.php';
+	$head[$h][1] = $langs->trans("Setup");
+	$head[$h][2] = 'holiday';
+	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin');
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/holiday_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/admin/holiday_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'attributes';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'holiday_admin', 'remove');
 

@@ -40,7 +40,7 @@ class ExpenseReportRule extends CoreObject
 	public $table_element = 'expensereport_rules';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_rule';
 
@@ -185,9 +185,7 @@ class ExpenseReportRule extends CoreObject
 				if ($rule->fetch($obj->rowid) > 0) $rules[$rule->id] = $rule;
 				else dol_print_error($db);
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -209,9 +207,7 @@ class ExpenseReportRule extends CoreObject
 			if ($group->fetch($this->fk_usergroup) > 0)
 			{
 				return $group->nom;
-			}
-			else
-			{
+			} else {
 				$this->error = $group->error;
 				$this->errors[] = $this->error;
 			}
@@ -235,9 +231,7 @@ class ExpenseReportRule extends CoreObject
 			if ($u->fetch($this->fk_user) > 0)
 			{
 				return dolGetFirstLastname($u->firstname, $u->lastname);
-			}
-			else
-			{
+			} else {
 				$this->error = $u->error;
 				$this->errors[] = $this->error;
 			}

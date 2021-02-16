@@ -99,11 +99,11 @@ if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($search_ref)		$sql .= " AND d.rowid=".$search_ref;
 if ($search_name)
 {
-    $sql .= natural_search('u.lastname', $search_name);
+	$sql .= natural_search('u.lastname', $search_name);
 }
 if ($search_company)
 {
-    $sql .= natural_search('s.nom', $search_company);
+	$sql .= natural_search('s.nom', $search_company);
 }
 $sql .= dolSqlDateFilter("d.dated", $day, $month, $year);
 
@@ -114,92 +114,90 @@ $sql .= $db->plimit($limit + 1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-    print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
 
-    $i = 0;
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<table class="noborder centpercent">';
-    print "<tr class=\"liste_titre\">";
-    print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", "&socid=$socid", '', $sortfield, $sortorder);
-    print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "d.type", "", "&socid=$socid", '', $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.dated", "", "&socid=$socid", 'align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "u.lastname", "", "&socid=$socid", '', $sortfield, $sortorder);
-    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&socid=$socid", '', $sortfield, $sortorder);
-    print_liste_field_titre("FeesKilometersOrAmout", $_SERVER["PHP_SELF"], "d.km", "", "&socid=$socid", 'class="right"', $sortfield, $sortorder);
-    print_liste_field_titre('');
-    print "</tr>\n";
+	$i = 0;
+	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<table class="noborder centpercent">';
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", "&socid=$socid", '', $sortfield, $sortorder);
+	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "d.type", "", "&socid=$socid", '', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.dated", "", "&socid=$socid", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Person", $_SERVER["PHP_SELF"], "u.lastname", "", "&socid=$socid", '', $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&socid=$socid", '', $sortfield, $sortorder);
+	print_liste_field_titre("FeesKilometersOrAmout", $_SERVER["PHP_SELF"], "d.km", "", "&socid=$socid", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
 
-    // Filters lines
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '&nbsp;';
-    print '</td>';
-    print '<td class="liste_titre" align="center">';
-    if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-    $formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
-    print '</td>';
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
-    print '</td>';
-    print '<td class="liste_titre right">';
-    // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
-    print '</td>';
-    print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto = $form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
-    print "</tr>\n";
+	// Filters lines
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
+	print '</td>';
+	print '<td class="liste_titre">';
+	print '&nbsp;';
+	print '</td>';
+	print '<td class="liste_titre" align="center">';
+	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print '</td>';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
+	print '</td>';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+	print '</td>';
+	print '<td class="liste_titre right">';
+	// print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
+	print '</td>';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+	print "</tr>\n";
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($resql);
+	while ($i < min($num, $limit))
+	{
+		$obj = $db->fetch_object($resql);
 
-        $soc = new Societe($db);
-        if ($obj->socid) $soc->fetch($obj->socid);
+		$soc = new Societe($db);
+		if ($obj->socid) $soc->fetch($obj->socid);
 
-        print '<tr class="oddeven">';
-        // Id
-        print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"), "trip").' '.$obj->rowid.'</a></td>';
-        // Type
-        print '<td>'.$langs->trans($obj->type).'</td>';
-        // Date
-        print '<td class="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
-        // User
-        print '<td>';
-        $userstatic->id = $obj->fk_user;
-        $userstatic->lastname = $obj->lastname;
-        $userstatic->firstname = $obj->firstname;
-        print $userstatic->getNomUrl(1);
-        print '</td>';
+		print '<tr class="oddeven">';
+		// Id
+		print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"), "trip").' '.$obj->rowid.'</a></td>';
+		// Type
+		print '<td>'.$langs->trans($obj->type).'</td>';
+		// Date
+		print '<td class="center">'.dol_print_date($db->jdate($obj->dd), 'day').'</td>';
+		// User
+		print '<td>';
+		$userstatic->id = $obj->fk_user;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->firstname = $obj->firstname;
+		print $userstatic->getNomUrl(1);
+		print '</td>';
 
-        if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
-        else print '<td>&nbsp;</td>';
+		if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
+		else print '<td>&nbsp;</td>';
 
-        print '<td class="right">'.$obj->km.'</td>';
+		print '<td class="right">'.$obj->km.'</td>';
 
-        $tripandexpense_static->statut = $obj->fk_statut;
-        print '<td class="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
-        print "</tr>\n";
+		$tripandexpense_static->statut = $obj->fk_statut;
+		print '<td class="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
+		print "</tr>\n";
 
-        $i++;
-    }
+		$i++;
+	}
 
-    print "</table>";
-    print "</form>\n";
-    $db->free($resql);
-}
-else
-{
-    dol_print_error($db);
+	print "</table>";
+	print "</form>\n";
+	$db->free($resql);
+} else {
+	dol_print_error($db);
 }
 
 // End of page

@@ -51,20 +51,38 @@ if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type))
 	$classpath = $subelement = $element;
 
 	// For compatibility
-	if ($element == 'order' || $element == 'commande') { $classpath = $subelement = 'commande'; }
-	elseif ($element == 'propal') { $classpath = 'comm/propal'; $subelement = 'propal'; }
-	elseif ($element == 'facture') { $classpath = 'compta/facture'; $subelement = 'facture'; }
-	elseif ($element == 'contract') { $classpath = $subelement = 'contrat'; }
-	elseif ($element == 'shipping') { $classpath = $subelement = 'expedition'; }
-	elseif ($element == 'deplacement') { $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
-	elseif ($element == 'order_supplier') { $classpath = 'fourn'; $subelement = 'fournisseur.commande'; }
-	elseif ($element == 'invoice_supplier') { $classpath = 'fourn'; $subelement = 'fournisseur.facture'; }
+	if ($element == 'order' || $element == 'commande') {
+		$classpath = $subelement = 'commande';
+	} elseif ($element == 'propal') {
+		$classpath = 'comm/propal';
+		$subelement = 'propal';
+	} elseif ($element == 'facture') {
+		$classpath = 'compta/facture';
+		$subelement = 'facture';
+	} elseif ($element == 'contract') {
+		$classpath = $subelement = 'contrat';
+	} elseif ($element == 'shipping') {
+		$classpath = $subelement = 'expedition';
+	} elseif ($element == 'deplacement') {
+		$classpath = 'compta/deplacement';
+		$subelement = 'deplacement';
+	} elseif ($element == 'order_supplier') {
+		$classpath = 'fourn';
+		$subelement = 'fournisseur.commande';
+	} elseif ($element == 'invoice_supplier') {
+		$classpath = 'fourn';
+		$subelement = 'fournisseur.facture';
+	}
 
 	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
 
-	if ($element == 'order_supplier') { $classname = 'CommandeFournisseur'; }
-	elseif ($element == 'invoice_supplier') { $classname = 'FactureFournisseur'; }
-	else $classname = ucfirst($subelement);
+	if ($element == 'order_supplier') {
+		$classname = 'CommandeFournisseur';
+	} elseif ($element == 'invoice_supplier') {
+		$classname = 'FactureFournisseur';
+	} else {
+		$classname = ucfirst($subelement);
+	}
 
 	$object = new $classname($db);
 	$object->fetch($id);

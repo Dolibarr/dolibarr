@@ -41,8 +41,7 @@ function myobjectPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) $nbNote++;
 		if (!empty($object->note_public)) $nbNote++;

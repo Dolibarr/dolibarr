@@ -22,7 +22,7 @@
 create table llx_notify
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   daten           datetime,           -- date de la notification
   fk_action       integer NOT NULL,
   fk_soc          integer NULL,

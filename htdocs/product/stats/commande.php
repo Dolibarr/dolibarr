@@ -95,32 +95,32 @@ if ($id > 0 || !empty($ref))
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct".$product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'referers', $titre, -1, $picto);
+		print dol_get_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        $shownav = 1;
-        if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+		$shownav = 1;
+		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
-        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-        print '<div class="fichecenter">';
+		print '<div class="fichecenter">';
 
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
 
-        $nboflines = show_stats_for_company($product, $socid);
+		$nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
-        print '</div>';
-        print '<div style="clear:both"></div>';
+		print '</div>';
+		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		if ($user->rights->commande->lire)
@@ -137,27 +137,27 @@ if ($id > 0 || !empty($ref))
 			$sql .= " AND c.entity IN (".getEntity('commande').")";
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product =".$product->id;
-	            if (!empty($search_month))
-	            	$sql .= ' AND MONTH(c.date_commande) IN ('.$search_month.')';
-	            if (!empty($search_year))
-	            	$sql .= ' AND YEAR(c.date_commande) IN ('.$search_year.')';
+				if (!empty($search_month))
+					$sql .= ' AND MONTH(c.date_commande) IN ('.$search_month.')';
+				if (!empty($search_year))
+					$sql .= ' AND YEAR(c.date_commande) IN ('.$search_year.')';
 			if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 			$sql .= $db->order($sortfield, $sortorder);
 
-	        //Calcul total qty and amount for global if full scan list
-	        $total_ht = 0;
-	        $total_qty = 0;
+			//Calcul total qty and amount for global if full scan list
+			$total_ht = 0;
+			$total_qty = 0;
 
-	        // Count total nb of records
-	        $totalofrecords = '';
-	        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-	        {
-	        	$result = $db->query($sql);
-	        	$totalofrecords = $db->num_rows($result);
-	        }
+			// Count total nb of records
+			$totalofrecords = '';
+			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+			{
+				$result = $db->query($sql);
+				$totalofrecords = $db->num_rows($result);
+			}
 
-	        $sql .= $db->plimit($limit + 1, $offset);
+			$sql .= $db->plimit($limit + 1, $offset);
 
 			$result = $db->query($sql);
 			if ($result)
@@ -169,30 +169,31 @@ if ($id > 0 || !empty($ref))
 				if (!empty($search_month)) $option .= '&search_month='.urlencode($search_month);
 				if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
 
-	            print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
-	            if (!empty($sortfield))
-	            	print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-	            if (!empty($sortorder))
-	            	print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				if (!empty($sortfield))
+					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+				if (!empty($sortorder))
+					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
-	            print_barre_liste($langs->trans("CustomersOrders"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+				print_barre_liste($langs->trans("CustomersOrders"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
-	            if (!empty($page)) $option .= '&page='.urlencode($page);
+				if (!empty($page)) $option .= '&page='.urlencode($page);
 
-	            print '<div class="liste_titre liste_titre_bydiv centpercent">';
-                print '<div class="divsearchfield">';
-			    print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
+				print '<div class="liste_titre liste_titre_bydiv centpercent">';
+				print '<div class="divsearchfield">';
+				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-			    print '</div>';
+				print '</div>';
 				print '</div>';
 				print '</div>';
 
 				$i = 0;
-                print '<div class="div-table-responsive">';
+				print '<div class="div-table-responsive">';
 				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
@@ -220,30 +221,30 @@ if ($id > 0 || !empty($ref))
 
 						print '<tr class="oddeven">';
 	 					print '<td>';
-	                    print $orderstatic->getNomUrl(1);
-	                    print "</td>\n";
-	                    print '<td>'.$societestatic->getNomUrl(1).'</td>';
-	                    print "<td>".$objp->code_client."</td>\n";
+						print $orderstatic->getNomUrl(1);
+						print "</td>\n";
+						print '<td>'.$societestatic->getNomUrl(1).'</td>';
+						print "<td>".$objp->code_client."</td>\n";
 						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
 						print  '<td class="center">'.$objp->qty."</td>\n";
-	                    print '<td align="right">'.price($objp->total_ht)."</td>\n";
+						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut, $objp->facture, 5).'</td>';
 						print "</tr>\n";
 						$i++;
 					}
 				}
-                print '<tr class="liste_total">';
-                if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-                else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-                print '<td colspan="3"></td>';
-                print '<td class="center">'.$total_qty.'</td>';
-                print '<td align="right">'.price($total_ht).'</td>';
-                print '<td></td>';
-                print "</table>";
-                print "</div>";
-                print '</form>';
-            } else {
+				print '<tr class="liste_total">';
+				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+				print '<td colspan="3"></td>';
+				print '<td class="center">'.$total_qty.'</td>';
+				print '<td align="right">'.price($total_ht).'</td>';
+				print '<td></td>';
+				print "</table>";
+				print "</div>";
+				print '</form>';
+			} else {
 				dol_print_error($db);
 			}
 			$db->free($result);

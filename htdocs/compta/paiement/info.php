@@ -33,7 +33,7 @@ $langs->loadLangs(array('bills', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 /*
@@ -55,7 +55,7 @@ $object->info($object->id);
 
 $head = payment_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("PaymentCustomerInvoice"), -1, 'payment');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -74,7 +74,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

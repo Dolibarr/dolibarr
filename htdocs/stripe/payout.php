@@ -64,9 +64,7 @@ if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETP
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-else
-{
+} else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
@@ -80,8 +78,8 @@ $stripeacc = $stripe->getStripeAccount($service);
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
-        print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    }
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -103,7 +101,7 @@ if (!$rowid) {
 	//print_liste_field_titre("CustomerId", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	//print_liste_field_titre("Origin", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
@@ -111,113 +109,115 @@ if (!$rowid) {
 
 	print "</tr>\n";
 
-	if ($stripeacc)
-	{
-		$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
-	}
-	else
-	{
-		$payout = \Stripe\Payout::all(array("limit" => $limit));
-	}
-
-	foreach ($payout->data as $payout)
-	{
-		//$charge = $payout;
-		//var_dump($payout);
-
-		// The metadata FULLTAG is defined by the online payment page
-		/*$FULLTAG=$charge->metadata->FULLTAG;
-
-		// Save into $tmparray all metadata
-		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
-		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']))
+	try {
+		if ($stripeacc)
 		{
-			$societestatic->fetch($tmparray['CUS']);
-		}
-		else
-		{
-			$societestatic->id = 0;
-		}
-		if (! empty($tmparray['MEM']))
-		{
-			$memberstatic->fetch($tmparray['MEM']);
-		}
-		else
-		{
-			$memberstatic->id = 0;
-		}*/
-
-		$societestatic->fetch($charge->metadata->idcustomer);
-		$societestatic->id = $charge->metadata->idcustomer;
-		$societestatic->lastname = $obj->lastname;
-		$societestatic->firstname = $obj->firstname;
-		$societestatic->admin = $obj->admin;
-		$societestatic->login = $obj->login;
-		$societestatic->email = $obj->email;
-		$societestatic->socid = $obj->fk_soc;
-
-		print '<tr class="oddeven">';
-
-		// Ref
-        if (!empty($stripeacc)) $connect = $stripeacc.'/';
-
-		$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
-		if ($servicestatus) {
-			$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
+			$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+		} else {
+			$payout = \Stripe\Payout::all(array("limit" => $limit));
 		}
 
-        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
+		foreach ($payout->data as $payout)
+		{
+			//$charge = $payout;
+			//var_dump($payout);
+
+			// The metadata FULLTAG is defined by the online payment page
+			/*$FULLTAG=$charge->metadata->FULLTAG;
+
+			// Save into $tmparray all metadata
+			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
+			// Load origin object according to metadata
+			if (! empty($tmparray['CUS']))
+			{
+				$societestatic->fetch($tmparray['CUS']);
+			}
+			else
+			{
+				$societestatic->id = 0;
+			}
+			if (! empty($tmparray['MEM']))
+			{
+				$memberstatic->fetch($tmparray['MEM']);
+			}
+			else
+			{
+				$memberstatic->id = 0;
+			}*/
+
+			$societestatic->fetch($charge->metadata->idcustomer);
+			$societestatic->id = $charge->metadata->idcustomer;
+			$societestatic->lastname = $obj->lastname;
+			$societestatic->firstname = $obj->firstname;
+			$societestatic->admin = $obj->admin;
+			$societestatic->login = $obj->login;
+			$societestatic->email = $obj->email;
+			$societestatic->socid = $obj->fk_soc;
+
+			print '<tr class="oddeven">';
+
+			// Ref
+			if (!empty($stripeacc)) $connect = $stripeacc.'/';
+
+			$url = 'https://dashboard.stripe.com/'.$connect.'test/payouts/'.$payout->id;
+			if ($servicestatus) {
+				$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
+			}
+
+			print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
 
 
-		// Stripe customer
-		//print "<td>".$charge->customer."</td>\n";
-		// Link
-		/*print "<td>";
-		if ($societestatic->id > 0)
-		{
-			print $societestatic->getNomUrl(1);
+			// Stripe customer
+			//print "<td>".$charge->customer."</td>\n";
+			// Link
+			/*print "<td>";
+			if ($societestatic->id > 0)
+			{
+				print $societestatic->getNomUrl(1);
+			}
+			if ($memberstatic->id > 0)
+			{
+				print $memberstatic->getNomUrl(1);
+			}
+			print "</td>\n";*/
+			// Origine
+			//print "<td>";
+			////if ($charge->metadata->dol_type=="order"){
+			//	$object = new Commande($db);
+			//	$object->fetch($charge->metadata->dol_id);
+			//	print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->dol_id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+			//} elseif ($charge->metadata->dol_type=="invoice"){
+			//	$object = new Facture($db);
+			//	$object->fetch($charge->metadata->dol_id);
+			//	print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+			//}
+			//print "</td>\n";
+			// Date payment
+			print '<td class="center">'.dol_print_date($payout->created, '%d/%m/%Y %H:%M')."</td>\n";
+			// Date payment
+			print '<td class="center">'.dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M')."</td>\n";
+			// Type
+			print '<td>'.$payout->description.'</td>';
+			// Amount
+			print '<td class="right">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</td>";
+			// Status
+			print "<td class='right'>";
+			if ($payout->status == 'paid') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut4');
+			} elseif ($payout->status == 'pending') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'in_transit') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'failed') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+			} elseif ($payout->status == 'canceled') {
+				print img_picto($langs->trans("".$payout->status.""), 'statut8');
+			}
+			print '</td>';
+			print "</tr>\n";
 		}
-		if ($memberstatic->id > 0)
-		{
-			print $memberstatic->getNomUrl(1);
-		}
-		print "</td>\n";*/
-		// Origine
-		//print "<td>";
-		////if ($charge->metadata->dol_type=="order"){
-		//	$object = new Commande($db);
-		//	$object->fetch($charge->metadata->dol_id);
-		//	print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->dol_id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
-		//} elseif ($charge->metadata->dol_type=="invoice"){
-		//	$object = new Facture($db);
-		//	$object->fetch($charge->metadata->dol_id);
-		//	print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
-		//}
-		//print "</td>\n";
-		// Date payment
-		print '<td class="center">'.dol_print_date($payout->created, '%d/%m/%Y %H:%M')."</td>\n";
-        // Date payment
-		print '<td class="center">'.dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M')."</td>\n";
-		// Type
-		print '<td>'.$payout->description.'</td>';
-		// Amount
-		print '<td class="right">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</td>";
-		// Status
-		print "<td class='right'>";
-		if ($payout->status == 'paid') {
-            print img_picto($langs->trans("".$payout->status.""), 'statut4');
-        } elseif ($payout->status == 'pending') {
-            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-        } elseif ($payout->status == 'in_transit') {
-            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-        } elseif ($payout->status == 'failed') {
-            print img_picto($langs->trans("".$payout->status.""), 'statut7');
-        } elseif ($payout->status == 'canceled') {
-            print img_picto($langs->trans("".$payout->status.""), 'statut8');
-        }
-		print '</td>';
-		print "</tr>\n";
+	} catch (Exception $e) {
+		print '<tr><td colspan="6">'.$e->getMessage().'</td></td>';
 	}
 	print "</table>";
 	print '</div>';

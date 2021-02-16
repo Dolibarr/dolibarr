@@ -31,10 +31,8 @@ TicketDictType=服務單-類型
 TicketDictCategory=服務單-組別
 TicketDictSeverity=服務單-嚴重程度
 TicketDictResolution=服務單-決議
-TicketTypeShortBUGSOFT=軟體故障
-TicketTypeShortBUGHARD=設備故障
-TicketTypeShortCOM=商業問題
 
+TicketTypeShortCOM=商業問題
 TicketTypeShortHELP=請求有用的幫助
 TicketTypeShortISSUE=錯誤或問題
 TicketTypeShortREQUEST=變更或增強要求
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=其他
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
-TicketSeverityShortBLOCKING=嚴重/阻止
+TicketSeverityShortBLOCKING=嚴重，阻止中
 
 ErrorBadEmailAddress=欄位'%s'不正確
 MenuTicketMyAssign=我的服務單
@@ -60,7 +58,6 @@ OriginEmail=電子郵件來源
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status
-NotRead=未讀
 Read=已讀
 Assigned=已分配
 InProgress=進行中
@@ -72,7 +69,6 @@ Deleted=已刪除
 
 # Dict
 Type=類型
-Category=分析代碼
 Severity=嚴重程度
 
 # Email templates
@@ -110,7 +106,7 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=此段文字將出現在用戶的�
 ExtraFieldsTicket=額外屬性
 TicketCkEditorEmailNotActivated=HTML編輯器未啟動。請將FCKEDITOR_ENABLE_MAIL內容設為1即可啟動。
 TicketsDisableEmail=不要為服務單建立或訊息紀錄發送電子郵件
-TicketsDisableEmailHelp=預設情況下，在建立新服務單或訊息時會發送電子郵件。啟用此選項可禁用*所有*電子郵件通知
+TicketsDisableEmailHelp=預設情況下，在建立新服務單或訊息時會發送電子郵件。啟用此選項可關閉*所有*電子郵件通知
 TicketsLogEnableEmail=通過電子郵件啟用日誌
 TicketsLogEnableEmailHelp=每次更改時，都會向與此服務單有關的**每個聯絡人**發送電子郵件。
 TicketParams=參數
@@ -127,8 +123,8 @@ TicketsActivatePublicInterfaceHelp=公共界面允許任何訪客建立服務單
 TicketsAutoAssignTicket=自動分配建立服務單的用戶
 TicketsAutoAssignTicketHelp=建立服務單時，可以自動將用戶分配給服務單。
 TicketNumberingModules=服務單編號模組
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=建立時通知合作方
-TicketGroup=群組
 TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
 TicketsPublicNotificationNewMessage=當有新訊息時寄送電子郵件
 TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
@@ -137,7 +133,7 @@ TicketPublicNotificationNewMessageDefaultEmailHelp=如果沒有分配服務單�
 #
 # Index & list page
 #
-TicketsIndex=門票區
+TicketsIndex=服務單區域
 TicketList=服務單清單
 TicketAssignedToMeInfos=此頁面顯示由目前用戶建立或分配給目前用戶的服務單清單
 NoTicketsFound=找不到服務單
@@ -162,7 +158,7 @@ CreatedBy=建立者
 NewTicket=新服務單
 SubjectAnswerToTicket=服務單回應
 TicketTypeRequest=需求類型
-TicketCategory=分析代碼
+TicketCategory=群組
 SeeTicket=查閱服務單
 TicketMarkedAsRead=服務單已標記為已讀
 TicketReadOn=繼續讀取
@@ -235,7 +231,6 @@ TicketLogStatusChanged=狀態已更改：%s到%s
 TicketNotNotifyTiersAtCreate=建立時不通知公司
 Unread=未讀
 TicketNotCreatedFromPublicInterface=無法使用。服務單不是從公共界面建立的。
-PublicInterfaceNotEnabled=未啟用公共界面
 ErrorTicketRefRequired=服務單參考名稱為必填
 
 #

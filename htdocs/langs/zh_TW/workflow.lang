@@ -16,5 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=當已確認裝運後（並且如�
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=當供應商發票已確認時（如果發票金額與連接提案的總金額相同），將連接供應商提案分類為開票
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=當供應商發票已確認時（如果發票金額與連接訂單的總金額相同），將連接的採購訂單分類為開票
+descWORKFLOW_BILL_ON_RECEPTION=驗證連結的供應商訂單後，將接收分類為“已開票”
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=關閉服務單後，關閉與服務單連結的所有干預措施
 AutomaticCreation=自動建立
 AutomaticClassification=自動分類
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

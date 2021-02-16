@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
- * retreived as GPL v2 or later
+ * retrieved as GPL v2 or later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ function OpenFile( fileUrl )
     funcNum = GetUrlParam('CKEditorFuncNum');
     //window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
 	window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
-    
+
     ///////////////////////////////////
     window.top.close();
     window.top.opener.focus();

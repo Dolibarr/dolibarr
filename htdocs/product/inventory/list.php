@@ -45,8 +45,8 @@ $id = GETPOST('id', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
@@ -76,14 +76,12 @@ if ($user->socid > 0)	// Protection if external user
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$result = restrictedArea($user, 'stock', $objectid);
-}
-else
-{
+} else {
 	$result = restrictedArea($user, 'stock', $objectid, '', 'inventory_advance');
 }
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -255,9 +253,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -328,7 +324,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "Information";
 $modelmail = "inventory";
 $objecttmp = new Inventory($db);
-$trackid = 'inve'.$object->id;
+$trackid = 'stockinv'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all)
@@ -375,11 +371,10 @@ foreach ($object->fields as $key => $val)
 	if (!empty($arrayfields['t.'.$key]['checked']))
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		elseif (strpos($val['type'], 'integer:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
-		}
-		elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }

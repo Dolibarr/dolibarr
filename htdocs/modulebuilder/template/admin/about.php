@@ -45,10 +45,12 @@ require_once '../lib/mymodule.lib.php';
 $langs->loadLangs(array("errors", "admin", "mymodule@mymodule"));
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 
@@ -75,13 +77,13 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@my
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-dol_fiche_head($head, 'about', '', 0, 'mymodule@mymodule');
+print dol_get_fiche_head($head, 'about', '', 0, 'mymodule@mymodule');
 
 dol_include_once('/mymodule/core/modules/modMyModule.class.php');
 $tmpmodule = new modMyModule($db);
 print $tmpmodule->getDescLong();
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 llxFooter();
 $db->close();

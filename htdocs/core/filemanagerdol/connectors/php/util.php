@@ -59,7 +59,7 @@ function FindBadUtf8($string)
 	$regex = '([\x00-\x7F]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]';
 	$regex .= '|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}|(.{1}))';
 
-	$matches =array();
+	$matches = array();
 	while (preg_match('/'.$regex.'/S', $string, $matches)) {
 		if (isset($matches[2])) {
 			return true;
@@ -81,18 +81,14 @@ function ConvertToXmlAttribute($value)
 	if (defined('PHP_OS'))
 	{
 		$os = PHP_OS;
-	}
-	else
-	{
+	} else {
 		$os = php_uname();
 	}
 
 	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value))
 	{
 		return (utf8_encode(htmlspecialchars($value)));
-	}
-	else
-	{
+	} else {
 		return (htmlspecialchars($value));
 	}
 }

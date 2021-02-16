@@ -59,85 +59,77 @@ if ($action == 'update' || $action == 'add')
 		$constnote = $_POST["constnote"][$key];
 		$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 	}
 
  	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
-        dol_print_error($db);
-    }
+	$result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
+	if ($result < 0)
+	{
+		dol_print_error($db);
+	}
 }
 
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
-    $result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
-    if ($result < 0)
-    {
-        dol_print_error($db);
-    }
+	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
+	if ($result < 0)
+	{
+		dol_print_error($db);
+	}
 }
 
 if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf->global->ADHERENT_USE_MAILMAN))
 {
-    $email = GETPOST($action.'email');
-    if (!isValidEmail($email))
-    {
-        $langs->load("errors");
-        setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
-    }
-    else
-    {
-        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-        $mailmanspip = new MailmanSpip($db);
+	$email = GETPOST($action.'email');
+	if (!isValidEmail($email))
+	{
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
+	} else {
+		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
+		$mailmanspip = new MailmanSpip($db);
 
-        $object = new stdClass();
-        $object->email = $email;
-        $object->pass = $email;
-        /*$object->element='member';
+		$object = new stdClass();
+		$object->email = $email;
+		$object->pass = $email;
+		/*$object->element='member';
         $object->type='Preferred Partners'; */
 
-        if ($action == 'testsubscribe')
-        {
-            $result = $mailmanspip->add_to_mailman($object);
+		if ($action == 'testsubscribe')
+		{
+			$result = $mailmanspip->add_to_mailman($object);
 			if ($result < 0)
 			{
 				$error++;
 				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				setEventMessages($langs->trans("MailmanCreationSuccess"), null);
 			}
-        }
-        if ($action == 'testunsubscribe')
-        {
-            $result = $mailmanspip->del_to_mailman($object);
-            if ($result < 0)
+		}
+		if ($action == 'testunsubscribe')
+		{
+			$result = $mailmanspip->del_to_mailman($object);
+			if ($result < 0)
 			{
 				$error++;
 				setEventMessages($mailmanspip->error, $mailmanspip->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				setEventMessages($langs->trans("MailmanDeletionSuccess"), null);
 			}
-        }
-    }
+		}
+	}
 }
 
 
@@ -157,31 +149,31 @@ $head = mailmanspip_admin_prepare_head();
 
 if (!empty($conf->global->ADHERENT_USE_MAILMAN))
 {
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="update">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update">';
 
-    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
+	print dol_get_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
 
-    //$link=img_picto($langs->trans("Active"),'tick').' ';
-    $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
-    //$link.=$langs->trans("Disable");
-    $link .= img_picto($langs->trans("Activated"), 'switch_on');
-    $link .= '</a>';
-    // Edition des varibales globales
-    $constantes = array(
-        'ADHERENT_MAILMAN_ADMINPW',
-        'ADHERENT_MAILMAN_URL',
-        'ADHERENT_MAILMAN_UNSUB_URL',
-        'ADHERENT_MAILMAN_LISTS'
-    );
+	//$link=img_picto($langs->trans("Active"),'tick').' ';
+	$link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&token='.newToken().'&value=0&name=ADHERENT_USE_MAILMAN">';
+	//$link.=$langs->trans("Disable");
+	$link .= img_picto($langs->trans("Activated"), 'switch_on');
+	$link .= '</a>';
+	// Edition des varibales globales
+	$constantes = array(
+		'ADHERENT_MAILMAN_ADMINPW',
+		'ADHERENT_MAILMAN_URL',
+		'ADHERENT_MAILMAN_UNSUB_URL',
+		'ADHERENT_MAILMAN_LISTS'
+	);
 
-    print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
+	print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
-    print '<br>';
+	print '<br>';
 
-    // JQuery activity
-    print '<script type="text/javascript">
+	// JQuery activity
+	print '<script type="text/javascript">
     var i1=0;
     var i2=0;
     var i3=0;
@@ -201,50 +193,48 @@ if (!empty($conf->global->ADHERENT_USE_MAILMAN))
 	});
     </script>';
 
-    form_constantes($constantes, 2);
+	form_constantes($constantes, 2);
 
-    print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-    print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
+	print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+	print '%LISTE%, %MAILMAN_ADMINPW%, %EMAIL% <br>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
-    print '</form>';
-}
-else
-{
-    dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
+	print '</form>';
+} else {
+	print dol_get_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
-    $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
-    //$link.=img_$langs->trans("Activate")
-    $link .= img_picto($langs->trans("Disabled"), 'switch_off');
-    $link .= '</a>';
-    print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
+	$link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value=1&name=ADHERENT_USE_MAILMAN">';
+	//$link.=img_$langs->trans("Activate")
+	$link .= img_picto($langs->trans("Disabled"), 'switch_off');
+	$link .= '</a>';
+	print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 
 if (!empty($conf->global->ADHERENT_USE_MAILMAN))
 {
-    print '<form action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="testsubscribe">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="testsubscribe">';
 
-    print $langs->trans("TestSubscribe").'<br>';
-    print $langs->trans("EMail").' <input type="email" class="flat" name="testsubscribeemail" value="'.GETPOST('testsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
+	print $langs->trans("TestSubscribe").'<br>';
+	print $langs->trans("EMail").' <input type="email" class="flat" name="testsubscribeemail" value="'.GETPOST('testsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
 
-    print '</form>';
+	print '</form>';
 
-    print '<form action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="testunsubscribe">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="testunsubscribe">';
 
-    print $langs->trans("TestUnSubscribe").'<br>';
-    print $langs->trans("EMail").' <input type="email" class="flat" name="testunsubscribeemail" value="'.GETPOST('testunsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
+	print $langs->trans("TestUnSubscribe").'<br>';
+	print $langs->trans("EMail").' <input type="email" class="flat" name="testunsubscribeemail" value="'.GETPOST('testunsubscribeemail').'"> <input class="button" type="submit" value="'.$langs->trans("Test").'"><br>';
 
-    print '</form>';
+	print '</form>';
 }
 
 // End of page

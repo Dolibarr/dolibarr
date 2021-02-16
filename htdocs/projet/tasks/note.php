@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->load('projects');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -57,15 +57,13 @@ if ($id > 0 || !empty($ref))
 		if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch(0, $project_ref) > 0)
@@ -75,9 +73,7 @@ if (!empty($project_ref) && !empty($withproject))
 		{
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}
@@ -113,7 +109,7 @@ if ($object->id > 0)
 		// Tabs for project
 		$tab = 'tasks';
 		$head = project_prepare_head($projectstatic);
-		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
+		print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
 		$param = ($mode == 'mine' ? '&mode=mine' : '');
 		// Project card
@@ -126,15 +122,15 @@ if ($object->id > 0)
 		// Thirdparty
 		if ($projectstatic->thirdparty->id > 0)
 		{
-		    $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->rights->projet->all->lire)
 		{
-		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-		    $projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+			$projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -214,9 +210,9 @@ if ($object->id > 0)
 
 		// Categories
 		if ($conf->categorie->enabled) {
-		    print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-		    print $form->showCategories($projectstatic->id, 'project', 1);
-		    print "</td></tr>";
+			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+			print $form->showCategories($projectstatic->id, 'project', 1);
+			print "</td></tr>";
 		}
 
 		print '</table>';
@@ -227,13 +223,13 @@ if ($object->id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<br>';
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
+	print dol_get_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
 
 
 	$param = (GETPOST('withproject') ? '&withproject=1' : '');
@@ -241,40 +237,39 @@ if ($object->id > 0)
 
 	if (!GETPOST('withproject') || empty($projectstatic->id))
 	{
-	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-	    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
-	}
-	else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
+		$object->next_prev_filter = " fk_projet in (".$projectsListId.")";
+	} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 	$morehtmlref = '';
 
 	// Project
 	if (empty($withproject))
 	{
-	    $morehtmlref .= '<div class="refidno">';
-	    $morehtmlref .= $langs->trans("Project").': ';
-	    $morehtmlref .= $projectstatic->getNomUrl(1);
-	    $morehtmlref .= '<br>';
+		$morehtmlref .= '<div class="refidno">';
+		$morehtmlref .= $langs->trans("Project").': ';
+		$morehtmlref .= $projectstatic->getNomUrl(1);
+		$morehtmlref .= '<br>';
 
-	    // Third party
-	    $morehtmlref .= $langs->trans("ThirdParty").': ';
-	    $morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
-	    $morehtmlref .= '</div>';
+		// Third party
+		$morehtmlref .= $langs->trans("ThirdParty").': ';
+		$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
+		$morehtmlref .= '</div>';
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
 	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = 'titlefield';
-    $moreparam = $param;
+	$moreparam = $param;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

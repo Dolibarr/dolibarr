@@ -210,16 +210,12 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 		{
 		    $db->commit();
 		    print " OK with ref ".$object->ref."\n";
-		}
-		else
-		{
+		} else {
 		    print " KO\n";
 		    $db->rollback();
 		    dol_print_error($db, $object->error);
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

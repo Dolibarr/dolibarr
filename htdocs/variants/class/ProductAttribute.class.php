@@ -16,17 +16,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  * Class ProductAttribute
  * Used to represent a product attribute
  */
-class ProductAttribute
+class ProductAttribute extends CommonObject
 {
 	/**
 	 * Database handler
 	 * @var DoliDB
 	 */
-	private $db;
+	public $db;
 
 	/**
 	 * Id of the product attribute
@@ -41,6 +42,12 @@ class ProductAttribute
 	public $ref;
 
 	/**
+	 * External ref of the product attribute
+	 * @var string
+	 */
+	public $ref_ext;
+
+	/**
 	 * Label of the product attribute
 	 * @var string
 	 */
@@ -53,11 +60,11 @@ class ProductAttribute
 	 */
 	public $rang;
 
-    /**
-     * Constructor
-     *
-     * @param   DoliDB $db     Database handler
-     */
+	/**
+	 * Constructor
+	 *
+	 * @param   DoliDB $db     Database handler
+	 */
 	public function __construct(DoliDB $db)
 	{
 		global $conf;
@@ -78,7 +85,7 @@ class ProductAttribute
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -90,6 +97,7 @@ class ProductAttribute
 
 		$this->id = $obj->rowid;
 		$this->ref = $obj->ref;
+		$this->ref_ext = $obj->ref_ext;
 		$this->label = $obj->label;
 		$this->rang = $obj->rang;
 
@@ -105,20 +113,21 @@ class ProductAttribute
 	{
 		$return = array();
 
-		$sql = 'SELECT rowid, ref, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
+		$sql = 'SELECT rowid, ref, ref_ext, label, rang FROM '.MAIN_DB_PREFIX."product_attribute WHERE entity IN (".getEntity('product').')';
 		$sql .= $this->db->order('rang', 'asc');
 		$query = $this->db->query($sql);
 		if ($query)
 		{
-    		while ($result = $this->db->fetch_object($query)) {
-    			$tmp = new ProductAttribute($this->db);
-    			$tmp->id = $result->rowid;
-    			$tmp->ref = $result->ref;
-    			$tmp->label = $result->label;
-    			$tmp->rang = $result->rang;
+			while ($result = $this->db->fetch_object($query)) {
+				$tmp = new ProductAttribute($this->db);
+				$tmp->id = $result->rowid;
+				$tmp->ref = $result->ref;
+				$tmp->ref_ext = $result->ref_ext;
+				$tmp->label = $result->label;
+				$tmp->rang = $result->rang;
 
-    			$return[] = $tmp;
-    		}
+				$return[] = $tmp;
+			}
 		}
 		else dol_print_error($this->db);
 
@@ -128,16 +137,26 @@ class ProductAttribute
 	/**
 	 * Creates a product attribute
 	 *
-	 * @param	User	$user	Object user that create
+	 * @param   User    $user      Object user
+	 * @param   int     $notrigger Do not execute trigger
 	 * @return 					int <0 KO, Id of new variant if OK
 	 */
-	public function create(User $user)
+	public function create(User $user, $notrigger = 0)
 	{
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_CREATE', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+		}
+
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, label, entity, rang)
-		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, ref_ext, label, entity, rang)
+		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
 
 		$query = $this->db->query($sql);
 		if ($query)
@@ -153,16 +172,26 @@ class ProductAttribute
 	/**
 	 * Updates a product attribute
 	 *
-	 * @param	User	$user		Object user
+	 * @param   User    $user      Object user
+	 * @param   int     $notrigger Do not execute trigger
 	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function update(User $user)
+	public function update(User $user, $notrigger = 0)
 	{
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+		}
+
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
 		$this->label = trim($this->label);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', ref_ext = '".$this->db->escape($this->ref_ext)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {
 			return 1;
@@ -174,11 +203,21 @@ class ProductAttribute
 	/**
 	 * Deletes a product attribute
 	 *
-	 * @param	User	$user		Object user
-	 * @return 	int 				<0 KO, >0 OK
+	 * @param   User    $user      Object user
+	 * @param   int     $notrigger Do not execute trigger
+	 * @return 	int <0 KO, >0 OK
 	 */
-	public function delete($user = null)
+	public function delete(User $user, $notrigger = 0)
 	{
+		if (empty($notrigger)) {
+			// Call trigger
+			$result = $this->call_trigger('PRODUCT_ATTRIBUTE_DELETE', $user);
+			if ($result < 0) {
+				return -1;
+			}
+			// End call triggers
+		}
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {

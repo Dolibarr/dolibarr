@@ -30,7 +30,7 @@ if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $value = GETPOST('value', 'int');
 $field = GETPOST('field', 'alpha');
@@ -43,9 +43,9 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-if (empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+/*if (empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 	accessforbidden('Calling this file is allowed only when MAIN_DIRECT_STATUS_UPDATE is set');
-}
+}*/
 
 
 /*
@@ -58,11 +58,9 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 if (in_array($field, array('status'))) {
 	$result = restrictedArea($user, $element, $id);
-}
-elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
+} elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	$result = restrictedArea($user, 'produit|service', $id, 'product&product', '', '', 'rowid');
-}
-else {
+} else {
 	accessforbidden("Bad value for combination of parameters element/field.", 0, 0, 1);
 	exit;
 }

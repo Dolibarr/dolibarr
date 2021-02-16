@@ -39,7 +39,7 @@ $error = 0;
 $website = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
 $pageid = GETPOST('pageid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if (GETPOST('delete')) { $action = 'delete'; }
 if (GETPOST('preview')) $action = 'preview';
@@ -94,9 +94,7 @@ if ($action == 'add')
 		$db->commit();
 		setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
 		$action = '';
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 
@@ -116,7 +114,7 @@ if ($action == 'delete')
 	if ($res > 0)
 	{
 		$res = $objectpage->delete($user);
-		if (!$res > 0)
+		if (!($res > 0))
 		{
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
@@ -129,14 +127,10 @@ if ($action == 'delete')
 
 			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

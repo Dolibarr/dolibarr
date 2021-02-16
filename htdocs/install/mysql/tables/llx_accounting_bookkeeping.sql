@@ -41,16 +41,16 @@ CREATE TABLE llx_accounting_bookkeeping
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  date_lim_reglement    datetime DEFAULT NULL,		-- 					| date limite de reglement
+  date_lim_reglement    datetime DEFAULT NULL,		-- FEC_suppl:DateLimitReglmt    | payment deadline
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
-  tms                   timestamp,					--					| date last modification
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					--					| last modification date
   fk_user               integer NULL,               -- The id of user that validate the accounting source document
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
   date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification)
   date_export	      	datetime DEFAULT NULL,		--
-  import_key            varchar(14),
+  import_key            varchar(14),				-- ID of import when data was inserted by a mass import
   extraparams           varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

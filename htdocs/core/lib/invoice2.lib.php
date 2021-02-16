@@ -175,9 +175,8 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 					if ($regenerate || !dol_is_file($filename))
 					{
 						if ($usestdout) print "Build PDF for invoice ".$obj->ref." - Lang = ".$outputlangs->defaultlang."\n";
-						$result = $fac->generateDocument($regenerate ? $regenerate : $fac->modelpdf, $outputlangs);
-					}
-					else {
+						$result = $fac->generateDocument($regenerate ? $regenerate : $fac->model_pdf, $outputlangs);
+					} else {
 						if ($usestdout) print "PDF for invoice ".$obj->ref." already exists\n";
 					}
 
@@ -261,16 +260,12 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			}
 
 			$result = 1;
-		}
-		else
-		{
+		} else {
 			if ($usestdout) print "No invoices found for criteria.\n";
 			else dol_syslog("No invoices found for criteria");
 			$result = 0;
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 		dol_syslog("scripts/invoices/rebuild_merge.php: Error");
 		$error++;

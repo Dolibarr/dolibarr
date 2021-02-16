@@ -27,6 +27,8 @@ if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on 
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 /**
  * Header empty
@@ -69,22 +71,20 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_
 
 if (empty($pageid))
 {
-    require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-    $object = new Website($db);
-    if ($websiteid)
-    {
-        $object->fetch($websiteid);
-        $website = $object->ref;
-    }
-    else
-    {
-        $object->fetch(0, $website);
-    }
+	$object = new Website($db);
+	if ($websiteid)
+	{
+		$object->fetch($websiteid);
+		$website = $object->ref;
+	} else {
+		$object->fetch(0, $website);
+	}
 
-    $objectpage = new WebsitePage($db);
-    /* Not required for CSS file
+	$objectpage = new WebsitePage($db);
+	/* Not required for CSS file
     $array=$objectpage->fetchAll($object->id);
 
     if (is_array($array) && count($array) > 0)
@@ -115,7 +115,7 @@ $refname = basename(dirname($original_file)."/");
 // Limite acces si droits non corrects
 if (!$accessallowed)
 {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Security:
@@ -123,10 +123,10 @@ if (!$accessallowed)
 // les noms de fichiers.
 if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
 {
-    dol_syslog("Refused to deliver file ".$original_file);
-    $file = basename($original_file); // Do no show plain path of original_file in shown error message
-    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
-    exit;
+	dol_syslog("Refused to deliver file ".$original_file);
+	$file = basename($original_file); // Do no show plain path of original_file in shown error message
+	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
+	exit;
 }
 
 clearstatcache();
@@ -140,10 +140,10 @@ $original_file_osencoded = dol_osencode($original_file); // New file name encode
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($original_file_osencoded))
 {
-    $langs->load("website");
-    print $langs->trans("RequestedPageHasNoContentYet", $pageid);
-    //dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-    exit;
+	$langs->load("website");
+	print $langs->trans("RequestedPageHasNoContentYet", $pageid);
+	//dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	exit;
 }
 
 

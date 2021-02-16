@@ -30,10 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
  */
 class mod_pacific extends ModeleNumRefFicheinter
 {
-    /**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	public $prefix = 'FI';
@@ -59,13 +59,13 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 *  Return description of numbering module
 	 *
-     *  @return     string      Text with description
-     */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	 *  @return     string      Text with description
+	 */
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 	/**
 	 *  Return an example of numbering
@@ -106,9 +106,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
 		{
 			return true;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -145,8 +143,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 		$date = $object->datec;
 		$yymm = strftime("%y%m", $date);
 
-    	if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max + 1);
 
 		return $this->prefix.$yymm."-".$num;
 	}

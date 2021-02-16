@@ -516,7 +516,8 @@ function hideMessage(fieldId,message) {
 
 
 /*
- * Used by button to set on/off
+ * Used by button to set on/off.
+ * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
  * @param	string	url			Url
  * @param	string	code		Code
@@ -525,12 +526,14 @@ function hideMessage(fieldId,message) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param   string  token       Token
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid) {
-	$.get( url, {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token) {
+	$.post( url, {
 		action: "set",
 		name: code,
-		entity: entity
+		entity: entity,
+		token: token
 	},
 	function() {
 		console.log("url request success forcereload="+forcereload);
@@ -582,11 +585,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid) {
 		if (forcereload) {
 			location.reload();
 		}
-	});
+	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
 }
 
 /*
  * Used by button to set on/off
+ * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
  * @param	string	url			Url
  * @param	string	code		Code
@@ -595,12 +599,14 @@ function setConstant(url, code, input, entity, strict, forcereload, userid) {
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
+ * @param   string  token       Token
  */
-function delConstant(url, code, input, entity, strict, forcereload, userid) {
-	$.get( url, {
+function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+	$.post( url, {
 		action: "del",
 		name: code,
-		entity: entity
+		entity: entity,
+		token: token
 	},
 	function() {
 		console.log("url request success forcereload="+forcereload);
@@ -648,7 +654,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid) {
 		if (forcereload) {
 			location.reload();
 		}
-	});
+	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMEssage in session visible */
 }
 
 /*
@@ -664,8 +670,9 @@ function delConstant(url, code, input, entity, strict, forcereload, userid) {
  * @param	int		noButton	noButton
  * @param	int		strict		Strict
  * @param   int     userid      User id
+ * @param   string  token       Token
  */
-function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid) {
+function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid, token) {
 	var boxConfirm = box;
 	$("#confirm_" + code)
 			.attr("title", boxConfirm.title)
@@ -681,9 +688,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity, strict, 0, userid);
+								setConstant(url, code, input, entity, strict, 0, userid, token);
 							} else if (action == "del") {
-								delConstant(url, code, input, entity, strict, 0, userid);
+								delConstant(url, code, input, entity, strict, 0, userid, token);
 							}
 							// Close dialog
 							$(this).dialog("close");
@@ -1098,7 +1105,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
-    ?>
+	?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')
@@ -1122,5 +1129,16 @@ $(document).ready(function() {
 	}
 });
 <?php } ?>
+
+// Force to hide menus when page is inside an iFrame
+$(document).ready(function() {
+	if (window.location !== window.parent.location ) {
+		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
+		// The page is in an iframe
+		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
+		jQuery(".id-container").css('width', '100%');
+
+	}
+});
 
 // End of lib_head.js.php

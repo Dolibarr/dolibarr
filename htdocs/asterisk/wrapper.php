@@ -44,10 +44,10 @@ if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
  */
 function llxHeader()
 {
-    print '<html>'."\n";
-    print '<head>'."\n";
-    print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
-    print '</head>'."\n";
+	print '<html>'."\n";
+	print '<head>'."\n";
+	print '<title>Asterisk redirection from Dolibarr...</title>'."\n";
+	print '</head>'."\n";
 }
 
 /**
@@ -58,7 +58,7 @@ function llxHeader()
  */
 function llxFooter()
 {
-    print "\n".'</html>'."\n";
+	print "\n".'</html>'."\n";
 }
 
 require_once '../main.inc.php';
@@ -69,8 +69,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Security check
 if (empty($conf->clicktodial->enabled))
 {
-    accessforbidden();
-    exit;
+	accessforbidden();
+	exit;
 }
 
 
@@ -137,9 +137,7 @@ if ($resql)
 		$found = $notfound;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db, 'Error');
 	$found = 'Error';
 }
@@ -148,49 +146,46 @@ $number = strtolower($called);
 $pos = strpos($number, "local");
 if (!empty($number))
 {
-    if ($pos === false)
-    {
-        $errno = 0;
-        $errstr = 0;
-        $strCallerId = "Dolibarr call $found <".strtolower($number).">";
-        $oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
-        if (!$oSocket)
-        {
-            print '<body>'."\n";
-            $txt = "Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
-            print $txt;
-            dol_syslog($txt, LOG_ERR);
-            $txt = $errstr." (".$errno.")<br>\n";
-            print $txt;
-            dol_syslog($txt, LOG_ERR);
-            print '</body>'."\n";
-        }
-        else
-        {
-            $txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
-            dol_syslog($txt);
-            print '<body onload="javascript:history.go(-1);">'."\n";
-            print '<!-- '.$txt.' -->';
-            fputs($oSocket, "Action: login\r\n");
-            fputs($oSocket, "Events: off\r\n");
-            fputs($oSocket, "Username: $login\r\n");
-            fputs($oSocket, "Secret: $password\r\n\r\n");
-            fputs($oSocket, "Action: originate\r\n");
-            fputs($oSocket, "Channel: ".$channel.$caller."\r\n");
-            fputs($oSocket, "WaitTime: $strWaitTime\r\n");
-            fputs($oSocket, "CallerId: $strCallerId\r\n");
-            fputs($oSocket, "Exten: ".$prefix.$number."\r\n");
-            fputs($oSocket, "Context: $strContext\r\n");
-            fputs($oSocket, "Priority: $strPriority\r\n\r\n");
-            fputs($oSocket, "Action: Logoff\r\n\r\n");
-            sleep(2);
-            fclose($oSocket);
-            print '</body>'."\n";
-        }
-    }
-}
-else {
-    print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
+	if ($pos === false)
+	{
+		$errno = 0;
+		$errstr = 0;
+		$strCallerId = "Dolibarr call $found <".strtolower($number).">";
+		$oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
+		if (!$oSocket)
+		{
+			print '<body>'."\n";
+			$txt = "Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
+			print $txt;
+			dol_syslog($txt, LOG_ERR);
+			$txt = $errstr." (".$errno.")<br>\n";
+			print $txt;
+			dol_syslog($txt, LOG_ERR);
+			print '</body>'."\n";
+		} else {
+			$txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
+			dol_syslog($txt);
+			print '<body onload="javascript:history.go(-1);">'."\n";
+			print '<!-- '.$txt.' -->';
+			fputs($oSocket, "Action: login\r\n");
+			fputs($oSocket, "Events: off\r\n");
+			fputs($oSocket, "Username: $login\r\n");
+			fputs($oSocket, "Secret: $password\r\n\r\n");
+			fputs($oSocket, "Action: originate\r\n");
+			fputs($oSocket, "Channel: ".$channel.$caller."\r\n");
+			fputs($oSocket, "WaitTime: $strWaitTime\r\n");
+			fputs($oSocket, "CallerId: $strCallerId\r\n");
+			fputs($oSocket, "Exten: ".$prefix.$number."\r\n");
+			fputs($oSocket, "Context: $strContext\r\n");
+			fputs($oSocket, "Priority: $strPriority\r\n\r\n");
+			fputs($oSocket, "Action: Logoff\r\n\r\n");
+			sleep(2);
+			fclose($oSocket);
+			print '</body>'."\n";
+		}
+	}
+} else {
+	print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
 // End of page

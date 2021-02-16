@@ -16,6 +16,9 @@
 	color: #<?php echo $colortextbackhmenu; ?>;
 }
 
+.fa-15x {
+    font-size: 1.5em;
+}
 
 div.mainmenu.menu {
 	background-image: none;
@@ -100,7 +103,7 @@ div.mainmenu.hrm::before {
 }
 
 div.mainmenu.members::before {
-    content: "\f0c0";
+    content: "\f007";
 }
 
 div.mainmenu.products::before {
@@ -149,7 +152,7 @@ div.mainmenu.generic4::before {
 	opacity: 0.7;
 	color: #440;
 }
-.fa-at, .fa-external-link-alt {
+.fa-at, .fa-external-link-alt, .fa-share-alt {
 	opacity: 0.7;
 	color: #304;
 }
@@ -196,3 +199,10 @@ div.mainmenu.generic4::before {
 	margin-left: 30px;
 }
 
+.menu_titre .em092 {
+	font-size: 0.92em;
+}
+
+.menu_titre .em080 {
+	font-size: 0.80em;
+}

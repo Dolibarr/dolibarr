@@ -46,8 +46,7 @@ function GetResourceTypePath($resourceType, $sCommand)
 
 	if ($sCommand == "QuickUpload")
 		return $Config['QuickUploadPath'][$resourceType];
-	else
-		return $Config['FileTypesPath'][$resourceType];
+	else return $Config['FileTypesPath'][$resourceType];
 }
 
 /**
@@ -67,9 +66,7 @@ function GetResourceTypeDirectory($resourceType, $sCommand)
 
 		// Map the "UserFiles" path to a local directory.
 		return Server_MapPath($Config['QuickUploadPath'][$resourceType]);
-	}
-	else
-	{
+	} else {
 		if (strlen($Config['FileTypesAbsolutePath'][$resourceType]) > 0)
 			return $Config['FileTypesAbsolutePath'][$resourceType];
 
@@ -131,8 +128,8 @@ function ServerMapFolder($resourceType, $folderPath, $sCommand)
  */
 function GetParentFolder($folderPath)
 {
-    $sPattern = "-[/\\\\][^/\\\\]+[/\\\\]?$-";
-    return preg_replace($sPattern, '', $folderPath);
+	$sPattern = "-[/\\\\][^/\\\\]+[/\\\\]?$-";
+	return preg_replace($sPattern, '', $folderPath);
 }
 
 /**
@@ -178,9 +175,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		if (isset($Config['ChmodOnFolderCreate']) && !$Config['ChmodOnFolderCreate'])
 		{
 			mkdir($folderPath);
-		}
-		else
-		{
+		} else {
 			$permissions = '0777';
 			if (isset($Config['ChmodOnFolderCreate']) && $Config['ChmodOnFolderCreate'])
 			{
@@ -202,9 +197,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		ini_restore('error_reporting');
 
 		return $sErrorMsg;
-	}
-	else
-		return '';
+	} else return '';
 }
 
 /**
@@ -214,26 +207,26 @@ function CreateServerFolder($folderPath, $lastFolder = null)
  */
 function GetRootPath()
 {
-    if (!isset($_SERVER)) {
-        global $_SERVER;
-    }
-    $sRealPath = realpath('./');
-    // #2124 ensure that no slash is at the end
-    $sRealPath = rtrim($sRealPath, "\\/");
+	if (!isset($_SERVER)) {
+		global $_SERVER;
+	}
+	$sRealPath = realpath('./');
+	// #2124 ensure that no slash is at the end
+	$sRealPath = rtrim($sRealPath, "\\/");
 
-    $sSelfPath = $_SERVER['PHP_SELF'];
-    $sSelfPath = substr($sSelfPath, 0, strrpos($sSelfPath, '/'));
+	$sSelfPath = $_SERVER['PHP_SELF'];
+	$sSelfPath = substr($sSelfPath, 0, strrpos($sSelfPath, '/'));
 
-    $sSelfPath = str_replace('/', DIRECTORY_SEPARATOR, $sSelfPath);
+	$sSelfPath = str_replace('/', DIRECTORY_SEPARATOR, $sSelfPath);
 
-    $position = strpos($sRealPath, $sSelfPath);
+	$position = strpos($sRealPath, $sSelfPath);
 
-    // This can check only that this script isn't run from a virtual dir
-    // But it avoids the problems that arise if it isn't checked
-    if ($position === false || $position <> strlen($sRealPath) - strlen($sSelfPath))
-        SendError(1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.php".');
+	// This can check only that this script isn't run from a virtual dir
+	// But it avoids the problems that arise if it isn't checked
+	if ($position === false || $position <> strlen($sRealPath) - strlen($sSelfPath))
+		SendError(1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.php".');
 
-    return substr($sRealPath, 0, $position);
+	return substr($sRealPath, 0, $position);
 }
 
 /**
@@ -243,15 +236,15 @@ function GetRootPath()
  */
 function Server_MapPath($path)
 {
-    // This function is available only for Apache
-    if (function_exists('apache_lookup_uri')) {
-        $info = apache_lookup_uri($path);
-        return $info->filename.$info->path_info;
-    }
+	// This function is available only for Apache
+	if (function_exists('apache_lookup_uri')) {
+		$info = apache_lookup_uri($path);
+		return $info->filename.$info->path_info;
+	}
 
-    // This isn't correct but for the moment there's no other solution
-    // If this script is under a virtual directory or symlink it will detect the problem and stop
-    return GetRootPath().$path;
+	// This isn't correct but for the moment there's no other solution
+	// If this script is under a virtual directory or symlink it will detect the problem and stop
+	return GetRootPath().$path;
 }
 
 /**
@@ -422,11 +415,11 @@ EOF;
  */
 function SendCKEditorResults($callback, $sFileUrl, $customMsg = '')
 {
-    echo '<script type="text/javascript">';
+	echo '<script type="text/javascript">';
 
-    $rpl = array('\\' => '\\\\', '"' => '\\"');
+	$rpl = array('\\' => '\\\\', '"' => '\\"');
 
-    echo 'window.parent.CKEDITOR.tools.callFunction("'.$callback.'","'.strtr($sFileUrl, $rpl).'", "'.strtr($customMsg, $rpl).'");';
+	echo 'window.parent.CKEDITOR.tools.callFunction("'.$callback.'","'.strtr($sFileUrl, $rpl).'", "'.strtr($customMsg, $rpl).'");';
 
-    echo '</script>';
+	echo '</script>';
 }

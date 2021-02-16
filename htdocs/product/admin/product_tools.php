@@ -37,7 +37,7 @@ $langs->loadLangs(array('admin', 'products'));
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $oldvatrate = GETPOST('oldvatrate', 'alpha');
 $newvatrate = GETPOST('newvatrate', 'alpha');
 //$price_base_type=GETPOST('price_base_type');
@@ -90,7 +90,7 @@ if ($action == 'convert')
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product';
 			$sql .= ' WHERE entity IN ('.getEntity('product').')';
 			$sql .= " AND tva_tx = '".$db->escape($oldvatrateclean)."'";
-			if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$vat_src_code_old."'";
+			if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			else " AND default_vat_code = IS NULL";
 
 			$resql = $db->query($sql);
@@ -120,9 +120,7 @@ if ($action == 'convert')
 							{
 								$newprice = price2num($objectstatic->multiprices_ttc[$level], 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 								$newminprice = $objectstatic->multiprices_min_ttc[$level];
-							}
-							else
-							{
+							} else {
 								$newprice = price2num($objectstatic->multiprices[$level], 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 								$newminprice = $objectstatic->multiprices_min[$level];
 							}
@@ -151,9 +149,7 @@ if ($action == 'convert')
 						{
 							$newprice = price2num($objectstatic->price_ttc, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 							$newminprice = $objectstatic->price_min_ttc;
-						}
-						else
-						{
+						} else {
 							$newprice = price2num($objectstatic->price, 'MU'); // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
 							$newminprice = $objectstatic->price_min;
 						}
@@ -172,12 +168,11 @@ if ($action == 'convert')
 						if ($ret < 0 || $retm < 0) $error++;
 						else $nbrecordsmodified++;
 					}
-                    unset($objectstatic);
+					unset($objectstatic);
 
 					$i++;
 				}
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 		}
 
 		$fourn = new Fournisseur($db);
@@ -187,9 +182,9 @@ if ($action == 'convert')
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp, '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' WHERE pfp.fk_soc = s.rowid AND pfp.entity IN ('.getEntity('product').')';
 		$sql .= " AND tva_tx = '".$db->escape($oldvatrate)."'";
-		if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$vat_src_code_old."'";
+		if ($vat_src_code_old) $sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		else " AND default_vat_code = IS NULL";
-		$sql .= " AND s.fk_pays = '".$country_id."'";
+		$sql .= " AND s.fk_pays = ".((int) $country_id);
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql)
@@ -245,15 +240,12 @@ if ($action == 'convert')
 
 				$i++;
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 
 		if (!$error)
 		{
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 
@@ -262,9 +254,7 @@ if ($action == 'convert')
 		{
 			if ($nbrecordsmodified > 0) setEventMessages($langs->trans("RecordsModified", $nbrecordsmodified), null, 'mesgs');
 			else setEventMessages($langs->trans("NoRecordFound"), null, 'warnings');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
@@ -289,9 +279,7 @@ if (empty($mysoc->country_code))
 	$langs->load("errors");
 	$warnpicto = img_error($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
-}
-else
-{
+} else {
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'" />';
 	print '<input type="hidden" name="action" value="convert" />';

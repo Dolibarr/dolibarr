@@ -56,7 +56,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	/**
 	 * @var boolean Condition to have widget visible (in most cases, permissions)
 	 */
-	public $hidden = 0;
+	public $hidden = false;
 
 	/**
 	 * @var int Box definition database ID
@@ -113,7 +113,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	 * Constructor
 	 *
 	 * @param   DoliDB  $db     Database handler
-     * @param   string  $param  More parameters
+	 * @param   string  $param  More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -143,10 +143,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 		global $conf;
 
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
-		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
+		$sql = "SELECT b.rowid as id, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql .= " WHERE b.entity = ".$conf->entity;
-		$sql .= " AND b.rowid = ".$rowid;
+		$sql .= " AND b.rowid = ".((int) $rowid);
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
 
 		$resql = $this->db->query($sql);
@@ -155,45 +155,19 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
-				$this->rowid = $obj->rowid;
+				$this->id = $obj->id;
+				$this->rowid = $obj->id; // For backward compatibility
 				$this->box_id = $obj->box_id;
 				$this->position = $obj->position;
 				$this->box_order = $obj->box_order;
 				$this->fk_user = $obj->fk_user;
 				return 1;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
-	}
-
-
-	/**
-	 * Standard method to get content of a box
-	 *
-	 * @param   array   $head       Array with properties of box title
-	 * @param   array   $contents   Array with properties of box lines
-	 *
-	 * @return  string
-	 */
-	public function outputBox($head = null, $contents = null)
-	{
-		global $langs, $user, $conf;
-
-		// Trick to get result into a var from a function that makes print instead of return
-		// TODO Replace ob_start with param nooutput=1 into showBox
-		ob_start();
-		$result = $this->showBox($head, $contents);
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		return $output;
 	}
 
 	/**
@@ -210,180 +184,180 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 
 		if (!empty($this->hidden)) return '\n<!-- Box ".get_class($this)." hidden -->\n'; // Nothing done if hidden (for example when user has no permission)
 
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$MAXLENGTHBOX = 60; // Mettre 0 pour pas de limite
 
-        $cachetime = 900; // 900 : 15mn
-        $cachedir = DOL_DATA_ROOT.'/boxes/temp';
-        $fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'.cache';
-        $filename = '/box-'.$fileid;
-        $refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
-        $out = '';
+		$cachetime = 900; // 900 : 15mn
+		$cachedir = DOL_DATA_ROOT.'/boxes/temp';
+		$fileid = get_class($this).'id-'.$this->box_id.'-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'.cache';
+		$filename = '/box-'.$fileid;
+		$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
+		$out = '';
 
-        if ($refresh) {
-            dol_syslog(get_class($this).'::showBox');
+		if ($refresh) {
+			dol_syslog(get_class($this).'::showBox');
 
-            // Define nbcol and nblines of the box to show
-            $nbcol = 0;
-            if (isset($contents[0])) $nbcol = count($contents[0]);
-            $nblines = count($contents);
+			// Define nbcol and nblines of the box to show
+			$nbcol = 0;
+			if (isset($contents[0])) $nbcol = count($contents[0]);
+			$nblines = count($contents);
 
-            $out .= "\n<!-- Box ".get_class($this)." start -->\n";
+			$out .= "\n<!-- Box ".get_class($this)." start -->\n";
 
-            $out .= '<div class="box boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
+			$out .= '<div class="box boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
 
-            if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines)
-            {
-                $out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
-            }
+			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines)
+			{
+				$out .= '<table summary="boxtable'.$this->box_id.'" width="100%" class="noborder boxtable">'."\n";
+			}
 
-            // Show box title
-            if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']))
-            {
-                $out .= '<tr class="liste_titre box_titre">';
-                $out .= '<td';
-                if ($nbcol > 0) { $out .= ' colspan="'.$nbcol.'"'; }
-                $out .= '>';
-                if (!empty($conf->use_javascript_ajax))
-                {
-                    //$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
-                	$out .= '<div class="tdoverflowmax250 maxwidth150onsmartphone float">';
-                }
-                if (!empty($head['text']))
-                {
-                    $s = dol_trunc($head['text'], isset($head['limit']) ? $head['limit'] : $MAXLENGTHBOX);
-                    $out .= $s;
-                }
-                if (!empty($conf->use_javascript_ajax))
-                {
-                	$out .= '</div>';
-                }
-                //$out.= '</td>';
+			// Show box title
+			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']))
+			{
+				$out .= '<tr class="liste_titre box_titre">';
+				$out .= '<td';
+				if ($nbcol > 0) { $out .= ' colspan="'.$nbcol.'"'; }
+				$out .= '>';
+				if (!empty($conf->use_javascript_ajax))
+				{
+					//$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
+					$out .= '<div class="tdoverflowmax250 maxwidth150onsmartphone float">';
+				}
+				if (!empty($head['text']))
+				{
+					$s = dol_trunc($head['text'], isset($head['limit']) ? $head['limit'] : $MAXLENGTHBOX);
+					$out .= $s;
+				}
+				if (!empty($conf->use_javascript_ajax))
+				{
+					$out .= '</div>';
+				}
+				//$out.= '</td>';
 
-                if (!empty($conf->use_javascript_ajax))
-                {
-                    $sublink = '';
-                    if (!empty($head['sublink']))  $sublink .= '<a href="'.$head['sublink'].'"'.(empty($head['target']) ? '' : ' target="'.$head['target'].'"').'>';
-                    if (!empty($head['subpicto'])) $sublink .= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium marginleftonly '.(empty($head['subclass']) ? '' : $head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                    if (!empty($head['sublink']))  $sublink .= '</a>';
+				if (!empty($conf->use_javascript_ajax))
+				{
+					$sublink = '';
+					if (!empty($head['sublink']))  $sublink .= '<a href="'.$head['sublink'].'"'.(empty($head['target']) ? '' : ' target="'.$head['target'].'"').'>';
+					if (!empty($head['subpicto'])) $sublink .= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium marginleftonly '.(empty($head['subclass']) ? '' : $head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+					if (!empty($head['sublink']))  $sublink .= '</a>';
 
-                    //$out.= '<td class="nocellnopadd boxclose right nowraponall">';
-                    $out .= '<div class="nocellnopadd boxclose floatright nowraponall">';
-                    $out .= $sublink;
-                    // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
-                    $out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
-                    $label = $head['text'];
-                    //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
-                    if (!empty($head['graph'])) $label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
-                    $out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
-                    //$out.= '</td></tr></table>';
-                    $out .= '</div>';
-                }
+					//$out.= '<td class="nocellnopadd boxclose right nowraponall">';
+					$out .= '<div class="nocellnopadd boxclose floatright nowraponall">';
+					$out .= $sublink;
+					// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+					$out .= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+					$out .= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
+					$label = $head['text'];
+					//if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+					if (!empty($head['graph'])) $label .= ' <span class="opacitymedium fa fa-bar-chart"></span>';
+					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
+					//$out.= '</td></tr></table>';
+					$out .= '</div>';
+				}
 
-                $out .= "</td>";
-                $out .= "</tr>\n";
-            }
+				$out .= "</td>";
+				$out .= "</tr>\n";
+			}
 
-            // Show box lines
-            if ($nblines)
-            {
-                // Loop on each record
-                for ($i = 0, $n = $nblines; $i < $n; $i++)
-                {
-                    if (isset($contents[$i]))
-                    {
-                        // TR
-                        if (isset($contents[$i][0]['tr'])) $out .= '<tr '.$contents[$i][0]['tr'].'>';
-                        else $out .= '<tr class="oddeven">';
+			// Show box lines
+			if ($nblines)
+			{
+				// Loop on each record
+				for ($i = 0, $n = $nblines; $i < $n; $i++)
+				{
+					if (isset($contents[$i]))
+					{
+						// TR
+						if (isset($contents[$i][0]['tr'])) $out .= '<tr '.$contents[$i][0]['tr'].'>';
+						else $out .= '<tr class="oddeven">';
 
-                        // Loop on each TD
-                        $nbcolthisline = count($contents[$i]);
-                        for ($j = 0; $j < $nbcolthisline; $j++) {
-                            // Define tdparam
-                            $tdparam = '';
-                            if (isset($contents[$i][$j]['td'])) $tdparam .= ' '.$contents[$i][$j]['td'];
+						// Loop on each TD
+						$nbcolthisline = count($contents[$i]);
+						for ($j = 0; $j < $nbcolthisline; $j++) {
+							// Define tdparam
+							$tdparam = '';
+							if (!empty($contents[$i][$j]['td'])) $tdparam .= ' '.$contents[$i][$j]['td'];
 
-                            $text = isset($contents[$i][$j]['text']) ? $contents[$i][$j]['text'] : '';
-                            $textwithnotags = preg_replace('/<([^>]+)>/i', '', $text);
-                            $text2 = isset($contents[$i][$j]['text2']) ? $contents[$i][$j]['text2'] : '';
-                            $text2withnotags = preg_replace('/<([^>]+)>/i', '', $text2);
+							$text = isset($contents[$i][$j]['text']) ? $contents[$i][$j]['text'] : '';
+							$textwithnotags = preg_replace('/<([^>]+)>/i', '', $text);
+							$text2 = isset($contents[$i][$j]['text2']) ? $contents[$i][$j]['text2'] : '';
+							$text2withnotags = preg_replace('/<([^>]+)>/i', '', $text2);
 
-                            $textnoformat = isset($contents[$i][$j]['textnoformat']) ? $contents[$i][$j]['textnoformat'] : '';
-                            //$out.= "xxx $textwithnotags y";
-                            if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip'] = "";
-                            $tooltip = isset($contents[$i][$j]['tooltip']) ? $contents[$i][$j]['tooltip'] : '';
+							$textnoformat = isset($contents[$i][$j]['textnoformat']) ? $contents[$i][$j]['textnoformat'] : '';
+							//$out.= "xxx $textwithnotags y";
+							if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip'] = "";
+							$tooltip = isset($contents[$i][$j]['tooltip']) ? $contents[$i][$j]['tooltip'] : '';
 
-                            $out .= '<td'.$tdparam.'>'."\n";
+							$out .= '<td'.$tdparam.'>'."\n";
 
-                            // Url
-                            if (!empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo']))
-                            {
-                                $out .= '<a href="'.$contents[$i][$j]['url'].'"';
-                                if (!empty($tooltip)) {
-                                    $out .= ' title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
-                                }
-                                //$out.= ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
-                                $out .= isset($contents[$i][$j]['target']) ? ' target="'.$contents[$i][$j]['target'].'"' : '';
-                                $out .= '>';
-                            }
+							// Url
+							if (!empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo']))
+							{
+								$out .= '<a href="'.$contents[$i][$j]['url'].'"';
+								if (!empty($tooltip)) {
+									$out .= ' title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
+								}
+								//$out.= ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
+								$out .= isset($contents[$i][$j]['target']) ? ' target="'.$contents[$i][$j]['target'].'"' : '';
+								$out .= '>';
+							}
 
-                            // Logo
-                            if (!empty($contents[$i][$j]['logo']))
-                            {
-                                $logo = preg_replace("/^object_/i", "", $contents[$i][$j]['logo']);
-                                $out .= '<a href="'.$contents[$i][$j]['url'].'">';
-                                $out .= img_object($langs->trans("Show").' '.$tooltip, $logo, 'class="classfortooltip"');
-                            }
+							// Logo
+							if (!empty($contents[$i][$j]['logo']))
+							{
+								$logo = preg_replace("/^object_/i", "", $contents[$i][$j]['logo']);
+								$out .= '<a href="'.$contents[$i][$j]['url'].'">';
+								$out .= img_object($langs->trans("Show").' '.$tooltip, $logo, 'class="classfortooltip"');
+							}
 
-                            $maxlength = $MAXLENGTHBOX;
-                            if (!empty($contents[$i][$j]['maxlength'])) $maxlength = $contents[$i][$j]['maxlength'];
+							$maxlength = $MAXLENGTHBOX;
+							if (!empty($contents[$i][$j]['maxlength'])) $maxlength = $contents[$i][$j]['maxlength'];
 
-                            if ($maxlength) $textwithnotags = dol_trunc($textwithnotags, $maxlength);
-                            if (preg_match('/^<(img|div|span)/i', $text) || !empty($contents[$i][$j]['asis'])) $out .= $text; // show text with no html cleaning
-                            else $out .= $textwithnotags; // show text with html cleaning
+							if ($maxlength) $textwithnotags = dol_trunc($textwithnotags, $maxlength);
+							if (preg_match('/^<(img|div|span)/i', $text) || !empty($contents[$i][$j]['asis'])) $out .= $text; // show text with no html cleaning
+							else $out .= $textwithnotags; // show text with html cleaning
 
-                            // End Url
-                            if (!empty($contents[$i][$j]['url'])) $out .= '</a>';
+							// End Url
+							if (!empty($contents[$i][$j]['url'])) $out .= '</a>';
 
-                            if (preg_match('/^<(img|div|span)/i', $text2) || !empty($contents[$i][$j]['asis2'])) $out .= $text2; // show text with no html cleaning
-                            else $out .= $text2withnotags; // show text with html cleaning
+							if (preg_match('/^<(img|div|span)/i', $text2) || !empty($contents[$i][$j]['asis2'])) $out .= $text2; // show text with no html cleaning
+							else $out .= $text2withnotags; // show text with html cleaning
 
-                            if (!empty($textnoformat)) $out .= "\n".$textnoformat."\n";
+							if (!empty($textnoformat)) $out .= "\n".$textnoformat."\n";
 
-                            $out .= "</td>\n";
-                        }
+							$out .= "</td>\n";
+						}
 
-                        $out .= "</tr>\n";
-                    }
-                }
-            }
+						$out .= "</tr>\n";
+					}
+				}
+			}
 
-            if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines)
-            {
-                $out .= "</table>\n";
-            }
+			if (!empty($head['text']) || !empty($head['sublink']) || !empty($head['subpicto']) || $nblines)
+			{
+				$out .= "</table>\n";
+			}
 
-            // If invisible box with no contents
-            if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && !$nblines) $out .= "<br>\n";
+			// If invisible box with no contents
+			if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && !$nblines) $out .= "<br>\n";
 
-            $out .= "</div>\n";
+			$out .= "</div>\n";
 
-            $out .= "<!-- Box ".get_class($this)." end -->\n\n";
-            if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-                dol_filecache($cachedir, $filename, $out);
-            }
-        } else {
-            dol_syslog(get_class($this).'::showBoxCached');
-            $out = "<!-- Box ".get_class($this)." from cache -->";
-            $out .= dol_readcachefile($cachedir, $filename);
-        }
+			$out .= "<!-- Box ".get_class($this)." end -->\n\n";
+			if (!empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+				dol_filecache($cachedir, $filename, $out);
+			}
+		} else {
+			dol_syslog(get_class($this).'::showBoxCached');
+			$out = "<!-- Box ".get_class($this)." from cache -->";
+			$out .= dol_readcachefile($cachedir, $filename);
+		}
 
-        if ($nooutput) return $out;
-        else print $out;
+		if ($nooutput) return $out;
+		else print $out;
 
-        return '';
+		return '';
 	}
 
 
@@ -426,6 +400,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			{
 				while (($file = readdir($handle)) !== false)
 				{
+					$reg = array();
 					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.php/', $file, $reg))
 					{
 						if (preg_match('/\.back$/', $file)) continue;
@@ -438,13 +413,10 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 						{
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateWidget", $modName, "").'</div>';
-						}
-						else
-						{
+						} else {
 							try {
 								include_once $newdir.'/'.$file;
-							}
-							catch (Exception $e)
+							} catch (Exception $e)
 							{
 								print $e->getMessage();
 							}
@@ -486,6 +458,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 			{
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
+				$disabledbymodule = 0; // TODO Set to 2 if module is not enabled
 				$module = '';
 
 				// Check if widget file is disabled by name
@@ -504,7 +477,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				$text = '<b>'.$langs->trans("Description").':</b><br>';
 				$text .= $objMod->boxlabel.'<br>';
 				$text .= '<br><b>'.$langs->trans("Status").':</b><br>';
-				if ($disabledbymodule == 2) $text .= $langs->trans("HooksDisabledAsModuleDisabled", $module).'<br>';
+				if ($disabledbymodule == 2) $text .= $langs->trans("WidgetDisabledAsModuleDisabled", $module).'<br>';
 
 				$widget[$j]['info'] = $text;
 			}

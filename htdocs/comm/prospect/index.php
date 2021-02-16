@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020      Open-Dsi        		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ if (!empty($conf->propal->enabled))
  *
  */
 
-$sql = "SELECT count(*) as cc, st.libelle, st.id";
+$sql = "SELECT count(*) as cc, st.libelle, st.picto, st.id";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -98,7 +99,7 @@ if ($resql)
 
 			print '<tr class="oddeven"><td>';
 			print '<a href="prospects.php?page=0&amp;stcomm='.$obj->id.'">';
-			print img_action($langs->trans("Show"), $obj->id).' ';
+			print img_action($langs->trans("Show"), $obj->id, $obj->picto).' ';
 			print $langs->trans("StatusProspect".$obj->id);
 			print '</a></td><td class="right">'.$obj->cc.'</td></tr>';
 			$i++;
@@ -205,11 +206,11 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print img_object($langs->trans("ShowPropal"), "propal").' '.$obj->ref.'</a></td>';
 
 				print "<td>";
-                $companystatic->id = $obj->socid;
-                $companystatic->name = $obj->name;
-                $companystatic->client = $obj->client;
-                $companystatic->canvas = $obj->canvas;
-                print $companystatic->getNomUrl(1, '', 44);
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				$companystatic->client = $obj->client;
+				$companystatic->canvas = $obj->canvas;
+				print $companystatic->getNomUrl(1, '', 44);
 				print "</td>\n";
 				print "<td align=\"right\">";
 				print dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
@@ -223,9 +224,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			}
 			print "</table><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -258,11 +257,11 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven"><td width="12%">';
-            $companystatic->id = $obj->socid;
-            $companystatic->name = $obj->name;
-            $companystatic->client = $obj->client;
-            $companystatic->canvas = $obj->canvas;
-            print $companystatic->getNomUrl(1, 'prospect', 44);
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			$companystatic->client = $obj->client;
+			$companystatic->canvas = $obj->canvas;
+			print $companystatic->getNomUrl(1, 'prospect', 44);
 			print '</td></tr>';
 			$i++;
 		}

@@ -36,8 +36,8 @@ $socid = GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $nowyear = strftime("%Y", dol_now());
@@ -73,36 +73,34 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
+	$filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
+} else {
+	$filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg)
 {
-    $px1->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfSendings"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->mode = 'depth';
-    $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
+	$px1->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px1->SetLegend($legend);
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
+	$px1->SetWidth($WIDTH);
+	$px1->SetHeight($HEIGHT);
+	$px1->SetYLabel($langs->trans("NbOfSendings"));
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->mode = 'depth';
+	$px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
 
-    $px1->draw($filenamenb, $fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
@@ -206,7 +204,7 @@ $type = 'shipment_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -271,8 +269,12 @@ foreach ($data as $val)
 
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center">';
-	if ($year) print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
-	else print $langs->trans("ValidationDateNotDefinedEvenIfShipmentValidated");
+	if ($year) {
+		print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'">'.$year.'</a>';
+	} else {
+		// Technical error that should not happen
+		print 'Error: validation date of shipment is not defined. This looks strange because shipment is validated. Try to run /install/repair.php?standard=confirmed';
+	}
 	print '</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
@@ -290,11 +292,10 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
-    print "<br>\n";
-    /*print $px2->show();
+if ($mesg) { print $mesg; } else {
+	print $px1->show();
+	print "<br>\n";
+	/*print $px2->show();
     print "<br>\n";
     print $px3->show();*/
 }
@@ -304,7 +305,7 @@ print '</td></tr></table>';
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 

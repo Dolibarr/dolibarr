@@ -54,7 +54,7 @@ class modBom extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '65';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -108,7 +108,7 @@ class modBom extends DolibarrModules
 		$this->requiredby = array('modMrp'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
-		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+		//$this->phpmin = array(5, 6));					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(9, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)

@@ -39,9 +39,7 @@ if (GETPOST('actioncode', 'array'))
 {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -134,7 +132,7 @@ if ($id > 0)
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = contract_prepare_head($object);
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Contract"), -1, 'contract');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("Contract"), -1, 'contract');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -206,7 +204,7 @@ if ($id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 
