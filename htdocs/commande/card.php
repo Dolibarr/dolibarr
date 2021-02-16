@@ -243,7 +243,7 @@ if (empty($reshook))
 	elseif ($action == 'add' && $usercancreate)
 	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+		$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
@@ -276,8 +276,8 @@ if (empty($reshook))
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id');
-			$object->date_livraison = $datelivraison; // deprecated
-			$object->delivery_date = $datelivraison;
+			$object->date_livraison = $date_delivery; // deprecated
+			$object->delivery_date = $date_delivery;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
 			$object->fk_delivery_address = GETPOST('fk_address');
@@ -1618,7 +1618,7 @@ if ($action == 'create' && $usercancreate)
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
 	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
-	print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+	print $form->selectDate($date_delivery ? $date_delivery : -1, 'liv_', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
 
