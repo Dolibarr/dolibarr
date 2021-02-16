@@ -384,6 +384,6 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 934
 -- Regions Angola (rowid country=35)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (35, 35001, 'AO', NULL, 'Angola');
 
--- Regions Taiwan (rowid country=886)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (886, 88601, 'TW', NULL, 'Taiwan');
+-- Regions Taiwan (rowid country=213)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (213, 21301, 'TW', NULL, 'Taiwan');
 
