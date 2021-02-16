@@ -110,7 +110,12 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
+// Set boolean (on/off) constants
+elseif (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
+		dol_print_error($db);
+	}
+}
 
 
 /*
@@ -257,7 +262,17 @@ else
 
 print "<br>\n";
 
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button">';
+print '<br/><br/>';
+print '</div>';
+
+print '</form>';
+
 // Options
+
+echo '<div>';
 echo '<table class="noborder centpercent">';
 echo '<thead>';
 echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
@@ -269,14 +284,7 @@ echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</
 
 echo '</tbody>';
 echo '</table>';
-
-print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button">';
-print '</div>';
-
-print '</form>';
-
-
+echo '</div>';
 
 
 if (!empty($conf->accounting->enabled))
