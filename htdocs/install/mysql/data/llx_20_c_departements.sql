@@ -1626,3 +1626,37 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ('35001', 'AO-NAM', NULL, NULL, 'NAMÍBE', 'Namíbe');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ('35001', 'AO-UIG', NULL, NULL, 'UÍGE', 'Uíge');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ('35001', 'AO-ZAI', NULL, NULL, 'ZAÍRE', 'Zaíre');
+
+-- Provinces  Taiwan (rowid country=886)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-KLU', 'KLU', NULL, '基隆市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TPE', 'TPE', NULL, '臺北市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TPH', 'TPH', NULL, '新北市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TYC', 'TYC', NULL, '桃園市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-HSH', 'HSH', NULL, '新竹縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-HSC', 'HSC', NULL, '新竹市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-MAL', 'MAL', NULL, '苗栗縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-MAC', 'MAC', NULL, '苗栗市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TXG', 'TXG', NULL, '臺中市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-CWH', 'CWH', NULL, '彰化縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-CWS', 'CWS', NULL, '彰化市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-NTC', 'NTC', NULL, '南投市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-NTO', 'NTO', NULL, '南投縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-YLH', 'YLH', NULL, '雲林縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-CHY', 'CHY', NULL, '嘉義縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-CYI', 'CYI', NULL, '嘉義市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TNN', 'TNN', NULL, '臺南市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-KHH', 'KHH', NULL, '高雄市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-IUH', 'IUH', NULL, '屏東縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-PTS', 'PTS', NULL, '屏東市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-ILN', 'ILN', NULL, '宜蘭縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-ILC', 'ILC', NULL, '宜蘭市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-HWA', 'HWA', NULL, '花蓮縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-HWC', 'HWC', NULL, '花蓮市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TTC', 'TTC', NULL, '臺東市');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-TTT', 'TTT', NULL, '臺東縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-PEH', 'PEH', NULL, '澎湖縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-GNI', 'GNI', NULL, '綠島');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-KYD', 'KYD', NULL, '蘭嶼');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-KMN', 'KMN', NULL, '金門縣');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (88601, 'TW-LNN', 'LNN', NULL, '連江縣');
+
