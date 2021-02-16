@@ -6876,7 +6876,7 @@ class Form
 			{
 				foreach ($array as $key => $value)
 				{
-					if (sizeof(explode("|", $value)) == 2){
+					if (count(explode("|", $value)) == 2){
 						$info = explode("|", $value);
 						$out.= '<option value="'.$key.'" parent="'.$info[1].'"';
 					} else {

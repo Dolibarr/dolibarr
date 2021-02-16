@@ -1620,7 +1620,7 @@ class ExtraFields
 		{
 			if ($langfile && $param['options'][$value]) {
 				$value=$langs->trans($param['options'][$value]);
-			}else if (sizeof(explode('|', $param['options'][$value])) > 1){
+			}elseif (count(explode('|', $param['options'][$value])) > 1){
 				$value_detail = explode('|', $param['options'][$value]);
 				$value = $value_detail[0];
 			} else $value=$param['options'][$value];
