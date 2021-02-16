@@ -69,7 +69,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $listofstatus = array_keys($listofoppstatus);
 		// Complete with values found into database and not into the dictionary
 	    foreach ($valsamount as $key => $val) {
-	    	if (!in_array($key, $listofstatus) && $key) {
+	    	if (!in_array($key, $listofstatus)) {
 	    		$listofstatus[] = $key;
 	    	}
 	    }
