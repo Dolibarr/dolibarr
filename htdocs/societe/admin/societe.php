@@ -861,16 +861,18 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 print '</a></td>';
 print '</tr>';
 
-// Default Prospect/Customer thirdparty type on customer création
-print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("DefaultCustomerType").'</td>';
-print '<td>';
-print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
-print '</td>';
-print '<td class="center">';
-print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr>';
+if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+	// Default Prospect/Customer thirdparty type on customer création
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
+	print '<td>';
+	print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
+	print '</td>';
+	print '<td class="center">';
+	print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+	print '</td>';
+	print '</tr>';
+}
 
 print '</table>';
 print '</div>';
