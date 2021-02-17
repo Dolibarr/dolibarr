@@ -47,7 +47,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 		$this->description = "Triggers of this module auto link contact to company.";
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = self::VERSION_DOLIBARR;
-		$this->picto = 'action';
+		$this->picto = 'company';
 	}
 
 	/**

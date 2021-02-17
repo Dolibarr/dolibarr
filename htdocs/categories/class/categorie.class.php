@@ -365,6 +365,8 @@ class Categorie extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
+			$this->error=$this->db->lasterror;
+			$this->errors[]=$this->db->lasterror;
 			return -1;
 		}
 	}

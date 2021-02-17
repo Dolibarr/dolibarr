@@ -241,7 +241,7 @@ class Project extends CommonObject
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			$this->fields['fk_opp_status']['enabled'] = 0;
 			$this->fields['opp_percent']['enabled'] = 0;
 			$this->fields['opp_amount']['enabled'] = 0;

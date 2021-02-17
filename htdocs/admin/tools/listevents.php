@@ -166,7 +166,8 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
  *	View
  */
 
-llxHeader('', $langs->trans("Audit"));
+$title = $langs->trans("Audit");
+llxHeader('', $title);
 
 $form = new Form($db);
 

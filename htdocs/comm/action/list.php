@@ -688,28 +688,10 @@ if ($resql)
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
 			print '<td class="nowraponall">';
-			$actioncomm = $actionstatic;
-			// TODO Code common with code into showactions
-			$imgpicto = '';
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
-				if ($actioncomm->type_picto) {
-					$imgpicto = img_picto('', $actioncomm->type_picto);
-				} else {
-					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_EMAIL' || $actioncomm->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
-					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
-				}
-			}
-			print $imgpicto;
-
+			print $actionstatic->getTypePicto();
 			$labeltype = $obj->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
-			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+			if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];

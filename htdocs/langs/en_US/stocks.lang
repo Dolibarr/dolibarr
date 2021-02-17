@@ -99,6 +99,7 @@ VirtualStock=Virtual stock
 VirtualStockAtDate=Virtual stock at date
 VirtualStockAtDateDesc=Virtual stock once all pending orders that are planned to be done before the date will be finished
 VirtualStockDesc=Virtual stock is the calculated stock available once all open/pending actions (that affect stocks) are closed (purchase orders received, sales orders shipped, manufacturing orders produced, etc)
+AtDate=At date
 IdWarehouse=Id warehouse
 DescWareHouse=Description warehouse
 LieuWareHouse=Localisation warehouse

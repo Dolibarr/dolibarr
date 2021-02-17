@@ -73,9 +73,10 @@ $terminalid = $cashcontrol->posnumber;
  * View
  */
 
+$title = $langs->trans("CashControl");
 $param = '';
 
-llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $param);
+llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
 
 /*$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";

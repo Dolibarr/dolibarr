@@ -184,7 +184,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
+print '<td class="right nowraponall">'."\n";
 
 if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	if (!isHTTPS()) {
@@ -232,7 +232,7 @@ if (!empty($conf->cron->enabled)) {
 }
 print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
+print '<td class="right nowraponall">'."\n";
 
 if (empty($conf->cron->enabled)) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
