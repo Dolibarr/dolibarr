@@ -1725,7 +1725,12 @@ class ExtraFields
 			$toprint = array();
 			if (is_array($value_arr))
 			{
+
 				foreach ($value_arr as $keyval=>$valueval) {
+					if (count(explode('|', $param['options'][$valueval])) == 2 ){
+						$value_detail = explode('|', $param['options'][$valueval]);
+						$param['options'][$valueval] = $value_detail[0];
+					}
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 				}
 			}

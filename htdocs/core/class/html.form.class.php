@@ -6879,6 +6879,7 @@ class Form
 					if (count(explode("|", $value)) == 2){
 						$info = explode("|", $value);
 						$out.= '<option value="'.$key.'" parent="'.$info[1].'"';
+						$value = $info[0];
 					} else {
 						$out .= '<option value="' . $key . '"';
 					}
@@ -6887,7 +6888,7 @@ class Form
 						$out.= ' selected';
 					}
 					$out.= '>';
-					$newval = ($translate ? $langs->trans($info[0]) : $info[0]);
+					$newval = ($translate ? $langs->trans($value) : $value);
 					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
 					$out.= dol_htmlentitiesbr($newval);
 					$out.= '</option>'."\n";

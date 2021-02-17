@@ -165,7 +165,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
-			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.(!empty($cols) ? ' colspan="'.$cols.'"' : '').'>';
+			print '<td id="'.$html_id.'" data-value="'.$value.'"class="'.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.(!empty($cols) ? ' colspan="'.$cols.'"' : '').'>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date', 'datetime')))
@@ -210,93 +210,20 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 	// TODO Test/enhance this with a more generic solution
 	if (!empty($conf->use_javascript_ajax))
 	{
+		$jsData = array(
+			"action" => $action,
+			"table_element" => $object->table_element,
+			"object_id" => $object->id
+		);
 		print "\n";
 		print '
-				<script>
-				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-							var infos = parent_list.split("_");
-							//Selection of the DOM element
-				    		var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
-				    		var parentVal = parent_list + ":" + val;
-				    		if(typeof val == "string"){
-				    		    if(val != "") {
-					    			$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-								} else {
-									$("select[name=\""+child_list+"\"] option").show();
-								}
-				    		} else if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
-							}
-				    	}
+			<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_extrafields.js"></script>
+			<script type="text/javascript">
+			$(document).ready(function() {
+				manageLinkedExtrafields('.json_encode($jsData).');
+			});
+			</script>';
 
-				    	function showOptionsOnMultiselect(child_list, parent_list){
-							var infos = parent_list.split("_");
-				    	    var val = $("#'.$object->table_element.'_extras_"+infos[1]+"_"'."+". $object->id.').text();
-				    		var parentVal = parent_list + ":" + val;
-				    		if(typeof val == "string"){
-				    		    if(val != "") {
-				    		        if($("select[name=\""+child_list+"\"]").hasClass("multiselect")){
-								     	var allOptionsWithParent = $("select[name=\""+child_list+"\"] option")
-								        var optionsToShow = $("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
-								        $("select[name=\""+child_list+"\"]").select2();
-								        for (option of allOptionsWithParent){
-								            option.disabled = true;
-								        }
-								        for (option of optionsToShow){
-								            option.disabled = false;
-								        }
-								        $("span.select2-selection.select2-selection--multiple").click(function() {
-								        	var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
-								        	for (li of select2_liToHide){
-								        	    $(li).css("display", "none")
-								        	}
-										});
-					    			}
-		    		    		}
-				    		} else if(val > 0) {
-				    		    if($("#"+child_list).hasClass("multiselect")){
-								     	var allOptionsWithParent = $("select[id=\""+child_list+"\"] option")
-								        var optionsToShow = $("select[id=\""+child_list+"\"] option[parent=\""+parentVal+"\"]");
-								        $("select[name=\""+child_list+"\"]").select2();
-								        for (option of allOptionsWithParent){
-								            option.disabled = true;
-								        }
-								        for (option of optionsToShow){
-								            option.disabled = false;
-								        }
-								        $("span.select2-selection.select2-selection--multiple").click(function() {
-								            var select2_liToHide = $(".select2-results__option[aria-disabled=true]")
-								        	for (li of select2_liToHide){
-								        	    $(li).css("display", "none")
-								        	}
-										});
-					    			}
-				    		}
-				    	}
-
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								var code_parent = parent_list.split("-")
-								var searchparams = new URLSearchParams(window.location.href);
-								if (searchparams.get("action") == "edit_extras"){
-									showOptions(child_list, parent_list);
-									showOptionsOnMultiselect(child_list, parent_list);
-								}
-					    	});
-						}
-						setListDependencies();
-				    });
-				</script>'."\n";
 	}
 }
 ?>
