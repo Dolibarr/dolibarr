@@ -304,21 +304,21 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-		$nbNote = 0;
+		$nbEvent = 0;
 		$sql = "SELECT COUNT(id) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 		$sql .= " WHERE fk_soc = ".$object->id;
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			$nbNote = $obj->nb;
+			$nbEvent = $obj->nb;
 		} else {
 			dol_print_error($db);
 		}
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
-		if ($nbNote > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
 		}
 	}
 	$head[$h][2] = 'agenda';
@@ -326,9 +326,9 @@ function societe_prepare_head(Societe $object)
 
 	// Log
 	/*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;*/
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;*/
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'remove');
 
@@ -1003,7 +1003,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			} elseif (in_array($key, array('role'))) {
 				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
 			} else {
-			    print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
+				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
 			}
 			print '</td>';
 		}
