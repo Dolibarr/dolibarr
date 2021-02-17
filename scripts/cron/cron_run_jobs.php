@@ -56,7 +56,7 @@ if ( false === file_exists($masterpath."/master.inc.php") ){
 	}
 }
 
-require_once $$masterpath."/master.inc.php";
+require_once $masterpath."/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
