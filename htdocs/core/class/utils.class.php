@@ -62,13 +62,16 @@ class Utils
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		if (empty($choices)) $choices = 'tempfilesold,logfiles';
+		if (empty($choices)) {
+			$choices = 'tempfilesold+logfiles';
+		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
 
 		$count = 0;
 		$countdeleted = 0;
 		$counterror = 0;
+		$filelog = '';
 
 		$choicesarray = preg_split('/[\+,]/', $choices);
 		foreach ($choicesarray as $choice) {
@@ -109,7 +112,6 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
-				$filelog = '';
 				if (!empty($conf->syslog->enabled))
 				{
 					$filelog = $conf->global->SYSLOG_FILE;
@@ -143,8 +145,7 @@ class Utils
 						if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile' || $choice == 'logfiles')
 						{
 							$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
-							if ($result)
-							{
+							if ($result) {
 								$count++;
 								$countdeleted++;
 							} else {
@@ -166,7 +167,9 @@ class Utils
 
 		if ($count > 0) {
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
-			if ($count > $countdeleted) $this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+			if ($count > $countdeleted) {
+				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+			}
 		} else {
 			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}

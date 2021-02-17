@@ -153,8 +153,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
 
 $form = new Form($db);
 
-
-llxHeader('', $langs->trans("SubscriptionCard"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
 
 
 dol_htmloutput_errors($errmsg);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,7 +70,7 @@ $workflowcodes = array(
 		'picto'=>'bill'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
@@ -183,6 +183,7 @@ foreach ($workflowcodes as $key => $params) {
 	if ($params['family'] == 'separator') {
 		print '</table>';
 		print '<br>';
+
 		print '<table class="noborder centpercent">';
 
 		continue;

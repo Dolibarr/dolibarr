@@ -1398,7 +1398,7 @@ if ($resql)
 					if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
 				}
 
-				$sqlu = "SELECT url_id FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$objp->rowid." AND type='user'";
+				$sqlu = "SELECT url_id FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$objp->rowid." AND (type='user' OR type='salary')";
 				$resqlu = $db->query($sqlu);
 
 				if ($resqlu) {
