@@ -86,7 +86,8 @@ if ($object->element == 'stock') {
 	print '</td>';
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
-print '<td><input name="nbpiece" id="nbpiece" class="maxwidth75" value="'.GETPOST("nbpiece").'"></td>';
+print '<td><input pattern="[0-9.]+" name="nbpiece" id="nbpiece" class="maxwidth75" value="'.GETPOST("nbpiece").'">';
+print $form->textwithpicto('', $langs->trans('ForNegativeStockCorrectionQuantitiesUseRemoveOption')). '</td>';
 print '</tr>';
 
 // Serial / Eat-by date
