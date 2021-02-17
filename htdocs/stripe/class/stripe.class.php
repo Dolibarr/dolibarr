@@ -333,6 +333,7 @@ class Stripe extends CommonObject
 		dol_syslog("getPaymentIntent", LOG_INFO, 1);
 
 		$error = 0;
+		$description .= ' TIME : '.time();
 
 		if (empty($status)) $service = 'StripeTest';
 		else $service = 'StripeLive';
