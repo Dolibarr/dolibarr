@@ -1475,7 +1475,7 @@ class User extends CommonObject
 		$this->civility_code = $member->civility_id;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
-		$this->gender = $member->gender;
+		$this->gender		= $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
 		$this->address      = $member->address;
