@@ -304,8 +304,22 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		$nbNote = 0;
+		$sql = "SELECT COUNT(id) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+		$sql .= " WHERE fk_soc = ".$object->id;
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$nbNote = $obj->nb;
+		} else {
+			dol_print_error($db);
+		}
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
