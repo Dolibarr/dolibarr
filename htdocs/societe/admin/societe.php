@@ -753,7 +753,7 @@ if (!$conf->use_javascript_ajax)
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -775,7 +775,7 @@ if (!$conf->use_javascript_ajax)
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -861,7 +861,7 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 print '</a></td>';
 print '</tr>';
 
-if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 	// Default Prospect/Customer thirdparty type on customer création
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
@@ -869,7 +869,7 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 	print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
 	print '<td class="center">';
-	print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 	print '</tr>';
 }
