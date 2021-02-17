@@ -451,8 +451,10 @@ if ($action == 'confirm_crop')
  */
 
 $title= $langs->trans("ImageEditor");
+$morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
+$morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 
-llxHeader($head, $title, '', '', 0, 0, array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js'), array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css'));
+llxHeader($head, $title, '', '', 0, 0, $morejs, $morecss);
 
 
 print load_fiche_titre($title);

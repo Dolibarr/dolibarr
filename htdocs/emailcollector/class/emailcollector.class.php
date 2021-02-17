@@ -251,6 +251,15 @@ class EmailCollector extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		global $langs;
+
+		// Check parameters
+		if ($this->host && preg_match('/^http:/i', trim($this->host))) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorHostMustNotStartWithHttp", $this->host);
+			return -1;
+		}
+
 		$id = $this->createCommon($user, $notrigger);
 
 		if (is_array($this->filters) && count($this->filters)) {
@@ -449,6 +458,15 @@ class EmailCollector extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		global $langs;
+
+		// Check parameters
+		if ($this->host && preg_match('/^http:/i', trim($this->host))) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorHostMustNotStartWithHttp", $this->host);
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 

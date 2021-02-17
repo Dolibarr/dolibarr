@@ -30,7 +30,7 @@
 -- Types action comm
 --
 
-delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,10,30,31,40,50);
+delete from llx_c_actioncomm where id in (1,2,3,4,5,6,8,9,10,11,30,31,40,50);
 -- Code used from 3.3+ when type of event is used
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 1,'AC_TEL','system','Phone call',NULL, 1, 2);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 2,'AC_FAX','system','Send Fax',NULL, 1, 3);

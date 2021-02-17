@@ -50,11 +50,11 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string      $choices	   Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'allfiles', 'logfile')
+	 *  @param	string      $choices	   Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'logfiles', or mix of this). Note 'allfiles' is possible too but very dangerous.
 	 *  @param  int         $nbsecondsold  Nb of seconds old to accept deletion of a directory if $choice is 'tempfilesold'
 	 *  @return	int						   0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function purgeFiles($choices = 'tempfilesold,logfile', $nbsecondsold = 86400)
+	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 
@@ -62,15 +62,18 @@ class Utils
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		if (empty($choices)) $choices = 'tempfilesold,logfile';
+		if (empty($choices)) {
+			$choices = 'tempfilesold+logfiles';
+		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
 
 		$count = 0;
 		$countdeleted = 0;
 		$counterror = 0;
+		$filelog = '';
 
-		$choicesarray = explode(',', $choices);
+		$choicesarray = preg_split('/[\+,]/', $choices);
 		foreach ($choicesarray as $choice) {
 			$filesarray = array();
 
@@ -101,7 +104,7 @@ class Utils
 				}
 			}
 
-			if ($choice == 'logfile')
+			if ($choice == 'logfile' || $choice == 'logfiles')
 			{
 				// Define files log
 				if ($dolibarr_main_data_root)
@@ -109,7 +112,6 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
-				$filelog = '';
 				if (!empty($conf->syslog->enabled))
 				{
 					$filelog = $conf->global->SYSLOG_FILE;
@@ -140,11 +142,10 @@ class Utils
 						}
 					} elseif ($filesarray[$key]['type'] == 'file') {
 						// If (file that is not logfile) or (if mode is logfile)
-						if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile')
+						if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile' || $choice == 'logfiles')
 						{
 							$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
-							if ($result)
-							{
+							if ($result) {
 								$count++;
 								$countdeleted++;
 							} else {
@@ -166,7 +167,9 @@ class Utils
 
 		if ($count > 0) {
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
-			if ($count > $countdeleted) $this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+			if ($count > $countdeleted) {
+				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
+			}
 		} else {
 			$this->output = $langs->trans("PurgeNothingToDelete").(in_array('tempfilesold', $choicesarray) ? ' (older than 24h for temp files)' : '');
 		}

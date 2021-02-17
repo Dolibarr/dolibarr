@@ -377,8 +377,7 @@ class PaymentLoan extends CommonObject
 			if ($sum_payment == 0)
 			{
 				dol_syslog(get_class($this)."::delete : set loan to unpaid", LOG_DEBUG);
-				if ($loan->set_unpaid($user) < 1)
-				{
+				if ($loan->setUnpaid($user) < 1) {
 					$error++;
 					dol_print_error($this->db);
 				}
@@ -532,7 +531,7 @@ class PaymentLoan extends CommonObject
 			if ($loan->paid == $loan::STATUS_UNPAID)
 			{
 				dol_syslog(get_class($this)."::addPaymentToBank : set loan payment to started", LOG_DEBUG);
-				if ($loan->set_started($user) < 1)
+				if ($loan->setStarted($user) < 1)
 				{
 					$error++;
 					dol_print_error($this->db);

@@ -52,7 +52,7 @@ $staticmember = new Adherent($db);
 $statictype = new AdherentType($db);
 $subscriptionstatic = new Subscription($db);
 
-print load_fiche_titre($langs->trans("MembersArea"), '', 'members');
+print load_fiche_titre($langs->trans("MembersArea"), '', 'member');
 
 $Adherents = array();
 $AdherentsAValider = array();

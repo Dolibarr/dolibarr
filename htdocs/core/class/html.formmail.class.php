@@ -1257,7 +1257,7 @@ class FormMail extends Form
 			$sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		}
 		if ($id > 0) {
-			$sql .= " AND rowid=".$id;
+			$sql .= " AND rowid=".(int) $id;
 		}
 		if ($id == -1) {
 			$sql .= " AND position=0";
@@ -1331,6 +1331,8 @@ class FormMail extends Form
 			return $ret;
 		} else {
 			dol_print_error($db);
+			$this->error=$db->lasterror;
+			$this->errors[]=$db->lasterror;
 			return -1;
 		}
 	}

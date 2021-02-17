@@ -357,6 +357,13 @@ abstract class CommonObject
 
 	/**
 	 * @var string
+	 * @deprecated
+	 * @see model_pdf
+	 */
+	public $modelpdf;
+
+	/**
+	 * @var string
 	 * Contains relative path of last generated main file
 	 */
 	public $last_main_doc;
@@ -631,12 +638,15 @@ abstract class CommonObject
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
+			$this->name_alias = dol_ucwords(dol_strtolower($this->name_alias));
 		}
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
+			$this->name_alias = dol_strtoupper($this->name_alias);
 		}
 		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
 	}
@@ -963,7 +973,7 @@ abstract class CommonObject
 	 *  @param 	int|string	$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
 	 *  @param  string		$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
 	 *  @param  int			$notrigger			Disable all triggers
-	 *  @return int         	        		<0 if KO, >0 if OK
+	 *  @return int         	        		<0 if KO, 0 if already added, >0 if OK
 	 */
 	public function add_contact($fk_socpeople, $type_contact, $source = 'external', $notrigger = 0)
 	{
@@ -1068,7 +1078,9 @@ abstract class CommonObject
 					return -1;
 				}
 			}
-		} else return 0;
+		} else {
+			return 0;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -6875,7 +6887,7 @@ abstract class CommonObject
 
 	/**
 	 * Function to show lines of extrafields with output datas.
-	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan']
+	 * This function is responsible to output the <tr> and <td> according to correct number of columns received into $params['colspan'] or <div> according to $display_type
 	 *
 	 * @param 	Extrafields $extrafields    Extrafield Object
 	 * @param 	string      $mode           Show output ('view') or input ('create' or 'edit') for extrafield

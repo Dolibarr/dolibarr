@@ -1121,14 +1121,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                         $("#radiocompany").click(function() {
                         	$(".individualline").hide();
                         	$("#typent_id").val(0);
+                        	$("#typent_id").change();
                         	$("#effectif_id").val(0);
+                        	$("#effectif_id").change();
                         	$("#TypeName").html(document.formsoc.ThirdPartyName.value);
                         	document.formsoc.private.value=0;
                         });
                         $("#radioprivate").click(function() {
                         	$(".individualline").show();
                         	$("#typent_id").val(id_te_private);
+                        	$("#typent_id").change();
                         	$("#effectif_id").val(id_ef15);
+                        	$("#effectif_id").change();
                         	$("#TypeName").html(document.formsoc.LastName.value);
                         	document.formsoc.private.value=1;
                         });

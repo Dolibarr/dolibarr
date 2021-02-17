@@ -116,6 +116,11 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'p.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
+$permissiontoread = $user->rights->propal->lire;
+$permissiontoadd = $user->rights->propal->write;
+$permissiontodelete = $user->rights->propal->supprimer;
+$permissiontoclose = $user->rights->propal->cloturer;
+
 // Security check
 $module = 'propal';
 $dbtable = '';
@@ -260,13 +265,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 if ($object_statut != '') $search_status = $object_statut;
 
+
 if (empty($reshook))
 {
 	$objectclass = 'Propal';
 	$objectlabel = 'Proposals';
-	$permissiontoread = $user->rights->propal->lire;
-	$permissiontodelete = $user->rights->propal->supprimer;
-	$permissiontoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -1381,7 +1384,7 @@ if ($resql)
 						$userstatic->job = $val['job'];
 						$userstatic->gender = $val['gender'];
 						//print '<div class="float">':
-						print ($nbofsalesrepresentative < 3) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) {
 							print ' ';
@@ -1492,7 +1495,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {
-		dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

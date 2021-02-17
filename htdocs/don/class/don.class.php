@@ -761,13 +761,28 @@ class Don extends CommonObject
 	/**
 	 *    Classify the donation as paid, the donation was received
 	 *
-	 *    @param	int		$id           	    id of donation
-	 *    @param    int		$modepayment   	    mode of payment
-	 *    @return   int      					<0 if KO, >0 if OK
+	 *	@deprecated
+	 *  @see setPaid()
+	 *  @param	int		$id           	    id of donation
+	 *  @param    int		$modepayment   	    mode of payment
+	 *  @return   int      					<0 if KO, >0 if OK
 	 */
 	public function set_paid($id, $modepayment = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($id, $modepayment);
+	}
+
+	/**
+	 *    Classify the donation as paid, the donation was received
+	 *
+	 *    @param	int		$id           	    id of donation
+	 *    @param    int		$modepayment   	    mode of payment
+	 *    @return   int      					<0 if KO, >0 if OK
+	 */
+	public function setPaid($id, $modepayment = 0)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 		if ($modepayment)
 		{

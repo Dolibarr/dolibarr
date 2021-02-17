@@ -73,7 +73,7 @@ print '<br>';
 
 $head = ecm_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'ecm', $langs->trans("ECM"), -1, 'ecm');
+print dol_get_fiche_head($head, 'ecm', '', -1, '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

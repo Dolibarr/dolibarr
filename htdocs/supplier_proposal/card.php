@@ -720,7 +720,9 @@ if (empty($reshook))
 
 				$fk_unit = GETPOST('units', 'alpha');
 
-				$tva_tx = price2num($tva_tx); // When vat is text input field
+				if (!preg_match('/\((.*)\)/', $tva_tx)) {
+					$tva_tx = price2num($tva_tx); // When vat is text input field
+				}
 
 				// Local Taxes
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
@@ -1216,9 +1218,9 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td colspan="2">';
-	$liste = ModelePDFSupplierProposal::liste_modeles($db);
+	$list = ModelePDFSupplierProposal::liste_modeles($db);
 	$preselected = ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
-	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
 	// Project

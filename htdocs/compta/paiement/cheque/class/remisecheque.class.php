@@ -788,7 +788,7 @@ class RemiseCheque extends CommonObject
 			{
 				$invoice = new Facture($this->db);
 				$invoice->fetch($obj->fk_facture);
-				$invoice->set_unpaid($user);
+				$invoice->setUnpaid($user);
 
 				$rejectedPayment->amounts[$obj->fk_facture] = price2num($obj->amount) * -1;
 			}

@@ -398,7 +398,7 @@ class Paiement extends CommonObject
 								// Set invoice to paid
 								if (!$error)
 								{
-									$result = $invoice->set_paid($user, '', '');
+									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0)
 									{
 										$this->error = $invoice->error;
@@ -425,7 +425,7 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 							$ret = $invoice->fetch($facid); // Reload to get new records
-							$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 							if ($result < 0) {
 								setEventMessages($invoice->error, $invoice->errors, 'errors');
 								$error++;
@@ -1312,7 +1312,7 @@ class Paiement extends CommonObject
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $invoice->fk_soc;
+					$force_thirdparty_id = $invoice->socid;
 				}
 			}
 		}

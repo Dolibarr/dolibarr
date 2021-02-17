@@ -12,7 +12,7 @@
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020	    Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1557,12 +1557,11 @@ if ($action == 'create')
 	}
 	print '</tr>'."\n";
 
-	if ($socid > 0)
-	{
+	if ($socid > 0) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact');
-		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
 
 		// Third party discounts info line
@@ -1612,8 +1611,9 @@ if ($action == 'create')
 
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod');
-	if (!empty($conf->commande->enabled))
+	if (!empty($conf->commande->enabled)) {
 		print ' ('.$langs->trans('AfterOrder').')';
+	}
 	print '</td><td>';
 	print img_picto('', 'clock').'&ensp;';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
