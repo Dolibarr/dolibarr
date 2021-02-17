@@ -4104,7 +4104,7 @@ if ($action == 'create')
 	if ($objectidnext > 0) {
 		$facthatreplace = new Facture($db);
 		$facthatreplace->fetch($objectidnext);
-		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')</span>';
+		print ' <span class="opacitymediumbycolor paddingleft">('.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).')</span>';
 	}
 
 	if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
@@ -4112,7 +4112,10 @@ if ($action == 'create')
 		$result = $discount->fetch(0, $object->id);
 		if ($result > 0) {
 			print ' <span class="opacitymediumbycolor paddingleft">';
-			print $langs->transnoentities("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount'));
+			$s = $langs->trans("CreditNoteConvertedIntoDiscount", '{s1}', '{s2}');
+			$s = str_replace('{s1}', $object->getLibType(1), $s);
+			$s = str_replace('{s2}', $discount->getNomUrl(1, 'discount'), $s);
+			print $s;
 			print '</span><br>';
 		}
 	}
@@ -4123,7 +4126,9 @@ if ($action == 'create')
 		$result = $tmptemplate->fetch($object->fk_fac_rec_source);
 		if ($result > 0) {
 			print ' <span class="opacitymediumbycolor paddingleft">';
-			print $langs->transnoentities("GeneratedFromTemplate", '<a href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->ref).'</a>');
+			$s = $langs->transnoentities("GeneratedFromTemplate", '{s1}');
+			$s = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$tmptemplate->id.'">'.dol_escape_htmltag($tmptemplate->ref).'</a>', $s);
+			print $s;
 			print '</span>';
 		}
 	}
