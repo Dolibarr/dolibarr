@@ -1402,6 +1402,7 @@ class User extends CommonObject
 		$this->address = $contact->address;
 		$this->zip = $contact->zip;
 		$this->town = $contact->town;
+		$this->setUpperOrLowerCase();
 		$this->state_id = $contact->state_id;
 		$this->country_id = $contact->country_id;
 		$this->employee = 0;
@@ -1480,6 +1481,7 @@ class User extends CommonObject
 		$this->address      = $member->address;
 		$this->zip          = $member->zip;
 		$this->town         = $member->town;
+		$this->setUpperOrLowerCase();
 		$this->state_id     = $member->state_id;
 		$this->country_id   = $member->country_id;
 		$this->socialnetworks = $member->socialnetworks;
@@ -1637,6 +1639,7 @@ class User extends CommonObject
 		$this->address = empty($this->address) ? '' : $this->address;
 		$this->zip			= empty($this->zip) ? '' : $this->zip;
 		$this->town = empty($this->town) ? '' : $this->town;
+		$this->setUpperOrLowerCase();
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color = empty($this->color) ? '' : $this->color;
 		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
