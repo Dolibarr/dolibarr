@@ -42,7 +42,21 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once $path."../../htdocs/master.inc.php";
+// master.inc.php should be in htdocs or in root folder in most cases
+$masterpath = ( false !== file_exists($path."../../htdocs/master.inc.php") ) ? $path."../../htdocs" : $path."../.." ;
+
+// if master.inc.php is not in htdocs or root, try to find it in root subfolder (incase of renaming htdocs)
+if ( false === file_exists($masterpath."/master.inc.php") ){
+	foreach (scandir ($path."../../") as $key => $value) {
+		// test only dorectories but not project default folders
+		if ( is_dir($path."../../".$value) && !in_array($value, array( ".", "..", ".github", ".tx", "build", "dev", "doc", "documents", "scripts", "test" )) && file_exists($path."../../".$value."/master.inc.php") ){
+			$masterpath = $path."../../".$value;
+			break;
+		}
+	}
+}
+
+require_once $$masterpath."/master.inc.php";
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
