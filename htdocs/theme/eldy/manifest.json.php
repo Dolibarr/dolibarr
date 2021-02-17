@@ -42,6 +42,9 @@ $appli = constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_APPLICATION_TITLE;
 
 top_httphead('text/json');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
+else header('Cache-Control: no-cache');
 
 ?>
 {
