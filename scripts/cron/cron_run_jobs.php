@@ -47,7 +47,7 @@ $masterpath = ( false !== file_exists($path."../../htdocs/master.inc.php") ) ? $
 
 // if master.inc.php is not in htdocs or root, try to find it in root subfolder (incase of renaming htdocs)
 if ( false === file_exists($masterpath."/master.inc.php") ){
-	foreach (scandir ($path."../../") as $key => $value) {
+	foreach (scandir($path."../../") as $key => $value) {
 		// test only dorectories but not project default folders
 		if ( is_dir($path."../../".$value) && !in_array($value, array( ".", "..", ".github", ".tx", "build", "dev", "doc", "documents", "scripts", "test" )) && file_exists($path."../../".$value."/master.inc.php") ){
 			$masterpath = $path."../../".$value;
