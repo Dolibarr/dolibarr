@@ -217,7 +217,7 @@ class modProduct extends DolibarrModules
 			'p.customcode'=>'Text',
 			'p.duration'=>"Text",
 			'p.finished' => 'Numeric',
-			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 
+			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric",
 			'p.price_min'=>"Numeric", 'p.price_min_ttc'=>"Numeric",
 			'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
