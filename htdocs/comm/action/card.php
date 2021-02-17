@@ -1050,6 +1050,7 @@ if ($action == 'create')
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
+	$percent = -1;
 	if (GETPOSTISSET('status')) $percent = GETPOST('status');
 	elseif (GETPOSTISSET('percentage')) $percent = GETPOST('percentage');
 	else {
