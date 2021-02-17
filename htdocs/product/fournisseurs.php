@@ -402,7 +402,7 @@ if ($id > 0 || $ref)
 			print '<div class="fichecenter">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
 			print '<tr><td>';
@@ -415,14 +415,14 @@ if ($id > 0 || $ref)
 			print '</td></tr>';
 
 			// PMP
-			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
+			print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 			print '<td>';
 			if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
 			print '</td>';
 			print '</tr>';
 
 			// Best buying Price
-			print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("BuyingPriceMin").'</td>';
 			print '<td colspan="2">';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
@@ -462,7 +462,7 @@ if ($id > 0 || $ref)
 				print '<table class="border centpercent">';
 
 				// Supplier
-				print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Supplier").'</td><td>';
+				print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Supplier").'</td><td>';
 				if ($rowid)
 				{
 					$supplier = new Fournisseur($db);
@@ -729,7 +729,7 @@ END;
 					// Option to define a transport cost on supplier price
 					print '<tr>';
 					print '<td>'.$langs->trans('BarcodeValue').'</td>';
-					print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
+					print '<td>'.img_picto('', 'barcode', 'class="pictofixedwidth"').'<input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
 					print '</tr>';
 					$formbarcode = new FormBarCode($db);
 

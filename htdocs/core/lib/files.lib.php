@@ -1192,6 +1192,16 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				{
 					if ($nophperrors) $ok = @unlink($filename);
 					else $ok = unlink($filename);
+
+					// If it fails and it is because of the missing write permission on parent dir
+					if (!$ok && file_exists(dirname($filename)) && !(fileperms(dirname($filename)) & 0200)) {
+						dol_syslog("Error in deletion, but parent directory exists with no permission to write, we try to change permission on parent directory and retry...", LOG_DEBUG);
+						@chmod(dirname($filename), fileperms(dirname($filename)) | 0200);
+						// Now we retry deletion
+						if ($nophperrors) $ok = @unlink($filename);
+						else $ok = unlink($filename);
+					}
+
 					if ($ok)
 					{
 						dol_syslog("Removed file ".$filename, LOG_DEBUG);
