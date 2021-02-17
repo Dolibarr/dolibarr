@@ -383,13 +383,35 @@ class Task extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error)
+			$result = $this->insertExtraFields();
+			if ($result < 0)
 			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
+				$error++;
+			}
+		}
+
+		if (!$error && $conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE) {
+			// Close the parent project if it is open (validated) and its tasks are 100% completed
+			$project = new Project($this->db);
+			if ($project->fetch($this->fk_project) > 0 && $project->statut == Project::STATUS_VALIDATED) {
+				$project->getLinesArray(null); // this method does not return <= 0 if fails
+				$projectCompleted = array_reduce(
+					$project->lines,
+					function ($allTasksCompleted, $task) {
+						return $allTasksCompleted && $task->progress >= 100;
+					},
+					1
+				);
+				if ($projectCompleted) {
+					if ($project->setClose($user) <= 0) {
+						$error++;
+					}
 				}
+			} else {
+				$error++;
+			}
+			if ($error) {
+				$this->errors[] = $project->error;
 			}
 		}
 
