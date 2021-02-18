@@ -834,8 +834,8 @@ if ($showbirthday)
 }
 
 // HOLIDAYS CALENDAR
-if ($conf->global->AGENDA_SHOW_HOLIDAYS)
-{
+//if ($conf->global->AGENDA_SHOW_HOLIDAYS)
+//{
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
@@ -920,7 +920,7 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 			$i++;
 		}
 	}
-}
+//}
 
 // EXTERNAL CALENDAR
 // Complete $eventarray with external import Ical
@@ -1514,6 +1514,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	global $theme_datacolor;
 	global $cachethirdparties, $cachecontacts, $cacheusers, $colorindexused;
 
+	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
+		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
+	}
+
 	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	print "\n";
@@ -1645,7 +1649,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						// Define color
 						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					}
-					$cssclass = $cssclass.' '.$cssclass.'_day_'.$ymd;
+					$cssclass = $cssclass.' eventday_'.$ymd;
 
 					// Defined style to disable drag and drop feature
 					if ($event->type_code == 'AC_OTH_AUTO')
@@ -1676,10 +1680,17 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($action == 'show_day') { $h = 'height: 100%; '; $nowrapontd = 0; }
 					if ($action == 'show_week') { $h = 'height: 100%; '; $nowrapontd = 0; }
 
-					// Show rect of event
+					// Show event box
 					print "\n";
 					print '<!-- start event '.$i.' -->'."\n";
-					print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.'"';
+					$morecss = '';
+					if ($i >= $maxprint) {
+						$morecss = 'showifmore';
+					}
+					if ($event->type == 'holiday' && !GETPOST('check_birthday')) {
+						$morecss = 'hidden';
+					}
+					print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
 					//print ' style="height: 100px;';
 					//print ' position: absolute; top: 40px; width: 50%;';
 					//print '"';
@@ -1887,17 +1898,21 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	if (!empty($conf->global->MAIN_JS_SWITCH_AGENDA) && $i > $maxprint && $maxprint)
 	{
-		print '<div id="more_'.$ymd.'">'.img_picto("all", "1downarrow_selected.png").' +'.$langs->trans("More").'...</div>';
+		print '<div class="center" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($i - $maxprint).'</div>';
 		//print ' +'.(count($eventarray[$daykey])-$maxprint);
 		print '<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function () {'."\n";
-		print 'jQuery("#more_'.$ymd.'").click(function() { reinit_day_'.$ymd.'(); });'."\n";
-
-		print 'function reinit_day_'.$ymd.'() {'."\n";
-		print 'var nb=0;'."\n";
-		// TODO Loop on each element of day $ymd and start to toggle once $maxprint has been reached
-		print 'jQuery(".family_mytasks_day_'.$ymd.'").toggle();';
-		print '}'."\n";
+		print ' var open=0;'."\n";
+		print ' jQuery("#more_'.$ymd.'").click(function() { console.log("Click on showmore for '.$ymd.'"); reinit_day_'.$ymd.'(); event.stopImmediatePropagation(); });'."\n";
+		print ' function reinit_day_'.$ymd.'() {'."\n";
+		print '  jQuery(".eventday_'.$ymd.'.showifmore").toggle();'."\n";
+		print '  open = open + 1; if (open > 1) { open = 0; }'."\n";
+		print '  if (open) { ';
+		print '   jQuery("#more_'.$ymd.'").html(\''.img_picto("All", "angle-double-up", 'class="warning"').'\');'."\n";
+		print '  } else { ';
+		print '   jQuery("#more_'.$ymd.'").html(\''.img_picto("All", "angle-double-down", 'class="warning"').' +'.($i - $maxprint).'\');'."\n";
+		print '  }'."\n";
+		print ' }'."\n";
 
 		print '});'."\n";
 
