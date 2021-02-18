@@ -836,93 +836,80 @@ if ($showbirthday)
 }
 
 // HOLIDAYS CALENDAR
-//if ($conf->global->AGENDA_SHOW_HOLIDAYS)
-//{
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
-	$sql .= " WHERE u.rowid = x.fk_user";
-	$sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
-	$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
+$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
+$sql .= " WHERE u.rowid = x.fk_user";
+$sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
+$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 
-	if ($action == 'show_day')
-	{
-		// Request only leaves for the current selected day
-		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";
-	} elseif ($action == 'show_week')
-	{
-		// TODO: Add filter to reduce database request
-	} elseif ($action == 'show_month')
-	{
-		// TODO: Add filter to reduce database request
-	}
+if ($action == 'show_day') {
+	// Request only leaves for the current selected day
+	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";
+} elseif ($action == 'show_week') {
+	// TODO: Add filter to reduce database request
+} elseif ($action == 'show_month') {
+	// TODO: Add filter to reduce database request
+}
 
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i   = 0;
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i   = 0;
 
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
 
-			$dateStartArray = dol_getdate(dol_stringtotime($obj->date_start, 1), true);
-			$dateEndArray   = dol_getdate(dol_stringtotime($obj->date_end, 1), true);
+		$dateStartArray = dol_getdate(dol_stringtotime($obj->date_start, 1), true);
+		$dateEndArray   = dol_getdate(dol_stringtotime($obj->date_end, 1), true);
 
-			$event = new ActionComm($db);
+		$event = new ActionComm($db);
 
-			// Need the id of the leave object for link to it
-			$event->id                      = $obj->rowid;
-			$event->ref                     = $event->id;
+		// Need the id of the leave object for link to it
+		$event->id = $obj->rowid;
+		$event->ref = $event->id;
 
-			$event->type_code = 'HOLIDAY';
-			$event->type_label = '';
-			$event->type_color = '';
-			$event->type = 'holiday';
-			$event->type_picto = 'holiday';
+		$event->type_code = 'HOLIDAY';
+		$event->type_label = '';
+		$event->type_color = '';
+		$event->type = 'holiday';
+		$event->type_picto = 'holiday';
 
-			$event->datep                   = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
-			$event->datef                   = dol_mktime(0, 0, 0, $dateEndArray['mon'], $dateEndArray['mday'], $dateEndArray['year'], true);
-			$event->date_start_in_calendar  = $event->datep;
-			$event->date_end_in_calendar    = $event->datef;
+		$event->datep = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
+		$event->datef = dol_mktime(0, 0, 0, $dateEndArray['mon'], $dateEndArray['mday'], $dateEndArray['year'], true);
+		$event->date_start_in_calendar = $event->datep;
+		$event->date_end_in_calendar = $event->datef;
 
-			if ($obj->status == 3)
-			{
-				// Show no symbol for leave with state "leave approved"
-				$event->percentage = -1;
-			} elseif ($obj->status == 2)
-			{
-				// Show TO-DO symbol for leave with state "leave wait for approval"
-				$event->percentage = 0;
-			}
-
-			if ($obj->halfday == 1)
-			{
-				$event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
-			} elseif ($obj->halfday == -1)
-			{
-				$event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
-			} else {
-				$event->label = $obj->lastname;
-			}
-
-			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y');
-			$mois = dol_print_date($daycursor, '%m');
-			$jour = dol_print_date($daycursor, '%d');
-
-			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-
-			do {
-				$eventarray[$daykey][] = $event;
-
-				$daykey += 60 * 60 * 24;
-			} while ($daykey <= $event->date_end_in_calendar);
-
-			$i++;
+		if ($obj->status == 3) {
+			// Show no symbol for leave with state "leave approved"
+			$event->percentage = -1;
+		} elseif ($obj->status == 2) {
+			// Show TO-DO symbol for leave with state "leave wait for approval"
+			$event->percentage = 0;
 		}
+
+		if ($obj->halfday == 1) {
+			$event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
+		} elseif ($obj->halfday == -1) {
+			$event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
+		} else {
+			$event->label = $obj->lastname;
+		}
+
+		$daycursor = $event->date_start_in_calendar;
+		$annee = dol_print_date($daycursor, '%Y');
+		$mois = dol_print_date($daycursor, '%m');
+		$jour = dol_print_date($daycursor, '%d');
+
+		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
+
+		do {
+			$eventarray[$daykey][] = $event;
+			$daykey += 60 * 60 * 24;
+		} while ($daykey <= $event->date_end_in_calendar);
+
+		$i++;
 	}
-//}
+}
 
 // EXTERNAL CALENDAR
 // Complete $eventarray with external import Ical
