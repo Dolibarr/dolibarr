@@ -7132,7 +7132,6 @@ abstract class CommonObject
 				   		manageLinkedExtrafields('.json_encode($jsData).');
 					})
 					</script>';
-
 				}
 
 				$out .= '<!-- /showOptionals --> '."\n";

@@ -223,7 +223,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				manageLinkedExtrafields('.json_encode($jsData).');
 			});
 			</script>';
-
 	}
 }
 ?>
