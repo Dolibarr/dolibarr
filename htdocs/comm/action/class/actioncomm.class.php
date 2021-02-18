@@ -86,6 +86,11 @@ class ActionComm extends CommonObject
 	public $type_id;
 
 	/**
+	 * @var string Calendar of event (Type of type of event). 'system'=Default calendar, 'systemauto'=Auto calendar, 'birthdate', 'holiday', 'module'=Calendar specific to a module
+	 */
+	public $type;
+
+	/**
 	 * @var string Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
 	 */
 	public $type_code;
@@ -96,14 +101,14 @@ class ActionComm extends CommonObject
 	public $type_label;
 
 	/**
-	 * @var string Label into parent table llx_c_actioncomm (used only if option to use type is set)
-	 */
-	public $type;
-
-	/**
 	 * @var string Color into parent table llx_c_actioncomm (used only if option to use type is set)
 	 */
 	public $type_color;
+
+	/**
+	 * @var string Picto for type of event (used only if option to use type is set)
+	 */
+	public $type_picto;
 
 	/**
 	 * @var string Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
@@ -1376,7 +1381,7 @@ class ActionComm extends CommonObject
 	 *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
 	 *  @param	string	$classname				Force style class on a link
 	 *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
-	 *  @param	int		$overwritepicto			1 = Overwrite picto
+	 *  @param	int		$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int   	$notooltip		    	1 = Disable tooltip
 	 *  @param  int     $save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
@@ -1426,8 +1431,8 @@ class ActionComm extends CommonObject
 		if (!empty($this->note_private))
 			$tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
 		$linkclose = '';
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
-			$linkclose = ' style="background-color:#'.$this->type_color.'"';
+		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
+		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
 
 		if (empty($notooltip))
 		{
@@ -1453,6 +1458,7 @@ class ActionComm extends CommonObject
 		elseif ($option == 'holiday')
 			$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 		else $url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+
 		if ($option !== 'nolink')
 		{
 			// Add param to save lastsearch_values or not
@@ -1494,7 +1500,7 @@ class ActionComm extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($this->type_color ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		$result .= $libelleshort;
 		$result .= $linkend;
 
@@ -1520,21 +1526,25 @@ class ActionComm extends CommonObject
 		$imgpicto = '';
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
+			$color = '';
+			if ($this->type_color) {
+				$color = 'style="color: #'.$this->type_color.' !important;"';
+			}
 			if ($this->type_picto) {
 				$imgpicto = img_picto('', $this->type_picto, 'class="paddingright"');
 			} else {
-				if ($this->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'meeting', '', false, 0, 0, '', 'paddingright');
-				elseif ($this->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-				elseif ($this->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
-				elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
-				elseif ($this->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright');
-				elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright');
-				elseif (!preg_match('/_AUTO/', $this->type_code)) $imgpicto = img_picto('', 'user-cog', '', false, 0, 0, '', 'paddingright');
-				else $imgpicto = img_picto('', 'cog', '', false, 0, 0, '', 'paddingright');
+				if ($this->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'meeting', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type != 'systemauto') $imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');
+				else $imgpicto = img_picto('', 'cog', $color, false, 0, 0, '', 'paddingright');
 			}
 		} else {
 			// 2 picto: 1 for auto, 1 for manual
-			if (!preg_match('/_AUTO/', $this->type_code)) $imgpicto = img_picto('', 'user-cog', '', false, 0, 0, '', 'paddingright');
+			if ($this->type != 'systemauto') $imgpicto = img_picto('', 'user-cog', '', false, 0, 0, '', 'paddingright');
 			else $imgpicto = img_picto('', 'cog', '', false, 0, 0, '', 'paddingright');
 		}
 		return $imgpicto;

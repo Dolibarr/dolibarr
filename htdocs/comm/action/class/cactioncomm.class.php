@@ -142,7 +142,7 @@ class CActionComm
 	 *  Return list of event types: array(id=>label) or array(code=>label)
 	 *
 	 *  @param  string|int  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
-	 *  @param  string      $idorcode       'id' or 'code'
+	 *  @param  string      $idorcode       'id' or 'code' or 'all'
 	 *  @param  string      $excludetype    Type to exclude ('system' or 'systemauto')
 	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
@@ -157,6 +157,7 @@ class CActionComm
 
 		$repid = array();
 		$repcode = array();
+		$repall = array();
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -175,6 +176,7 @@ class CActionComm
 			$nump = $this->db->num_rows($resql);
 			if ($nump)
 			{
+				$idforallfornewmodule = 97;
 				$i = 0;
 				while ($i < $nump)
 				{
@@ -220,25 +222,40 @@ class CActionComm
 						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE))
 						{
 							if ($typecalendar == 'system') {
-								$label = '&nbsp; '.$label;
+								$label = '&nbsp;&nbsp; '.$label;
 								$repid[-99] = $langs->trans("ActionAC_MANUAL");
 								$repcode['AC_NON_AUTO'] = '-- '.$langs->trans("ActionAC_MANUAL");
 							}
 							if ($typecalendar == 'systemauto') {
-								$label = '&nbsp; '.$label;
+								$label = '&nbsp;&nbsp; '.$label;
 								$repid[-98] = $langs->trans("ActionAC_AUTO");
 								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
+							}
+							if ($typecalendar == 'module') {
+								$label = '&nbsp;&nbsp; '.$label;
+								if (!isset($repcode['AC_ALL_'.strtoupper($obj->module)])) {	// If first time for this module
+									$idforallfornewmodule--;
+								}
+								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($obj->module));
+								$repcode['AC_ALL_'.strtoupper($obj->module)] = '-- '.$langs->trans("Module").' '.ucfirst($obj->module);
 							}
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;
-						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) $repcode[$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
+						$repall[$obj->code] = array('id' => $label, 'label' => $label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
+						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) {
+							$repcode[$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
+							$repall[$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')';
+						}
 					}
 					$i++;
 				}
 			}
+
 			if ($idorcode == 'id') $this->liste_array = $repid;
-			if ($idorcode == 'code') $this->liste_array = $repcode;
+			elseif ($idorcode == 'code') $this->liste_array = $repcode;
+			else $this->liste_array = $repall;
+
 			return $this->liste_array;
 		} else {
 			$this->error = $this->db->lasterror();

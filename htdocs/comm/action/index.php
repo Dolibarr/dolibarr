@@ -557,10 +557,11 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 }
 
 
-// DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
 // Load events from database into $eventarray
 $eventarray = array();
 
+
+// DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
 $sql = 'SELECT ';
 if ($usergroup > 0) $sql .= " DISTINCT";
 $sql .= ' a.id, a.label,';
@@ -571,7 +572,7 @@ $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_project,';
 $sql .= ' a.fk_element, a.elementtype,';
-$sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color';
+$sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 // We must filter on resource table
@@ -689,13 +690,17 @@ if ($resql)
 		$event->type_code = $obj->type_code;
 		$event->type_label = $obj->type_label;
 		$event->type_color = $obj->type_color;
+		$event->type = $obj->type_type;
+		$event->type_picto = $obj->type_picto;
 
 		$event->libelle = $obj->label; // deprecated
 		$event->label = $obj->label;
 		$event->percentage = $obj->percent;
+
 		$event->authorid = $obj->fk_user_author; // user id of creator
 		$event->userownerid = $obj->fk_user_action; // user id of owner
 		$event->fetch_userassigned(); // This load $event->userassigned
+
 		$event->priority = $obj->priority;
 		$event->fulldayevent = $obj->fulldayevent;
 		$event->location = $obj->location;
@@ -793,7 +798,13 @@ if ($showbirthday)
 			$datearray = dol_getdate($datebirth, true);
 			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they wont but converted during output
 			$event->datef = $event->datep;
+
 			$event->type_code = 'BIRTHDAY';
+			$event->type_label = '';
+			$event->type_color = '';
+			$event->type = 'birthdate';
+			$event->type_picto = 'birthdate';
+
 			$event->label = $langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
 			$event->percentage = 100;
 			$event->fulldayevent = 1;
@@ -862,7 +873,12 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 			$event->id                      = $obj->rowid;
 			$event->ref                     = $event->id;
 
-			$event->type_code               = 'HOLIDAY';
+			$event->type_code = 'HOLIDAY';
+			$event->type_label = '';
+			$event->type_color = '';
+			$event->type = 'holiday';
+			$event->type_picto = 'holiday';
+
 			$event->datep                   = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
 			$event->datef                   = dol_mktime(0, 0, 0, $dateEndArray['mon'], $dateEndArray['mday'], $dateEndArray['year'], true);
 			$event->date_start_in_calendar  = $event->datep;
@@ -1095,9 +1111,12 @@ if (count($listofextcals))
 						$event->userassigned[$userId] = $userId;
 						$event->percentage = -1;
 					}
-					else {
-						$event->type_code = "ICALEVENT";
-					}
+
+					$event->type_code = "ICALEVENT";
+					$event->type_label = $namecal;
+					$event->type_color = $colorcal;
+					$event->type = 'icalevent';
+					$event->type_picto = 'rss';
 
 					$event->icalname = $namecal;
 					$event->icalcolor = $colorcal;
@@ -1660,7 +1679,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					// Show rect of event
 					print "\n";
 					print '<!-- start event '.$i.' -->'."\n";
-					print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'"';
+					print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.'"';
 					//print ' style="height: 100px;';
 					//print ' position: absolute; top: 40px; width: 50%;';
 					//print '"';
@@ -1695,14 +1714,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 					$daterange = '';
 
-					if ($event->type_code == 'BIRTHDAY') // It's a birthday
-					{
+					if ($event->type_code == 'BIRTHDAY') { 			// It's birthday calendar
 						print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
-					} elseif ($event->type_code == 'HOLIDAY')
-					{
+					} elseif ($event->type_code == 'HOLIDAY') {		// It's holiday calendar
 						print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'holiday', 'user');
-					} elseif ($event->type_code != 'BIRTHDAY' && $event->type_code != 'HOLIDAY')
-					{
+					} else {										// Other calendar
 						// Picto
 						if (empty($event->fulldayevent))
 						{
@@ -1761,7 +1777,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$event->label = $titletoshow;
 							$event->libelle = $titletoshow;
 							// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
-							$titletoshow = $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
+							$titletoshow = (($event->type_picto || $event->type_code) ? $event->getTypePicto() : '');
+							$titletoshow .= $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
 							$event->label = $savlabel;
 							$event->libelle = $savlabel;
 						}
