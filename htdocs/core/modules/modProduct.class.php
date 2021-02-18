@@ -547,7 +547,7 @@ class modProduct extends DolibarrModules
 
 		// field order as per structure of table llx_product
 		$import_sample = array(
-			'p.ref' => "PREF123456",
+			'p.ref' => "ref:PREF123456",
 			'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
 			'p.label' => "Product name in default language",
 			'p.description' => "Product description in default language",
@@ -687,7 +687,7 @@ class modProduct extends DolibarrModules
 			);
 
 			$this->import_examplevalues_array[$r] = array(
-				'sp.fk_product' => "PRODUCT_REF or id:123456",
+				'sp.fk_product' => "ref:PRODUCT_REF or id:123456",
 				'sp.fk_soc' => "My Supplier",
 				'sp.ref_fourn' => "XYZ-F123456",
 				'sp.quantity' => "5",
