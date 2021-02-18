@@ -1343,14 +1343,14 @@ if (empty($action) || $action == 'show_month')      // View by month
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
-		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime, true);
-		$tmpday = $tmparray['mday'];
-		$tmpmonth = $tmparray['mon'];
-		$tmpyear = $tmparray['year'];
+		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');		// $firstdaytoshow is in timezone of server
+		$tmpday = dol_print_date($curtime, '%d', 'tzuserrel');
+		$tmpmonth = dol_print_date($curtime, '%m', 'tzuserrel');
+		$tmpyear = dol_print_date($curtime, '%Y', 'tzuserrel');
 
 		$style = 'cal_current_month';
 		if ($iter_day == 6) $style .= ' cal_other_month_right';
+
 		$today = 0;
 		$todayarray = dol_getdate($now, 'fast');
 		if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $tmpmonth && $todayarray['year'] == $tmpyear) $today = 1;
