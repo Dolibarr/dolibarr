@@ -476,9 +476,7 @@ else
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type,";
-$sql .= " ba.rowid as bankid, ba.ref as bankref,";
-$sql .= " bu.url_id, bu.type as type_url,";
-$sql .= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -492,8 +490,6 @@ if ($search_bid > 0) $sql .= MAIN_DB_PREFIX."bank_class as l,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) $sql .= " AND b.fk_account = ".$search_account;
@@ -507,7 +503,22 @@ if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".$search_conciliated;
-if ($search_thirdparty_user) $sql .= natural_search(array("s.nom", "u.firstname", "u.lastname"), $search_thirdparty_user);
+if ($search_thirdparty_user) {
+
+	$sql.= " AND (b.rowid IN ";
+	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
+	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1)."))";
+
+	$sql.= " OR b.rowid IN ";
+	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
+	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql.= ")";
+
+}
 if ($search_description)
 {
 	$search_description_to_use = $search_description;
@@ -1008,6 +1019,11 @@ if ($resql)
     {
         $objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
+
+		$sqlbu = "SELECT url_id, 'type' FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank =".$objp->rowid;
+		$resqlbu = $db->query($sqlbu);
+
+		//TODO : récupérer les informations sur la société et le url_id et url_type : apparemment c'est que pour la société alors voir dans la partie "ThirdParty" !!
 
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && $mode_balance_ok)
