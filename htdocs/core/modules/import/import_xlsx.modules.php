@@ -173,7 +173,7 @@ class ImportXlsx extends ModeleImports
 		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
 		$this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
-		$col = 0;
+		$col = 1;
 		foreach ($headerlinefields as $field) {
 			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, 1, $outputlangs->transnoentities($field));
 			// set autowidth
@@ -195,7 +195,7 @@ class ImportXlsx extends ModeleImports
 	public function write_record_example($outputlangs, $contentlinevalues)
 	{
 		// phpcs:enable
-		$col = 0;
+		$col = 1;
 		$row = 2;
 		foreach ($contentlinevalues as $cell) {
 			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, $row, $cell);
@@ -289,7 +289,7 @@ class ImportXlsx extends ModeleImports
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
-		for ($col = 0; $col < $countcolumns; $col++) {
+		for ($col = 1; $col <= $countcolumns; $col++) {
 			$this->headers[$col] = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, 1)->getValue();
 		}
 		return 0;
@@ -314,7 +314,7 @@ class ImportXlsx extends ModeleImports
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
-		for ($col = 0; $col < $countcolumns; $col++) {
+		for ($col = 1; $col <= $countcolumns; $col++) {
 			$val = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record)->getValue();
 			$array[$col]['val'] = $val;
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
