@@ -749,13 +749,13 @@ class modProduct extends DolibarrModules
 			$this->import_convertvalue_array[$r] = array(
 				'pr.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r] = array('pr.fk_product'=>"PRODUCT_REF or id:123456",
+			$this->import_examplevalues_array[$r] = array('pr.fk_product'=>"ref:PRODUCT_REF or id:123456",
 				'pr.price_base_type'=>"HT (for excl tax) or TTC (for inc tax)", 'pr.price_level'=>"1",
 				'pr.price'=>"100", 'pr.price_ttc'=>"110",
 				'pr.price_min'=>"100", 'pr.price_min_ttc'=>"110",
 				'pr.tva_tx'=>'20',
 				'pr.recuperableonly'=>'0',
-				'pr.date_price'=>'2013-04-10');
+				'pr.date_price'=>'2020-12-31');
 		}
 
 		if (!empty($conf->global->MAIN_MULTILANGS))
