@@ -1684,7 +1684,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print "\n";
 					print '<!-- start event '.$i.' -->'."\n";
 					$morecss = '';
-					if ($i >= $maxprint) {
+					if ($maxprint && $i >= $maxprint) {
 						$morecss = 'showifmore';
 					}
 					if ($event->type == 'holiday' && !GETPOST('check_birthday')) {
