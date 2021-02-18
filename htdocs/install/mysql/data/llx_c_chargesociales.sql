@@ -44,7 +44,8 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 30, 'Prevoyance', 1, 1,'TAXPREV', '1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 40, 'Mutuelle', 1, 1,'TAXMUT', '1');
 insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 50, 'Retraite', 1, 1,'TAXRET', '1');
-insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 50, 'Taxe sur vehicule societe (TVS)', 0, 1, 'TAXTVS', '1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 60, 'Taxe sur vehicule societe (TVS)', 0, 1, 'TAXTVS', '1');
+insert into llx_c_chargesociales (id, libelle, deductible, active, code, fk_pays) values ( 70, 'impôts sur les sociétés (IS)', 0, 1, 'TAXIS', '1');
 
 --
 -- Belgique
