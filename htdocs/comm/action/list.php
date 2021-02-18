@@ -657,6 +657,7 @@ if ($resql)
 		$actionstatic->type_code = $obj->type_code;
 		$actionstatic->type_label = $obj->type_label;
 		$actionstatic->type_picto = $obj->type_picto;
+		$actionstatic->type_color = $obj->type_color;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
