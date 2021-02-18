@@ -144,7 +144,7 @@ class CActionComm
 	 *  @param  string|int  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
 	 *  @param  string      $idorcode       'id' or 'code'
 	 *  @param  string      $excludetype    Type to exclude ('system' or 'systemauto')
-	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
+	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
 	 *  @param  int         $shortlabel     1=Get short label instead of long label
 	 *  @return mixed                       Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
@@ -166,7 +166,7 @@ class CActionComm
 		}
 		if (!empty($excludetype)) $sql .= " AND type <> '".$this->db->escape($excludetype)."'";
 		if ($morefilter) $sql .= " AND ".$morefilter;
-		$sql .= " ORDER BY module, position, type";
+		$sql .= " ORDER BY type, position, module";
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -200,8 +200,12 @@ class CActionComm
 						$keyfortrans = '';
 						$transcode = '';
 						$code = $obj->code;
-						if ($onlyautoornot > 0 && $code == 'AC_OTH') $code = 'AC_MANUAL';
-						if ($onlyautoornot > 0 && $code == 'AC_OTH_AUTO') $code = 'AC_AUTO';
+						$typecalendar = $obj->type;
+
+						if ($onlyautoornot > 0 && $typecalendar == 'system') $code = 'AC_MANUAL';
+						elseif ($onlyautoornot > 0 && $typecalendar == 'systemauto') $code = 'AC_AUTO';
+						elseif ($onlyautoornot > 0) $code = 'AC_'.strtoupper($obj->module);
+
 						if ($shortlabel)
 						{
 							$keyfortrans = "Action".$code.'Short';
@@ -213,11 +217,18 @@ class CActionComm
 							$transcode = $langs->trans($keyfortrans);
 						}
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
-						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE) && !preg_match('/auto/i', $code))
+						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE))
 						{
-							$label = '&nbsp; '.$label;
-							$repid[-99] = $langs->trans("ActionAC_MANUAL");
-							$repcode['AC_NON_AUTO'] = $langs->trans("ActionAC_MANUAL");
+							if ($typecalendar == 'system') {
+								$label = '&nbsp; '.$label;
+								$repid[-99] = $langs->trans("ActionAC_MANUAL");
+								$repcode['AC_NON_AUTO'] = '-- '.$langs->trans("ActionAC_MANUAL");
+							}
+							if ($typecalendar == 'systemauto') {
+								$label = '&nbsp; '.$label;
+								$repid[-98] = $langs->trans("ActionAC_AUTO");
+								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
+							}
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;

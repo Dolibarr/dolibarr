@@ -541,6 +541,8 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	{
 		$s = $hookmanager->resPrint;
 	}
+
+	$s .= "\n".'<!-- End div to calendars selectors -->'."\n";
 } else // If javascript off
 {
 	$newparam = $param; // newparam is for birthday links
@@ -554,6 +556,8 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	$link .= '</a>';
 }
 
+
+// DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
 // Load events from database into $eventarray
 $eventarray = array();
 
@@ -752,6 +756,7 @@ if ($resql)
 	dol_print_error($db);
 }
 
+// BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
 if ($showbirthday)
 {
@@ -817,6 +822,7 @@ if ($showbirthday)
 	}
 }
 
+// HOLIDAYS CALENDAR
 if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
@@ -900,6 +906,7 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 	}
 }
 
+// EXTERNAL CALENDAR
 // Complete $eventarray with external import Ical
 if (count($listofextcals))
 {
@@ -1205,9 +1212,11 @@ if (is_readable($color_file))
 }
 if (!is_array($theme_datacolor)) $theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
+$massactionbutton ='';
 
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
+// Show div with list of calendars
 print $s;
 
 
