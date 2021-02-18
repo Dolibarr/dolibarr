@@ -1501,11 +1501,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	// Line with title of day
-	print '<div id="dayevent_'.$dateint.'" class="cursorpointer dayevent tagtable centpercent nobordernopadding" onclick="window.location=\''.$urltocreate.'\';">'."\n";
+	print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding">'."\n";
 
 	if ($nonew <= 0)
 	{
-		print '<div class="tagtr"><div class="nowrap tagtd"><div class="left inline-block">';
+		print '<div class="tagtr cursorpointer" onclick="window.location=\''.$urltocreate.'\';"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
 		if ($showinfo) print dol_print_date($curtime, 'daytextshort');
 		else print dol_print_date($curtime, '%d');
