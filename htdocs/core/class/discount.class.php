@@ -222,6 +222,7 @@ class DiscountAbsolute
 		if (empty($this->multicurrency_amount_ht)) $this->multicurrency_amount_ht = 0;
 		if (empty($this->multicurrency_amount_tva)) $this->multicurrency_amount_tva = 0;
 		if (empty($this->multicurrency_amount_ttc)) $this->multicurrency_amount_ttc = 0;
+		if (empty($this->tva_tx)) $this->tva_tx = 0;
 
 		// Check parameters
 		if (empty($this->description))
