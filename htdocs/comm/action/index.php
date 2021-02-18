@@ -1630,7 +1630,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$tmpyearend    = date('Y', $event->date_end_in_calendar);
 						$tmpmonthend   = date('m', $event->date_end_in_calendar);
 						$tmpdayend     = date('d', $event->date_end_in_calendar);
-						if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour)
 						{
 							$cssclass .= " unmovable";
 						}
