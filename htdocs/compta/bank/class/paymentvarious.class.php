@@ -70,6 +70,8 @@ class PaymentVarious extends CommonObject
 	public $amount;
 	public $type_payment;
 	public $num_payment;
+	public $chqemetteur;
+	public $chqbank;
 	public $category_transaction;
 
 	/**
@@ -499,8 +501,8 @@ class PaymentVarious extends CommonObject
 						$this->num_payment,
 						($this->category_transaction > 0 ? $this->category_transaction : 0),
 						$user,
-						'',
-						'',
+						$this->chqemetteur,
+						$this->chqbank,
 						'',
 						$this->datev
 					);
