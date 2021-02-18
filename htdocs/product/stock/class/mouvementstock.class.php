@@ -147,10 +147,16 @@ class MouvementStock extends CommonObject
 
 		// $qty may be a string with more than 1 sign, like "+-4" or "--12.65" (when correct_stock_batch or correct_stock get negative values)
 		// we want to convert it to a numeric.
-		$qty = doubleval(preg_replace_callback('/^([+-]+)/',
-			function ($m) {
-				return substr_count($m[1], '-') % 2 ? '-' : '';
-			}, $qty));
+		$qty = price2num(
+			preg_replace_callback(
+				'/^([+-]+)/',
+				function ($m) {
+					return substr_count($m[1], '-') % 2 ? '-' : '';
+				},
+				$qty
+			),
+			'MS'
+		);
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
