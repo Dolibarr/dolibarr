@@ -215,9 +215,9 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			"table_element" => $object->table_element,
 			"object_id" => $object->id
 		);
-		print "\n";
+		var_dump(DOL_MAIN_URL_ROOT);
 		print '
-			<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_extrafields.js"></script>
+			<script type="text/javascript" src="'.DOL_MAIN_URL_ROOT.'/core/js/lib_extrafields.js"></script>
 			<script type="text/javascript">
 			$(document).ready(function() {
 				manageLinkedExtrafields('.json_encode($jsData).');

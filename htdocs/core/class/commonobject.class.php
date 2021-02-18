@@ -7126,7 +7126,7 @@ abstract class CommonObject
 			if (! empty($conf->use_javascript_ajax)) {
 				$jsData = array("action" => $action);
 				$out .= '
-					<script type="text/javascript" src="/dolibarr/htdocs/core/js/lib_extrafields.js"></script>
+					<script type="text/javascript" src="'.DOL_MAIN_URL_ROOT.'/core/js/lib_extrafields.js"></script>
 					<script type="text/javascript">
 					$(document).ready(function() {
 				   		manageLinkedExtrafields('.json_encode($jsData).');
