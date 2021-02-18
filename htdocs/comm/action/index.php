@@ -1898,7 +1898,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	if (!empty($conf->global->MAIN_JS_SWITCH_AGENDA) && $i > $maxprint && $maxprint)
 	{
-		print '<div class="center" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($i - $maxprint).'</div>';
+		print '<div class="center cursorpointer" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($i - $maxprint).'</div>';
 		//print ' +'.(count($eventarray[$daykey])-$maxprint);
 		print '<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function () {'."\n";
