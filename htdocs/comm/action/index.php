@@ -114,8 +114,7 @@ if ($status == '' && !GETPOSTISSET('search_status')) $status = (empty($conf->glo
 $defaultview = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 $defaultview = (empty($user->conf->AGENDA_DEFAULT_VIEW) ? $defaultview : $user->conf->AGENDA_DEFAULT_VIEW);
 if (empty($action) && !GETPOSTISSET('action')) $action = $defaultview;
-if ($action == 'default')	// When action is default, we want a calendar view and not the list
-{
+if ($action == 'default') {	// When action is default, we want a calendar view and not the list
 	$action = (($defaultview != 'show_list') ? $defaultview : 'show_month');
 }
 if (GETPOST('viewcal', 'restricthtml') && GETPOST('action', 'alpha') != 'show_day' && GETPOST('action', 'alpha') != 'show_week') {
@@ -488,8 +487,8 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
-	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthday"); jQuery(".family_birthday").toggle(); });'."\n";
-	$s .= 'jQuery(".family_birthday").toggle();'."\n";
+	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthdays"); jQuery(".family_birthday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle holidays"); jQuery(".family_holiday").toggle(); });'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action))
 	{
 		// Code to enable drag and drop
@@ -510,6 +509,9 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 
 	// Local calendar
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
+
+	// Holiday calendar
+	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_holiday" name="check_holiday" class="check_holiday"><label for="check_holiday"> <span class="check_holiday_text">'.$langs->trans("Holidays").'</span></label> &nbsp; </div>';
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0)
@@ -790,6 +792,7 @@ if ($showbirthday)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
+
 			$event = new ActionComm($db);
 
 			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
@@ -811,23 +814,28 @@ if ($showbirthday)
 			$event->percentage = 100;
 			$event->fulldayevent = 1;
 
-			$event->date_start_in_calendar = $event->datep;
-			$event->date_end_in_calendar = $event->datef;
+			$event->date_start_in_calendar = $db->jdate($event->datep);
+			$event->date_end_in_calendar = $db->jdate($event->datef);
 			$event->ponctuel = 0;
 
-			// Add an entry in actionarray for each day
-			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y');
-			$mois = dol_print_date($daycursor, '%m');
-			$jour = dol_print_date($daycursor, '%d');
+			// Add an entry in eventarray for each day
+			$daycursor = $event->datep;
+			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
 
-			$loop = true;
+			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+
+			$eventarray[$daykey][] = $event;
+
+			/*$loop = true;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
 			do {
 				$eventarray[$daykey][] = $event;
 				$daykey += 60 * 60 * 24;
 				if ($daykey > $event->date_end_in_calendar) $loop = false;
 			} while ($loop);
+			*/
 			$i++;
 		}
 	} else {
@@ -835,7 +843,6 @@ if ($showbirthday)
 	}
 }
 
-// HOLIDAYS CALENDAR
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = x.fk_user";
@@ -844,7 +851,7 @@ $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2
 
 if ($action == 'show_day') {
 	// Request only leaves for the current selected day
-	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";
+	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date wihout time
 } elseif ($action == 'show_week') {
 	// TODO: Add filter to reduce database request
 } elseif ($action == 'show_month') {
@@ -852,21 +859,20 @@ if ($action == 'show_day') {
 }
 
 $resql = $db->query($sql);
-if ($resql) {
+if ($resql)
+{
 	$num = $db->num_rows($resql);
 	$i   = 0;
 
-	while ($i < $num) {
+	while ($i < $num)
+	{
 		$obj = $db->fetch_object($resql);
-
-		$dateStartArray = dol_getdate(dol_stringtotime($obj->date_start, 1), true);
-		$dateEndArray   = dol_getdate(dol_stringtotime($obj->date_end, 1), true);
 
 		$event = new ActionComm($db);
 
 		// Need the id of the leave object for link to it
-		$event->id = $obj->rowid;
-		$event->ref = $event->id;
+		$event->id                      = $obj->rowid;
+		$event->ref                     = $event->id;
 
 		$event->type_code = 'HOLIDAY';
 		$event->type_label = '';
@@ -874,36 +880,40 @@ if ($resql) {
 		$event->type = 'holiday';
 		$event->type_picto = 'holiday';
 
-		$event->datep = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
-		$event->datef = dol_mktime(0, 0, 0, $dateEndArray['mon'], $dateEndArray['mday'], $dateEndArray['year'], true);
-		$event->date_start_in_calendar = $event->datep;
-		$event->date_end_in_calendar = $event->datef;
+		$event->datep                   = $db->jdate($obj->date_start);
+		$event->datef                   = $db->jdate($obj->date_end);
+		$event->date_start_in_calendar  = $event->datep;
+		$event->date_end_in_calendar    = $event->datef;
 
-		if ($obj->status == 3) {
+		if ($obj->status == 3)
+		{
 			// Show no symbol for leave with state "leave approved"
 			$event->percentage = -1;
-		} elseif ($obj->status == 2) {
+		} elseif ($obj->status == 2)
+		{
 			// Show TO-DO symbol for leave with state "leave wait for approval"
 			$event->percentage = 0;
 		}
 
-		if ($obj->halfday == 1) {
+		if ($obj->halfday == 1)
+		{
 			$event->label = $obj->lastname.' ('.$langs->trans("Morning").')';
-		} elseif ($obj->halfday == -1) {
+		} elseif ($obj->halfday == -1)
+		{
 			$event->label = $obj->lastname.' ('.$langs->trans("Afternoon").')';
 		} else {
 			$event->label = $obj->lastname;
 		}
 
 		$daycursor = $event->date_start_in_calendar;
-		$annee = dol_print_date($daycursor, '%Y');
-		$mois = dol_print_date($daycursor, '%m');
-		$jour = dol_print_date($daycursor, '%d');
+		$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
+		$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
+		$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
 
-		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-
+		$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 		do {
 			$eventarray[$daykey][] = $event;
+
 			$daykey += 60 * 60 * 24;
 		} while ($daykey <= $event->date_end_in_calendar);
 
@@ -923,7 +933,7 @@ if (count($listofextcals))
 		$offsettz = $extcal['offsettz'];
 		$colorcal = $extcal['color'];
 		$buggedfile = $extcal['buggedfile'];
-		//print "url=".$url." namecal=".$namecal." colorcal=".$colorcal." buggedfile=".$buggedfile;
+
 		$ical = new ICal();
 		$ical->parse($url);
 
@@ -1164,15 +1174,15 @@ if (count($listofextcals))
 
 						// Add an entry in actionarray for each day
 						$daycursor = $event->date_start_in_calendar;
-						$annee = date('Y', $daycursor);
-						$mois = date('m', $daycursor);
-						$jour = date('d', $daycursor);
+						$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
+						$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
+						$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
 
 						// Loop on each day covered by action to prepare an index to show on calendar
 						$loop = true; $j = 0;
 						// daykey must be date that represent day box in calendar so must be a user time
-						$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee);
-						$daykeygmt = dol_mktime(0, 0, 0, $mois, $jour, $annee, true, 0);
+						$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
+						$daykeygmt = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 						do {
 							//if ($event->fulldayevent) print dol_print_date($daykeygmt,'dayhour','gmt').'-'.dol_print_date($daykey,'dayhour','gmt').'-'.dol_print_date($event->date_end_in_calendar,'dayhour','gmt').' ';
 							$eventarray[$daykey][] = $event;
@@ -1552,12 +1562,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	print '<div class="tagtd centpercent agendacell sortable">';
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
-	$i = 0; $numother = 0; $numbirthday = 0; $numical = 0; $numicals = array();
+	$i = 0; $ireallyshown = 0; $itoshow = 0; $numother = 0; $numbirthday = 0; $numical = 0; $numicals = array();
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	$colorindexused[$user->id] = 0; // Color index for current user (user->id) is always 0
 	$nextindextouse = is_array($colorindexused) ?count($colorindexused) : 0; // At first run this is 0, so fist user has 0, next 1, ...
 	//var_dump($colorindexused);
+
+	include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+	$tmpholiday = new Holiday($db);
 
 	foreach ($eventarray as $daykey => $notused)
 	{
@@ -1604,7 +1617,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other');
 					} elseif ($event->type_code == 'BIRTHDAY')
 					{
-						$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday unmovable'; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+						$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday '; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
 					} else {
 						$numother++;
 						$color = ($event->icalcolor ? $event->icalcolor : -1);
@@ -1641,11 +1654,13 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					$cssclass = $cssclass.' eventday_'.$ymd;
 
 					// Defined style to disable drag and drop feature
-					if ($event->type_code == 'AC_OTH_AUTO')
-					{
+					if ($event->type_code == 'AC_OTH_AUTO') {
 						$cssclass .= " unmovable";
-					} elseif ($event->type_code == 'ICALEVENT')
-					{
+					} elseif ($event->type_code == 'HOLIDAY') {
+						$cssclass .= " unmovable";
+					} elseif ($event->type_code == 'BIRTHDAY') {
+						$cssclass .= " unmovable";
+					} elseif ($event->type_code == 'ICALEVENT') {
 						$cssclass .= " unmovable";
 					} elseif ($event->date_end_in_calendar && date('Ymd', $event->date_start_in_calendar) != date('Ymd', $event->date_end_in_calendar)) {
 						$tmpyearend    = date('Y', $event->date_end_in_calendar);
@@ -1672,13 +1687,25 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					// Show event box
 					print "\n";
 					print '<!-- start event '.$i.' -->'."\n";
+
 					$morecss = '';
-					if ($maxprint && $i >= $maxprint) {
+					if ($maxprint && $ireallyshown >= $maxprint) {
 						$morecss = 'showifmore';
 					}
-					if ($event->type == 'holiday' && !GETPOST('check_birthday')) {
+					if ($event->type == 'birthdate' && !GETPOST('check_birthday')) {
 						$morecss = 'hidden';
 					}
+					if ($event->type == 'holiday' && !GETPOST('check_holiday')) {
+						$morecss = 'hidden';
+					}
+					if ($morecss != 'hidden') {
+						$itoshow++;
+					}
+					if ($morecss != 'showifmore' && $morecss != 'hidden') {
+						$ireallyshown++;
+					}
+					//var_dump($event->type.' - '.$morecss.' - '.$cssclass.' - '.$i.' - '.$ireallyshown.' - '.$itoshow);
+
 					print '<div id="event_'.$ymd.'_'.$i.'" class="event family_'.$event->type.' '.$cssclass.($morecss ? ' '.$morecss : '').'"';
 					//print ' style="height: 100px;';
 					//print ' position: absolute; top: 40px; width: 50%;';
@@ -1717,7 +1744,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					if ($event->type_code == 'BIRTHDAY') { 			// It's birthday calendar
 						print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'birthday', 'contact');
 					} elseif ($event->type_code == 'HOLIDAY') {		// It's holiday calendar
-						print $event->getNomUrl(1, $maxnbofchar, 'cal_event', 'holiday', 'user');
+						$tmpholiday->fetch($event->id);
+
+						print $tmpholiday->getNomUrl(1);
+
+						$tmpid = $tmpholiday->fk_user;
+						if (empty($cacheusers[$tmpid])) {
+							$newuser = new User($db);
+							$newuser->fetch($tmpid);
+							$cacheusers[$tmpid] = $newuser;
+						}
+
+						$listofusertoshow .= '<br>'.$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
+						print $listofusertoshow;
 					} else {										// Other calendar
 						// Picto
 						if (empty($event->fulldayevent))
@@ -1762,8 +1801,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$daterange .= dol_print_date($event->date_end_in_calendar, 'hour', 'tzuserrel');
 							}
 						} else {
-							if ($showinfo)
-							{
+							if ($showinfo) {
 								print $langs->trans("EventOnFullDay")."<br>\n";
 							}
 						}
@@ -1790,8 +1828,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						{
 							if (!$posuserassigned && $titletoshow) $listofusertoshow .= '<br>';
 							$posuserassigned++;
-							if (empty($cacheusers[$tmpid]))
-							{
+							if (empty($cacheusers[$tmpid])) {
 								$newuser = new User($db);
 								$newuser->fetch($tmpid);
 								$cacheusers[$tmpid] = $newuser;
@@ -1863,6 +1900,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					else print '&nbsp;';
 					print '</td></tr></table>';
 					print '</div><!-- end event '.$i.' -->'."\n";
+
 					$i++;
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
@@ -1885,10 +1923,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '&nbsp;';
 	}
 
-	if (!empty($conf->global->MAIN_JS_SWITCH_AGENDA) && $i > $maxprint && $maxprint)
+	if (!empty($conf->global->MAIN_JS_SWITCH_AGENDA) && $itoshow > $ireallyshown && $maxprint)
 	{
-		print '<div class="center cursorpointer" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($i - $maxprint).'</div>';
+		print '<div class="center cursorpointer" id="more_'.$ymd.'">'.img_picto("All", "angle-double-down", 'class="warning"').' +'.($itoshow - $ireallyshown).'</div>';
 		//print ' +'.(count($eventarray[$daykey])-$maxprint);
+
 		print '<script type="text/javascript">'."\n";
 		print 'jQuery(document).ready(function () {'."\n";
 		print ' var open=0;'."\n";
@@ -1899,12 +1938,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		print '  if (open) { ';
 		print '   jQuery("#more_'.$ymd.'").html(\''.img_picto("All", "angle-double-up", 'class="warning"').'\');'."\n";
 		print '  } else { ';
-		print '   jQuery("#more_'.$ymd.'").html(\''.img_picto("All", "angle-double-down", 'class="warning"').' +'.($i - $maxprint).'\');'."\n";
+		print '   jQuery("#more_'.$ymd.'").html(\''.img_picto("All", "angle-double-down", 'class="warning"').' +'.($itoshow - $ireallyshown).'\');'."\n";
 		print '  }'."\n";
 		print ' }'."\n";
-
 		print '});'."\n";
-
 		print '</script>'."\n";
 	}
 
@@ -1951,7 +1988,6 @@ function sort_events_by_date($a, $b)
 	{
 		return -1;
 	}
-
 	if ($b->type_code === 'HOLIDAY')
 	{
 		return 1;
