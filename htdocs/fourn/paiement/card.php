@@ -39,6 +39,8 @@ $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $object = new PaiementFourn($db);
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
