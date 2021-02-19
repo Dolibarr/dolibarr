@@ -185,9 +185,12 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 
 
 // Check consistency of NOREQUIREXXX DEFINES
-if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU'))
-{
-	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them';
+if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
+	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them.';
+	exit;
+}
+if (defined('NOREQUIREUSER') && !defined('NOREQUIREMENU')) {
+	print 'If define NOREQUIREUSER is set, you must also set NOREQUIREMENU or not set it.';
 	exit;
 }
 

@@ -6251,17 +6251,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		)
 			);
 
-		$substitutionarray = array_merge($substitutionarray, array(
-		'__USER_ID__' => (string) $user->id,
-		'__USER_LOGIN__' => (string) $user->login,
-		'__USER_EMAIL__' => (string) $user->email,
-		'__USER_LASTNAME__' => (string) $user->lastname,
-		'__USER_FIRSTNAME__' => (string) $user->firstname,
-		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-		'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
-		)
+		if (is_object($user)) {
+			$substitutionarray = array_merge($substitutionarray, array(
+				'__USER_ID__' => (string) $user->id,
+				'__USER_LOGIN__' => (string) $user->login,
+				'__USER_EMAIL__' => (string) $user->email,
+				'__USER_LASTNAME__' => (string) $user->lastname,
+				'__USER_FIRSTNAME__' => (string) $user->firstname,
+				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
+				)
 			);
+		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
@@ -6275,7 +6277,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
 			'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-			'__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1, ', '),
+			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
