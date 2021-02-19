@@ -780,7 +780,7 @@ if ($object->id > 0)
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				$propal_static->id = $objp->propalid;
 				$propal_static->ref = $objp->ref;
 				$propal_static->ref_client = $objp->ref_client;
@@ -871,7 +871,7 @@ if ($object->id > 0)
 				$commande_static->billed = $objp->billed;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
@@ -938,7 +938,7 @@ if ($object->id > 0)
 				$sendingstatic->ref = $objp->ref;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
 				print '</td>';
 				if ($objp->date_creation > 0) {
@@ -1014,7 +1014,7 @@ if ($object->id > 0)
 				}
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
 				print $late;
 				print "</td>\n";
@@ -1076,10 +1076,13 @@ if ($object->id > 0)
 				$objp = $db->fetch_object($resql);
 
 				$fichinter_static->id = $objp->id;
+				$fichinter_static->ref = $objp->ref;
 				$fichinter_static->statut = $objp->fk_statut;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/card.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"), "propal").' '.$objp->ref.'</a></td>'."\n";
+				print '<td class="nowraponall">';
+				print $fichinter_static->getNomUrl(1);
+				print '</td>'."\n";
 				//print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
 				print '<td class="nowrap right" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
