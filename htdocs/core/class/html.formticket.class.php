@@ -247,7 +247,7 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA) {
+		if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 			print '<span class="span-icon-security inline-block">';
