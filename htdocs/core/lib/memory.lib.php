@@ -36,8 +36,9 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
  * 	Save data into a memory area shared by all users, all sessions on server
  *
  *  @param	string      $memoryid		Memory id of shared area
- * 	@param	string		$data			Data to save
+ * 	@param	mixed		$data			Data to save
  * 	@return	int							<0 if KO, Nb of bytes written if OK
+ *  @see dol_getcache()
  */
 function dol_setcache($memoryid, $data)
 {
@@ -99,7 +100,8 @@ function dol_setcache($memoryid, $data)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area
- * 	@return	int						<0 if KO, data if OK
+ * 	@return	int|mixed				<0 if KO, data if OK
+ *  @see dol_setcache()
  */
 function dol_getcache($memoryid)
 {
