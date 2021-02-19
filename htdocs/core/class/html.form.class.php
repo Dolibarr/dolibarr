@@ -6480,6 +6480,11 @@ class Form
 
 		$out = '';
 
+		if ($addjscombo < 0) {
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $addjscombo = 1;
+			else $addjscombo = 0;
+		}
+
 		// Add code for jquery to use multiselect
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2

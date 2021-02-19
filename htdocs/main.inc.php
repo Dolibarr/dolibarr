@@ -1010,8 +1010,6 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 {
 	$conf->dol_optimize_smallscreen = 1;
 }
-// If we force to use jmobile, then we reenable javascript
-if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 // Replace themes bugged with jmobile with eldy
 if (!empty($conf->dol_use_jmobile) && in_array($conf->theme, array('bureau2crea', 'cameleo', 'amarok')))
 {
