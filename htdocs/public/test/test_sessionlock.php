@@ -17,13 +17,14 @@ if (!defined("NOLOGIN"))        define("NOLOGIN", '1'); // If this page is publi
 // TODO We can close session with session_write_close() as soon as we just need read access everywhere in code.
 if (!defined("NOSESSION"))      define("NOSESSION", '1');
 
-
-print PHP_SESSION_DISABLED;
-print PHP_SESSION_NONE;
-print PHP_SESSION_ACTIVE;
+print "Legend:<br>\n";
+print 'PHP_SESSION_DISABLED='.PHP_SESSION_DISABLED."<br>\n";
+print 'PHP_SESSION_NONE='.PHP_SESSION_NONE."<br>\n";
+print 'PHP_SESSION_ACTIVE='.PHP_SESSION_ACTIVE."<br>\n";
 print '<br>';
 
-print session_status();
+print 'session_status='.session_status().' (before main.inc.php)';
+print '<br>';
 
 require '../../main.inc.php';
 
@@ -33,11 +34,11 @@ if ($dolibarr_main_prod) {
 }
 */
 
-print session_status();
+print 'session_status='.session_status().' (after main.inc.php)';
 print '<br>';
 
 //print 'a'.$_SESSION['disablemodules'].'b';
 
-print 'This page is visible. It means you are not locked by another page called in same session.';
+print "\n<br>This page is visible. It means you are not locked by another page called in same session.";
 
 //session_write_close();
