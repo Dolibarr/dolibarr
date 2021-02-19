@@ -56,7 +56,8 @@ class Categorie extends CommonObject
 	const TYPE_WAREHOUSE = 'warehouse';
 	const TYPE_ACTIONCOMM = 'actioncomm';
 	const TYPE_WEBSITE_PAGE = 'website_page';
-
+	const FILTER_MODE_OR = 'OR';
+	const FILTER_MODE_AND = 'AND';
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -1884,13 +1885,39 @@ class Categorie extends CommonObject
 	/**
 	 * Return the addtional SQL SELECT query for filtering a list by a category
 	 *
-	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
-	 * @param Array		$searchList		A list with the selected categories
-	 * @return string					A additional SQL SELECT query
+	 * @param string $type       The category type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param string $rowIdName  The name of the row id inside the whole sql query (e.g. "e.rowid")
+	 * @param Array  $searchList A list with the selected categories
+	 * @param string $mode       Handle checkbox or/and
+	 * @param string $categAlias Alias of table category
+	 * @return string                    A additional SQL SELECT query
 	 */
-	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
+	public static function getFilterSelectQuery($type, $rowIdName, $searchList, $mode = self::FILTER_MODE_AND, $categAlias = 'cp')
 	{
+		$tableSuffix = $type;
+		$fk = $type;
+		switch ($type) {
+			case 'contact':
+				$fk = 'socpeople'; $listAlias = 'p';
+				break;
+			case 'account':
+				break;
+			case 'event':case 'actioncomm':
+					$tableSuffix = 'actioncomm';
+					$fk = 'actioncomm';
+			break;
+			case 'supplier':
+				$tableSuffix = 'fournisseur';
+				$fk = 'soc';
+				break;
+			case 'customer':
+				$tableSuffix = 'societe';
+				$fk = 'soc';
+				break;
+			case 'societe':
+				$fk = 'soc';
+				break;
+		}
 		if ($type == 'bank_account') $type = 'account';
 
 		if (empty($searchList) && !is_array($searchList)) {
@@ -1900,14 +1927,16 @@ class Categorie extends CommonObject
 		$searchCategorySqlList = array();
 		foreach ($searchList as $searchCategory) {
 			if (intval($searchCategory) == -2) {
-				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
+				$searchCategorySqlList[] = " $categAlias.fk_categorie IS NULL";
 			} elseif (intval($searchCategory) > 0) {
-				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type." WHERE fk_categorie = ".((int) $searchCategory).")";
+				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$fk." FROM ".MAIN_DB_PREFIX."categorie_".$tableSuffix." WHERE fk_categorie = ".((int) $searchCategory).")";
 			}
 		}
 
 		if (!empty($searchCategorySqlList)) {
-			return " AND (".implode(' AND ', $searchCategorySqlList).")";
+			if ($mode === Categorie::FILTER_MODE_AND) $glueOperator = ' AND ';
+			elseif ($mode === Categorie::FILTER_MODE_OR) $glueOperator = ' OR ';
+			return " AND (".implode($glueOperator, $searchCategorySqlList).")";
 		} else {
 			return "";
 		}
