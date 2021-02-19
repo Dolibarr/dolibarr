@@ -35,7 +35,10 @@ class Export
 	 */
 	public $db;
 
-	public $array_export_code = array(); // Tableau de "idmodule_numlot"
+	public $error;
+
+	public $array_export_code = array(); // Tableau de "idmodule_numexportprofile"
+	public $array_export_code_for_sort = array(); // Tableau de "idmodule_numexportprofile"
 	public $array_export_module = array(); // Tableau de "nom de modules"
 	public $array_export_label = array(); // Tableau de "libelle de lots"
 	public $array_export_sql_start = array(); // Tableau des "requetes sql"
@@ -139,11 +142,10 @@ class Export
 										{
 											$perm = $val;
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-											if (!empty($perm[2]))
-											{
-												$bool = $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
+											if (!empty($perm[2])) {
+												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]}) ? $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]} : false;
 											} else {
-												$bool = $user->rights->{$perm[0]}->{$perm[1]};
+												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
 											}
 											if ($perm[0] == 'user' && $user->admin) $bool = true;
 											if (!$bool) break;
@@ -164,6 +166,7 @@ class Export
 										}
 									}
 
+
 									// Module
 									$this->array_export_module[$i] = $module;
 									// Permission
@@ -172,6 +175,8 @@ class Export
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
 									// Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
+									// Define a key for sort
+									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r];	// Add a key into the module
 									// Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Tableau des champ a exporter (cle=champ, valeur=libelle)
@@ -185,14 +190,14 @@ class Export
 									// Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
-									$this->array_export_examplevalues[$i] = $module->export_examplevalues_array[$r];
+									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);
 									// Array of help tooltips
 									$this->array_export_help[$i] = (!empty($module->export_help_array[$r]) ? $module->export_help_array[$r] : '');
 
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i] = $module->export_sql_start[$r];
 									$this->array_export_sql_end[$i] = $module->export_sql_end[$r];
-									$this->array_export_sql_order[$i] = $module->export_sql_order[$r];
+									$this->array_export_sql_order[$i] = (!empty($module->export_sql_order[$r]) ? $module->export_sql_order[$r] : null);
 									//$this->array_export_sql[$i]=$module->export_sql[$r];
 
 									dol_syslog(get_class($this)."::load_arrays loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".(!empty($module->export_fields_code[$r]) ?count($module->export_fields_code[$r]) : ''));
@@ -580,9 +585,12 @@ class Export
 		if ($resql)
 		{
 			//$this->array_export_label[$indice]
-			if ($conf->global->EXPORT_PREFIX_SPEC)
+			if (!empty($conf->global->EXPORT_PREFIX_SPEC)) {
 				$filename = $conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
-			else $filename = "export_".$datatoexport;
+			}
+			else {
+				$filename = "export_".$datatoexport;
+			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;
 
@@ -598,7 +606,7 @@ class Export
 				$objmodel->write_header($outputlangs);
 
 				// Genere ligne de titre
-				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, $this->array_export_TypeFields[$indice]);
+				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
 				while ($obj = $this->db->fetch_object($resql))
 				{
@@ -651,18 +659,20 @@ class Export
 								}
 								$obj->$alias = $remaintopay;
 							} else {
-								// TODO FIXME Export of compute field does not work. $obj containt $obj->alias_field and formulat will contains $obj->field
+								// TODO FIXME
+								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
+								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								$tmp = dol_eval($computestring, 1, 0);
-								$obj->$alias = $tmp;
+								//$tmp = dol_eval($computestring, 1, 0);
+								//$obj->$alias = $tmp;
 
-								$this->error = "ERROPNOTSUPPORTED. Operation ".$this->array_export_special[$indice][$key]." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
+								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
 								return -1;
 							}
 						}
 					}
 					// end of special operation processing
-					$objmodel->write_record($array_selected, $obj, $outputlangs, $this->array_export_TypeFields[$indice]);
+					$objmodel->write_record($array_selected, $obj, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 				}
 
 				// Genere en-tete

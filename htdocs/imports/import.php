@@ -38,31 +38,93 @@ $langs->loadLangs(array('exports', 'compta', 'errors'));
 // Security check
 $result = restrictedArea($user, 'import');
 
+// Map icons, array duplicated in export.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
-	'invoice'=>'bill', 'invoice_line'=>'bill',
-	'order'=>'order', 'order_line'=>'order',
-	'intervention'=>'intervention', 'inter_line'=>'intervention',
-	'member'=>'user', 'member_type'=>'group', 'subscription'=>'payment',
-	'tax'=>'bill', 'tax_type'=>'generic',
-	'account'=>'account',
-	'payment'=>'payment',
-	'product'=>'product', 'stock'=>'generic', 'warehouse'=>'stock',
-	'category'=>'generic',
-	'other'=>'generic'
+	'invoice'      => 'bill',
+    'invoice_line' => 'bill',
+	'order'        => 'order',
+    'order_line'   => 'order',
+	'propal'       => 'propal',
+    'propal_line'  => 'propal',
+	'intervention' => 'intervention',
+    'inter_line'   => 'intervention',
+	'member'       => 'user',
+    'member_type'  => 'group',
+    'subscription' => 'payment',
+    'payment'      => 'payment',
+	'tax'          => 'bill',
+    'tax_type'     => 'generic',
+    'other'        => 'generic',
+	'account'      => 'account',
+	'product'      => 'product',
+    'virtualproduct'=>'product',
+	'subproduct'   => 'product',
+	'product_supplier_ref'      => 'product',
+    'stock'        => 'stock',
+	'warehouse'    => 'stock',
+	'batch'        => 'stock',
+	'stockbatch'   => 'stock',
+	'category'     => 'category',
+	'shipment'     => 'sending',
+    'shipment_line'=> 'sending',
+    'reception'=> 'sending',
+    'reception_line'=> 'sending',
+	'expensereport'=> 'trip',
+    'expensereport_line'=> 'trip',
+	'holiday'      => 'holiday',
+    'contract_line' => 'contract',
+    'translation'  => 'generic',
+    'bomm'         => 'bom',
+    'bomline'      => 'bom'
 );
-$entitytolang = array(		// Translation code
-	'user'=>'User',
-	'company'=>'Company', 'contact'=>'Contact',
-	'invoice'=>'Bill', 'invoice_line'=>'InvoiceLine',
-	'order'=>'Order', 'order_line'=>'OrderLine',
-	'intervention'=>'Intervention', 'inter_line'=>'InterLine',
-	'member'=>'Member', 'member_type'=>'MemberType', 'subscription'=>'Subscription',
-	'tax'=>'SocialContribution', 'tax_type'=>'DictionarySocialContributions',
-	'account'=>'BankTransactions',
-	'payment'=>'Payment',
-	'product'=>'Product', 'stock'=>'Stock', 'warehouse'=>'Warehouse',
-	'category'=>'Category',
-	'other'=>'Other'
+
+// Translation code, array duplicated in export.php, was not synchronized, TODO put it somewhere only once
+$entitytolang = array(
+	'user'         => 'User',
+	'company'      => 'Company',
+    'contact'      => 'Contact',
+	'invoice'      => 'Bill',
+    'invoice_line' => 'InvoiceLine',
+	'order'        => 'Order',
+    'order_line'   => 'OrderLine',
+    'propal'       => 'Proposal',
+    'propal_line'  => 'ProposalLine',
+	'intervention' => 'Intervention',
+    'inter_line'   => 'InterLine',
+	'member'       => 'Member',
+    'member_type'  => 'MemberType',
+    'subscription' => 'Subscription',
+	'tax'          => 'SocialContribution',
+    'tax_type'     => 'DictionarySocialContributions',
+	'account'      => 'BankTransactions',
+	'payment'      => 'Payment',
+	'product'      => 'Product',
+	'virtualproduct'  => 'AssociatedProducts',
+	'subproduct'      => 'SubProduct',
+	'product_supplier_ref'      => 'SupplierPrices',
+	'service'      => 'Service',
+    'stock'        => 'Stock',
+	'movement'	   => 'StockMovement',
+	'batch'        => 'Batch',
+	'stockbatch'   => 'StockDetailPerBatch',
+	'warehouse'    => 'Warehouse',
+	'category'     => 'Category',
+	'other'        => 'Other',
+    'trip'         => 'TripsAndExpenses',
+    'shipment'     => 'Shipments',
+    'shipment_line'=> 'ShipmentLine',
+    'project'      => 'Projects',
+    'projecttask'  => 'Tasks',
+    'task_time'    => 'TaskTimeSpent',
+	'action'       => 'Event',
+	'expensereport'=> 'ExpenseReport',
+	'expensereport_line'=> 'ExpenseReportLine',
+	'holiday'      => 'TitreRequestCP',
+	'contract'     => 'Contract',
+    'contract_line'=> 'ContractLine',
+    'translation'  => 'Translation',
+    'bom'          => 'BOM',
+    'bomline'      => 'BOMLine'
 );
 
 $datatoimport		= GETPOST('datatoimport');
@@ -330,8 +392,7 @@ if ($step == 1 || !$datatoimport)
 
 	$head = import_prepare_head($param, 1);
 
-	print dol_get_fiche_head($head, 'step1', $langs->trans("NewImport"), -1);
-
+	print dol_get_fiche_head($head, 'step1', '', -1);
 
 	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
 
@@ -356,7 +417,9 @@ if ($step == 1 || !$datatoimport)
 			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) $titleofmodule = $langs->trans("ProductOrService");
 			print $titleofmodule;
 			print '</td><td>';
-			print img_object($objimport->array_import_module[$key]['module']->getName(), $objimport->array_import_icon[$key]).' ';
+			$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[$key]);
+			$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+			print img_object($objimport->array_import_module[$key]['module']->getName(), $entityicon).' ';
 			print $objimport->array_import_label[$key];
 			print '</td><td style="text-align: right">';
 			if ($objimport->array_import_perms[$key])
@@ -390,7 +453,7 @@ if ($step == 2 && $datatoimport)
 
 	$head = import_prepare_head($param, 2);
 
-	print dol_get_fiche_head($head, 'step2', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step2', '', -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -409,22 +472,26 @@ if ($step == 2 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]['module']->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
-
 	print '</div>';
 
 	print dol_get_fiche_end();
-
 
 	print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
-	print '<span class="opacitymedium">'.$langs->trans("ChooseFormatOfFileToImport", img_picto('', 'next', '')).'</span><br><br>';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("ChooseFormatOfFileToImport", '{s1}');
+	$s = str_replace('{s1}', img_picto('', 'next'), $s);
+	print $s;
+	print '</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -435,8 +502,8 @@ if ($step == 2 && $datatoimport)
 	print '<tr class="liste_titre"><td colspan="6">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
-	$liste = $objmodelimport->liste_modeles($db);
-	foreach ($liste as $key)
+	$list = $objmodelimport->liste_modeles($db);
+	foreach ($list as $key)
 	{
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
@@ -466,13 +533,13 @@ if ($step == 3 && $datatoimport)
 	if ($separator) $param .= '&separator='.urlencode($separator);
 	if ($enclosure) $param .= '&enclosure='.urlencode($enclosure);
 
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 
 	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
 	$head = import_prepare_head($param, 3);
 
-	print dol_get_fiche_head($head, 'step3', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step3', '', -2);
 
 	/*
 	 * Confirm delete file
@@ -499,16 +566,16 @@ if ($step == 3 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]['module']->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
 
-
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
-
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -542,14 +609,18 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
 	print '<input type="hidden" value="'.$step.'" name="step">';
-	print '<input type="hidden" value="'.$format.'" name="format">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($format).'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
 	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
 	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
 	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
-	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
+	print '<input type="hidden" value="'.dol_escape_htmltag($datatoimport).'" name="datatoimport">';
 
-	print '<span class="opacitymedium">'.$langs->trans("ChooseFileToImport", img_picto('', 'next')).'</span><br><br>';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("ChooseFileToImport", '{s1}');
+	$s = str_replace('{s1}', img_picto('', 'next'), $s);
+	print $s;
+	print '</span><br><br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -660,7 +731,7 @@ if ($step == 3 && $datatoimport)
 if ($step == 4 && $datatoimport)
 {
 	$model = $format;
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -763,7 +834,7 @@ if ($step == 4 && $datatoimport)
 
 	$head = import_prepare_head($param, 4);
 
-	print dol_get_fiche_head($head, 'step4', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step4', '', -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -782,13 +853,14 @@ if ($step == 4 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]['module']->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
-
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
@@ -857,7 +929,11 @@ if ($step == 4 && $datatoimport)
 	print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
 	print '<div class="marginbottomonly">';
-	print '<span class="opacitymedium">'.$langs->trans("SelectImportFields", img_picto('', 'grip_title', '', false, 0, 0, '', '', 0)).'</span> ';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("SelectImportFields", '{s1}');
+	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
+	print $s;
+	print '</span> ';
 	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
 	print '</div>';
@@ -1179,8 +1255,16 @@ if ($step == 4 && $datatoimport)
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport)
 {
+	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_time = @ini_get("max_execution_time");
+	if ($max_time && $max_time < $max_execution_time_for_importexport)
+	{
+		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+	}
+
 	$model = $format;
-	$liste = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->liste_modeles($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -1229,7 +1313,7 @@ if ($step == 5 && $datatoimport)
 	print '<input type="hidden" name="step" value="5">'; // step 5
 	print '<input type="hidden" name="action" value="launchsimu">'; // step 5
 
-	print dol_get_fiche_head($head, 'step5', $langs->trans("NewImport"), -2);
+	print dol_get_fiche_head($head, 'step5', '', -2);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1248,13 +1332,14 @@ if ($step == 5 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]['module']->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
-
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
@@ -1518,8 +1603,10 @@ if ($step == 5 && $datatoimport)
 		// Show OK
 		if (!count($arrayoferrors) && !count($arrayofwarnings)) {
 			print '<div class="center">'.img_picto($langs->trans("OK"), 'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
-			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+			print '<div class="ok">';
+			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
+			print '</div>';
 		} else print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
 
 		// Show Errors
@@ -1607,9 +1694,17 @@ if ($step == 5 && $datatoimport)
 // STEP 6: Real import
 if ($step == 6 && $datatoimport)
 {
+	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_time = @ini_get("max_execution_time");
+	if ($max_time && $max_time < $max_execution_time_for_importexport)
+	{
+		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
+		@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
+	}
+
 	$model = $format;
-	$liste = $objmodelimport->liste_modeles($db);
-	$importid = $_REQUEST["importid"];
+	$list = $objmodelimport->liste_modeles($db);
+	$importid = GETPOST("importid", 'alphanohtml');
 
 
 	// Create classe to use for import
@@ -1652,7 +1747,7 @@ if ($step == 6 && $datatoimport)
 
 	$head = import_prepare_head($param, 6);
 
-	print dol_get_fiche_head($head, 'step6', $langs->trans("NewImport"), -1);
+	print dol_get_fiche_head($head, 'step6', '', -1);
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1671,13 +1766,14 @@ if ($step == 6 && $datatoimport)
 	// Lot de donnees a importer
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
-	print img_object($objimport->array_import_module[0]['module']->getName(), $objimport->array_import_icon[0]).' ';
+	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
+	$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
+	print img_object($objimport->array_import_module[0]['module']->getName(), $entityicon).' ';
 	print $objimport->array_import_label[0];
 	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
-
 
 	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
 
@@ -1884,12 +1980,14 @@ if ($step == 6 && $datatoimport)
 
 	// Show result
 	print '<br>';
-	print '<div class="center">';
+	print '<div class="ok">';
 	print $langs->trans("NbOfLinesImported", $nbok).'</b><br>';
-	print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
-	print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+	print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+	print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
+	print '</div>';
+	print '<div class="center">';
 	print $langs->trans("FileWasImported", $importid).'<br>';
-	print $langs->trans("YouCanUseImportIdToFindRecord", $importid).'<br>';
+	print '<span class="opacitymedium">'.$langs->trans("YouCanUseImportIdToFindRecord", $importid).'</span><br>';
 	print '</div>';
 }
 

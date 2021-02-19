@@ -99,6 +99,7 @@ class Categorie extends CommonObject
 		8 => 'bank_line',
 		9 => 'warehouse',
 		10 => 'actioncomm',
+        11 => 'website_page'
 	);
 
 	/**
@@ -222,7 +223,6 @@ class Categorie extends CommonObject
 	/**
 	 * @var string	Category type
 	 *
-	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
 	 * @see Categorie::TYPE_CUSTOMER
@@ -230,9 +230,11 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_CONTACT
 	 * @see Categorie::TYPE_USER
 	 * @see Categorie::TYPE_PROJECT
+	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_BANK_LINE
-	 * @see Categorie::TYPE_WAREHOUSE
-	 * @see Categorie::TYPE_ACTIONCOMM
+     * @see Categorie::TYPE_WAREHOUSE
+     * @see Categorie::TYPE_ACTIONCOMM
+     * @see Categorie::TYPE_WEBSITE_PAGE
 	 */
 	public $type;
 
@@ -313,7 +315,7 @@ class Categorie extends CommonObject
 
 		// Check parameters
 		if (empty($id) && empty($label) && empty($ref_ext)) return -1;
-		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (!is_null($type) && !is_numeric($type)) $type = $this->MAP_ID[$type];
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
@@ -364,6 +366,8 @@ class Categorie extends CommonObject
 			}
 		} else {
 			dol_print_error($this->db);
+			$this->error=$this->db->lasterror;
+			$this->errors[]=$this->db->lasterror;
 			return -1;
 		}
 	}
@@ -1059,7 +1063,7 @@ class Categorie extends CommonObject
 		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
 		if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= ", t.label as label_trans, t.description as description_trans";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$this->db->escape($current_lang)."'";
@@ -1144,6 +1148,8 @@ class Categorie extends CommonObject
 
 		// First build full array $motherof
 		//$this->load_motherof();	// Disabled because already done by caller of build_path_from_id_categ
+
+		// $this->cats[$id_categ] is supposed to be already an array. We just want to complete it with property fullpath and fulllabel
 
 		// Define fullpath and fulllabel
 		$this->cats[$id_categ]['fullpath'] = '_'.$id_categ;

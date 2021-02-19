@@ -46,7 +46,14 @@ class Reception extends CommonObject
 {
 	use CommonIncoterm;
 
+	/**
+	 * @var string element name
+	 */
 	public $element = "reception";
+
+	/**
+	 * @var string Fieldname with ID of parent key if this field has a parent
+	 */
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
 	public $table_element_line = "commande_fournisseur_dispatch";
@@ -1544,11 +1551,24 @@ class Reception extends CommonObject
 	/**
 	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
 	 *
+	 *	@deprecated
+	 *  @see setBilled()
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
 	public function set_billed()
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_billed is deprecated, use setBilled instead", LOG_NOTICE);
+		return $this->setBilled();
+	}
+
+	/**
+	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	public function setBilled()
+	{
 		global $user;
 		$error = 0;
 

@@ -192,6 +192,7 @@ class Paiement extends CommonObject
 				$this->amount         = $obj->amount;
 				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->type_label = $obj->type_label;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
@@ -294,7 +295,7 @@ class Paiement extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, ref_ext, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
-		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((int) $this->pos_change).")";
+		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((float) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -397,10 +398,11 @@ class Paiement extends CommonObject
 								// Set invoice to paid
 								if (!$error)
 								{
-									$result = $invoice->set_paid($user, '', '');
+									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0)
 									{
 										$this->error = $invoice->error;
+										$this->errors = $invoice->errors;
 										$error++;
 									}
 								}
@@ -423,7 +425,7 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 							$ret = $invoice->fetch($facid); // Reload to get new records
-							$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
 							if ($result < 0) {
 								setEventMessages($invoice->error, $invoice->errors, 'errors');
 								$error++;
@@ -578,9 +580,10 @@ class Paiement extends CommonObject
 	 *      @param  string	$emetteur_nom       Name of transmitter
 	 *      @param  string	$emetteur_banque    Name of bank
 	 *      @param	int		$notrigger			No trigger
+	 *  	@param	string	$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
 	 *      @return int                 		<0 if KO, bank_line_id if OK
 	 */
-	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0)
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque, $notrigger = 0, $accountancycode = '')
 	{
 		global $conf, $langs, $user;
 
@@ -625,7 +628,8 @@ class Paiement extends CommonObject
 				'',
 				$user,
 				$emetteur_nom,
-				$emetteur_banque
+				$emetteur_banque,
+				$accountancycode
 			);
 
 			// Mise a jour fk_bank dans llx_paiement
@@ -1171,9 +1175,19 @@ class Paiement extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
+
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
-		if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+        $dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+        if ($dateofpayment) {
+        	$label .= '<br><strong>'.$langs->trans("Date").':</strong> ';
+        	$tmparray = dol_getdate($dateofpayment);
+        	if ($tmparray['seconds'] == 0 && $tmparray['minutes'] == 0 && ($tmparray['hours'] == 0 || $tmparray['hours'] == 12)) {	// We set hours to 0:00 or 12:00 because we don't know it
+        		$label .= dol_print_date($dateofpayment, 'day');
+        	} else {	// Hours was set to real date of payment (special case for POS for example)
+        		$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+        	}
+        }
 		if ($mode == 'withlistofinvoices')
 		{
 			$arraybill = $this->getBillsArray();
@@ -1298,7 +1312,7 @@ class Paiement extends CommonObject
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $invoice->fk_soc;
+					$force_thirdparty_id = $invoice->socid;
 				}
 			}
 		}

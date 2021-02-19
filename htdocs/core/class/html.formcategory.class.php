@@ -55,7 +55,8 @@ class FormCategory extends Form
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
-		$filter .= $langs->trans($title).": ";
+		$filter .= img_picto($langs->trans($title), 'category', 'class="pictofixedwidth"');
+		//$filter .= $langs->trans('Categories').": ";
 		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300");
 		if ($withOperator) $filter .= ' <br/><input type="checkbox" class="valignmiddle" name="search_category_'.$type.'_operator" value="1"'.($preselectOperator == 1 ? ' checked="checked"' : '').'/> <span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span>';
 		$filter .= "</div>";

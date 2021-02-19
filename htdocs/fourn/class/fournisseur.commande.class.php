@@ -53,12 +53,12 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element = 'commande_fournisseur';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
 
@@ -139,6 +139,8 @@ class CommandeFournisseur extends CommonOrder
 
 	public $cond_reglement_id;
 	public $cond_reglement_code;
+	public $cond_reglement_label;	// Label
+	public $cond_reglement_doc;		// Label on documents
 
 	/**
 	 * @var int ID
@@ -312,7 +314,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
 		$sql .= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
 		$sql .= " cm.libelle as methode_commande,";
-		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc,";
+		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
 		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
@@ -373,8 +375,9 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_project = $obj->fk_project;
 			$this->cond_reglement_id = $obj->fk_cond_reglement;
 			$this->cond_reglement_code = $obj->cond_reglement_code;
-			$this->cond_reglement = $obj->cond_reglement_libelle;
-			$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
+			$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
+			$this->cond_reglement_label = $obj->cond_reglement_label;
+			$this->cond_reglement_doc = $obj->cond_reglement_doc;
 			$this->fk_account = $obj->fk_account;
 			$this->mode_reglement_id = $obj->fk_mode_reglement;
 			$this->mode_reglement_code = $obj->mode_reglement_code;
@@ -736,8 +739,8 @@ class CommandeFournisseur extends CommonOrder
 		}
 		if ($status == 5 && $billed) $statusClass = 'status6';
 
-		$statusLong = $langs->trans($this->statuts[$status]).$billedtext;
-		$statusShort = $langs->trans($this->statutshort[$status]);
+		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
+		$statusShort = $langs->transnoentitiesnoconv($this->statutshort[$status]);
 
 		return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
 	}
@@ -891,11 +894,17 @@ class CommandeFournisseur extends CommonOrder
 	 *	Class invoiced the supplier order
 	 *
 	 *  @param      User        $user       Object user making the change
-	 *	@return     int     	            <0 if KO, >0 if KO
+	 *	@return     int     	            <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user)
 	{
 		$error = 0;
+
+		if ($this->billed)
+		{
+			return 0;
+		}
+
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
@@ -1380,7 +1389,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 
 						// Add object linked
-						if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+						if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 						{
 							foreach ($this->linked_objects as $origin => $tmp_origin_id)
 							{
@@ -1556,8 +1565,6 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $langs, $mysoc, $conf;
 
-		$error = 0;
-
 		dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, $info_bits, $notrigger, $date_start, $date_end, $fk_unit, $pu_ht_devise, $origin, $origin_id");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1607,21 +1614,22 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			if ($fk_product > 0)
-			{
-				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
-				{
+			$product_type = $type;
+			$label = '';	// deprecated
+
+			if ($fk_product > 0) {
+				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
 					$prod = new Product($this->db);
-					if ($prod->fetch($fk_product) > 0)
-					{
+					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
-						$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+						$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', (isset($this->fk_soc) ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+
 						// If supplier order created from customer order, we take best supplier price
 						// If $pu (defined previously from pu_ht or pu_ttc) is not defined at all, we also take the best supplier price
 						if ($result > 0 && ($origin == 'commande' || $pu === ''))
@@ -1663,25 +1671,20 @@ class CommandeFournisseur extends CommonOrder
 					}
 				}
 
-				// redefine quantity according to packaging
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
-				{
+				// Predefine quantity according to packaging
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$prod = new Product($this->db, $fk_product);
 					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc ? $this->fk_soc : $this->socid));
-					if ($qty < $prod->packaging)
-					{
+					if ($qty < $prod->packaging) {
 						$qty = $prod->packaging;
 					} else {
-						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0)
-						{
+						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
 						}
 					}
 					setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 				}
-			} else {
-				$product_type = $type;
 			}
 
 			if (!empty($conf->multicurrency->enabled) && $pu_ht_devise > 0) {
@@ -1718,8 +1721,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$rangmax = $this->line_max();
 			$rang = $rangmax + 1;
@@ -1738,8 +1741,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = $localtax1_type;
+			$this->line->localtax2_type = $localtax2_type;
 			$this->line->fk_product = $fk_product;
 			$this->line->product_type = $product_type;
 			$this->line->remise_percent = $remise_percent;
@@ -2550,9 +2553,12 @@ class CommandeFournisseur extends CommonOrder
 
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
+			if (!$qty) $qty = 1;
 			$pu = price2num($pu);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+        	if (!preg_match('/\((.*)\)/', $txtva)) {
+        		$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+        	}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 
@@ -2598,8 +2604,8 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$this->line = new CommandeFournisseurLigne($this->db);
@@ -2637,8 +2643,8 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->tva_tx         = $txtva;
 			$this->line->localtax1_tx   = $txlocaltax1;
 			$this->line->localtax2_tx   = $txlocaltax2;
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
 			$this->line->subprice       = $pu_ht;
 			$this->line->rang           = $this->rang;
@@ -3064,8 +3070,10 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Is the supplier order delayed?
+	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
+	 * If order has not been sent, we use the order date.
 	 *
-	 * @return bool
+	 * @return 	bool					True if object is delayed
 	 */
 	public function hasDelay()
 	{
@@ -3073,14 +3081,28 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		$now = dol_now();
-		$date_to_test = empty($this->delivery_date) ? $this->date_commande : $this->delivery_date;
+		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
+			$now = dol_now();
+			if (!empty($this->delivery_date)) {
+				$date_to_test = $this->delivery_date;
+				return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+			} else {
+				//$date_to_test = $this->date_commande;
+				//return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+				return false;
+			}
+		} else {
+			$now = dol_now();
+			$date_to_test = $this->date_commande;
 
-		return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+			return ($this->statut > 0 && $this->statut < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+		}
 	}
 
 	/**
-	 * Show the customer delayed info
+	 * Show the customer delayed info.
+	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
+	 * If order has not been sent, we use the order date.
 	 *
 	 * @return string       Show delayed information
 	 */
@@ -3090,12 +3112,20 @@ class CommandeFournisseur extends CommonOrder
 
 		if (empty($this->delivery_date) && !empty($this->date_livraison)) $this->delivery_date = $this->date_livraison; // For backward compatibility
 
-		if (empty($this->delivery_date)) {
-			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+		$text = '';
+
+		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
+			if (!empty($this->delivery_date)) {
+				$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			} else {
+				$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+			}
 		} else {
-			$text = $langs->trans("DeliveryDate").' '.dol_print_date($this->delivery_date, 'day');
+			$text = $langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
 		}
-		$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+		if ($text) {
+			$text .= ' '.($conf->commande->fournisseur->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->fournisseur->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+		}
 
 		return $text;
 	}
@@ -3127,13 +3157,12 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
-			if ($ret < 0)
-			{
+			if ($ret < 0) {
 				$this->error = $supplierorderdispatch->error; $this->errors = $supplierorderdispatch->errors;
 				return $ret;
 			} else {
-				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0)
-				{
+				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
+					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$date_liv = dol_now();
 
 					// Build array with quantity deliverd by product
@@ -3141,13 +3170,17 @@ class CommandeFournisseur extends CommonOrder
 						$qtydelivered[$line->fk_product] += $line->qty;
 					}
 					foreach ($this->lines as $line) {
+						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $line->product_type > 0) continue;
 						$qtywished[$line->fk_product] += $line->qty;
 					}
+
 					//Compare array
 					$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
 					/*var_dump(array_keys($qtydelivered));
+
     				var_dump(array_keys($qtywished));
     				var_dump($diff_array);
     				var_dump($keysinwishednotindelivered);

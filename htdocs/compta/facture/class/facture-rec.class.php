@@ -50,12 +50,12 @@ class FactureRec extends CommonInvoice
 	public $table_element = 'facture_rec';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'facturedet_rec';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture';
 
@@ -215,7 +215,7 @@ class FactureRec extends CommonInvoice
 		$now = dol_now();
 
 		// Clean parameters
-		$this->titre = trim($this->titre); // deprecated
+		$this->titre = trim(isset($this->titre) ? $this->titre : $this->title); // deprecated
 		$this->title = trim($this->title);
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		if (empty($this->suspended)) $this->suspended = 0;
@@ -280,7 +280,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".(!empty($facsrc->remise) ? $this->remise : '0');
 			$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 			$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
-			$sql .= ", ".(!empty($this->modelpdf) ? ("'".$this->db->escape($this->modelpdf)."'") : "NULL");
+			$sql .= ", ".(!empty($this->model_pdf) ? ("'".$this->db->escape($this->model_pdf)."'") : "NULL");
 			$sql .= ", '".$this->db->escape($user->id)."'";
 			$sql .= ", ".(!empty($facsrc->fk_project) ? "'".$this->db->escape($facsrc->fk_project)."'" : "null");
 			$sql .= ", ".(!empty($facsrc->fk_account) ? "'".$this->db->escape($facsrc->fk_account)."'" : "null");
@@ -347,7 +347,7 @@ class FactureRec extends CommonInvoice
 						{
 							// Extrafields
 							if (method_exists($facsrc->lines[$i], 'fetch_optionals')) {
-								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->rowid);
+								$facsrc->lines[$i]->fetch_optionals($facsrc->lines[$i]->id);
 								$objectline->array_options = $facsrc->lines[$i]->array_options;
 							}
 
@@ -366,7 +366,7 @@ class FactureRec extends CommonInvoice
 				}
 
 				// Add object linked
-				if (!$error && $this->id && is_array($this->linked_objects) && !empty($this->linked_objects))
+				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects))
 				{
 					foreach ($this->linked_objects as $origin => $tmp_origin_id)
 					{
@@ -562,7 +562,7 @@ class FactureRec extends CommonInvoice
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
-				$this->modelpdf               = $obj->model_pdf; // deprecatd
+				$this->modelpdf               = $obj->model_pdf; // deprecated
 				$this->model_pdf              = $obj->model_pdf;
 				$this->rang = $obj->rang;
 				$this->special_code = $obj->special_code;
@@ -702,7 +702,7 @@ class FactureRec extends CommonInvoice
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
 				$line->total_ttc        = $objp->total_ttc;
-				$line->code_ventilation = $objp->fk_code_ventilation;
+				//$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->fk_fournprice = $objp->fk_fournprice;
 				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 				$line->pa_ht = $marginInfos[0];
@@ -853,7 +853,9 @@ class FactureRec extends CommonInvoice
 			$qty = price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 			if (empty($txtva)) $txtva = 0;
@@ -935,9 +937,9 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".price2num($txtva);
 			$sql .= ", '".$this->db->escape($vat_src_code)."'";
 			$sql .= ", ".price2num($txlocaltax1);
-			$sql .= ", '".$this->db->escape($localtaxes_type[0])."'";
+			$sql .= ", '".$this->db->escape(isset($localtaxes_type[0]) ? $localtaxes_type[0] : '')."'";
 			$sql .= ", ".price2num($txlocaltax2);
-			$sql .= ", '".$this->db->escape($localtaxes_type[2])."'";
+			$sql .= ", '".$this->db->escape(isset($localtaxes_type[2]) ? $localtaxes_type[2] : '')."'";
 			$sql .= ", ".(!empty($fk_product) ? "'".$this->db->escape($fk_product)."'" : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".price2num($remise_percent);
@@ -1031,7 +1033,9 @@ class FactureRec extends CommonInvoice
 			$pu_ht          = price2num($pu_ht);
 			$pu_ttc         = price2num($pu_ttc);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+	        if (!preg_match('/\((.*)\)/', $txtva)) {
+	        	$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+	        }
 			$txlocaltax1	= price2num($txlocaltax1);
 			$txlocaltax2	= price2num($txlocaltax2);
 			if (empty($txlocaltax1)) $txlocaltax1 = 0;
@@ -1057,6 +1061,7 @@ class FactureRec extends CommonInvoice
 
 			// Clean vat code
 			$vat_src_code = '';
+	        $reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -1275,9 +1280,8 @@ class FactureRec extends CommonInvoice
 					{
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
-						$result = $facture->generateDocument($facturerec->modelpdf, $langs);
-						if ($result <= 0)
-						{
+						$result = $facture->generateDocument($facturerec->model_pdf, $langs);
+						if ($result <= 0) {
 							$this->errors = $facture->errors;
 							$this->error = $facture->error;
 							$error++;
@@ -1868,7 +1872,7 @@ class FactureRec extends CommonInvoice
 		dol_syslog(get_class($this)."::setModelPdf", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			$this->modelpdf = $model;
+			$this->model_pdf = $model;
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -1996,7 +2000,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->localtax1_type   = $objp->localtax1_type;
 			$this->localtax2_type   = $objp->localtax2_type;
 			$this->remise_percent   = $objp->remise_percent;
-			$this->fk_remise_except = $objp->fk_remise_except;
+			//$this->fk_remise_except = $objp->fk_remise_except;
 			$this->fk_product       = $objp->fk_product;
 			$this->date_start_fill  = $objp->date_start_fill;
 			$this->date_end_fill    = $objp->date_end_fill;
@@ -2004,7 +2008,7 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
 			$this->total_ttc        = $objp->total_ttc;
-			$this->code_ventilation = $objp->fk_code_ventilation;
+			//$this->code_ventilation = $objp->fk_code_ventilation;
 			$this->rang = $objp->rang;
 			$this->special_code = $objp->special_code;
 			$this->fk_unit          = $objp->fk_unit;
@@ -2067,6 +2071,8 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2086,13 +2092,18 @@ class FactureLigneRec extends CommonInvoiceLine
 				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
 				if ($result < 0)
 				{
-					$this->db->rollback();
-					return -2;
+					$error++;
 				}
 				// End call triggers
 			}
-			$this->db->commit();
-			return 1;
+
+			if ($error) {
+				$this->db->rollback();
+				return -2;
+			} else {
+				$this->db->commit();
+				return 1;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();

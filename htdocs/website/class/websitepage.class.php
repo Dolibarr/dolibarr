@@ -161,7 +161,7 @@ class WebsitePage extends CommonObject
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
 		'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
 		'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
-		'allowed_in_frames'   =>array('type'=>'integer', 'label'=>'AllowedInFrames', 'enabled'=>1, 'visible'=>-1, 'position'=>48, 'searchall'=>0),
+		'allowed_in_frames'   =>array('type'=>'integer', 'label'=>'AllowedInFrames', 'enabled'=>1, 'visible'=>-1, 'position'=>48, 'searchall'=>0, 'default'=>0),
 		'htmlheader'     =>array('type'=>'text', 'label'=>'HtmlHeader', 'enabled'=>1, 'visible'=>0, 'position'=>50, 'searchall'=>0),
 		'content'        =>array('type'=>'mediumtext', 'label'=>'Content', 'enabled'=>1, 'visible'=>0, 'position'=>51, 'searchall'=>0),
 		'grabbed_from'   =>array('type'=>'varchar(255)', 'label'=>'GrabbedFrom', 'enabled'=>1, 'visible'=>1, 'index'=>1, 'position'=>400, 'comment'=>'URL page content was grabbed from'),
@@ -181,19 +181,19 @@ class WebsitePage extends CommonObject
 
 	// If this object has a subtable with lines
 
-	/**
-	 * @var int    Name of subtable line
-	 */
+	// /**
+	//  * @var string    Name of subtable line
+	//  */
 	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
-	 * @var int 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
+	// /**
+	//  * @var string    Name of subtable class that manage subtable lines
+	//  */
 	//public $class_element_line = 'MyObjectline';
 
 	/**
@@ -400,7 +400,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
+		// Manage filter (same than into countAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
@@ -501,14 +501,27 @@ class WebsitePage extends CommonObject
 		$sql = 'SELECT COUNT(t.rowid) as nb';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.$websiteid;
-		// Manage filter
+		// Manage filter (same than into fetchAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website') {
-					$sqlwhere[] = $key.'='.$value;
+				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
+					$sqlwhere[] = $key.' = '.$value;
+				} elseif ($key == 'type_container') {
+					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
-					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+					$listoflang = array();
+					$foundnull = 0;
+					foreach (explode(',', $value) as $tmpvalue) {
+						if ($tmpvalue == 'null') {
+							$foundnull++;
+							continue;
+						}
+						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+					}
+					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					if ($foundnull) $stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+					$sqlwhere[] = $stringtouse;
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -682,6 +695,7 @@ class WebsitePage extends CommonObject
 		$object->author_alias = '';
 		$object->date_creation = $now;
 		$object->title = ($newtitle == '1' ? $object->title : ($newtitle ? $newtitle : $object->title));
+		$object->description = $object->title;
 		if (!empty($newlang)) $object->lang = $newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;

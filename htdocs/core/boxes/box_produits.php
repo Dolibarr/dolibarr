@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,16 +84,25 @@ class box_produits extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts", $max));
 
-		if ($user->rights->produit->lire || $user->rights->service->lire)
-		{
+		if ($user->rights->produit->lire || $user->rights->service->lire) {
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
+			$sql .= ", p.accountancy_code_sell";
+			$sql .= ", p.accountancy_code_sell_intra";
+			$sql .= ", p.accountancy_code_sell_export";
+			$sql .= ", p.accountancy_code_buy";
+			$sql .= ", p.accountancy_code_buy_intra";
+			$sql .= ", p.accountancy_code_buy_export";
+			$sql .= ', p.barcode';
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
-			if (empty($user->rights->produit->lire)) $sql .= ' AND p.fk_product_type != 0';
-			if (empty($user->rights->service->lire)) $sql .= ' AND p.fk_product_type != 1';
+			if (empty($user->rights->produit->lire)) {
+				$sql .= ' AND p.fk_product_type != 0';
+			}
+			if (empty($user->rights->service->lire)) {
+				$sql .= ' AND p.fk_product_type != 1';
+			}
 			// Add where from hooks
-			if (is_object($hookmanager))
-			{
+			if (is_object($hookmanager)) {
 				$parameters = array('boxproductlist'=>1);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
@@ -102,18 +111,15 @@ class box_produits extends ModeleBoxes
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datem = $this->db->jdate($objp->tms);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-					{
+					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld .= " WHERE fk_product=".$objp->rowid;
@@ -121,11 +127,11 @@ class box_produits extends ModeleBoxes
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
-						if ($resultd)
-						{
+						if ($resultd) {
 							$objtp = $this->db->fetch_object($resultd);
-							if (isset($objtp->label) && $objtp->label != '')
+							if (isset($objtp->label) && $objtp->label != '') {
 								$objp->label = $objtp->label;
+							}
 						}
 					}
 					$productstatic->id = $objp->rowid;
@@ -133,6 +139,15 @@ class box_produits extends ModeleBoxes
 					$productstatic->type = $objp->fk_product_type;
 					$productstatic->label = $objp->label;
 					$productstatic->entity = $objp->entity;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
@@ -149,14 +164,13 @@ class box_produits extends ModeleBoxes
 					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
 						$price_base_type = $langs->trans($objp->price_base_type);
 						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
-					} else //Parse the dynamic price
-				   	{
+					} else {
+						//Parse the dynamic price
 						$productstatic->fetch($objp->rowid, '', '', 1);
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($productstatic);
 						if ($price_result >= 0) {
-							if ($objp->price_base_type == 'HT')
-							{
+							if ($objp->price_base_type == 'HT') {
 								$price_base_type = $langs->trans("HT");
 							} else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
@@ -164,7 +178,7 @@ class box_produits extends ModeleBoxes
 							}
 							$price = price($price_result);
 						}
-				   	}
+					}
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
 						'text' => $price,
@@ -182,7 +196,7 @@ class box_produits extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'</span>',
 						'asis' => 1
 					);
 
@@ -194,11 +208,12 @@ class box_produits extends ModeleBoxes
 
 					$line++;
 				}
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoRecordedProducts"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

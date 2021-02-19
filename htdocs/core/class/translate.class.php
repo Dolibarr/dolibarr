@@ -113,7 +113,12 @@ class Translate
 			} else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
 		} else {						// If it's for a codetouse that is a short code xx
 			// Array to convert short lang code into long code.
-			$longforshort = array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'ja'=>'ja_JP', 'nb'=>'nb_NO', 'no'=>'nb_NO');
+			$longforshort = array(
+				'am'=>'am_ET', 'ar'=>'ar_SA', 'bn'=>'bn_DB', 'el'=>'el_GR', 'ca'=>'ca_ES', 'cs'=>'cs_CZ', 'en'=>'en_US', 'fa'=>'fa_IR',
+				'gl'=>'gl_ES', 'he'=>'he_IL', 'hi'=>'hi_IN', 'ja'=>'ja_JP',
+				'ka'=>'ka_GE', 'km'=>'km_KH', 'kn'=>'kn_IN', 'ko'=>'ko_KR', 'lo'=>'lo_LA', 'nb'=>'nb_NO', 'no'=>'nb_NO', 'ne'=>'ne_NP',
+				'sl'=>'sl_SI', 'sq'=>'sq_AL', 'sr'=>'sr_RS', 'sv'=>'sv_SE', 'uk'=>'uk_UA', 'vi'=>'vi_VN', 'zh'=>'zh_CN'
+			);
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang = $longforshort[strtolower($langpart[0])];
 			elseif (!empty($langpart[0])) $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
 			else $srclang = 'en_US';
@@ -624,7 +629,7 @@ class Translate
 			// we want to keep '"' '<b>' '</b>' '<strong' '</strong>' '<a ' '</a>' '<br>' '< ' '<span' '</span>' that are reliable HTML tags inside translation strings.
 			$str = str_replace(
 				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__lt__', '__gt__'),
+				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
 				$str
 			);
 
@@ -638,8 +643,8 @@ class Translate
 
 			// Restore reliable HTML tags into original translation string
 			$str = str_replace(
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__lt__', '__gt__'),
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '> '),
+				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
 				$str
 			);
 
@@ -731,7 +736,7 @@ class Translate
 	 */
 	public function transcountry($str, $countrycode)
 	{
-		if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
+		if (!empty($this->tab_translate["$str$countrycode"])) return $this->trans("$str$countrycode");
 		else return $this->trans($str);
 	}
 
@@ -794,29 +799,33 @@ class Translate
 				if ($mainlangonly) {
 					$arrayofspecialmainlanguages = array(
 						'en'=>'en_US',
-						'sq'=>'sq_AL',
+						'am'=>'am_ET',
 						'ar'=>'ar_SA',
-						'eu'=>'eu_ES',
 						'bn'=>'bn_DB',
 						'bs'=>'bs_BA',
 						'ca'=>'ca_ES',
-						'zh'=>'zh_TW',
 						'cs'=>'cs_CZ',
 						'da'=>'da_DK',
 						'et'=>'et_EE',
-						'ka'=>'ka_GE',
 						'el'=>'el_GR',
+						'eu'=>'eu_ES',
+						'fa'=>'fa_IR',
 						'he'=>'he_IL',
-						'kn'=>'kn_IN',
+						'ka'=>'ka_GE',
 						'km'=>'km_KH',
+						'kn'=>'kn_IN',
 						'ko'=>'ko_KR',
+						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
 						'fa'=>'fa_IR',
+						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
+						'sv'=>'sv_SE',
 						'sl'=>'sl_SI',
 						'uk'=>'uk_UA',
-						'vi'=>'vi_VN'
+						'vi'=>'vi_VN',
+						'zh'=>'zh_CN'
 					);
 					if (strtolower($regs[1]) != strtolower($regs[2]) && !in_array($dir, $arrayofspecialmainlanguages)) continue;
 				}

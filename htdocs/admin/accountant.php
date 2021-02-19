@@ -66,6 +66,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	if ($action != 'updateedit' && !$error)
 	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -114,57 +115,57 @@ print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans(
 
 // Name
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'.($conf->global->MAIN_INFO_ACCOUNTANT_NAME ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : GETPOST("nom", 'nohtml')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" value="'.(GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : '')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
-print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'.($conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS ? $conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS : GETPOST("address", 'nohtml')).'</textarea></td></tr>'."\n";
+print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('address') ? GETPOST('address', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS) ? $conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS : '')).'</textarea></td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="minwidth100" name="zipcode" id="zipcode" value="'.($conf->global->MAIN_INFO_ACCOUNTANT_ZIP ? $conf->global->MAIN_INFO_ACCOUNTANT_ZIP : GETPOST("zipcode", 'alpha')).'"></td></tr>'."\n";
+print '<input class="minwidth100" name="zipcode" id="zipcode" value="'.(GETPOSTISSET('zipcode') ? GETPOST('zipcode', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_ZIP) ? $conf->global->MAIN_INFO_ACCOUNTANT_ZIP : '')).'"></td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="town">'.$langs->trans("CompanyTown").'</label></td><td>';
-print '<input name="town" class="minwidth100" id="town" value="'.($conf->global->MAIN_INFO_ACCOUNTANT_TOWN ? $conf->global->MAIN_INFO_ACCOUNTANT_TOWN : GETPOST("town", 'nohtml')).'"></td></tr>'."\n";
+print '<input name="town" class="minwidth100" id="town" value="'.(GETPOSTISSET('town') ? GETPOST('town', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_TOWN) ? $conf->global->MAIN_INFO_ACCOUNTANT_TOWN : '')).'"></td></tr>'."\n";
 
 // Country
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 print img_picto('', 'globe-americas', 'class="paddingrightonly"');
-print $form->select_country($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'country_id');
+print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'country_id');
 if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-$formcompany->select_departement($conf->global->MAIN_INFO_ACCOUNTANT_STATE, $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'state_id');
+$formcompany->select_departement((GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_STATE) ? $conf->global->MAIN_INFO_ACCOUNTANT_STATE : '')), (GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'state_id');
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
 print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-print '<input name="tel" id="phone" value="'.$conf->global->MAIN_INFO_ACCOUNTANT_PHONE.'"></td></tr>';
+print '<input name="tel" id="phone" value="'.(GETPOSTISSET('tel') ? GETPOST('tel', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_PHONE) ? $conf->global->MAIN_INFO_ACCOUNTANT_PHONE : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
 print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
-print '<input name="fax" id="fax" value="'.$conf->global->MAIN_INFO_ACCOUNTANT_FAX.'"></td></tr>';
+print '<input name="fax" id="fax" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_FAX) ? $conf->global->MAIN_INFO_ACCOUNTANT_FAX : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
 print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
-print '<input name="mail" id="email" class="minwidth200" value="'.$conf->global->MAIN_INFO_ACCOUNTANT_MAIL.'"></td></tr>';
+print '<input name="mail" id="email" class="minwidth200" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
 print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
-print '<input name="web" id="web" class="minwidth300" value="'.$conf->global->MAIN_INFO_ACCOUNTANT_WEB.'"></td></tr>';
+print '<input name="web" id="web" class="minwidth300" value="'.(GETPOSTISSET('web') ? GETPOST('web', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_WEB) ? $conf->global->MAIN_INFO_ACCOUNTANT_WEB : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Code
 print '<tr class="oddeven"><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
-print '<input name="code" id="code" class="minwidth100" value="'.($conf->global->MAIN_INFO_ACCOUNTANT_CODE ? $conf->global->MAIN_INFO_ACCOUNTANT_CODE : GETPOST("code", 'nohtml')).'"></td></tr>'."\n";
+print '<input name="code" id="code" class="minwidth100" value="'.(GETPOSTISSET('code') ? GETPOST('code', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_CODE) ? $conf->global->MAIN_INFO_ACCOUNTANT_CODE : '')).'"></td></tr>'."\n";
 
 // Note
 print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : $conf->global->MAIN_INFO_ACCOUNTANT_NOTE).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) ? $conf->global->MAIN_INFO_ACCOUNTANT_NOTE : '')).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';

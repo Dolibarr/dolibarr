@@ -70,7 +70,7 @@ class FormActions
 		global $langs, $conf;
 
 		$listofstatus = array(
-			'-1' => $langs->trans("ActionNotApplicable"),
+			'na' => $langs->trans("ActionNotApplicable"),
 			'0' => $langs->trans("ActionsToDoShort"),
 			'50' => $langs->trans("ActionRunningShort"),
 			'100' => $langs->trans("ActionDoneShort")
@@ -130,7 +130,7 @@ class FormActions
 			//var_dump($selected);
 			if ($selected == 'done') $selected = '100';
 			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
-			if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'></option>';
+			if ($showempty) print '<option value=""'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			foreach ($listofstatus as $key => $val)
 			{
 				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
@@ -141,6 +141,8 @@ class FormActions
 			}
 			print '</select>';
 			if ($selected == 0 || $selected == 100) $canedit = 0;
+
+			print ajax_combobox('select'.$htmlname);
 
 			if (empty($onlyselect))
 			{
@@ -202,9 +204,9 @@ class FormActions
 			$newcardbutton = '';
 			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create))
 			{
-				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.($object->socid > 0 ? '&amp;socid='.$object->socid : ($socid > 0 ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage));
+			    $url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
+			    $newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
-
 
 			print '<!-- formactions->showactions -->'."\n";
 			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
@@ -244,7 +246,7 @@ class FormActions
 					print '<td class="nowraponall tdoverflowmax125">';
 					if (!empty($actioncomm->userownerid))
 					{
-						if (is_object($cacheusers[$actioncomm->userownerid]))
+					    if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid]))
 						{
 							$tmpuser = $cacheusers[$actioncomm->userownerid];
 						} else {
@@ -261,23 +263,7 @@ class FormActions
 
 					// Type
 					print '<td>';
-					// TODO Code common with code into comm/action/list.php
-					$imgpicto = '';
-					if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-					{
-						if ($actioncomm->type_picto) {
-							$imgpicto = img_picto('', $actioncomm->type_picto);
-						} else {
-							if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright');
-							elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright');
-							elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright');
-						}
-					}
-					print $imgpicto;
+					print $actioncomm->getTypePicto();
 					if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
 						print $langs->trans("Message");
 					} else {
@@ -369,7 +355,7 @@ class FormActions
 			if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200'.($morecss ? ' '.$morecss : ''), 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300'.($morecss ? ' '.$morecss : ''), 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

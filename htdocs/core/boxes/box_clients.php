@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,29 +79,23 @@ class box_clients extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		$thirdpartystatic = new Societe($this->db);
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+		$thirdpartystatic = new Client($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-			$sql .= ", s.code_client";
-			$sql .= ", s.client";
-			$sql .= ", s.code_fournisseur";
-			$sql .= ", s.fournisseur";
-			$sql .= ", s.code_compta";
-			$sql .= ", s.code_compta_fournisseur";
-			$sql .= ", s.logo";
-			$sql .= ", s.email";
-			$sql .= ", s.datec, s.tms, s.status, s.entity";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = $user->socid";
+			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
 			$sql .= " ORDER BY s.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -117,14 +111,13 @@ class box_clients extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
-					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta = $objp->code_compta;
-					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->client = $objp->client;
-					$thirdpartystatic->fournisseur = $objp->fournisseur;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;

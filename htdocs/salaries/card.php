@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -256,7 +256,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'salary');
 
 	print dol_get_fiche_head('', '');
 
@@ -265,7 +265,7 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep) ?-1 : $datep), "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datep) ? '' : $datep), "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
@@ -305,16 +305,6 @@ if ($action == 'create')
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
-	// Project
-	if (!empty($conf->projet->enabled))
-	{
-		$formproject = new FormProjets($db);
-
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-		print '</td></tr>';
-	}
-
 	// Bank
 	if (!empty($conf->banque->enabled))
 	{
@@ -338,6 +328,16 @@ if ($action == 'create')
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</label></td>';
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+	}
+
+	// Project
+	if (!empty($conf->projet->enabled))
+	{
+	    $formproject = new FormProjets($db);
+
+	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
+	    $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+	    print '</td></tr>';
 	}
 
 	// Other attributes
@@ -375,7 +375,7 @@ if ($id)
 {
 	$head = salaries_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -425,7 +425,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -476,9 +476,8 @@ if ($id)
 	print dol_get_fiche_end();
 
 
-	/*
-	 * Action buttons
-	 */
+	// Action buttons
+
 	print '<div class="tabsAction">'."\n";
 	if ($object->rappro == 0)
 	{

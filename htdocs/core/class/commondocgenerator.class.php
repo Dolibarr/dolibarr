@@ -56,6 +56,11 @@ abstract class CommonDocGenerator
 	public $extrafieldsCache;
 
 	/**
+	 * @var int	If set to 1, save the fullname of generated file with path as the main doc when generating a doc with this template.
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -741,6 +746,12 @@ abstract class CommonDocGenerator
 			$object->fetch_optionals();
 
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
+		}
+
+		// Add infor from $object->xxx where xxx has been loaded by fetch_origin() of shipment
+		if (!empty($object->commande) && is_object($object->commande)) {
+			$array_shipment['order_ref'] = $object->commande->ref;
+			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}
 
 		return $array_shipment;

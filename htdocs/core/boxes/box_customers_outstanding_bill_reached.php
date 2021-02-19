@@ -86,17 +86,11 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-			$sql .= ", s.code_client";
-			$sql .= ", s.client";
-			$sql .= ", s.code_fournisseur";
-			$sql .= ", s.fournisseur";
-			$sql .= ", s.code_compta";
-			$sql .= ", s.code_compta_fournisseur";
-			$sql .= ", s.logo";
-			$sql .= ", s.email";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.outstanding_limit";
-			$sql .= ", s.datec, s.tms, s.status, s.entity";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE s.client IN (1, 3)";
@@ -120,17 +114,15 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 				while ($line < $num)
 				{
 					$objp = $this->db->fetch_object($result);
-
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
+					//$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
-					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta = $objp->code_compta;
-					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 					$thirdpartystatic->client = $objp->client;
-					$thirdpartystatic->fournisseur = $objp->fournisseur;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;
@@ -158,8 +150,8 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 				}
 
 				if ($num == 0 || $nboutstandingbillreachedcustomers == 0) $this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+					'text'=> '<span class="opacitymedium">'.$langs->trans("None").'</span>'
 				);
 
 				$this->db->free($result);
@@ -172,8 +164,8 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

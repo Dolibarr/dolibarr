@@ -63,7 +63,7 @@ if ($action == 'updateMask')
 
 	if ($maskconstorder)  $res = dolibarr_set_const($db, $maskconstorder, $maskvalue, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -194,7 +194,7 @@ elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
 {
 	$res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -439,7 +439,7 @@ foreach ($dirmodels as $reldir)
 					print $form->textwithpicto('', $htmltooltip, 1, 0);
 					print '</td>';
 					print '<td class="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					print '</td>';
 
 					print "</tr>\n";
@@ -485,7 +485,7 @@ if ($conf->banque->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp</td><td align="center">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');

@@ -225,10 +225,12 @@ if (empty($reshook))
 		if (!($object->fk_user_author > 0)) $object->fk_user_author = $user->id;
 
 		// Check that expense report is for a user inside the hierarchy or advanced permission for all is set
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->writeall_advance))) {
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
 			$error++;
 			setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
-		} else {
+		}
+		if (!$error) {
 			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
 				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;
@@ -953,35 +955,7 @@ if (empty($reshook))
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
-		$result = $object->set_unpaid($user);
-
-		if ($result > 0)
-		{
-			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-			{
-				$outputlangs = $langs;
-				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-				if (!empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				$model = $object->model_pdf;
-				$ret = $object->fetch($id); // Reload to get new records
-
-				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-			}
-		}
-	}
-
-	if ($action == 'set_unpaid' && $id > 0 && $user->rights->expensereport->to_paid)
-	{
-		$object = new ExpenseReport($db);
-		$object->fetch($id);
-
-		$result = $object->set_unpaid($user);
+		$result = $object->setUnpaid($user);
 
 		if ($result > 0)
 		{
@@ -1009,7 +983,7 @@ if (empty($reshook))
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
-		$result = $object->set_paid($id, $user);
+		$result = $object->setPaid($id, $user);
 
 		if ($result > 0)
 		{
@@ -1457,7 +1431,7 @@ if ($action == 'create')
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1467,7 +1441,7 @@ if ($action == 'create')
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1492,8 +1466,7 @@ if ($action == 'create')
 
 	print '</form>';
 } else {
-	if ($id > 0 || $ref)
-	{
+	if ($id > 0 || $ref) {
 		$result = $object->fetch($id, $ref);
 
 		$res = $object->fetch_optionals();
@@ -1755,6 +1728,7 @@ if ($action == 'create')
 				}
 				print '</td></tr>';
 
+				// Period
 				print '<tr>';
 				print '<td class="titlefield">'.$langs->trans("Period").'</td>';
 				print '<td>';
@@ -1772,9 +1746,9 @@ if ($action == 'create')
 				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.dol_print_date($object->date_valid, 'dayhour');
-				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
-				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
+				print '<td>'.dol_print_date($object->date_valid, 'dayhour', 'tzuser');
+				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late").' - '.$langs->trans("ToApprove"));
+				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late").' - '.$langs->trans("ToPay"));
 				print '</td></tr>';
 				print '</tr>';
 
@@ -1815,7 +1789,7 @@ if ($action == 'create')
 					print '</tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_CANCEL").'</td>';
-					print '<td>'.dol_print_date($object->date_cancel, 'dayhour').'</td></tr>';
+					print '<td>'.dol_print_date($object->date_cancel, 'dayhour', 'tzuser').'</td></tr>';
 					print '</tr>';
 				} else {
 					print '<tr>';
@@ -1831,7 +1805,7 @@ if ($action == 'create')
 
 					print '<tr>';
 					print '<td>'.$langs->trans("DateApprove").'</td>';
-					print '<td>'.dol_print_date($object->date_approve, 'dayhour').'</td></tr>';
+					print '<td>'.dol_print_date($object->date_approve, 'dayhour', 'tzuser').'</td></tr>';
 					print '</tr>';
 				}
 
@@ -1847,7 +1821,7 @@ if ($action == 'create')
 
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
-					print '<td>'.dol_print_date($object->date_refuse, 'dayhour');
+					print '<td>'.dol_print_date($object->date_refuse, 'dayhour', 'tzuser');
 					if ($object->detail_refuse) print ' - '.$object->detail_refuse;
 					print '</td>';
 					print '</tr>';

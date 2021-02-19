@@ -97,3 +97,12 @@ div.mainmenu.generic4::before {
 	border-bottom: solid 60px currentColor;
 	margin-left: 30px;
 }
+
+
+.menu_titre .em092 {
+	font-size: 0.92em;
+}
+
+.menu_titre .em080 {
+	font-size: 0.80em;
+}

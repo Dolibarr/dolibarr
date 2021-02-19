@@ -156,10 +156,12 @@ class HookManager
 			$method,
 			array(
 				'addCalendarChoice',
+				'addCalendarView',
 				'addMoreActionsButtons',
 				'addMoreMassActions',
 				'addSearchEntry',
 				'addStatisticLine',
+				'addSectionECMAuto',
 				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',
@@ -246,7 +248,7 @@ class HookManager
 					$actionclassinstance->error = 0;
 					$actionclassinstance->errors = array();
 
-					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", action=".$action." context=".$context, LOG_DEBUG);
+					dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".get_class($actionclassinstance).'->'.$method.", context=".$context.", module=".$module.", action=".$action.((is_object($object) && property_exists($object, 'id')) ? ', objectid='.$object->id : ''), LOG_DEBUG);
 
 					// Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
 					$parameters['currentcontext'] = $context;

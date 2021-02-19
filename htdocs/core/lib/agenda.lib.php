@@ -64,7 +64,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="year" value="'.$year.'">';
 	print '<input type="hidden" name="month" value="'.$month.'">';
 	print '<input type="hidden" name="day" value="'.$day.'">';
-	if ($massaction != 'predelete') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
+	if ($massaction != 'predelete' && $massaction != 'preaffecttag') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
 		print '<input type="hidden" name="action" value="'.$action.'">';
 	}
 	print '<input type="hidden" name="search_showbirthday" value="'.$showbirthday.'">';
@@ -73,8 +73,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		print '<div class="divsearchfield">';
 		// Type
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
-		print '<span class="hideonsmartphone">'.$langs->trans("Type").'</span>';
+		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("Type").'"></span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
@@ -85,13 +84,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 		// Assigned to
 		print '<div class="divsearchfield">';
-		print img_picto('', 'user', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ActionsToDoBy").'</span>';
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500');
+		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="fawidth30 inline-block"');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 		print '<div class="divsearchfield">';
-		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ToUserOfGroup").'</span>';
+		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="fawidth30 inline-block"');
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
 		print '</div>';
 
@@ -102,8 +99,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 			// Resource
 			print '<div class="divsearchfield">';
-			print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
-			print '<span class="hideonsmartphone">'.$langs->trans("Resource").'</span>';
+			print img_picto($langs->trans("Resource"), 'object_resource', 'class="fawidth30 inline-block"');
 			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
 			print '</div>';
 		}
@@ -112,8 +108,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
 		print '<div class="divsearchfield">';
-		print img_picto('', 'company', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("ThirdParty").'</span>';
+		print img_picto($langs->trans("ThirdParty"), 'company', 'class="fawidth30 inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</div>';
 	}
@@ -124,8 +119,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		$formproject = new FormProjets($db);
 
 		print '<div class="divsearchfield">';
-		print img_picto('', 'project', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("Project").'</span>';
+		print img_picto($langs->trans("Project"), 'project', 'class="fawidth30 inline-block"');
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print '</div>';
 	}
@@ -134,8 +128,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		// Status
 		print '<div class="divsearchfield">';
-		print img_picto('', 'setup', 'class="fawidth30 inline-block"');
-		print '<span class="hideonsmartphone">'.$langs->trans("Status").'</span>';
+		print img_picto($langs->trans("Status"), 'setup', 'class="fawidth30 inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</div>';
 	}
@@ -164,9 +157,11 @@ function show_array_actions_to_do($max = 5)
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
-	$sql .= " c.code, c.libelle as type_label,";
-	$sql .= " s.nom as sname, s.rowid, s.client";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent";
+	$sql .= ", c.code, c.libelle as type_label";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -189,7 +184,6 @@ function show_array_actions_to_do($max = 5)
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
-		$var = true;
 		$i = 0;
 
 		$staticaction = new ActionComm($db);
@@ -210,12 +204,18 @@ function show_array_actions_to_do($max = 5)
 			// print '<td>'.dol_trunc($obj->label,22).'</td>';
 
 			print '<td>';
-			if ($obj->rowid > 0)
+			if ($obj->socid > 0)
 			{
-				$customerstatic->id = $obj->rowid;
-				$customerstatic->name = $obj->sname;
+				$customerstatic->id = $obj->socid;
+				$customerstatic->name = $obj->name;
+				//$customerstatic->name_alias = $obj->name_alias;
+				$customerstatic->code_client = $obj->code_client;
+				$customerstatic->code_compta = $obj->code_compta;
 				$customerstatic->client = $obj->client;
-				print $customerstatic->getNomUrl(1, '', 16);
+				$customerstatic->logo = $obj->logo;
+				$customerstatic->email = $obj->email;
+				$customerstatic->entity = $obj->entity;
+				print $customerstatic->getNomUrl(1, '', 40);
 			}
 			print '</td>';
 
@@ -260,9 +260,11 @@ function show_array_last_actions_done($max = 5)
 
 	$now = dol_now();
 
-	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
-	$sql .= " c.code, c.libelle,";
-	$sql .= " s.rowid, s.nom as sname, s.client";
+	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label";
+	$sql .= ", c.code, c.libelle";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -284,7 +286,7 @@ function show_array_last_actions_done($max = 5)
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
-		$var = true;
+
 		$i = 0;
 
 		$staticaction = new ActionComm($db);
@@ -305,12 +307,18 @@ function show_array_last_actions_done($max = 5)
 			//print '<td>'.dol_trunc($obj->label,24).'</td>';
 
 			print '<td>';
-			if ($obj->rowid > 0)
+			if ($obj->socid > 0)
 			{
-				$customerstatic->id = $obj->rowid;
-				$customerstatic->name = $obj->sname;
+				$customerstatic->id = $obj->socid;
+				$customerstatic->name = $obj->name;
+				//$customerstatic->name_alias = $obj->name_alias;
+				$customerstatic->code_client = $obj->code_client;
+				$customerstatic->code_compta = $obj->code_compta;
 				$customerstatic->client = $obj->client;
-				print $customerstatic->getNomUrl(1, '', 24);
+				$customerstatic->logo = $obj->logo;
+				$customerstatic->email = $obj->email;
+				$customerstatic->entity = $obj->entity;
+				print $customerstatic->getNomUrl(1, '', 30);
 			}
 			print '</td>';
 

@@ -44,7 +44,7 @@ class PaymentSalary extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'payment';
+	public $picto = 'salary';
 
 	public $tms;
 
@@ -88,6 +88,11 @@ class PaymentSalary extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
+
 
 	/**
 	 *	Constructor
@@ -120,8 +125,7 @@ class PaymentSalary extends CommonObject
 		$this->note = trim($this->note);
 
 		// Check parameters
-		if (empty($this->fk_user) || $this->fk_user < 0)
-		{
+		if (empty($this->fk_user) || $this->fk_user < 0) {
 			$this->error = 'ErrorBadParameter';
 			return -1;
 		}
@@ -151,35 +155,29 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 
 		// Update extrafield
-		if (!$error)
-		{
-			if (!$error)
-			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
-		if (!$notrigger)
-		{
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PAYMENT_SALARY_MODIFY', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -199,6 +197,7 @@ class PaymentSalary extends CommonObject
 	public function fetch($id, $user = null)
 	{
 		global $langs;
+
 		$sql = "SELECT";
 		$sql .= " s.rowid,";
 
@@ -227,26 +226,24 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
-				$this->ref				= $obj->rowid;
-				$this->tms				= $this->db->jdate($obj->tms);
+				$this->ref = $obj->rowid;
+				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_user = $obj->fk_user;
-				$this->datep			= $this->db->jdate($obj->datep);
-				$this->datev			= $this->db->jdate($obj->datev);
+				$this->datep = $this->db->jdate($obj->datep);
+				$this->datev = $this->db->jdate($obj->datev);
 				$this->amount = $obj->amount;
 				$this->fk_project = $obj->fk_project;
 				$this->type_payement = $obj->fk_typepayment;
 				$this->num_payment = $obj->num_payment;
-				$this->label			= $obj->label;
-				$this->datesp			= $this->db->jdate($obj->datesp);
-				$this->dateep			= $this->db->jdate($obj->dateep);
-				$this->note				= $obj->note;
+				$this->label = $obj->label;
+				$this->datesp = $this->db->jdate($obj->datesp);
+				$this->dateep = $this->db->jdate($obj->dateep);
+				$this->note = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -282,18 +279,18 @@ class PaymentSalary extends CommonObject
 
 		// Call trigger
 		$result = $this->call_trigger('PAYMENT_SALARY_DELETE', $user);
-		if ($result < 0) return -1;
+		if ($result < 0) {
+			return -1;
+		}
 		// End call triggers
 
 		// Delete donation
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary_extrafields";
 			$sql .= " WHERE fk_object=".$this->id;
 
 			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
+			if (!$resql) {
 				$this->errors[] = $this->db->lasterror();
 				$error++;
 			}
@@ -304,8 +301,7 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -326,7 +322,7 @@ class PaymentSalary extends CommonObject
 		$this->id = 0;
 
 		$this->tms = '';
-		$this->fk_user = '';
+		$this->fk_user = 1;
 		$this->datep = '';
 		$this->datev = '';
 		$this->amount = '';
@@ -335,8 +331,8 @@ class PaymentSalary extends CommonObject
 		$this->dateep = '';
 		$this->note = '';
 		$this->fk_bank = '';
-		$this->fk_user_author = '';
-		$this->fk_user_modif = '';
+		$this->fk_user_author = 1;
+		$this->fk_user_modif = 1;
 	}
 
 	/**
@@ -356,34 +352,29 @@ class PaymentSalary extends CommonObject
 		$this->amount = price2num(trim($this->amount));
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
-		$this->fk_bank = trim($this->fk_bank);
-		$this->fk_user_author = trim($this->fk_user_author);
-		$this->fk_user_modif = trim($this->fk_user_modif);
+		$this->fk_bank = (int) $this->fk_bank;
+		$this->fk_user_author = (int) $this->fk_user_author;
+		$this->fk_user_modif = (int) $this->fk_user_modif;
 
 		// Check parameters
-		if (!$this->label)
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
+		if (!$this->label) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 			return -3;
 		}
-		if ($this->fk_user < 0 || $this->fk_user == '')
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
+		if ($this->fk_user <= 0 || $this->fk_user == '') {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
-		if ($this->amount < 0 || $this->amount == '')
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
+		if ($this->amount < 0 || $this->amount == '') {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
+		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0)) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -6;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
-		{
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
+		if (!empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0)) {
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -7;
 		}
 
@@ -398,7 +389,9 @@ class PaymentSalary extends CommonObject
 		$sql .= ", salary";
 		$sql .= ", fk_typepayment";
 		$sql .= ", num_payment";
-		if ($this->note) $sql .= ", note";
+		if ($this->note) {
+			$sql .= ", note";
+		}
 		$sql .= ", label";
 		$sql .= ", datesp";
 		$sql .= ", dateep";
@@ -416,7 +409,9 @@ class PaymentSalary extends CommonObject
 		$sql .= ", ".($this->salary > 0 ? $this->salary : "null");
 		$sql .= ", ".$this->db->escape($this->type_payment);
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
-		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
+		if ($this->note) {
+			$sql .= ", '".$this->db->escape($this->note)."'";
+		}
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
 		$sql .= ", '".$this->db->idate($this->dateep)."'";
@@ -428,30 +423,25 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
-			if ($this->id > 0)
-			{
-				if (!empty($conf->banque->enabled) && !empty($this->amount))
-				{
+			if ($this->id > 0) {
+				if (!empty($conf->banque->enabled) && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
 					$result = $acc->fetch($this->accountid);
-					if ($result <= 0) dol_print_error($this->db);
+					if ($result <= 0) {
+						dol_print_error($this->db);
+					}
 
 					// Update extrafield
 					if (!$error) {
-						if (!$error)
-						{
-							$result = $this->insertExtraFields();
-							if ($result < 0)
-							{
-								$error++;
-							}
+						$result = $this->insertExtraFields();
+						if ($result < 0) {
+							$error++;
 						}
 					}
 
@@ -473,22 +463,19 @@ class PaymentSalary extends CommonObject
 
 					// Update fk_bank into llx_paiement.
 					// So we know the payment which has generate the banking ecriture
-					if ($bank_line_id > 0)
-					{
+					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {
 						$this->error = $acc->error;
 						$error++;
 					}
 
-					if (!$error)
-					{
+					if (!$error) {
 						// Add link 'payment_salary' in bank_url between payment and bank transaction
 						$url = DOL_URL_ROOT.'/salaries/card.php?id=';
 
 						$result = $acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
-						if ($result <= 0)
-						{
+						if ($result <= 0) {
 							$this->error = $acc->error;
 							$error++;
 						}
@@ -507,8 +494,7 @@ class PaymentSalary extends CommonObject
 						'user'
 					);
 
-					if ($result <= 0)
-					{
+					if ($result <= 0) {
 						$this->error = $acc->error;
 						$error++;
 					}
@@ -516,12 +502,15 @@ class PaymentSalary extends CommonObject
 
 				// Call trigger
 				$result = $this->call_trigger('PAYMENT_SALARY_CREATE', $user);
-				if ($result < 0) $error++;
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
-			} else $error++;
+			} else {
+				$error++;
+			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return $this->id;
 			} else {
@@ -548,8 +537,7 @@ class PaymentSalary extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_salary SET fk_bank = '.$id_bank;
 		$sql .= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -571,10 +559,10 @@ class PaymentSalary extends CommonObject
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $db, $conf, $langs, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -583,10 +571,11 @@ class PaymentSalary extends CommonObject
 		if (!empty($this->label)) {
 			$labeltoshow = $this->label;
 			$reg = array();
-			if (preg_match('/^\((.*)\)$/i', $this->label, $reg))
-			{
+			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
-				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
+				if ($reg[1] == 'paiement') {
+					$reg[1] = 'Payment';
+				}
 				$labeltoshow = $langs->trans($reg[1]);
 			}
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
@@ -594,19 +583,20 @@ class PaymentSalary extends CommonObject
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -614,20 +604,26 @@ class PaymentSalary extends CommonObject
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
 			/*
-             $hookmanager->initHooks(array('myobjectdao'));
-             $parameters=array('id'=>$this->id);
-             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-             */
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+			 $hookmanager->initHooks(array('myobjectdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -635,8 +631,11 @@ class PaymentSalary extends CommonObject
 		$hookmanager->initHooks(array('salarypayment'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -656,14 +655,11 @@ class PaymentSalary extends CommonObject
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
@@ -703,40 +699,40 @@ class PaymentSalary extends CommonObject
 
 		$langs->load('compta');
 		/*if ($mode == 0)
-        {
-            if ($status == 0) return $langs->trans('ToValidate');
-            if ($status == 1) return $langs->trans('Validated');
-        }
-        if ($mode == 1)
-        {
-            if ($status == 0) return $langs->trans('ToValidate');
-            if ($status == 1) return $langs->trans('Validated');
-        }
-        if ($mode == 2)
-        {
-            if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
-            if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
-        }
-        if ($mode == 3)
-        {
-            if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
-            if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
-        }
-        if ($mode == 4)
-        {
-            if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
-            if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
-        }
-        if ($mode == 5)
-        {
-            if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
-            if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
-        }
-        if ($mode == 6)
-        {
-            if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
-            if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
-        }*/
+		{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+		}
+		if ($mode == 1)
+		{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+		}
+		if ($mode == 2)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		}
+		if ($mode == 3)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		}
+		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}
+		if ($mode == 6)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}*/
 		return '';
 	}
 }

@@ -654,7 +654,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("ProjectModifiedInDolibarr", $object->ref);
 			$object->actionmsg = $langs->transnoentities("ProjectModifiedInDolibarr", $object->ref);
-			$object->actionmsg .= "\n".$langs->transnoentities("Task").': '.$object->ref;
+			//$object->actionmsg .= "\n".$langs->transnoentities("Task").': ???';
+			if (!empty($object->usage_opportunity) && is_object($object->oldcopy) && $object->opp_status != $object->oldcopy->opp_status) {
+				$object->actionmsg .= "\n".$langs->transnoentitiesnoconv("OpportunityStatus").': '.$object->oldcopy->opp_status.' -> '.$object->opp_status;
+			}
 
 			$object->sendtoid = 0;
 		}
@@ -717,20 +720,20 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			if (empty($object->actionmsg2)) {
 				$langs->loadLangs(array("agenda", "other"));
-				if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
-					$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+				if ($langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref)) != $action."InDolibarr") {	// specific translation key
+					$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
 				} else {	// generic translation key
 					$tmp = explode('_', $action);
-					$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+					$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
 				}
 			}
 			if (empty($object->actionmsg)) {
 				$langs->loadLangs(array("agenda", "other"));
-				if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
-					$object->actionmsg = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+				if ($langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref)) != $action."InDolibarr") {	// specific translation key
+					$object->actionmsg = $langs->transnoentities($action."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
 				} else {	// generic translation key
 					$tmp = explode('_', $action);
-					$object->actionmsg = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+					$object->actionmsg = $langs->transnoentities($tmp[count($tmp) - 1]."InDolibarr", (empty($object->newref) ? $object->ref : $object->newref));
 				}
 			}
 
@@ -787,8 +790,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
 		}
 		// Set societeforaction.
-		if ($object->socid > 0)			$societeforaction->fetch($object->socid);
-		elseif ($object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
+		if (isset($object->socid) && $object->socid > 0)		$societeforaction->fetch($object->socid);
+		elseif (isset($object->fk_soc) && $object->fk_soc > 0)	$societeforaction->fetch($object->fk_soc);
 
 		$projectid = isset($object->fk_project) ? $object->fk_project : 0;
 		if ($object->element == 'project') $projectid = $object->id;

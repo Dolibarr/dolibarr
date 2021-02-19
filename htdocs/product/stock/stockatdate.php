@@ -52,12 +52,16 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'alpha');
+
 $date = '';
 $dateendofday = '';
 if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateyear')) {
 	$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 	$dateendofday = dol_mktime(23, 59, 59, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 }
+
+$search_ref = GETPOST('search_ref', 'alphanohtml');
+$search_nom = GETPOST('search_nom', 'alphanohtml');
 
 $now = dol_now();
 
@@ -104,6 +108,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$date = '';
 	$productid = 0;
 	$fk_warehouse = 0;
+	$search_ref = '';
+	$search_nom = '';
 }
 
 $warehouseStatus = array();
@@ -237,9 +243,12 @@ $title = $langs->trans('StockAtDate');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
-$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock';
+$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if ($fk_warehouse > 0) {
+	$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
+} else {
+	$sql .= " SUM(p.pmp * p.stock) as estimatedvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -263,6 +272,9 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 }
 if (!empty($canvas)) $sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
 if ($fk_warehouse > 0) {
+	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
+	$sql .= ' p.tms, p.duration, p.tobuy, p.stock';
+} else {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 	$sql .= ' p.tms, p.duration, p.tobuy, p.stock';
 }
@@ -341,10 +353,14 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> '.$langs->trans('Product').'</span> ';
+print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> ';
+print img_picto('', 'product').' ';
+print $langs->trans('Product').'</span> ';
 $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> '.$langs->trans('Warehouse').'</span> ';
+print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> ';
+print img_picto('', 'stock').' ';
+print $langs->trans('Warehouse').'</span> ';
 print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1);
 print '</div>';
 
@@ -386,12 +402,15 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
-print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 if ($mode == 'future') {
+	print '<td class="liste_titre"></td>';
+} else {
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
 // Fields from hook
@@ -414,6 +433,7 @@ if ($fk_warehouse > 0) {
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
+
 if ($mode == 'future') {
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
@@ -421,6 +441,8 @@ if ($mode == 'future') {
 	print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 } else {
 	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
+	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $langs->trans("AtDate"), 1);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 }
@@ -521,6 +543,21 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			// Stock at date
 			print '<td class="right">'.($stock ? $stock : '<span class="opacitymedium">'.$stock.'</span>').'</td>';
 
+			// PMP value
+			print '<td class="right">';
+			if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
+			else print '';
+			print '</td>';
+
+			// Selling value
+			print '<td class="right">';
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
+			else {
+				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			}
+			print'</td>';
+
 			print '<td class="right">';
 			if ($nbofmovement > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid.($fk_warehouse > 0 ? '&search_warehouse='.$fk_warehouse : '').'">'.$langs->trans("Movements").'</a>';
@@ -548,6 +585,12 @@ while ($i < ($limit ? min($num, $limit) : $num))
 $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+
+if (empty($date) || ! $dateIsValid) {
+	$colspan = 8;
+	if ($mode == 'future') $colspan++;
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
+}
 
 print '</table>';
 print '</div>';

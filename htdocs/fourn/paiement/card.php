@@ -265,10 +265,10 @@ if ($result > 0)
 
 		$i = 0;
 		$total = 0;
-		print '<b>'.$langs->trans("Invoices").'</b><br>';
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
+		print '<td>'.$langs->trans('Invoice').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';
 		print '<td>'.$langs->trans('Company').'</td>';
 		print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
@@ -305,7 +305,7 @@ if ($result > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$objp->name.'</a></td>';
 				// Expected to pay
 				print '<td class="right">'.price($objp->total_ttc).'</td>';
-				// Payed
+				// Paid
 				print '<td class="right">'.price($objp->amount).'</td>';
 				// Status
 				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->status, 6, 1).'</td>';

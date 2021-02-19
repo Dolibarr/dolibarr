@@ -869,14 +869,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		$arrayfields['value'] = array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled) ? 0 : 1));
 		$arrayfields['valuebilled'] = array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((!empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT)) ? 0 : 1) && $projectstatic->usage_bill_time));
 		// Extra fields
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-		{
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-			{
-				if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-					$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-			}
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 		$arrayfields = dol_sort_array($arrayfields, 'position');
 
 		$param = '';
@@ -897,7 +891,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if ($id) $param .= '&id='.urlencode($id);
 		if ($projectid) $param .= '&projectid='.urlencode($projectid);
 		if ($withproject) $param .= '&withproject='.urlencode($withproject);
-		if ($page) $param .= '&page='.urlencode($page);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -1053,13 +1046,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 				$title = $langs->trans("ListTaskTimeUserProject");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit, 0, 0, 1);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'clock', 0, $linktocreatetime, '', $limit, 0, 0, 1);
 			} else {
 				print '<!-- List of time spent for project -->'."\n";
 
 				$title = $langs->trans("ListTaskTimeForTask");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit, 0, 0, 1);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'clock', 0, $linktocreatetime, '', $limit, 0, 0, 1);
 			}
 
 			$i = 0;
@@ -1127,7 +1120,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				else $userid = $contactsofproject[0];
 
 				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth250');
 			} else {
 				if ($nboftasks) {
 					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
@@ -1211,7 +1204,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!empty($arrayfields['t.task_label']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 		}
 		// Author
-		if (!empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
+		if (!empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250').'</td>';
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 		// Duration

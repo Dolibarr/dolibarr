@@ -83,14 +83,13 @@ class box_commandes extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$userstatic = new User($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerOrders", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerOrders", $max));
 
 		if ($user->rights->commande->lire)
 		{
-			$sql = "SELECT s.nom as name";
-			$sql .= ", s.rowid as socid";
-			$sql .= ", s.code_client";
-			$sql .= ", s.logo, s.email";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", c.ref, c.tms";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_commande";
@@ -109,7 +108,7 @@ class box_commandes extends ModeleBoxes
 			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql .= " AND c.fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
 			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -123,17 +122,23 @@ class box_commandes extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 					$date = $this->db->jdate($objp->date_commande);
 					$datem = $this->db->jdate($objp->tms);
+
 					$commandestatic->id = $objp->rowid;
 					$commandestatic->ref = $objp->ref;
 					$commandestatic->ref_client = $objp->ref_client;
 					$commandestatic->total_ht = $objp->total_ht;
 					$commandestatic->total_tva = $objp->total_tva;
 					$commandestatic->total_ttc = $objp->total_ttc;
+
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
-					$societestatic->email = $objp->email;
+					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
+					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
+					$societestatic->email = $objp->email;
+					$societestatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',

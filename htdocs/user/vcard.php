@@ -61,7 +61,7 @@ $v = new vCard();
 $v->setProdId('Dolibarr '.DOL_VERSION);
 
 $v->setUid('DOLIBARR-USERID-'.$user2->id);
-$v->setName($user2->lastname, $user2->firstname, "", $user2->civility, "");
+$v->setName($user2->lastname, $user2->firstname, "", $user2->civility_code, "");
 $v->setFormattedName($user2->getFullName($langs, 1));
 
 $v->setPhoneNumber($user2->phone_pro, "TYPE=WORK;VOICE");

@@ -24,6 +24,8 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
+print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
+
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
@@ -62,7 +64,11 @@ if ($absolute_discount > 0) {
 			$text .= ' ('.$addabsolutediscount.')';
 		}
 
-		print '<div class="inline-block clearboth">'.$text.'</div>';
+		if ($isNewObject) {
+			print '<br>'.$text;
+		} else {
+			print '<div class="inline-block clearboth">'.$text.'</div>';
+		}
 	} else {
 		// Discount available of type fixed amount (not credit note)
 		$more = '('.$addabsolutediscount.')';
@@ -82,10 +88,14 @@ if ($absolute_creditnote > 0) {
 		}
 
 		if ($absolute_discount <= 0 || $isNewObject) {
-			$text .= '('.$addabsolutediscount.')';
+			$text .= ' ('.$addabsolutediscount.')';
 		}
 
-		print '<div class="inline-block clearboth">'.$text.'</div>';
+		if ($isNewObject) {
+			print '<br>'.$text;
+		} else {
+			print '<div class="inline-block clearboth">'.$text.'</div>';
+		}
 	} else {  // We can add a credit note on a down payment or standard invoice or situation invoice
 		// There is credit notes discounts available
 		$more = $isInvoice && !$isNewObject ? ' ('.$viewabsolutediscount.')' : '';
@@ -101,3 +111,5 @@ if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 		print ' ('.$addabsolutediscount.')';
 	}
 }
+
+print '<!-- END template -->';

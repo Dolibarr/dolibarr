@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills'));
+$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -211,8 +211,9 @@ $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Ex
 llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, l.date_delivery as date_reception, e.fk_statut, e.billed, e.tracking_number,";
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number,";
+$sql .= " l.date_delivery as date_reception,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -242,11 +243,12 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user_author = u.rowid';
-
+if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk_source
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
+}
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-if ($search_user > 0)
-{
+if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
@@ -272,8 +274,13 @@ if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_tracking)   $sql .= natural_search("e.tracking_number", $search_tracking);
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+if ($search_user > 0)
+{
+	// The contact on a shipment is also the contact of the order.
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".$db->escape($search_user);
+}
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
@@ -332,6 +339,7 @@ if ($resql)
 	if ($search_tracking)   $param .= "&amp;search_tracking=".urlencode($search_tracking);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 
 	if ($search_datedelivery_start)	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
 	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
@@ -340,7 +348,7 @@ if ($resql)
 
 	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
-	if ($search_status != '') $param .= '&viewstatut='.urlencode($search_status);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
 	if ($optioncss != '')  $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -483,7 +491,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Weight

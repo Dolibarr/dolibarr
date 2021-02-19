@@ -133,6 +133,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->db = $db;
 		$this->name = "canelle";
 		$this->description = $langs->trans('SuppliersInvoiceModel');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page dimensions
 		$this->type = 'pdf';
@@ -1209,9 +1210,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// We can use the name of the contact's company
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $mysoc;

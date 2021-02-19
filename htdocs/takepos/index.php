@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');
@@ -139,6 +140,7 @@ if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 		}
 	}
 }
+
 $levelofmaincategories = $levelofrootcategory + 1;
 
 $maincategories = array();
@@ -167,6 +169,7 @@ var pageactions=0;
 var place="<?php echo $place; ?>";
 var editaction="qty";
 var editnumber="";
+var invoiceid=0;
 
 /*
 var app = this;
@@ -474,7 +477,7 @@ function Floors() {
 
 function FreeZone() {
 	console.log("Open box to enter a free product");
-	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
+	$.colorbox({href:"freezone.php?action=freezone&place="+place, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
 }
 
 function TakeposOrderNotes() {
@@ -483,17 +486,18 @@ function TakeposOrderNotes() {
 }
 
 function Refresh() {
-	console.log("Refresh");
-	$("#poslines").load("invoice.php?place="+place, function() {
+	console.log("Refresh by reloading place="+place+" invoiceid="+invoiceid);
+	$("#poslines").load("invoice.php?place="+place+"&invoiceid="+invoiceid, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
 }
 
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
-	console.log("New with place = <?php echo $place; ?>, js place="+place);
-
 	invoiceid = $("#invoiceid").val();
+
+	console.log("New with place = <?php echo $place; ?>, js place="+place+", invoiceid="+invoiceid);
+
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getInvoice&id='+invoiceid, function(data) {
 		var r;
 
@@ -686,7 +690,10 @@ function OpenDrawer(){
 	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
 	$.ajax({
 		type: "POST",
-		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
+		<?php
+		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
+		else echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
+		?>
 		data: "opendrawer"
 	});
 }
@@ -771,11 +778,10 @@ $( document ).ready(function() {
 	{
 		print "ModalBox('ModalTerminal');";
 	}
-	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
-	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
-		$sql .= "date(date_creation) = CURDATE() ";
-		$sql .= "";
+	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING) {
+	    $sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
+	    $sql .= " entity = ".$conf->entity." AND ";
+	    $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -813,7 +819,9 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</a>
 			<?php
 			if (!empty($conf->multicurrency->enabled)) {
-				print '<a class="valignmiddle tdoverflowmax100 minwidth75" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>'.$langs->trans("Currency").'</a>';
+				print '<a class="valignmiddle tdoverflowmax100" id="multicurrency" onclick="ModalBox(\'ModalCurrency\');" title=""><span class="fas fa-coins paddingrightonly"></span>';
+				print '<span class="hideonsmartphone">'.$langs->trans("Currency").'</span>';
+				print '</a>';
 			}
 			?>
 			</div>
@@ -826,11 +834,11 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
-				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
+				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
-				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>
 				</div>
 				<div class="login_block_user">
@@ -954,7 +962,13 @@ if (empty($paiementsModes)) {
 	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 }
 if (count($maincategories) == 0) {
-	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+		$tmpcategory = new Categorie($db);
+		$tmpcategory->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
+	} else {
+		setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
+	}
 }
 // User menu and external TakePOS modules
 $menus = array();
@@ -1019,8 +1033,9 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	);
 }
 
-$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
-$sql .= "date(date_creation) = CURDATE() ";
+$sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
+$sql .= " entity = ".$conf->entity." AND ";
+$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 $resql = $db->query($sql);
 if ($resql)
 {

@@ -78,25 +78,25 @@ class box_factures_fourn extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 		$facturestatic = new FactureFournisseur($this->db);
-		$thirdpartytmp = new Fournisseur($this->db);
+		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierBills", $max)
+			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
 		);
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid,";
-			$sql .= " s.code_fournisseur, s.email,";
-			$sql .= " s.logo,";
-			$sql .= " f.rowid as facid, f.ref, f.ref_supplier,";
-			$sql .= " f.total_ht,";
-			$sql .= " f.total_tva,";
-			$sql .= " f.total_ttc,";
-			$sql .= " f.paye, f.fk_statut,";
-			$sql .= ' f.datef as df,';
-			$sql .= ' f.datec as datec,';
-			$sql .= ' f.date_lim_reglement as datelimite, f.tms, f.type';
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", f.rowid as facid, f.ref, f.ref_supplier";
+			$sql .= ", f.total_ht";
+			$sql .= ", f.total_tva";
+			$sql .= ", f.total_ttc";
+			$sql .= ", f.paye, f.fk_statut";
+			$sql .= ', f.datef as df';
+			$sql .= ', f.datec as datec';
+			$sql .= ', f.date_lim_reglement as datelimite, f.tms, f.type';
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -104,7 +104,7 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= " AND f.entity = ".$conf->entity;
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -131,12 +131,15 @@ class box_factures_fourn extends ModeleBoxes
 					$facturestatic->statut = $objp->fk_statut;
 					$facturestatic->ref_supplier = $objp->ref_supplier;
 
-					$thirdpartytmp->id = $objp->socid;
-					$thirdpartytmp->name = $objp->name;
-					$thirdpartytmp->email = $objp->email;
-					$thirdpartytmp->fournisseur = 1;
-					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
-					$thirdpartytmp->logo = $objp->logo;
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
 					$late = '';
 
@@ -160,7 +163,7 @@ class box_factures_fourn extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150"',
-						'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
+						'text' => $thirdpartystatic->getNomUrl(1, 'supplier'),
 						'asis' => 1,
 					);
 

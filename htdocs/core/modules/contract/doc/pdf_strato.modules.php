@@ -56,6 +56,11 @@ class pdf_strato extends ModelePDFContract
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -131,6 +136,7 @@ class pdf_strato extends ModelePDFContract
 		$this->db = $db;
 		$this->name = 'strato';
 		$this->description = $langs->trans("StandardContractsTemplate");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -195,7 +201,7 @@ class pdf_strato extends ModelePDFContract
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->contrat->dir_output."/".$objectref;
+				$dir = $conf->contrat->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -340,13 +346,12 @@ class pdf_strato extends ModelePDFContract
 							$datere = $langs->trans("Unknown");
 						}
 
-						$txtpredefinedservice = '';
-						$txtpredefinedservice = $objectligne->product_label;
-						if ($objectligne->product_label)
-						{
-							$txtpredefinedservice .= ' - ';
-							$txtpredefinedservice .= $objectligne->product_label;
-						}
+                        $txtpredefinedservice = $objectligne->product_ref;
+                        if ($objectligne->product_label)
+                        {
+                        	$txtpredefinedservice .= ' - ';
+                        	$txtpredefinedservice .= $objectligne->product_label;
+                        }
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
@@ -711,9 +716,8 @@ class pdf_strato extends ModelePDFContract
 
 			$this->recipient = $object->thirdparty;
 
-			//Recipient name
-			// You can use the name of the contact company
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

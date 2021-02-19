@@ -86,7 +86,24 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
+// Security check
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+if ($object->id > 0) {
+	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+		accessforbidden();
+	}
+}
+
 $now = dol_now();
+
+if ($id > 0 && empty($object->id))
+{
+	// Load data of third party
+	$res = $object->fetch($id);
+	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
+}
+
 
 
 /*
@@ -217,6 +234,12 @@ if (empty($reshook))
 		}
 		if ($error) $action = 'edit_extras';
 	}
+
+	// warehouse
+	if ($action == 'setwarehouse' && $user->rights->societe->creer)
+	{
+		$result = $object->setWarehouse(GETPOST('fk_warehouse', 'int'));
+	}
 }
 
 
@@ -228,13 +251,6 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-if ($id > 0 && empty($object->id))
-{
-	// Load data of third party
-	$res = $object->fetch($id);
-	if ($object->id < 0) dol_print_error($db, $object->error, $object->errors);
-}
 
 $title = $langs->trans("CustomerCard");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name;
@@ -257,9 +273,9 @@ if ($object->id > 0)
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Prospect/Customer
-	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
-	print $object->getLibCustProspStatut();
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
 	// Prefix
@@ -277,7 +293,10 @@ if ($object->id > 0)
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
 		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		$tmpcheck = $object->check_codeclient();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		}
 		print '</td></tr>';
 
 		print '<tr>';
@@ -468,7 +487,24 @@ if ($object->id > 0)
 		print "</td>";
 		print '</tr>';
 	}
-
+	// Warehouse
+	if (!empty($conf->stock->enabled))
+	{
+		$langs->load('stocks');
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		print '<tr class="nowrap">';
+		print '<td>';
+		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->rights->societe->creer);
+		print '</td><td>';
+		if ($action == 'editwarehouse') {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
+		} else {
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'none');
+		}
+		print '</td>';
+		print '</tr>';
+	}
 	// Preferred shipping Method
 	if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
 		print '<tr><td class="nowrap">';
@@ -495,11 +531,12 @@ if ($object->id > 0)
 		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('IntracommReportTransportMode');
 		print '<td>';
-		if (($action != 'edittransportmode') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		if (($action != 'edittransportmode') && $user->rights->societe->creer) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'edittransportmode')
-		{
+		if ($action == 'edittransportmode') {
 			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
 		}
 		else {
@@ -526,8 +563,7 @@ if ($object->id > 0)
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 	// Module Adherent
-	if (!empty($conf->adherent->enabled))
-	{
+	if (!empty($conf->adherent->enabled)) {
 		$langs->load("members");
 		$langs->load("users");
 
@@ -535,10 +571,9 @@ if ($object->id > 0)
 		print '<td>';
 		$adh = new Adherent($db);
 		$result = $adh->fetch('', '', $object->id);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			print $adh->getNomUrl(1);
+			print $adh->getNomUrl(-1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 		}
@@ -1253,6 +1288,12 @@ if ($object->id > 0)
 			dol_print_error($db);
 		}
 	}
+
+	// Allow external modules to add their own shortlist of recent objects
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreRecentObjects', $parameters, $object, $action);
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	else print $hookmanager->resPrint;
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';

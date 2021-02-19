@@ -53,6 +53,11 @@ class pdf_rouget extends ModelePdfExpedition
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -123,6 +128,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "rouget";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
@@ -142,8 +148,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
-		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 78;
-		$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 56;
+		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 82;
+		$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 60;
 		$this->posxqtytoship = $this->page_largeur - $this->marge_droite - 28;
 		$this->posxpuht = $this->page_largeur - $this->marge_droite;
 
@@ -365,14 +371,15 @@ class pdf_rouget extends ModelePdfExpedition
 					$tab_top_alt = $tab_top;
 
 					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
 
-					$tab_top_alt = $pdf->GetY();
 					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (!empty($object->tracking_number))
 					{
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
+						$tab_top_alt = $pdf->GetY();
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url))
 						{
@@ -1054,9 +1061,8 @@ class pdf_rouget extends ModelePdfExpedition
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

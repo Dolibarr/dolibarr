@@ -200,6 +200,7 @@ if (empty($reshook))
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $user->rights->ficheinter->creer) {
+		$selectedLines = GETPOST('toselect', 'array');
 		$object->socid = $socid;
 		$object->duration = (int) GETPOST('duration', 'int');
 		$object->fk_project = (int) GETPOST('projectid', 'int');
@@ -217,8 +218,9 @@ if (empty($reshook))
 			if (!empty($origin) && !empty($originid))
 			{
 				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $_POST['origin'];
-				if (preg_match('/^([^_]+)_([^_]+)/i', $_POST['origin'], $regs))
+				$regs = array();
+				$element = $subelement = GETPOST('origin', 'alphanohtml');
+				if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
 				{
 					$element = $regs[1];
 					$subelement = $regs[2];
@@ -246,7 +248,13 @@ if (empty($reshook))
 				}
 
 				// Extrafields
-				$extrafields = new ExtraFields($db);
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				if ($ret < 0) {
+					$error++;
+					$action = 'create';
+				}
 				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 				$object->array_options = $array_options;
@@ -277,6 +285,8 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
+								if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
 								if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
@@ -472,8 +482,7 @@ if (empty($reshook))
 
 			$desc = GETPOST('np_desc', 'restricthtml');
 			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ?convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
-
+			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
 
 			// Extrafields
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -941,7 +950,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -952,7 +961,7 @@ if ($action == 'create')
 			print '<tr>';
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -1017,8 +1026,6 @@ if ($action == 'create')
 		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
-		print '</form>';
-
 		// Show origin lines
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 			$title = $langs->trans('Services');
@@ -1030,6 +1037,8 @@ if ($action == 'create')
 
 			print '</table>';
 		}
+
+		print '</form>';
 	} else {
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1329,8 +1338,7 @@ if ($action == 'create')
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		if ($action == 'editline')
-		{
+		if ($action == 'editline') {
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id', 'int').'">';
 		} else {
@@ -1342,8 +1350,9 @@ if ($action == 'create')
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.fk_fichinter = '.$object->id;
-		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION))
+		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
 			$sql .= ' AND ft.duree <> 0';
+		}
 		$sql .= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
 
 		$resql = $db->query($sql);
@@ -1370,13 +1379,11 @@ if ($action == 'create')
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				// Ligne en mode visu
-				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid)
-				{
+				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
 					// No.
@@ -1396,8 +1403,7 @@ if ($action == 'create')
 
 					print "</td>\n";
 
-
-					// Econ to edit and delete
+					// Icon to edit and delete
 					if ($object->statut == 0 && $user->rights->ficheinter->creer)
 					{
 						print '<td class="center">';

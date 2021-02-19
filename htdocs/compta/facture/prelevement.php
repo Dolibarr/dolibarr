@@ -213,7 +213,7 @@ if ($object->id > 0)
 		$head = facture_prepare_head($object);
 	}
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, 'bill');
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {
@@ -287,7 +287,9 @@ if ($object->id > 0)
 
 	// Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="3">';
+	print '<span class="badgeneutral">';
 	print $object->getLibType();
+	print '</span>';
 	if ($object->module_source) {
 		print ' <span class="opacitymediumbycolor">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}

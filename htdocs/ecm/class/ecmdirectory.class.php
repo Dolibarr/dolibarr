@@ -40,7 +40,7 @@ class EcmDirectory extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'dir';
+	public $picto = 'folder-open';
 
 	/**
 	 * @var int ID
@@ -345,7 +345,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " t.date_c as date_c,";
 		$sql .= " t.tms as date_m";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -68,7 +68,7 @@ class modProjet extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array('projects');
 
 		// Constants
@@ -138,14 +138,12 @@ class modProjet extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r = 0;
-		$this->boxes[$r][1] = "box_project.php";
-		$r++;
-		$this->boxes[$r][1] = "box_task.php";
-		$r++;
-		$this->boxes[$r][1] = "box_validated_projects.php";
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_project.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_task.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_validated_projects.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_funnel_of_prospection.php', 'enabledbydefaulton'=>'Home'),
+		);
 
 		// Permissions
 		$this->rights = array();

@@ -39,7 +39,7 @@ $title = GETPOST('title');
 $description = GETPOST('description', 'restricthtml');
 $mailsonde = GETPOST('mailsonde');
 $creation_sondage_date = GETPOST('creation_sondage_date');
-$creation_sondage_date = GETPOST('creation_sondage_date');
+$creation_sondage_autre = GETPOST('creation_sondage_autre');
 
 // We init some session variable to avoir warning
 $session_var = array('title', 'description', 'mailsonde');
@@ -53,7 +53,7 @@ $cocheplus = '';
 $cochemail = '';
 
 // Jump to correct page
-if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
+if (!empty($creation_sondage_date) || !empty($creation_sondage_autre))
 {
 	$_SESSION["title"] = $title;
 	$_SESSION["description"] = $description;
@@ -163,7 +163,7 @@ print dol_get_fiche_end();
 
 //focus javascript sur le premier champ
 print '<script type="text/javascript">'."\n";
-print 'document.formulaire.titre.focus();'."\n";
+print 'document.formulaire.title.focus();'."\n";
 print '</script>'."\n";
 
 print '<br>'."\n";

@@ -162,9 +162,9 @@ class Ccountry // extends CommonObject
   		$sql .= " t.label,";
   		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_country as t";
-		if ($id) $sql .= " WHERE t.rowid = ".$id;
-		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-		elseif ($code_iso) $sql .= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
+		if ($id) $sql .= " WHERE t.rowid = ".((int) $id);
+		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape(strtoupper($code))."'";
+		elseif ($code_iso) $sql .= " WHERE t.code_iso = '".$this->db->escape(strtoupper($code_iso))."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -174,11 +174,13 @@ class Ccountry // extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
-				$this->code = $obj->code;
-				$this->code_iso = $obj->code_iso;
-				$this->label = $obj->label;
-				$this->active = $obj->active;
+				if ($obj) {
+					$this->id = $obj->rowid;
+					$this->code = $obj->code;
+					$this->code_iso = $obj->code_iso;
+					$this->label = $obj->label;
+					$this->active = $obj->active;
+				}
 
 				$this->db->free($resql);
 				return 1;

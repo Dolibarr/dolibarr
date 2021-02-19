@@ -246,8 +246,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateCreation");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_creation, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -280,8 +280,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateLastModification");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_modification, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_modification, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -314,8 +314,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateValidation");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_validation, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -348,8 +348,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateApprove");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_approve, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -376,8 +376,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateApprove2");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_approve2, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2 + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -412,8 +412,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateClosing");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_closing, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -446,8 +446,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateConciliating");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_rappro, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -459,8 +459,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateLastSend");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_envoi, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_envoi, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -759,7 +759,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (dol_strlen($maskcounter) < 3 && empty($conf->global->MAIN_COUNTER_WITH_LESS_3_DIGITS)) return 'ErrorCounterMustHaveMoreThan3Digits';
 
 	// Extract value for third party mask counter
-	$regClient = array();
+	$regClientRef = array();
 	if (preg_match('/\{(c+)(0*)\}/i', $mask, $regClientRef))
 	{
 		$maskrefclient = $regClientRef[1].$regClientRef[2];
@@ -791,8 +791,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	// Extract value for user
-	if (preg_match('/\{(u+)\}/i', $mask, $regType))
-	{
+    $regType = array();
+	if (preg_match('/\{(u+)\}/i', $mask, $regType)) {
 		$lastname = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 		if (is_object($objuser)) $lastname = $objuser->lastname;
 
@@ -931,12 +931,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp1)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
 			$sqlwhere .= ')';
-		} elseif ($resetEveryMonth)
-		{
+		} elseif ($resetEveryMonth) {
 			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
-		} else // reset is done on january
-		{
+		} else { // reset is done on january
 			$sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$db->escape($yearcomp)."')";
 		}
 	}
@@ -1040,8 +1038,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} else dol_print_error($db);
 
 		$numFinal = $ref;
-	} elseif ($mode == 'next')
-	{
+	} elseif ($mode == 'next') {
 		$counter++;
 
 		// If value for $counter has a length higher than $maskcounter chars
@@ -1184,8 +1181,7 @@ function check_value($mask, $value)
 	$hasglobalcounter = false;
 	// Extract value for mask counter, mask raz and mask offset
 	$reg = array();
-	if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg))
-	{
+	if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg)) {
 		$masktri = $reg[1].(isset($reg[2]) ? $reg[2] : '').(isset($reg[3]) ? $reg[3] : '');
 		$maskcounter = $reg[1];
 		$hasglobalcounter = true;
@@ -1253,31 +1249,25 @@ function check_value($mask, $value)
 		if ($maskraz <= 1 && !preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) return 'ErrorCantUseRazIfNoYearInMask';
 		//print "x".$maskwithonlyymcode." ".$maskraz;
 	}
-	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
+	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
-	// Check we have a number in ($posnumstart+1).', '.dol_strlen($maskcounter)
-	//
+	if (function_exists('mb_strrpos')) {
+		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 0, 'UTF-8');
+	}
+	else {
+		$posnumstart = strrpos($maskwithnocode, $maskcounter);
+	}	// Pos of counter in final string (from 0 to ...)
+	if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
 
-	// Check length
-	$len = dol_strlen($maskwithnocode);
-	if (dol_strlen($value) != $len) $result = -1;
+	// Check we have a number in $value at position ($posnumstart+1).', '.dol_strlen($maskcounter)
+	// TODO
 
-	// Define $maskLike
-	/* seems not used
-    $maskLike = dol_string_nospecial($mask);
-    $maskLike = str_replace("%","_",$maskLike);
-    // Replace protected special codes with matching number of _ as wild card caracter
-    $maskLike = str_replace(dol_string_nospecial('{yyyy}'),'____',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{yy}'),'__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{y}'),'_',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{mm}'),'__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
-    $maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",dol_strlen($maskcounter),"_"),$maskLike);
-    if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
-	*/
+    // Check length
+    $len = dol_strlen($maskwithnocode);
+    if (dol_strlen($value) != $len) $result = -1;
 
-	dol_syslog("functions2::check_value result=".$result, LOG_DEBUG);
-	return $result;
+    dol_syslog("functions2::check_value result=".$result, LOG_DEBUG);
+    return $result;
 }
 
 /**

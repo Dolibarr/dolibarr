@@ -219,7 +219,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->contrat->dir_output)
+		if ($conf->contrat->multidir_output[$object->entity])
 		{
 			// If $object is id instead of object
 			if (!is_object($object))
@@ -236,7 +236,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->contrat->dir_output;
+			$dir = $conf->contrat->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
 			$file = $dir."/".$objectref.".odt";
@@ -291,12 +291,11 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we dont use as recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {

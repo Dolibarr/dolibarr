@@ -332,13 +332,13 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param   integer	$selected     	Preselected value
-	 * @param   string	$htmlname      	Name of combo list
-	 * @param	int		$nocateg		Show also an entry "Not categorized"
-	 * @param   int     $showempty      Add also an empty line
-	 * @param   string  $morecss        More CSS
-	 * @return  string		        	Html combo list code
+	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param   integer		$selected     	Preselected value
+	 * @param   string		$htmlname      	Name of combo list
+	 * @param	int			$nocateg		Show also an entry "Not categorized"
+	 * @param   int|string  $showempty      Add also an empty line
+	 * @param   string  	$morecss        More CSS
+	 * @return  string			        	Html combo list code
 	 * @see	select_all_categories()
 	 */
 	public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
@@ -368,7 +368,13 @@ class FormOther
 
 		// Print a select with each of them
 		$moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) $moreforfilter .= '<option value="0">&nbsp;</option>'; // Should use -1 to say nothing
+		if ($showempty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) $textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			if (!is_numeric($showempty)) $textforempty = $showempty;
+			$moreforfilter .= '<option class="optiongrey" '.($moreparamonempty ? $moreparamonempty.' ' : '').'value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
+		}
 
 		if (is_array($tab_categs))
 		{
@@ -394,14 +400,14 @@ class FormOther
 	/**
 	 *  Return select list for categories (to use in form search selectors)
 	 *
-	 *  @param	string	$selected     		Preselected value
-	 *  @param  string	$htmlname      		Name of combo list (example: 'search_sale')
-	 *  @param  User	$user           	Object user
-	 *  @param	int		$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	int		$showempty			1=show also an empty value
-	 *  @param	string	$morecss			More CSS
-	 *  @param	int		$norepresentative	Show also an entry "Not categorized"
-	 *  @return string						Html combo list code
+	 *  @param	string		$selected     		Preselected value
+	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
+	 *  @param  User		$user           	Object user
+	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 *  @param	int|string	$showempty			1=show also an empty value
+	 *  @param	string		$morecss			More CSS
+	 *  @param	int			$norepresentative	Show also an entry "Not categorized"
+	 *  @return string							Html combo list code
 	 */
 	public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
 	{
@@ -427,7 +433,12 @@ class FormOther
 
 		// Select each sales and print them in a select input
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) $out .= '<option value="0">&nbsp;</option>';
+		if ($showempty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) $textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			if (!is_numeric($showempty)) $textforempty = $showempty;
+			$out .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+		}
 
 		// Get list of users allowed to be viewed
 		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
@@ -499,11 +510,7 @@ class FormOther
 				$out .= '<option value="'.$obj_usr->rowid.'"';
 				if ($obj_usr->rowid == $selected) $out .= ' selected';
 				$out .= ' data-html="';
-				$outhtml = '';
-				if (!empty($obj_usr->photo))
-				{
-					$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
-				}
+				$outhtml = $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
 				if ($showstatus >= 0 && $obj_usr->status == 0) $outhtml .= '<strike class="opacitymediumxxx">';
 				$outhtml .= $labeltoshow;
 				if ($showstatus >= 0 && $obj_usr->status == 0) $outhtml .= '</strike>';
@@ -620,15 +627,17 @@ class FormOther
 						if ($i > 0) print '<option value="0" disabled>----------</option>';
 						print '<option value="'.$lines[$i]->fk_project.'_0"';
 						if ($selectedproject == $lines[$i]->fk_project) print ' selected';
-						print '>'; // Project -> Task
-						print $langs->trans("Project").' '.$lines[$i]->projectref;
-						if (empty($lines[$i]->public))
-						{
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+
+						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						if (empty($lines[$i]->public)) {
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 						} else {
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 						}
-						//print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
+
+						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+						print '>'; // Project -> Task
+						print $labeltoshow;
 						print "</option>\n";
 
 						$lastprojectid = $lines[$i]->fk_project;
@@ -652,21 +661,26 @@ class FormOther
 					print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
 					if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
 					if ($disabled) print ' disabled';
-					print '>';
-					print $langs->trans("Project").' '.$lines[$i]->projectref;
-					print ' '.$lines[$i]->projectlabel;
+
+					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+					$labeltoshow .= ' '.$lines[$i]->projectlabel;
 					if (empty($lines[$i]->public))
 					{
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 					} else {
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 					}
-					if ($lines[$i]->id) print ' > ';
+					if ($lines[$i]->id) $labeltoshow .= ' > ';
 					for ($k = 0; $k < $level; $k++)
 					{
-						print "&nbsp;&nbsp;&nbsp;";
+						$labeltoshow .= "&nbsp;&nbsp;&nbsp;";
 					}
-					print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
+					$labeltoshow .= $lines[$i]->ref.' '.$lines[$i]->label;
+
+					print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+					print '>';
+					print $labeltoshow;
+					print "</option>\n";
 					$inc++;
 				}
 
@@ -918,9 +932,10 @@ class FormOther
 	 *      @param  int         $useempty          	Show empty in list
 	 *      @param  int         $longlabel         	Show long label
 	 *      @param	string		$morecss			More Css
+	 *  	@param  bool		$addjscombo			Add js combo
 	 *      @return string
 	 */
-	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
+	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'minwidth50 maxwidth75imp valignmiddle', $addjscombo = false)
 	{
 		// phpcs:enable
 		global $langs;
@@ -947,6 +962,15 @@ class FormOther
 			$select_month .= '</option>';
 		}
 		$select_month .= '</select>';
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo)
+		{
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$select_month .= ajax_combobox($htmlname);
+		}
+
 		return $select_month;
 	}
 
@@ -986,17 +1010,9 @@ class FormOther
 	 *  @param  bool	$addjscombo		Add js combo
 	 *  @return	string
 	 */
-	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
+	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle width75', $addjscombo = false)
 	{
 		$out = '';
-
-		// Add code for jquery to use multiselect
-		if ($addjscombo)
-		{
-			// Enhance with select2
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
-		}
 
 		$currentyear = date("Y") + $offset;
 		$max_year = $currentyear + $max_year;
@@ -1027,6 +1043,14 @@ class FormOther
 			}
 		}
 		$out .= "</select>\n";
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo)
+		{
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}
@@ -1354,9 +1378,10 @@ class FormOther
 	 * @param 	mixed	$object				Object analyzed
 	 * @param	array	$search_groupby		Array of preselected fields
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
+	 * @param	string	$morecss			More CSS
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby)
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250')
 	{
 		global $langs, $extrafields, $form;
 
@@ -1378,9 +1403,9 @@ class FormOther
 				if (preg_match('/^pass/', $key)) continue;
 				if (in_array($val['type'], array('html', 'text'))) continue;
 				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
+					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
+					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
 				} else {
 					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
 				}
@@ -1400,7 +1425,7 @@ class FormOther
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}

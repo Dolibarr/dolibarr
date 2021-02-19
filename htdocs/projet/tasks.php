@@ -46,6 +46,16 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $taskref = GETPOST('taskref', 'alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
@@ -83,6 +93,12 @@ if ($id > 0 || !empty($ref))
 $extrafields->fetch_name_optionals_label($taskstatic->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
 
+
+// Default sort order (if not yet defined by previous GETPOST)
+if (!$sortfield) { reset($object->fields); $sortfield="t.".key($object->fields); }   // Set here default search field. By default 1st field in definition. Reset is required to avoid key() to return null.
+if (!$sortorder) $sortorder = "ASC";
+
+
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
@@ -119,14 +135,8 @@ if ($object->usage_bill_time) {
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$taskstatic->table_element]['label']) && count($extrafields->attributes[$taskstatic->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$taskstatic->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$taskstatic->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$taskstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$taskstatic->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$taskstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$taskstatic->table_element]['list'][$key]) != 3 && $extrafields->attributes[$taskstatic->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -329,6 +339,7 @@ $userstatic = new User($db);
 $title = $langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
 llxHeader("", $title, $help_url);
 
 
@@ -492,121 +503,120 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	print load_fiche_titre($langs->trans("NewTask"), '', 'projecttask');
 
-	if ($object->statut == Project::STATUS_CLOSED) {
+	if ($object->id > 0 && $object->statut == Project::STATUS_CLOSED) {
 		print '<div class="warning">';
 		$langs->load("errors");
 		print $langs->trans("WarningProjectClosed");
 		print '</div>';
-	} else {
-		if ($object->statut == Project::STATUS_DRAFT)
-		{
-			print '<div class="warning">';
-			$langs->load("errors");
-			print $langs->trans("WarningProjectDraft");
-			print '</div>';
-		}
-
-		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="createtask">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-		print dol_get_fiche_head('');
-
-		print '<table class="border centpercent">';
-
-		$defaultref = '';
-		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
-		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
-		{
-			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
-			$modTask = new $obj;
-			$defaultref = $modTask->getNextValue($object->thirdparty, null);
-		}
-
-		if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
-
-		// Ref
-		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
-		if (empty($duplicate_code_error))
-		{
-			print (GETPOSTISSET("ref") ?GETPOST("ref", 'alpha') : $defaultref);
-		} else {
-			print $defaultref;
-		}
-		print '<input type="hidden" name="taskref" value="'.($_POST["ref"] ? $_POST["ref"] : $defaultref).'">';
-		print '</td></tr>';
-
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
-		print '<input type="text" name="label" autofocus class="minwidth500 maxwidthonsmartphone" value="'.$label.'">';
-		print '</td></tr>';
-
-		// List of projects
-		print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
-		print $formother->selectProjectTasks(GETPOST('task_parent'), $projectid ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
-		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
-		$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
-		if (is_array($contactsofproject) && count($contactsofproject))
-		{
-			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
-		} else {
-			print $langs->trans("NoUserAssignedToTheProject");
-		}
-		print '</td></tr>';
-
-		// Date start
-		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print $form->selectDate(($date_start ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
-		print '</td></tr>';
-
-		// Date end
-		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print $form->selectDate(($date_end ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
-		print '</td></tr>';
-
-		// Planned workload
-		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-		print $form->select_duration('planned_workload', $planned_workload ? $planned_workload : 0, 0, 'text');
-		print '</td></tr>';
-
-		// Progress
-		print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
-		print $formother->select_percent($progress, 'progress', 0, 5, 0, 100, 1);
-		print '</td></tr>';
-
-		// Description
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
-		print '<td>';
-		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
-		print '</td></tr>';
-
-		// Other options
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
-		if (empty($reshook) && !empty($extrafields->attributes[$taskstatic->table_element]['label']))
-		{
-			print $taskstatic->showOptionals($extrafields, 'edit'); // Do not use $object here that is object of project but use $taskstatic
-		}
-
-		print '</table>';
-
-		print dol_get_fiche_end();
-
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-
-		print '</form>';
 	}
-} elseif ($id > 0 || !empty($ref))
-{
+
+	if ($object->id > 0 && $object->statut == Project::STATUS_DRAFT) {
+		print '<div class="warning">';
+		$langs->load("errors");
+		print $langs->trans("WarningProjectDraft");
+		print '</div>';
+	}
+
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="createtask">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if (!empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
+
+	print dol_get_fiche_head('');
+
+	print '<table class="border centpercent">';
+
+	$defaultref = '';
+	$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+	if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))
+	{
+		require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.'.php';
+		$modTask = new $obj;
+		$defaultref = $modTask->getNextValue($object->thirdparty, null);
+	}
+
+	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref = '';
+
+	// Ref
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
+	if (empty($duplicate_code_error))
+	{
+		print (GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $defaultref);
+	} else {
+		print $defaultref;
+	}
+	print '<input type="hidden" name="taskref" value="'.(GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $defaultref).'">';
+	print '</td></tr>';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
+	print '<input type="text" name="label" autofocus class="minwidth500 maxwidthonsmartphone" value="'.$label.'">';
+	print '</td></tr>';
+
+	// List of projects
+	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
+	print img_picto('', 'project');
+	$formother->selectProjectTasks(GETPOST('task_parent'), $projectid ? $projectid : $object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
+	$contactsofproject = (!empty($object->id) ? $object->getListContactId('internal') : '');
+	if (is_array($contactsofproject) && count($contactsofproject))
+	{
+		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
+	} else {
+		print $langs->trans("NoUserAssignedToTheProject");
+	}
+	print '</td></tr>';
+
+	// Date start
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print $form->selectDate(($date_start ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
+	print '</td></tr>';
+
+	// Date end
+	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print $form->selectDate(($date_end ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
+	print '</td></tr>';
+
+	// Planned workload
+	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+	print $form->select_duration('planned_workload', $planned_workload ? $planned_workload : 0, 0, 'text');
+	print '</td></tr>';
+
+	// Progress
+	print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+	print $formother->select_percent($progress, 'progress', 0, 5, 0, 100, 1);
+	print '</td></tr>';
+
+	// Description
+	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+	print '<td>';
+	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+	print '</td></tr>';
+
+	// Other options
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	if (empty($reshook) && !empty($extrafields->attributes[$taskstatic->table_element]['label']))
+	{
+		print $taskstatic->showOptionals($extrafields, 'edit'); // Do not use $object here that is object of project but use $taskstatic
+	}
+
+	print '</table>';
+
+	print dol_get_fiche_end();
+
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
+
+	print '</form>';
+} elseif ($id > 0 || !empty($ref)) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 	/*
@@ -778,11 +788,11 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (!empty($arrayfields['t.description']['checked'])) print_liste_field_titre($arrayfields['t.description']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, '');
 	if (!empty($arrayfields['t.dateo']['checked'])) print_liste_field_titre($arrayfields['t.dateo']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['t.datee']['checked'])) print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($arrayfields['t.planned_workload']['checked'])) print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.duration_effective']['checked'])) print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.progress_calculated']['checked'])) print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.progress']['checked']))  print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	if (!empty($arrayfields['t.progress_summary']['checked'])) print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['t.planned_workload']['checked'])) print_liste_field_titre($arrayfields['t.planned_workload']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '', 1);
+	if (!empty($arrayfields['t.duration_effective']['checked'])) print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '', 1);
+	if (!empty($arrayfields['t.progress_calculated']['checked'])) print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '', 1);
+	if (!empty($arrayfields['t.progress']['checked']))  print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '', 1);
+	if (!empty($arrayfields['t.progress_summary']['checked'])) print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '', 1);
 	if ($object->usage_bill_time)
 	{
 		if (!empty($arrayfields['t.tobill']['checked']))  print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');

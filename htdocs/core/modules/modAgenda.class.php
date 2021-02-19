@@ -73,7 +73,7 @@ class modAgenda extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("companies");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Module parts
 		$this->module_parts = array();
@@ -221,6 +221,7 @@ class modAgenda extends DolibarrModules
 			'fk_menu'=>'r=0',
 			'type'=>'left',
 			'titre'=>'Actions',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'agenda',
 			'url'=>'/comm/action/index.php?mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',

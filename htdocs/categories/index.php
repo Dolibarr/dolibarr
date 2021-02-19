@@ -109,7 +109,7 @@ if (empty($nosearch)) {
 
 		foreach ($cats as $cat)
 		{
-			$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #bbb"';
+			$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
 
 			print "\t".'<tr class="oddeven">'."\n";
 			print "\t\t<td>";
@@ -160,26 +160,45 @@ foreach ($fulltree as $key => $val)
 	$categstatic->ref = $val['label'];
 	$categstatic->color = $val['color'];
 	$categstatic->type = $type;
-	$li = $categstatic->getNomUrl(1, '', 60, $moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam));
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$counter = '';
-
 	if ($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
-		$elements = $categstatic->getObjectsInCateg($type, 1);
+		$elements = $type == Categorie::TYPE_ACCOUNT
+			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
+			: $categstatic->getObjectsInCateg($type, 1);
+
 		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 	}
 
-	$color = $categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #bbb"';
+	$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
+	$li = $categstatic->getNomUrl(1, '', 60, '&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam));
 
-	$data[] = array(
-	'rowid'=>$val['rowid'],
-	'fk_menu'=>$val['fk_parent'],
-	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories"'.$color.'>'.$li.'</span></td>'.$counter.
-		'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'">'.img_view().'</a></td></tr></table>'
-	);
+	$entry = '<table class="nobordernopadding centpercent">';
+	$entry .= '<tr>';
+
+	$entry .= '<td>';
+	$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
+	$entry .= '</td>';
+
+	$entry .= $counter;
+
+	$entry .= '<td class="right" width="20px;">';
+	$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'">'.img_view().'</a>';
+	$entry .= '</td>';
+	$entry .= '<td class="right" width="20px;">';
+	$entry .= '<a class="editfielda" href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'">'.img_edit().'</a>';
+	$entry .= '</td>';
+	$entry .= '<td class="right" width="20px;">';
+	$entry .= '<a class="deletefilelink" href="'.DOL_URL_ROOT.'/categories/viewcat.php?action=delete&token='.newToken().'&id='.$val['id'].'&type='.$type.$moreparam.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'">'.img_delete().'</a>';
+	$entry .= '</td>';
+
+	$entry .= '</tr>';
+	$entry .= '</table>';
+
+	$data[] = array('rowid' => $val['rowid'], 'fk_menu' => $val['fk_parent'], 'entry' => $entry);
 }
 
 
@@ -194,7 +213,6 @@ if (!empty($conf->use_javascript_ajax))
 print '</td></tr>';
 
 $nbofentries = (count($data) - 1);
-
 if ($nbofentries > 0)
 {
 	print '<tr class="pair"><td colspan="3">';

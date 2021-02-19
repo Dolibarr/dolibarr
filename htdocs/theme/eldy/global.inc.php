@@ -35,7 +35,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #804000;
+	--fieldrequiredcolor: #400030;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -97,10 +97,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 body {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	background-color: #FFFFFF;
-<?php } else { ?>
-	background: var(--colorbackbody);
 <?php } ?>
-	color: var(--colortext);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	line-height: 1.4;
 	font-family: <?php print $fontlist ?>;
@@ -128,6 +125,10 @@ th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decora
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
 /* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
+
+input {
+	font-size: unset;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
@@ -139,7 +140,7 @@ select.vmenusearchselectcombo {
 table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
     overflow: hidden;
     white-space: nowrap;
-    max-width: 120px;
+    max-width: 100px;
     text-overflow: ellipsis;
 }
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
@@ -177,8 +178,11 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 
 input {
     line-height: 1.3em;
-	padding: 5px;
+	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	padding: 5px;
 }
 select {
 	padding-top: 5px;
@@ -322,10 +326,13 @@ input.buttonpaymentstripe {
 	max-width: 320px;
 }
 
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
-    /* height: 40px; */
+    background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -399,6 +406,13 @@ input.pageplusone {
 	color: #000;
 }
 
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
+}
+
 select:invalid {
 	color: gray;
 }
@@ -433,8 +447,12 @@ input:-webkit-autofill {
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px #FDFFF0 inset;
 }
-::-webkit-input-placeholder { color:#ccc; }
-input:-moz-placeholder { color:#ccc; }
+
+/* CSS for placeholder */
+.placeholder { color: #ccc; }
+::-webkit-input-placeholder { color: #ccc; }
+input:-moz-placeholder { color: #ccc; }
+
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
@@ -603,7 +621,7 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1);
+	transform: scaleX(-1) translate(2px, 0);
 }
 .center {
     text-align: center;
@@ -629,6 +647,9 @@ textarea.centpercent {
 }
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
+}
+.nowraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
 }
 .liste_titre .nowrap {
 	white-space: nowrap;
@@ -659,6 +680,15 @@ textarea.centpercent {
 }
 .nounderline {
     text-decoration: none;
+}
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -759,7 +789,8 @@ span.fa.fa-plus-circle.paddingleft {
     padding-bottom: 2px;
 }
 
-.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
@@ -776,12 +807,24 @@ span.fa.fa-plus-circle.paddingleft {
 {
 	border-right: 1px solid #DDD;
 }
+.borderleftlight
+{
+	border-left: 1px solid #DDD;
+}
 #formuserfile {
 	margin-top: 4px;
 }
 #formuserfile input[type='file'] {
     font-size: 1em;
+    /* opacity: 0.5em; */
 }
+/*#formuserfile input[type='file']:valid {
+	color: #a00;
+}
+#formuserfile input[type='file']:empty {
+	color: #0a0;
+}*/
+
 #formuserfile_link {
 	margin-left: 1px;
 }
@@ -1220,6 +1263,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
+.width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
@@ -1292,11 +1336,11 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
-select.widthcentpercentminusx, input.widthcentpercentminusx {
+select.widthcentpercentminusx, span.widthcentpercentminusx:not(.select2-selection), input.widthcentpercentminusx {
 	width: calc(100% - 52px) !important;
 	display: inline-block;
 }
-select.widthcentpercentminusxx, input.widthcentpercentminusxx {
+select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
 	width: calc(100% - 70px) !important;
 	display: inline-block;
 }
@@ -1490,7 +1534,7 @@ select.widthcentpercentminusxx, input.widthcentpercentminusxx {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: var(--tableforfieldcolor);
 }
 
@@ -1882,7 +1926,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -1903,6 +1947,12 @@ span.widthpictotitle.pictotitle {
 .tagtdnote span.pictoedit {
     opacity: 0.4;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 18px;
+    padding-right: 0;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -2078,7 +2128,7 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
-	padding: 0px 4px 0px 4px;
+	padding: 0px 2px 0px 2px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
     text-decoration: none;
@@ -2530,11 +2580,13 @@ img.login, img.printer, img.entity {
 	font-weight: bold;
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
-	width: <?php echo $disableimages ? '26' : '32'; ?>px;
-    height: <?php echo $disableimages ? '26' : '32'; ?>px;
+	width: <?php echo $disableimages ? '26' : '30'; ?>px;
+    height: <?php echo $disableimages ? '26' : '30'; ?>px;
     border-radius: 50%;
     background-size: contain;
     background-size: contain;
+    border: 1px solid;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 0.72em;
@@ -2553,6 +2605,9 @@ img.userphotosmall {			/* size for user photo in lists */
 }
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
     background: #fff;
+}
+form[name="addtime"] img.userphoto {
+    border: 1px solid #444;
 }
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
@@ -3029,6 +3084,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
     padding: 4px !important;
 }
+input.button.smallpaddingimp {
+    font-size: 0.8em;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
@@ -3255,6 +3313,12 @@ td.borderright {
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
 }
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
+}
 
 
 /* For table with no filter before */
@@ -3374,13 +3438,13 @@ div.pagination li:first-child span {
   border-bottom-left-radius: 4px;*/
 }
 
-div.pagination li a:hover,
-div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
+/*div.pagination li a:hover,
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
-div.pagination li:not(.paginationafterarrows,.title-button) span:focus {
+div.pagination li:not(.paginationbeforearrows,.paginationafterarrows,.title-button) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-}
+}*/
 div.pagination li .active a,
 div.pagination li .active span,
 div.pagination li .active a:hover,
@@ -3685,8 +3749,8 @@ table.noborder.paymenttable {
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 .shadow {
-	-webkit-box-shadow: 2px 2px 5px #CCC !important;
-	box-shadow: 2px 2px 5px #CCC !important;
+	-webkit-box-shadow: 1px 1px 7px #CCC !important;
+	box-shadow: 1px 1px 7px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -4113,7 +4177,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
-td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+td.widthpictotitle { width: 38px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; }
 table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
@@ -4358,6 +4422,16 @@ div.ui-tooltip.mytooltip {
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+/*div.divfordateinput img.ui-datepicker-trigger {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 10px;
+}
+.hasDatepicker {
+    padding-bottom: 6px;
+}*/
+
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
 .ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
 html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
@@ -4457,7 +4531,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
     display: none;
 }
 
@@ -4608,7 +4682,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
 .cal_event a:visited    { color: #111111; font-weight: normal !important; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
-.cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event_notbusy a.cal_event_title:hover { color: #111111; font-weight: normal !important; }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 30px !important; }
 .cal_event span.badge.badge-status { border: 1px solid #aaa; }
@@ -5092,17 +5166,30 @@ td.gminorheading {
 .glistlbl, .glistgrid {
 	width: 582px !important;
 }
-.gtaskname div, .gtaskname {
+/*.gtaskname div, .gtaskname {
     min-width: 250px !important;
     max-width: 250px !important;
     width: 250px !important;
+}*/
+.gtaskname div, .gtaskname {
+    min-width: 250px !important;
+    max-width: unset !important;
+    width: unset !important;
 }
 .gpccomplete div, .gpccomplete {
     min-width: 40px !important;
     max-width: 40px !important;
     width: 40px !important;
 }
-
+td.gtaskheading.gstartdate, td.gtaskheading.genddate {
+    white-space: break-spaces;
+}
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
@@ -5393,6 +5480,9 @@ input.select2-input {
 {
     background-color: var(--colorbackvmenu1);
 }
+.select2-container--default .select2-selection--single {
+    background-color: var(--colorbackbody);
+}
 #blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
     color: var(--colortextbackvmenu);
 }
@@ -5501,6 +5591,8 @@ input.select2-input {
 	/*background-color: var(--colorbackvmenu1);
 	border: 1px solid var(--colorbackvmenu1); */
 	box-shadow: 1px 2px 10px var(--colorbackvmenu1);
+	background-color: var(--colorbackbody);
+	color: var(--colortext);
 }
 .select2-dropdown-open {
 	background-color: var(--colorbackvmenu1);
@@ -5597,6 +5689,8 @@ a span.select2-chosen
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
     text-align: <?php echo $left; ?>;
+}
+span#select2-boxbookmark-container {
     opacity: 0.4;
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
@@ -6509,6 +6603,15 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
+/* For copypaste feature                                                          */
+/* ============================================================================== */
+
+.clipboardCPShowOnHover .clipboardCPButton {
+	display: none;
+}
+
+
+/* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
@@ -6731,6 +6834,24 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	}
 }
 
+@media only screen and (max-width: 320px)
+{
+	.dropdown dd ul {
+		max-width: 270px;	/* must always be 50 slower than width */
+	}
+}
+@media only screen and (max-width: 300px)
+{
+	.dropdown dd ul {
+		max-width: 250px;
+	}
+}
+@media only screen and (max-width: 280px)
+{
+	.dropdown dd ul {
+		max-width: 230px;
+	}
+}
 
 
 <?php

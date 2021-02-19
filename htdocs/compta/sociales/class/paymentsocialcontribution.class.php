@@ -47,6 +47,11 @@ class PaymentSocialContribution extends CommonObject
 	public $picto = 'payment';
 
 	/**
+	 * @var string	Label
+	 */
+	public $label;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_charge;
@@ -110,7 +115,7 @@ class PaymentSocialContribution extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
@@ -178,7 +183,7 @@ class PaymentSocialContribution extends CommonObject
 					{
 						$amount = price2num($amount);
 
-						// If we want to closed payed invoices
+						// If we want to closed paid invoices
 						if ($closepaidcontrib)
 						{
 							$contrib = new ChargeSociales($this->db);
@@ -192,7 +197,7 @@ class PaymentSocialContribution extends CommonObject
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0)
 							{
-								$result = $contrib->set_paid($user);
+								$result = $contrib->setPaid($user);
 							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
@@ -562,6 +567,25 @@ class PaymentSocialContribution extends CommonObject
 						$socialcontrib->fetch($key);
 						$result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
 						if ($result <= 0) dol_print_error($this->db);
+
+                        if ($socialcontrib->fk_user) {
+							$fuser = new User($this->db);
+							$fuser->fetch($socialcontrib->fk_user);
+
+							// Add link 'user' in bank_url between operation and bank transaction
+							$result = $acc->add_url_line(
+								$bank_line_id,
+								$socialcontrib->fk_user,
+								DOL_URL_ROOT . '/user/card.php?id=',
+								$fuser->getFullName($langs),
+								'user'
+							);
+
+							if ($result <= 0) {
+								$this->error = $acc->error;
+								$error++;
+							}
+						}
 					}
 				}
 			} else {
@@ -679,7 +703,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) $this->ref = $this->lib;
+		if (empty($this->ref)) $this->ref = $this->label;
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SocialContributionPayment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -694,7 +718,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
 		}
-		if ($this->date) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+		if ($this->datep) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
 
 		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
@@ -706,5 +730,38 @@ class PaymentSocialContribution extends CommonObject
 		}
 
 		return $result;
+	}
+
+
+	/**
+	 *	Return if object was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'bank';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->bank_line;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj)
+			{
+				$alreadydispatched = $obj->nb;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched)
+		{
+			return 1;
+		}
+		return 0;
 	}
 }

@@ -1660,19 +1660,19 @@ if ($action != 'dopayment')
 		$reshook = $hookmanager->executeHooks('doCheckStatus', $parameters, $object, $action);
 		if ($source == 'order' && $object->billed)
 		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("OrderBilled").'</span>';
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("OrderBilled").'</span>';
 		} elseif ($source == 'invoice' && $object->paye)
 		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("InvoicePaid").'</span>';
 		} elseif ($source == 'donation' && $object->paid)
 		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("DonationPaid").'</span>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
 			if ($source == 'membersubscription' && $object->datefin > dol_now())
 			{
 				$langs->load("members");
-				print '<br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
+				print '<br><span class="amountpaymentcomplete size15x">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
 				print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';
 			}
 
@@ -1855,7 +1855,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			{
 				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
-				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already payed)
+				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);
 				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
 			}

@@ -65,7 +65,7 @@ if ($action == 'updateMask')
 	if ($maskconstinvoice)  $res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	if ($maskconstcredit)  $res = dolibarr_set_const($db, $maskconstcredit, $maskcredit, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -146,8 +146,7 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'unsetdoc')
-{
+} elseif ($action == 'unsetdoc') {
 	dolibarr_del_const($db, "INVOICE_SUPPLIER_ADDON_PDF", $conf->entity);
 }
 
@@ -171,7 +170,7 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 
 	$res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -426,7 +425,7 @@ foreach ($dirmodels as $reldir)
 					print $form->textwithpicto('', $htmltooltip, 1, 0);
 					print '</td>';
 					print '<td class="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'order').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					print '</td>';
 
 					print "</tr>\n";

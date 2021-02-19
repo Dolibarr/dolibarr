@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2018	Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014-2020	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -89,6 +89,7 @@ $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_elem
 $permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->contrat->creer; // Used by the include of actions_dellink.inc.php
 
+$error = 0;
 
 
 /*
@@ -212,7 +213,7 @@ if (empty($reshook))
 			$object->note_private = GETPOST('note_private', 'alpha');
 			$object->note_public				= GETPOST('note_public', 'alpha');
 			$object->fk_project					= GETPOST('projectid', 'int');
-			$object->remise_percent = GETPOST('remise_percent', 'alpha');
+			$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
 			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
@@ -373,8 +374,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 		}
-	} elseif ($action == 'classin' && $user->rights->contrat->creer)
-	{
+	} elseif ($action == 'classin' && $user->rights->contrat->creer) {
 		$object->setProject(GETPOST('projectid'));
 	}
 
@@ -383,9 +383,9 @@ if (empty($reshook))
 	{
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = price2num(GETPOST('price_ht'));
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'), 'MU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CU'));
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
@@ -395,8 +395,8 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef));
-		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), 2) : 0);
 
 		if ($qty == '')
 		{
@@ -499,6 +499,12 @@ if (empty($reshook))
 				}
 
 			   	$desc = $prod->description;
+
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc='';
+				}
+
 			   	if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
 				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
@@ -667,10 +673,10 @@ if (empty($reshook))
 
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = GETPOST('elprice');
-			$objectline->subprice = GETPOST('elprice');
-			$objectline->qty = GETPOST('elqty');
-			$objectline->remise_percent = GETPOST('elremise_percent');
+			$objectline->price_ht = price2num(GETPOST('elprice'), 'MU');
+			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
+			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
+			$objectline->remise_percent = price2num(GETPOST('elremise_percent'), 2);
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;
@@ -883,8 +889,8 @@ if (empty($reshook))
 				$action = 'editref';
 			} else {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				$old_filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($old_ref);
-				$new_filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
+				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
+				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 				$files = dol_dir_list($old_filedir);
 				if (!empty($files))
@@ -929,7 +935,7 @@ if (empty($reshook))
 
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->dir_output;
+	$upload_dir = $conf->contrat->multidir_output[$object->entity];
 	$permissiontoadd = $user->rights->contrat->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -1174,14 +1180,14 @@ if ($action == 'create')
 	}
 
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
-	$doleditor = new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
 	if (empty($user->socid))
 	{
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
-		$doleditor = new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -2035,7 +2041,7 @@ if ($action == 'create')
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
-						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
+						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 						} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
 					}
@@ -2131,13 +2137,13 @@ if ($action == 'create')
     		 * Documents generes
     		*/
 			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->contrat->dir_output."/".dol_sanitizeFileName($object->ref);
+			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->contrat->lire;
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
@@ -2162,7 +2168,7 @@ if ($action == 'create')
 		// Presend form
 		$modelmail = 'contract';
 		$defaulttopic = 'SendContractRef';
-		$diroutput = $conf->contrat->dir_output;
+		$diroutput = $conf->contrat->multidir_output[$object->entity];
 		$trackid = 'con'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

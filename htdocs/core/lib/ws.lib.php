@@ -29,7 +29,7 @@
  *  @param	array	$authentication     Array with authentication informations ('login'=>,'password'=>,'entity'=>,'dolibarrkey'=>)
  *  @param 	int		$error				Number of errors
  *  @param  string	$errorcode			Error string code
- *  @param  string	$errorlabel		Error string label
+ *  @param  string	$errorlabel			Error string label
  *  @return User						Return user object identified by login/pass/entity into authentication array
  */
 function check_authentication($authentication, &$error, &$errorcode, &$errorlabel)

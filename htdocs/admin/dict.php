@@ -8,7 +8,7 @@
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2019	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
@@ -205,7 +205,7 @@ $tabsql[17] = "SELECT id      as rowid, code, label, accountancy_code, active FR
 $tabsql[18] = "SELECT rowid   as rowid, code, libelle, tracking, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
-$tabsql[21] = "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
+$tabsql[21] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.position FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
@@ -236,7 +236,7 @@ $tabsqlsort[3] = "country ASC, code ASC";
 $tabsqlsort[4] = "code ASC";
 $tabsqlsort[5] = "label ASC";
 $tabsqlsort[6] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
-$tabsqlsort[7] = "country ASC, code ASC, a.libelle ASC";
+$tabsqlsort[7] = "c.label ASC, a.code ASC, a.libelle ASC";
 $tabsqlsort[8] = "country DESC,".(!empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? ' t.position ASC,' : '')." libelle ASC";
 $tabsqlsort[9] = "label ASC";
 $tabsqlsort[10] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
@@ -250,7 +250,7 @@ $tabsqlsort[17] = "code ASC";
 $tabsqlsort[18] = "code ASC, libelle ASC";
 $tabsqlsort[19] = "id ASC";
 $tabsqlsort[20] = "code ASC, libelle ASC";
-$tabsqlsort[21] = "code ASC, label ASC";
+$tabsqlsort[21] = "code ASC, label ASC, position ASC";
 $tabsqlsort[22] = "code ASC, label ASC";
 $tabsqlsort[23] = "country ASC, taux ASC";
 $tabsqlsort[24] = "code ASC, label ASC";
@@ -295,7 +295,7 @@ $tabfield[17] = "code,label,accountancy_code";
 $tabfield[18] = "code,libelle,tracking";
 $tabfield[19] = "code,libelle";
 $tabfield[20] = "code,libelle";
-$tabfield[21] = "code,label";
+$tabfield[21] = "code,label,position";
 $tabfield[22] = "code,label";
 $tabfield[23] = "country_id,country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[24] = "code,label";
@@ -340,7 +340,7 @@ $tabfieldvalue[17] = "code,label,accountancy_code";
 $tabfieldvalue[18] = "code,libelle,tracking";
 $tabfieldvalue[19] = "code,libelle";
 $tabfieldvalue[20] = "code,libelle";
-$tabfieldvalue[21] = "code,label";
+$tabfieldvalue[21] = "code,label,position";
 $tabfieldvalue[22] = "code,label";
 $tabfieldvalue[23] = "country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[24] = "code,label";
@@ -385,7 +385,7 @@ $tabfieldinsert[17] = "code,label,accountancy_code";
 $tabfieldinsert[18] = "code,libelle,tracking";
 $tabfieldinsert[19] = "code,libelle";
 $tabfieldinsert[20] = "code,libelle";
-$tabfieldinsert[21] = "code,label";
+$tabfieldinsert[21] = "code,label,position";
 $tabfieldinsert[22] = "code,label";
 $tabfieldinsert[23] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24] = "code,label";
@@ -523,7 +523,7 @@ $tabhelp[17] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[18] = array('code'=>$langs->trans("EnterAnyCode"), 'tracking'=>$langs->trans("UrlTrackingDesc"));
 $tabhelp[19] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[20] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[22] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[23] = array('revenuestamp_type'=>'FixedOrPercent');
 $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
@@ -621,6 +621,7 @@ if ($id == 11)
 		// 'contract' => $langs->trans('Contract'),
 		'project' => $langs->trans('Project'),
 		'project_task' => $langs->trans('Task'),
+        'ticket' => $langs->trans('Ticket'),
 		'agenda' => $langs->trans('Agenda'),
 		'dolresource' => $langs->trans('Resource'),
 		// old deprecated
@@ -682,7 +683,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	{
 		// Discard check of mandatory fields for country for some tables
 		if ($value == 'country_id' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryVAT', 'DictionaryRegion', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp', 'DictionaryAccountancysystem', 'DictionaryAccountancyCategory'))) continue; // For some pages, country is not mandatory
-		if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryRevenueStamp'))) continue; // For some pages, country is not mandatory
+		if ($value == 'country' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryCanton', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp'))) continue; // For some pages, country is not mandatory
 		// Discard check of mandatory fiedls for other fields
 		if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
 		if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
@@ -692,7 +693,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if ($value == 'sortorder') continue; // For a column name 'sortorder', we use the field name 'position'
 		if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 			&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
-			&& (!($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
+			&& ($id != 10 || ($listfield[$f] != 'code' && $listfield[$f] != 'note')) // Field code and note is not mandatory for dictionary table 10
 			)
 		) {
 			$ok = 0;
@@ -757,9 +758,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"] = ''; // If empty, we force to null
 	if ($_POST["accountancy_code_sell"] <= 0) $_POST["accountancy_code_sell"] = ''; // If empty, we force to null
 	if ($_POST["accountancy_code_buy"] <= 0) $_POST["accountancy_code_buy"] = ''; // If empty, we force to null
-	if ($id == 10 && GETPOSTISSET("code"))  // Spaces are not allowed into code
+	if ($id == 10 && GETPOSTISSET("code"))  // Spaces are not allowed into code for tax dictionary
 	{
-		$_POST["code"] = preg_replace('/\s/', '', $_POST["code"]);
+		$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', $_POST["code"]);
 	}
 
 	// If check ok and action add, add the line
@@ -798,11 +799,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $value;
 
-			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($value == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($value == 'price' || preg_match('/^amount/i', $value)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($value == 'taux' || $value == 'localtax1' || $value == 'localtax2') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            }
+            elseif ($value == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 
@@ -822,12 +827,17 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		}
 		$sql .= ",1)";
 
-		dol_syslog("actionadd", LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result)	// Add is ok
-		{
-			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
+        dol_syslog("actionadd", LOG_DEBUG);
+        $result = $db->query($sql);
+        if ($result)	// Add is ok
+        {
+            setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
+
+			// Clean $_POST array, we keep only id of dictionary
+			if ($id == 10 && GETPOST('country', 'int') > 0) {
+				$search_country_id = GETPOST('country', 'int');
+			}
+			$_POST = array('id'=>$id);
 		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -856,11 +866,15 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$keycode = $listfieldvalue[$i];
 			if (empty($keycode)) $keycode = $field;
 
-			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-				$_POST[$keycode] = price2num($_POST[$keycode], 'MU');
-			} elseif ($field == 'entity') {
-				$_POST[$keycode] = getEntity($tabname[$id]);
-			}
+            if ($field == 'price' || preg_match('/^amount/i', $field)) {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 'MU');
+            }
+            elseif ($field == 'taux' || $field == 'localtax1' || $field == 'localtax2') {
+            	$_POST[$keycode] = price2num(GETPOST($keycode), 8);
+            }
+            elseif ($field == 'entity') {
+            	$_POST[$keycode] = getEntity($tabname[$id]);
+            }
 
 			if ($i) $sql .= ",";
 			$sql .= $field."=";
@@ -1063,6 +1077,7 @@ if ($id)
 	elseif ($search_code != '' && $id == 28)    $sql .= natural_search("h.code", $search_code);
 	elseif ($search_code != '' && $id == 32)    $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id == 3)     $sql .= natural_search("r.code_region", $search_code);
+	elseif ($search_code != '' && $id == 7)     $sql .= natural_search("a.code", $search_code);
 	elseif ($search_code != '' && $id != 9)     $sql .= natural_search("code", $search_code);
 
 	if ($sortfield)
@@ -1101,7 +1116,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
 		$withentity = null;
 
 		$fieldlist = explode(',', $tabfield[$id]);
@@ -1208,7 +1222,6 @@ if ($id)
 				else $tdsoffields .= $valuetoshow;
 				$tdsoffields .= '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		if ($id == 4) $tdsoffields .= '<td></td>';
@@ -1487,11 +1500,9 @@ if ($id)
 								continue;
 							}
 
-							if ($value == 'element')
-							{
+							if ($value == 'element') {
 								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							} elseif ($value == 'source')
-							{
+							} elseif ($value == 'source') {
 								$valuetoshow = isset($sourceList[$valuetoshow]) ? $sourceList[$valuetoshow] : $valuetoshow;
 							} elseif ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');

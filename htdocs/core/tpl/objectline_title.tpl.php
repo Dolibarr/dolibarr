@@ -53,9 +53,10 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum c
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
+// Supplier ref
 if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
 {
-	print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
+	print '<td class="linerefsupplier maxwidth125"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
 }
 
 // VAT
@@ -65,6 +66,7 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 } else {
 	print $langs->trans('VAT');
 }
+
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT)
 {
 	global $mysoc;
@@ -89,6 +91,7 @@ if ($inputalsopricewithtax) print '<td class="right" style="width: 80px">'.$lang
 // Qty
 print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
+// Unit
 if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
@@ -103,6 +106,7 @@ if ($this->situation_cycle_ref) {
 	print '<td class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</td>';
 }
 
+// Purchase price
 if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
 {
 	if (!empty($user->rights->margins->creer))

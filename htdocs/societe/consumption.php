@@ -130,7 +130,10 @@ if ($object->client)
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
-	if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	$tmpcheck = $object->check_codeclient();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
+		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+	}
 	print '</td></tr>';
 	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
 	$resql = $db->query($sql);
@@ -145,7 +148,7 @@ if ($object->client)
 	if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 }
 
-if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
+if (!empty($conf->ficheinter->enabled) && !empty($user->rights->ficheinter->lire)) $elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 
 if ($object->fournisseur)
 {
@@ -153,7 +156,10 @@ if ($object->fournisseur)
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
-	if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	$tmpcheck = $object->check_codefournisseur();
+	if ($tmpcheck != 0 && $tmpcheck != -5) {
+		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+	}
 	print '</td></tr>';
 	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".$socid;
 	$resql = $db->query($sql);
@@ -427,15 +433,15 @@ if ($sql_select)
 
 		// Status
 		print '<td class="center">';
-		if ($type_element == 'contract')
-		{
-			print $documentstaticline->getLibStatut(2);
+		if ($type_element == 'contract') {
+			print $documentstaticline->getLibStatut(5);
 		} else {
-			print $documentstatic->getLibStatut(2);
+			print $documentstatic->getLibStatut(5);
 		}
 		print '</td>';
 
-		print '<td>';
+		// Label
+		print '<td class="tdoverflowmax300">';
 
 		// Define text, description and type
 		$text = ''; $description = ''; $type = 0;
@@ -600,9 +606,10 @@ if ($sql_select)
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	$db->free($resql);
-} elseif (empty($type_element) || $type_element == -1)
+}
+elseif (empty($type_element) || $type_element == -1)
 {
-	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', (!empty($num) ? $num : 0), '', '');
 
 	print '<table class="liste centpercent">'."\n";
 	// Titles with sort buttons

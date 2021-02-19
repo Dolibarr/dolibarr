@@ -103,6 +103,7 @@ class Adherent extends CommonObject
 	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;
+	public $socid;
 
 	/**
 	 * @var string Address
@@ -287,6 +288,7 @@ class Adherent extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => 1, 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 12, 'index' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
@@ -416,6 +418,7 @@ class Adherent extends CommonObject
 		$infos = '';
 		if ($this->civility_id) $infos .= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel()."\n";
 		$infos .= $langs->transnoentities("id").": ".$this->id."\n";
+		$infos .= $langs->transnoentities("ref").": ".$this->ref."\n";
 		$infos .= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos .= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
 		$infos .= $langs->transnoentities("Company").": ".$this->company."\n";
@@ -437,15 +440,20 @@ class Adherent extends CommonObject
 
 		// Substitutions
 		$substitutionarray = array(
-			'__ID__' => $this->id, '__MEMBER_ID__' => $this->id, '__CIVILITY__' => $this->getCivilityLabel(),
+			'__ID__' => $this->id,
+			'__REF__' => $this->ref,
+			'__MEMBER_ID__' => $this->id,
+			'__CIVILITY__' => $this->getCivilityLabel(),
 			'__FIRSTNAME__' => $msgishtml ? dol_htmlentitiesbr($this->firstname) : ($this->firstname ? $this->firstname : ''),
 			'__LASTNAME__' => $msgishtml ? dol_htmlentitiesbr($this->lastname) : ($this->lastname ? $this->lastname : ''),
 			'__FULLNAME__' => $msgishtml ? dol_htmlentitiesbr($this->getFullName($langs)) : $this->getFullName($langs),
 			'__COMPANY__' => $msgishtml ? dol_htmlentitiesbr($this->company) : ($this->company ? $this->company : ''),
 			'__ADDRESS__' => $msgishtml ? dol_htmlentitiesbr($this->address) : ($this->address ? $this->address : ''),
-			'__ZIP__' => $msgishtml ? dol_htmlentitiesbr($this->zip) : ($this->zip ? $this->zip : ''), '__TOWN__' => $msgishtml ? dol_htmlentitiesbr($this->town) : ($this->town ? $this->town : ''),
+			'__ZIP__' => $msgishtml ? dol_htmlentitiesbr($this->zip) : ($this->zip ? $this->zip : ''),
+			'__TOWN__' => $msgishtml ? dol_htmlentitiesbr($this->town) : ($this->town ? $this->town : ''),
 			'__COUNTRY__' => $msgishtml ? dol_htmlentitiesbr($this->country) : ($this->country ? $this->country : ''),
-			'__EMAIL__' => $msgishtml ? dol_htmlentitiesbr($this->email) : ($this->email ? $this->email : ''), '__BIRTH__' => $msgishtml ? dol_htmlentitiesbr($birthday) : ($birthday ? $birthday : ''),
+			'__EMAIL__' => $msgishtml ? dol_htmlentitiesbr($this->email) : ($this->email ? $this->email : ''),
+			'__BIRTH__' => $msgishtml ? dol_htmlentitiesbr($birthday) : ($birthday ? $birthday : ''),
 			'__PHOTO__' => $msgishtml ? dol_htmlentitiesbr($this->photo) : ($this->photo ? $this->photo : ''),
 			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($this->login) : ($this->login ? $this->login : ''),
 			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($this->pass) : ($this->pass ? $this->pass : ''),
@@ -518,9 +526,10 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql .= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
+		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
 		$sql .= " VALUES (";
-		$sql .= " '".$this->db->idate($this->datec)."'";
+		$sql .= " '(PROV)'";
+		$sql .= ", '".$this->db->idate($this->datec)."'";
 		$sql .= ", ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", ".($user->id > 0 ? $user->id : "null"); // Can be null because member can be created by a guest or a script
 		$sql .= ", null, null, '".$this->db->escape($this->morphy)."'";
@@ -634,7 +643,8 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " civility = ".($this->civility_id ? "'".$this->db->escape($this->civility_id)."'" : "null");
+		$sql .= " ref = '".$this->db->escape($this->ref)."'";
+		$sql .= ", civility = ".($this->civility_id ? "'".$this->db->escape($this->civility_id)."'" : "null");
 		$sql .= ", firstname = ".($this->firstname ? "'".$this->db->escape($this->firstname)."'" : "null");
 		$sql .= ", lastname = ".($this->lastname ? "'".$this->db->escape($this->lastname)."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
@@ -751,6 +761,7 @@ class Adherent extends CommonObject
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $luser->login = $this->login;
 
+						$luser->ref = $this->ref;
 						$luser->civility_id = $this->civility_id;
 						$luser->firstname = $this->firstname;
 						$luser->lastname = $this->lastname;
@@ -1241,7 +1252,8 @@ class Adherent extends CommonObject
 	{
 		global $langs;
 
-		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql = "SELECT d.rowid, d.ref, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname,";
+		$sql .= " d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql .= " d.note_public,";
 		$sql .= " d.email, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
@@ -1262,14 +1274,15 @@ class Adherent extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.state_id = dep.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid";
-		if ($rowid)
-			$sql .= " AND d.rowid=".$rowid;
-		elseif ($ref || $fk_soc) {
+		if ($rowid) {
+			$sql .= " AND d.rowid=".((int) $rowid);
+		} elseif ($ref || $fk_soc) {
 			$sql .= " AND d.entity IN (".getEntity('adherent').")";
-			if ($ref)
-				$sql .= " AND d.rowid='".$this->db->escape($ref)."'";
-			elseif ($fk_soc > 0)
-				$sql .= " AND d.fk_soc=".$fk_soc;
+			if ($ref) {
+				$sql .= " AND d.ref='".$this->db->escape($ref)."'";
+			} elseif ($fk_soc > 0) {
+				$sql .= " AND d.fk_soc=".((int) $fk_soc);
+			}
 		} elseif ($ref_ext) {
 			$sql .= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
 		}
@@ -1281,8 +1294,8 @@ class Adherent extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->entity = $obj->entity;
-				$this->ref = $obj->rowid;
 				$this->id = $obj->rowid;
+				$this->ref = $obj->ref;
 				$this->ref_ext = $obj->ref_ext;
 
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
@@ -1736,7 +1749,7 @@ class Adherent extends CommonObject
 
 				if (!$error) {
 					// Set invoice as paid
-					$invoice->set_paid($user);
+					$invoice->setPaid($user);
 				}
 			}
 
@@ -2070,7 +2083,7 @@ class Adherent extends CommonObject
 			if ($mode == 'login') {
 				$result .= dol_trunc($this->login, $maxlen);
 			} elseif ($mode == 'ref') {
-				$result .= $this->id;
+				$result .= $this->ref;
 			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
@@ -2315,6 +2328,7 @@ class Adherent extends CommonObject
 
 		// Initialise parametres
 		$this->id = 0;
+		$this->ref = 'ABC001';
 		$this->entity = 1;
 		$this->specimen = 1;
 		$this->civility_id = 0;
@@ -2583,38 +2597,8 @@ class Adherent extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		// Handle single category
-		if (!is_array($categories)) {
-			$categories = array($categories);
-		}
-
-		// Get current categories
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, Categorie::TYPE_MEMBER, 'id');
-
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $categories);
-			$to_add = array_diff($categories, $existing);
-		} else {
-			$to_del = array(); // Nothing to delete
-			$to_add = $categories;
-		}
-
-		// Process
-		foreach ($to_del as $del) {
-			if ($c->fetch($del) > 0) {
-				$c->del_type($this, Categorie::TYPE_MEMBER);
-			}
-		}
-		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, Categorie::TYPE_MEMBER);
-			}
-		}
-
-		return;
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_MEMBER);
 	}
 
 	/**

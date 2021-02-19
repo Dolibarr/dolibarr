@@ -89,12 +89,12 @@ if ($action == 'setcodeproduct')
 if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'), 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", GETPOST('value_PRODUIT_MULTIPRICES_LIMIT'), 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 if ($action == 'other')
 {
@@ -127,8 +127,8 @@ if ($action == 'other')
 	$value = GETPOST('price_base_type', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUCT_PRICE_BASE_TYPE", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);
+	/*$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);*/
 
 	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
@@ -144,6 +144,9 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_useProdFournDesc', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+
+	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
 	if ($value) {
 		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
@@ -249,7 +252,7 @@ if ($action == 'set')
 	$value = GETPOST('value');
 	if (GETPOST('value', 'alpha')) $res = dolibarr_set_const($db, $const, $value, 'chaine', 0, '', $conf->entity);
 	else $res = dolibarr_del_const($db, $const, $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 
 //if ($action == 'other')
@@ -312,7 +315,6 @@ print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-$var = true;
 foreach ($dirproduct as $dirroot)
 {
 	$dir = dol_buildpath($dirroot, 0);
@@ -340,7 +342,6 @@ foreach ($dirproduct as $dirroot)
 				if ($modCodeProduct->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 				if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-				$var = !$var;
 				print '<tr class="oddeven">'."\n";
 				print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
@@ -537,16 +538,34 @@ print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 
-/*
- * Other parameters
- */
+// Enable kits (subproducts)
 
-$rowspan = 4;
-if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
-if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
-if (!empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $rowspan++;
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
+print '<td class="right">';
+print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
+print '</td>';
+print '</tr>';
 
+
+// Enable variants
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("VariantsAbility").'</td>';
+print '<td class="right">';
+//print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
+if (empty($conf->variants->enabled)) {
+	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("Module610Name")).'</span>';
+} else {
+	print yn(1).' <span class="opacitymedium">('.$langs->trans("ModuleIsEnabled", $langs->transnoentitiesnoconv("Module610Name")).')</span>';
+}
+print '</td>';
+print '</tr>';
+
+
+// Rule for price
 
 print '<tr class="oddeven">';
 if (empty($conf->multicompany->enabled))
@@ -561,7 +580,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule = 'PRODUIT_MULTIPR
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
+print $form->selectarray("princingrule", $select_pricing_rules, $current_rule, 0, 0, 0, '', 1, 0, 0, '', 'maxwidth400', 1);
 print '</td>';
 print '</tr>';
 
@@ -575,24 +594,15 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</tr>';
 }
 
-//Default product price base type
+// Default product price base type
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultPriceType").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
 print '</td>';
 print '</tr>';
 
-// sousproduits activation/desactivation
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
-print '<td class="right">';
-print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
-print '</td>';
-print '</tr>';
-
-// Utilisation formulaire Ajax sur choix produit
+// Use Ajax form to select a product
 
 print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"), $langs->trans('UseSearchToSelectProductTooltip'), 1).'</td>';
@@ -621,6 +631,28 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
 	print '</tr>';
 }
+
+// Do Not Add Product description on add lines
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
+print '<td class="right">';
+print $form->selectarray(
+	"activate_FillProductDescAuto",
+	array(1=>'AutoFillFormFieldBeforeSubmit', 0=>'DoNotAutofillButAutoConcat', -1=>'DoNotUseDescriptionOfProdut'),
+	empty($conf->global->PRODUIT_AUTOFILL_DESC) ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
+	0,
+	0,
+	0,
+	'',
+	1,
+	0,
+	0,
+	'',
+	'maxwidth400',
+	1
+);
+print '</td>';
+print '</tr>';
 
 // Visualiser description produit dans les formulaires activation/desactivation
 print '<tr class="oddeven">';

@@ -53,6 +53,11 @@ class pdf_merou extends ModelePdfExpedition
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -123,6 +128,7 @@ class pdf_merou extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "merou";
 		$this->description = $langs->trans("DocumentModelMerou");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
@@ -453,7 +459,7 @@ class pdf_merou extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Translations
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "bills", "orders"));
 
 		if (empty($hidetop))
 		{
@@ -620,12 +626,12 @@ class pdf_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, 'day', false, $outputlangs, true), '', 'L');
+		$pdf->MultiCell(70, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, 'day', false, $outputlangs, true), '', 'L');
 
 		$pdf->SetXY($blSocX - 80, $blSocY + 20);
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, '', 'L');
+		$pdf->MultiCell(70, 8, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, '', 'L');
 
 		// Deliverer
 		$pdf->SetXY($blSocX - 80, $blSocY + 23);
@@ -678,8 +684,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Recipient name
-		// You can use the name of the contact company
-		if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+		if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 			$thirdparty = $object->contact;
 		} else {
 			$thirdparty = $object->thirdparty;

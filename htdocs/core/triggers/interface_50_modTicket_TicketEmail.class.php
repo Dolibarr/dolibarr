@@ -132,8 +132,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$langs->load('ticket');
 
 				// Send email to notification email
-				$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
+					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+
 					if ($sendto) {
 						// Init to avoid errors
 						$filepath = array();
@@ -197,11 +198,21 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
-					if (empty($user->socid) && empty($user->email)) {
-							  $object->fetch_thirdparty();
-							  $sendto = $object->thirdparty->email;
-					} else {
-						$sendto = $user->email;
+
+					//if contact selected send to email's contact else send to email's thirdparty
+
+					$contactid = GETPOST('contactid', 'alpha');
+
+					if (!empty($contactid)) {
+						$contact = new Contact($this->db);
+						$res = $contact->fetch($contactid);
+					}
+
+					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
+						$sendto = $contact->email;
+					} elseif (!empty($object->fk_soc)) {
+						$object->fetch_thirdparty();
+						$sendto = $object->thirdparty->email;
 					}
 
 					if ($sendto) {
@@ -246,7 +257,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$message_customer .= '<p>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 						$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 						$replyto = $from;
 
 						$trackid = 'tic'.$object->id;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 if (!$user->admin) accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors"));
+$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors", 'sendings'));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -70,7 +70,7 @@ $workflowcodes = array(
 		'picto'=>'bill'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
@@ -130,6 +130,14 @@ $workflowcodes = array(
 		'enabled'=>(!empty($conf->reception->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
 		'picto'=>'bill'
 	),
+
+	// Automatic classification shipping
+	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
+		'family' => 'classify_shipping',
+		'position' => 66,
+		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
+		'picto' => 'shipment'
+	)
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
@@ -175,6 +183,7 @@ foreach ($workflowcodes as $key => $params) {
 	if ($params['family'] == 'separator') {
 		print '</table>';
 		print '<br>';
+
 		print '<table class="noborder centpercent">';
 
 		continue;
@@ -190,6 +199,7 @@ foreach ($workflowcodes as $key => $params) {
 			if ($reg[1] == 'supplier_proposal')	$header .= ' - '.$langs->trans('SupplierProposal');
 			if ($reg[1] == 'supplier_order')	$header .= ' - '.$langs->trans('SupplierOrder');
 			if ($reg[1] == 'reception')			$header .= ' - '.$langs->trans('Reception');
+			if ($reg[1] == 'shipping')			$header .= ' - '.$langs->trans('Shipment');
 		} else {
 			$header = $langs->trans("Description");
 		}

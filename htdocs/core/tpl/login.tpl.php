@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2009-2015 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2015 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2021 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Need global variable $title to be defined by caller (like dol_loginfunction)
+// Need global variable $urllogo, $title and $titletruedolibarrversion to be defined by caller (like dol_loginfunction in security2.lib.php)
 // Caller can also set 	$morelogincontent = array(['options']=>array('js'=>..., 'table'=>...);
 
 
@@ -149,8 +149,7 @@ if ($disablenofollow) echo '</a>';
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php } ?>
 <!-- <span class="span-icon-user">-->
-<span class="fa fa-user">
-</span>
+<span class="fa fa-user"></span>
 <input type="text" id="username" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </div>
 </div>
@@ -160,12 +159,35 @@ if ($disablenofollow) echo '</a>';
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php } ?>
 <!--<span class="span-icon-password">-->
-<span class="fa fa-key">
-</span>
+<span class="fa fa-key"></span>
 <input id="password" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" type="password" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
 </div></div>
 
 <?php
+if ($captcha) {
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
+	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
+	// TODO: provide accessible captcha variants
+	?>
+	<!-- Captcha -->
+	<div class="trinputlogin">
+	<div class="tagtd none valignmiddle tdinputlogin">
+
+	<span class="fa fa-unlock"></span>
+	<span class="span-icon-security inline-block">
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	</span>
+	<span class="nowrap inline-block">
+	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a>
+	</span>
+
+	</div></div>
+	<?php
+}
+
 if (!empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
 		foreach ($morelogincontent as $format => $option)
@@ -181,31 +203,7 @@ if (!empty($morelogincontent)) {
 	}
 }
 
-if ($captcha) {
-	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
-	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
-	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
-	// TODO: provide accessible captcha variants
-	?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
-
-	<table class="login_table_securitycode centpercent">
-	<tr class="valignmiddle">
-	<td>
-	<span class="span-icon-security">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
-	</span>
-	</td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4" data-role="button"><?php echo $captcha_refresh; ?></a></td>
-	</tr>
-	</table>
-
-	</div></div>
-<?php } ?>
+?>
 
 </div>
 

@@ -204,6 +204,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$object->civility_code = GETPOST("civility_code", 'aZ09');
 			$object->lastname = GETPOST("lastname", 'alphanohtml');
 			$object->firstname = GETPOST("firstname", 'alphanohtml');
 			$object->login = GETPOST("login", 'alphanohtml');
@@ -366,6 +367,7 @@ if (empty($reshook)) {
 
 				$db->begin();
 
+				$object->civility_code = GETPOST("civility_code", 'aZ09');
 				$object->lastname = GETPOST("lastname", 'alphanohtml');
 				$object->firstname = GETPOST("firstname", 'alphanohtml');
 				$object->login = GETPOST("login", 'alphanohtml');
@@ -509,15 +511,15 @@ if (empty($reshook)) {
 				}
 
 				if (!$error && !count($object->errors)) {
-					if (GETPOST('deletephoto') && $object->photo) {
-						$fileimg = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/logos/'.$object->photo;
-						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id.'/logos/thumbs';
+					if (GETPOST('deletephoto') && $object->oldcopy->photo) {
+						$fileimg = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').$object->oldcopy->photo;
+						$dirthumbs = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/thumbs';
 						dol_delete_file($fileimg);
 						dol_delete_dir_recursive($dirthumbs);
 					}
 
 					if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
-						$dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
+						$dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'user');
 
 						dol_mkdir($dir);
 
@@ -737,10 +739,12 @@ if ($action == 'create' || $action == 'adduserldap')
 					$label = '';
 					foreach ($required_fields as $value)
 					{
-						if ($value)
-						{
-							$label .= $value."=".$ldapuser[$value]." ";
-						}
+						if ($value === $conf->global->LDAP_FIELD_PASSWORD || $value === $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
+ 						{
+ 							$label .= $value."=******* ";
+ 						} elseif ($value) {
+ 							$label .= $value."=".$ldapuser[$value]." ";
+ 						}
 					}
 					$liste[$key] = $label;
 				}
@@ -764,7 +768,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	   	print '<input type="hidden" name="action" value="adduserldap">';
 		if (is_array($liste) && count($liste))
 		{
-			print $form->selectarray('users', $liste, '', 1);
+			print $form->selectarray('users', $liste, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth500');
 			print ajax_combobox('users');
 		}
 	   	print '</td><td class="center">';
@@ -788,6 +792,11 @@ if ($action == 'create' || $action == 'adduserldap')
 	print dol_set_focus('#lastname');
 
 	print '<table class="border centpercent">';
+
+	// Civility
+	print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+	print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+	print '</td></tr>';
 
 	// Lastname
 	print '<tr>';
@@ -930,12 +939,6 @@ if ($action == 'create' || $action == 'adduserldap')
 		print "</td></tr>\n";
 	}
 
-	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td>';
-	print '<td>';
-	print $form->textwithpicto($langs->trans("Internal"), $langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
-	print '</td></tr>';
-
 	// Gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';
 	print '<td>';
@@ -953,7 +956,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Hierarchy
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 	print '<td>';
-	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+	print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td>';
 	print "</tr>\n";
 
@@ -965,7 +968,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 		print '</td>';
 		print '<td>';
-		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user').$form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 		print "</tr>\n";
 	}
@@ -978,11 +981,16 @@ if ($action == 'create' || $action == 'adduserldap')
 		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 		print '</td>';
 		print '<td>';
-		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user').$form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
 		print "</tr>\n";
 	}
 
+	// External user
+	print '<tr><td>'.$langs->trans("ExternalUser").' ?</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("Internal"), $langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
+	print '</td></tr>';
 
 	print '</table><hr><table class="border centpercent">';
 
@@ -1840,8 +1848,7 @@ if ($action == 'create' || $action == 'adduserldap')
 
 				if ($caneditfield && (empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
-					if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
-					{
+					if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
@@ -2037,6 +2044,11 @@ if ($action == 'create' || $action == 'adduserldap')
 				print '</tr>';
 			}
 
+			// Civility
+			print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+			print '</td></tr>';
+
 			// Lastname
 			print "<tr>";
 			print '<td class="titlefield fieldrequired">'.$langs->trans("Lastname").'</td>';
@@ -2197,36 +2209,6 @@ if ($action == 'create' || $action == 'adduserldap')
 				print '</td></tr>';
 			}
 
-		   	// Type
-		   	print '<tr><td>'.$langs->trans("Type").'</td>';
-		   	print '<td>';
-		   	if ($user->id == $object->id || !$user->admin)
-		   	{
-		   		// Read mode
-			   	$type = $langs->trans("Internal");
-			   	if ($object->socid) $type = $langs->trans("External");
-			   	print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
-			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
-		   	} else {
-				// Select mode
-				$type = 0;
-				if ($object->contact_id) $type = $object->contact_id;
-
-				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
-					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
-					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
-				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
-			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
-				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
-				}
-			}
-		   	print '</td></tr>';
-
 		   	// Gender
 		   	print '<tr><td>'.$langs->trans("Gender").'</td>';
 		   	print '<td>';
@@ -2307,6 +2289,35 @@ if ($action == 'create' || $action == 'adduserldap')
 				print "</tr>\n";
 			}
 
+			// External user ?
+			print '<tr><td>'.$langs->trans("ExternalUser").' ?</td>';
+			print '<td>';
+			if ($user->id == $object->id || !$user->admin)
+			{
+				// Read mode
+				$type = $langs->trans("Internal");
+				if ($object->socid) $type = $langs->trans("External");
+				print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
+				if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+			} else {
+				// Select mode
+				$type = 0;
+				if ($object->contact_id) $type = $object->contact_id;
+
+				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
+					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+				} else {	// $object->socid is not > 0 here
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+				}
+			}
+			print '</td></tr>';
 
 		   	print '</table><hr><table class="border centpercent">';
 

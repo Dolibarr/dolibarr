@@ -29,7 +29,7 @@ $action = GETPOST('action', 'alpha');
  * Actions
  */
 
-if ($action == 'create') {
+if ($action == 'add') {
 	if (empty($ref) || empty($label)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {

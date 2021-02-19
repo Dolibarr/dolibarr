@@ -368,7 +368,9 @@ class FormTicket
                                         if (response.num) {
                                             var selecthtml_str = response.value;
                                             var selecthtml_dom=$.parseHTML(selecthtml_str);
-                                            $("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+											if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
+                                            	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+											}
                                         } else {
                                             $("#inputautocomplete"+htmlname).val("");
                                         }
@@ -408,7 +410,7 @@ class FormTicket
 		{
 			$formproject = new FormProjets($this->db);
 			print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-			print $formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+			print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print '</td></tr>';
 		}
 

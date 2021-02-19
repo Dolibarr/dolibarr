@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
  *
@@ -73,15 +73,18 @@ $date_endmonth = GETPOST('date_endmonth', 'int');
 $date_endday = GETPOST('date_endday', 'int');
 $date_endyear = GETPOST('date_endyear', 'int');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
-if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
+if ($in_bookkeeping == '') {
+	$in_bookkeeping = 'notyet';
+}
 
 $now = dol_now();
 
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid > 0 && empty($id_journal))
+if ($user->socid > 0 && empty($id_journal)) {
 	accessforbidden();
+}
 
 
 /*
@@ -93,8 +96,7 @@ $error = 0;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth))
-{
+if (empty($date_startmonth) || empty($date_endmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
@@ -103,8 +105,7 @@ if (empty($date_startmonth) || empty($date_endmonth))
 	$pastmonth = $dates['pastmonth'];
 }
 
-if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
-{
+if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
@@ -124,19 +125,18 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc on bu1.url_id=soc.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
 $sql .= " WHERE ba.fk_accountancy_journal=".$id_journal;
 $sql .= ' AND b.amount != 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
-if ($date_start && $date_end)
+if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
+}
 // Define begin binding date
 if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 	$sql .= " AND b.dateo >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
 // Already in bookkeeping or not
-if ($in_bookkeeping == 'already')
-{
+if ($in_bookkeeping == 'already') {
 	$sql .= " AND (b.rowid IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 }
-if ($in_bookkeeping == 'notyet')
-{
+if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 }
 $sql .= " ORDER BY b.datev";
@@ -150,7 +150,7 @@ $userstatic = new User($db);
 $bankaccountstatic = new Account($db);
 $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
-$paymentvatstatic = new TVA($db);
+$paymentvatstatic = new Tva($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -177,9 +177,9 @@ if ($result) {
 	//print $sql;
 
 	// Variables
-	$account_supplier			= (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined'); // NotDefined is a reserved word
-	$account_customer			= (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined'); // NotDefined is a reserved word
-	$account_employee			= (!empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined'); // NotDefined is a reserved word
+	$account_supplier = (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined'); // NotDefined is a reserved word
+	$account_customer = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined'); // NotDefined is a reserved word
+	$account_employee = (!empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_vat = (!empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_donation = (!empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : 'NotDefined'); // NotDefined is a reserved word
 	$account_pay_subscription = (!empty($conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT) ? $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT : 'NotDefined'); // NotDefined is a reserved word
@@ -198,23 +198,28 @@ if ($result) {
 	// one line for bank record = tabbq
 	// one line for thirdparty record = tabtp
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
 		$lineisapurchase = -1;
 		$lineisasale = -1;
 		// Old method to detect if it's a sale or purchase
-		if ($obj->label == '(SupplierInvoicePayment)' || $obj->label == '(SupplierInvoicePaymentBack)') $lineisapurchase = 1;
-		if ($obj->label == '(CustomerInvoicePayment)' || $obj->label == '(CustomerInvoicePaymentBack)') $lineisasale = 1;
-		// Try a more reliable method to detect if record is a supplier payment or a customer payment
-		if ($lineisapurchase < 0)
-		{
-			if ($obj->typeop_payment_supplier == 'payment_supplier') $lineisapurchase = 1;
+		if ($obj->label == '(SupplierInvoicePayment)' || $obj->label == '(SupplierInvoicePaymentBack)') {
+			$lineisapurchase = 1;
 		}
-		if ($lineisasale < 0)
-		{
-			if ($obj->typeop_payment == 'payment') $lineisasale = 1;
+		if ($obj->label == '(CustomerInvoicePayment)' || $obj->label == '(CustomerInvoicePaymentBack)') {
+			$lineisasale = 1;
+		}
+		// Try a more reliable method to detect if record is a supplier payment or a customer payment
+		if ($lineisapurchase < 0) {
+			if ($obj->typeop_payment_supplier == 'payment_supplier') {
+				$lineisapurchase = 1;
+			}
+		}
+		if ($lineisasale < 0) {
+			if ($obj->typeop_payment == 'payment') {
+				$lineisasale = 1;
+			}
 		}
 		//var_dump($obj->type_payment); var_dump($obj->type_payment_supplier);
 		//var_dump($lineisapurchase); //var_dump($lineisasale);
@@ -224,28 +229,30 @@ if ($result) {
 
 		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
-		if ($lineisapurchase > 0)
+		if ($lineisapurchase > 0) {
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
-		if ($lineisasale > 0)
+		}
+		if ($lineisasale > 0) {
 			$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+		}
 
 		$tabcompany[$obj->rowid] = array(
-				'id' => $obj->socid,
-				'name' => $obj->name,
-				'code_compta' => $compta_soc,
-				'email' => $obj->email
+			'id' => $obj->socid,
+			'name' => $obj->name,
+			'code_compta' => $compta_soc,
+			'email' => $obj->email
 		);
 
 		// Set accountancy code for user
 		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
-				'id' => $obj->userid,
-				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
-				'lastname' => $obj->lastname,
-				'firstname' => $obj->firstname,
-				'email' => $obj->useremail,
-				'accountancy_code' => $compta_user
+			'id' => $obj->userid,
+			'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
+			'lastname' => $obj->lastname,
+			'firstname' => $obj->firstname,
+			'email' => $obj->useremail,
+			'accountancy_code' => $compta_user
 		);
 
 		// Variable bookkeeping ($obj->rowid is Bank Id)
@@ -264,10 +271,6 @@ if ($result) {
 		// Load of url links to the line into llx_bank
 		$links = $object->get_url($obj->rowid); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
 
-		//var_dump($i);
-		//var_dump($tabpay);
-		//var_dump($tabcompany);
-
 		// By default
 		$tabpay[$obj->rowid]['type'] = 'unknown'; // Can be SOLD, miscellaneous entry, payment of patient, or any old record with no links in bank_url.
 		$tabtype[$obj->rowid] = 'unknown';
@@ -277,17 +280,14 @@ if ($result) {
 		if (is_array($links) && count($links) > 0) {
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
-				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various')))
-				{
+				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
 					// We save tabtype for a future use, to remember what kind of payment it is
 					$tabpay[$obj->rowid]['type'] = $links[$key]['type'];
 					$tabtype[$obj->rowid] = $links[$key]['type'];
-				} elseif (in_array($links[$key]['type'], array('company', 'user')))
-				{
-					if ($tabpay[$obj->rowid]['type'] == 'unknown')
-					{
+				} elseif (in_array($links[$key]['type'], array('company', 'user'))) {
+					if ($tabpay[$obj->rowid]['type'] == 'unknown') {
 						// We can guess here it is a bank record for a thirdparty company or a user.
 						// But we won't be able to record somewhere else than into a waiting account, because there is no other journal to record the contreparty.
 					}
@@ -312,16 +312,23 @@ if ($result) {
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-					if ($compta_soc) $tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+					if ($compta_soc) {
+						$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+					}
 				} elseif ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
 					$userstatic->name = $links[$key]['label'];
 					$userstatic->email = $tabuser[$obj->rowid]['email'];
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
-					if ($userstatic->id > 0) $tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
-					else $tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
-					if ($compta_user) $tabtp[$obj->rowid][$compta_user] += $obj->amount;
+					if ($userstatic->id > 0) {
+						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
+					} else {
+						$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
+					}
+					if ($compta_user) {
+						$tabtp[$obj->rowid][$compta_user] += $obj->amount;
+					}
 				} elseif ($links[$key]['type'] == 'sc') {
 					$chargestatic->id = $links[$key]['url_id'];
 					$chargestatic->ref = $links[$key]['url_id'];
@@ -329,8 +336,9 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$chargestatic->getNomUrl(2);
 					$reg = array();
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
-						if ($reg[1] == 'socialcontribution')
+						if ($reg[1] == 'socialcontribution') {
 							$reg[1] = 'SocialContribution';
+						}
 						$chargestatic->label = $langs->trans($reg[1]);
 					} else {
 						$chargestatic->label = $links[$key]['label'];
@@ -430,20 +438,17 @@ if ($result) {
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
-		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw']))	// If we dont find 'company' link because it is an old 'withdraw' record
-		{
+		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we dont find 'company' link because it is an old 'withdraw' record
 			foreach ($links as $key => $val) {
 				if ($links[$key]['type'] == 'payment') {
 					// Get thirdparty
 					$tmppayment->fetch($links[$key]['url_id']);
 					$arrayofamounts = $tmppayment->getAmountsArray();
 					if (is_array($arrayofamounts)) {
-						foreach ($arrayofamounts as $invoiceid => $amount)
-						{
+						foreach ($arrayofamounts as $invoiceid => $amount) {
 							$tmpinvoice->fetch($invoiceid);
 							$tmpinvoice->fetch_thirdparty();
-							if ($tmpinvoice->thirdparty->code_compta)
-							{
+							if ($tmpinvoice->thirdparty->code_compta) {
 								$tabtp[$obj->rowid][$tmpinvoice->thirdparty->code_compta] += $amount;
 							}
 						}
@@ -453,7 +458,9 @@ if ($result) {
 		}
 
 		// If no links were found to know the amount on thirdparty, we init it to account 'NotDefined'.
-		if (empty($tabtp[$obj->rowid])) $tabtp[$obj->rowid]['NotDefined'] = $tabbq[$obj->rowid][$compta_bank];
+		if (empty($tabtp[$obj->rowid])) {
+			$tabtp[$obj->rowid]['NotDefined'] = $tabbq[$obj->rowid][$compta_bank];
+		}
 
 		// Check account number is ok
 		/*if ($action == 'writebookkeeping')		// Make test now in such a case
@@ -494,8 +501,7 @@ if (!$error && $action == 'writebookkeeping') {
 	$now = dol_now();
 
 	$error = 0;
-	foreach ($tabpay as $key => $val)		// $key is rowid into llx_bank
-	{
+	foreach ($tabpay as $key => $val) {		// $key is rowid into llx_bank
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
@@ -513,17 +519,18 @@ if (!$error && $action == 'writebookkeeping') {
 		var_dump($tabbq);exit;*/
 
 		// Bank
-		if (!$errorforline && is_array($tabbq[$key]))
-		{
+		if (!$errorforline && is_array($tabbq[$key])) {
 			// Line into bank account
-			foreach ($tabbq[$key] as $k => $mt)
-			{
-				if ($mt)
-				{
+			foreach ($tabbq[$key] as $k => $mt) {
+				if ($mt) {
 					$reflabel = '';
-					if (!empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+					if (!empty($val['lib'])) {
+						$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+					}
 					$reflabel .= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
-					if (!empty($val['soclib'])) $reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
+					if (!empty($val['soclib'])) {
+						$reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
+					}
 
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
@@ -542,7 +549,7 @@ if (!$error && $action == 'writebookkeeping') {
 					$bookkeeping->debit = ($mt >= 0 ? $mt : 0);
 					$bookkeeping->credit = ($mt < 0 ? -$mt : 0);
 					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
+					$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 					$bookkeeping->fk_user_author = $user->id;
 					$bookkeeping->date_creation = $now;
 
@@ -556,8 +563,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
-						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-						{
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 							$error++;
 							$errorforline++;
 							setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
@@ -572,18 +578,16 @@ if (!$error && $action == 'writebookkeeping') {
 		}
 
 		// Third party
-		if (!$errorforline)
-		{
-			if (is_array($tabtp[$key]))
-			{
+		if (!$errorforline) {
+			if (is_array($tabtp[$key])) {
 				// Line into thirdparty account
 				foreach ($tabtp[$key] as $k => $mt) {
-					if ($mt)
-					{
+					if ($mt) {
 						$reflabel = '';
-						if (!empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
-						if ($tabtype[$key] == 'banktransfert')
-						{
+						if (!empty($val['lib'])) {
+							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
+						}
+						if ($tabtype[$key] == 'banktransfert') {
 							$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
 						} else {
 							$reflabel .= dol_string_nohtmltag($val['soclib']);
@@ -601,7 +605,7 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt < 0 ? -$mt : 0);
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->date_creation = $now;
 
@@ -683,8 +687,7 @@ if (!$error && $action == 'writebookkeeping') {
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} else {
-							if ($tabtype[$key] == 'unknown')	// Unknown transaction, we will use a waiting account for thirdparty.
-							{
+							if ($tabtype[$key] == 'unknown') {	// Unknown transaction, we will use a waiting account for thirdparty.
 								// Temporary account
 								$bookkeeping->subledger_account = '';
 								$bookkeeping->subledger_label = '';
@@ -702,8 +705,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 						$result = $bookkeeping->create($user);
 						if ($result < 0) {
-							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-							{
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
 								setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
@@ -717,10 +719,11 @@ if (!$error && $action == 'writebookkeeping') {
 				}
 			} else {	// If thirdparty unknown, output the waiting account
 				foreach ($tabbq[$key] as $k => $mt) {
-					if ($mt)
-					{
+					if ($mt) {
 						$reflabel = '';
-						if (!empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+						if (!empty($val['lib'])) {
+							$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+						}
 						$reflabel .= dol_string_nohtmltag('WaitingAccount');
 
 						$bookkeeping = new BookKeeping($db);
@@ -734,7 +737,7 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->debit = ($mt < 0 ? -$mt : 0);
 						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->journal_label = $langs->transnoentities($journal_label);
 						$bookkeeping->fk_user_author = $user->id;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->label_compte = '';
@@ -747,8 +750,7 @@ if (!$error && $action == 'writebookkeeping') {
 						$result = $bookkeeping->create($user);
 
 						if ($result < 0) {
-							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-							{
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
 								setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
@@ -763,23 +765,20 @@ if (!$error && $action == 'writebookkeeping') {
 			}
 		}
 
-		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))
-		{
+		if (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')) {
 			$error++;
 			$errorforline++;
 			setEventMessages('Try to insert a non balanced transaction in book for '.$ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
 
-		if (!$errorforline)
-		{
+		if (!$errorforline) {
 			$db->commit();
 		} else {
 			//print 'KO for line '.$key.' '.$error.'<br>';
 			$db->rollback();
 
 			$MAXNBERRORS = 5;
-			if ($error >= $MAXNBERRORS)
-			{
+			if ($error >= $MAXNBERRORS) {
 				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
 				break; // Break in the foreach
 			}
@@ -788,8 +787,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
-	} elseif (count($tabpay) == $error)
-	{
+	} elseif (count($tabpay) == $error) {
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
 	} else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
@@ -798,8 +796,7 @@ if (!$error && $action == 'writebookkeeping') {
 	$action = '';
 
 	// Must reload data, so we make a redirect
-	if (count($tabpay) != $error)
-	{
+	if (count($tabpay) != $error) {
 		$param = 'id_journal='.$id_journal;
 		$param .= '&date_startday='.$date_startday;
 		$param .= '&date_startmonth='.$date_startmonth;
@@ -837,20 +834,22 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"'.$langs->transnoentitiesnoconv("Note").'"'.$sep;
 	print "\n";
 
-	foreach ($tabpay as $key => $val)
-	{
+	foreach ($tabpay as $key => $val) {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
 		// Bank
 		foreach ($tabbq[$key] as $k => $mt) {
-			if ($mt)
-			{
+			if ($mt) {
 				$reflabel = '';
-				if (!empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+				if (!empty($val['lib'])) {
+					$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+				}
 				$reflabel .= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
-				if (!empty($val['soclib'])) $reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
+				if (!empty($val['soclib'])) {
+					$reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
+				}
 
 				print '"'.$key.'"'.$sep;
 				print '"'.$date.'"'.$sep;
@@ -870,12 +869,12 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		// Third party
 		if (is_array($tabtp[$key])) {
 			foreach ($tabtp[$key] as $k => $mt) {
-				if ($mt)
-				{
+				if ($mt) {
 					$reflabel = '';
-					if (!empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
-					if ($tabtype[$key] == 'banktransfert')
-					{
+					if (!empty($val['lib'])) {
+						$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
+					}
+					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
 					} else {
 						$reflabel .= dol_string_nohtmltag($val['soclib']);
@@ -907,10 +906,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			}
 		} else {	// If thirdparty unkown, output the waiting account
 			foreach ($tabbq[$key] as $k => $mt) {
-				if ($mt)
-				{
+				if ($mt) {
 					$reflabel = '';
-					if (!empty($val['lib'])) $reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+					if (!empty($val['lib'])) {
+						$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+					}
 					$reflabel .= dol_string_nohtmltag('WaitingAccount');
 
 					print '"'.$key.'"'.$sep;
@@ -967,16 +967,18 @@ if (empty($action) || $action == 'view') {
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
 	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE entity = '.$conf->entity.' AND fk_accountancy_journal IS NULL AND clos=0';
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj->nb > 0)
-		{
+		if ($obj->nb > 0) {
 			print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
-			print ' : '.$langs->trans("AccountancyAreaDescBank", 9, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("BankAccounts").'</strong>');
+			$desc = ' : '.$langs->trans("AccountancyAreaDescBank", 9, '{link}');
+			$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("BankAccounts").'</strong>', $desc);
+			print $desc;
 			print '</div>';
 		}
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 
 
 	// Button to write into Ledger
@@ -990,14 +992,19 @@ if (empty($action) || $action == 'view') {
 
 	print '<div class="tabsAction tabsActionNoBottom">';
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
+	}
 
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
-		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
-		else print '<a class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
+		if ($in_bookkeeping == 'notyet') {
+			print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
+		} else {
+			print '<a class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
+		}
 	}
 
 	print '</div>';
@@ -1040,21 +1047,22 @@ if (empty($action) || $action == 'view') {
 
 	$r = '';
 
-	foreach ($tabpay as $key => $val)			  // $key is rowid in llx_bank
-	{
+	foreach ($tabpay as $key => $val) {			  // $key is rowid in llx_bank
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 		$ref = getSourceDocRef($val, $tabtype[$key]);
 
 		// Bank
-		foreach ($tabbq[$key] as $k => $mt)
-		{
-			if ($mt)
-			{
+		foreach ($tabbq[$key] as $k => $mt) {
+			if ($mt) {
 				$reflabel = '';
-				if (!empty($val['lib'])) $reflabel .= $val['lib']." - ";
+				if (!empty($val['lib'])) {
+					$reflabel .= $val['lib']." - ";
+				}
 				$reflabel .= $langs->trans("Bank").' '.$val['bank_account_ref'];
-				if (!empty($val['soclib'])) $reflabel .= " - ".$val['soclib'];
+				if (!empty($val['soclib'])) {
+					$reflabel .= " - ".$val['soclib'];
+				}
 
 				//var_dump($tabpay[$key]);
 				print '<!-- Bank bank.rowid='.$key.' type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].'-->';
@@ -1064,10 +1072,11 @@ if (empty($action) || $action == 'view') {
 				// Ledger account
 				print "<td>";
 				$accounttoshow = length_accountg($k);
-				if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
-				{
+				if (empty($accounttoshow) || $accounttoshow == 'NotDefined') {
 					print '<span class="error">'.$langs->trans("BankAccountNotDefined").'</span>';
-				} else print $accounttoshow;
+				} else {
+					print $accounttoshow;
+				}
 				print "</td>";
 				// Subledger account
 				print "<td>";
@@ -1091,12 +1100,12 @@ if (empty($action) || $action == 'view') {
 		// Third party
 		if (is_array($tabtp[$key])) {
 			foreach ($tabtp[$key] as $k => $mt) {
-				if ($mt)
-				{
+				if ($mt) {
 					$reflabel = '';
-					if (!empty($val['lib'])) $reflabel .= $val['lib'].($val['soclib'] ? " - " : "");
-					if ($tabtype[$key] == 'banktransfert')
-					{
+					if (!empty($val['lib'])) {
+						$reflabel .= $val['lib'].($val['soclib'] ? " - " : "");
+					}
+					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= $langs->trans('TransitionalAccount').' '.$account_transfer;
 					} else {
 						$reflabel .= $val['soclib'];
@@ -1110,21 +1119,32 @@ if (empty($action) || $action == 'view') {
 					print "<td>";
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
-					if ($tabtype[$key] == 'payment')				$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-					if ($tabtype[$key] == 'payment_supplier')		$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
-					if ($tabtype[$key] == 'payment_expensereport')	$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-					if ($tabtype[$key] == 'payment_salary')			$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
-					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
-					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
-					if ($tabtype[$key] == 'payment_various')	    $account_ledger = $tabpay[$key]["account_various"];
+					if ($tabtype[$key] == 'payment') {
+						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+					}
+					if ($tabtype[$key] == 'payment_supplier') {
+						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+					}
+					if ($tabtype[$key] == 'payment_expensereport') {
+						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					}
+					if ($tabtype[$key] == 'payment_salary') {
+						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					}
+					if ($tabtype[$key] == 'payment_vat') {
+						$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
+					}
+					if ($tabtype[$key] == 'member') {
+						$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
+					}
+					if ($tabtype[$key] == 'payment_various') {
+						$account_ledger = $tabpay[$key]["account_various"];
+					}
 					$accounttoshow = length_accountg($account_ledger);
-					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
-					{
-						if ($tabtype[$key] == 'unknown')
-						{
+					if (empty($accounttoshow) || $accounttoshow == 'NotDefined') {
+						if ($tabtype[$key] == 'unknown') {
 							// We will accept writing, but into a waiting account
-							if (empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) || $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE == '-1')
-							{
+							if (empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) || $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE == '-1') {
 								print '<span class="error">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							} else {
 								print '<span class="warning">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
@@ -1132,32 +1152,42 @@ if (empty($action) || $action == 'view') {
 						} else {
 							// We will refuse writing
 							$errorstring = 'UnknownAccountForThirdpartyBlocking';
-							if ($tabtype[$key] == 'payment')				$errorstring = 'MainAccountForCustomersNotDefined';
-							if ($tabtype[$key] == 'payment_supplier')		$errorstring = 'MainAccountForSuppliersNotDefined';
-							if ($tabtype[$key] == 'payment_expensereport')	$errorstring = 'MainAccountForUsersNotDefined';
-							if ($tabtype[$key] == 'payment_salary')			$errorstring = 'MainAccountForUsersNotDefined';
-							if ($tabtype[$key] == 'payment_vat')			$errorstring = 'MainAccountForVatPaymentNotDefined';
-							if ($tabtype[$key] == 'member')					$errorstring = 'MainAccountForSubscriptionPaymentNotDefined';
+							if ($tabtype[$key] == 'payment') {
+								$errorstring = 'MainAccountForCustomersNotDefined';
+							}
+							if ($tabtype[$key] == 'payment_supplier') {
+								$errorstring = 'MainAccountForSuppliersNotDefined';
+							}
+							if ($tabtype[$key] == 'payment_expensereport') {
+								$errorstring = 'MainAccountForUsersNotDefined';
+							}
+							if ($tabtype[$key] == 'payment_salary') {
+								$errorstring = 'MainAccountForUsersNotDefined';
+							}
+							if ($tabtype[$key] == 'payment_vat') {
+								$errorstring = 'MainAccountForVatPaymentNotDefined';
+							}
+							if ($tabtype[$key] == 'member') {
+								$errorstring = 'MainAccountForSubscriptionPaymentNotDefined';
+							}
 							print '<span class="error">'.$langs->trans($errorstring).'</span>';
 						}
-					} else print $accounttoshow;
+					} else {
+						print $accounttoshow;
+					}
 					print "</td>";
 
 					// Subledger account
 					print "<td>";
-					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various')))	// Type of payment with subledger
-					{
+					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various'))) {	// Type of payment with subledger
 						$accounttoshowsubledger = length_accounta($k);
-						if ($accounttoshow != $accounttoshowsubledger)
-						{
-							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined')
-							{
+						if ($accounttoshow != $accounttoshowsubledger) {
+							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined') {
 								/*var_dump($tabpay[$key]);
 								var_dump($tabtype[$key]);
 								var_dump($tabbq[$key]);*/
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-								if (!empty($tabcompany[$key]['code_compta']))
-								{
+								if (!empty($tabcompany[$key]['code_compta'])) {
 									if (in_array($tabtype[$key], array('payment_various'))) {
 										// For such case, if subledger is not defined, we won't use subledger accounts.
 										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
@@ -1167,7 +1197,9 @@ if (empty($action) || $action == 'view') {
 								} else {
 									print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
 								}
-							} else print $accounttoshowsubledger;
+							} else {
+								print $accounttoshowsubledger;
+							}
 						}
 					}
 					print "</td>";
@@ -1180,10 +1212,11 @@ if (empty($action) || $action == 'view') {
 			}
 		} else {	// Waiting account
 			foreach ($tabbq[$key] as $k => $mt) {
-				if ($mt)
-				{
+				if ($mt) {
 					$reflabel = '';
-					if (!empty($val['lib'])) $reflabel .= $val['lib']." - ";
+					if (!empty($val['lib'])) {
+						$reflabel .= $val['lib']." - ";
+					}
 					$reflabel .= 'WaitingAccount';
 
 					print '<!-- Wait bank.rowid='.$key.' -->';
@@ -1267,78 +1300,67 @@ function getSourceDocRef($val, $typerecord)
 	}
 
 	$sqlmid = '';
-	if ($typerecord == 'payment')
-	{
+	if ($typerecord == 'payment') {
 		$sqlmid = 'SELECT payfac.fk_facture as id, f.ref as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
 		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=".$val["paymentid"];
 		$ref = $langs->transnoentitiesnoconv("Invoice");
-	} elseif ($typerecord == 'payment_supplier')
-	{
+	} elseif ($typerecord == 'payment_supplier') {
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as payfac, ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=".$val["paymentsupplierid"];
 		$ref = $langs->transnoentitiesnoconv("SupplierInvoice");
-	} elseif ($typerecord == 'payment_expensereport')
-	{
+	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
 		$sqlmid .= " WHERE pe.rowid=".$val["paymentexpensereport"]." AND pe.fk_expensereport = e.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
-	} elseif ($typerecord == 'payment_salary')
-	{
+	} elseif ($typerecord == 'payment_salary') {
 		$sqlmid = 'SELECT s.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 		$sqlmid .= " WHERE s.rowid=".$val["paymentsalid"];
 		$ref = $langs->transnoentitiesnoconv("SalaryPayment");
-	} elseif ($typerecord == 'sc')
-	{
+	} elseif ($typerecord == 'sc') {
 		$sqlmid = 'SELECT sc.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementcharge as sc";
 		$sqlmid .= " WHERE sc.rowid=".$val["paymentscid"];
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
-	} elseif ($typerecord == 'payment_vat')
-	{
+	} elseif ($typerecord == 'payment_vat') {
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."tva as v";
 		$sqlmid .= " WHERE v.rowid=".$val["paymentvatid"];
 		$ref = $langs->transnoentitiesnoconv("PaymentVat");
-	} elseif ($typerecord == 'payment_donation')
-	{
+	} elseif ($typerecord == 'payment_donation') {
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_donation as payd";
 		$sqlmid .= " WHERE payd.fk_donation=".$val["paymentdonationid"];
 		$ref = $langs->transnoentitiesnoconv("Donation");
-	} elseif ($typerecord == 'payment_loan')
-	{
+	} elseif ($typerecord == 'payment_loan') {
 		$sqlmid = 'SELECT l.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_loan as l";
 		$sqlmid .= " WHERE l.rowid=".$val["paymentloanid"];
 		$ref = $langs->transnoentitiesnoconv("LoanPayment");
-	} elseif ($typerecord == 'payment_various')
-	{
+	} elseif ($typerecord == 'payment_various') {
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sqlmid .= " WHERE v.rowid=".$val["paymentvariousid"];
 		$ref = $langs->transnoentitiesnoconv("VariousPayment");
 	}
 	// Add warning
-	if (empty($sqlmid))
-	{
+	if (empty($sqlmid)) {
 		dol_syslog("Found a typerecord=".$typerecord." not supported", LOG_WARNING);
 	}
 
-	if ($sqlmid)
-	{
+	if ($sqlmid) {
 		dol_syslog("accountancy/journal/bankjournal.php::sqlmid=".$sqlmid, LOG_DEBUG);
 		$resultmid = $db->query($sqlmid);
-		if ($resultmid)
-		{
-			while ($objmid = $db->fetch_object($resultmid))
-			{
+		if ($resultmid) {
+			while ($objmid = $db->fetch_object($resultmid)) {
 				$ref .= ' '.$objmid->ref;
 			}
-		} else dol_print_error($db);
+		} else {
+			dol_print_error($db);
+		}
 	}
 
 	$ref = dol_trunc($langs->transnoentitiesnoconv("BankId").' '.$val['fk_bank'].' - '.$ref, 295); // 295 + 3 dots (...) is < than max size of 300

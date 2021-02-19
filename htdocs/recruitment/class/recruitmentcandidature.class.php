@@ -115,7 +115,7 @@ class RecruitmentCandidature extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'lastname' => array('type'=>'varchar(128)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>1,),
 		'firstname' => array('type'=>'varchar(128)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>1,),
-		'email' => array('type'=>'varchar(255)', 'label'=>'EMail', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1,),
+		'email' => array('type'=>'varchar(255)', 'label'=>'EMail', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'picto'=>'email'),
 		'phone' => array('type'=>'varchar(64)', 'label'=>'Phone', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1,),
 		'date_birth' => array('type'=>'date', 'label'=>'DateOfBirth', 'enabled'=>'1', 'position'=>70, 'visible'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
@@ -151,42 +151,6 @@ class RecruitmentCandidature extends CommonObject
 	public $model_pdf;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'recruitment_recruitmentcandidatureline';
-
-	/**
-	 * @var int    Field with ID of parent key if this object has a parent
-	 */
-	//public $fk_element = 'fk_recruitmentcandidature';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'RecruitmentCandidatureline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables = array();
-
-	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	 */
-	//protected $childtablesoncascade = array('recruitment_recruitmentcandidaturedet');
-
-	/**
-	 * @var RecruitmentCandidatureLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -1018,7 +982,7 @@ class RecruitmentCandidature extends CommonObject
 
 		$modelpath = "core/modules/recruitment/doc/";
 
-		if ($includedocgeneration) {
+		if ($includedocgeneration && !empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 

@@ -128,7 +128,6 @@ class Opensurveysondage extends CommonObject
 	const STATUS_CLOSED = 2;
 
 
-
 	/**
 	 *  Constructor
 	 *
@@ -149,6 +148,8 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Clean parameters
@@ -173,7 +174,8 @@ class Opensurveysondage extends CommonObject
 		$sql .= "mailsonde,";
 		$sql .= "allow_comments,";
 		$sql .= "allow_spy,";
-		$sql .= "sujet";
+		$sql .= "sujet,";
+ 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->id_sondage)."',";
 		$sql .= " ".(empty($this->description) ? 'NULL' : "'".$this->db->escape($this->description)."'").",";
@@ -182,10 +184,11 @@ class Opensurveysondage extends CommonObject
 		$sql .= " '".$this->db->idate($this->date_fin)."',";
 		$sql .= " ".(int) $this->status.",";
 		$sql .= " '".$this->db->escape($this->format)."',";
-		$sql .= " ".$this->db->escape($this->mailsonde).",";
-		$sql .= " ".$this->db->escape($this->allow_comments).",";
-		$sql .= " ".$this->db->escape($this->allow_spy).",";
-		$sql .= " '".$this->db->escape($this->sujet)."'";
+		$sql .= " ".((int) $this->mailsonde).",";
+		$sql .= " ".((int) $this->allow_comments).",";
+		$sql .= " ".((int) $this->allow_spy).",";
+		$sql .= " '".$this->db->escape($this->sujet)."',";
+        $sql .= " ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();

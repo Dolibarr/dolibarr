@@ -46,6 +46,8 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'stocklist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$toselect = GETPOST('toselect', 'array');
+
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("search_ref", "alpha");
@@ -84,18 +86,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	't.ref'=>"Ref",
-	't.lieu'=>"LocationSummary",
-	't.description'=>"Description",
-	't.address'=>"Address",
-	't.zip'=>'Zip',
-	't.town'=>'Town',
-	't.phone'=>'Phone',
-	't.fax'=>'Fax',
-);
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
@@ -106,35 +96,37 @@ foreach ($object->fields as $key => $val)
 	if (GETPOST('search_'.$search_key, 'alpha') !== '') $search[$search_key] = GETPOST('search_'.$search_key, 'alpha');
 }
 
-// Definition of fields for list
-$arrayfields = array(
-	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
-	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>-2, 'position'=>71),
-	'estimatedstockvaluesell'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'visible'=>-2, 'position'=>72),
-);
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array();
 foreach ($object->fields as $key => $val)
 {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
+	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
-// Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["ef.".$key] = array(
-				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
-			);
-		}
+
+// Definition of array of fields for columns
+$arrayfields = array(
+	'stockqty'=>array('type'=>'float', 'label'=>'PhysicalStock', 'enabled'=>1, 'visible'=>-2, 'checked'=>0, 'position'=>170),
+	'estimatedvalue'=>array('type'=>'float', 'label'=>'EstimatedStockValue', 'enabled'=>1, 'visible'=>1, 'checked'=>1, 'position'=>171),
+	'estimatedstockvaluesell'=>array('type'=>'float', 'label'=>'EstimatedStockValueSell', 'enabled'=>1, 'checked'=>1, 'visible'=>2, 'position'=>172),
+);
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['t.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=>$val['help']
+		);
 	}
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 
 /*
@@ -160,7 +152,7 @@ if (empty($reshook))
 		{
 			$search[$key] = '';
 		}
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -174,6 +166,7 @@ if (empty($reshook))
 	$objectlabel = 'Warehouse';
 	$permissiontoread = $user->rights->stock->lire;
 	$permissiontodelete = $user->rights->stock->supprimer;
+	$permissiontoadd = $user->rights->stock->creer;
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -343,7 +336,8 @@ $arrayofmassactions = array(
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
+if ($user->rights->stock->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" id="searchFormList" method="POST" name="formulaire">';

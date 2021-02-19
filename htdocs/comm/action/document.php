@@ -208,7 +208,7 @@ if ($object->id > 0)
 		if (!empty($object->userassigned))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
-			$tmplist1 = $object->userassigned; $tmplist2 = array();
+			$tmplist1 = $object->userassigned;
 			foreach ($tmplist1 as $key => $val)
 			{
 				if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']] = $val;

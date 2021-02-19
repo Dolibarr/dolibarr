@@ -506,7 +506,7 @@ if (empty($reshook))
 	} elseif ($action == 'classifybilled')
 	{
 		$object->fetch($id);
-		$result = $object->set_billed();
+		$result = $object->setBilled();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
@@ -785,7 +785,7 @@ if ($action == 'create')
 			// Note Public
 			print '<tr><td>'.$langs->trans("NotePublic").'</td>';
 			print '<td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print "</td></tr>";
 
@@ -794,7 +794,7 @@ if ($action == 'create')
 			{
 				print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="3">';
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 60, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 				print $doleditor->Create(1);
 				print "</td></tr>";
 			}
@@ -860,13 +860,13 @@ if ($action == 'create')
 
 			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
-			$liste = ModelePdfReception::liste_modeles($db);
+			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($liste) > 1)
+			if (count($list) > 1)
 			{
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
-				print $form->selectarray('model', $liste, $conf->global->RECEPTION_ADDON_PDF);
+				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);
 				print "</td></tr>\n";
 			}
 

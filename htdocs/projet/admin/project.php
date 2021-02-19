@@ -58,7 +58,7 @@ if ($action == 'updateMask')
 
 	if ($maskconstproject)  $res = dolibarr_set_const($db, $maskconstproject, $maskproject, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -75,7 +75,7 @@ if ($action == 'updateMaskTask')
 
 	if ($maskconstmasktask)  $res = dolibarr_set_const($db, $maskconstmasktask, $masktaskt, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -244,6 +244,12 @@ elseif ($action == 'setdoc')
 	}
 }
 
+// Set boolean (on/off) constants
+elseif (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
+		dol_print_error($db);
+	}
+}
 
 /*
  * View
@@ -839,6 +845,16 @@ print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$
 print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
 print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
+
+$key = 'PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE';
+echo '<tr class="oddeven">',
+		'<td class="left">',
+			$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
+		'</td>',
+		'<td class="right" colspan="2">',
+			ajax_constantonoff($key),
+		'</td>',
+	'</tr>';
 
 print '</table>';
 

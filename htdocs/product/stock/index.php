@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -170,16 +171,18 @@ if ($resql)
 	if (!empty($conf->productbatch->enabled))
 	{
 		print '<th>'.$langs->trans("Batch").'</th>';
-		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			print '<th>'.$langs->trans("SellByDate").'</th>';
 		}
 		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 			print '<th>'.$langs->trans("EatByDate").'</th>';
-		}
+		}*/
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
 	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
+
+	$tmplotstatic = new Productlot($db);
 
 	$i = 0;
 	while ($i < min($num, $max))
@@ -198,20 +201,25 @@ if ($resql)
 		$warehouse->label = $objp->warehouse_label;
 		$warehouse->lieu = $objp->lieu;
 
+		$tmplotstatic->batch = $objp->batch;
+		$tmplotstatic->sellby = $objp->sellby;
+		$tmplotstatic->eatby = $objp->eatby;
+
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
-		if (!empty($conf->productbatch->enabled))
-		{
-			print '<td>'.$objp->batch.'</td>';
-			if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		if (!empty($conf->productbatch->enabled)) {
+			print '<td>';
+			print $tmplotstatic->getNomUrl(0, 'nolink');
+			print '</td>';
+			/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 				print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 			}
 			if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 				print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-			}
+			}*/
 		}
 		print '<td class="tdoverflowmax200">';
 		print $warehouse->getNomUrl(1);

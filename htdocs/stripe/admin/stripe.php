@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
- * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2021  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -169,6 +169,7 @@ print '<span class="opacitymedium">'.$langs->trans("StripeDesc")."</span><br>\n"
 
 print '<br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
@@ -177,7 +178,7 @@ print '<td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven">';
-print '<td class="titlefield">';
+print '<td>';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STRIPE_LIVE');
@@ -209,9 +210,9 @@ if (empty($conf->stripeconnect->enabled))
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
-	  $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
+	  $out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForTestWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php?test', 3);
-	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
+	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
@@ -278,9 +279,9 @@ if (empty($conf->stripeconnect->enabled))
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx</span>';
-	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForLiveWebhook").'</span> ';
 	$url = dol_buildpath('/public/stripe/ipn.php', 3);
-	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
+	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
@@ -321,13 +322,15 @@ if (empty($conf->stripeconnect->enabled))
 
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("UsageParameter").'</td>';
+print '<td>'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
@@ -339,11 +342,12 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("StripeUserAccountForActions").'</td><td>';
-print $form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
+print img_picto('', 'user').$form->select_dolusers($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS, 'STRIPE_USER_ACCOUNT_FOR_ACTIONS', 0);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("BankAccount").'</td><td>';
+print img_picto('', 'bank_account').' ';
 $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
@@ -383,6 +387,21 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 	print '</td></tr>';
 }
 
+// Activate Bancontact
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_BANCONTACT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_BANCONTACT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_BANCONTACT", $arrval, $conf->global->STRIPE_BANCONTACT);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForBECustomers").'</span>';
+	print '</td></tr>';
+}
+
 // Activate iDEAL
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
@@ -395,6 +414,36 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 		print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForNLCustomers").'</span>';
+	print '</td></tr>';
+}
+
+// Activate Giropay
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_GIROPAY").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_GIROPAY');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_GIROPAY", $arrval, $conf->global->STRIPE_GIROPAY);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForDECustomers").'</span>';
+	print '</td></tr>';
+}
+
+// Activate Sofort
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_SOFORT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_SOFORT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_SOFORT", $arrval, $conf->global->STRIPE_SOFORT);
+	}
+	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForATBEDEITNLESCustomers").'</span>';
 	print '</td></tr>';
 }
 
@@ -437,6 +486,19 @@ print '<input class="minwidth200" type="text" name="ONLINE_PAYMENT_SENDEMAIL" va
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
 print '</td></tr>';
 
+print '</table>';
+print '</div>';
+
+print '<br>';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
@@ -461,6 +523,7 @@ if ($conf->use_javascript_ajax) {
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print dol_get_fiche_end();
 
@@ -475,18 +538,20 @@ $token = '';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
-print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required the off-seesion allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
 
 if (!empty($conf->use_javascript_ajax))
 {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
-            $("#apidoc").hide();
-            $("#apidoca").click(function() {
-                $("#apidoc").show();
-            	$("#apidoca").hide();
-            });
-    });';
+	            $("#apidoc").hide();
+	            $("#apidoca").click(function() {
+					console.log("We click on apidoca show/hide");
+	                $("#apidoc").show();
+	            	$("#apidoca").hide();
+					return false;
+	            });
+		   });';
 	print '</script>';
 }
 

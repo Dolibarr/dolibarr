@@ -58,6 +58,10 @@ $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) $search_accountancy_account = '';
 $search_accountancy_subledger = GETPOST("search_accountancy_subledger");
 if ($search_accountancy_subledger == - 1) $search_accountancy_subledger = '';
+if (empty($search_datep_start))  $search_datep_start = GETPOST("search_datep_start", 'int');
+if (empty($search_datep_end)) $search_datep_end = GETPOST("search_datep_end", 'int');
+if (empty($search_datev_start)) $search_datev_start = GETPOST("search_datev_start", 'int');
+if (empty($search_datev_end)) $search_datev_end = GETPOST("search_datev_end", 'int');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -424,6 +428,10 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
+		$variousstatic->id = $obj->rowid;
+		$variousstatic->ref = $obj->rowid;
+		$variousstatic->label = $obj->label;
+
 		print '<tr class="oddeven">';
 
 		// No
@@ -433,15 +441,13 @@ if ($result)
 
 		// Ref
 		if ($arrayfields['ref']['checked']) {
-			$variousstatic->id = $obj->rowid;
-			$variousstatic->ref = $obj->rowid;
-			print "<td>".$variousstatic->getNomUrl(1)."</td>";
+			print '<td>'.$variousstatic->getNomUrl(1)."</td>";
 			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Label payment
 		if ($arrayfields['label']['checked']) {
-			print "<td>".dol_trunc($obj->label, 40)."</td>";
+			print '<td class="tdoverflowmax150" title="'.$variousstatic->label.'">'.$variousstatic->label."</td>";
 			if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -460,20 +466,30 @@ if ($result)
 
 		// Type
 		if ($arrayfields['type']['checked']) {
-			print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+			print '<td>';
+			if ($obj->payment_code) {
+				print $langs->trans("PaymentTypeShort".$obj->payment_code);
+				print ' ';
+			}
+			print $obj->num_payment;
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Project
 		if ($arrayfields['project']['checked']) {
-			$proj->fetch($obj->fk_project);
-			print '<td class="nowraponall">'.$proj->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">';
+			if ($obj->fk_project > 0) {
+				$proj->fetch($obj->fk_project);
+				print $proj->getNomUrl(1);
+			}
+			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Bank account
 		if ($arrayfields['bank']['checked']) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			if ($obj->bid > 0)
 			{
 				$accountstatic->id = $obj->bid;

@@ -37,6 +37,7 @@
 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ALL', '[76,101,107]', 1,	  'Albania Lek');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'DZD', NULL, 1,              'Algeria Dinar');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'AOA', NULL, 1,					    'Angola Kwanza');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'AFN', '[1547]', 1,				  'Afghanistan Afghani');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ARS', '[36]', 1,            'Argentino Peso');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'AWG', '[402]', 1,				    'Aruba Guilder');
@@ -72,6 +73,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XCD'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EGP', '[163]', 1,	    			'Egypt Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'SVC', '[36]', 1,			    	'El Salvador Colon');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EEK', '[107,114]', 1,	  		'Estonia Kroon');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ETB', NULL, 1,		  		    'Ethiopian Birr'); 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EUR', '[8364]', 1,		  		'Euro Member Countries'); 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FKP', '[163]', 1,	    			'Falkland Islands (Malvinas) Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FJD', '[36]', 1,		    		'Fiji Dollar');

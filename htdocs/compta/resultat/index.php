@@ -123,8 +123,12 @@ if ($modecompta == 'CREANCES-DETTES')
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode = $langs->trans("CalcModeDebt");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) $calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>'), $calcmode);
+	if (!empty($conf->accounting->enabled)) {
+		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
+		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
+	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesAmountWithTaxIncluded");
@@ -136,8 +140,12 @@ if ($modecompta == 'CREANCES-DETTES')
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode = $langs->trans("CalcModeEngagement");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) $calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>'), $calcmode);
+	if (!empty($conf->accounting->enabled)) {
+		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{s1}', '{s2}').')';
+		$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', '</a>'), $calcmode);
+	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesAmountWithTaxIncluded");
@@ -148,8 +156,10 @@ if ($modecompta == 'CREANCES-DETTES')
 {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByYear");
 	$calcmode = $langs->trans("CalcModeBookkeeping");
-	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>').')';
-	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>').')';
+	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">', '</a>'), $calcmode);
+	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{s1}', '{s2}').')';
+	$calcmode = str_replace(array('{s1}', '{s2}'), array('<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', '</a>'), $calcmode);
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesAmountOnInOutBookkeepingRecord");
@@ -818,17 +828,15 @@ if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan
 if (!empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 {
 	$predefinedgroupwhere = "(";
-	//$predefinedgroupwhere.= " (pcg_type = 'EXPENSE' and pcg_subtype in ('PRODUCT','SERVICE'))";
-	$predefinedgroupwhere .= " (pcg_type = 'EXPENSE')";
+	$predefinedgroupwhere .= " (aa.pcg_type = 'EXPENSE')";
 	$predefinedgroupwhere .= " OR ";
-	//$predefinedgroupwhere.= " (pcg_type = 'INCOME' and pcg_subtype in ('PRODUCT','SERVICE'))";
-	$predefinedgroupwhere .= " (pcg_type = 'INCOME')";
+	$predefinedgroupwhere .= " (aa.pcg_type = 'INCOME')";
 	$predefinedgroupwhere .= ")";
 
 	$charofaccountstring = $conf->global->CHARTOFACCOUNTS;
 	$charofaccountstring = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
-	$sql = "SELECT b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, pcg_type, date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as debit, sum(b.credit) as credit, sum(b.montant) as amount";
+	$sql = "SELECT b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, aa.pcg_type, date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as debit, sum(b.credit) as credit, sum(b.montant) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE b.entity = ".$conf->entity;
 	$sql .= " AND aa.entity = ".$conf->entity;
@@ -855,10 +863,18 @@ if (!empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 			{
 				$obj = $db->fetch_object($result);
 
-				if (!isset($encaiss[$obj->dm])) $encaiss[$obj->dm] = 0;
-				if (!isset($decaiss[$obj->dm])) $decaiss[$obj->dm] = 0;
-				$encaiss[$obj->dm] += $obj->credit;
-				$decaiss[$obj->dm] += $obj->debit;
+				if ($obj->pcg_type == 'INCOME') {
+					if (!isset($encaiss[$obj->dm])) $encaiss[$obj->dm] = 0;	// To avoid warning of var not defined
+					$encaiss[$obj->dm] += $obj->credit;
+					$encaiss[$obj->dm] -= $obj->debit;
+				}
+				if ($obj->pcg_type == 'EXPENSE') {
+					if (!isset($decaiss[$obj->dm])) $decaiss[$obj->dm] = 0;	// To avoid warning of var not defined
+					$decaiss[$obj->dm] += $obj->debit;
+					$decaiss[$obj->dm] -= $obj->credit;
+				}
+
+				// ???
 				if (!isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm] = 0;
 				if (!isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm] = 0;
 				$encaiss_ttc[$obj->dm] += 0;

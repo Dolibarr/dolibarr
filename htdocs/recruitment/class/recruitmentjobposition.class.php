@@ -103,13 +103,13 @@ class RecruitmentJobPosition extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'csslist'=>'tdoverflowmax300', 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
-		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp',),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
+		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'css'=>'maxwidth500', 'picto'=>'project'),
 		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
-		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail'),
+		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail', 'picto'=>'email'),
 		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid',),
 		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'1', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner",),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'1', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'css'=>'maxwidth500', 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner", 'picto'=>'company'),
 		'date_planned' => array('type'=>'date', 'label'=>'DateExpected', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
 		'remuneration_suggested' => array('type'=>'varchar(255)', 'label'=>'Remuneration', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>1,),
 		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>3,),
@@ -166,40 +166,6 @@ class RecruitmentJobPosition extends CommonObject
 	public $model_pdf;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'recruitment_recruitmentjobpositionline';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_recruitmentjobposition';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'RecruitmentJobPositionline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-
-	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
-	 */
-	//protected $childtablesoncascade=array('recruitment_recruitmentjobpositiondet');
-
-	/**
-	 * @var RecruitmentJobPositionLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -1093,8 +1059,7 @@ class RecruitmentJobPosition extends CommonObject
 		$langs->load("recruitment");
 
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF))
-			{
+			if (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
 				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For job position, we allow to disable all PDF generation
@@ -1103,7 +1068,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		$modelpath = "core/modules/recruitment/doc/";
 
-		if ($includedocgeneration) {
+		if ($includedocgeneration && !empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 

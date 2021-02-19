@@ -45,7 +45,7 @@ class Task extends CommonObject
 	public $table_element = 'projet_task';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_task';
 
@@ -383,13 +383,35 @@ class Task extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error)
+			$result = $this->insertExtraFields();
+			if ($result < 0)
 			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
+				$error++;
+			}
+		}
+
+		if (!$error && $conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE) {
+			// Close the parent project if it is open (validated) and its tasks are 100% completed
+			$project = new Project($this->db);
+			if ($project->fetch($this->fk_project) > 0 && $project->statut == Project::STATUS_VALIDATED) {
+				$project->getLinesArray(null); // this method does not return <= 0 if fails
+				$projectCompleted = array_reduce(
+					$project->lines,
+					function ($allTasksCompleted, $task) {
+						return $allTasksCompleted && $task->progress >= 100;
+					},
+					1
+				);
+				if ($projectCompleted) {
+					if ($project->setClose($user) <= 0) {
+						$error++;
+					}
 				}
+			} else {
+				$error++;
+			}
+			if ($error) {
+				$this->errors[] = $project->error;
 			}
 		}
 
@@ -1896,14 +1918,16 @@ class Task extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("projects");
+		$outputlangs->load("projects");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'nodefault';
 
-			if (!empty($this->modelpdf)) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;

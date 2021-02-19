@@ -29,56 +29,72 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 $langs->loadLangs(array("intracommreport"));
 
 $action = GETPOST('action');
-$exporttype = GETPOST('exporttype'); // DEB ou DES
-if (empty($exporttype)) $exporttype = 'deb';
-
+$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB ou DES
+$year = GETPOSTINT('year');
+$month = GETPOSTINT('month');
+$label = (string) GETPOST('label', 'alphanohtml');
+$type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');
+$backtopage = GETPOST('backtopage', 'alpha');
+$declaration = array(
+	"deb" => $langs->trans("DEB"),
+	"des" => $langs->trans("DES"),
+);
+$typeOfDeclaration = array(
+	"introduction" => $langs->trans("Introduction"),
+	"expedition" => $langs->trans("Expedition"),
+);
+$object = new IntracommReport($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
 $form = new Form($db);
 $formother = new FormOther($db);
-$year = GETPOST('year');
-$month = GETPOST('month');
-$type_declaration = GETPOST('type');
-$backtopage = GETPOST('backtopage', 'alpha');
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
 /*
  * 	Actions
  */
+$parameters = array('id' => $id);
+// Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $confirm == 'yes')
-{
+if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $confirm == 'yes') {
 	$result = $object->delete($id, $user);
-	if ($result > 0)
-	{
-		if (!empty($backtopage))
-		{
+	if ($result > 0) {
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
-		}
-		else {
+		} else {
 			header("Location: list.php");
 			exit;
 		}
-	}
-	else {
+	} else {
 		$errmesg = $object->error;
 	}
 }
 
 if ($action == 'add' && $user->rights->intracommreport->write) {
 	$object->label = trim($label);
-	$object->type               = trim($type);
-	$object->type_declaration   = (int) $statut;
-	$object->subscription       = (int) $subscription;
+	$object->type = trim($exporttype);
+	$object->type_declaration =  $type_declaration;
+	$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-	if ($ret < 0) $error++;
+	// $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	// if ($ret < 0) {
+	// 	$error++;
+	// }
 
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+	} else {
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."intracommreport WHERE ref='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -90,20 +106,16 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$id = $object->create($user);
-		if ($id > 0)
-		{
-			header("Location: ".$_SERVER["PHP_SELF"]);
+		if ($id > 0) {
+			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
-	}
-	else {
+	} else {
 		$action = 'create';
 	}
 }
@@ -113,15 +125,14 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
  */
 
 // Creation mode
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$title = $langs->trans("IntracommReportTitle");
 	llxHeader("", $title);
 	print load_fiche_titre($langs->trans("IntracommReportTitle"));
 
 	print '<form name="charge" method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="export" />';
+	print '<input type="hidden" name="action" value="add" />';
 
 	print dol_get_fiche_head();
 
@@ -131,10 +142,8 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	// Declaration
-	$declaration["deb"] = $langs->trans("DEB");
-	$declaration["des"] = $langs->trans("DES");
 	print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
-	print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha') ?GETPOST('declaration', 'alpha') : $object->declaration, 0);
+	print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha') ? GETPOST('declaration', 'alpha') : $object->declaration, 0);
 	print "</td>\n";
 
 	// Analysis period
@@ -149,10 +158,8 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Type of declaration
-	$typeOfDeclaration["introduction"] = $langs->trans("Introduction");
-	$typeOfDeclaration["expedition"] = $langs->trans("Expedition");
 	print '<tr><td class="fieldrequired">'.$langs->trans("TypeOfDeclaration")."</td><td>\n";
-	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ?GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
+	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ? GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
 	print "</td>\n";
 
 	print '</table>';
@@ -179,11 +186,11 @@ if ($id > 0 && $action != 'edit') {
 	}
 
 	/*
-     * Show tabs
-     */
-	$head = intracommreport_prepare_head($object);
+	 * Show tabs
+	 */
+	//$head = intracommreport_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'general', $langs->trans("IntracommReport"), -1, 'user');
+	print dol_get_fiche_head("", 'general', $langs->trans("IntracommReport"), -1, 'user');
 
 	// Confirm remove report
 	if ($action == 'delete') {
@@ -195,8 +202,15 @@ if ($id > 0 && $action != 'edit') {
 				'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"])
 			);
 		}
-		print $form->formconfirm("card.php?rowid=".$id, $langs->trans("DeleteReport"),
-			$langs->trans("ConfirmDeleteReport"), "confirm_delete", $formquestion, 'no', 1);
+		print $form->formconfirm(
+			"card.php?rowid=".$id,
+			$langs->trans("DeleteReport"),
+			$langs->trans("ConfirmDeleteReport"),
+			"confirm_delete",
+			$formquestion,
+			'no',
+			1
+		);
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/intracommreport/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -229,101 +243,101 @@ if ($id > 0 && $action != 'edit') {
 }
 
 	/*
-    switch($action) {
-        case 'generateXML':
-            $obj = new TDebProdouane($PDOdb);
-            $obj->load($PDOdb, GETPOST('id_declaration'));
-            $obj->generateXMLFile();
-            break;
-        case 'list':
-            _liste($exporttype);
-            break;
-        case 'export':
-            if ($exporttype == 'deb') _export_xml_deb($type_declaration, $year, str_pad($month, 2, 0, STR_PAD_LEFT));
-            else _export_xml_des($type_declaration, $year, str_pad($month, 2, 0, STR_PAD_LEFT));
-        default:
-            if ($exporttype == 'deb') _print_form_deb();
-            else _print_form_des();
-            break;
-    }
+	switch($action) {
+		case 'generateXML':
+			$obj = new TDebProdouane($PDOdb);
+			$obj->load($PDOdb, GETPOST('id_declaration'));
+			$obj->generateXMLFile();
+			break;
+		case 'list':
+			_liste($exporttype);
+			break;
+		case 'export':
+			if ($exporttype == 'deb') _export_xml_deb($type_declaration, $year, str_pad($month, 2, 0, STR_PAD_LEFT));
+			else _export_xml_des($type_declaration, $year, str_pad($month, 2, 0, STR_PAD_LEFT));
+		default:
+			if ($exporttype == 'deb') _print_form_deb();
+			else _print_form_des();
+			break;
+	}
 
-    function _print_form_des()
-    {
-        global $langs, $formother, $year, $month, $type_declaration;
+	function _print_form_des()
+	{
+		global $langs, $formother, $year, $month, $type_declaration;
 
-        $title = $langs->trans("IntracommReportDESTitle");
-        llxHeader("", $title);
-        print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
+		$title = $langs->trans("IntracommReportDESTitle");
+		llxHeader("", $title);
+		print load_fiche_titre($langs->trans("IntracommReportDESTitle"));
 
-        print dol_get_fiche_head();
+		print dol_get_fiche_head();
 
-        print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
-        print '<input type="hidden" name="token" value="'.newToken().'">';
-        print '<input type="hidden" name="action" value="export" />';
-        print '<input type="hidden" name="exporttype" value="des" />';
-        print '<input type="hidden" name="type" value="expedition" />'; // Permet d'utiliser le bon select de la requête sql
+		print '<form action="'.$_SERVER['PHP_SELF'].'" name="save" method="POST">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="export" />';
+		print '<input type="hidden" name="exporttype" value="des" />';
+		print '<input type="hidden" name="type" value="expedition" />'; // Permet d'utiliser le bon select de la requête sql
 
-        print '<table width="100%" class="noborder">';
+		print '<table width="100%" class="noborder">';
 
-        print '<tr class="liste_titre"><td colspan="2">';
-        print 'Paramètres de l\'export';
-        print '</td></tr>';
+		print '<tr class="liste_titre"><td colspan="2">';
+		print 'Paramètres de l\'export';
+		print '</td></tr>';
 
-        print '<tr>';
-        print '<td>Période d\'analyse</td>';
-        print '<td>';
-        $TabMonth = array();
-        for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
-        //print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
-        print $formother->selectyear(empty($year) ? date('Y') : $year,'year',0, 20, 5);
-        print '</td>';
-        print '</tr>';
+		print '<tr>';
+		print '<td>Période d\'analyse</td>';
+		print '<td>';
+		$TabMonth = array();
+		for($i=1;$i<=12;$i++) $TabMonth[$i] = $langs->trans('Month'.str_pad($i, 2, 0, STR_PAD_LEFT));
+		//print $ATMform->combo('','month', $TabMonth, empty($month) ? date('m') : $month);
+		print $formother->selectyear(empty($year) ? date('Y') : $year,'year',0, 20, 5);
+		print '</td>';
+		print '</tr>';
 
-        print '</table>';
+		print '</table>';
 
-        print '<div class="tabsAction">';
-        print '<input class="butAction" type="submit" value="Exporter XML" />';
-        print '</div>';
+		print '<div class="tabsAction">';
+		print '<input class="butAction" type="submit" value="Exporter XML" />';
+		print '</div>';
 
-        print '</form>';
-    }
+		print '</form>';
+	}
 
-    function _export_xml_deb($type_declaration, $period_year, $period_month) {
+	function _export_xml_deb($type_declaration, $period_year, $period_month) {
 
-        global $db, $conf;
+		global $db, $conf;
 
-        $obj = new TDebProdouane($db);
-        $obj->entity = $conf->entity;
-        $obj->mode = 'O';
-        $obj->periode = $period_year.'-'.$period_month;
-        $obj->type_declaration = $type_declaration;
-        $obj->numero_declaration = $obj->getNextNumeroDeclaration();
-        $obj->content_xml = $obj->getXML('O', $type_declaration, $period_year.'-'.$period_month);
-        if(empty($obj->errors)) {
-            $obj->save($PDOdb);
-            $obj->generateXMLFile();
-        }
-        else setEventMessage($obj->errors, 'warnings');
-    }
+		$obj = new TDebProdouane($db);
+		$obj->entity = $conf->entity;
+		$obj->mode = 'O';
+		$obj->periode = $period_year.'-'.$period_month;
+		$obj->type_declaration = $type_declaration;
+		$obj->numero_declaration = $obj->getNextNumeroDeclaration();
+		$obj->content_xml = $obj->getXML('O', $type_declaration, $period_year.'-'.$period_month);
+		if(empty($obj->errors)) {
+			$obj->save($PDOdb);
+			$obj->generateXMLFile();
+		}
+		else setEventMessage($obj->errors, 'warnings');
+	}
 
-    function _export_xml_des($type_declaration, $period_year, $period_month) {
+	function _export_xml_des($type_declaration, $period_year, $period_month) {
 
-        global $PDOdb, $conf;
+		global $PDOdb, $conf;
 
-        $obj = new TDebProdouane($PDOdb);
-        $obj->entity = $conf->entity;
-        $obj->periode = $period_year.'-'.$period_month;
-        $obj->type_declaration = $type_declaration;
-        $obj->exporttype = 'des';
-        $obj->numero_declaration = $obj->getNextNumeroDeclaration();
-        $obj->content_xml = $obj->getXMLDes($period_year, $period_month, $type_declaration);
-        if(empty($obj->errors)) {
-            $obj->save($PDOdb);
-            $obj->generateXMLFile();
-        }
-        else setEventMessage($obj->errors, 'warnings');
-    }
-    */
+		$obj = new TDebProdouane($PDOdb);
+		$obj->entity = $conf->entity;
+		$obj->periode = $period_year.'-'.$period_month;
+		$obj->type_declaration = $type_declaration;
+		$obj->exporttype = 'des';
+		$obj->numero_declaration = $obj->getNextNumeroDeclaration();
+		$obj->content_xml = $obj->getXMLDes($period_year, $period_month, $type_declaration);
+		if(empty($obj->errors)) {
+			$obj->save($PDOdb);
+			$obj->generateXMLFile();
+		}
+		else setEventMessage($obj->errors, 'warnings');
+	}
+	*/
 
 // End of page
 llxFooter();

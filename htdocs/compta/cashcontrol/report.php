@@ -73,9 +73,10 @@ $terminalid = $cashcontrol->posnumber;
  * View
  */
 
+$title = $langs->trans("CashControl");
 $param = '';
 
-llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $param);
+llxHeader('', $title, '', '', 0, 0, array(), array(), $param);
 
 /*$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql.= " b.fk_account, b.fk_type,";
@@ -133,7 +134,8 @@ if ($resql) {
 	print "<center><h2>";
 	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) print $langs->trans("CashControl")." ".$cashcontrol->id;
 	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
-	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour')."</h2></center>";
+	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour');
+	print "</h2></center>";
 
 	$invoicetmp = new Facture($db);
 
@@ -155,8 +157,6 @@ if ($resql) {
 	print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
-
-	$posconciliatecol = 0;
 
 	// Loop on each record
 	$sign = 1;
@@ -263,7 +263,7 @@ if ($resql) {
 	print "</table>";
 
 	//$cash = $amountpertype['LIQ'] + $cashcontrol->opening;
-	$cash = $cash + $cashcontrol->opening;
+	$cash = price2num($cash + $cashcontrol->opening, 'MT');
 
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("Cash").": ".price($cash);

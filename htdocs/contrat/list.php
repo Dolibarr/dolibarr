@@ -33,6 +33,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -114,31 +115,25 @@ $fieldstosearchall = array(
 if (empty($user->socid)) $fieldstosearchall["c.note_private"] = "NotePrivate";
 
 $arrayfields = array(
-	'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'c.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-	'c.ref_supplier'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.email'=>array('label'=>$langs->trans("ThirdPartyEmail"), 'checked'=>0),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
-	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
-	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
-	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1),
+	'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1, 'position'=>10),
+	'c.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1, 'position'=>12),
+	'c.ref_supplier'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'position'=>14),
+	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>30),
+	's.email'=>array('label'=>$langs->trans("ThirdPartyEmail"), 'checked'=>0, 'position'=>30),
+	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0, 'position'=>31),
+	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0, 'position'=>32),
+	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0, 'position'=>33),
+	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0, 'position'=>34),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1, 'position'=>80),
+	'c.date_contrat'=>array('label'=>$langs->trans("DateContract"), 'checked'=>1, 'position'=>45),
 	'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'lower_planned_end_date'=>array('label'=>$langs->trans("LowerDateEndPlannedShort"), 'checked'=>1, 'position'=>900, 'help'=>$langs->trans("LowerDateEndPlannedShort")),
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -181,6 +176,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$sall = "";
 	$search_status = "";
 	$toselect = '';
+	$search_type_thirdparty = '';
 	$search_array_options = array();
 }
 
@@ -204,11 +200,12 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);
+$formcompany = new FormCompany($db);
 $contracttmp = new Contrat($db);
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
-$sql .= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";
@@ -241,6 +238,7 @@ if ($search_user > 0)
 }
 $sql .= " WHERE c.fk_soc = s.rowid ";
 $sql .= ' AND c.entity IN ('.getEntity('contract').')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_product_category > 0) $sql .= " AND cp.fk_categorie = ".$search_product_category;
 if ($socid) $sql .= " AND s.rowid = ".$db->escape($socid);
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -262,8 +260,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
-$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
+$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
 $sql .= " typent.code,";
 $sql .= " state.code_departement, state.nom";
 // Add fields from extrafields
@@ -281,7 +279,6 @@ if ($search_dfyear > 0 && $search_op2df)
 	else $sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 }
 $sql .= $db->order($sortfield, $sortorder);
-//print $sql;
 
 $totalnboflines = 0;
 $result = $db->query($sql);
@@ -341,7 +338,7 @@ if ($socid > 0)
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 if ($sall != '')                $param .= '&sall='.urlencode($sall);
 if ($search_contract != '')     $param .= '&search_contract='.urlencode($search_contract);
 if ($search_name != '')         $param .= '&search_name='.urlencode($search_name);
@@ -353,6 +350,7 @@ if ($search_dfyear != '')       $param .= '&search_dfyear='.urlencode($search_df
 if ($search_dfmonth != '')      $param .= '&search_dfmonth='.urlencode($search_dfmonth);
 if ($search_sale != '')         $param .= '&search_sale='.urlencode($search_sale);
 if ($search_user != '')			$param .= '&search_user='.urlencode($search_user);
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 if ($search_product_category != '')	$param .= '&search_product_category='.urlencode($search_product_category);
 if ($show_files)                $param .= '&show_files='.urlencode($show_files);
 if ($optioncss != '')           $param .= '&optioncss='.urlencode($optioncss);
@@ -498,7 +496,7 @@ if (!empty($arrayfields['country.code_iso']['checked']))
 if (!empty($arrayfields['typent.code']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT),  '', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['sale_representative']['checked']))
@@ -596,6 +594,10 @@ if (!empty($arrayfields['status']['checked'])) {
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
+$totalarray = array();
+$typenArray = array();
+$cacheCountryIDCode = array();
+
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -608,6 +610,24 @@ while ($i < min($num, $limit))
 	if ($obj->socid > 0) {
 		$result = $socstatic->fetch($obj->socid);
 	}
+	/*$socstatic->id = $obj->socid;
+	$socstatic->name = $obj->name;
+	$socstatic->name_alias = $obj->name_alias;
+	$socstatic->email = $obj->email;
+	$socstatic->status = $obj->company_status;
+	$socstatic->logo = $obj->logo;
+	$socstatic->country_id = $obj->country_id;
+	$socstatic->country_code = '';
+	$socstatic->country = '';*/
+	if ($obj->country_id > 0) {
+		if (!isset($cacheCountryIDCode[$obj->country_id]['code'])) {
+			$tmparray = getCountry($obj->country_id, 'all');
+			$cacheCountryIDCode[$obj->country_id] = array('code'=> empty($tmparray['code']) ? '' : $tmparray['code'], 'label' => empty($tmparray['label']) ? '' : $tmparray['label']);
+		}
+		$socstatic->country_code = $cacheCountryIDCode[$obj->country_id]['code'];
+		$socstatic->country = $cacheCountryIDCode[$obj->country_id]['label'];
+	}
+
 
 	print '<tr class="oddeven">';
 
@@ -624,7 +644,7 @@ while ($i < min($num, $limit))
 		}
 
 		$filename = dol_sanitizeFileName($obj->ref);
-		$filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+		$filedir = $conf->contrat->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 		print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
 		print '</td>';
@@ -642,10 +662,9 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td>';
-		//print '<a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a>';
-		if ($obj->socid > 0)
-		{
+		print '<td class="tdoverflowmax150">';
+		if ($obj->socid > 0) {
+			// TODO Use a cache for this string
 			print $socstatic->getNomUrl(1, '');
 		}
 		print '</td>';
@@ -680,8 +699,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print $socstatic->country;
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -703,15 +721,13 @@ while ($i < min($num, $limit))
 			$listsalesrepresentatives = $socstatic->getSalesRepresentatives($user);
 			if ($listsalesrepresentatives < 0) dol_print_error($db);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
-			if ($nbofsalesrepresentative > 3) {
+			if ($nbofsalesrepresentative > 6) {
 				// We print only number
 				print $nbofsalesrepresentative;
-			} elseif ($nbofsalesrepresentative > 0)
-			{
+			} elseif ($nbofsalesrepresentative > 0) {
 				$userstatic = new User($db);
 				$j = 0;
-				foreach ($listsalesrepresentatives as $val)
-				{
+				foreach ($listsalesrepresentatives as $val) {
 					$userstatic->id = $val['id'];
 					$userstatic->lastname = $val['lastname'];
 					$userstatic->firstname = $val['firstname'];
@@ -719,17 +735,23 @@ while ($i < min($num, $limit))
 					$userstatic->statut = $val['statut'];
 					$userstatic->entity = $val['entity'];
 					$userstatic->photo = $val['photo'];
+					$userstatic->login = $val['login'];
+					$userstatic->phone = $val['phone'];
+					$userstatic->job = $val['job'];
+					$userstatic->gender = $val['gender'];
 
 					//print '<div class="float">':
-					print $userstatic->getNomUrl(-2);
+					print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
 					$j++;
-					if ($j < $nbofsalesrepresentative) print ' ';
+					if ($j < $nbofsalesrepresentative) {
+						print ' ';
+					}
 					//print '</div>';
 				}
 			}
 			//else print $langs->trans("NoSalesRepresentativeAffected");
 		} else {
-			print '&nbsp';
+			print '&nbsp;';
 		}
 		print '</td>';
 	}
