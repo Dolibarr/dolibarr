@@ -304,16 +304,45 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-		$nbEvent = 0;
-		$sql = "SELECT COUNT(id) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-		$sql .= " WHERE fk_soc = ".$object->id;
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$nbEvent = $obj->nb;
-		} else {
-			dol_print_error($db);
+		// Enable caching of count actioncomm
+		$usecachekey = '';
+		$found = false;
+		if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+			// Using a memcached/memcache server
+			$usecachekey = 'count_event_'.$object->id;
+		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+			// Using cache with shmop
+			$usecachekey = 'count_event_'.$object->id;
+		}
+		if ($usecachekey) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$dataretrieved = dol_getcache($usecachekey);
+			if (is_array($dataretrieved) && count($dataretrieved)) {
+				$nbEvent = $dataretrieved[$usecachekey];
+				$found = true;
+			}
+		}
+		if (!$found) {
+			$nbEvent = 0;
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_soc = ".$object->id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			if ($usecachekey) {
+				$datatocache = array();
+				$datatocache[$usecachekey] = $nbEvent;
+				$ressetcache = dol_setcache($usecachekey, $datatocache);
+				if ($ressetcache < 0) {
+					$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
+					dol_syslog($error, LOG_ERR);
+				}
+			}
 		}
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
