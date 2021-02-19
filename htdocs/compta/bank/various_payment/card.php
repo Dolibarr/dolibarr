@@ -347,7 +347,7 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 /* ************************************************************************** */
 if ($action == 'create')
 {
-	// Add realtime total information
+	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax))
 	{
 		print "\n".'<script type="text/javascript" language="javascript">';
