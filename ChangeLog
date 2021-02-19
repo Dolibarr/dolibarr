@@ -57,6 +57,7 @@ FIX: ODT generation very slow
 FIX: amount in summary of report
 FIX: vat value when code contains number
 FIX: payment term label on PDF
+FIX: date selector when using reduced year (like on smartphone)
 
 
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****

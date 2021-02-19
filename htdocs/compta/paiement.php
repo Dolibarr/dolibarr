@@ -507,19 +507,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
-		print '<td><input name="num_paiement" type="text" value="'.$paymentnum.'"></td></tr>';
+		print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
 
 		// Check transmitter
 		print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
 		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
 		print '</td>';
-		print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
+		print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
 
 		// Bank name
 		print '<tr><td>'.$langs->trans('Bank');
 		print ' <em>('.$langs->trans("ChequeBank").')</em>';
 		print '</td>';
-		print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
+		print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
@@ -577,6 +577,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$i = 0;
 				//print '<tr><td colspan="3">';
 				print '<br>';
+
+				print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 				print '<table class="noborder centpercent">';
 
 				print '<tr class="liste_titre">';
@@ -785,7 +787,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					print "</tr>\n";
 				}
 				print "</table>";
-				//print "</td></tr>\n";
+				print "</div>\n";
 			}
 			$db->free($resql);
 		} else {
