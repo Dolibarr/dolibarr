@@ -401,7 +401,7 @@ class ImportXlsx extends ModeleImports
 						else $tablewithentity_cache[$tablename] = 0; // table does not contains entity field
 					} else dol_print_error($this->db);
 				} else {
-					dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
+					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
 				// array of fields to column index
