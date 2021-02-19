@@ -1384,9 +1384,9 @@ if ($resql)
 		// Third party
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
-		print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax150">';
 
-				$companylinked_id = 0;
+			$companylinked_id = 0;
 				$userlinked_id = 0;
 
 				//payment line type to define user display and user or company linked
@@ -1416,7 +1416,7 @@ if ($resql)
 
 			print '</td>';
            	if (!$i) $totalarray['nbfield']++;
-	}
+		}
 
 		// Bank account
 		if (!empty($arrayfields['ba.ref']['checked']))
