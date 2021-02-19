@@ -161,7 +161,7 @@ if ($result)
 	if ($typeid > 0)            			$param .= '&typeid='.urlencode($typeid);
 	if ($search_amount_deb)     			$param .= '&search_amount_deb='.urlencode($search_amount_deb);
 	if ($search_amount_cred)    			$param .= '&search_amount_cred='.urlencode($search_amount_cred);
-	if ($search_account > 0)				$param .= '&search_amount='.urlencode($search_account);
+	if ($search_account > 0)				$param .= '&search_account='.urlencode($search_account);
 	if ($search_accountancy_account > 0)	$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
 	if ($search_accountancy_subledger > 0)	$param .= '&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
 
