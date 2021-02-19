@@ -1213,7 +1213,7 @@ if ($object->id > 0)
 		$sql .= ', f.total as total_ht';
 		$sql .= ', f.tva as total_tva';
 		$sql .= ', f.total_ttc';
-		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut';
+		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -1254,9 +1254,10 @@ if ($object->id > 0)
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
+				$facturestatic->statut = $objp->status;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
 				print '</td>';
 				if ($objp->df > 0)
@@ -1276,7 +1277,7 @@ if ($object->id > 0)
 					print '</td>';
 				}
 
-				print '<td class="nowrap right" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->statut, 5, $objp->am)).'</td>';
+				print '<td class="nowrap right" style="min-width: 60px">'.($facturestatic->LibStatut($objp->paye, $objp->status, 5, $objp->am)).'</td>';
 				print "</tr>\n";
 				$i++;
 			}
