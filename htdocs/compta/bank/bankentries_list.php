@@ -1398,55 +1398,35 @@ if ($resql)
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
     		print '<td class="tdoverflowmax150">';
-    		if ($objp->url_id)							//display company
-			{
-				if($objp->type_url == 'company') {
-					$companystatic->id = $objp->url_id;
-					$companystatic->name = $objp->nom;
-					$companystatic->name_alias = $objp->name_alias;
-					$companystatic->client = $objp->client;
-					$companystatic->email = $objp->email;
-					$companystatic->fournisseur = $objp->fournisseur;
-					$companystatic->code_client = $objp->code_client;
-					$companystatic->code_fournisseur = $objp->code_fournisseur;
-					$companystatic->code_compta = $objp->code_compta;
-					$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-					print $companystatic->getNomUrl(1);
-				}
-			}
-			else									//display user or nothing
-			{
+
+				$companylinked = 0;
+				$userlinked = 0;
+
 				//payment line type to define user display
 				foreach($links as $key=>$value){
 					if($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
 					if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+
+					if($links[$key]['type'] == 'company') {
+						$companylinked = $links[$key]['url_id'];
+					}
+					if($links[$key]['type'] == 'user') {
+						$userlinked = $links[$key]['url_id'];
+					}
 				}
 
-				$sqlu = "SELECT url_id FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$objp->rowid." AND type='user'";
-				$resqlu = $db->query($sqlu);
-
-				if($resqlu) {
-
-					if($db->num_rows($resqlu) > 0 &&
-						(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
-							|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
-
-						$obj = $db->fetch_object($resqlu);
-						$userstatic->fetch($obj->url_id);
-						print $userstatic->getNomUrl(1);
-
-					}
-
-					else {
-						print '&nbsp;';
-					}
-
-				} else
-				{
-					dol_print_error($db);
+				if($companylinked) {
+					$companystatic->fetch($companylinked);
+					print $companystatic->getNomUrl(1);
+				} elseif($userlinked &&
+					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
+						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))){
+					$userstatic->fetch($userlinked);
+					print $userstatic->getNomUrl(1);
+				} else {
+					print '&nbsp;';
 				}
 
-			}
 			print '</td>';
             if (!$i) $totalarray['nbfield']++;
     	}
