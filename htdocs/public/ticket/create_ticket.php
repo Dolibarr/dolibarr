@@ -143,6 +143,17 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 		$action = '';
 	}
 
+	// Check Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		$sessionkey = 'dol_antispam_value';
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		if (!$ok) {
+			$error++;
+			array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
+			$action = '';
+		}
+	}
+
 	if (!$error) {
 		$object->db->begin();
 
