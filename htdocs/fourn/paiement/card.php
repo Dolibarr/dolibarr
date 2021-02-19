@@ -40,10 +40,19 @@ $confirm	= GETPOST('confirm', 'alpha');
 
 $object = new PaiementFourn($db);
 
-// PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
+
+// Security check
+if ($user->socid) $socid = $user->socid;
+// Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
+// It should be enough because all payments are done on invoices of the same thirdparty.
+if ($socid && $socid != $object->thirdparty->id) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -177,41 +186,46 @@ if ($result > 0)
 	print '<table class="border centpercent">';
 
 	/*print '<tr>';
-	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
+	print '<td width="20%">'.$langs->trans('Ref').'</td><td>';
     print $form->showrefnav($object,'id','',1,'rowid','ref');
 	print '</td></tr>';*/
 
 	// Date of payment
-	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td>';
+	print '<td>';
 	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment mode
 	$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
-	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td>';
+	print '<td>'.$labeltype;
 	print $object->num_payment ? ' - '.$object->num_payment : '';
 	print '</td></tr>';
 
 	// Payment numero
 	/* TODO Add field num_payment into payment table and save it
-	print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td>';
+	print '<td>';
 	print $form->editfieldval("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
     */
 
 	// Amount
-	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Amount').'</td>';
+	print '<td>'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
 
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
-		print '<tr><td colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Status').'</td>';
+		print '<td>'.$object->getLibStatut(4).'</td></tr>';
 	}
 
 	$allow_delete = 1;
 	// Bank account
 	if (!empty($conf->banque->enabled))
 	{
-		if ($object->bank_account)
+		if ($object->fk_account)
 		{
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
@@ -222,8 +236,8 @@ if ($result > 0)
 			}
 
 			print '<tr>';
-			print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
-			print '<td colspan="3">';
+			print '<td>'.$langs->trans('BankAccount').'</td>';
+			print '<td>';
 			$accountstatic = new Account($db);
 			$accountstatic->fetch($bankline->fk_account);
 			print $accountstatic->getNomUrl(1);
@@ -231,8 +245,8 @@ if ($result > 0)
 			print '</tr>';
 
 			print '<tr>';
-			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td>';
 			print $bankline->getNomUrl(1, 0, 'showconciliated');
 			print '</td>';
 			print '</tr>';
@@ -240,7 +254,8 @@ if ($result > 0)
 	}
 
 	// Note
-	print '<tr><td colspan="2">'.$form->editfieldkey("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer).'</td>';
+	print '<td>';
 	print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer, 'textarea');
 	print '</td></tr>';
 
