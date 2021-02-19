@@ -192,6 +192,7 @@ class modProduct extends DolibarrModules
 			'p.duration'=>"Duration",
 			'p.finished' => 'Nature',
 			'p.price_base_type'=>"PriceBase", 'p.price'=>"UnitPriceHT", 'p.price_ttc'=>"UnitPriceTTC",
+			'p.price_min'=>"MinPriceHT",'p.price_min_ttc'=>"MinPriceTTC",
 			'p.tva_tx'=>'VATRate',
 			'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 		);
@@ -216,7 +217,9 @@ class modProduct extends DolibarrModules
 			'p.customcode'=>'Text',
 			'p.duration'=>"Text",
 			'p.finished' => 'Numeric',
-			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric',
+			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric",
+			'p.price_min'=>"Numeric", 'p.price_min_ttc'=>"Numeric",
+			'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
 		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('e.ref'=>'Text', 'p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
