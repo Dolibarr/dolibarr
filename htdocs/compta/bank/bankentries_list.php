@@ -1020,11 +1020,6 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
 
-		$sqlbu = "SELECT url_id, 'type' FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank =".$objp->rowid;
-		$resqlbu = $db->query($sqlbu);
-
-		//TODO : récupérer les informations sur la société et le url_id et url_type : apparemment c'est que pour la société alors voir dans la partie "ThirdParty" !!
-
         // If we are in a situation where we need/can show balance, we calculate the start of balance
         if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && $mode_balance_ok)
         {
@@ -1402,7 +1397,7 @@ if ($resql)
 				$companylinked_id = 0;
 				$userlinked_id = 0;
 
-				//payment line type to define user display
+				//payment line type to define user display and user or company linked
 				foreach($links as $key=>$value){
 					if($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
 					if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
