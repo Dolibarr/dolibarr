@@ -510,7 +510,6 @@ if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".urlencode($search_conciliated);
 if ($search_thirdparty_user) {
-
 	$sql.= " AND (b.rowid IN ";
 	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
@@ -523,7 +522,6 @@ if ($search_thirdparty_user) {
 	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
 	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
 	$sql.= ")";
-
 }
 if ($search_description)
 {
@@ -1390,29 +1388,29 @@ if ($resql)
 				$userlinked_id = 0;
 
 				//payment line type to define user display and user or company linked
-				foreach($links as $key=>$value){
-					if($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
-					if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+			foreach ($links as $key=>$value){
+				if ($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
+				if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
 
-					if($links[$key]['type'] == 'company') {
-						$companylinked_id = $links[$key]['url_id'];
-					}
-					if($links[$key]['type'] == 'user') {
-						$userlinked_id = $links[$key]['url_id'];
-					}
+				if ($links[$key]['type'] == 'company') {
+					$companylinked_id = $links[$key]['url_id'];
 				}
+				if ($links[$key]['type'] == 'user') {
+					$userlinked_id = $links[$key]['url_id'];
+				}
+			}
 
-				if($companylinked_id) {
-					$companystatic->fetch($companylinked_id);
-					print $companystatic->getNomUrl(1);
-				} elseif($userlinked_id &&
+			if ($companylinked_id) {
+				$companystatic->fetch($companylinked_id);
+				print $companystatic->getNomUrl(1);
+			} elseif ($userlinked_id &&
 					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
 						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))){
-					$userstatic->fetch($userlinked_id);
-					print $userstatic->getNomUrl(1);
-				} else {
-					print '&nbsp;';
-				}
+				$userstatic->fetch($userlinked_id);
+				print $userstatic->getNomUrl(1);
+			} else {
+				print '&nbsp;';
+			}
 
 			print '</td>';
            	if (!$i) $totalarray['nbfield']++;
