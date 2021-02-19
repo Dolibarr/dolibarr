@@ -178,7 +178,7 @@ if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-$sql .= ' GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label';
+$sql .= ' GROUP BY p.rowid, p.ref, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, s.email, c.code, c.libelle, ba.rowid, ba.label';
 if (!$user->rights->societe->client->voir) $sql .= ', sc.fk_soc, sc.fk_user';
 
 $sql .= $db->order($sortfield, $sortorder);

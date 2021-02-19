@@ -3371,8 +3371,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
+			}
+			if (in_array($pictowithouttext, array('holiday'))) {
+				$morecss = 'em088';
 			}
 			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
 				$morecss = 'em080';
@@ -6248,17 +6251,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		)
 			);
 
-		$substitutionarray = array_merge($substitutionarray, array(
-		'__USER_ID__' => (string) $user->id,
-		'__USER_LOGIN__' => (string) $user->login,
-		'__USER_EMAIL__' => (string) $user->email,
-		'__USER_LASTNAME__' => (string) $user->lastname,
-		'__USER_FIRSTNAME__' => (string) $user->firstname,
-		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-		'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
-		)
+		if (is_object($user)) {
+			$substitutionarray = array_merge($substitutionarray, array(
+				'__USER_ID__' => (string) $user->id,
+				'__USER_LOGIN__' => (string) $user->login,
+				'__USER_EMAIL__' => (string) $user->email,
+				'__USER_LASTNAME__' => (string) $user->lastname,
+				'__USER_FIRSTNAME__' => (string) $user->firstname,
+				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
+				)
 			);
+		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
@@ -6272,7 +6277,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
 			'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-			'__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1, ', '),
+			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
@@ -6553,6 +6558,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment = 'order';
 				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment = 'invoice';
 				if (is_object($object) && $object->element == 'member')   $typeforonlinepayment = 'member';
+				if (is_object($object) && $object->element == 'contrat')  $typeforonlinepayment = 'contract';
 				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
 				$paymenturl = $url;
 			}
@@ -6574,10 +6580,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				{
 					$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
 				} else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
+				if (!empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'contrat')
+				{
+					$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = $object->getLastMainDocLink($object->element);
+				} else $substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = '';
 
 				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
+				if (is_object($object) && $object->element == 'contrat') $substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
 			}
 
 			if (is_object($object) && $object->element == 'action')

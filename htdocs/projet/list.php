@@ -92,6 +92,7 @@ $search_sale = GETPOST('search_sale', 'int');
 $search_usage_opportunity = GETPOST('search_usage_opportunity', 'int');
 $search_usage_task = GETPOST('search_usage_task', 'int');
 $search_usage_bill_time = GETPOST('search_usage_bill_time', 'int');
+$search_usage_event_organization = GETPOST('search_usage_event_organization', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
@@ -207,6 +208,7 @@ if (empty($reshook))
 		$search_usage_opportunity = '';
 		$search_usage_task = '';
 		$search_usage_bill_time = '';
+		$search_usage_event_organization = '';
 		$toselect = '';
 		$search_array_options = array();
 		$search_category_array = array();
@@ -300,7 +302,8 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; /
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount, p.usage_opportunity, p.usage_task, p.usage_bill_time";
+$sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount ";
+$sql .= ",  p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event";
 $sql .= ", s.rowid as socid, s.nom as name, s.email";
 $sql .= ", cls.code as opp_status_code";
 // Add fields from extrafields
@@ -369,6 +372,7 @@ if ($search_budget_amount != '') $sql .= natural_search('p.budget_amount', $sear
 if ($search_usage_opportunity != '' && $search_usage_opportunity >= 0) $sql .= natural_search('p.usage_opportunity', $search_usage_opportunity, 2);
 if ($search_usage_task != '' && $search_usage_task >= 0)               $sql .= natural_search('p.usage_task', $search_usage_task, 2);
 if ($search_usage_bill_time != '' && $search_usage_bill_time >= 0)     $sql .= natural_search('p.usage_bill_time', $search_usage_bill_time, 2);
+if ($search_usage_event_organization != '' && $search_usage_event_organization >= 0)     $sql .= natural_search('p.usage_organize_event', $search_usage_event_organization, 2);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -443,6 +447,9 @@ if ($search_project_user != '')   $param .= '&search_project_user='.urlencode($s
 if ($search_sale > 0)    		$param .= '&search_sale='.urlencode($search_sale);
 if ($search_opp_amount != '')    $param .= '&search_opp_amount='.urlencode($search_opp_amount);
 if ($search_budget_amount != '') $param .= '&search_budget_amount='.urlencode($search_budget_amount);
+if ($search_usage_task != '') $param .= '&search_usage_task='.urlencode($search_usage_task);
+if ($search_usage_bill_time != '') $param .= '&search_usage_opportunity='.urlencode($search_usage_bill_time);
+if ($search_usage_event_organization != '') $param .= '&search_usage_event_organization='.urlencode($search_usage_event_organization);
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -650,6 +657,12 @@ if (!empty($arrayfields['p.usage_bill_time']['checked']))
 	print $form->selectyesno('search_usage_bill_time', $search_usage_bill_time, 1, false, 1);
 	print '</td>';
 }
+if (!empty($arrayfields['p.usage_organize_event']['checked']))
+{
+	print '<td class="liste_titre nowrap right">';
+	print $form->selectyesno('search_usage_event_organization', $search_usage_event_organization, 1, false, 1);
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -703,6 +716,7 @@ if (!empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre(
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['p.usage_task']['checked']))        print_liste_field_titre($arrayfields['p.usage_task']['label'], $_SERVER["PHP_SELF"], 'p.usage_task', "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['p.usage_bill_time']['checked']))   print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+if (!empty($arrayfields['p.usage_organize_event']['checked']))   print_liste_field_titre($arrayfields['p.usage_organize_event']['label'], $_SERVER["PHP_SELF"], 'p.usage_organize_event', "", $param, '', $sortfield, $sortorder, 'right ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -923,6 +937,17 @@ while ($i < min($num, $limit))
 			if ($obj->usage_bill_time)
 			{
 				print yn($obj->usage_bill_time);
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		// Event Organization
+		if (!empty($arrayfields['p.usage_organize_event']['checked']))
+		{
+			print '<td class="right">';
+			if ($obj->usage_event_organization)
+			{
+				print yn($obj->usage_event_organization);
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

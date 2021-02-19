@@ -30,6 +30,9 @@
 
 -- Missing in v13 or lower
 
+ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
+ALTER TABLE llx_asset ADD COLUMN amount_vat double(24,8) DEFAULT NULL;
+
 ALTER TABLE llx_supplier_proposal_extrafields ADD INDEX idx_supplier_proposal_extrafields (fk_object);
 ALTER TABLE llx_supplier_proposaldet_extrafields ADD INDEX idx_supplier_proposaldet_extrafields (fk_object);
 

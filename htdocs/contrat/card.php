@@ -2150,6 +2150,12 @@ if ($action == 'create')
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show direct download link
+			if ($object->statut != Contrat::STATUS_DRAFT && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD))
+			{
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($object).'<br>';
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
