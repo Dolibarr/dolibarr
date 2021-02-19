@@ -1056,7 +1056,7 @@ if ($action == 'create')
 	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
-		elseif ($conf->global->AGENDA_EVENT_DEFAULT_STATUS!=='na') $percent = $conf->global->AGENDA_EVENT_DEFAULT_STATUS;
+		elseif (isset($conf->global->AGENDA_EVENT_DEFAULT_STATUS) && $conf->global->AGENDA_EVENT_DEFAULT_STATUS!=='na') $percent = $conf->global->AGENDA_EVENT_DEFAULT_STATUS;
 	}
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
