@@ -1399,8 +1399,8 @@ if ($resql)
     	{
     		print '<td class="tdoverflowmax150">';
 
-				$companylinked = 0;
-				$userlinked = 0;
+				$companylinked_id = 0;
+				$userlinked_id = 0;
 
 				//payment line type to define user display
 				foreach($links as $key=>$value){
@@ -1408,20 +1408,20 @@ if ($resql)
 					if($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
 
 					if($links[$key]['type'] == 'company') {
-						$companylinked = $links[$key]['url_id'];
+						$companylinked_id = $links[$key]['url_id'];
 					}
 					if($links[$key]['type'] == 'user') {
-						$userlinked = $links[$key]['url_id'];
+						$userlinked_id = $links[$key]['url_id'];
 					}
 				}
 
-				if($companylinked) {
-					$companystatic->fetch($companylinked);
+				if($companylinked_id) {
+					$companystatic->fetch($companylinked_id);
 					print $companystatic->getNomUrl(1);
-				} elseif($userlinked &&
+				} elseif($userlinked_id &&
 					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
 						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))){
-					$userstatic->fetch($userlinked);
+					$userstatic->fetch($userlinked_id);
 					print $userstatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
