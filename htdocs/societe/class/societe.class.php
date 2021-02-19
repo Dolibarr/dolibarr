@@ -984,6 +984,7 @@ class Societe extends CommonObject
 		$contact->email             = $this->email;
 		$contact->zip               = $this->zip;
 		$contact->town              = $this->town;
+		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
 
 		$contactId = $contact->create($user);

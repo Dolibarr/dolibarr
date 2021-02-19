@@ -35,7 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects', 'companies'));
+$langsLoad=array('projects', 'companies');
+if (!empty($conf->eventorganization->enabled)) {
+	$langsLoad[]='eventorganization';
+}
+
+$langs->loadLangs($langsLoad);
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -569,10 +574,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
 		print '<br>';
 	}
-	/*
-	print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
-	$htmltext = $langs->trans("OrganizeEvent");
-	print $form->textwithpicto($langs->trans("OrganizeEvent"), $htmltext);*/
+
+	if (!empty($conf->eventorganization->enabled))
+	{
+		print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+	}
+
 	print '</td>';
 	print '</tr>';
 
@@ -855,6 +864,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
+		if (!empty($conf->eventorganization->enabled))
+		{
+			print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
 		print '</td></tr>';
 
 		// Thirdparty
@@ -1019,6 +1034,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
+		}
+
+		if (!empty($conf->eventorganization->enabled))
+		{
+			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 		}
 		print '</td></tr>';
 
