@@ -772,9 +772,17 @@ class MyObject extends CommonObject
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
-		$linkstart = '<a href="'.$url.'"';
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
 		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
 		$result .= $linkstart;
 

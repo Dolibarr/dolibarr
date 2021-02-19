@@ -253,9 +253,9 @@ class Form
 
 				if (empty($notabletag)) $ret .= '<td class="left">';
 				//else $ret.='<div class="clearboth"></div>';
-				$ret .= '<input type="submit" class="button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
+				$ret .= '<input type="submit" class="smallpaddingimp button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
 				if (preg_match('/ckeditor|textarea/', $typeofdata) && empty($notabletag)) $ret .= '<br>'."\n";
-				$ret .= '<input type="submit" class="button button-cancel'.(empty($notabletag) ? '' : ' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$ret .= '<input type="submit" class="smallpaddingimp button button-cancel'.(empty($notabletag) ? '' : ' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
 				if (empty($notabletag)) $ret .= '</td>';
 
 				if (empty($notabletag)) $ret .= '</tr></table>'."\n";
@@ -672,7 +672,7 @@ class Form
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-				$ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		$ret .= '<input type="submit" disabled name="confirmmassaction"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display: none"').' class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax))
@@ -984,6 +984,7 @@ class Form
 			print '>'.$langs->trans("Service");
 
 			print '</select>';
+			print ajax_combobox('select_'.$htmlname);
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
 		if ((empty($forceall) && empty($conf->product->enabled) && !empty($conf->service->enabled)) || $forceall == 3)
@@ -2753,9 +2754,10 @@ class Form
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		More CSS
+	 *  @param	string	$placeholder	Placeholder
 	 *	@return	void
 	 */
-	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '')
+	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '')
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2776,9 +2778,9 @@ class Form
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid='.$socid.'&' : '').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
+			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" class="minwidth300" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.$placeholder.'"' : '').'>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
 	}
 
@@ -2798,9 +2800,10 @@ class Form
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		Add more CSS
 	 *  @param	int		$showstockinlist	Show stock information (slower).
+	 *  @param	string	$placeholder	Placeholder
 	 *  @return array           		Array of keys for json
 	 */
-	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0)
+	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
 		// phpcs:enable
 		global $langs, $conf, $db, $user;
@@ -2884,9 +2887,9 @@ class Form
 			$num = $this->db->num_rows($result);
 
 			//$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-			$out .= '<select class="flat maxwidthonsmartphone'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-			if (!$selected) $out .= '<option value="0" selected>&nbsp;</option>';
-			else $out .= '<option value="0">&nbsp;</option>';
+			$out .= '<select class="flat '.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+			if (!$selected) $out .= '<option value="-1" selected>'.($placeholder ? $placeholder : '&nbsp;').'</option>';
+			else $out .= '<option value="-1">'.($placeholder ? $placeholder : '&nbsp;').'</option>';
 
 			$i = 0;
 			while ($i < $num)
@@ -3101,7 +3104,7 @@ class Form
 
 
 				// Add new entry
-				// "key" value of json key array is used by jQuery automatically as selected value
+				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
 				array_push($outarray,
@@ -3109,12 +3112,12 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'up'=>$objp->unitprice,
+						'price_ht'=>price2num($objp->unitprice, 'MT'),
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
 						'duration_unit'=>$outdurationunit,
-						'disabled'=>(empty($objp->idprodfournprice) ?true:false),
+						'disabled'=>(empty($objp->idprodfournprice) ? true : false),
 						'description'=>$objp->description
 					)
 				);
@@ -4164,6 +4167,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setbankaccount">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
 			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4362,14 +4366,11 @@ class Form
 					$moreattr = (!empty($input['moreattr']) ? ' '.$input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 
-					if ($input['type'] == 'text')
-					{
+					if ($input['type'] == 'text') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
-					} elseif ($input['type'] == 'password')
-					{
+					} elseif ($input['type'] == 'password')	{
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
-					} elseif ($input['type'] == 'select')
-					{
+					} elseif ($input['type'] == 'select') {
 						if (empty($morecss)) {
 							$morecss = 'minwidth100';
 						}
@@ -4377,8 +4378,7 @@ class Form
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd left">';
 						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
 						$more .= '</div></div>'."\n";
-					} elseif ($input['type'] == 'checkbox')
-					{
+					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
@@ -4387,8 +4387,7 @@ class Form
 						if (isset($input['disabled'])) $more .= ' disabled';
 						$more .= ' /></div>';
 						$more .= '</div>'."\n";
-					} elseif ($input['type'] == 'radio')
-					{
+					} elseif ($input['type'] == 'radio') {
 						$i = 0;
 						foreach ($input['values'] as $selkey => $selval)
 						{
@@ -4403,8 +4402,7 @@ class Form
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
-					} elseif ($input['type'] == 'date')
-					{
+					} elseif ($input['type'] == 'date') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div>';
 						$more .= '<div class="tagtd">';
 						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
@@ -4414,17 +4412,17 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other')
-					{
+					} elseif ($input['type'] == 'other') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd">';
 						$more .= $input['value'];
 						$more .= '</div></div>'."\n";
-					} elseif ($input['type'] == 'onecolumn')
-					{
+					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['value'];
 						$moreonecolumn .= '</div>'."\n";
+					} elseif ($input['type'] == 'hidden') {
+						// Do nothing more, already added by a previous loop
 					} else {
 						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}
@@ -6303,7 +6301,7 @@ class Form
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		//print "$objecttmp->filter, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled";
 
@@ -6349,27 +6347,34 @@ class Form
 		}
 		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe')
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE 1=1";
-		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-			$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
-		}
-		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-			if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
-			else $sql .= " AND t.fk_soc = ".$user->socid;
-		}
-		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-		}
-		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-			/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
-			}*/
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
-		}
+
+		// Add where from hooks
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+        if (!empty($hookmanager->resPrint)) $sql .= $hookmanager->resPrint;
+		else {
+		    $sql .= " WHERE 1=1";
+            if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+            if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
+                $sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+            }
+            if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+                if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
+                else $sql .= " AND t.fk_soc = ".$user->socid;
+            }
+            if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
+            if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+                if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+            }
+            if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+                /*if (! DolibarrApi::_checkFilters($objecttmp->filter))
+                {
+                    throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
+                }*/
+                $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+                $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
+            }
+        }
 		$sql .= $this->db->order($fieldstoshow, "ASC");
 		//$sql.=$this->db->plimit($limit, 0);
 		//print $sql;

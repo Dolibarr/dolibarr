@@ -796,7 +796,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$adht = new AdherentType($db);
 
-		print load_fiche_titre($langs->trans("NewMember"), '', 'members');
+		print load_fiche_titre($langs->trans("NewMember"), '', $object->picto);
 
 		if ($conf->use_javascript_ajax) {
 			print "\n".'<script type="text/javascript" language="javascript">';

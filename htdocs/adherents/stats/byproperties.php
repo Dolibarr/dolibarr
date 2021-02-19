@@ -57,7 +57,7 @@ llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, arra
 
 $title = $langs->trans("MembersStatisticsByProperties");
 
-print load_fiche_titre($title, '', 'object_group');
+print load_fiche_titre($title, '', $memberstatic->picto);
 
 dol_mkdir($dir);
 
@@ -128,7 +128,7 @@ if ($resql) {
 
 $head = member_stats_prepare_head($adh);
 
-print dol_get_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'user');
+print dol_get_fiche_head($head, 'statsbyproperties', '', -1, '');
 
 
 // Print title

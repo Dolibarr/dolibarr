@@ -568,15 +568,13 @@ class Productlot extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("Batch").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Batch").'</u>';
 		$label .= '<div width="100%">';
 		$label .= '<b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby)
-		{
+		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 			$label .= '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
 		}
-		if ($this->sellby)
-		{
+		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			$label .= '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
 		}
 
@@ -602,9 +600,17 @@ class Productlot extends CommonObject
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
-		$linkstart = '<a href="'.$url.'"';
+		if ($option == 'nolink') {
+			$linkstart = '<span';
+		} else {
+			$linkstart = '<a href="'.$url.'"';
+		}
 		$linkstart .= $linkclose.'>';
-		$linkend = '</a>';
+		if ($option == 'nolink') {
+			$linkend = '</span>';
+		} else {
+			$linkend = '</a>';
+		}
 
 		$result .= $linkstart;
 		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);

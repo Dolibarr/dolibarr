@@ -3232,7 +3232,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		string		$moreatt				Add more attribute on img tag (For example 'style="float: right"')
+ *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
  *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
  *	@param		int			$srconly				Return only content of the src attribute of img.
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
@@ -3265,7 +3265,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
+				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
@@ -3273,11 +3273,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert',
+				'object_folder', 'object_folder-open','object_generic',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
 				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
 				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
-				'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
+				'object_margin', 'object_members', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
 				'object_lot', 'object_mrp', 'object_other',
 				'object_payment', 'object_pdf', 'object_product', 'object_propal',
 				'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
@@ -3291,7 +3292,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'supplier_invoice', 'ticket',
+				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'user-cog',
@@ -3318,11 +3319,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
-				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 				'email'=>'at',
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
-				'member'=>'users', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
+				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
@@ -3370,11 +3371,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('member', 'contract'))) {
-				$fasize = '0.92em';
+			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan'))) {
-				$fasize = '0.80em';
+			if (in_array($pictowithouttext, array('holiday'))) {
+				$morecss = 'em088';
+			}
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
+				$morecss = 'em080';
 			}
 
 			// Define $marginleftonlyshort
@@ -3423,7 +3427,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
+				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
 				'website'=>'#304'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -7873,7 +7877,10 @@ function printCommonFooter($zone = 'private')
 								// Add property 'required' on input
 								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
 								print 'jQuery("textarea[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n"; // required on a select works only if key is "", this does not happen in Dolibarr
+								print '// required on a select works only if key is "", so we add the required attributes but also we reset the key -1 or 0 to an empty string'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
 							}
 						}
 					}
@@ -8202,7 +8209,7 @@ function showDirectDownloadLink($object)
 
 	if ($url)
 	{
-		$out .= img_picto('', 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
 		$out .= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
 		$out .= ajax_autoselect("directdownloadlink", 0);
 	}

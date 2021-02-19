@@ -270,3 +270,5 @@ RefTaskParent=Ref. Parent Task
 ProfitIsCalculatedWith=Profit is calculated using
 AddPersonToTask=Add also to tasks
 UsageOrganizeEvent=Usage: Event Organization
+PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classify project as closed when all its tasks are completed (100%% progress)
+PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Note: existing projects with all tasks at 100 %% progress won't be affected: you will have to close them manually. This option only affects open projects.

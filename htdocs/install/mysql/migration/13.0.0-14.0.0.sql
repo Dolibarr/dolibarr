@@ -35,6 +35,8 @@ ALTER TABLE llx_supplier_proposaldet_extrafields ADD INDEX idx_supplier_proposal
 
 ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
 
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
+
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;

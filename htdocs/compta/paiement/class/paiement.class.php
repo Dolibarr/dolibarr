@@ -1312,7 +1312,7 @@ class Paiement extends CommonObject
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($billsarray[0]) > 0)
 				{
-					$force_thirdparty_id = $invoice->fk_soc;
+					$force_thirdparty_id = $invoice->socid;
 				}
 			}
 		}

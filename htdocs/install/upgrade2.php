@@ -469,6 +469,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
 			'MAIN_MODULE_CRON'=>'newboxdefonly',
 			'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
+			'MAIN_MODULE_BLOCKEDLOG'=>'noboxes',
 			'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
 			'MAIN_MODULE_DON'=>'newboxdefonly',
 			'MAIN_MODULE_ECM'=>'newboxdefonly',
@@ -482,7 +483,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
 			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
 			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-			'MAIN_MODULE_RESOURCE'=>'newboxdefonly',
+			'MAIN_MODULE_RESOURCE'=>'noboxes',
 			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
 			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
@@ -4289,7 +4290,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
- * @param	array		$listofmodule	List of modules
+ * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>', $reloadmode)
  * @param   int         $force          1=Reload module even if not already loaded
  * @return	int							<0 if KO, >0 if OK
  */
@@ -4327,6 +4328,15 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod = new modBarcode($db);
 				$mod->remove('noboxes');
 				$mod->init($reloadmode);
+			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_BLOCKEDLOG') {
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate BlockedLog module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modBlockedLog.class.php';
+			if ($res) {
+				$mod = new modBlockedLog($db);
+				// For this module we only reload menus.
+				$mod->delete_menus();
+				$mod->insert_menus($reloadmode);
 			}
 		} elseif ($moduletoreload == 'MAIN_MODULE_CRON') {
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
@@ -4472,7 +4482,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->remove('noboxes'); // We need to remove because menu entries has changed
 				$mod->init($reloadmode);
 			}
-		} else {
+		} else {	// Other generic cases/modules
 			$reg = array();
 			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
 			if (!empty($reg[1]))
@@ -4484,12 +4494,15 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				{
 					$moduletoreloadshort = $reg[1];
 				}
+
 				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort." with mode ".$reloadmode);
 				$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
 				if ($res) {
 					$classname = 'mod'.$moduletoreloadshort;
 					$mod = new $classname($db);
+
 					//$mod->remove('noboxes');
+					$mod->delete_menus();	// We must delete to be sure it is insert with new values
 					$mod->init($reloadmode);
 				} else {
 					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
@@ -4498,7 +4511,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					if ($res) {
 						$classname = 'mod'.$moduletoreloadshort;
 						$mod = new $classname($db);
-						//$mod->remove('noboxes');
 						$mod->init($reloadmode);
 					} else {
 						dolibarr_install_syslog('Failed to include '.strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php', LOG_ERR);
@@ -4530,7 +4542,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 
 
 /**
- * Reload menu if dynamic menus, if modified by version
+ * Reload SQL menu file (if dynamic menus, if modified by version)
  *
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs

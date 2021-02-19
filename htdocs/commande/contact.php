@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2021 		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,22 +129,16 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
-	$langs->trans("OrderCard");
-
-	if ($object->fetch($id, $ref) > 0)
-	{
+if ($id > 0 || !empty($ref)) {
+	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
 
-
 		// Order card
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/commande/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
-
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
