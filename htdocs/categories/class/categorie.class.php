@@ -1929,7 +1929,7 @@ class Categorie extends CommonObject
 			if (intval($searchCategory) == -2) {
 				$searchCategorySqlList[] = " $categAlias.fk_categorie IS NULL";
 			} elseif (intval($searchCategory) > 0) {
-				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$fk." FROM ".MAIN_DB_PREFIX."categorie_".$tableSuffix." WHERE fk_categorie = ".$searchCategory.")";
+				$searchCategorySqlList[] = " ".$rowIdName." IN (SELECT fk_".$fk." FROM ".MAIN_DB_PREFIX."categorie_".$tableSuffix." WHERE fk_categorie = ".((int) $searchCategory).")";
 			}
 		}
 
