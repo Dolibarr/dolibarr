@@ -1200,7 +1200,7 @@ class SupplierProposal extends CommonObject
 		global $conf;
 
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
-		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
+		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as delivery_date";
