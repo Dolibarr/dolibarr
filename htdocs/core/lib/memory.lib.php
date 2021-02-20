@@ -61,10 +61,11 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
  *
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.
+ *  @param 	int			$expire			ttl in seconds, 0 never expire
  * 	@return	int							<0 if KO, 0 if nothing is done, Nb of bytes written if OK
  *  @see dol_getcache()
  */
-function dol_setcache($memoryid, $data)
+function dol_setcache($memoryid, $data, $expire = 0)
 {
 	global $conf;
 	$result = 0;
@@ -85,7 +86,7 @@ function dol_setcache($memoryid, $data)
 
 		$memoryid = session_name() . '_' . $memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		$dolmemcache->add($memoryid, $data); // This fails if key already exists
+		$dolmemcache->add($memoryid, $data, $expire); // This fails if key already exists
 		$rescode = $dolmemcache->getResultCode();
 		if ($rescode == 0) {
 			return count($data);
@@ -104,7 +105,7 @@ function dol_setcache($memoryid, $data)
 
 		$memoryid = session_name() . '_' . $memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
-		$result = $dolmemcache->add($memoryid, $data); // This fails if key already exists
+		$result = $dolmemcache->add($memoryid, $data, false, $expire); // This fails if key already exists
 		if ($result) {
 			return count($data);
 		} else {
@@ -112,7 +113,7 @@ function dol_setcache($memoryid, $data)
 		}
 	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
-		$result = dol_setshmop($memoryid, $data);
+		$result = dol_setshmop($memoryid, $data, $expire);
 	}
 
 	return $result;
@@ -226,9 +227,10 @@ function dol_listshmop()
  *
  *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@param	string	$data			Data to save. Must be a not null value.
+ *  @param 	int		$expire			ttl in seconds, 0 never expire
  * 	@return	int						<0 if KO, 0=Caching not available, Nb of bytes written if OK
  */
-function dol_setshmop($memoryid, $data)
+function dol_setshmop($memoryid, $data, $expire)
 {
 	global $shmkeys, $shmoffset;
 
