@@ -36,7 +36,7 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
  * 	Save data into a memory area shared by all users, all sessions on server
  *
  *  @param	string      $memoryid		Memory id of shared area
- * 	@param	mixed		$data			Data to save
+ * 	@param	mixed		$data			Data to save. It must not be a null value.
  * 	@return	int							<0 if KO, Nb of bytes written if OK
  *  @see dol_getcache()
  */
@@ -100,7 +100,7 @@ function dol_setcache($memoryid, $data)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area
- * 	@return	int|mixed				<0 if KO, data if OK
+ * 	@return	int|mixed				<0 if KO, data if OK, null if not found into cache
  *  @see dol_setcache()
  */
 function dol_getcache($memoryid)
@@ -108,11 +108,9 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	// Using a memcached server
-	if (!empty($conf->memcached->enabled) && class_exists('Memcached'))
-	{
+	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
 		global $m;
-		if (empty($m) || !is_object($m))
-		{
+		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
 	   		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
 	   		$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
@@ -126,17 +124,14 @@ function dol_getcache($memoryid)
 		$rescode = $m->getResultCode();
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
-		if ($rescode == 0)
-		{
+		if ($rescode == 0) {
 			return $data;
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
-	{
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {
 		global $m;
-		if (empty($m) || !is_object($m))
-		{
+		if (empty($m) || !is_object($m)) {
 	   		$m = new Memcache();
 	   		$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
 	   		$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
@@ -148,20 +143,18 @@ function dol_getcache($memoryid)
 		$data = $m->get($memoryid);
 		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
 		//var_dump($data);
-		if ($data)
-		{
+		if ($data) {
 			return $data;
 		} else {
 			return -1;
 		}
-	} // Using shmop
-	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
-	{
+	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
 	}
 
-	return 0;
+	return null;
 }
 
 

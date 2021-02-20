@@ -460,7 +460,7 @@ class Translate
 			$tmparray = dol_getcache($usecachekey);
 			if (is_array($tmparray) && count($tmparray))
 			{
-				$this->tab_translate += $tmparray; // Faster than array_merge($tmparray,$this->tab_translate). Note: If a valuer already exists into tab_translate, value into tmparaay is not added.
+				$this->tab_translate += $tmparray; // Faster than array_merge($tmparray,$this->tab_translate). Note: If a value already exists into tab_translate, value into tmparaay is not added.
 				//print $newdomain."\n";
 				//var_dump($this->tab_translate);
 				$fileread = 1;
