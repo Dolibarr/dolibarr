@@ -88,7 +88,7 @@ function dol_setcache($memoryid, $data)
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using a memcache server
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
@@ -106,7 +106,7 @@ function dol_setcache($memoryid, $data)
 		} else {
 			return -1;
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data);
 	}
@@ -140,14 +140,16 @@ function dol_getcache($memoryid)
 		//print "Get memoryid=".$memoryid;
 		$data = $m->get($memoryid);
 		$rescode = $m->getResultCode();
-		//print "memoryid=".$memoryid." - rescode=".$rescode." - data=".count($data)."\n<br>";
+		//print "memoryid=".$memoryid." - rescode=".$rescode." - count(response)=".count($data)."\n<br>";
 		//var_dump($data);
 		if ($rescode == 0) {
 			return $data;
+		} elseif ($rescode == 16) {		// = Memcached::MEMCACHED_NOTFOUND but this constant doe snot exists.
+			return null;
 		} else {
 			return -$rescode;
 		}
-	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache')) {	// This is a really not reliable cache ! Use Memcached instead.
 		global $m;
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
@@ -164,9 +166,9 @@ function dol_getcache($memoryid)
 		if ($data) {
 			return $data;
 		} else {
-			return -1;
+			return null;		// There is no way to make a difference between NOTFOUND and error when using Memcache. So do not use it, use Memcached instead.
 		}
-	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+	} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
@@ -186,7 +188,7 @@ function dol_getcache($memoryid)
 function dol_getshmopaddress($memoryid)
 {
 	global $shmkeys, $shmoffset;
-	if (empty($shmkeys[$memoryid])) {
+	if (empty($shmkeys[$memoryid])) {	// No room reserved for thid memoryid, no way to use cache
 		return 0;
 	}
 	return $shmkeys[$memoryid] + $shmoffset;
@@ -215,8 +217,8 @@ function dol_listshmop()
  * 	Save data into a memory area shared by all users, all sessions on server
  *
  *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@param	string	$data			Data to save
- * 	@return	int						<0 if KO, Nb of bytes written if OK
+ * 	@param	string	$data			Data to save. Must be a not null value.
+ * 	@return	int						<0 if KO, 0=Caching not available, Nb of bytes written if OK
  */
 function dol_setshmop($memoryid, $data)
 {
@@ -225,6 +227,8 @@ function dol_setshmop($memoryid, $data)
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
 	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) return 0;
 	$shmkey = dol_getshmopaddress($memoryid);
+	if (empty($shmkey)) return 0;	// No key reserved for this memoryid, we can't cache this memoryid
+
 	$newdata = serialize($data);
 	$size = strlen($newdata);
 	//print 'dol_setshmop memoryid='.$memoryid." shmkey=".$shmkey." newdata=".$size."bytes<br>\n";
@@ -247,14 +251,20 @@ function dol_setshmop($memoryid, $data)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int						<0 if KO, data if OK
+ * 	@return	int						<0 if KO, data if OK, Null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {
 	global $shmkeys, $shmoffset;
 
-	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_open")) return 0;
+	$data = null;
+
+	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_open")) {
+		return null;
+	}
 	$shmkey = dol_getshmopaddress($memoryid);
+	if (empty($shmkey)) return null;		// No key reserved for this memoryid, we can't cache this memoryid
+
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle = @shmop_open($shmkey, 'a', 0, 0);
 	if ($handle) {
@@ -263,7 +273,7 @@ function dol_getshmop($memoryid)
 		else return -1;
 		shmop_close($handle);
 	} else {
-		return -2;
+		return null;	// Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid
 	}
 	return $data;
 }

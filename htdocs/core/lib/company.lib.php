@@ -52,13 +52,15 @@ function societe_prepare_head(Societe $object)
 
 	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
 		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
-			$cachekey = 'thirdparty_countcontact_'.$object->id;
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'thirdparty_'.$object->id.'_countcontacts';
 			$dataretrieved = dol_getcache($cachekey);
-			if (is_array($dataretrieved) && count($dataretrieved)) {
-				$nbContact = $dataretrieved[$cachekey];
+
+			if (!is_null($dataretrieved)) {
+				$nbContact = $dataretrieved;
 			} else {
 				$sql = "SELECT COUNT(p.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -68,14 +70,10 @@ function societe_prepare_head(Societe $object)
 					$obj = $db->fetch_object($resql);
 					$nbContact = $obj->nb;
 				}
-				$datatocache = array();
-				$datatocache[$cachekey] = $nbContact;
-				$res_setcache = dol_setcache($cachekey, $datatocache);
-				if ($res_setcache < 0) {
-					$error = 'Failed to set cache for cachekey='.$cachekey.' result='.$res_setcache;
-					dol_syslog($error, LOG_ERR);
-				}
+
+				dol_setcache($cachekey, $nbContact);	// If setting cache fails, this is not a problem, so we do not test result.
 			}
+
 			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans('ContactsAddresses');
 			if ($nbContact > 0) {
@@ -273,13 +271,14 @@ function societe_prepare_head(Societe $object)
 	if ($user->socid == 0) {
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+
 			$nbNotif = 0;
 			// Enable caching of thirdrparty count notifications
-			$cachekey = 'thirdparty_countnotif_'.$object->id;
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'thirdparty_'.$object->id.'_countnotifications';
 			$dataretrieved = dol_getcache($cachekey);
-			if (is_array($dataretrieved) && count($dataretrieved)) {
-				$nbNotif = $dataretrieved[$cachekey];
+			if (!is_null($dataretrieved)) {
+				$nbNotif = $dataretrieved;
 			} else {
 				$sql = "SELECT COUNT(n.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
@@ -291,14 +290,9 @@ function societe_prepare_head(Societe $object)
 				} else {
 					dol_print_error($db);
 				}
-				$datatocache = array();
-				$datatocache[$cachekey] = $nbNotif;
-				$res_setcache = dol_setcache($cachekey, $datatocache);
-				if ($res_setcache < 0) {
-					$error = 'Failed to set cache for cachekey='.$cachekey.' result='.$res_setcache;
-					dol_syslog($error, LOG_ERR);
-				}
+				dol_setcache($cachekey, $nbNotif);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
+
 			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
@@ -343,13 +337,14 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-		// Enable caching of thirdrparty count actioncomm
-		$nbEvent = 0;
-		$cachekey = 'thirdparty_countevent_'.$object->id;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+
+		$nbEvent = 0;
+		// Enable caching of thirdrparty count actioncomm
+		$cachekey = 'thirdparty_'.$object->id.'_countevents';
 		$dataretrieved = dol_getcache($cachekey);
-		if (is_array($dataretrieved) && count($dataretrieved)) {
-			$nbEvent = $dataretrieved[$cachekey];
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
 		} else {
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
@@ -361,14 +356,9 @@ function societe_prepare_head(Societe $object)
 			} else {
 				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
 			}
-			$datatocache = array();
-			$datatocache[$cachekey] = $nbEvent;
-			$res_setcache = dol_setcache($cachekey, $datatocache);
-			if ($res_setcache < 0) {
-				$error = 'Failed to set cache for cachekey='.$cachekey.' result='.$res_setcache;
-				dol_syslog($error, LOG_ERR);
-			}
+			dol_setcache($cachekey, $nbEvent);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 		if ($nbEvent > 0) {
