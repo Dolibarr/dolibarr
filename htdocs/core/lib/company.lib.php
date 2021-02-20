@@ -54,22 +54,12 @@ function societe_prepare_head(Societe $object)
 		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
-			if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
-				// Using a memcached/memcache server
-				$usecachekey = 'thirdparty_countcontact_'.$object->id;
-			} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
-				// Using cache with shmop
-				$usecachekey = 'thirdparty_countcontact_'.$object->id;
-			}
-			if ($usecachekey) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-				$dataretrieved = dol_getcache($usecachekey);
-				if (is_array($dataretrieved) && count($dataretrieved)) {
-					$nbContact = $dataretrieved[$usecachekey];
-					$found = true;
-				}
-			}
-			if (!$found) {
+			$cachekey = 'thirdparty_countcontact_'.$object->id;
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$dataretrieved = dol_getcache($cachekey);
+			if (is_array($dataretrieved) && count($dataretrieved)) {
+				$nbContact = $dataretrieved[$cachekey];
+			} else {
 				$sql = "SELECT COUNT(p.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 				$sql .= " WHERE p.fk_soc = ".$object->id;
@@ -78,14 +68,12 @@ function societe_prepare_head(Societe $object)
 					$obj = $db->fetch_object($resql);
 					$nbContact = $obj->nb;
 				}
-				if ($usecachekey) {
-					$datatocache = array();
-					$datatocache[$usecachekey] = $nbContact;
-					$res_setcache = dol_setcache($usecachekey, $datatocache);
-					if ($res_setcache < 0) {
-						$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
-						dol_syslog($error, LOG_ERR);
-					}
+				$datatocache = array();
+				$datatocache[$cachekey] = $nbContact;
+				$res_setcache = dol_setcache($cachekey, $datatocache);
+				if ($res_setcache < 0) {
+					$error = 'Failed to set cache for cachekey='.$cachekey.' result='.$res_setcache;
+					dol_syslog($error, LOG_ERR);
 				}
 			}
 			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
@@ -285,26 +273,14 @@ function societe_prepare_head(Societe $object)
 	if ($user->socid == 0) {
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
-			// Enable caching of thirdrparty count notifications
-			$usecachekey = '';
-			$found = false;
 			$nbNotif = 0;
-			if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
-				// Using a memcached/memcache server
-				$usecachekey = 'thirdparty_countnotif_'.$object->id;
-			} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
-				// Using cache with shmop
-				$usecachekey = 'thirdparty_countnotif_'.$object->id;
-			}
-			if ($usecachekey) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-				$dataretrieved = dol_getcache($usecachekey);
-				if (is_array($dataretrieved) && count($dataretrieved)) {
-					$nbNotif = $dataretrieved[$usecachekey];
-					$found = true;
-				}
-			}
-			if (!$found) {
+			// Enable caching of thirdrparty count notifications
+			$cachekey = 'thirdparty_countnotif_'.$object->id;
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$dataretrieved = dol_getcache($cachekey);
+			if (is_array($dataretrieved) && count($dataretrieved)) {
+				$nbNotif = $dataretrieved[$cachekey];
+			} else {
 				$sql = "SELECT COUNT(n.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
 				$sql .= " WHERE fk_soc = ".$object->id;
@@ -315,17 +291,14 @@ function societe_prepare_head(Societe $object)
 				} else {
 					dol_print_error($db);
 				}
-				if ($usecachekey) {
-					$datatocache = array();
-					$datatocache[$usecachekey] = $nbNotif;
-					$res_setcache = dol_setcache($usecachekey, $datatocache);
-					if ($res_setcache < 0) {
-						$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
-						dol_syslog($error, LOG_ERR);
-					}
+				$datatocache = array();
+				$datatocache[$cachekey] = $nbNotif;
+				$res_setcache = dol_setcache($cachekey, $datatocache);
+				if ($res_setcache < 0) {
+					$error = 'Failed to set cache for cachekey='.$cachekey.' result='.$res_setcache;
+					dol_syslog($error, LOG_ERR);
 				}
 			}
-
 			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
@@ -371,25 +344,13 @@ function societe_prepare_head(Societe $object)
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		// Enable caching of thirdrparty count actioncomm
-		$usecachekey = '';
-		$found = false;
 		$nbEvent = 0;
-		if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
-			// Using a memcached/memcache server
-			$usecachekey = 'thirdparty_countevent_'.$object->id;
-		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
-			// Using cache with shmop
-			$usecachekey = 'thirdparty_countevent_'.$object->id;
-		}
-		if ($usecachekey) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-			$dataretrieved = dol_getcache($usecachekey);
-			if (is_array($dataretrieved) && count($dataretrieved)) {
-				$nbEvent = $dataretrieved[$usecachekey];
-				$found = true;
-			}
-		}
-		if (!$found) {
+		$cachekey = 'thirdparty_countevent_'.$object->id;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$dataretrieved = dol_getcache($cachekey);
+		if (is_array($dataretrieved) && count($dataretrieved)) {
+			$nbEvent = $dataretrieved[$cachekey];
+		} else {
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 			$sql .= " WHERE fk_soc = ".$object->id;
@@ -400,14 +361,12 @@ function societe_prepare_head(Societe $object)
 			} else {
 				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
 			}
-			if ($usecachekey) {
-				$datatocache = array();
-				$datatocache[$usecachekey] = $nbEvent;
-				$res_setcache = dol_setcache($usecachekey, $datatocache);
-				if ($res_setcache < 0) {
-					$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
-					dol_syslog($error, LOG_ERR);
-				}
+			$datatocache = array();
+			$datatocache[$cachekey] = $nbEvent;
+			$res_setcache = dol_setcache($cachekey, $datatocache);
+			if ($res_setcache < 0) {
+				$error = 'Failed to set cache for cachekey='.$cachekey.' result='.$res_setcache;
+				dol_syslog($error, LOG_ERR);
 			}
 		}
 		$head[$h][1] .= '/';
@@ -521,16 +480,27 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 
 	// Check parameters
 	if (empty($searchkey) && empty($searchlabel)) {
-		if ($withcode === 'all') return array('id'=>'', 'code'=>'', 'label'=>'');
-		else return '';
+		if ($withcode === 'all') {
+			return array('id'=>'', 'code'=>'', 'label'=>'');
+		} else {
+			return '';
+		}
 	}
-	if (!is_object($dbtouse)) $dbtouse = $db;
-	if (!is_object($outputlangs)) $outputlangs = $langs;
+	if (!is_object($dbtouse)) {
+		$dbtouse = $db;
+	}
+	if (!is_object($outputlangs)) {
+		$outputlangs = $langs;
+	}
 
 	$sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
-	if (is_numeric($searchkey)) $sql .= " WHERE rowid=".$searchkey;
-	elseif (!empty($searchkey)) $sql .= " WHERE code='".$db->escape($searchkey)."'";
-	else $sql .= " WHERE label='".$db->escape($searchlabel)."'";
+	if (is_numeric($searchkey)) {
+		$sql .= " WHERE rowid=".$searchkey;
+	} elseif (!empty($searchkey)) {
+		$sql .= " WHERE code='".$db->escape($searchkey)."'";
+	} else {
+		$sql .= " WHERE label='".$db->escape($searchlabel)."'";
+	}
 
 	$resql = $dbtouse->query($sql);
 	if ($resql) {
@@ -542,11 +512,17 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 				if ($entconv) $label = ($obj->code && ($outputlangs->trans("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->trans("Country".$obj->code) : $label;
 				else $label = ($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->transnoentitiesnoconv("Country".$obj->code) : $label;
 			}
-			if ($withcode == 1) $result = $label ? "$obj->code - $label" : "$obj->code";
-			elseif ($withcode == 2) $result = $obj->code;
-			elseif ($withcode == 3) $result = $obj->rowid;
-			elseif ($withcode === 'all') $result = array('id'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$label);
-			else $result = $label;
+			if ($withcode == 1) {
+				$result = $label ? "$obj->code - $label" : "$obj->code";
+			} elseif ($withcode == 2) {
+				$result = $obj->code;
+			} elseif ($withcode == 3) {
+				$result = $obj->rowid;
+			} elseif ($withcode === 'all') {
+				$result = array('id'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$label);
+			} else {
+				$result = $label;
+			}
 		} else {
 			$result = 'NotDefined';
 		}
@@ -577,7 +553,9 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 {
 	global $db, $langs;
 
-	if (!is_object($dbtouse)) $dbtouse = $db;
+	if (!is_object($dbtouse)) {
+		$dbtouse = $db;
+	}
 
 	$sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
 	$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
@@ -640,7 +618,9 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 {
 	global $langs, $db;
 
-	if (empty($outputlangs)) $outputlangs = $langs;
+	if (empty($outputlangs)) {
+		$outputlangs = $langs;
+	}
 
 	$outputlangs->load("dict");
 
@@ -660,8 +640,11 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 			$label = ($obj->label != '-' ? $obj->label : '');
-			if ($withcode) return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
-			else return $label;
+			if ($withcode) {
+				return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
+			} else {
+				return $label;
+			}
 		} else {
 			return $code_iso;
 		}
