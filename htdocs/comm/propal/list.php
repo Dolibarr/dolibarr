@@ -181,14 +181,14 @@ $arrayfields = array(
 	'p.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0),
 	'p.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
-	'p.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
+	'p.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0),
 	'p.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
 	'p.total_ht_invoiced'=>array('label'=>"AmountInvoicedHT", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'p.total_invoiced'=>array('label'=>"AmountInvoicedTTC", 'checked'=>0, 'enabled'=>!empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'p.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'p.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
+	'p.multicurrency_total_tva'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'p.multicurrency_total_ht_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedHT', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
@@ -391,8 +391,8 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.tow
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
-$sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva as multicurrency_total_vat, p.multicurrency_total_ttc,';
+$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,';
@@ -449,7 +449,7 @@ if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
 if ($search_societe_alias)			$sql .= natural_search('s.name_alias', $search_societe_alias);
 if ($search_login)					$sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')		$sql .= natural_search("p.total_ht", $search_montant_ht, 1);
-if ($search_montant_vat != '')		$sql .= natural_search("p.tva", $search_montant_vat, 1);
+if ($search_montant_vat != '')		$sql .= natural_search("p.total_tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '')		$sql .= natural_search("p.total", $search_montant_ttc, 1);
 if ($search_multicurrency_code != '')        $sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);
@@ -834,7 +834,7 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['p.total_vat']['checked']))
+	if (!empty($arrayfields['p.total_tva']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre right">';
@@ -881,7 +881,7 @@ if ($resql)
 		print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ht" value="'.dol_escape_htmltag($search_multicurrency_montant_ht).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['p.multicurrency_total_vat']['checked']))
+	if (!empty($arrayfields['p.multicurrency_total_tva']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre right">';
@@ -992,14 +992,14 @@ if ($resql)
 	if (!empty($arrayfields['p.fk_cond_reglement']['checked']))		print_liste_field_titre($arrayfields['p.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.fk_mode_reglement']['checked']))		print_liste_field_titre($arrayfields['p.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_ht']['checked']))			print_liste_field_titre($arrayfields['p.total_ht']['label'], $_SERVER["PHP_SELF"], 'p.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (!empty($arrayfields['p.total_vat']['checked']))			print_liste_field_titre($arrayfields['p.total_vat']['label'], $_SERVER["PHP_SELF"], 'p.tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.total_tva']['checked']))			print_liste_field_titre($arrayfields['p.total_tva']['label'], $_SERVER["PHP_SELF"], 'p.total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_ttc']['checked']))			print_liste_field_titre($arrayfields['p.total_ttc']['label'], $_SERVER["PHP_SELF"], 'p.total', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.total_invoiced']['checked']))	print_liste_field_titre($arrayfields['p.total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.multicurrency_code']['checked']))      print_liste_field_titre($arrayfields['p.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_code', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.multicurrency_tx']['checked']))        print_liste_field_titre($arrayfields['p.multicurrency_tx']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_tx', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.multicurrency_total_ht']['checked']))  print_liste_field_titre($arrayfields['p.multicurrency_total_ht']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (!empty($arrayfields['p.multicurrency_total_vat']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_vat']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['p.multicurrency_total_tva']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_tva']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.multicurrency_total_ttc']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_ttc']['label'], $_SERVER['PHP_SELF'], 'p.multicurrency_total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])) print_liste_field_titre($arrayfields['p.multicurrency_total_ht_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked']))	print_liste_field_titre($arrayfields['p.multicurrency_total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -1267,12 +1267,12 @@ if ($resql)
 			$totalarray['val']['p.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
-		if (!empty($arrayfields['p.total_vat']['checked']))
+		if (!empty($arrayfields['p.total_tva']['checked']))
 		{
-			print '<td class="nowrap right">'.price($obj->total_vat)."</td>\n";
+			print '<td class="nowrap right">'.price($obj->total_tva)."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
-			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_vat';
-			$totalarray['val']['p.total_vat'] += $obj->total_vat;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.total_tva';
+			$totalarray['val']['p.total_tva'] += $obj->total_tva;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['p.total_ttc']['checked']))
@@ -1320,9 +1320,9 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Amount VAT
-		if (!empty($arrayfields['p.multicurrency_total_vat']['checked']))
+		if (!empty($arrayfields['p.multicurrency_total_tva']['checked']))
 		{
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			print '<td class="right nowrap">'.price($obj->multicurrency_total_tva)."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Amount TTC
