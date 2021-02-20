@@ -71,7 +71,7 @@ function societe_prepare_head(Societe $object)
 					$nbContact = $obj->nb;
 				}
 
-				dol_setcache($cachekey, $nbContact);	// If setting cache fails, this is not a problem, so we do not test result.
+				dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
@@ -290,7 +290,7 @@ function societe_prepare_head(Societe $object)
 				} else {
 					dol_print_error($db);
 				}
-				dol_setcache($cachekey, $nbNotif);		// If setting cache fails, this is not a problem, so we do not test result.
+				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
@@ -356,7 +356,7 @@ function societe_prepare_head(Societe $object)
 			} else {
 				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
 			}
-			dol_setcache($cachekey, $nbEvent);		// If setting cache fails, this is not a problem, so we do not test result.
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
 		$head[$h][1] .= '/';
