@@ -2090,7 +2090,7 @@ if ($action == 'create' && $usercancreate)
 			if ($arrayoutstandingbills['opened'] >= $soc->outstanding_limit)
 			{
 				print '<span class="right amountremaintopay">'.price($arrayoutstandingbills['opened']).'</span> / ';
-			}else{
+			}else {
 				print price($arrayoutstandingbills['opened']).' / ';
 			}
 			print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
