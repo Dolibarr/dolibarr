@@ -415,6 +415,11 @@ jQuery(document).ready(function()
 			jQuery("#price_ttc").val('');
 		}
 	});
+	jQuery("#price_ttc").keyup(function () {
+	var tva_tx = 1+(jQuery("#tva_tx").val()/100);
+	var value = Math.round10(jQuery(this).val()/tva_tx,-8);
+	jQuery("#price_ht").val(value);
+	});
 
     <?php
 	if (!empty($conf->margin->enabled))
