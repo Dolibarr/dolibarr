@@ -10,13 +10,13 @@ FIX: 11.0 when a mandatory extrafield of type sellist contains '0' it should be 
 FIX: 11.0 when a new intervention is created from an object, a new $extrafields object is instantiated but not initialized
 FIX: create MO, Column 'tms' cannot be null
 FIX: #14290 #15900
-FIX: #16076
-FIX: #16077
-FIX: #16079
-FIX: #16080
-FIX: 16084
+FIX: #16076  patch user/list.php for extrafields
+FIX: #16077  patch wrong timezone
+FIX: #16079  error of service date at duplicated invoice
+FIX: #16080  mailing list title
+FIX: #16084  DB error at projects
 FIX: #16107
-FIX: #16118 Timezone problem on some fields
+FIX: #16118  Timezone problem on some fields
 FIX: #16131
 FIX: #16135
 FIX: #16143
@@ -47,7 +47,7 @@ FIX: select default mail template
 FIX: Select transport mode function when creating a supplier invoice and add unique key to the table llx_c_transport_mode in migrate sql
 FIX: Merge of thirdparties : "unknow column fk_soc" + "Delivery" label
 FIX: SQL Error in group by with postgres or mysql strict mode
-FIX: takepos : load date function
+FIX: TakePOS : load date function
 FIX: Timeout during import
 FIX: Trigger on expense report was not fired
 FIX: User creation of expense report not visible
