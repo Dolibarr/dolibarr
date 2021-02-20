@@ -61,13 +61,17 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
  *
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.
- * 	@return	int							<0 if KO, Nb of bytes written if OK
+ * 	@return	int							<0 if KO, 0 if nothing is done, Nb of bytes written if OK
  *  @see dol_getcache()
  */
 function dol_setcache($memoryid, $data)
 {
 	global $conf;
 	$result = 0;
+
+	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
+		if (empty($conf->global->MAIN_CACHE_COUNT)) return 0;
+	}
 
 	if (!empty($conf->memcached->enabled) &&  class_exists('Memcached')) {
 		// Using a memcached server
@@ -118,12 +122,16 @@ function dol_setcache($memoryid, $data)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area
- * 	@return	int|mixed				<0 if KO, data if OK, null if not found into cache
+ * 	@return	int|mixed				<0 if KO, data if OK, null if not found into cache or no caching feature enabled
  *  @see dol_setcache()
  */
 function dol_getcache($memoryid)
 {
 	global $conf;
+
+	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
+		if (empty($conf->global->MAIN_CACHE_COUNT)) return null;
+	}
 
 	// Using a memcached server
 	if (!empty($conf->memcached->enabled) && class_exists('Memcached')) {
