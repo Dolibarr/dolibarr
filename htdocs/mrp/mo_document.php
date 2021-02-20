@@ -80,7 +80,7 @@ $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'row
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*

@@ -4756,7 +4756,7 @@ if ($action == 'create')
 				$paymentstatic->num_payment = $objp->num_payment;
 				$paymentstatic->payment_code = $objp->payment_code;
 
-				print '<tr class="oddeven"><td>';
+				print '<tr class="oddeven"><td class="nowraponall">';
 				print $paymentstatic->getNomUrl(1);
 				print '</td>';
 				print '<td>';
@@ -4785,7 +4785,7 @@ if ($action == 'create')
 						$bankaccountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 					}
 
-					print '<td class="right">';
+					print '<td class="nowraponall">';
 					if ($bankaccountstatic->id)
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
 					print '</td>';

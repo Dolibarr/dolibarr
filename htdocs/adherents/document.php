@@ -73,7 +73,7 @@ $upload_dir = $conf->adherent->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'me
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*

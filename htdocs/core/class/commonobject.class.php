@@ -3230,7 +3230,10 @@ abstract class CommonObject
 			// Specific code for backward compatibility with old field names
 			if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht = 'total';
 			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva = 'total_tva';
-			if ($this->element == 'propal')                                                $fieldttc = 'total';
+			if ($this->element == 'propal') {
+				$fieldttc = 'total';
+				$fieldtva = 'total_tva';
+			}
 			if ($this->element == 'expensereport')                                         $fieldtva = 'total_tva';
 			if ($this->element == 'supplier_proposal')                                     $fieldttc = 'total';
 
@@ -4882,6 +4885,9 @@ abstract class CommonObject
 								$setsharekey = true;
 							}
 							if ($this->element == 'bank_account' && !empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
+							if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
 								$setsharekey = true;
 							}
 

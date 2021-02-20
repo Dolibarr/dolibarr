@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
- *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
+ *      \brief      File of class with predefined functions and HTML components
  */
 
 
