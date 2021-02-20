@@ -370,6 +370,9 @@ if ($socid > 0)
 		print '<td>';
 		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
 		print '</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("AmountTTC").'</td>';
+		print '<td><input type="text" size="5" id="discount_amount_ttc" name="discount_amount_ttc" value="">';
+		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 		print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
 		print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
 
@@ -1060,3 +1063,13 @@ if ($socid > 0)
 // End of page
 llxFooter();
 $db->close();
+?>
+<script>
+    jQuery(document).ready(function () {
+	jQuery("#discount_amount_ttc").keyup(function () {
+	var tva_tx = 1+(jQuery("#tva_tx").val()/100);
+	var value = Math.round10(jQuery(this).val()/1.18,-8);
+	jQuery("#amount_ht").val(value);
+	});
+	});
+</script>
