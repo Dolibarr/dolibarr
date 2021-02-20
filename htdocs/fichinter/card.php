@@ -1287,7 +1287,7 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Outstanding Bill
 	if ($soc->outstanding_limit)
 	{
