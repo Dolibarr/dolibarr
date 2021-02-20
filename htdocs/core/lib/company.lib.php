@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
@@ -53,20 +53,46 @@ function societe_prepare_head(Societe $object)
 	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
 		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-			$nbContact = 0; // TODO
-
-			$sql = "SELECT COUNT(p.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-			$sql .= " WHERE p.fk_soc = ".$object->id;
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				if ($obj) $nbContact = $obj->nb;
+			$nbContact = 0;
+			if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+				// Using a memcached/memcache server
+				$usecachekey = 'thirdparty_countcontact_'.$object->id;
+			} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+				// Using cache with shmop
+				$usecachekey = 'thirdparty_countcontact_'.$object->id;
 			}
-
+			if ($usecachekey) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+				$dataretrieved = dol_getcache($usecachekey);
+				if (is_array($dataretrieved) && count($dataretrieved)) {
+					$nbContact = $dataretrieved[$usecachekey];
+					$found = true;
+				}
+			}
+			if (!$found) {
+				$sql = "SELECT COUNT(p.rowid) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+				$sql .= " WHERE p.fk_soc = ".$object->id;
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					$nbContact = $obj->nb;
+				}
+				if ($usecachekey) {
+					$datatocache = array();
+					$datatocache[$usecachekey] = $nbContact;
+					$res_setcache = dol_setcache($usecachekey, $datatocache);
+					if ($res_setcache < 0) {
+						$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
+						dol_syslog($error, LOG_ERR);
+					}
+				}
+			}
 			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans('ContactsAddresses');
-			if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			if ($nbContact > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			}
 			$head[$h][2] = 'contact';
 			$h++;
 		}
@@ -74,7 +100,9 @@ function societe_prepare_head(Societe $object)
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -82,9 +110,15 @@ function societe_prepare_head(Societe $object)
 	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
 		$head[$h][1] = '';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) $head[$h][1] .= $langs->trans("Prospect");
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client == 3) $head[$h][1] .= ' | ';
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client == 1 || $object->client == 3)) $head[$h][1] .= $langs->trans("Customer");
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) {
+			$head[$h][1] .= $langs->trans("Prospect");
+		}
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client == 3) {
+			$head[$h][1] .= ' | ';
+		}
+		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client == 1 || $object->client == 3)) {
+			$head[$h][1] .= $langs->trans("Customer");
+		}
 		$head[$h][2] = 'customer';
 		$h++;
 
@@ -98,7 +132,9 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled = 1;
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		$supplier_module_enabled = 1;
+	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
@@ -107,8 +143,6 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
-		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("Projects");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
@@ -116,17 +150,16 @@ function societe_prepare_head(Societe $object)
 		$sql .= " AND entity IN (".getEntity('project').")";
 		$resql = $db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$nbNote = $obj->nb;
-				$i++;
-			}
+			$obj = $db->fetch_object($resql);
+			$nbNote = $obj->nb;
 		} else {
 			dol_print_error($db);
 		}
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
+		$head[$h][1] = $langs->trans("Projects");
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'project';
 		$h++;
 	}
@@ -180,12 +213,16 @@ function societe_prepare_head(Societe $object)
 			//$title = $langs->trans("BankAccountsAndGateways");
 
 			$servicestatus = 0;
-			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) $servicestatus = 1;
+			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+				$servicestatus = 1;
+			}
 
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 			$societeaccount = new SocieteAccount($db);
 			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus); // Get thirdparty cu_...
-			if ($stripecu) $foundonexternalonlinesystem++;
+			if ($stripecu) {
+				$foundonexternalonlinesystem++;
+			}
 		}
 
 		$sql = "SELECT COUNT(n.rowid) as nb";
@@ -199,13 +236,8 @@ function societe_prepare_head(Societe $object)
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$nbBankAccount = $obj->nb;
-				$i++;
-			}
+			$obj = $db->fetch_object($resql);
+			$nbBankAccount = $obj->nb;
 		} else {
 			dol_print_error($db);
 		}
@@ -214,8 +246,11 @@ function societe_prepare_head(Societe $object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 		$head[$h][1] = $title;
-		if ($foundonexternalonlinesystem) $head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
-	   	elseif ($nbBankAccount > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
+		if ($foundonexternalonlinesystem) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
+		} elseif ($nbBankAccount > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
+		}
 		$head[$h][2] = 'rib';
 		$h++;
 	}
@@ -229,17 +264,14 @@ function societe_prepare_head(Societe $object)
 		$sql .= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
 		$resql = $db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$nbNote = $obj->nb;
-				$i++;
-			}
+			$obj = $db->fetch_object($resql);
+			$nbNote = $obj->nb;
 		} else {
 			dol_print_error($db);
 		}
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'website';
 		$h++;
 	}
@@ -253,26 +285,52 @@ function societe_prepare_head(Societe $object)
 	if ($user->socid == 0) {
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
-			$nbNote = 0;
-			$sql = "SELECT COUNT(n.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-			$sql .= " WHERE fk_soc = ".$object->id;
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					$nbNote = $obj->nb;
-					$i++;
+			// Enable caching of thirdrparty count notifications
+			$usecachekey = '';
+			$found = false;
+			$nbNotif = 0;
+			if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
+				// Using a memcached/memcache server
+				$usecachekey = 'thirdparty_countnotif_'.$object->id;
+			} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+				// Using cache with shmop
+				$usecachekey = 'thirdparty_countnotif_'.$object->id;
+			}
+			if ($usecachekey) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+				$dataretrieved = dol_getcache($usecachekey);
+				if (is_array($dataretrieved) && count($dataretrieved)) {
+					$nbNotif = $dataretrieved[$usecachekey];
+					$found = true;
 				}
-			} else {
-				dol_print_error($db);
+			}
+			if (!$found) {
+				$sql = "SELECT COUNT(n.rowid) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+				$sql .= " WHERE fk_soc = ".$object->id;
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					$nbNotif = $obj->nb;
+				} else {
+					dol_print_error($db);
+				}
+				if ($usecachekey) {
+					$datatocache = array();
+					$datatocache[$usecachekey] = $nbNotif;
+					$res_setcache = dol_setcache($usecachekey, $datatocache);
+					if ($res_setcache < 0) {
+						$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
+						dol_syslog($error, LOG_ERR);
+					}
+				}
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Notifications");
-			if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			if ($nbNotif > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNotif.'</span>';
+			}
 			$head[$h][2] = 'notify';
 			$h++;
 		}
@@ -283,7 +341,9 @@ function societe_prepare_head(Societe $object)
 		if (!empty($object->note_public)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 
@@ -296,7 +356,9 @@ function societe_prepare_head(Societe $object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
-		if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		if (($nbFiles + $nbLinks) > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		}
 		$head[$h][2] = 'document';
 		$h++;
 	}
@@ -304,15 +366,16 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-		// Enable caching of count actioncomm
+		// Enable caching of thirdrparty count actioncomm
 		$usecachekey = '';
 		$found = false;
+		$nbEvent = 0;
 		if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
 			// Using a memcached/memcache server
-			$usecachekey = 'count_event_'.$object->id;
+			$usecachekey = 'thirdparty_countevent_'.$object->id;
 		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
 			// Using cache with shmop
-			$usecachekey = 'count_event_'.$object->id;
+			$usecachekey = 'thirdparty_countevent_'.$object->id;
 		}
 		if ($usecachekey) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -323,7 +386,6 @@ function societe_prepare_head(Societe $object)
 			}
 		}
 		if (!$found) {
-			$nbEvent = 0;
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 			$sql .= " WHERE fk_soc = ".$object->id;
@@ -337,8 +399,8 @@ function societe_prepare_head(Societe $object)
 			if ($usecachekey) {
 				$datatocache = array();
 				$datatocache[$usecachekey] = $nbEvent;
-				$ressetcache = dol_setcache($usecachekey, $datatocache);
-				if ($ressetcache < 0) {
+				$res_setcache = dol_setcache($usecachekey, $datatocache);
+				if ($res_setcache < 0) {
 					$error = 'Failed to set cache for usecachekey='.$usecachekey.' result='.$ressetcache;
 					dol_syslog($error, LOG_ERR);
 				}
