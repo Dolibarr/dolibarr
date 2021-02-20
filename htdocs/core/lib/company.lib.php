@@ -129,22 +129,30 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
-		$nbNote = 0;
-		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
-		$sql .= " WHERE fk_soc = ".$object->id;
-		$sql .= " AND entity IN (".getEntity('project').")";
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$nbNote = $obj->nb;
+		$nbProject = 0;
+		$cachekey = 'count_projects_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+
+		if (!is_null($dataretrieved)) {
+			$nbProject = $dataretrieved;
 		} else {
-			dol_print_error($db);
+			$sql = "SELECT COUNT(n.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
+			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " AND entity IN (".getEntity('project').")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbProject = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Projects");
-		if ($nbNote > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbProject > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbProject.'</span>';
 		}
 		$head[$h][2] = 'project';
 		$h++;
