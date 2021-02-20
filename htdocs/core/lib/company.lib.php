@@ -56,7 +56,7 @@ function societe_prepare_head(Societe $object)
 
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
-			$cachekey = 'thirdparty_'.$object->id.'_countcontacts';
+			$cachekey = 'count_contacts_thirdparty_'.$object->id;
 			$dataretrieved = dol_getcache($cachekey);
 
 			if (!is_null($dataretrieved)) {
@@ -275,7 +275,7 @@ function societe_prepare_head(Societe $object)
 
 			$nbNotif = 0;
 			// Enable caching of thirdrparty count notifications
-			$cachekey = 'thirdparty_'.$object->id.'_countnotifications';
+			$cachekey = 'count_notifications_thirdparty_'.$object->id;
 			$dataretrieved = dol_getcache($cachekey);
 			if (!is_null($dataretrieved)) {
 				$nbNotif = $dataretrieved;
@@ -341,7 +341,7 @@ function societe_prepare_head(Societe $object)
 
 		$nbEvent = 0;
 		// Enable caching of thirdrparty count actioncomm
-		$cachekey = 'thirdparty_'.$object->id.'_countevents';
+		$cachekey = 'count_events_thirdparty_'.$object->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$nbEvent = $dataretrieved;
