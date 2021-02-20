@@ -4198,6 +4198,9 @@ abstract class CommonObject
 		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
 		// TODO We should not use global var for this
 		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
+		
+		// inputalsopricewithtax=1 if GLOBAL_CONSTANT_ACTIVE for example INPUT_ALSO_PRICE_WITH_TAX
+		$inputalsopricewithtax=1;
 
 		// Define usemargins
 		$usemargins = 0;
