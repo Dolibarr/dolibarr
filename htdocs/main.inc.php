@@ -38,7 +38,7 @@
 
 // For optional tuning. Enabled if environment variable MAIN_SHOW_TUNING_INFO is defined.
 $micro_start_time = 0;
-if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
+if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']) )
 {
 	list($usec, $sec) = explode(" ", microtime());
 	$micro_start_time = ((float) $usec + (float) $sec);

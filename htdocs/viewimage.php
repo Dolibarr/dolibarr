@@ -34,7 +34,7 @@ if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
 if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
 if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX',  '1');
 
 // Some value of modulepart can be used to get resources that are public so no login are required.
 // Note that only directory logo is free to access without login.
