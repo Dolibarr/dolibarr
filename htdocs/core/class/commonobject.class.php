@@ -3233,6 +3233,7 @@ abstract class CommonObject
 			if ($this->element == 'propal')                                                $fieldttc = 'total';
 			if ($this->element == 'expensereport')                                         $fieldtva = 'total_tva';
 			if ($this->element == 'supplier_proposal')                                     $fieldttc = 'total';
+			if ($this->element == 'commande')                                              $fieldtva = 'total_tva';
 
 			if (empty($nodatabaseupdate))
 			{

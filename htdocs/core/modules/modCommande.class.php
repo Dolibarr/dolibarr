@@ -288,7 +288,7 @@ class modCommande extends DolibarrModules
 			'c.fk_user_valid'     => 'ValidatedById',
 			'c.fk_statut'         => 'Status*',
 			'c.remise_percent'    => 'GlobalDiscount',
-			'c.tva'               => 'TotalTVA',
+			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',
