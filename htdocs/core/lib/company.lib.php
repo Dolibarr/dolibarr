@@ -337,8 +337,12 @@ function societe_prepare_head(Societe $object)
 
 		// Notes
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
@@ -548,7 +552,9 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 		}
 		$dbtouse->free($resql);
 		return $result;
-	} else dol_print_error($dbtouse, '');
+	} else {
+		dol_print_error($dbtouse, '');
+	}
 	return 'Error';
 }
 
@@ -1000,8 +1006,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_status = '';
-		$search_name         = '';
-		$search_roles        = array();
+		$search_name = '';
+		$search_roles = array();
 		$search_address = '';
 		$search_poste = '';
 		$search = array();
@@ -1365,14 +1371,27 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " a.fk_contact,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
-		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')))      $sql .= ", sp.lastname, sp.firstname";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", m.lastname, m.firstname";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql .= ", o.ref";
-		elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) $sql .= ", o.ref";
+		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
+			$sql .= ", sp.lastname, sp.firstname";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
+			/* Nothing */
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
+			/* Nothing */
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
+			$sql .= ", m.lastname, m.firstname";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
+			$sql .= ", o.ref";
+		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
@@ -1391,7 +1410,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
 			$sql .= " AND er.resource_id = ".$filterobj->id;
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
+			/* Nothing */
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
 		elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
 		elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql .= ", ".MAIN_DB_PREFIX."product as o";
 		elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql .= ", ".MAIN_DB_PREFIX."ticket as o";
