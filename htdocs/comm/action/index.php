@@ -1343,14 +1343,14 @@ if (empty($action) || $action == 'show_month')      // View by month
 
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
-		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime, true);
-		$tmpday = $tmparray['mday'];
-		$tmpmonth = $tmparray['mon'];
-		$tmpyear = $tmparray['year'];
+		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');		// $firstdaytoshow is in timezone of server
+		$tmpday = dol_print_date($curtime, '%d', 'tzuserrel');
+		$tmpmonth = dol_print_date($curtime, '%m', 'tzuserrel');
+		$tmpyear = dol_print_date($curtime, '%Y', 'tzuserrel');
 
 		$style = 'cal_current_month';
 		if ($iter_day == 6) $style .= ' cal_other_month_right';
+
 		$today = 0;
 		$todayarray = dol_getdate($now, 'fast');
 		if ($todayarray['mday'] == $tmpday && $todayarray['mon'] == $tmpmonth && $todayarray['year'] == $tmpyear) $today = 1;
@@ -1501,11 +1501,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	}
 
 	// Line with title of day
-	print '<div id="dayevent_'.$dateint.'" class="cursorpointer dayevent tagtable centpercent nobordernopadding" onclick="window.location=\''.$urltocreate.'\';">'."\n";
+	print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding">'."\n";
 
 	if ($nonew <= 0)
 	{
-		print '<div class="tagtr"><div class="nowrap tagtd"><div class="left inline-block">';
+		print '<div class="tagtr cursorpointer" onclick="window.location=\''.$urltocreate.'\';"><div class="nowrap tagtd"><div class="left inline-block">';
 		print '<a class="dayevent-aday" style="color: #666" href="'.$urltoshow.'">';
 		if ($showinfo) print dol_print_date($curtime, 'daytextshort');
 		else print dol_print_date($curtime, '%d');
@@ -1630,7 +1630,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$tmpyearend    = date('Y', $event->date_end_in_calendar);
 						$tmpmonthend   = date('m', $event->date_end_in_calendar);
 						$tmpdayend     = date('d', $event->date_end_in_calendar);
-						if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+						if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour)
 						{
 							$cssclass .= " unmovable";
 						}
