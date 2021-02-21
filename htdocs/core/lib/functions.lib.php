@@ -2450,21 +2450,32 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 function getArrayOfSocialNetworks()
 {
 	global $conf, $db;
-	$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-	$sql .= " WHERE entity=".$conf->entity;
+
 	$socialnetworks = array();
-	$resql = $db->query($sql);
-	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$socialnetworks[$obj->code] = array(
-				'rowid' => $obj->rowid,
-				'label' => $obj->label,
-				'url' => $obj->url,
-				'icon' => $obj->icon,
-				'active' => $obj->active,
-			);
+	// Enable caching of array
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'socialnetworks_' . $conf->entity;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$socialnetworks = $dataretrieved;
+	} else {
+		$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+		$sql .= " WHERE entity=".$conf->entity;
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$socialnetworks[$obj->code] = array(
+					'rowid' => $obj->rowid,
+					'label' => $obj->label,
+					'url' => $obj->url,
+					'icon' => $obj->icon,
+					'active' => $obj->active,
+				);
+			}
 		}
+		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
+
 	return $socialnetworks;
 }
 
