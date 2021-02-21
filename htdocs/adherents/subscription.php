@@ -111,6 +111,13 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
  * 	Actions
  */
 
+$datefrom = 0;
+$dateto = 0;
+$paymentdate = -1;
+
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 // Create third party from a member
 if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
 	if ($result > 0) {
@@ -826,9 +833,6 @@ if ($rowid > 0) {
 		print '<tbody>';
 
 		$today = dol_now();
-		$datefrom = 0;
-		$dateto = 0;
-		$paymentdate = -1;
 
 		// Date payment
 		if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
