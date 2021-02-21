@@ -765,21 +765,21 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolTrunc()
 	{
-		// Default trunc (will add ... if truncation truncation or keep last char if only one char)
+		// Default trunc (will add … if truncation truncation or keep last char if only one char)
 		$input="éeéeéeàa";
 		$after=dol_trunc($input, 3);
-		$this->assertEquals("éeé...", $after, 'Test A1');
+		$this->assertEquals("éeé…", $after, 'Test A1');
 		$after=dol_trunc($input, 2);
-		$this->assertEquals("ée...", $after, 'Test A2');
+		$this->assertEquals("ée…", $after, 'Test A2');
 		$after=dol_trunc($input, 1);
-		$this->assertEquals("é...", $after, 'Test A3');
+		$this->assertEquals("é…", $after, 'Test A3');
 		$input="éeéeé";
 		$after=dol_trunc($input, 3);
 		$this->assertEquals("éeéeé", $after, 'Test B1');
 		$after=dol_trunc($input, 2);
 		$this->assertEquals("éeéeé", $after, 'Test B2');
 		$after=dol_trunc($input, 1);
-		$this->assertEquals("é...", $after, 'Test B3');
+		$this->assertEquals("é…", $after, 'Test B3');
 		$input="éeée";
 		$after=dol_trunc($input, 3);
 		$this->assertEquals("éeée", $after, 'Test C1');
@@ -794,7 +794,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals("éeé", $after, 'Test D');
 		$after=dol_trunc($input, 1);
 		$this->assertEquals("éeé", $after, 'Test E');
-		// Trunc with no ...
+		// Trunc with no …
 		$input="éeéeéeàa";
 		$after=dol_trunc($input, 3, 'right', 'UTF-8', 1);
 		$this->assertEquals("éeé", $after, 'Test F');
@@ -809,7 +809,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals("é", $after, 'Test J');
 		$input="éeéeéeàa";
 		$after=dol_trunc($input, 4, 'middle');
-		$this->assertEquals("ée...àa", $after, 'Test K');
+		$this->assertEquals("ée…àa", $after, 'Test K');
 
 		return true;
 	}

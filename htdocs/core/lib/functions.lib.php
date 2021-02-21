@@ -3173,12 +3173,12 @@ function dol_substr($string, $start, $length, $stringencoding = '', $trunconbyte
 
 
 /**
- *	Truncate a string to a particular length adding '...' if string larger than length.
- * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
+ *	Truncate a string to a particular length adding '…' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '…'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added ..., or if size was max+1 or max+2 or max+3 so it does not worse to replace with ...)
+ *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added …, or if size was max+1 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: 'right', 'left', 'middle' (size must be a 2 power), 'wrap'
  * 	@param	string	$stringencoding		Tell what is source string encoding
  *  @param	int		$nodot				Truncation do not add … after truncation. So it's an exact truncation.
