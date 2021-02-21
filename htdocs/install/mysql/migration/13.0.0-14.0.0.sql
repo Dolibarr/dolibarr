@@ -176,6 +176,7 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 
 
 -- Code enhanced - Standardize field name
+ALTER TABLE llx_commande CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_supplier_proposal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_supplier_proposal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;

@@ -814,7 +814,7 @@ if ($object->id > 0)
 	{
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.total_ht";
-		$sql .= ", c.tva as total_tva";
+		$sql .= ", c.total_tva";
 		$sql .= ", c.total_ttc";
 		$sql .= ", c.ref, c.ref_client, c.fk_statut, c.facture";
 		$sql .= ", c.date_commande as dc";

@@ -3236,6 +3236,7 @@ abstract class CommonObject
 			}
 			if ($this->element == 'expensereport')                                         $fieldtva = 'total_tva';
 			if ($this->element == 'supplier_proposal')                                     $fieldtva = 'total_tva';
+			if ($this->element == 'commande')                                              $fieldtva = 'total_tva';
 
 			if (empty($nodatabaseupdate))
 			{
