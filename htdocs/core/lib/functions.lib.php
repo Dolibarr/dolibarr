@@ -2450,21 +2450,32 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 function getArrayOfSocialNetworks()
 {
 	global $conf, $db;
-	$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-	$sql .= " WHERE entity=".$conf->entity;
+
 	$socialnetworks = array();
-	$resql = $db->query($sql);
-	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$socialnetworks[$obj->code] = array(
-				'rowid' => $obj->rowid,
-				'label' => $obj->label,
-				'url' => $obj->url,
-				'icon' => $obj->icon,
-				'active' => $obj->active,
-			);
+	// Enable caching of array
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'socialnetworks_' . $conf->entity;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$socialnetworks = $dataretrieved;
+	} else {
+		$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+		$sql .= " WHERE entity=".$conf->entity;
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$socialnetworks[$obj->code] = array(
+					'rowid' => $obj->rowid,
+					'label' => $obj->label,
+					'url' => $obj->url,
+					'icon' => $obj->icon,
+					'active' => $obj->active,
+				);
+			}
 		}
+		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
+
 	return $socialnetworks;
 }
 
@@ -3173,15 +3184,15 @@ function dol_substr($string, $start, $length, $stringencoding = '', $trunconbyte
 
 
 /**
- *	Truncate a string to a particular length adding '...' if string larger than length.
- * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
+ *	Truncate a string to a particular length adding '…' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '…'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible (excluding ...). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added ..., or if size was max+1 or max+2 or max+3 so it does not worse to replace with ...)
+ *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added …, or if size was max+1 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: 'right', 'left', 'middle' (size must be a 2 power), 'wrap'
  * 	@param	string	$stringencoding		Tell what is source string encoding
- *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
+ *  @param	int		$nodot				Truncation do not add … after truncation. So it's an exact truncation.
  *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
@@ -3189,42 +3200,53 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 {
 	global $conf;
 
-	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
+		return $string;
+	}
 
-	if (empty($stringencoding)) $stringencoding = 'UTF-8';
+	if (empty($stringencoding)) {
+		$stringencoding = 'UTF-8';
+	}
 	// reduce for small screen
 	if ($conf->dol_optimize_smallscreen == 1 && $display == 1) $size = round($size / 3);
 
 	// We go always here
-	if ($trunc == 'right')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '...');
-		else //return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
-		return $string;
-	} elseif ($trunc == 'middle')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size + 1))
-		{
+	if ($trunc == 'right') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '…');
+		} else {
+			//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
+			return $string;
+		}
+	} elseif ($trunc == 'middle') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size + 1)) {
 			$size1 = round($size / 2);
 			$size2 = round($size / 2);
-			return dol_substr($newstring, 0, $size1, $stringencoding).'...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
-		} else return $string;
-	} elseif ($trunc == 'left')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return '...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
-		else return $string;
-	} elseif ($trunc == 'wrap')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + 1))
-		return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
-		else return $string;
-	} else return 'BadParam3CallingDolTrunc';
+			return dol_substr($newstring, 0, $size1, $stringencoding).'…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
+		} else {
+			return $string;
+		}
+	} elseif ($trunc == 'left') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			return '…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
+		} else {
+			return $string;
+		}
+	} elseif ($trunc == 'wrap') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + 1)) {
+			return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
+		} else {
+			return $string;
+		}
+	} else {
+		return 'BadParam3CallingDolTrunc';
+	}
 }
 
 /**

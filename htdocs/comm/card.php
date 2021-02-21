@@ -7,7 +7,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2019 Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2021 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
  *
@@ -741,12 +741,11 @@ if ($object->id > 0)
 	/*
 	 * Latest proposals
 	 */
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
-	{
+	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$langs->load("propal");
 
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
-		$sql .= ", p.tva as total_tva";
+		$sql .= ", p.total_tva";
 		$sql .= ", p.total as total_ttc";
 		$sql .= ", p.ref, p.ref_client, p.remise";
 		$sql .= ", p.datep as dp, p.fin_validite as date_limit";
