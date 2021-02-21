@@ -3503,6 +3503,7 @@ table.hidepaginationnext .paginationnext {
 }
 
 
+
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
