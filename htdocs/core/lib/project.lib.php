@@ -125,7 +125,7 @@ function project_prepare_head(Project $project)
 		$langs->load('eventorganization');
 		//TODO : Count
 		$nbConfOrBooth = 1;
-		$head[$h][0] = DOL_URL_ROOT . '/eventorganisation/conferenceorbooth_card.php?id=' . $project->id;
+		$head[$h][0] = DOL_URL_ROOT . '/projet/event.php?id=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
 		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
 		$head[$h][2] = 'eventorganisation';

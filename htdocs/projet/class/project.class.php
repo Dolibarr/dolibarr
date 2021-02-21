@@ -201,6 +201,10 @@ class Project extends CommonObject
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+		'allow_unknown_people_conf' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestConf', 'enabled'=>1, 'visible'=>-1, 'position'=>146),
+		'allow_unknown_people_booth' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>147),
+		'price_registration' =>array('type'=>'double(24,8)', 'label'=>'PriceOfRegistration', 'enabled'=>1, 'visible'=>-1, 'position'=>148),
+		'price_booth' =>array('type'=>'double(24,8)', 'label'=>'PriceOfBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>149),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>-2, 'position'=>200),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>205),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>210),
@@ -257,6 +261,10 @@ class Project extends CommonObject
 
 		if (empty($conf->eventorganization->enabled)) {
 			$this->fields['usage_organize_event']['visible'] = 0;
+			$this->fields['allow_unknown_people_conf']['enabled'] = 0;
+			$this->fields['allow_unknown_people_booth']['enabled'] = 0;
+			$this->fields['price_registration']['enabled'] = 0;
+			$this->fields['price_booth']['enabled'] = 0;
 		}
 	}
 
@@ -316,6 +324,10 @@ class Project extends CommonObject
 		$sql .= ", usage_task";
 		$sql .= ", usage_bill_time";
 		$sql .= ", usage_organize_event";
+		$sql .= ", allow_unknown_people_conf";
+		$sql .= ", allow_unknown_people_booth";
+		$sql .= ", price_registration";
+		$sql .= ", price_booth";
 		$sql .= ", email_msgid";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
@@ -339,6 +351,10 @@ class Project extends CommonObject
 		$sql .= ", ".($this->usage_task ? 1 : 0);
 		$sql .= ", ".($this->usage_bill_time ? 1 : 0);
 		$sql .= ", ".($this->usage_organize_event ? 1 : 0);
+		$sql .= ", ".($this->allow_unknown_people_conf ? 1 : 0);
+		$sql .= ", ".($this->allow_unknown_people_booth ? 1 : 0);
+		$sql .= ", ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : 'null');
+		$sql .= ", ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : 'null');
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
@@ -442,6 +458,10 @@ class Project extends CommonObject
 			$sql .= ", usage_task = ".($this->usage_task ? 1 : 0);
 			$sql .= ", usage_bill_time = ".($this->usage_bill_time ? 1 : 0);
 			$sql .= ", usage_organize_event = ".($this->usage_organize_event ? 1 : 0);
+			$sql .= ", allow_unknown_people_conf = ".($this->allow_unknown_people_conf ? 1 : 0);
+			$sql .= ", allow_unknown_people_booth = ".($this->allow_unknown_people_booth ? 1 : 0);
+			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
+			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -531,7 +551,8 @@ class Project extends CommonObject
 
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
-		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid";
+		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid,";
+		$sql .= " allow_unknown_people_conf, allow_unknown_people_booth, price_registration, price_booth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id))
 		{
@@ -588,6 +609,10 @@ class Project extends CommonObject
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
 				$this->usage_organize_event = (int) $obj->usage_organize_event;
+				$this->allow_unknown_people_conf = (int) $obj->allow_unknown_people_conf;
+				$this->allow_unknown_people_booth = (int) $obj->allow_unknown_people_booth;
+				$this->price_registration = $obj->price_registration;
+				$this->price_booth = $obj->price_booth;
 				$this->email_msgid = $obj->email_msgid;
 
 				$this->db->free($resql);
