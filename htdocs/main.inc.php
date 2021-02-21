@@ -185,9 +185,12 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 
 
 // Check consistency of NOREQUIREXXX DEFINES
-if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU'))
-{
-	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them';
+if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
+	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them.';
+	exit;
+}
+if (defined('NOREQUIREUSER') && !defined('NOREQUIREMENU')) {
+	print 'If define NOREQUIREUSER is set, you must also set NOREQUIREMENU or not set it.';
 	exit;
 }
 
@@ -595,7 +598,7 @@ if (!defined('NOLOGIN'))
 		if ($test && GETPOST("username", "alpha", 2) && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) && !isset($_SESSION['dol_bypass_antispam']))
 		{
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'none'))));
 
 			// Check code
 			if (!$ok)
@@ -1007,8 +1010,6 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 {
 	$conf->dol_optimize_smallscreen = 1;
 }
-// If we force to use jmobile, then we reenable javascript
-if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 // Replace themes bugged with jmobile with eldy
 if (!empty($conf->dol_use_jmobile) && in_array($conf->theme, array('bureau2crea', 'cameleo', 'amarok')))
 {

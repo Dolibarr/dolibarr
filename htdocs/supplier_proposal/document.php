@@ -69,7 +69,7 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
-	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 

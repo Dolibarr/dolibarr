@@ -98,7 +98,7 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.fk_user_valid";
 			$sql .= ", c.facture";
 			$sql .= ", c.total_ht";
-			$sql .= ", c.tva as total_tva";
+			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande as c";

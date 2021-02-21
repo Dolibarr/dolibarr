@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
@@ -53,20 +53,32 @@ function societe_prepare_head(Societe $object)
 	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
 		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-			$nbContact = 0; // TODO
+			$nbContact = 0;
+			// Enable caching of thirdrparty count Contacts
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'count_contacts_thirdparty_'.$object->id;
+			$dataretrieved = dol_getcache($cachekey);
 
-			$sql = "SELECT COUNT(p.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-			$sql .= " WHERE p.fk_soc = ".$object->id;
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				if ($obj) $nbContact = $obj->nb;
+			if (!is_null($dataretrieved)) {
+				$nbContact = $dataretrieved;
+			} else {
+				$sql = "SELECT COUNT(p.rowid) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+				$sql .= " WHERE p.fk_soc = ".$object->id;
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					$nbContact = $obj->nb;
+				}
+
+				dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans('ContactsAddresses');
-			if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			if ($nbContact > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			}
 			$head[$h][2] = 'contact';
 			$h++;
 		}
@@ -74,7 +86,9 @@ function societe_prepare_head(Societe $object)
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -82,9 +96,15 @@ function societe_prepare_head(Societe $object)
 	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
 		$head[$h][1] = '';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) $head[$h][1] .= $langs->trans("Prospect");
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client == 3) $head[$h][1] .= ' | ';
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client == 1 || $object->client == 3)) $head[$h][1] .= $langs->trans("Customer");
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client == 2 || $object->client == 3)) {
+			$head[$h][1] .= $langs->trans("Prospect");
+		}
+		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client == 3) {
+			$head[$h][1] .= ' | ';
+		}
+		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client == 1 || $object->client == 3)) {
+			$head[$h][1] .= $langs->trans("Customer");
+		}
 		$head[$h][2] = 'customer';
 		$h++;
 
@@ -98,7 +118,9 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 	$supplier_module_enabled = 0;
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled = 1;
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		$supplier_module_enabled = 1;
+	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Supplier");
@@ -107,26 +129,33 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+		$nbProject = 0;
+		// Enable caching of thirdrparty count projects
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_projects_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+
+		if (!is_null($dataretrieved)) {
+			$nbProject = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(n.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
+			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " AND entity IN (".getEntity('project').")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbProject = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Projects");
-		$nbNote = 0;
-		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
-		$sql .= " WHERE fk_soc = ".$object->id;
-		$sql .= " AND entity IN (".getEntity('project').")";
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$nbNote = $obj->nb;
-				$i++;
-			}
-		} else {
-			dol_print_error($db);
+		if ($nbProject > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbProject.'</span>';
 		}
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'project';
 		$h++;
 	}
@@ -180,12 +209,16 @@ function societe_prepare_head(Societe $object)
 			//$title = $langs->trans("BankAccountsAndGateways");
 
 			$servicestatus = 0;
-			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) $servicestatus = 1;
+			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+				$servicestatus = 1;
+			}
 
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 			$societeaccount = new SocieteAccount($db);
 			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus); // Get thirdparty cu_...
-			if ($stripecu) $foundonexternalonlinesystem++;
+			if ($stripecu) {
+				$foundonexternalonlinesystem++;
+			}
 		}
 
 		$sql = "SELECT COUNT(n.rowid) as nb";
@@ -199,13 +232,8 @@ function societe_prepare_head(Societe $object)
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$nbBankAccount = $obj->nb;
-				$i++;
-			}
+			$obj = $db->fetch_object($resql);
+			$nbBankAccount = $obj->nb;
 		} else {
 			dol_print_error($db);
 		}
@@ -214,8 +242,11 @@ function societe_prepare_head(Societe $object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 		$head[$h][1] = $title;
-		if ($foundonexternalonlinesystem) $head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
-	   	elseif ($nbBankAccount > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
+		if ($foundonexternalonlinesystem) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
+		} elseif ($nbBankAccount > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
+		}
 		$head[$h][2] = 'rib';
 		$h++;
 	}
@@ -229,17 +260,14 @@ function societe_prepare_head(Societe $object)
 		$sql .= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
 		$resql = $db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				$nbNote = $obj->nb;
-				$i++;
-			}
+			$obj = $db->fetch_object($resql);
+			$nbNote = $obj->nb;
 		} else {
 			dol_print_error($db);
 		}
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'website';
 		$h++;
 	}
@@ -253,50 +281,75 @@ function societe_prepare_head(Societe $object)
 	if ($user->socid == 0) {
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
-			$nbNote = 0;
-			$sql = "SELECT COUNT(n.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-			$sql .= " WHERE fk_soc = ".$object->id;
-			$resql = $db->query($sql);
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$obj = $db->fetch_object($resql);
-					$nbNote = $obj->nb;
-					$i++;
-				}
+			$nbNotif = 0;
+			// Enable caching of thirdrparty count notifications
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'count_notifications_thirdparty_'.$object->id;
+			$dataretrieved = dol_getcache($cachekey);
+			if (!is_null($dataretrieved)) {
+				$nbNotif = $dataretrieved;
 			} else {
-				dol_print_error($db);
+				$sql = "SELECT COUNT(n.rowid) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
+				$sql .= " WHERE fk_soc = ".$object->id;
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					$nbNotif = $obj->nb;
+				} else {
+					dol_print_error($db);
+				}
+				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
 			$head[$h][1] = $langs->trans("Notifications");
-			if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			if ($nbNotif > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNotif.'</span>';
+			}
 			$head[$h][2] = 'notify';
 			$h++;
 		}
 
 		// Notes
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 
-		// Attached files
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
-		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-		$nbLinks = Link::count($db, $object->element, $object->id);
+		// Attached files and Links
+		$totalAttached = 0;
+		// Enable caching of thirdrparty count attached files and links
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_attached_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$totalAttached = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+			$nbLinks = Link::count($db, $object->element, $object->id);
+			$totalAttached = $nbFiles + $nbLinks;
+			dol_setcache($cachekey, $totalAttached, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
 
 		$head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
-		if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		if (($totalAttached) > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($totalAttached).'</span>';
+		}
 		$head[$h][2] = 'document';
 		$h++;
 	}
@@ -304,17 +357,41 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		$nbEvent = 0;
+		// Enable caching of thirdrparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_soc = ".$object->id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
 
 	// Log
 	/*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;*/
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;*/
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty', 'remove');
 
@@ -412,16 +489,27 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 
 	// Check parameters
 	if (empty($searchkey) && empty($searchlabel)) {
-		if ($withcode === 'all') return array('id'=>'', 'code'=>'', 'label'=>'');
-		else return '';
+		if ($withcode === 'all') {
+			return array('id'=>'', 'code'=>'', 'label'=>'');
+		} else {
+			return '';
+		}
 	}
-	if (!is_object($dbtouse)) $dbtouse = $db;
-	if (!is_object($outputlangs)) $outputlangs = $langs;
+	if (!is_object($dbtouse)) {
+		$dbtouse = $db;
+	}
+	if (!is_object($outputlangs)) {
+		$outputlangs = $langs;
+	}
 
 	$sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
-	if (is_numeric($searchkey)) $sql .= " WHERE rowid=".$searchkey;
-	elseif (!empty($searchkey)) $sql .= " WHERE code='".$db->escape($searchkey)."'";
-	else $sql .= " WHERE label='".$db->escape($searchlabel)."'";
+	if (is_numeric($searchkey)) {
+		$sql .= " WHERE rowid=".$searchkey;
+	} elseif (!empty($searchkey)) {
+		$sql .= " WHERE code='".$db->escape($searchkey)."'";
+	} else {
+		$sql .= " WHERE label='".$db->escape($searchlabel)."'";
+	}
 
 	$resql = $dbtouse->query($sql);
 	if ($resql) {
@@ -433,17 +521,25 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 				if ($entconv) $label = ($obj->code && ($outputlangs->trans("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->trans("Country".$obj->code) : $label;
 				else $label = ($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->transnoentitiesnoconv("Country".$obj->code) : $label;
 			}
-			if ($withcode == 1) $result = $label ? "$obj->code - $label" : "$obj->code";
-			elseif ($withcode == 2) $result = $obj->code;
-			elseif ($withcode == 3) $result = $obj->rowid;
-			elseif ($withcode === 'all') $result = array('id'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$label);
-			else $result = $label;
+			if ($withcode == 1) {
+				$result = $label ? "$obj->code - $label" : "$obj->code";
+			} elseif ($withcode == 2) {
+				$result = $obj->code;
+			} elseif ($withcode == 3) {
+				$result = $obj->rowid;
+			} elseif ($withcode === 'all') {
+				$result = array('id'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$label);
+			} else {
+				$result = $label;
+			}
 		} else {
 			$result = 'NotDefined';
 		}
 		$dbtouse->free($resql);
 		return $result;
-	} else dol_print_error($dbtouse, '');
+	} else {
+		dol_print_error($dbtouse, '');
+	}
 	return 'Error';
 }
 
@@ -466,7 +562,9 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 {
 	global $db, $langs;
 
-	if (!is_object($dbtouse)) $dbtouse = $db;
+	if (!is_object($dbtouse)) {
+		$dbtouse = $db;
+	}
 
 	$sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
 	$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
@@ -529,7 +627,9 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 {
 	global $langs, $db;
 
-	if (empty($outputlangs)) $outputlangs = $langs;
+	if (empty($outputlangs)) {
+		$outputlangs = $langs;
+	}
 
 	$outputlangs->load("dict");
 
@@ -549,8 +649,11 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 			$label = ($obj->label != '-' ? $obj->label : '');
-			if ($withcode) return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
-			else return $label;
+			if ($withcode) {
+				return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
+			} else {
+				return $label;
+			}
 		} else {
 			return $code_iso;
 		}
@@ -895,8 +998,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_status = '';
-		$search_name         = '';
-		$search_roles        = array();
+		$search_name = '';
+		$search_roles = array();
 		$search_address = '';
 		$search_poste = '';
 		$search = array();
@@ -989,7 +1092,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			} elseif (in_array($key, array('role'))) {
 				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
 			} else {
-			    print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
+				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
 			}
 			print '</td>';
 		}
@@ -1260,14 +1363,27 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " a.fk_contact,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
-		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')))      $sql .= ", sp.lastname, sp.firstname";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", m.lastname, m.firstname";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')      $sql .= ", o.ref";
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')  $sql .= ", o.ref";
-		elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) $sql .= ", o.ref";
+		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
+			$sql .= ", sp.lastname, sp.firstname";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
+			/* Nothing */
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
+			/* Nothing */
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
+			$sql .= ", m.lastname, m.firstname";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
+			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
+			$sql .= ", o.ref";
+		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
@@ -1286,7 +1402,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
 			$sql .= " AND er.resource_id = ".$filterobj->id;
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
+			/* Nothing */
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
 		elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
 		elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql .= ", ".MAIN_DB_PREFIX."product as o";
 		elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql .= ", ".MAIN_DB_PREFIX."ticket as o";

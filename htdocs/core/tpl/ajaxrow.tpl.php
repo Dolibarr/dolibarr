@@ -28,7 +28,7 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object))
 {
-	print "Error, template page can't be called as URL";
+	print "Error, template page ".basename(__FILE__)." can't be called with no object defined.";
 	exit;
 }
 

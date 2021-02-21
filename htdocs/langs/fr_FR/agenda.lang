@@ -130,7 +130,7 @@ AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées �
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
-AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
+AgendaShowBirthdayEvents=Anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
 ExportDataset_event1=Liste des événements de l'agenda
