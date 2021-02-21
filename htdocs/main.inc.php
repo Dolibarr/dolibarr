@@ -416,14 +416,16 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 }
 
 // Creation of a token against CSRF vulnerabilities
-if (!defined('NOTOKENRENEWAL'))
-{
+if (!defined('NOTOKENRENEWAL')) {
 	// Rolling token at each call ($_SESSION['token'] contains token of previous page)
-	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
+	if (isset($_SESSION['newtoken'])) {
+		$_SESSION['token'] = $_SESSION['newtoken'];
+	}
 
 	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
 	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
+	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_INFO);
 }
 
 //dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
