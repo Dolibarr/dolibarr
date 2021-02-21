@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2020	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -768,8 +768,7 @@ if (empty($reshook))
 	}
 
 	// Close all lines
-	elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
-	{
+	elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer) {
 		$result = $object->closeAll($user);
 		if ($result < 0)
 		{
@@ -778,15 +777,13 @@ if (empty($reshook))
 	}
 
 	// Close all lines
-	elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
-	{
+	elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer) {
 		$result = $object->activateAll($user);
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
-	{
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer) {
 		$result = $object->delete($user);
 		if ($result >= 0)
 		{
@@ -795,13 +792,12 @@ if (empty($reshook))
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer)
-	{
+	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer) {
 		if (GETPOST('newcid') > 0)
 		{
 			$contractline = new ContratLigne($db);
-			$result = $contractline->fetch(GETPOST('lineid'));
-			$contractline->fk_contrat = GETPOST('newcid');
+			$result = $contractline->fetch(GETPOSTINT('lineid'));
+			$contractline->fk_contrat = GETPOSTINT('newcid');
 			$result = $contractline->update($user, 1);
 			if ($result >= 0)
 			{
@@ -871,8 +867,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setref')
-	{
+	} elseif ($action == 'setref') {
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
 		if (!$cancelbutton) {
@@ -909,8 +904,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setdate_contrat')
-	{
+	} elseif ($action == 'setdate_contrat') {
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
 		if (!$cancelbutton) {
