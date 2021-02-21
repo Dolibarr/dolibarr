@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->load('projects','enevntorganization');
+$langs->load('projects', 'enevntorganization');
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
@@ -97,7 +97,6 @@ $now = dol_now();
 
 if ($id > 0 || !empty($ref))
 {
-
 	$head = project_prepare_head($object);
 	print dol_get_fiche_head($head, 'eventorganisation', $langs->trans('ConferenceOrBoothTab'), -1);
 
@@ -304,7 +303,6 @@ if ($id > 0 || !empty($ref))
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-
 }
 
 print dol_get_fiche_end();
