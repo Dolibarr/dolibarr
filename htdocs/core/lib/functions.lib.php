@@ -3197,12 +3197,12 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 		$stringencoding = 'UTF-8';
 	}
 	// reduce for small screen
-	// if ($conf->dol_optimize_smallscreen == 1 && $display == 1) $size = round($size / 3);
+	if ($conf->dol_optimize_smallscreen == 1 && $display == 1) $size = round($size / 3);
 
 	// We go always here
 	if ($trunc == 'right') {
 		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 2))) {
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3))) {
 			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
 			return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '…');
 		} else {
@@ -3220,7 +3220,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 		}
 	} elseif ($trunc == 'left') {
 		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 2))) {
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3))) {
 			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
 			return '…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
 		} else {

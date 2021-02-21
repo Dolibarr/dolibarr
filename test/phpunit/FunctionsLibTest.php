@@ -773,11 +773,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals("ée…", $after, 'Test A2');
 		$after=dol_trunc($input, 1);
 		$this->assertEquals("é…", $after, 'Test A3');
-		$input="éeéeé";
+		$input="éeée";
 		$after=dol_trunc($input, 3);
-		$this->assertEquals("éeéeé", $after, 'Test B1');
+		$this->assertEquals("éeée", $after, 'Test B1');
 		$after=dol_trunc($input, 2);
-		$this->assertEquals("éeéeé", $after, 'Test B2');
+		$this->assertEquals("ée…", $after, 'Test B2');
 		$after=dol_trunc($input, 1);
 		$this->assertEquals("é…", $after, 'Test B3');
 		$input="éeée";
