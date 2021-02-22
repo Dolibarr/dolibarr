@@ -311,7 +311,7 @@ if (!$error && $db->connected) {
 // Define $defaultCharacterSet and $defaultDBSortingCollation
 if (!$error && $db->connected) {
 	if (!empty($db_create_database)) {    // If we create database, we force default value
-	// Default values come from the database handler
+		// Default values come from the database handler
 
 		$defaultCharacterSet = $db->forcecharset;
 		$defaultDBSortingCollation = $db->forcecollate;

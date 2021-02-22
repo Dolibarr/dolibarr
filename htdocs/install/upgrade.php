@@ -358,7 +358,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					if (is_resource($handlemodule)) {
 						while (($filemodule = readdir($handlemodule)) !== false) {
 							if (!preg_match('/\./', $filemodule) && is_dir($dirroot.'/'.$filemodule.'/sql')) {	// We exclude filemodule that contains . (are not directories) and are not directories.
-							//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
+								//print "Scan for ".$dirroot . '/' . $filemodule . '/sql/'.$file;
 								if (is_file($dirroot.'/'.$filemodule.'/sql/dolibarr_'.$file)) {
 									$modulesfile[$dirroot.'/'.$filemodule.'/sql/dolibarr_'.$file] = '/'.$filemodule.'/sql/dolibarr_'.$file;
 								}

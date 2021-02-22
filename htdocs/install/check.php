@@ -454,7 +454,7 @@ if (!file_exists($conffile)) {
 
 			if ($ok) {
 				if (count($dolibarrlastupgradeversionarray) >= 2) {	// If database access is available and last upgrade version is known
-				// Now we check if this is the first qualified choice
+					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) &&
 						(versioncompare($dolibarrversiontoarray, $dolibarrlastupgradeversionarray) > 0 || versioncompare($dolibarrversiontoarray, $versionarray) < -2)
 					) {
