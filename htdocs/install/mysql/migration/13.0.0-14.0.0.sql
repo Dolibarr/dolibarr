@@ -174,8 +174,8 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailAttendes', 50, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailAttendes)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToAttendees)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailSpeakers', 60, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailSpeakers)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToSpeakers)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 
-ALTER TABLE llx_projet ADD COLUMN allow_unknown_people_conf integer DEFAULT 0;
-ALTER TABLE llx_projet ADD COLUMN allow_unknown_people_booth integer DEFAULT 0;
+ALTER TABLE llx_projet ADD COLUMN accept_conference_suggestions integer DEFAULT 0;
+ALTER TABLE llx_projet ADD COLUMN accept_booth_suggestions integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN price_registration double(24,8);
 ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 

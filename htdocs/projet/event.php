@@ -60,8 +60,8 @@ if ($action == 'update' && empty(GETPOST('cancel')) && $permissiontoadd) {
 	$error = 0;
 	$object->oldcopy = clone $object;
 
-	$object->allow_unknown_people_conf=(GETPOST('allow_unknown_people_conf', 'alpha') == 'on' ? 1 : 0);
-	$object->allow_unknown_people_booth=(GETPOST('allow_unknown_people_booth', 'alpha') == 'on' ? 1 : 0);
+	$object->accept_conference_suggestions=(GETPOST('accept_conference_suggestions', 'alpha') == 'on' ? 1 : 0);
+	$object->accept_booth_suggestions=(GETPOST('accept_booth_suggestions', 'alpha') == 'on' ? 1 : 0);
 	$object->price_registration=price2num(GETPOST('price_registration', 'alphanohtml'));;
 	$object->price_booth=price2num(GETPOST('price_booth', 'alphanohtml'));;
 
@@ -250,12 +250,12 @@ if ($id > 0 || !empty($ref))
 	if ($action == 'edit' && $permissiontoadd) {
 		//Allow unknown people to suggest conferences
 		print '<tr><td class="valignmiddle">' . $langs->trans("AllowUnknownPeopleSuggestConf") . $form->textwithpicto('', $langs->trans("AllowUnknownPeopleSuggestConfHelp")) . '</td><td>';
-		print '<input type="checkbox" name="allow_unknown_people_conf"' . (GETPOSTISSET('allow_unknown_people_conf') ? (GETPOST('allow_unknown_people_conf', 'alpha') != '' ? ' checked="checked"' : '') : ($object->allow_unknown_people_conf ? ' checked="checked"' : '')) . '"> ';
+		print '<input type="checkbox" name="accept_conference_suggestions"' . (GETPOSTISSET('accept_conference_suggestions') ? (GETPOST('accept_conference_suggestions', 'alpha') != '' ? ' checked="checked"' : '') : ($object->accept_conference_suggestions ? ' checked="checked"' : '')) . '"> ';
 		print "</td></tr>";
 
 		//Allow unknown people to suggest booth
 		print '<tr><td class="valignmiddle">' . $langs->trans("AllowUnknownPeopleSuggestBooth") . $form->textwithpicto('', $langs->trans("AllowUnknownPeopleSuggestBoothHelp")) . '</td><td>';
-		print '<input type="checkbox" name="allow_unknown_people_booth"' . (GETPOSTISSET('allow_unknown_people_booth') ? (GETPOST('allow_unknown_people_booth', 'alpha') != '' ? ' checked="checked"' : '') : ($object->allow_unknown_people_booth ? ' checked="checked"' : '')) . '"> ';
+		print '<input type="checkbox" name="accept_booth_suggestions"' . (GETPOSTISSET('accept_booth_suggestions') ? (GETPOST('accept_booth_suggestions', 'alpha') != '' ? ' checked="checked"' : '') : ($object->accept_booth_suggestions ? ' checked="checked"' : '')) . '"> ';
 		print "</td></tr>";
 
 		//Price of registration
@@ -270,12 +270,12 @@ if ($id > 0 || !empty($ref))
 	} else {
 		//Allow unknown people to suggest conferences
 		print '<tr><td class="valignmiddle">' . $langs->trans("AllowUnknownPeopleSuggestConf") . $form->textwithpicto('', $langs->trans("AllowUnknownPeopleSuggestConfHelp")) . '</td><td>';
-		print '<input type="checkbox" disabled name="allow_unknown_people_conf"' . (GETPOSTISSET('allow_unknown_people_conf') ? (GETPOST('allow_unknown_people_conf', 'alpha') != '' ? ' checked="checked"' : '') : ($object->allow_unknown_people_conf ? ' checked="checked"' : '')) . '"> ';
+		print '<input type="checkbox" disabled name="accept_conference_suggestions"' . (GETPOSTISSET('accept_conference_suggestions') ? (GETPOST('accept_conference_suggestions', 'alpha') != '' ? ' checked="checked"' : '') : ($object->accept_conference_suggestions ? ' checked="checked"' : '')) . '"> ';
 		print "</td></tr>";
 
 		//Allow unknown people to suggest booth
 		print '<tr><td class="valignmiddle">' . $langs->trans("AllowUnknownPeopleSuggestBooth") . $form->textwithpicto('', $langs->trans("AllowUnknownPeopleSuggestBoothHelp")) . '</td><td>';
-		print '<input type="checkbox" disabled name="allow_unknown_people_booth"' . (GETPOSTISSET('allow_unknown_people_booth') ? (GETPOST('allow_unknown_people_booth', 'alpha') != '' ? ' checked="checked"' : '') : ($object->allow_unknown_people_booth ? ' checked="checked"' : '')) . '"> ';
+		print '<input type="checkbox" disabled name="accept_booth_suggestions"' . (GETPOSTISSET('accept_booth_suggestions') ? (GETPOST('accept_booth_suggestions', 'alpha') != '' ? ' checked="checked"' : '') : ($object->accept_booth_suggestions ? ' checked="checked"' : '')) . '"> ';
 		print "</td></tr>";
 
 		//Price of registration

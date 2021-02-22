@@ -48,8 +48,8 @@ create table llx_projet
   usage_task           integer DEFAULT 1,		-- Set to 1 if project is used to manage tasks and/or record timesheet
   usage_bill_time      integer DEFAULT 0,		-- Set to 1 if time spent must be converted into invoices
   usage_organize_event integer DEFAULT 0,		-- Set to 1 if you want to use project to organize an event, receive attendees subscription				
-  allow_unknown_people_conf integer DEFAULT 0,		-- Set to 1 if you want to allow unknown people to suggest conferences
-  allow_unknown_people_booth integer DEFAULT 0,		-- Set to 1 if you want to Allow unknown people to suggest booth
+  accept_conference_suggestions integer DEFAULT 0,		-- Set to 1 if you want to allow unknown people to suggest conferences
+  accept_booth_suggestions integer DEFAULT 0,		-- Set to 1 if you want to Allow unknown people to suggest booth
   price_registration    double(24,8),
   price_booth    double(24,8),
   model_pdf        varchar(255),
