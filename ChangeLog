@@ -21,7 +21,7 @@ Following changes may create regressions for some external modules, but were nec
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "total" renamed into to "total_ht" in llx_facture, llx_facture_rec for better field name consistency
 * Field "tva" renamed into to "total_tva" in llx_facture, llx_facture_rec, llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
-* Field "total" renamed into "total_ttc" in llx_supplier_proposal for better field name consistency
+* Field "total" renamed into "total_ttc" in llx_propal, llx_supplier_proposal for better field name consistency
 
 
 ***** ChangeLog for 13.0.1 compared to 13.0.0 *****

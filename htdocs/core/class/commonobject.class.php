@@ -3230,10 +3230,7 @@ abstract class CommonObject
 			// Specific code for backward compatibility with old field names
 			if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldtva = 'total_tva';
 			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva = 'total_tva';
-			if ($this->element == 'propal') {
-				$fieldttc = 'total';
-				$fieldtva = 'total_tva';
-			}
+			if ($this->element == 'propal')                                                $fieldtva = 'total_tva';
 			if ($this->element == 'expensereport')                                         $fieldtva = 'total_tva';
 			if ($this->element == 'supplier_proposal')                                     $fieldtva = 'total_tva';
 			if ($this->element == 'commande')                                              $fieldtva = 'total_tva';

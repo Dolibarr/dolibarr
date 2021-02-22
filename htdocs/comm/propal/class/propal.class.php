@@ -288,7 +288,7 @@ class Propal extends CommonObject
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LocalTax2', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
-		'total' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
+		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
 		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
@@ -1039,7 +1039,7 @@ class Propal extends CommonObject
 		$sql .= ", remise_percent";
 		$sql .= ", remise_absolue";
 		$sql .= ", total_tva";
-		$sql .= ", total";
+		$sql .= ", total_ttc";
 		$sql .= ", datep";
 		$sql .= ", datec";
 		$sql .= ", ref";
@@ -1425,7 +1425,7 @@ class Propal extends CommonObject
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
-		$sql .= ", p.total, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
+		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.datep as dp";
@@ -1622,7 +1622,7 @@ class Propal extends CommonObject
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
