@@ -95,8 +95,8 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= ", f.ref, f.date_lim_reglement as datelimite";
 			$sql .= ", f.type";
 			$sql .= ", f.datef as df";
-			$sql .= ", f.total as total_ht";
-			$sql .= ", f.tva as total_tva";
+			$sql .= ", f.total_ht";
+			$sql .= ", f.total_tva";
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.paye, f.fk_statut, f.rowid as facid";
 			$sql .= ", sum(pf.amount) as am";
@@ -112,7 +112,7 @@ class box_factures_imp extends ModeleBoxes
 			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
 			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql .= " f.ref, f.date_lim_reglement,";
-			$sql .= " f.type, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
+			$sql .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
 			$sql .= " ORDER BY datelimite ASC, f.ref ASC ";
 			$sql .= $this->db->plimit($max, 0);

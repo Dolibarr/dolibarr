@@ -3228,7 +3228,7 @@ abstract class CommonObject
 			$fieldlocaltax2 = 'localtax2';
 			$fieldttc = 'total_ttc';
 			// Specific code for backward compatibility with old field names
-			if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht = 'total';
+			if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldtva = 'total_tva';
 			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva = 'total_tva';
 			if ($this->element == 'propal') {
 				$fieldttc = 'total';
