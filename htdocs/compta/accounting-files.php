@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -189,7 +189,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		    $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 		    $sql .= " WHERE datep between ".$wheretail;
 		    $sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-		    //$sql.=" AND fk_statut <> ".Salary::STATUS_DRAFT;
+		    //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 		}
 	    // Social contributions
 		if (GETPOST('selectsocialcontributions')) {
@@ -510,7 +510,7 @@ $invoice = new Facture($db);
 $supplier_invoice = new FactureFournisseur($db);
 $expensereport = new ExpenseReport($db);
 $don = new Don($db);
-$salary_payment = new Salary($db);
+$salary_payment = new PaymentSalary($db);
 $charge_sociales = new ChargeSociales($db);
 $various_payment = new PaymentVarious($db);
 $payment_loan = new PaymentLoan($db);
