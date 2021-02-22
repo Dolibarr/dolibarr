@@ -194,7 +194,7 @@ $arrayfields = array(
 	'f.module_source'=>array('label'=>"Module", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>($conf->cashdesk->enabled || $conf->takepos->enabled || $conf->global->INVOICE_SHOW_POS), 'position'=>90),
 	'f.pos_source'=>array('label'=>"Terminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>($conf->cashdesk->enabled || $conf->takepos->enabled || $conf->global->INVOICE_SHOW_POS), 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
-	'f.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
+	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
 	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>120),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
@@ -417,7 +417,7 @@ $thirdpartystatic = new Societe($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -497,8 +497,8 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($se
 if ($search_type_thirdparty != '' && $search_type_thirdparty != '-1') $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_company_alias) $sql .= natural_search('s.name_alias', $search_company_alias);
-if ($search_montant_ht != '') $sql .= natural_search('f.total', $search_montant_ht, 1);
-if ($search_montant_vat != '') $sql .= natural_search('f.tva', $search_montant_vat, 1);
+if ($search_montant_ht != '') $sql .= natural_search('f.total_ht', $search_montant_ht, 1);
+if ($search_montant_vat != '') $sql .= natural_search('f.total_tva', $search_montant_vat, 1);
 if ($search_montant_localtax1 != '') $sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
 if ($search_montant_localtax2 != '') $sql .= natural_search('f.localtax2', $search_montant_localtax2, 1);
 if ($search_montant_ttc != '') $sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
@@ -548,7 +548,7 @@ $sql .= $hookmanager->resPrint;
 
 if (!$sall)
 {
-	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total, f.tva, f.total_ttc,';
+	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
 	$sql .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
 	$sql .= ' f.paye, f.fk_statut, f.close_code,';
@@ -932,7 +932,7 @@ if ($resql)
 		print '<input class="flat" type="text" size="4" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.total_vat']['checked']))
+	if (!empty($arrayfields['f.total_tva']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre right">';
@@ -1120,8 +1120,8 @@ if ($resql)
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked']))           print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_cond_reglement", "", $param, "", $sortfield, $sortorder);
 	if (!empty($arrayfields['f.module_source']['checked']))               print_liste_field_titre($arrayfields['f.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
 	if (!empty($arrayfields['f.pos_source']['checked']))                  print_liste_field_titre($arrayfields['f.pos_source']['label'], $_SERVER["PHP_SELF"], "f.pos_source", "", $param, "", $sortfield, $sortorder);
-	if (!empty($arrayfields['f.total_ht']['checked']))                    print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total', '', $param, 'class="right"', $sortfield, $sortorder);
-	if (!empty($arrayfields['f.total_vat']['checked']))                   print_liste_field_titre($arrayfields['f.total_vat']['label'], $_SERVER['PHP_SELF'], 'f.tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_ht']['checked']))                    print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_tva']['checked']))                   print_liste_field_titre($arrayfields['f.total_tva']['label'], $_SERVER['PHP_SELF'], 'f.total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.total_localtax1']['checked']))             print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.total_localtax2']['checked']))             print_liste_field_titre($arrayfields['f.total_localtax2']['label'], $_SERVER['PHP_SELF'], 'f.localtax2', '', $param, 'class="right"', $sortfield, $sortorder);
 	if (!empty($arrayfields['f.total_ttc']['checked']))                   print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], 'f.total_ttc', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -1174,7 +1174,7 @@ if ($resql)
 			$facturestatic->ref_client = $obj->ref_client;
 			$facturestatic->type = $obj->type;
 			$facturestatic->total_ht = $obj->total_ht;
-			$facturestatic->total_tva = $obj->total_vat;
+			$facturestatic->total_tva = $obj->total_tva;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->multicurrency_code = $obj->multicurrency_code;
 			$facturestatic->multicurrency_tx = $obj->multicurrency_tx;
@@ -1476,12 +1476,12 @@ if ($resql)
 				  $totalarray['val']['f.total_ht'] += $obj->total_ht;
 			}
 			// Amount VAT
-			if (!empty($arrayfields['f.total_vat']['checked']))
+			if (!empty($arrayfields['f.total_tva']['checked']))
 			{
-				print '<td class="right nowraponall">'.price($obj->total_vat)."</td>\n";
+				print '<td class="right nowraponall">'.price($obj->total_tva)."</td>\n";
 				if (!$i) $totalarray['nbfield']++;
-				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_vat';
-				$totalarray['val']['f.total_vat'] += $obj->total_vat;
+				if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
+				$totalarray['val']['f.total_tva'] += $obj->total_tva;
 			}
 			// Amount LocalTax1
 			if (!empty($arrayfields['f.total_localtax1']['checked']))

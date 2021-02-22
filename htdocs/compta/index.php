@@ -138,7 +138,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$tmpinvoice = new Facture($db);
 
-	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
+	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total_ht, f.total_tva, f.total_ttc, f.ref_client";
 	$sql .= ", f.type, f.fk_statut as status, f.paye";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
@@ -160,7 +160,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
@@ -383,7 +383,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
-	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid";
@@ -402,7 +402,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerLastModified', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
 	$sql .= " cc.rowid, cc.code";
 	$sql .= " ORDER BY f.tms DESC";
@@ -971,7 +971,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$tmpinvoice = new Facture($db);
 
-	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
@@ -990,7 +990,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerUnpaid', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
 	$sql .= " ORDER BY f.datef ASC, f.ref ASC";
 
