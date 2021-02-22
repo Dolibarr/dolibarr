@@ -391,7 +391,7 @@ $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.tow
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
+$sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
@@ -450,7 +450,7 @@ if ($search_societe_alias)			$sql .= natural_search('s.name_alias', $search_soci
 if ($search_login)					$sql .= natural_search("u.login", $search_login);
 if ($search_montant_ht != '')		$sql .= natural_search("p.total_ht", $search_montant_ht, 1);
 if ($search_montant_vat != '')		$sql .= natural_search("p.total_tva", $search_montant_vat, 1);
-if ($search_montant_ttc != '')		$sql .= natural_search("p.total", $search_montant_ttc, 1);
+if ($search_montant_ttc != '')		$sql .= natural_search("p.total_ttc", $search_montant_ttc, 1);
 if ($search_multicurrency_code != '')        $sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('p.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('p.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);

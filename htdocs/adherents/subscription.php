@@ -106,10 +106,17 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
+$datefrom = 0;
+$dateto = 0;
+$paymentdate = -1;
+
 
 /*
  * 	Actions
  */
+
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Create third party from a member
 if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
@@ -826,9 +833,6 @@ if ($rowid > 0) {
 		print '<tbody>';
 
 		$today = dol_now();
-		$datefrom = 0;
-		$dateto = 0;
-		$paymentdate = -1;
 
 		// Date payment
 		if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
