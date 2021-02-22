@@ -3503,6 +3503,7 @@ table.hidepaginationnext .paginationnext {
 }
 
 
+
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
@@ -4630,6 +4631,10 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 }
 .websitebar input#previewpageurl {
     line-height: 1em;
+}
+
+#divbodywebsite section p {
+    margin: unset;
 }
 
 

@@ -416,14 +416,16 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 }
 
 // Creation of a token against CSRF vulnerabilities
-if (!defined('NOTOKENRENEWAL'))
-{
+if (!defined('NOTOKENRENEWAL')) {
 	// Rolling token at each call ($_SESSION['token'] contains token of previous page)
-	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
+	if (isset($_SESSION['newtoken'])) {
+		$_SESSION['token'] = $_SESSION['newtoken'];
+	}
 
-	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
+	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = newToken();
 	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
+	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
 }
 
 //dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
@@ -457,8 +459,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		}
 	}
 
-	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
-	{
+	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token']) {
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');

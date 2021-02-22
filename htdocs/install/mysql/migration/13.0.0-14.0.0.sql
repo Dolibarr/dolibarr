@@ -179,5 +179,12 @@ ALTER TABLE llx_projet ADD COLUMN accept_booth_suggestions integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN price_registration double(24,8);
 ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 
--- Uniformize field total_ht, total_tva, total_ttc
+
+-- Code enhanced - Standardize field name
+ALTER TABLE llx_commande CHANGE COLUMN tva total_tva double(24,8) default 0;
+ALTER TABLE llx_supplier_proposal CHANGE COLUMN tva total_tva double(24,8) default 0;
+ALTER TABLE llx_supplier_proposal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
+ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
+ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
+

@@ -824,7 +824,7 @@ class FormCompany extends Form
 				}
 				if (count($newselected) > 0) $selected = $newselected;
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected);
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, 'minwidth500');
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened

@@ -52,10 +52,10 @@ function societe_prepare_head(Societe $object)
 
 	if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) {
 		if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->societe->contact->lire) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-
 			//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 			$nbContact = 0;
+			// Enable caching of thirdrparty count Contacts
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 			$cachekey = 'count_contacts_thirdparty_'.$object->id;
 			$dataretrieved = dol_getcache($cachekey);
 
@@ -71,7 +71,7 @@ function societe_prepare_head(Societe $object)
 					$nbContact = $obj->nb;
 				}
 
-				dol_setcache($cachekey, $nbContact);	// If setting cache fails, this is not a problem, so we do not test result.
+				dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
@@ -129,22 +129,32 @@ function societe_prepare_head(Societe $object)
 	}
 
 	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
-		$nbNote = 0;
-		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
-		$sql .= " WHERE fk_soc = ".$object->id;
-		$sql .= " AND entity IN (".getEntity('project').")";
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			$nbNote = $obj->nb;
+		$nbProject = 0;
+		// Enable caching of thirdrparty count projects
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_projects_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+
+		if (!is_null($dataretrieved)) {
+			$nbProject = $dataretrieved;
 		} else {
-			dol_print_error($db);
+			$sql = "SELECT COUNT(n.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
+			$sql .= " WHERE fk_soc = ".$object->id;
+			$sql .= " AND entity IN (".getEntity('project').")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbProject = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Projects");
-		if ($nbNote > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbProject > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbProject.'</span>';
 		}
 		$head[$h][2] = 'project';
 		$h++;
@@ -271,10 +281,9 @@ function societe_prepare_head(Societe $object)
 	if ($user->socid == 0) {
 		// Notifications
 		if (!empty($conf->notification->enabled)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-
 			$nbNotif = 0;
 			// Enable caching of thirdrparty count notifications
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 			$cachekey = 'count_notifications_thirdparty_'.$object->id;
 			$dataretrieved = dol_getcache($cachekey);
 			if (!is_null($dataretrieved)) {
@@ -290,7 +299,7 @@ function societe_prepare_head(Societe $object)
 				} else {
 					dol_print_error($db);
 				}
-				dol_setcache($cachekey, $nbNotif);		// If setting cache fails, this is not a problem, so we do not test result.
+				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
 			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
@@ -318,17 +327,28 @@ function societe_prepare_head(Societe $object)
 		$head[$h][2] = 'note';
 		$h++;
 
-		// Attached files
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-		$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
-		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-		$nbLinks = Link::count($db, $object->element, $object->id);
+		// Attached files and Links
+		$totalAttached = 0;
+		// Enable caching of thirdrparty count attached files and links
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_attached_thirdparty_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$totalAttached = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+			$nbLinks = Link::count($db, $object->element, $object->id);
+			$totalAttached = $nbFiles + $nbLinks;
+			dol_setcache($cachekey, $totalAttached, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
 
 		$head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
-		if (($nbFiles + $nbLinks) > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		if (($totalAttached) > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($totalAttached).'</span>';
 		}
 		$head[$h][2] = 'document';
 		$h++;
@@ -337,10 +357,9 @@ function societe_prepare_head(Societe $object)
 	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-
 		$nbEvent = 0;
 		// Enable caching of thirdrparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 		$cachekey = 'count_events_thirdparty_'.$object->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
@@ -356,7 +375,7 @@ function societe_prepare_head(Societe $object)
 			} else {
 				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
 			}
-			dol_setcache($cachekey, $nbEvent);		// If setting cache fails, this is not a problem, so we do not test result.
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
 		$head[$h][1] .= '/';
