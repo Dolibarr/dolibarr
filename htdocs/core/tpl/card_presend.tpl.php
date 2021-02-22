@@ -277,7 +277,7 @@ if ($action == 'presend')
 			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 			$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;
 			$substitutionarray['__CONTACT_FIRSTNAME_'.$contact['code'].'__'] = $contactstatic->firstname;
-            $substitutionarray['__CONTACT_SALUTATION_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
+			$substitutionarray['__CONTACT_SALUTATION_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
 		}
 	}
 
