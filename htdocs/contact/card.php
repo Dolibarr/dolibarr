@@ -843,7 +843,7 @@ else
 		        print '<tr><td>'.$langs->trans("ContactByDefaultFor").'</td>';
 		        print '<td colspan="3">';
 		        $contactType = $object->listeTypeContacts('external', '', 1);
-		        print $form->multiselectarray('roles', $contactType);
+		        print $form->multiselectarray('roles', $contactType, array(), 0, 0, 'minwidth500');
 		        print '</td></tr>';
 	        }
 
