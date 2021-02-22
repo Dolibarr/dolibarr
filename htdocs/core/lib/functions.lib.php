@@ -6404,10 +6404,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		} else {
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
-			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
-			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
-			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
+			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
+			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
+			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : '');
+			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : '');
 			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
 			$substitutionarray['__DATE_DELIVERY_DAY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%d") : '');
 			$substitutionarray['__DATE_DELIVERY_DAY_TEXT__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%A") : '');
@@ -6419,10 +6419,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__DATE_DELIVERY_SS__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%S") : '');
 
 			// For backward compatibility
-			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
-			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
-			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
+			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
+			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
+			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
 			$substitutionarray['__SUPPLIER_ORDER_DELAY_DELIVERY__'] = (isset($object->availability_code) ? ($outputlangs->transnoentities("AvailabilityType".$object->availability_code) != ('AvailabilityType'.$object->availability_code) ? $outputlangs->transnoentities("AvailabilityType".$object->availability_code) : $outputlangs->convToOutputCharset(isset($object->availability) ? $object->availability : '')) : '');
 
@@ -6458,51 +6458,51 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 
 			if (is_object($object) && $object->element == 'societe') {
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object) ? $object->id : '');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object) ? $object->name : '');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object) ? $object->name_alias : '');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object) ? $object->code_client : '');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object) ? $object->code_fournisseur : '');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object) ? $object->email : '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object) ? $object->phone : '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object) ? $object->fax : '');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object) ? $object->address : '');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object) ? $object->zip : '');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object) ? $object->town : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (is_object($object) ? $object->country_id : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (is_object($object) ? $object->country_code : '');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object) ? $object->idprof1 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object) ? $object->idprof2 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object) ? $object->idprof3 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object) ? $object->idprof4 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object) ? $object->idprof5 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object) ? $object->idprof6 : '');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object) ? $object->tva_intra : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object) ? dol_htmlentitiesbr($object->note_public) : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object) ? dol_htmlentitiesbr($object->note_private) : '');
+				$substitutionarray['__THIRDPARTY_ID__'] = (isset($object->id) ? $object->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (isset($object->name) ? $object->name : '');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (isset($object->name_alias) ? $object->name_alias : '');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (isset($object->code_client) ? $object->code_client : '');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (isset($object->code_fournisseur) ? $object->code_fournisseur : '');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (isset($object->email) ? dol_print_email($object->email, 0, 0, 'AC_EMAIL') : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (isset($object->phone) ? dol_print_phone($object->phone, $object->country_code, 0, 0, 'AC_TEL') : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (isset($object->fax) ? dol_print_phone($object->fax, $object->country_code, 0, 0, 'AC_TEL') : '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (isset($object->address) ? $object->address : '');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (isset($object->zip) ? $object->zip : '');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (isset($object->town) ? $object->town : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (isset($object->country_id) ? $object->country_id : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (isset($object->country_code) ? $object->country_code : '');
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (isset($object->idprof1) ? $object->idprof1 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (isset($object->idprof2) ? $object->idprof2 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (isset($object->idprof3) ? $object->idprof3 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (isset($object->idprof4) ? $object->idprof4 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (isset($object->idprof5) ? $object->idprof5 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (isset($object->idprof6) ? $object->idprof6 : '');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (isset($object->tva_intra) ? $object->tva_intra : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (isset($object->note_public)) ? dol_htmlentitiesbr($object->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (isset($object->note_private) ? dol_htmlentitiesbr($object->note_private) : '');
 			} elseif (is_object($object->thirdparty)) {
-				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->id : '');
-				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty) ? $object->thirdparty->name : '');
-				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty) ? $object->thirdparty->name_alias : '');
-				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_client : '');
-				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty) ? $object->thirdparty->code_fournisseur : '');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty) ? $object->thirdparty->email : '');
-				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty) ? $object->thirdparty->phone : '');
-				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty) ? $object->thirdparty->fax : '');
-				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (is_object($object->thirdparty) ? $object->thirdparty->address : '');
-				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty) ? $object->thirdparty->zip : '');
-				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty) ? $object->thirdparty->town : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (is_object($object->thirdparty) ? $object->thirdparty->country_id : '');
-				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (is_object($object->thirdparty) ? $object->thirdparty->country_code : '');
-				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof1 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof2 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof3 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof4 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof5 : '');
-				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (is_object($object->thirdparty) ? $object->thirdparty->idprof6 : '');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty) ? $object->thirdparty->tva_intra : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty) ? dol_htmlentitiesbr($object->thirdparty->note_public) : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty) ? dol_htmlentitiesbr($object->thirdparty->note_private) : '');
+				$substitutionarray['__THIRDPARTY_ID__'] = (isset($object->thirdparty->id) ? $object->thirdparty->id : '');
+				$substitutionarray['__THIRDPARTY_NAME__'] = (isset($object->thirdparty->name) ? $object->thirdparty->name : '');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (isset($object->thirdparty->name_alias) ? $object->thirdparty->name_alias : '');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (isset($object->thirdparty->code_client) ? $object->thirdparty->code_client : '');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (isset($object->thirdparty->code_fournisseur) ? $object->thirdparty->code_fournisseur : '');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (isset($object->thirdparty->email) ? dol_print_email($object->thirdparty->email, 0, 0, 'AC_EMAIL') : '');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (isset($object->thirdparty->phone) ? dol_print_phone($object->thirdparty->phone, $object->country_code, 0, 0, 'AC_TEL') : '');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (isset($object->thirdparty->fax) ? dol_print_phone($object->thirdparty->fax, $object->country_code, 0, 0, 'AC_TEL') : '');
+				$substitutionarray['__THIRDPARTY_ADDRESS__'] = (isset($object->thirdparty->address) ? $object->thirdparty->address : '');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (isset($object->thirdparty->zip) ? $object->thirdparty->zip : '');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (isset($object->thirdparty->town) ? $object->thirdparty->town : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_ID__'] = (isset($object->thirdparty->country_id) ? $object->thirdparty->country_id : '');
+				$substitutionarray['__THIRDPARTY_COUNTRY_CODE__'] = (isset($object->thirdparty->country_code) ? $object->thirdparty->country_code : '');
+				$substitutionarray['__THIRDPARTY_IDPROF1__'] = (isset($object->thirdparty->idprof1) ? $object->thirdparty->idprof1 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF2__'] = (isset($object->thirdparty->idprof2) ? $object->thirdparty->idprof2 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF3__'] = (isset($object->thirdparty->idprof3) ? $object->thirdparty->idprof3 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF4__'] = (isset($object->thirdparty->idprof4) ? $object->thirdparty->idprof4 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (isset($object->thirdparty->idprof5) ? $object->thirdparty->idprof5 : '');
+				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (isset($object->thirdparty->idprof6) ? $object->thirdparty->idprof6 : '');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (isset($object->thirdparty->tva_intra) ? $object->thirdparty->tva_intra : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (isset($object->thirdparty->note_public) ? dol_htmlentitiesbr($object->thirdparty->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (isset($object->thirdparty->note_private) ? dol_htmlentitiesbr($object->thirdparty->note_private) : '');
 			}
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
