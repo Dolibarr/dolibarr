@@ -49,8 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once ADODB_PATH.'adodb-time.inc.php';
 
-// stdClass for $db
-$conf = new Conf(new stdClass()); 
+$conf = new Conf(); 
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
