@@ -106,14 +106,14 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
+$datefrom = 0;
+$dateto = 0;
+$paymentdate = -1;
+
 
 /*
  * 	Actions
  */
-
-$datefrom = 0;
-$dateto = 0;
-$paymentdate = -1;
 
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
