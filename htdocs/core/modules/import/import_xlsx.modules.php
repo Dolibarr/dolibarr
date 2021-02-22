@@ -173,7 +173,7 @@ class ImportXlsx extends ModeleImports
 		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
 		$this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
-		$col = 0;
+		$col = 1;
 		foreach ($headerlinefields as $field) {
 			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, 1, $outputlangs->transnoentities($field));
 			// set autowidth
@@ -195,7 +195,7 @@ class ImportXlsx extends ModeleImports
 	public function write_record_example($outputlangs, $contentlinevalues)
 	{
 		// phpcs:enable
-		$col = 0;
+		$col = 1;
 		$row = 2;
 		foreach ($contentlinevalues as $cell) {
 			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, $row, $cell);
@@ -289,7 +289,7 @@ class ImportXlsx extends ModeleImports
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
-		for ($col = 0; $col < $countcolumns; $col++) {
+		for ($col = 1; $col <= $countcolumns; $col++) {
 			$this->headers[$col] = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, 1)->getValue();
 		}
 		return 0;
@@ -314,7 +314,7 @@ class ImportXlsx extends ModeleImports
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
-		for ($col = 0; $col < $countcolumns; $col++) {
+		for ($col = 1; $col <= $countcolumns; $col++) {
 			$val = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record)->getValue();
 			$array[$col]['val'] = $val;
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
@@ -372,7 +372,7 @@ class ImportXlsx extends ModeleImports
 
 		//var_dump($sort_array_match_file_to_database);
 
-		if (count($arrayrecord) == 0 || (count($arrayrecord) == 1 && empty($arrayrecord[0]['val']))) {
+		if (count($arrayrecord) == 0 || (count($arrayrecord) == 1 && empty($arrayrecord[1]['val']))) {
 			//print 'W';
 			$this->warnings[$warning]['lib'] = $langs->trans('EmptyLine');
 			$this->warnings[$warning]['type'] = 'EMPTY';
@@ -420,7 +420,7 @@ class ImportXlsx extends ModeleImports
 					if ($key <= $maxfields) {
 						// Set $newval with value to insert and set $listvalues with sql request part for insert
 						$newval = '';
-						if ($arrayrecord[($key - 1)]['type'] > 0) $newval = $arrayrecord[($key - 1)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
+						if ($arrayrecord[($key)]['type'] > 0) $newval = $arrayrecord[($key)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
 
 						// Make some tests on $newval
 
@@ -572,21 +572,21 @@ class ImportXlsx extends ModeleImports
 										$newval = $this->thirpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
-									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+									if (empty($newval)) $arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$newval = $this->thirpartyobject->get_codefournisseur(0, 1);
 										$newval = $this->thirpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
-									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+									if (empty($newval)) $arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirpartyobject->get_codecompta('customer');
 										$newval = $this->thirpartyobject->code_compta;
 										//print 'code_compta='.$newval;
 									}
-									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+									if (empty($newval)) $arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsupplieraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirpartyobject->get_codecompta('supplier');
@@ -594,7 +594,7 @@ class ImportXlsx extends ModeleImports
 										if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
 										//print 'code_compta_fournisseur='.$newval;
 									}
-									if (empty($newval)) $arrayrecord[($key - 1)]['type'] = -1; // If we get empty value, we will use "null"
+									if (empty($newval)) $arrayrecord[($key)]['type'] = -1; // If we get empty value, we will use "null"
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getrefifauto') {
 									$defaultref = '';
 									// TODO provide the $modTask (module of generation of ref) as parameter of import_insert function
@@ -624,7 +624,7 @@ class ImportXlsx extends ModeleImports
 										$errorforthistable++;
 										$error++;
 									} else {
-										$newval = $arrayrecord[($key - 1)]['val']; //We get new value computed.
+										$newval = $arrayrecord[($key)]['val']; //We get new value computed.
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -695,8 +695,8 @@ class ImportXlsx extends ModeleImports
 						$listfields[] = $fieldname;
 
 						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
-						if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0)		 $listvalues[] = ($newval == '0' ? $newval : "null");
-						elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0)	 $listvalues[] = "''";
+						if (empty($newval) && $arrayrecord[($key)]['type'] < 0)		 $listvalues[] = ($newval == '0' ? $newval : "null");
+						elseif (empty($newval) && $arrayrecord[($key)]['type'] == 0)	 $listvalues[] = "''";
 						else $listvalues[] = "'" . $this->db->escape($newval) . "'";
 					}
 					$i++;

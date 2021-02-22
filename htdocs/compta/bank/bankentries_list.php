@@ -482,9 +482,7 @@ if ($id > 0 || !empty($ref))
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type,";
-$sql .= " ba.rowid as bankid, ba.ref as bankref,";
-$sql .= " bu.url_id, bu.type as type_url,";
-$sql .= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -498,8 +496,6 @@ if ($search_bid > 0) $sql .= MAIN_DB_PREFIX."bank_class as l,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) $sql .= " AND b.fk_account = ".$search_account;
@@ -513,7 +509,20 @@ if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".urlencode($search_conciliated);
-if ($search_thirdparty_user) $sql .= natural_search(array("s.nom", "u.firstname", "u.lastname"), $search_thirdparty_user);
+if ($search_thirdparty_user) {
+	$sql.= " AND (b.rowid IN ";
+	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
+	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1)."))";
+
+	$sql.= " OR b.rowid IN ";
+	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
+	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql.= ")";
+}
 if ($search_description)
 {
 	$search_description_to_use = $search_description;
@@ -1376,52 +1385,40 @@ if ($resql)
 		// Third party
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
-    		print '<td class="tdoverflowmax150">';
-			if ($objp->url_id)
-			{
-				if ($objp->type_url == 'company') {
-					$companystatic->id = $objp->url_id;
-					$companystatic->name = $objp->nom;
-					$companystatic->name_alias = $objp->name_alias;
-					$companystatic->client = $objp->client;
-					$companystatic->email = $objp->email;
-					$companystatic->fournisseur = $objp->fournisseur;
-					$companystatic->code_client = $objp->code_client;
-					$companystatic->code_fournisseur = $objp->code_fournisseur;
-					$companystatic->code_compta = $objp->code_compta;
-					$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-					print $companystatic->getNomUrl(1);
+			print '<td class="tdoverflowmax150">';
+
+			$companylinked_id = 0;
+				$userlinked_id = 0;
+
+				//payment line type to define user display and user or company linked
+			foreach ($links as $key=>$value){
+				if ($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
+				if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+
+				if ($links[$key]['type'] == 'company') {
+					$companylinked_id = $links[$key]['url_id'];
+				}
+				if ($links[$key]['type'] == 'user') {
+					$userlinked_id = $links[$key]['url_id'];
 				}
 			}
-			else //display user or nothing
-			{
-				//payment line type to define user display
-				foreach ($links as $key=>$value){
-					if ($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
-					if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
-				}
 
-				$sqlu = "SELECT url_id FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$objp->rowid." AND (type='user' OR type='salary')";
-				$resqlu = $db->query($sqlu);
-
-				if ($resqlu) {
-					if ($db->num_rows($resqlu) > 0 &&
-						(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
-							|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))) {
-						$obj = $db->fetch_object($resqlu);
-						$userstatic->fetch($obj->url_id);
-						print $userstatic->getNomUrl(1);
-					}
-
-					else {
-						print '&nbsp;';
-					}
-				} else {
-					dol_print_error($db);
-				}
+			if ($companylinked_id) {
+				// TODO Add a cache of loaded companies here
+				$companystatic->fetch($companylinked_id);
+				print $companystatic->getNomUrl(1);
+			} elseif ($userlinked_id &&
+					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
+						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))){
+				// TODO Add a cache of loaded users here
+				$userstatic->fetch($userlinked_id);
+				print $userstatic->getNomUrl(1);
+			} else {
+				print '&nbsp;';
 			}
+
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+           	if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Bank account

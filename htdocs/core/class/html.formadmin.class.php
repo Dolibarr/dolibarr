@@ -77,7 +77,7 @@ class FormAdmin
 		if ($showempty && !$multiselect)
 		{
 			$out .= '<option value="0"';
-			if ($selected == '') $out .= ' selected';
+			if ($selected === '') $out .= ' selected';
 			$out .= '>';
 			if ($showempty != '1') $out .= $showempty;
 			else $out .= '&nbsp;';
@@ -86,7 +86,7 @@ class FormAdmin
 		if ($showauto)
 		{
 			$out .= '<option value="auto"';
-			if ($selected == 'auto') $out .= ' selected';
+			if ($selected === 'auto') $out .= ' selected';
 			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
@@ -115,7 +115,7 @@ class FormAdmin
 			}
 
 			$valuetoshow .= ' '.picto_from_langcode($key, 'class="saturatemedium"');
-			if ($selected == $keytouse) {
+			if ((string) $selected == (string) $keytouse) {
 				$out .= '<option value="'.$keytouse.'" selected data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			} else {
 				$out .= '<option value="'.$keytouse.'" data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';

@@ -4402,7 +4402,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
     display: none;
 }
 
@@ -4507,6 +4507,10 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 }
 .websitebar input#previewpageurl {
     line-height: 1em;
+}
+
+#divbodywebsite section p {
+    margin: unset;
 }
 
 

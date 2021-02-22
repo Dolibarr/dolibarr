@@ -1970,7 +1970,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
  *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
- *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
+ *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...inputnoreduce", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
@@ -2014,13 +2014,17 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	}
 	if (!is_object($outputlangs)) $outputlangs = $langs;
 	if (!$format) $format = 'daytextshort';
-	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;
+
+	// Do we have to reduce the length of date (year on 2 chars) to save space.
+	// Note: dayinputnoreduce is same than day but no reduction of year length will be done
+	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;	// Test on original $format param.
+	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat = 1; }  // so format 'dayreduceformat' is processed like day
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	// TODO Add format daysmallyear and dayhoursmallyear
-	if ($format == 'day')				$format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
+	if ($format == 'day') $format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
 	elseif ($format == 'hour')			$format = ($outputlangs->trans("FormatHourShort") != "FormatHourShort" ? $outputlangs->trans("FormatHourShort") : $conf->format_hour_short);
 	elseif ($format == 'hourduration')	$format = ($outputlangs->trans("FormatHourShortDuration") != "FormatHourShortDuration" ? $outputlangs->trans("FormatHourShortDuration") : $conf->format_hour_short_duration);
 	elseif ($format == 'daytext')			 $format = ($outputlangs->trans("FormatDateText") != "FormatDateText" ? $outputlangs->trans("FormatDateText") : $conf->format_date_text);
@@ -2446,21 +2450,32 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 function getArrayOfSocialNetworks()
 {
 	global $conf, $db;
-	$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-	$sql .= " WHERE entity=".$conf->entity;
+
 	$socialnetworks = array();
-	$resql = $db->query($sql);
-	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$socialnetworks[$obj->code] = array(
-				'rowid' => $obj->rowid,
-				'label' => $obj->label,
-				'url' => $obj->url,
-				'icon' => $obj->icon,
-				'active' => $obj->active,
-			);
+	// Enable caching of array
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'socialnetworks_' . $conf->entity;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$socialnetworks = $dataretrieved;
+	} else {
+		$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+		$sql .= " WHERE entity=".$conf->entity;
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$socialnetworks[$obj->code] = array(
+					'rowid' => $obj->rowid,
+					'label' => $obj->label,
+					'url' => $obj->url,
+					'icon' => $obj->icon,
+					'active' => $obj->active,
+				);
+			}
 		}
+		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
+
 	return $socialnetworks;
 }
 
@@ -3169,15 +3184,15 @@ function dol_substr($string, $start, $length, $stringencoding = '', $trunconbyte
 
 
 /**
- *	Truncate a string to a particular length adding '...' if string larger than length.
- * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
+ *	Truncate a string to a particular length adding '…' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '…'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible (excluding ...). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added ..., or if size was max+1 or max+2 or max+3 so it does not worse to replace with ...)
+ *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added …, or if size was max+1 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: 'right', 'left', 'middle' (size must be a 2 power), 'wrap'
  * 	@param	string	$stringencoding		Tell what is source string encoding
- *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
+ *  @param	int		$nodot				Truncation do not add … after truncation. So it's an exact truncation.
  *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
@@ -3185,42 +3200,53 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 {
 	global $conf;
 
-	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
+		return $string;
+	}
 
-	if (empty($stringencoding)) $stringencoding = 'UTF-8';
+	if (empty($stringencoding)) {
+		$stringencoding = 'UTF-8';
+	}
 	// reduce for small screen
 	if ($conf->dol_optimize_smallscreen == 1 && $display == 1) $size = round($size / 3);
 
 	// We go always here
-	if ($trunc == 'right')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '...');
-		else //return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
-		return $string;
-	} elseif ($trunc == 'middle')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size + 1))
-		{
+	if ($trunc == 'right') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '…');
+		} else {
+			//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
+			return $string;
+		}
+	} elseif ($trunc == 'middle') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size + 1)) {
 			$size1 = round($size / 2);
 			$size2 = round($size / 2);
-			return dol_substr($newstring, 0, $size1, $stringencoding).'...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
-		} else return $string;
-	} elseif ($trunc == 'left')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return '...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
-		else return $string;
-	} elseif ($trunc == 'wrap')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + 1))
-		return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
-		else return $string;
-	} else return 'BadParam3CallingDolTrunc';
+			return dol_substr($newstring, 0, $size1, $stringencoding).'…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
+		} else {
+			return $string;
+		}
+	} elseif ($trunc == 'left') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			return '…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
+		} else {
+			return $string;
+		}
+	} elseif ($trunc == 'wrap') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + 1)) {
+			return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
+		} else {
+			return $string;
+		}
+	} else {
+		return 'BadParam3CallingDolTrunc';
+	}
 }
 
 /**
@@ -3265,7 +3291,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
+				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
 				'cash-register', 'category', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
@@ -3292,7 +3318,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'supplier_invoice', 'technic', 'ticket',
+				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'user-cog',
@@ -3371,10 +3397,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('member', 'members', 'contract', 'group', 'resource'))) {
+			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'technic'))) {
+			if (in_array($pictowithouttext, array('holiday'))) {
+				$morecss = 'em088';
+			}
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 
@@ -6248,17 +6277,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		)
 			);
 
-		$substitutionarray = array_merge($substitutionarray, array(
-		'__USER_ID__' => (string) $user->id,
-		'__USER_LOGIN__' => (string) $user->login,
-		'__USER_EMAIL__' => (string) $user->email,
-		'__USER_LASTNAME__' => (string) $user->lastname,
-		'__USER_FIRSTNAME__' => (string) $user->firstname,
-		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-		'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
-		)
+		if (is_object($user)) {
+			$substitutionarray = array_merge($substitutionarray, array(
+				'__USER_ID__' => (string) $user->id,
+				'__USER_LOGIN__' => (string) $user->login,
+				'__USER_EMAIL__' => (string) $user->email,
+				'__USER_LASTNAME__' => (string) $user->lastname,
+				'__USER_FIRSTNAME__' => (string) $user->firstname,
+				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
+				)
 			);
+		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
@@ -6272,7 +6303,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
 			'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-			'__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1, ', '),
+			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
@@ -6553,6 +6584,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment = 'order';
 				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment = 'invoice';
 				if (is_object($object) && $object->element == 'member')   $typeforonlinepayment = 'member';
+				if (is_object($object) && $object->element == 'contrat')  $typeforonlinepayment = 'contract';
 				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
 				$paymenturl = $url;
 			}
@@ -6574,10 +6606,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				{
 					$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
 				} else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
+				if (!empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'contrat')
+				{
+					$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = $object->getLastMainDocLink($object->element);
+				} else $substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = '';
 
 				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
+				if (is_object($object) && $object->element == 'contrat') $substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
 			}
 
 			if (is_object($object) && $object->element == 'action')

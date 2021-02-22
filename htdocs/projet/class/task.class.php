@@ -390,7 +390,7 @@ class Task extends CommonObject
 			}
 		}
 
-		if (!$error && $conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE) {
+		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
 			if ($project->fetch($this->fk_project) > 0 && $project->statut == Project::STATUS_VALIDATED) {

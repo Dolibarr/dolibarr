@@ -730,8 +730,8 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
 {
 	$error = 0;
 
-	$shour = dol_print_date($object->datep, "%H");
-	$smin = dol_print_date($object->datep, "%M");
+	$shour = dol_print_date($object->datep, "%H", 'tzuserrel');		// We take the date visible by user $newdate is also date visible by user.
+	$smin = dol_print_date($object->datep, "%M", 'tzuserrel');
 
 	$newdate = GETPOST('newdate', 'alpha');
 	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0)
@@ -740,7 +740,9 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
 		exit;
 	}
 
-	$datep = dol_mktime($shour, $smin, 0, substr($newdate, 13, 2), substr($newdate, 15, 2), substr($newdate, 9, 4));
+	$datep = dol_mktime($shour, $smin, 0, substr($newdate, 13, 2), substr($newdate, 15, 2), substr($newdate, 9, 4), 'tzuserrel');
+	//print dol_print_date($datep, 'dayhour');exit;
+
 	if ($datep != $object->datep)
 	{
 		if (!empty($object->datef))
