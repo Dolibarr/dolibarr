@@ -421,7 +421,7 @@ if (!defined('NOTOKENRENEWAL'))
 	// Rolling token at each call ($_SESSION['token'] contains token of previous page)
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 
-	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
+	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = newToken();
 	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
