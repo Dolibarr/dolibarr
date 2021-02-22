@@ -6478,7 +6478,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_IDPROF5__'] = (isset($object->idprof5) ? $object->idprof5 : '');
 				$substitutionarray['__THIRDPARTY_IDPROF6__'] = (isset($object->idprof6) ? $object->idprof6 : '');
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (isset($object->tva_intra) ? $object->tva_intra : '');
-				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (isset($object->note_public)) ? dol_htmlentitiesbr($object->note_public) : '');
+				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (isset($object->note_public) ? dol_htmlentitiesbr($object->note_public) : '');
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (isset($object->note_private) ? dol_htmlentitiesbr($object->note_private) : '');
 			} elseif (is_object($object->thirdparty)) {
 				$substitutionarray['__THIRDPARTY_ID__'] = (isset($object->thirdparty->id) ? $object->thirdparty->id : '');
