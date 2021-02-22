@@ -522,7 +522,7 @@ class modFournisseur extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"OrderId", 'f.ref'=>"Ref", 'f.ref_supplier'=>"RefSupplier", 'f.date_creation'=>"DateCreation", 'f.date_commande'=>"OrderDate", 'f.date_livraison'=>"DateDeliveryPlanned",
-			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
 			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
@@ -544,7 +544,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'Text', 's.address'=>'Text', 's.cp'=>'Text', 's.ville'=>'Text', 'c.code'=>'Text', 's.tel'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text",
-			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric",
+			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric",
 			'f.fk_statut'=>'Status', 'f.date_approve'=>'Date', 'f.date_approve2'=>'Date', 'f.note_public'=>"Text", 'f.note_private'=>"Text", 'fd.description'=>"Text",
 			'fd.tva_tx'=>"Numeric", 'fd.qty'=>"Numeric", 'fd.remise_percent'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_tva'=>"Numeric",
 			'fd.product_type'=>'Numeric', 'fd.ref'=>'Text', 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
@@ -852,7 +852,7 @@ class modFournisseur extends DolibarrModules
 			'c.fk_statut'         => 'Status*',
 			'c.billed'            => 'Billed(0/1)',
 			'c.remise_percent'    => 'GlobalDiscount',
-			'c.tva'               => 'TotalTVA',
+			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',

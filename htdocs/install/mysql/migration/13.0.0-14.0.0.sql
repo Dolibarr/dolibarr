@@ -184,4 +184,5 @@ ALTER TABLE llx_facture CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_facture CHANGE COLUMN total total_ht double(24,8) default 0;
 ALTER TABLE llx_facture_rec CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_facture_rec CHANGE COLUMN total total_ht double(24,8) default 0;
+ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
