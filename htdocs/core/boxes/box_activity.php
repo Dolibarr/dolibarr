@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2019 Frederic France        <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2021 Frederic France        <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,8 +100,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the propals
-		if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
-		{
+		if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propalstatic = new Propal($this->db);
 
@@ -109,24 +108,28 @@ class box_activity extends ModeleBoxes
 			$filename = '/boxactivity-propal'.$fileid;
 			$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 			$data = array();
-			if ($refresh)
-			{
-				$sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
+			if ($refresh) {
+				$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
 				$sql .= ")";
 				$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 				$sql .= " AND p.fk_soc = s.rowid";
-				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-				if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				}
+				if ($user->socid) {
+					$sql .= " AND s.rowid = ".$user->socid;
+				}
 				$sql .= " AND p.datep >= '".$this->db->idate($tmpdate)."'";
 				$sql .= " AND p.date_cloture IS NULL"; // just unclosed
 				$sql .= " GROUP BY p.fk_statut";
 				$sql .= " ORDER BY p.fk_statut DESC";
 
 				$result = $this->db->query($sql);
-				if ($result)
-				{
+				if ($result) {
 					$num = $this->db->num_rows($result);
 
 					$j = 0;
@@ -145,11 +148,9 @@ class box_activity extends ModeleBoxes
 				$data = dol_readcachefile($cachedir, $filename);
 			}
 
-			if (!empty($data))
-			{
+			if (!empty($data)) {
 				$j = 0;
-				while ($j < count($data))
-				{
+				while ($j < count($data)) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="left" width="16"',
 						'url' => DOL_URL_ROOT."/comm/propal/list.php?mainmenu=commercial&amp;leftmenu=propals&amp;search_status=".$data[$j]->fk_statut,

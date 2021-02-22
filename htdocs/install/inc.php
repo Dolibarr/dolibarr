@@ -5,7 +5,8 @@
  * Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- *
+ * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
+*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -42,17 +43,13 @@ if (!defined('ADODB_PATH'))
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once ADODB_PATH.'adodb-time.inc.php';
 
-// Avoid warnings with strict mode E_STRICT
-$conf = new stdClass(); // instantiate $conf explicitely
-$conf->global	= new stdClass();
-$conf->file = new stdClass();
-$conf->db = new stdClass();
-$conf->syslog	= new stdClass();
+$conf = new Conf(); 
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
