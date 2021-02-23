@@ -7,6 +7,7 @@
  * Copyright (C) 2014      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -657,7 +658,7 @@ if ($object->id > 0)
 			$num = $object_count->total;
 		}
 
-		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
+		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.total_tva, p.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p";
 		$sql .= " WHERE p.fk_soc =".$object->id;
 		$sql .= " AND p.entity IN (".getEntity('commande_fournisseur').")";
