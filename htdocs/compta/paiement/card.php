@@ -43,12 +43,20 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+$object = new Paiement($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, $object->element, $object->id, 'paiement', '');
+
 // Security check
 if ($user->socid) $socid = $user->socid;
-// TODO ajouter regle pour restreindre acces paiement
-//$result = restrictedArea($user, 'facture', $id,'');
-
-$object = new Paiement($db);
+// Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
+// It should be enough because all payments are done on invoices of the same thirdparty.
+if ($socid && $socid != $object->thirdparty->id) {
+	accessforbidden();
+}
 
 
 /*
@@ -59,7 +67,6 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
-	$object->fetch($id);
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
 	if ($result > 0)
 	{
@@ -75,7 +82,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 {
 	$db->begin();
 
-	$object->fetch($id);
 	$result = $object->delete();
 	if ($result > 0)
 	{
@@ -100,7 +106,6 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 {
 	$db->begin();
 
-	$object->fetch($id);
 	if ($object->validate($user) > 0)
 	{
 		$db->commit();
@@ -134,7 +139,6 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 
 if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 {
-	$object->fetch($id);
 	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
@@ -146,7 +150,6 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 
 if ($action == 'setdatep' && !empty($_POST['datepday']))
 {
-	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0)

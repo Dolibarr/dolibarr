@@ -87,6 +87,7 @@ $picto = 'margin';
 
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
@@ -101,7 +102,7 @@ if ($socid > 0) {
 	{
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td class="maxwidthonsmartphone" colspan="4">';
-		print $form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+		print img_picto('', 'company').$form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
 		print '</td></tr>';
 
 		$client = true;
@@ -111,7 +112,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print $form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+	print img_picto('', 'company').$form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -138,16 +139,16 @@ foreach ($TRes as $prod) {
 	$TProducts[$prod['key']] = $prod['label'];
 }
 
-print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
 print '<td class="maxwidthonsmartpone" colspan="4">';
-print $form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
+print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
 print '</td></tr>';
 
 // Categories
 $TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
 
 print '<tr>';
-print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
 print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
@@ -365,11 +366,6 @@ $db->free($result);
 
 print '<script type="text/javascript">
 $(document).ready(function() {
-	/*
-	$("#socid").change(function() {
-    	$("div.fiche form").submit();
-	});*/
-
 	$("#totalMargin").html("'.price($totalMargin, null, null, null, null, $rounding).'");
 	$("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%").'");
 	$("#markRate").html("'.(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%").'");

@@ -138,6 +138,7 @@ class Odf
 		if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml, $tag) === false) {
 			// Add the throw only for development. In most cases, it is normal to not having the key into the document (only few keys are presents).
 			//throw new OdfException("var $key not found in the document");
+			return $this;
 		}
 
 		$this->vars[$tag] = $this->convertVarToOdf($value, $encode, $charset);

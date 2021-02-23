@@ -160,9 +160,13 @@ if (empty($reshook))
 		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
 		$quantity = price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent', 'alpha'));
+
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
-		$tva_tx = price2num($tva_tx);
+		if (!preg_match('/\((.*)\)/', $tva_tx)) {
+			$tva_tx = price2num($tva_tx);
+		}
+
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
@@ -398,7 +402,7 @@ if ($id > 0 || $ref)
 			print '<div class="fichecenter">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
 			print '<tr><td>';
@@ -411,14 +415,14 @@ if ($id > 0 || $ref)
 			print '</td></tr>';
 
 			// PMP
-			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
+			print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 			print '<td>';
 			if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
 			print '</td>';
 			print '</tr>';
 
 			// Best buying Price
-			print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("BuyingPriceMin").'</td>';
 			print '<td colspan="2">';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
@@ -458,7 +462,7 @@ if ($id > 0 || $ref)
 				print '<table class="border centpercent">';
 
 				// Supplier
-				print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Supplier").'</td><td>';
+				print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Supplier").'</td><td>';
 				if ($rowid)
 				{
 					$supplier = new Fournisseur($db);
@@ -725,7 +729,7 @@ END;
 					// Option to define a transport cost on supplier price
 					print '<tr>';
 					print '<td>'.$langs->trans('BarcodeValue').'</td>';
-					print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
+					print '<td>'.img_picto('', 'barcode', 'class="pictofixedwidth"').'<input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
 					print '</tr>';
 					$formbarcode = new FormBarCode($db);
 

@@ -1022,11 +1022,10 @@ class FormCompany extends Form
 	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		$out = '';
-		if ($htmlname != "none")
-		{
+		if ($htmlname != "none") {
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1035,8 +1034,7 @@ class FormCompany extends Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
-			if ($selected)
-			{
+			if ($selected) {
 				$arr = $this->typent_array(0);
 				$typent = $arr[$selected];
 				$out .= $typent;
@@ -1045,7 +1043,10 @@ class FormCompany extends Form
 			}
 		}
 
-		if ($nooutput) return $out;
-		else print $out;
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
 	}
 }

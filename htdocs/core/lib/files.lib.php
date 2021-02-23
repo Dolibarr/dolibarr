@@ -1192,6 +1192,16 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				{
 					if ($nophperrors) $ok = @unlink($filename);
 					else $ok = unlink($filename);
+
+					// If it fails and it is because of the missing write permission on parent dir
+					if (!$ok && file_exists(dirname($filename)) && !(fileperms(dirname($filename)) & 0200)) {
+						dol_syslog("Error in deletion, but parent directory exists with no permission to write, we try to change permission on parent directory and retry...", LOG_DEBUG);
+						@chmod(dirname($filename), fileperms(dirname($filename)) | 0200);
+						// Now we retry deletion
+						if ($nophperrors) $ok = @unlink($filename);
+						else $ok = unlink($filename);
+					}
+
 					if ($ok)
 					{
 						dol_syslog("Removed file ".$filename, LOG_DEBUG);
@@ -1513,6 +1523,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param	int		$generatethumbs			1=Generate also thumbs for uploaded image files
  * @param   Object  $object                 Object used to set 'src_object_*' fields
  * @return	int                             <=0 if KO, >0 if OK
+ * @see dol_remove_file_process()
  */
 function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
@@ -1673,6 +1684,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
  * @param   int		$donotdeletefile        1=Do not delete physically file
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
+ * @see dol_add_file_process()
  */
 function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletefile = 1, $trackid = '')
 {
@@ -2314,10 +2326,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->rights->ficheinter->{$lire}) $accessallowed = 1;
 		$original_file = $conf->ficheinter->dir_output.'/'.$original_file;
 	} // Wrapping pour les apercu conat
-	elseif (($modulepart == 'apercucontract') && !empty($conf->contrat->dir_output))
+	elseif (($modulepart == 'apercucontract') && !empty($conf->contrat->multidir_output[$entity]))
 	{
 		if ($fuser->rights->contrat->{$lire}) $accessallowed = 1;
-		$original_file = $conf->contrat->dir_output.'/'.$original_file;
+		$original_file = $conf->contrat->multidir_output[$entity].'/'.$original_file;
 	} // Wrapping pour les apercu supplier proposal
 	elseif (($modulepart == 'apercusupplier_proposal' || $modulepart == 'apercusupplier_proposal') && !empty($conf->supplier_proposal->dir_output))
 	{
@@ -2707,13 +2719,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (!empty($conf->stock->enabled)) $original_file = $conf->stock->multidir_output[$entity].'/movement/'.$original_file;
 	} // Wrapping pour les contrats
-	elseif ($modulepart == 'contract' && !empty($conf->contrat->dir_output))
+	elseif ($modulepart == 'contract' && !empty($conf->contrat->multidir_output[$entity]))
 	{
 		if ($fuser->rights->contrat->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed = 1;
 		}
-		$original_file = $conf->contrat->dir_output.'/'.$original_file;
+		$original_file = $conf->contrat->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."contrat WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('contract').")";
 	} // Wrapping pour les dons
 	elseif ($modulepart == 'donation' && !empty($conf->don->dir_output))

@@ -169,6 +169,7 @@ $totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help = $extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall = $extrafields->attributes[$elementtype]['entityid'][$attrname];
 $printable = $extrafields->attributes[$elementtype]['printable'][$attrname];
+$enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 
 if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {
@@ -299,6 +300,14 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 	<!-- Multicompany entity -->
     <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>
+
+<!-- Show Enabled property when value is not a common value -->
+<?php if ($enabled != '1') { ?>
+	<tr class="help"><td><?php echo $langs->trans("EnabledCondition"); ?></td><td class="valeur">
+	<?php echo dol_escape_htmltag($enabled); ?>
+<?php } ?>
+</td></tr>
+
 </table>
 
 <?php print dol_get_fiche_end(); ?>

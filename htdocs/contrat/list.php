@@ -201,7 +201,7 @@ $socstatic = new Societe($db);
 $contracttmp = new Contrat($db);
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -256,7 +256,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
+$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
 $sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
 $sql .= " typent.code,";
 $sql .= " state.code_departement, state.nom";
@@ -640,7 +640,7 @@ while ($i < min($num, $limit))
 		}
 
 		$filename = dol_sanitizeFileName($obj->ref);
-		$filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+		$filedir = $conf->contrat->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 		print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
 		print '</td>';
@@ -658,7 +658,7 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			// TODO Use a cache for this string
 			print $socstatic->getNomUrl(1, '');

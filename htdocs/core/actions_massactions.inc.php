@@ -3,7 +3,7 @@
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019      Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021 Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1082,6 +1082,7 @@ if ($action == 'remove_file')
 	$action = '';
 }
 
+
 // Validate records
 if (!$error && $massaction == 'validate' && $permissiontoadd)
 {
@@ -1110,18 +1111,47 @@ if (!$error && $massaction == 'validate' && $permissiontoadd)
 			if ($result > 0)
 			{
 				$result = $objecttmp->validate($user);
-				if ($result == 0)
-				{
+				if ($result == 0) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftToBeValidated", $objecttmp->ref), null, 'errors');
 					$error++;
 					break;
-				} elseif ($result < 0)
-				{
+				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
-				} else $nbok++;
+				} else {
+					// validate() rename pdf but do not regenerate
+					// Define output language
+					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+							$newlang = $objecttmp->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						$model = $objecttmp->model_pdf;
+						$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
+						// To be sure vars is defined
+						$hidedetails = !empty($hidedetails) ? $hidedetails : 0;
+						$hidedesc = !empty($hidedesc) ? $hidedesc : 0;
+						$hideref = !empty($hideref) ? $hideref : 0;
+						$moreparams = !empty($moreparams) ? $moreparams : null;
+
+						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						if ($result < 0) {
+							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						}
+					}
+					$nbok++;
+				}
 			} else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;

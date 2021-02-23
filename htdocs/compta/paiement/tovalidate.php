@@ -27,10 +27,6 @@ require '../../main.inc.php';
 // Load translation files required by the page
 $langs->load("bills");
 
-// Security check
-if (!$user->rights->facture->lire)
-  accessforbidden();
-
 $socid = 0;
 if ($user->socid > 0)
 {
@@ -49,6 +45,9 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "p.rowid";
+
+// Security check
+if (empty($user->rights->facture->lire)) accessforbidden();
 
 
 /*

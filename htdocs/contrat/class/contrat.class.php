@@ -1296,7 +1296,7 @@ class Contrat extends CommonObject
 			$ref = dol_sanitizeFileName($this->ref);
 			if ($conf->contrat->dir_output)
 			{
-				$dir = $conf->contrat->dir_output."/".$ref;
+				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir))
 				{
 					$res = @dol_delete_dir_recursive($dir);

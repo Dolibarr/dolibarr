@@ -426,7 +426,7 @@ class FormFile
 
 			if ($modulepart == 'company')
 			{
-				$showempty = 1;
+				$showempty = 1;		// can have no template active
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
@@ -490,6 +490,7 @@ class FormFile
 				}
 			} elseif ($modulepart == 'contract')
 			{
+				$showempty = 1;		// can have no template active
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
@@ -553,6 +554,7 @@ class FormFile
 				}
 			} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
 			{
+				$showempty = 1; 	// can have no template active
 				if (is_array($genallowed)) $modellist = $genallowed;
 				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
