@@ -153,11 +153,13 @@ class InfoBox
 						$box->sourcefile = $relsourcefile;
 						$box->class     = $boxname;
 
-						if ($mode == 'activated' && !is_object($user))	// List of activated box was not yet personalized into database
-						{
+						if ($mode == 'activated' && !is_object($user)) {	// List of activated box was not yet personalized into database
 							if (is_numeric($box->box_order)) {
-								if ($box->box_order % 2 == 1) $box->box_order = 'A'.$box->box_order;
-								elseif ($box->box_order % 2 == 0) $box->box_order = 'B'.$box->box_order;
+								if ($box->box_order % 2 == 1) {
+									$box->box_order = 'A'.$box->box_order;
+								} elseif ($box->box_order % 2 == 0) {
+									$box->box_order = 'B'.$box->box_order;
+								}
 							}
 						}
 						// box_def properties
@@ -173,11 +175,12 @@ class InfoBox
 								$tmpenabled = 0; // $tmpenabled is used for the '|' test (OR)
 								foreach ($arrayelem as $module) {
 									$tmpmodule = preg_replace('/@[^@]+/', '', $module);
-									if (!empty($conf->$tmpmodule->enabled)) $tmpenabled = 1;
+									if (!empty($conf->$tmpmodule->enabled)) {
+										$tmpenabled = 1;
+									}
 									//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
 								}
-								if (empty($tmpenabled))	// We found at least one module required that is disabled
-								{
+								if (empty($tmpenabled)) {	// We found at least one module required that is disabled
 									$enabled = 0;
 									break;
 								}
@@ -186,8 +189,11 @@ class InfoBox
 						//print '=>'.$boxname.'-enabled='.$enabled.'<br>';
 
 						//print 'xx module='.$module.' enabled='.$enabled;
-						if ($enabled && ($includehidden || empty($box->hidden))) $boxes[] = $box;
-						else unset($box);
+						if ($enabled && ($includehidden || empty($box->hidden))) {
+							$boxes[] = $box;
+						} else {
+							unset($box);
+						}
 					} else {
 						dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
 					}
@@ -222,7 +228,9 @@ class InfoBox
 
 		dol_syslog(get_class()."::saveboxorder zone=".$zone." userid=".$userid);
 
-		if (!$userid || $userid == 0) return 0;
+		if (!$userid || $userid == 0) {
+			return 0;
+		}
 
 		$user = new User($db);
 		$user->id = $userid;
@@ -247,11 +255,9 @@ class InfoBox
 
 		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 		$result = $db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$colonnes = explode('-', $boxorder);
-			foreach ($colonnes as $collist)
-			{
+			foreach ($colonnes as $collist) {
 				$part = explode(':', $collist);
 				$colonne = $part[0];
 				$list = $part[1];
@@ -259,10 +265,8 @@ class InfoBox
 
 				$i = 0;
 				$listarray = explode(',', $list);
-				foreach ($listarray as $id)
-				{
-					if (is_numeric($id))
-					{
+				foreach ($listarray as $id) {
+					if (is_numeric($id)) {
 						//dol_syslog("aaaaa".count($listarray));
 						$i++;
 						$ii = sprintf('%02d', $i);
@@ -290,8 +294,7 @@ class InfoBox
 			$error++;
 		}
 
-		if ($error)
-		{
+		if ($error) {
 			$db->rollback();
 			return -2;
 		} else {

@@ -105,14 +105,12 @@ class modGeneratePassStandard extends ModeleGenPassword
 		$i = 0;
 
 		// add random characters to $password until $length is reached
-		while ($i < $this->length)
-		{
+		while ($i < $this->length) {
 			// pick a random character from the possible ones
 			$char = substr($possible, mt_rand(0, dol_strlen($possible) - 1), 1);
 
 			// we don't want this character if it's already in the password
-			if (!strstr($password, $char))
-			{
+			if (!strstr($password, $char)) {
 				$password .= $char;
 				$i++;
 			}
@@ -130,7 +128,9 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 */
 	public function validatePassword($password)
 	{
-		if (dol_strlen($password) < $this->length) return 0;
+		if (dol_strlen($password) < $this->length) {
+			return 0;
+		}
 		return 1;
 	}
 }

@@ -46,13 +46,19 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
-	if (empty($minLength)) $minLength = 1;
+	if (empty($minLength)) {
+		$minLength = 1;
+	}
 
 	$dataforrenderITem = 'ui-autocomplete';
 	$dataforitem = 'ui-autocomplete-item';
 	// Allow two constant to use other values for backward compatibility
-	if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
-	if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+	if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) {
+		$dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+	}
+	if (defined('JS_QUERY_AUTOCOMPLETE_ITEM')) {
+		$dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+	}
 
 	// Input search_htmlname is original field
 	// Input htmlname is a second input field used when using ajax autocomplete.
@@ -413,14 +419,26 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	global $conf;
 
 	// select2 can be disabled for smartphones
-	if (!empty($conf->browser->layout) && $conf->browser->layout == 'phone' && !empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) return '';
+	if (!empty($conf->browser->layout) && $conf->browser->layout == 'phone' && !empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) {
+		return '';
+	}
 
-	if (!empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
-	if (empty($conf->use_javascript_ajax)) return '';
-	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) return '';
-	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
+	if (!empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) {
+		return '';
+	}
+	if (empty($conf->use_javascript_ajax)) {
+		return '';
+	}
+	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
+		return '';
+	}
+	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		return '';
+	}
 
-	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete = 0;
+	if (empty($minLengthToAutocomplete)) {
+		$minLengthToAutocomplete = 0;
+	}
 
 	$tmpplugin = 'select2';
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
@@ -450,11 +468,12 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					},
 					dropdownCssClass: \'ui-dialog\'
 				})';
-	if ($forcefocus) $msg .= '.select2(\'focus\')';
+	if ($forcefocus) {
+		$msg .= '.select2(\'focus\')';
+	}
 	$msg .= ';'."\n";
 
-	if (is_array($events) && count($events))    // If an array of js events to do were provided.
-	{
+	if (is_array($events) && count($events)) {    // If an array of js events to do were provided.
 		$msg .= '
 			jQuery("#'.$htmlname.'").change(function () {
 				var obj = '.json_encode($events).';
@@ -530,12 +549,16 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	global $conf, $langs, $user;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
-	if (!isset($input)) $input = array();
+	if (!isset($input)) {
+		$input = array();
+	}
 
-	if (empty($conf->use_javascript_ajax) || $forcenoajax)
-	{
-		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
+		if (empty($conf->global->$code)) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 		<script>
