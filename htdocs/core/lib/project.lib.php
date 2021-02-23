@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,44 +44,80 @@ function project_prepare_head(Project $project)
 	$head[$h][1] = $langs->trans("Project");
 	$head[$h][2] = 'project';
 	$h++;
+	$nbContacts = 0;
+	// Enable caching of project count Contacts
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'count_contacts_project_'.$object->id;
+	$dataretrieved = dol_getcache($cachekey);
 
-	$nbContact = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
+	if (!is_null($dataretrieved)) {
+		$nbContacts = $dataretrieved;
+	} else {
+		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
+		dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+	}
 	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
-	if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+	if ($nbContacts > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContacts.'</span>';
+	}
 	$head[$h][2] = 'contact';
 	$h++;
 
-	if (empty($conf->global->PROJECT_HIDE_TASKS))
-	{
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 		// Then tab for sub level of projet, i mean tasks
+		$nbTasks = 0;
+		// Enable caching of project count Tasks
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_tasks_project_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+
+		if (!is_null($dataretrieved)) {
+			$nbTasks = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$taskstatic = new Task($db);
+			$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
+			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("Tasks");
-
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-		$taskstatic = new Task($db);
-		$nbTasks = count($taskstatic->getTasksArray(0, 0, $project->id, 0, 0));
-		if ($nbTasks > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTasks).'</span>';
+		if ($nbTasks > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTasks).'</span>';
+		}
 		$head[$h][2] = 'tasks';
 		$h++;
 
 		$nbTimeSpent = 0;
-		$sql = "SELECT t.rowid";
-		//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
-		//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
-		$sql .= " WHERE t.fk_task = pt.rowid";
-		$sql .= " AND pt.fk_projet =".$project->id;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $nbTimeSpent = 1;
-		} else dol_print_error($db);
+		// Enable caching of project count Timespent
+		$cachekey = 'count_timespent_project_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbTimeSpent = $dataretrieved;
+		} else {
+			$sql = "SELECT t.rowid";
+			//$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+			//$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql .= " WHERE t.fk_task = pt.rowid";
+			$sql .= " AND pt.fk_projet =".$project->id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$nbTimeSpent = 1;
+					dol_setcache($cachekey, $nbTimeSpent, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+				}
+			} else {
+				dol_print_error($db);
+			}
+		}
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$project->id;
 		$head[$h][1] = $langs->trans("TimeSpent");
-		if ($nbTimeSpent > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
+		if ($nbTimeSpent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
+		}
 		$head[$h][2] = 'timespent';
 		$h++;
 	}
@@ -89,34 +125,80 @@ function project_prepare_head(Project $project)
 	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
 		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
-		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled))
-	{
-		$count = 0;
-
-		if (!empty($conf->propal->enabled))				$count += $project->getElementCount('propal', 'propal');
-		if (!empty($conf->commande->enabled))			$count += $project->getElementCount('order', 'commande');
-		if (!empty($conf->facture->enabled))			$count += $project->getElementCount('invoice', 'facture');
-		if (!empty($conf->facture->enabled))			$count += $project->getElementCount('invoice_predefined', 'facture_rec');
-		if (!empty($conf->supplier_proposal->enabled))	$count += $project->getElementCount('proposal_supplier', 'supplier_proposal');
-		if (!empty($conf->supplier_order->enabled))		$count += $project->getElementCount('order_supplier', 'commande_fournisseur');
-		if (!empty($conf->supplier_invoice->enabled))	$count += $project->getElementCount('invoice_supplier', 'facture_fourn');
-		if (!empty($conf->contrat->enabled))			$count += $project->getElementCount('contract', 'contrat');
-		if (!empty($conf->ficheinter->enabled))			$count += $project->getElementCount('intervention', 'fichinter');
-		if (!empty($conf->expedition->enabled))			$count += $project->getElementCount('shipping', 'expedition');
-		if (!empty($conf->mrp->enabled))				$count += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
-		if (!empty($conf->deplacement->enabled))		$count += $project->getElementCount('trip', 'deplacement');
-		if (!empty($conf->expensereport->enabled))		$count += $project->getElementCount('expensereport', 'expensereport');
-		if (!empty($conf->don->enabled))				$count += $project->getElementCount('donation', 'don');
-		if (!empty($conf->loan->enabled))				$count += $project->getElementCount('loan', 'loan');
-		if (!empty($conf->tax->enabled))				$count += $project->getElementCount('chargesociales', 'chargesociales');
-		if (!empty($conf->projet->enabled))				$count += $project->getElementCount('project_task', 'projet_task');
-		if (!empty($conf->stock->enabled))				$count += $project->getElementCount('stock_mouvement', 'stock');
-		if (!empty($conf->salaries->enabled))			$count += $project->getElementCount('salaries', 'payment_salary');
-		if (!empty($conf->banque->enabled))				$count += $project->getElementCount('variouspayment', 'payment_various');
-
+		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled)) {
+		$nbElements = 0;
+		// Enable caching of thirdrparty count Contacts
+		$cachekey = 'count_elements_project_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbElements = $dataretrieved;
+		} else {
+			if (!empty($conf->propal->enabled)) {
+				$count += $project->getElementCount('propal', 'propal');
+			}
+			if (!empty($conf->commande->enabled)) {
+				$count += $project->getElementCount('order', 'commande');
+			}
+			if (!empty($conf->facture->enabled)) {
+				$count += $project->getElementCount('invoice', 'facture');
+			}
+			if (!empty($conf->facture->enabled)) {
+				$count += $project->getElementCount('invoice_predefined', 'facture_rec');
+			}
+			if (!empty($conf->supplier_proposal->enabled)) {
+				$count += $project->getElementCount('proposal_supplier', 'supplier_proposal');
+			}
+			if (!empty($conf->supplier_order->enabled)) {
+				$count += $project->getElementCount('order_supplier', 'commande_fournisseur');
+			}
+			if (!empty($conf->supplier_invoice->enabled)) {
+				$count += $project->getElementCount('invoice_supplier', 'facture_fourn');
+			}
+			if (!empty($conf->contrat->enabled)) {
+				$count += $project->getElementCount('contract', 'contrat');
+			}
+			if (!empty($conf->ficheinter->enabled)) {
+				$count += $project->getElementCount('intervention', 'fichinter');
+			}
+			if (!empty($conf->expedition->enabled)) {
+				$count += $project->getElementCount('shipping', 'expedition');
+			}
+			if (!empty($conf->mrp->enabled)) {
+				$count += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
+			}
+			if (!empty($conf->deplacement->enabled)) {
+				$count += $project->getElementCount('trip', 'deplacement');
+			}
+			if (!empty($conf->expensereport->enabled)) {
+				$count += $project->getElementCount('expensereport', 'expensereport');
+			}
+			if (!empty($conf->don->enabled)) {
+				$count += $project->getElementCount('donation', 'don');
+			}
+			if (!empty($conf->loan->enabled)) {
+				$count += $project->getElementCount('loan', 'loan');
+			}
+			if (!empty($conf->tax->enabled)) {
+				$count += $project->getElementCount('chargesociales', 'chargesociales');
+			}
+			if (!empty($conf->projet->enabled)) {
+				$count += $project->getElementCount('project_task', 'projet_task');
+			}
+			if (!empty($conf->stock->enabled)) {
+				$count += $project->getElementCount('stock_mouvement', 'stock');
+			}
+			if (!empty($conf->salaries->enabled)) {
+				$count += $project->getElementCount('salaries', 'payment_salary');
+			}
+			if (!empty($conf->banque->enabled)) {
+				$count += $project->getElementCount('variouspayment', 'payment_various');
+			}
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("ProjectOverview");
-		if ($count > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$count.'</span>';
+		if ($nbElements > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbElements.'</span>';
+		}
 		$head[$h][2] = 'element';
 		$h++;
 	}
@@ -128,44 +210,73 @@ function project_prepare_head(Project $project)
 	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project');
 
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
-		if (!empty($project->note_private)) $nbNote++;
-		if (!empty($project->note_public)) $nbNote++;
+		if (!empty($project->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($project->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$project->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'notes';
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($project->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks = Link::count($db, $project->element, $project->id);
+	// Attached files and Links
+	$totalAttached = 0;
+	// Enable caching of thirdrparty count attached files and links
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'count_attached_project_'.$object->id;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$totalAttached = $dataretrieved;
+	} else {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+		$upload_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($project->ref);
+		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+		$nbLinks = Link::count($db, $project->element, $project->id);
+		$totalAttached = $nbFiles + $nbLinks;
+		dol_setcache($cachekey, $totalAttached, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+	}
 	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$project->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($totalAttached) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($totalAttached).'</span>';
+	}
 	$head[$h][2] = 'document';
 	$h++;
 
 	// Manage discussion
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
-	{
-		$nbComments = $project->getNbComments();
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT)) {
+		$nbComments = 0;
+		// Enable caching of thirdrparty count attached files and links
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_attached_project_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbComments = $dataretrieved;
+		} else {
+			$nbComments = $project->getNbComments();
+			dol_setcache($cachekey, $nbComments, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/comment.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("CommentLink");
-		if ($nbComments > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbComments.'</span>';
+		if ($nbComments > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbComments.'</span>';
+		}
 		$head[$h][2] = 'project_comment';
 		$h++;
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
 	$head[$h][1] .= $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-	{
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
