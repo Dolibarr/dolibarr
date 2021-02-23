@@ -983,7 +983,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			if (!($_POST['fac_replacement'] > 0)) {
+			if (!(GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 				$action = 'create';
@@ -1298,17 +1298,21 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard or deposit or proforma invoice, not from a Predefined template invoice
+		// Standard or deposit invoice, not from a Predefined template invoice
 		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT || GETPOST('type') == Facture::TYPE_PROFORMA || (GETPOST('type') == Facture::TYPE_SITUATION && !GETPOST('situations'))) && GETPOST('fac_rec') <= 0)
 		{
-			if (GETPOST('socid', 'int') < 1)
-			{
+			$typeamount = GETPOST('typedeposit', 'aZ09');
+			$valuestandardinvoice = price2num(str_replace('%', '', GETPOST('valuestandardinvoice', 'alpha')), 'MU');
+			$valuedeposit = price2num(str_replace('%', '', GETPOST('valuedeposit', 'alpha')), 'MU');
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
+
+			if (GETPOST('socid', 'int') < 1) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
 				$action = 'create';
 			}
 
-			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -1319,7 +1323,33 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$date_pointoftax = dol_mktime(12, 0, 0, GETPOST('date_pointoftaxmonth', 'int'), GETPOST('date_pointoftaxday', 'int'), GETPOST('date_pointoftaxyear', 'int'));
+
+			if (GETPOST('type') == Facture::TYPE_STANDARD) {
+				if ($valuestandardinvoice < 0 || $valuestandardinvoice > 100) {
+					setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
+					$error++;
+					$action = 'create';
+				}
+			} elseif (GETPOST('type') == Facture::TYPE_DEPOSIT) {
+				if ($typeamount && !empty($origin) && !empty($originid))
+				{
+					if ($typeamount == 'amount' && $valuedeposit <= 0) {
+						setEventMessages($langs->trans("ErrorAnAmountWithoutTaxIsRequired"), null, 'errors');
+						$error++;
+						$action = 'create';
+					}
+					if ($typeamount == 'variable' && $valuedeposit <= 0) {
+						setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
+						$error++;
+						$action = 'create';
+					}
+					if ($typeamount == 'variablealllines' && $valuedeposit <= 0) {
+						setEventMessages($langs->trans("ErrorAPercentIsRequired"), null, 'errors');
+						$error++;
+						$action = 'create';
+					}
+				}
+			}
 
 			if (!$error)
 			{
@@ -1345,8 +1375,7 @@ if (empty($reshook))
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
-				if (GETPOST('type') == Facture::TYPE_SITUATION)
-				{
+				if (GETPOST('type') == Facture::TYPE_SITUATION) {
 					$object->situation_counter = 1;
 					$object->situation_final = 0;
 					$object->situation_cycle_ref = $object->newCycle();
@@ -1361,8 +1390,8 @@ if (empty($reshook))
 				}
 
 				$retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
-				if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
-					$object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+				if (!empty($retained_warranty_date_limit) && dol_stringtotime($retained_warranty_date_limit)) {
+					$object->retained_warranty_date_limit = dol_stringtotime($retained_warranty_date_limit);
 				}
 				$object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
 
@@ -1371,11 +1400,12 @@ if (empty($reshook))
 				// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (!empty($origin) && !empty($originid))
 				{
+					$regs = array();
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = $origin;
 					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-						$element = $regs [1];
-						$subelement = $regs [2];
+						$element = $regs[1];
+						$subelement = $regs[2];
 					}
 
 					// For compatibility
@@ -1432,12 +1462,10 @@ if (empty($reshook))
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
 
-						$typeamount = GETPOST('typedeposit', 'aZ09');
-						$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
-
-						// If deposit invoice
-						if ($_POST['type'] == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable')))
+						// If deposit invoice - down payment with 1 line (fixed amount or percent)
+						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable')))
 						{
+							// Define the array $amountdeposit
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
 							{
@@ -1548,7 +1576,8 @@ if (empty($reshook))
 							}
 						}
 
-						if ($_POST['type'] != Facture::TYPE_DEPOSIT || ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines'))
+						// standard invoice, credit note, or down payment from a percent of all lines
+						if (GETPOST('type') != Facture::TYPE_DEPOSIT || (GETPOST('type') == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines'))
 						{
 							if ($result > 0)
 							{
@@ -1559,8 +1588,17 @@ if (empty($reshook))
 									$lines = $srcobject->lines;
 								}
 
-								// If we create a deposit with all lines and a percent, we change amount
-								if ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
+								// If we create a standard invoice with a percent, we change amount by changing the qty
+								if (GETPOST('type') == Facture::TYPE_STANDARD && $valuestandardinvoice > 0 && $valuestandardinvoice < 100) {
+									if (is_array($lines)) {
+										foreach ($lines as $line) {
+											// We keep ->subprice and ->pa_ht, but we change the qty
+											$line->qty = price2num($line->qty * $valuestandardinvoice / 100, 'MS');
+										}
+									}
+								}
+								// If we create a down payment with a percent on all lines, we change amount by changing the qty
+								if (GETPOST('type') == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
@@ -2938,14 +2976,13 @@ if ($action == 'create')
 		// Outstanding Bill
 		$arrayoutstandingbills = $soc->getOutstandingBills();
 		$outstandingBills = $arrayoutstandingbills['opened'];
-		print ' ('.$langs->trans('CurrentOutstandingBill').': ';
+		print ' - <span class="opacitymedium">'.$langs->trans('CurrentOutstandingBill').':</span> ';
 		print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
 		if ($soc->outstanding_limit != '')
 		{
 			if ($outstandingBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
 			print ' / '.price($soc->outstanding_limit, '', $langs, 0, 0, -1, $conf->currency);
 		}
-		print ')';
 		print '</td>';
 		print '</tr>'."\n";
 	} else {
@@ -3049,7 +3086,6 @@ if ($action == 'create')
 	}
 
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
-
 	print '<div class="tagtable">'."\n";
 
 	// Standard invoice
@@ -3057,32 +3093,70 @@ if ($action == 'create')
 	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type') == 0 ? ' checked' : '').'> ';
 	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	print '<table class="nobordernopadding"><tr>';
+	print '<td>';
 	print $desc;
+	print '</td>';
+	if ((($origin == 'propal') || ($origin == 'commande')) && (!empty($originid))) {
+		/*print '<td class="nowrap" style="padding-left: 5px">';
+		$arraylist = array(
+			//'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
+			//'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
+			'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
+		);
+		print $form->selectarray('typestandard', $arraylist, GETPOST('typestandard', 'aZ09'), 0, 0, 0, '', 1);
+		print '</td>';*/
+		print '<td class="nowrap" style="padding-left: 15px">';
+		print '<span class="opacitymedium">'.$langs->trans('PercentOfOriginalObject').'</span>:<input class="right" placeholder="100%" type="text" id="valuestandardinvoice" name="valuestandardinvoice" size="3" value="'.(GETPOSTISSET('valuestandardinvoice') ? GETPOST('valuestandardinvoice', 'alpha') : '100%').'"/>';
+		print '</td>';
+	}
+	print '</tr></table>';
 	print '</div></div>';
 
-	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (!empty($originid))))
-	{
-		// Deposit
+	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (!empty($originid)))) {
+		// Deposit - Down payment
 		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT))
    		{
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input type="radio" id="radio_deposit" name="type" value="3"'.(GETPOST('type') == 3 ? ' checked' : '').'> ';
 			print '<script type="text/javascript" language="javascript">
     		jQuery(document).ready(function() {
+    			jQuery("#typestandardinvoice, #valuestandardinvoice").click(function() {
+    				jQuery("#radio_standard").prop("checked", true);
+    			});
     			jQuery("#typedeposit, #valuedeposit").click(function() {
     				jQuery("#radio_deposit").prop("checked", true);
     			});
+				jQuery("#typedeposit").change(function() {
+					console.log("We change type of down payment");
+					jQuery("#radio_deposit").prop("checked", true);
+					setRadioForTypeOfIncoice();
+				});
+    			jQuery("#radio_standard, #radio_deposit, #radio_replacement, #radio_template").change(function() {
+					setRadioForTypeOfIncoice();
+				});
+				function setRadioForTypeOfIncoice() {
+					console.log("Change radio");
+					if (jQuery("#radio_deposit").prop("checked") && (jQuery("#typedeposit").val() == \'amount\' || jQuery("#typedeposit").val() == \'variable\')) {
+						jQuery(".checkforselect").prop("disabled", true);
+						jQuery(".checkforselect").prop("checked", false);
+					} else {
+						jQuery(".checkforselect").prop("disabled", false);
+						jQuery(".checkforselect").prop("checked", true);
+					}
+				};
     		});
     		</script>';
 
 			$tmp  = $tmp.'<label for="radio_deposit" >'.$langs->trans("InvoiceDeposit").'</label>';
 			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
-			print '<table class="nobordernopadding"><tr><td>';
+			print '<table class="nobordernopadding"><tr>';
+			print '<td>';
 			print $desc;
 			print '</td>';
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
-				print '<td class="nowrap" style="padding-left: 5px">';
+				print '<td class="nowrap" style="padding-left: 15px">';
 				$arraylist = array(
 					'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
 					'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
@@ -3090,9 +3164,11 @@ if ($action == 'create')
 				);
 				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit', 'aZ09'), 0, 0, 0, '', 1);
 				print '</td>';
-				print '<td class="nowrap" style="padding-left: 5px">'.$langs->trans('Value').':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="'.GETPOST('valuedeposit', 'int').'"/>';
+				print '<td class="nowrap" style="padding-left: 5px">';
+				print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span><input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.GETPOST('valuedeposit', 'int').'"/>';
+				print '</td>';
 			}
-			print '</td></tr></table>';
+			print '</tr></table>';
 
 			print '</div></div>';
    		}
@@ -3570,6 +3646,8 @@ if ($action == 'create')
 	// Lines from source (TODO Show them also when creating invoice from template invoice)
 	if (!empty($origin) && !empty($originid) && is_object($objectsrc))
 	{
+		$langs->loadLangs(array('orders', 'propal'));
+
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
@@ -3578,13 +3656,12 @@ if ($action == 'create')
 			$objectsrc->update_price(1, - 1, 1);
 		}
 
-		print "\n<!-- ".$classname." info -->";
-		print "\n";
-		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$objectsrc->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$objectsrc->total_tva.'">'."\n";
-		print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
-		print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		print "\n<!-- Show ref of origin ".$classname." -->\n";
+		print '<input type="hidden" name="amount"   value="'.$objectsrc->total_ht.'">'."\n";
+		print '<input type="hidden" name="total"    value="'.$objectsrc->total_ttc.'">'."\n";
+		print '<input type="hidden" name="tva"      value="'.$objectsrc->total_tva.'">'."\n";
+		print '<input type="hidden" name="origin"   value="'.$objectsrc->element.'">';
+		print '<input type="hidden" name="originid" value="'.$objectsrc->id.'">';
 
 		switch (get_class($objectsrc)) {
 			case 'Propal':
@@ -3606,13 +3683,16 @@ if ($action == 'create')
 				$newclassname = get_class($objectsrc);
 		}
 
-		print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1);
+		// Ref of origin
+		print '<tr><td>'.$langs->trans($newclassname).'</td>';
+		print '<td colspan="2">';
+		print $objectsrc->getNomUrl(1);
 		// We check if Origin document (id and type is known) has already at least one invoice attached to it
 		$objectsrc->fetchObjectLinked($originid, $origin, '', 'facture');
 		if (is_array($objectsrc->linkedObjects['facture']) && count($objectsrc->linkedObjects['facture']) >= 1)
 		{
 			setEventMessages('WarningBillExist', null, 'warnings');
-			echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['facture'])->getNomUrl(1).')';
+			echo ' - '.$langs->trans('LatestRelatedBill').' '.end($objectsrc->linkedObjects['facture'])->getNomUrl(1);
 		}
 		echo '</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
