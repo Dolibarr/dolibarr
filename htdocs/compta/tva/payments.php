@@ -39,24 +39,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
-if (!$year && $mode != 'tvaonly') { $year = date("Y", time()); }
+if (!$year && $mode != 'tvaonly') {
+	$year = date("Y", time());
+}
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "ptva.datep";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "ptva.datep";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 
 /*
@@ -73,14 +83,24 @@ llxHeader('', $langs->trans("VATExpensesArea"));
 $title = $langs->trans("VATPayments");
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($sortfield) $param .= '&sortfield='.$sortfield;
-if ($sortorder) $param .= '&sortorder='.$sortorder;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.$contextpage;
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.$limit;
+}
+if ($sortfield) {
+	$param .= '&sortfield='.$sortfield;
+}
+if ($sortorder) {
+	$param .= '&sortorder='.$sortorder;
+}
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -90,10 +110,11 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
 
-if ($year) $param .= '&year='.$year;
+if ($year) {
+	$param .= '&year='.$year;
+}
 
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
-{
+if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -120,8 +141,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE ptva.fk_tva = tva.rowid";
 	$sql .= " AND tva.entity = ".$conf->entity;
-	if ($year > 0)
-	{
+	if ($year > 0) {
 		$sql .= " AND (";
 		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
@@ -133,22 +153,22 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		|| preg_match('/^tva\./', $sortfield)
 		|| preg_match('/^ptva\./', $sortfield)
 		|| preg_match('/^pct\./', $sortfield)
-		|| preg_match('/^bank\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
+		|| preg_match('/^bank\./', $sortfield)) {
+		$sql .= $db->order($sortfield, $sortorder);
+	}
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
 	dol_syslog("compta/tva/payments.php: select payment", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 		$total = 0;
 		$totalnb = 0;
 		$totalpaye = 0;
 
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
 			$payment_vat_static->id = $obj->pid;
@@ -159,11 +179,13 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<td>'.$payment_vat_static->getNomUrl(1)."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
-	        // Type payment
-    	    print '<td>';
-    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-    	    print $obj->num_payment.'</td>';
-    	    // Account
+			// Type payment
+			print '<td>';
+			if ($obj->payment_code) {
+				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+			}
+			print $obj->num_payment.'</td>';
+			// Account
 			print '<td>';
 			$account = new Account($db);
 			$account->fetch($obj->fk_account);
@@ -185,7 +207,9 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			print '<td class="right">'.price($obj->total).'</td>';
 			// Paid
 			print '<td class="right">';
-			if ($obj->totalpaye) print price($obj->totalpaye);
+			if ($obj->totalpaye) {
+				print price($obj->totalpaye);
+			}
 			print '</td>';
 			print '</tr>';
 
@@ -194,16 +218,15 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$totalpaye = $totalpaye + $obj->totalpaye;
 			$i++;
 		}
-	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-	    print '<td class="liste_total right"></td>'; // A total here has no sense
-	    //print '<td align="center" class="liste_total">&nbsp;</td>';
-	    print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td class="liste_total right"></td>'; // A total here has no sense
+		//print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
+		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 	print '</table>';
