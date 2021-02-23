@@ -228,7 +228,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
+	if ($action == 'update' && empty(GETPOST('cancel')) && $user->rights->projet->creer)
 	{
 		$error = 0;
 
@@ -1132,7 +1132,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if ($action == 'edit' && $userWrite > 0)
 	{
 		print '<div class="center">';
-		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp; &nbsp; &nbsp;';
+		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
@@ -1223,14 +1223,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 			// Send
 			if (empty($user->socid)) {
-				if ($object->statut != 2)
+				if ($object->statut != Project::STATUS_CLOSED)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 				}
 			}
 
 			// Modify
-			if ($object->statut != 2 && $user->rights->projet->creer)
+			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1241,7 +1241,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Validate
-			if ($object->statut == 0 && $user->rights->projet->creer)
+			if ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1252,7 +1252,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Close
-			if ($object->statut == 1 && $user->rights->projet->creer)
+			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1263,7 +1263,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Reopen
-			if ($object->statut == 2 && $user->rights->projet->creer)
+			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1340,9 +1340,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Delete
-			if ($user->rights->projet->supprimer || ($object->statut == 0 && $user->rights->projet->creer))
+			if ($user->rights->projet->supprimer || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer))
 			{
-				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
+				if ($userDelete > 0 || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer))
 				{
 					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
 				} else {
