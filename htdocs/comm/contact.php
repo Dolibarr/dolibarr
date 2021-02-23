@@ -32,9 +32,15 @@ $langs->load("companies");
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "p.name";
-if ($page < 0) { $page = 0; }
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "p.name";
+}
+if ($page < 0) {
+	$page = 0;
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
@@ -47,7 +53,9 @@ $begin = GETPOST('begin', 'alpha');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
@@ -57,13 +65,11 @@ $result = restrictedArea($user, 'societe', $socid, '');
 
 llxHeader('', $langs->trans("Contacts"));
 
-if ($type == "c" || $type == "p")
-{
+if ($type == "c" || $type == "p") {
 	$label = $langs->trans("Customers");
 	$urlfiche = "card.php";
 }
-if ($type == "f")
-{
+if ($type == "f") {
 	$label = $langs->trans("Suppliers");
 	$urlfiche = "card.php";
 }
@@ -75,39 +81,46 @@ if ($type == "f")
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
 $sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+}
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND p.entity IN (".getEntity('socpeople').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($type == "c") $sql .= " AND s.client IN (1, 3)";
-if ($type == "p") $sql .= " AND s.client IN (2, 3)";
-if ($type == "f") $sql .= " AND s.fournisseur = 1";
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
+if ($type == "c") {
+	$sql .= " AND s.client IN (1, 3)";
+}
+if ($type == "p") {
+	$sql .= " AND s.client IN (2, 3)";
+}
+if ($type == "f") {
+	$sql .= " AND s.fournisseur = 1";
+}
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
+}
 
-if (dol_strlen($stcomm))
-{
+if (dol_strlen($stcomm)) {
 	$sql .= " AND s.fk_stcomm=".$db->escape($stcomm);
 }
 
-if (!empty($search_lastname))
-{
+if (!empty($search_lastname)) {
 	$sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
 
-if (!empty($search_firstname))
-{
+if (!empty($search_firstname)) {
 	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 
-if (!empty($search_company))
-{
+if (!empty($search_company)) {
 	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 
-if (!empty($contactname)) // acces a partir du module de recherche
-{
+if (!empty($contactname)) { // acces a partir du module de recherche
 	$sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
 	$sortfield = "p.name";
 	$sortorder = "ASC";
@@ -117,8 +130,7 @@ $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$param = "&type=".$type;
@@ -146,8 +158,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$i = 0;
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
