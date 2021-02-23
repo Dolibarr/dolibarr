@@ -95,8 +95,7 @@ class AccountancySystem
 	{
 		global $conf;
 
-		if ($rowid > 0 || $ref)
-		{
+		if ($rowid > 0 || $ref) {
 			$sql  = "SELECT a.rowid, a.pcg_version, a.label, a.active";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 			$sql .= " WHERE";

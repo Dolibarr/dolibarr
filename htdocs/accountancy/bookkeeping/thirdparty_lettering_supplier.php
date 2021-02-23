@@ -222,7 +222,6 @@ if ($resql) {
 
 	// Piece
 	print '<td><input type="text" name="search_doc_ref" value="' . $search_doc_ref . '"></td>';
-
 	print '<td colspan="6">&nbsp;</td>';
 	print '<td class="right">';
 	$searchpicto = $form->showFilterButtons();
