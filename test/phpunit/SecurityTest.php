@@ -300,6 +300,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
     	$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
     	$_POST["param11"]=' Name <email@email.com> ';
+		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 
     	$result=GETPOST('id', 'int');              // Must return nothing
     	print __METHOD__." result=".$result."\n";
@@ -396,6 +397,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     	$result=GETPOST("param11", 'alphawithlgt');
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
+
+    	$result=GETPOST("param12", 'restricthtml');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
     	return $result;
     }
