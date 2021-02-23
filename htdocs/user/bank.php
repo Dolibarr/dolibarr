@@ -343,12 +343,12 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	{
 		$payment_salary = new PaymentSalary($db);
 
-		$sql = "SELECT ps.rowid, ps.datesp, ps.dateep, ps.amount";
+		$sql = "SELECT ps.rowid, s.datesp, s.dateep, ps.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
 		$sql .= " WHERE s.fk_user = ".$object->id;
 		$sql .= " AND ps.entity = ".$conf->entity;
-		$sql .= " ORDER BY ps.datesp DESC";
+		$sql .= " ORDER BY ps.rowid DESC";
 
 		$resql = $db->query($sql);
 		if ($resql)
