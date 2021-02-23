@@ -129,7 +129,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid = s.fk_user)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ps.fk_typepayment = pct.id";
         $sql .= " WHERE s.entity IN (".getEntity('user').")";
-	if(!empty($search_user)) $sql .= " AND u.rowid = ".$search_user;
+		if (!empty($search_user)) $sql .= " AND u.rowid = ".$search_user;
 		/* if ($year > 0)
         {
             $sql .= " AND (s.datesp between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
