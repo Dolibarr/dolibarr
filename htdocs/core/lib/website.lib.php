@@ -231,7 +231,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor (this case should not happen)
+	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
 	{
 		// We remove the <head> part of content
 		if ($contenttype == 'html')
@@ -355,7 +355,9 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	}
 
-	//$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+	if (!defined('USEDOLIBARREDITOR')) {
+		$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+	}
 
 	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);

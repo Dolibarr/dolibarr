@@ -1412,6 +1412,8 @@ abstract class CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
+				$langs->loadLangs(array("propal", "orders", "bills", "suppliers", "contracts", "supplier_proposal"));
+
 				while ($obj = $this->db->fetch_object($resql)) {
 					$modulename = $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
@@ -1427,11 +1429,15 @@ abstract class CommonObject
 					}
 					if (!empty($conf->{$modulename}->enabled)) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-						$transkey = "TypeContact_".$obj->element."_".$source."_".$obj->code;
+						$tmpelement = $obj->element;
+						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
-						if (empty($option))
+						if (empty($option)) {
 							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
-						else $tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						}
+						else {
+							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						}
 					}
 				}
 			}
@@ -3231,13 +3237,11 @@ abstract class CommonObject
 			// Specific code for backward compatibility with old field names
 			if ($this->element == 'facture' || $this->element == 'facturerec')             $fieldht = 'total';
 			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva = 'total_tva';
-			if ($this->element == 'propal') {
-				$fieldttc = 'total';
-				$fieldtva = 'total_tva';
-			}
+			if ($this->element == 'propal')                                                $fieldtva = 'total_tva';
 			if ($this->element == 'expensereport')                                         $fieldtva = 'total_tva';
 			if ($this->element == 'supplier_proposal')                                     $fieldtva = 'total_tva';
 			if ($this->element == 'commande')                                              $fieldtva = 'total_tva';
+			if ($this->element == 'order_supplier')                                        $fieldtva = 'total_tva';
 
 			if (empty($nodatabaseupdate))
 			{
