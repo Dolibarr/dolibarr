@@ -28,13 +28,27 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 /**
  * Empty header
@@ -67,23 +81,40 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // Security check
-if (empty($conf->clicktodial->enabled))
-{
+if (empty($conf->clicktodial->enabled)) {
 	accessforbidden();
 	exit;
 }
 
 
 // Define Asterisk setup
-if (!isset($conf->global->ASTERISK_HOST))      $conf->global->ASTERISK_HOST = "127.0.0.1";
-if (!isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE = "SIP/";
-if (!isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF = "0";
-if (!isset($conf->global->ASTERISK_PORT))      $conf->global->ASTERISK_PORT = 5038;
-if ($conf->global->ASTERISK_INDICATIF == 'NONE')  $conf->global->ASTERISK_INDICATIF = '';
-if (!isset($conf->global->ASTERISK_CONTEXT))   $conf->global->ASTERISK_CONTEXT = "from-internal";
-if (!isset($conf->global->ASTERISK_WAIT_TIME)) $conf->global->ASTERISK_WAIT_TIME = "30";
-if (!isset($conf->global->ASTERISK_PRIORITY))  $conf->global->ASTERISK_PRIORITY = "1";
-if (!isset($conf->global->ASTERISK_MAX_RETRY)) $conf->global->ASTERISK_MAX_RETRY = "2";
+if (!isset($conf->global->ASTERISK_HOST)) {
+	$conf->global->ASTERISK_HOST = "127.0.0.1";
+}
+if (!isset($conf->global->ASTERISK_TYPE)) {
+	$conf->global->ASTERISK_TYPE = "SIP/";
+}
+if (!isset($conf->global->ASTERISK_INDICATIF)) {
+	$conf->global->ASTERISK_INDICATIF = "0";
+}
+if (!isset($conf->global->ASTERISK_PORT)) {
+	$conf->global->ASTERISK_PORT = 5038;
+}
+if ($conf->global->ASTERISK_INDICATIF == 'NONE') {
+	$conf->global->ASTERISK_INDICATIF = '';
+}
+if (!isset($conf->global->ASTERISK_CONTEXT)) {
+	$conf->global->ASTERISK_CONTEXT = "from-internal";
+}
+if (!isset($conf->global->ASTERISK_WAIT_TIME)) {
+	$conf->global->ASTERISK_WAIT_TIME = "30";
+}
+if (!isset($conf->global->ASTERISK_PRIORITY)) {
+	$conf->global->ASTERISK_PRIORITY = "1";
+}
+if (!isset($conf->global->ASTERISK_MAX_RETRY)) {
+	$conf->global->ASTERISK_MAX_RETRY = "2";
+}
 
 
 $login = GETPOST('login');
@@ -127,11 +158,9 @@ $sql .= $db->plimit(1);
 
 dol_syslog('click to dial search information with phone '.$called, LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
+	if ($obj) {
 		$found = $obj->name;
 	} else {
 		$found = $notfound;
@@ -144,16 +173,13 @@ if ($resql)
 
 $number = strtolower($called);
 $pos = strpos($number, "local");
-if (!empty($number))
-{
-	if ($pos === false)
-	{
+if (!empty($number)) {
+	if ($pos === false) {
 		$errno = 0;
 		$errstr = 0;
 		$strCallerId = "Dolibarr call $found <".strtolower($number).">";
 		$oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
-		if (!$oSocket)
-		{
+		if (!$oSocket) {
 			print '<body>'."\n";
 			$txt = "Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
 			print $txt;

@@ -121,6 +121,17 @@ function project_prepare_head(Project $project)
 		$h++;
 	}
 
+	if ($conf->eventorganization->enabled) {
+		$langs->load('eventorganization');
+		//TODO : Count
+		$nbConfOrBooth = 1;
+		$head[$h][0] = DOL_URL_ROOT . '/projet/event.php?id=' . $project->id;
+		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
+		$head[$h][2] = 'eventorganisation';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

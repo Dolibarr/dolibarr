@@ -13,7 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2020 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1463,14 +1463,14 @@ class Propal extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
-		} else $sql .= " WHERE p.rowid=".$rowid;
+		} else {
+			$sql .= " WHERE p.rowid=".$rowid;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id                   = $obj->rowid;
@@ -1481,12 +1481,12 @@ class Propal extends CommonObject
 				$this->remise               = $obj->remise;
 				$this->remise_percent       = $obj->remise_percent;
 				$this->remise_absolue       = $obj->remise_absolue;
-				$this->total                = $obj->total; // TODO deprecated
+				$this->total                = $obj->total_ttc; // TODO deprecated
+				$this->total_ttc            = $obj->total_ttc;
 				$this->total_ht             = $obj->total_ht;
 				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
-				$this->total_ttc            = $obj->total;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -1537,8 +1537,8 @@ class Propal extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_valid_id = $obj->fk_user_valid;
+				$this->user_close_id = $obj->fk_user_cloture;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
@@ -1550,11 +1550,10 @@ class Propal extends CommonObject
 				$this->multicurrency_code = $obj->multicurrency_code;
 				$this->multicurrency_tx 		= $obj->multicurrency_tx;
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
-				if ($obj->fk_statut == self::STATUS_DRAFT)
-				{
+				if ($obj->fk_statut == self::STATUS_DRAFT) {
 					$this->brouillon = 1;
 				}
 
@@ -1568,8 +1567,7 @@ class Propal extends CommonObject
 
 				// Lines
 				$result = $this->fetch_lines();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					return -3;
 				}
 

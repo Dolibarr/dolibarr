@@ -36,8 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
