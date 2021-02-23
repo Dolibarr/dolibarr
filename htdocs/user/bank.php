@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 if (!empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 if (!empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
@@ -341,11 +341,12 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
 		)
 	{
-		$salary = new Salary($db);
+		$payment_salary = new PaymentSalary($db);
 
 		$sql = "SELECT ps.rowid, ps.datesp, ps.dateep, ps.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-		$sql .= " WHERE ps.fk_user = ".$object->id;
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
+		$sql .= " WHERE s.fk_user = ".$object->id;
 		$sql .= " AND ps.entity = ".$conf->entity;
 		$sql .= " ORDER BY ps.datesp DESC";
 
@@ -357,7 +358,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->id.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 
@@ -368,9 +369,9 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
-				$salary->id = $objp->rowid;
-				$salary->ref = $objp->rowid;
-				print $salary->getNomUrl(1);
+				$payment_salary->id = $objp->rowid;
+				$payment_salary->ref = $objp->rowid;
+				print $payment_salary->getNomUrl(1);
 				print '</td>';
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
