@@ -226,8 +226,7 @@ if (!empty($hashp)) {
 
 // Security:
 // Limit access if permissions are wrong
-if (!$accessallowed)
-{
+if (!$accessallowed) {
 	accessforbidden();
 }
 
