@@ -244,7 +244,7 @@ foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 	//if ($tmppath) $concatpath.='/'.$tmppath;
 	//print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
 	if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath)) {    // @ avoid warning when safe_mode is on.
-	//print "Found relative url = ".$concatpath;
+		//print "Found relative url = ".$concatpath;
 		$tmp3 = $concatpath;
 		$found = 1;
 		break;
