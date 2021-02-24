@@ -7,7 +7,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
  */
 class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 {
-    public $code = 'syslog';
+	public $code = 'syslog';
 
 	/**
 	 * 	Return name of logger
@@ -48,7 +48,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function isActive()
 	{
-	    global $conf;
+		global $conf;
 
 		// This function does not exists on some ISP (Ex: Free in France)
 		if (!function_exists('openlog')) return 0;
@@ -85,15 +85,15 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 
 		$errors = array();
 
-	    $facility = constant($conf->global->SYSLOG_FACILITY);
-	    if ($facility)
+		$facility = constant($conf->global->SYSLOG_FACILITY);
+		if ($facility)
 		{
 			// Only LOG_USER supported on Windows
 			if (!empty($_SERVER["WINDIR"])) $facility = constant('LOG_USER');
 
 			dol_syslog("admin/syslog: facility ".$facility);
 		} else {
-		    $errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
 		}
 
 		return $errors;

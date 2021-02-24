@@ -56,7 +56,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		sleep(1);
 
 		// Load translation files required by the page
-        $langs->loadLangs(array('main', 'other'));
+		$langs->loadLangs(array('main', 'other'));
 
 		$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLDAPFunctionsAreDisabledOnThisPHP").' '.$langs->trans("TryAnotherConnectionMode");
 		return;
@@ -148,8 +148,11 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		{
 			if ($result == 2)	// Connection is ok for user/pass into LDAP
 			{
-				dol_syslog("functions_ldap::check_user_password_ldap Authentification ok");
 				$login = $usertotest;
+				if (!empty($conf->global->LDAP_FIELD_LOGIN)) {
+					$login = $ldap->login;
+				}
+				dol_syslog("functions_ldap::check_user_password_ldap $login authentication ok");
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -234,7 +237,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				sleep(1);
 
 				// Load translation files required by the page
-                $langs->loadLangs(array('main', 'other'));
+				$langs->loadLangs(array('main', 'other'));
 
 				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
 			}
@@ -257,7 +260,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			sleep(2); // Anti brut force protection
 
 			// Load translation files required by the page
-            $langs->loadLangs(array('main', 'other', 'errors'));
+			$langs->loadLangs(array('main', 'other', 'errors'));
 			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->trans("ErrorBadLoginPassword"));
 		}
 

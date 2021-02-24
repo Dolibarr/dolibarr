@@ -550,8 +550,8 @@ class Tasks extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   object  $object    Object to clean
-	 * @return    array    Array of cleaned object properties
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

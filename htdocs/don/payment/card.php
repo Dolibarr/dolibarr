@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "banks", "companies"));
+$langs->loadLangs(array("bills", "banks", "companies", "donations"));
 
 // Security check
 $id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
@@ -60,14 +60,15 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supp
 	$result = $object->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/don/index.php");
-        exit;
+		$db->commit();
+		header("Location: ".DOL_URL_ROOT."/don/index.php");
+		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
+
 
 
 /*
@@ -81,6 +82,7 @@ $form = new Form($db);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/don/payment/card.php?id='.$id;
 $head[$h][1] = $langs->trans("DonationPayment");
 $hselected = $h;
@@ -111,7 +113,7 @@ print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td>'.dol_print_
 print '<tr><td>'.$langs->trans('Mode').'</td><td>'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Number
-print '<tr><td>'.$langs->trans('Number').'</td><td>'.$object->num_payment.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td>'.$object->num_payment.'</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
@@ -122,18 +124,18 @@ print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note_public).'
 // Bank account
 if (!empty($conf->banque->enabled))
 {
-    if ($object->bank_account)
-    {
-    	$bankline = new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
+	if ($object->bank_account)
+	{
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td>';
 		print $bankline->getNomUrl(1, 0, 'showall');
-    	print '</td>';
-    	print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
@@ -161,7 +163,7 @@ if ($resql)
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Donation').'</td>';
-    print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
@@ -182,11 +184,11 @@ if ($resql)
 			print '<td class="right">'.price($objp->d_amount).'</td>';
 			// Status
 			print '<td class="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paid == 1) {
-                // If at least one invoice is paid, disable delete
+				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;
@@ -203,7 +205,7 @@ if ($resql)
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

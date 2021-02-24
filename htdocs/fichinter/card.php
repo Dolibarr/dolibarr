@@ -8,6 +8,7 @@
  * Copyright (C) 2014-2018  Charlene Benke          <charlies@patas-monkey.com>
  * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2018 		Philippe Grand       	<philippe.grand@atoo-net.com>
+ * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +58,8 @@ $langs->loadLangs(array('bills', 'companies', 'interventions'));
 
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
-$contratid = GETPOST('contratid', 'int');
+$socid = (int) GETPOST('socid', 'int');
+$contratid = (int) GETPOST('contratid', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -175,8 +176,7 @@ if (empty($reshook))
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
-	{
+	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer) {
 		$result = $object->setDraft($user);
 		if ($result >= 0)
 		{
@@ -187,8 +187,7 @@ if (empty($reshook))
 				$newlang = '';
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
-				if (!empty($newlang))
-				{
+				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -200,14 +199,14 @@ if (empty($reshook))
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'add' && $user->rights->ficheinter->creer)
-	{
+	} elseif ($action == 'add' && $user->rights->ficheinter->creer) {
+		$selectedLines = GETPOST('toselect', 'array');
 		$object->socid = $socid;
-		$object->duration = GETPOST('duration', 'int');
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contrat		= GETPOST('contratid', 'int');
+		$object->duration = (int) GETPOST('duration', 'int');
+		$object->fk_project = (int) GETPOST('projectid', 'int');
+		$object->fk_contrat = (int) GETPOST('contratid', 'int');
 		$object->author = $user->id;
-		$object->description	= GETPOST('description', 'restricthtml');
+		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 		$object->model_pdf = GETPOST('model', 'alpha');
 		$object->note_private = GETPOST('note_private', 'restricthtml');
@@ -219,8 +218,9 @@ if (empty($reshook))
 			if (!empty($origin) && !empty($originid))
 			{
 				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $_POST['origin'];
-				if (preg_match('/^([^_]+)_([^_]+)/i', $_POST['origin'], $regs))
+				$regs = array();
+				$element = $subelement = GETPOST('origin', 'alphanohtml');
+				if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
 				{
 					$element = $regs[1];
 					$subelement = $regs[2];
@@ -248,7 +248,13 @@ if (empty($reshook))
 				}
 
 				// Extrafields
-				$extrafields = new ExtraFields($db);
+
+				// Fill array 'array_options' with data from add form
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
+				if ($ret < 0) {
+					$error++;
+					$action = 'create';
+				}
 				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 				$object->array_options = $array_options;
@@ -279,6 +285,8 @@ if (empty($reshook))
 
 							for ($i = 0; $i < $num; $i++)
 							{
+								if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
 								if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
@@ -409,13 +417,12 @@ if (empty($reshook))
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"));
 			$action = 'create';
 		}
-	} elseif ($action == 'update' && $user->rights->ficheinter->creer)
-	{
+	} elseif ($action == 'update' && $user->rights->ficheinter->creer) {
 		$object->socid = $socid;
-		$object->fk_project		= GETPOST('projectid', 'int');
-		$object->fk_contrat		= GETPOST('contratid', 'int');
+		$object->fk_project = (int) GETPOST('projectid', 'int');
+		$object->fk_contrat = (int) GETPOST('contratid', 'int');
 		$object->author = $user->id;
-		$object->description	= GETPOST('description', 'restricthtml');
+		$object->description = GETPOST('description', 'restricthtml');
 		$object->ref = $ref;
 
 		$result = $object->update($user);
@@ -475,8 +482,7 @@ if (empty($reshook))
 
 			$desc = GETPOST('np_desc', 'restricthtml');
 			$date_intervention = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ?convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
-
+			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION) ? convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int')) : 0;
 
 			// Extrafields
 			$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -520,8 +526,7 @@ if (empty($reshook))
 	elseif ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setStatut(2);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
@@ -738,7 +743,8 @@ if (empty($reshook))
 			if ($result > 0 && $id > 0)
 			{
 				$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-				$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
 			if ($result >= 0)
@@ -944,7 +950,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -955,7 +961,7 @@ if ($action == 'create')
 			print '<tr>';
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -1012,15 +1018,13 @@ if ($action == 'create')
 			print '<input type="hidden" name="projectid" value="'.$projectid.'">';
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
-
-		print '</form>';
 
 		// Show origin lines
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
@@ -1033,6 +1037,8 @@ if ($action == 'create')
 
 			print '</table>';
 		}
+
+		print '</form>';
 	} else {
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1053,13 +1059,13 @@ if ($action == 'create')
 		print '</td></tr>';
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1332,8 +1338,7 @@ if ($action == 'create')
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		if ($action == 'editline')
-		{
+		if ($action == 'editline') {
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="line_id" value="'.GETPOST('line_id', 'int').'">';
 		} else {
@@ -1345,8 +1350,9 @@ if ($action == 'create')
 		$sql .= ' ft.date as date_intervention';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql .= ' WHERE ft.fk_fichinter = '.$object->id;
-		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION))
+		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION)) {
 			$sql .= ' AND ft.duree <> 0';
+		}
 		$sql .= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
 
 		$resql = $db->query($sql);
@@ -1373,13 +1379,11 @@ if ($action == 'create')
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				// Ligne en mode visu
-				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid)
-				{
+				if ($action != 'editline' || GETPOST('line_id', 'int') != $objp->rowid) {
 					print '<tr class="oddeven">';
 
 					// No.
@@ -1399,8 +1403,7 @@ if ($action == 'create')
 
 					print "</td>\n";
 
-
-					// Econ to edit and delete
+					// Icon to edit and delete
 					if ($object->statut == 0 && $user->rights->ficheinter->creer)
 					{
 						print '<td class="center">';
@@ -1482,8 +1485,8 @@ if ($action == 'create')
 					print '</td>';
 
 					print '<td class="center" colspan="5" valign="center">';
-					print '<input type="submit" class="button buttongen marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
-					print '<input type="submit" class="button buttongen marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
+					print '<input type="submit" class="button buttongen marginbottomonly button-save" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen marginbottomonly button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>'."\n";
 
 					$line = new FichinterLigne($db);
@@ -1588,7 +1591,7 @@ if ($action == 'create')
 		print '</form>'."\n";
  	}
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print "\n";
 

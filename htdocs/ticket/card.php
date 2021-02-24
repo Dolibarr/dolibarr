@@ -59,10 +59,10 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 
 if (GETPOST('actioncode', 'array')) {
-    $actioncode = GETPOST('actioncode', 'array', 3);
-    if (!count($actioncode)) $actioncode = '0';
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) $actioncode = '0';
 } else {
-    $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -194,7 +194,8 @@ if (empty($reshook)) {
 				$type_contact = GETPOST("type", 'alpha');
 
 				if ($contactid > 0 && $type_contact) {
-					$result = $object->add_contact($contactid, GETPOST("type"), 'external');
+					$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+					$result = $object->add_contact($contactid, $typeid, 'external');
 				}
 
 				// altairis: link ticket to project
@@ -585,16 +586,16 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-			if ($result > 0) {
-				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-				$action = 'view';
-			} else {
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			if ($result < 0) { $error++; }
 		}
 
-		if ($error) $action = 'edit_extras';
+		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		} else {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		}
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $user->rights->ticket->write) {
@@ -636,6 +637,7 @@ if (empty($reshook)) {
 	if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 }
 
+
 /*
  * View
  */
@@ -666,9 +668,6 @@ if ($action == 'create' || $action == 'presend')
 	$formticket->withfile = 2;
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
-	if (empty($defaultref)) {
-		$defaultref = '';
-	}
 
 	$formticket->showForm(1, 'create');
 } elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
@@ -697,7 +696,7 @@ if ($action == 'create' || $action == 'presend')
 	print '</td></tr>';
 
 	// Group
-	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketGroup").'</span></label></td><td>';
+	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
 	$formticket->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
 	print '</td></tr>';
 
@@ -717,12 +716,12 @@ if ($action == 'create' || $action == 'presend')
 	print '</table>';
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -832,7 +831,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 			dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 
 		if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
@@ -862,8 +861,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		}
 
 		// Thirdparty
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' ';
 			if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 0).'</a> : ';
@@ -876,12 +874,10 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->ticket->write)
-			{
+			if ($user->rights->ticket->write) {
 				if ($action != 'classify')
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a>';
 	   			$morehtmlref .= ' : ';
@@ -942,14 +938,14 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
-		print dol_print_date($object->datec, 'dayhour');
+		print dol_print_date($object->datec, 'dayhour', 'tzuser');
 		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
 		print '</td></tr>';
 
 		// Read date
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
-			print dol_print_date($object->date_read, 'dayhour');
+			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
 			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
 			print ' - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
 		}
@@ -958,7 +954,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		// Close date
 		print '<tr><td>'.$langs->trans("TicketCloseOn").'</td><td>';
 		if (!empty($object->date_close)) {
-			print dol_print_date($object->date_close, 'dayhour');
+			print dol_print_date($object->date_close, 'dayhour', 'tzuser');
 		}
 		print '</td></tr>';
 
@@ -966,7 +962,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
-		if ($object->fk_statut < 8 && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
+		if ($object->fk_statut < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
 			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.$object->track_id.'&action=view&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a></td>';
 		}
 		print '</tr></table>';
@@ -994,7 +990,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans('Progression').'</td><td class="left">';
 		print '</td>';
-		if ($action != 'progression' && $object->fk_statut < 8 && !$user->socid) {
+		if ($action != 'progression' && $object->fk_statut < $object::STATUS_CLOSED && !$user->socid) {
 			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=progression&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1053,11 +1049,10 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
-		print '<input type="hidden" name="property" value="'.$property['dict'].'">';
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable">';
+		print '<table class="noborder tableforfield centpercent margintable">';
 		print '<tr class="liste_titre">';
 		print '<td>';
 		print $langs->trans('Properties');
@@ -1067,7 +1062,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 			print '<input class="button" type="submit" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
 		} else {
 			//    Button to edit Properties
-			if ($object->fk_statut < 5 && $user->rights->ticket->write) {
+			if ($object->fk_statut < $object::STATUS_NEED_MORE_INFO && $user->rights->ticket->write) {
 				print '<a class="editfielda" href="card.php?track_id='.$object->track_id.'&action=view&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
 			}
 		}
@@ -1120,7 +1115,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 		// Display navbar with links to change ticket status
 		print '<!-- navbar with status -->';
-		if (!$user->socid && $user->rights->ticket->write && $object->fk_statut < 8 && GETPOST('set') !== 'properties') {
+		if (!$user->socid && $user->rights->ticket->write && $object->fk_statut < $object::STATUS_CLOSED && GETPOST('set') !== 'properties') {
 			$actionobject->viewStatusActions($object);
 		}
 
@@ -1242,7 +1237,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		print '</div></div></div>';
 		print '<div style="clear:both"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		// Buttons for actions

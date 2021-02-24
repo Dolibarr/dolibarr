@@ -340,7 +340,7 @@ if ($object->id > 0)
 						print img_picto($langs->trans("Add"), 'switch_off');
 						print '</a></td>';
 					}
-					print '<td>&nbsp</td>';
+					print '<td>&nbsp;</td>';
 				}
 			} else {
 				// Do not own permission
@@ -351,7 +351,7 @@ if ($object->id > 0)
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
 				}
-				print '<td>&nbsp</td>';
+				print '<td>&nbsp;</td>';
 			}
 
 			$permlabel = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
@@ -374,7 +374,7 @@ if ($object->id > 0)
 	$reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

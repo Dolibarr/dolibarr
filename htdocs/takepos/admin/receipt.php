@@ -47,24 +47,26 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_RECEIPT_NAME", GETPOST('TAKEPOS_RECEIPT_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SHOW_CUSTOMER", GETPOST('TAKEPOS_SHOW_CUSTOMER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_PRINT_PAYMENT_METHOD", GETPOST('TAKEPOS_PRINT_PAYMENT_METHOD', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 } elseif (GETPOST('action', 'alpha') == 'setmethod')
 {
-    dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	// TakePOS connector require ReceiptPrinter module
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !$conf->receiptprinter->enabled) activateModule("modReceiptPrinter");
 }
 
 
@@ -102,34 +104,32 @@ print $langs->trans('BrowserMethodDescription');
 print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
-    print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 
 // Receipt printer module
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans('DolibarrReceiptPrinter');
-	print '<td>';
-	print $langs->trans('ReceiptPrinterMethodDescription');
-	print '<br>';
-	print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
-	print '</td><td class="right">';
-	if ($conf->receiptprinter->enabled) {
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
-			print img_picto($langs->trans("Activated"), 'switch_on');
-		} else {
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-		}
+print '<tr class="oddeven"><td>';
+print $langs->trans('DolibarrReceiptPrinter');
+print '<td>';
+print $langs->trans('ReceiptPrinterMethodDescription');
+print '<br>';
+print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
+print '</td><td class="right">';
+if ($conf->receiptprinter->enabled) {
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		print img_picto($langs->trans("Activated"), 'switch_on');
 	} else {
-		print '<span class="opacitymedium">';
-		print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
-		print '</span>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	}
-	print "</td></tr>\n";
+} else {
+	print '<span class="opacitymedium">';
+	print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
+	print '</span>';
 }
+print "</td></tr>\n";
 
 // TakePOS Connector
 print '<tr class="oddeven"><td>';
@@ -139,9 +139,9 @@ print $langs->trans('TakeposConnectorMethodDescription');
 print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
-    print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 print '</table>';
@@ -246,7 +246,7 @@ print '</div>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

@@ -70,9 +70,9 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -128,7 +128,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 
 
 	/**
-	 * @var array of document table collumns
+	 * @var array of document table columns
 	 */
 	public $cols;
 
@@ -825,7 +825,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == Facture::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK)))
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK)))
 		{
 			  pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FACTURE_DRAFT_WATERMARK);
 		}
@@ -885,7 +885,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == Facture::STATUS_DRAFT)
+		if ($object->statut == $object::STATUS_DRAFT)
 		{
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
@@ -1002,7 +1002,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 			}
 
 			// Recipient name
-			/*if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			/*if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1060,7 +1060,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
@@ -1213,7 +1213,7 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	        ),
 	        'border-left' => true, // add left line separator
 	    );
-	    if ($conf->global->PRODUCT_USE_UNITS) {
+	    if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	        $this->cols['unit']['status'] = true;
 	    }
 

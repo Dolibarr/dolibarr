@@ -93,10 +93,10 @@ if ($action == 'warehouse')
 {
 	$value = GETPOST('default_warehouse', 'alpha');
 	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
-	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)){
+	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 }
 
 if ($action == 'specimen')
@@ -483,13 +483,15 @@ if ($virtualdiffersfromphysical)
 	print '</tr>'."\n";
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
+	print '<td>';
+	print $form->textwithpicto($langs->trans("UseRealStockByDefault"), $langs->trans("ReplenishmentCalculation"));
+	print '</td>';
 	print '<td class="right">';
 	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_USE_VIRTUAL_STOCK');
+		print ajax_constantonoff('STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_USE_VIRTUAL_STOCK", $arrval, $conf->global->STOCK_USE_VIRTUAL_STOCK);
+		print $form->selectarray("STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT", $arrval, $conf->global->STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT);
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -636,7 +638,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -668,8 +670,8 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Other")."</td>\n";
-print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+print "<td>".$langs->trans("Parameter")."</td>\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
@@ -684,7 +686,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null,  0, 0, 1);
+	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, $conf->global->MAIN_DEFAULT_WAREHOUSE_USER);
@@ -692,7 +694,7 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
-if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
 	print '<td class="right">';
@@ -705,7 +707,15 @@ if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	print "</td>\n";
 	print "</tr>\n";
 }
-
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseDuringPropal").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL);
+}
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringOrder").'</td>';
 print '<td class="right">';

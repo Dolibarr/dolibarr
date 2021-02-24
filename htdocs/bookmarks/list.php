@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2020 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,14 +197,14 @@ while ($i < min($num, $limit))
 	// Title
 	print "<td>";
 	$linkintern = 1;
-	if ($linkintern) print "<a href=\"".$obj->url."\">";
+	if ($linkintern) print '<a href="'.$obj->url.'">';
 	print $title;
 	if ($linkintern) print "</a>";
 	print "</td>\n";
 
 	// Url
 	print '<td class="tdoverflowmax200">';
-	if (!$linkintern) print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink"' : '').'>';
+	if (!$linkintern) print '<a href="'.$obj->url.'"'.($obj->target ? ' target="newlink" rel="noopener"' : '').'>';
 	print $link;
 	if (!$linkintern) print '</a>';
 	print "</td>\n";
@@ -241,7 +241,7 @@ while ($i < min($num, $limit))
 	print '<td class="nowrap right">';
 	if ($user->rights->bookmark->creer)
 	{
-		print '<a class="editfielda" href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&token='.newToken().'&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($user->rights->bookmark->supprimer)
 	{

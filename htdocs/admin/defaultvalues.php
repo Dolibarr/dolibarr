@@ -72,9 +72,9 @@ $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));
  */
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && !empty($massaction) && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
-$parameters = array('socid'=>$socid);
+$parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -186,7 +186,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param = '&mode='.$mode;
 
-$enabledisablehtml .= $langs->trans("EnableDefaultValues").' ';
+$enabledisablehtml = $langs->trans("EnableDefaultValues").' ';
 if (empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES))
 {
 	// Button off, click to enable
@@ -213,7 +213,7 @@ if ($defaultkey)      $param .= '&defaultkey='.urlencode($defaultkey);
 if ($defaultvalue)    $param .= '&defaultvalue='.urlencode($defaultvalue);
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && !empty($debug)) ? '?debug=1' : '').'" method="POST">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -378,15 +378,14 @@ if ($result)
 		print '<td class="center">';
 		if ($action != 'edit' || GETPOST('rowid') != $obj->rowid)
 		{
-			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
-			print ' &nbsp; ';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=edit&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&mode='.$mode.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
 		} else {
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$id.'">';
 			print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : 'none').'"></div>';
 			print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-			print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</td>';
 
@@ -401,7 +400,7 @@ if ($result)
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print "</form>\n";
 

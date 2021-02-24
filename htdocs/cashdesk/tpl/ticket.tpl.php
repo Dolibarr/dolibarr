@@ -55,11 +55,11 @@ $object->fetch($facid);
         </p>
 
         <p class="date_heure"><?php
-        // Recuperation et affichage de la date et de l'heure
-        $now = dol_now();
-        print dol_print_date($now, 'dayhourtext').'<br>';
-        print $object->ref;
-        ?></p>
+		// Recuperation et affichage de la date et de l'heure
+		$now = dol_now();
+		print dol_print_date($now, 'dayhourtext').'<br>';
+		print $object->ref;
+		?></p>
     </div>
 </div>
 
@@ -78,14 +78,14 @@ $object->fetch($facid);
     <tbody>
     <?php
 
-    $tab = array();
-    $tab = $_SESSION['poscart'];
+	$tab = array();
+	$tab = $_SESSION['poscart'];
 
-    $tab_size = count($tab);
-    for ($i = 0; $i < $tab_size; $i++)
-    {
-        $remise = $tab[$i]['remise'];
-        ?>
+	$tab_size = count($tab);
+	for ($i = 0; $i < $tab_size; $i++)
+	{
+		$remise = $tab[$i]['remise'];
+		?>
     <tr>
         <td><?php echo $tab[$i]['ref']; ?></td>
         <td><?php echo $tab[$i]['label']; ?></td>
@@ -94,8 +94,8 @@ $object->fetch($facid);
         <td class="total"><?php echo price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td>
     </tr>
         <?php
-    }
-    ?>
+	}
+	?>
     </tbody>
 </table>
 

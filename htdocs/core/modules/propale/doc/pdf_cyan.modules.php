@@ -78,9 +78,9 @@ class pdf_cyan extends ModelePDFPropales
 	 */
 	public $version = 'dolibarr';
 
-	 /**
-	  * @var int page_largeur
-	  */
+	/**
+	 * @var int page_largeur
+	 */
 	public $page_largeur;
 
 	/**
@@ -120,7 +120,7 @@ class pdf_cyan extends ModelePDFPropales
 	public $emetteur;
 
 	/**
-	 * @var array of document table collumns
+	 * @var array of document table columns
 	 */
 	public $cols;
 
@@ -187,7 +187,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
+	 *  @param		Propal		$object				Object to generate
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -200,6 +200,8 @@ class pdf_cyan extends ModelePDFPropales
 	  // phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
+		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
@@ -207,8 +209,9 @@ class pdf_cyan extends ModelePDFPropales
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 
+		global $outputlangsbis;
+		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
-			global $outputlangsbis;
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
@@ -239,7 +242,7 @@ class pdf_cyan extends ModelePDFPropales
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
-					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
+					$pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product'); // default
 					$pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 				}
 
@@ -320,6 +323,10 @@ class pdf_cyan extends ModelePDFPropales
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
+				// Set nblines with the new facture lines content after hook
+				$nblines = count($object->lines);
+				//$nbpayments = count($object->getListOfPayments());
+
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
@@ -384,7 +391,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				// Incoterm
 				$height_incoterms = 0;
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -393,7 +400,7 @@ class pdf_cyan extends ModelePDFPropales
 
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
-						$nexY = $pdf->GetY();
+						$nexY = max($pdf->GetY(), $nexY);
 						$height_incoterms = $nexY - $tab_top;
 
 						// Rect takes a length in 3rd parameter
@@ -420,8 +427,7 @@ class pdf_cyan extends ModelePDFPropales
 
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
-				if (!empty($extranote))
-				{
+				if (!empty($extranote)) {
 					$notetoshow = dol_concatdesc($notetoshow, $extranote);
 				}
 
@@ -554,7 +560,7 @@ class pdf_cyan extends ModelePDFPropales
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-				// tab simulation to know line height
+				// Table simulation to know the height of the title line
 				$pdf->startTransaction();
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
@@ -633,7 +639,6 @@ class pdf_cyan extends ModelePDFPropales
 								{
 									$pdf->AddPage('', '', true);
 									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-									//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
@@ -747,7 +752,7 @@ class pdf_cyan extends ModelePDFPropales
 
 
 					// Collection of totals by value of vat in $this->tva["rate"] = total_tva
-					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva;
+					if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne = $object->lines[$i]->total_tva;
 
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
@@ -768,25 +773,26 @@ class pdf_cyan extends ModelePDFPropales
 					&& (!empty($localtax1_rate) || !empty($localtax2_rate))) // and there is local tax
 					{
 						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = $localtaxtmp_array[0];
-						$localtax2_type = $localtaxtmp_array[2];
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 					}
 
 					// retrieve global local tax
-					if ($localtax1_type && $localtax1ligne != 0)
+					if ($localtax1_type && $localtax1ligne != 0) {
 						$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
-					if ($localtax2_type && $localtax2ligne != 0)
+					}
+					if ($localtax2_type && $localtax2ligne != 0) {
 						$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+					}
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate .= '*';
 					if (!isset($this->tva[$vatrate]))				$this->tva[$vatrate] = 0;
 					$this->tva[$vatrate] += $tvaligne;
 
-					if ($posYAfterImage > $posYAfterDescription) $nexY = $posYAfterImage;
+					if ($posYAfterImage > $posYAfterDescription) $nexY = max($nexY, $posYAfterImage);
 
 					// Add line
-					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
-					{
+					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -797,14 +803,12 @@ class pdf_cyan extends ModelePDFPropales
 
 
 					// Detect if some page were added automatically and output _tableau for past pages
-					while ($pagenb < $pageposafter)
-					{
+					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						if ($pagenb == $pageposbeforeprintlines)
-						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
+						if ($pagenb == $pageposbeforeprintlines) {
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 						} else {
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code, $outputlangsbis);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
@@ -812,13 +816,12 @@ class pdf_cyan extends ModelePDFPropales
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak)
-					{
-						if ($pagenb == $pageposafter)
-						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
+
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+						if ($pagenb == $pageposafter) {
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
 						} else {
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code, $outputlangsbis);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
@@ -832,10 +835,10 @@ class pdf_cyan extends ModelePDFPropales
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code, $outputlangsbis);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter + 1;
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code, $outputlangsbis);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforsignature - $heightforfooter + 1;
 				}
 
@@ -859,7 +862,7 @@ class pdf_cyan extends ModelePDFPropales
 					$posy = $this->drawSignatureArea($pdf, $object, $posy, $outputlangs);
 				}
 
-				// Pied de page
+				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -967,8 +970,8 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	TCPDF		$pdf           Object PDF
-	 *  @param  Object		$object         Object proposal
+	 *  @param	TCPDF		$pdf            Object PDF
+	 *  @param  Propal		$object         Object proposal
 	 *  @param  int			$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
 	 *  @return int             			<0 if KO, >0 if OK
@@ -981,7 +984,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		Propal		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	int							Pos y
@@ -1006,7 +1009,7 @@ class pdf_cyan extends ModelePDFPropales
 		$posxval = 52;
 
 		// Show shipping date
-		if (!empty($object->date_livraison))
+		if (!empty($object->delivery_date))
 		{
 			$outputlangs->load("sendings");
 			$pdf->SetFont('', 'B', $default_font_size - 2);
@@ -1015,7 +1018,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$dlp = dol_print_date($object->date_livraison, "daytext", false, $outputlangs, true);
+			$dlp = dol_print_date($object->delivery_date, "daytext", false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
@@ -1045,7 +1048,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc);
+			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
@@ -1158,9 +1161,9 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  Propal		$object         Object proposal
+	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
@@ -1199,14 +1202,14 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
 
-		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = ((!empty($conf->multicurrency->enabled) && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);
 
-		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+		$total_ttc = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 
 		$this->atleastoneratenotnull = 0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -1417,7 +1420,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetFillColor(255,255,255);
 
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle, 0, $outputlangs), $useborder, 'R', 1);
@@ -1507,7 +1510,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Propal		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
@@ -1525,7 +1528,7 @@ class pdf_cyan extends ModelePDFPropales
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		//  Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->PROPALE_DRAFT_WATERMARK)))
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->PROPALE_DRAFT_WATERMARK)))
 		{
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->PROPALE_DRAFT_WATERMARK);
 		}
@@ -1553,8 +1556,7 @@ class pdf_cyan extends ModelePDFPropales
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
-				if (is_readable($logo))
-				{
+				if (is_readable($logo)) {
 					$height = pdf_getHeightForLogo($logo);
 					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 				} else {
@@ -1580,7 +1582,13 @@ class pdf_cyan extends ModelePDFPropales
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
+		if ($object->statut == $object::STATUS_DRAFT)
+		{
+			$pdf->SetTextColor(128, 0, 0);
+			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
+		$pdf->MultiCell($w, 4, $textref, '', 'R');
 
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
@@ -1625,7 +1633,12 @@ class pdf_cyan extends ModelePDFPropales
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : ".dol_print_date($object->fin_validite, "day", false, $outputlangs, true), '', 'R');
+
+		$title = $outputlangs->transnoentities("DateEndPropal");
+		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+			$title .= ' - '.$outputlangsbis->transnoentities("DateEndPropal");
+		}
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->fin_validite, "day", false, $outputlangs, true), '', 'R');
 
 		if ($object->thirdparty->code_client)
 		{
@@ -1677,10 +1690,13 @@ class pdf_cyan extends ModelePDFPropales
 		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
-			$posy = 42 + $top_shift;
+		 	$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+		 	$posy += $top_shift;
 		 	$posx = $this->marge_gauche;
 			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->page_largeur - $this->marge_droite - 80;
-			$hautcadre = 40;
+
+			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
+			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
 
 			// Show sender frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -1689,19 +1705,19 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0, 0, 60);
 
 			// Show sender name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 			$posy = $pdf->getY();
 
 			// Show sender information
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->SetFont('', '', $default_font_size - 1);
-			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			$pdf->MultiCell($widthrecbox - 2, 4, $carac_emetteur, 0, 'L');
 
 
 			// If CUSTOMER contact defined, we use it
@@ -1713,9 +1729,8 @@ class pdf_cyan extends ModelePDFPropales
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1762,7 +1777,7 @@ class pdf_cyan extends ModelePDFPropales
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	Propal		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1770,15 +1785,15 @@ class pdf_cyan extends ModelePDFPropales
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
 	/**
 	 *	Show area for the customer to sign
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  Propal		$object         Object proposal
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
@@ -1813,7 +1828,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object			common object
+	 *   	@param	Propal			$object			object proposal
 	 *   	@param	Translate		$outputlangs	langs
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
@@ -1921,6 +1936,17 @@ class pdf_cyan extends ModelePDFPropales
 			'border-left' => true, // add left line separator
 		);
 
+		// Adapt dynamically the width of subprice, if text is too long.
+		$tmpwidth = 0;
+		$nblines = count($object->lines);
+		for ($i = 0; $i < $nblines; $i++) {
+			$tmpwidth2 = dol_strlen(dol_string_nohtmltag(pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails)));
+			$tmpwidth = max($tmpwidth, $tmpwidth2);
+		}
+		if ($tmpwidth > 10) {
+			$this->cols['subprice']['width'] += (2 * ($tmpwidth - 10));
+		}
+
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
@@ -1942,7 +1968,7 @@ class pdf_cyan extends ModelePDFPropales
 			),
 			'border-left' => true, // add left line separator
 		);
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->cols['unit']['status'] = true;
 		}
 

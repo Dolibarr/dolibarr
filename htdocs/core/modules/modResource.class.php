@@ -95,7 +95,7 @@ class modResource extends DolibarrModules
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
-		$this->phpmin = array(5, 4);
+		$this->phpmin = array(5, 6);
 
 		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
@@ -188,6 +188,7 @@ class modResource extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=tools',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
@@ -246,9 +247,9 @@ class modResource extends DolibarrModules
 
 		$this->export_dependencies_array[$r] = array('resource'=>array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'resource as r ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'resource as r';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.rowid=r.fk_code_type_resource';
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = c.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = r.rowid';
 		$this->export_sql_end[$r] .= ' AND r.entity IN ('.getEntity('resource').')';
 
 

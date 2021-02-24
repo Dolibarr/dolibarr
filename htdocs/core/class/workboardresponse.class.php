@@ -24,6 +24,11 @@
 
 class WorkboardResponse
 {
+	/**
+	 * Unique key of the workboard
+	 * @var string
+	 */
+	public $id;
 
 	/**
 	 * Image URL to represent the board item

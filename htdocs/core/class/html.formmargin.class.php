@@ -28,26 +28,26 @@
  */
 class FormMargin
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 
-    /**
-     *	Constructor
-     *
-     *	@param	DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *	Constructor
+	 *
+	 *	@param	DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
 
@@ -146,7 +146,7 @@ class FormMargin
 					//}
 					//else
 					//{
-					    $marginInfos['margin_on_products'] += $pv - $pa;
+						$marginInfos['margin_on_products'] += $pv - $pa;
 					//}
 				} elseif ($type == 1) {  // service
 					$marginInfos['pa_services'] += $pa;
@@ -195,24 +195,24 @@ class FormMargin
 	{
 		global $langs, $conf, $user;
 
-    	if (!empty($user->socid)) return;
+		if (!empty($user->socid)) return;
 
-    	if (!$user->rights->margins->liretous) return;
+		if (!$user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfosArray($object, $force_price);
 
 		if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
-	        $hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']);	// Clean cookie
-	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? '' : 'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
-	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? 'hideobject' : '').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
+			$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']); // Clean cookie
+			print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? '' : 'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
+			print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? 'hideobject' : '').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
 
-    	    print '<script>$(document).ready(function() {
+			print '<script>$(document).ready(function() {
         	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
         	    $("span#hideMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
       	        });</script>';
-    	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+			if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
 		print '<div class="div-table-responsive-no-min">';

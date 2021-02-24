@@ -203,7 +203,8 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
@@ -247,7 +248,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
-		print '<th class="center">'.$langs->trans("MemberNature").'</th>';
+		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
@@ -263,6 +264,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->ref = $objp->rowid;
 			$membertype->label = $objp->rowid;
 			$membertype->status = $objp->status;
+			$membertype->subscription = $objp->subscription;
 
 			print '<tr class="oddeven">';
 			print '<td>';
@@ -271,7 +273,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td class="center">';
-			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorPhy");
+			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorAndPhy");
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
@@ -321,10 +323,10 @@ if ($action == 'create') {
 
 	// Morphy
   	$morphys = array();
-	$morphys[""] = $langs->trans("MorPhy");
-	$morphys["phy"] = $langs->trans("Physical");
+  	$morphys[""] = $langs->trans("MorAndPhy");
+  	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
-	print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
+	print '<tr><td><span>'.$langs->trans("MembersNature").'</span></td><td>';
 	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
@@ -343,12 +345,12 @@ if ($action == 'create') {
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('comment', $object->note, '', 200, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 280, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -358,12 +360,12 @@ if ($action == 'create') {
 	print '<tbody>';
 	print "</table>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
+	print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
 	print '</div>';
 
 	print "</form>\n";
@@ -401,7 +403,7 @@ if ($rowid > 0) {
 		print '<table class="border centpercent">';
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
+		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -433,7 +435,7 @@ if ($rowid > 0) {
 		print '</table>';
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Buttons
@@ -614,13 +616,16 @@ if ($rowid > 0) {
 				$adh = new Adherent($db);
 				$adh->lastname = $objp->lastname;
 				$adh->firstname = $objp->firstname;
+				$adh->datefin = $datefin;
+				$adh->need_subscription = $objp->subscription;
+				$adh->statut = $objp->status;
 
 				// Lastname
 				print '<tr class="oddeven">';
 				if ($objp->company != '') {
-					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
+					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->company, 12).'</a></td>'."\n";
 				} else {
-					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 32).'</a></td>'."\n";
+					print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user", 'class="paddingright"').$adh->getFullName($langs, 0, -1, 32).'</a></td>'."\n";
 				}
 
 				// Login
@@ -640,9 +645,9 @@ if ($rowid > 0) {
 				// EMail
 				print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
 
-				// Statut
+				// Status
 				print '<td class="nowrap">';
-				print $adh->LibStatut($objp->status, $objp->subscription, $datefin, 2);
+				print $adh->getLibStatut(2);
 				print "</td>";
 
 				// Date end subscription
@@ -668,11 +673,10 @@ if ($rowid > 0) {
 				// Actions
 				print '<td class="center">';
 				if ($user->rights->adherent->creer) {
-					print '<a class="editfielda" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
-				print '&nbsp;';
 				if ($user->rights->adherent->supprimer) {
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 				}
 				print "</td>";
 
@@ -716,18 +720,18 @@ if ($rowid > 0) {
 
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
 		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
 		print '</td></tr>';
 
 		// Morphy
-		$morphys[""] = $langs->trans("MorPhy");
+		$morphys[""] = $langs->trans("MorAndPhy");
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy") : $object->morphy);
+		print '<tr><td><span>'.$langs->trans("MembersNature").'</span></td><td>';
+		print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : $object->morphy);
 		print "</td></tr>";
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
@@ -759,12 +763,12 @@ if ($rowid > 0) {
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print "</form>";

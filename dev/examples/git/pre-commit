@@ -1,0 +1,49 @@
+#!/bin/sh
+
+PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
+STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+
+# Determine if a file list is passed
+if [ "$#" -eq 1 ]
+then
+    oIFS=$IFS
+    IFS='
+    '
+    SFILES="$1"
+    IFS=$oIFS
+fi
+SFILES=${SFILES:-$STAGED_FILES_CMD}
+
+echo "Checking PHP Lint..."
+for FILE in $SFILES
+do
+    php -l -d display_errors=0 $PROJECT/$FILE
+    if [ $? != 0 ]
+    then
+        echo "Fix the error before commit."
+        exit 1
+    fi
+    FILES="$FILES $PROJECT/$FILE"
+done
+
+if [ "$FILES" != "" ]
+then
+    echo "Running PHPCS Code Sniffer..."
+    #~/vendor/bin/phpcs --version
+    #phpcs --standard=PSR2 --encoding=utf-8 -n -p $FILES
+    # Check Dolibarr standard
+    ~/vendor/bin/phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+    # Check your own standard
+    #~/vendor/bin/phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+
+    if [ $? != 0 ]
+    then
+        # fix standard errors
+        ~/vendor/bin/phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+        #~/vendor/bin/phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+        echo "Fix the error before commit."
+        exit 1
+    fi
+fi
+
+exit $?

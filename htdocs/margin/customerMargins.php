@@ -87,6 +87,7 @@ $picto = 'margin';
 
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
@@ -101,7 +102,7 @@ if ($socid > 0) {
 	{
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td class="maxwidthonsmartphone" colspan="4">';
-		print $form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+		print img_picto('', 'company').$form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
 		print '</td></tr>';
 
 		$client = true;
@@ -111,7 +112,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print $form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
+	print img_picto('', 'company').$form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -125,31 +126,31 @@ if (!$sortfield)
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	} else {
-	    $sortfield = "s.nom";
-	    $sortorder = "ASC";
+		$sortfield = "s.nom";
+		$sortorder = "ASC";
 	}
 }
 
 // Products
-$TRes = $form->select_produits_list('', '', '', 20, 0, '', 1, 2, 1, 0, '', 1);
+$TRes = $form->select_produits_list('', '', '', '', 0, '', 1, 2, 1, 0, '', 1);
 
 $TProducts = array();
 foreach ($TRes as $prod) {
 	$TProducts[$prod['key']] = $prod['label'];
 }
 
-print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
 print '<td class="maxwidthonsmartpone" colspan="4">';
-print $form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
+print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
 print '</td></tr>';
 
 // Categories
 $TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
 
 print '<tr>';
-print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'minwidth500');
+print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
 print '</tr>';
 
@@ -193,7 +194,7 @@ if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -251,9 +252,9 @@ if ($result)
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
+		$labelcostprice = 'BuyingPrice';
 	else // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
@@ -299,27 +300,27 @@ if ($result)
 
 			print '<tr class="oddeven">';
 			if ($client) {
-		        print '<td>';
+				print '<td>';
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
 				print $invoicestatic->getNomUrl(1);
-				print "</td>\n";
-				print "<td class=\"center\">";
-				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
+				print '</td>';
+				print '<td class="center">';
+				print dol_print_date($db->jdate($objp->datef), 'day').'</td>';
 		  	} else {
 				$companystatic->id = $objp->socid;
 				$companystatic->name = $objp->name;
 				$companystatic->client = $objp->client;
-		   		print "<td>".$companystatic->getNomUrl(1, 'margin')."</td>\n";
+		   		print '<td>'.$companystatic->getNomUrl(1, 'margin').'</td>';
 		  	}
 
-			print "<td class=\"right\">".price(price2num($pv, 'MT'))."</td>\n";
-			print "<td class=\"right\">".price(price2num($pa, 'MT'))."</td>\n";
-			print "<td class=\"right\">".price(price2num($marge, 'MT'))."</td>\n";
+			print '<td class="nowrap right">'.price(price2num($pv, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($pa, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($marge, 'MT')).'</td>';
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
+				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 			if (!empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+				print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 			print "</tr>\n";
 
 			$i++;
@@ -344,19 +345,19 @@ if ($result)
 
 	print '<tr class="liste_total">';
 	if ($client)
-	    print '<td colspan=2>';
+		print '<td colspan=2>';
   	else print '<td>';
   	print $langs->trans('TotalMargin')."</td>";
-	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-	print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-	print "<td class=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+	print '<td class="nowrap right">'.price(price2num($cumul_vente, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($cumul_achat, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($totalMargin, 'MT')).'</td>';
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-		print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+		print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 	if (!empty($conf->global->DISPLAY_MARK_RATES))
-		print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
-	print "</tr>\n";
+		print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
+	print '</tr>';
 
-	print "</table>";
+	print '</table>';
 	print '</div>';
 } else {
 	dol_print_error($db);
@@ -365,14 +366,10 @@ $db->free($result);
 
 print '<script type="text/javascript">
 $(document).ready(function() {
-	/*
-	$("#socid").change(function() {
-    	$("div.fiche form").submit();
-	});*/
-
-	$("#totalMargin").html("'.price($totalMargin, null, null, null, null, $rounding).'");
-	$("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price($marginRate, null, null, null, null, $rounding)."%").'");
-	$("#markRate").html("'.(($markRate === '') ? 'n/a' : price($markRate, null, null, null, null, $rounding)."%").'");
+	console.log("Init some values");
+	$("#totalMargin").html("'.price(price2num($totalMargin, 'MT')).'");
+	$("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
+	$("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
 });
 </script>
 ';

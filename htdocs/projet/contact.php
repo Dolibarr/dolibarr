@@ -24,6 +24,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -53,34 +54,155 @@ $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $hookmanager->initHooks(array('projectcontactcard', 'globalcard'));
 
+
 /*
  * Actions
  */
 
+// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
+$formconfirmtoaddtasks = '';
+if ($action == 'addcontact') {
+	$form = new Form($db);
+
+	$source=GETPOST("source", 'aZ09');
+
+	$taskstatic = new Task($db);
+	$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+	$nbTasks = count($task_array);
+
+	//If no task avaiblable, redirec to to add confirm
+	$type_to = (GETPOST('typecontact') ? 'typecontact='.GETPOST('typecontact') : 'type='.GETPOST('type'));
+	$personToAffect = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	$affect_to = (GETPOST('userid') ? 'userid='.$personToAffect : 'contactid='.$personToAffect);
+	$url_redirect='?id='.$object->id.'&'.$affect_to.'&'.$type_to.'&source='.$source;
+
+	if ($personToAffect > 0 && (empty($conf->global->PROJECT_HIDE_TASKS) || $nbTasks > 0)) {
+		$text = $langs->trans('AddPersonToTask');
+		$textbody = $text.' (<a href="#" class="selectall">'.$langs->trans("SelectAll").'</a>)';
+		$formquestion = array('text' => $textbody);
+
+		$task_to_affect = array();
+		foreach ($task_array as $task) {
+			$task_already_affected=false;
+			$personsLinked = $task->liste_contact(-1, $source);
+			if (!is_array($personsLinked) && coun($personsLinked) < 0) {
+				setEventMessage($object->error, 'errors');
+			} else {
+				foreach ($personsLinked as $person) {
+					if ($person['id']==$personToAffect) {
+						$task_already_affected = true;
+						break;
+					}
+				}
+				if (!$task_already_affected) {
+					$task_to_affect[$task->id] = $task->id;
+				}
+			}
+		}
+
+		if (empty($task_to_affect)) {
+			$action = 'addcontact_confirm';
+		} else {
+			$formcompany = new FormCompany($db);
+			foreach ($task_array as $task) {
+				$key = $task->id;
+				$val = $task->ref . ' '.dol_trunc($task->label);
+				$formquestion[] = array(
+					'type' => 'other',
+					'name' => 'person_'.$key.',person_role_'.$key,
+					'label' => '<input type="checkbox" class="flat'.(in_array($key, $task_to_affect) ? ' taskcheckboxes"' : '" checked disabled').' id="person_'.$key.'" name="person_'.$key.'" value="1"> <label for="person_'.$key.'">'.$val.'<label>',
+					'value' => $formcompany->selectTypeContact($taskstatic, '', 'person_role_'.$key, $source, 'position', 0, 'minwidth100imp', 0, 1)
+				);
+			}
+			$formquestion[] = array('type'=> 'other', 'name'=>'tasksavailable', 'label'=>'', 'value' => '<input type="hidden" id="tasksavailable" name="tasksavailable" value="'.implode(',', array_keys($task_to_affect)).'">');
+		}
+
+		$formconfirmtoaddtasks = $form->formconfirm($_SERVER['PHP_SELF'] . $url_redirect, $text, '', 'addcontact_confirm', $formquestion, '', 1, 300, 590);
+		$formconfirmtoaddtasks .='
+		 <script>
+		 $(document).ready(function() {
+			var saveprop = false;
+		 	$(".selectall").click(function(){
+				console.log("We click on select all with "+saveprop);
+				if (!saveprop) {
+					$(".taskcheckboxes").prop("checked", true);
+					saveprop = true;
+				} else {
+					$(".taskcheckboxes").prop("checked", false);
+					saveprop = false;
+				}
+			});
+		 });
+		 </script>';
+	} else {
+		$action = 'addcontact_confirm';
+	}
+}
+
 // Add new contact
-if ($action == 'addcontact' && $user->rights->projet->creer)
+if ($action == 'addcontact_confirm' && $user->rights->projet->creer)
 {
+	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+
+	if (! ($contactid > 0)) {
+		$error++;
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
+	}
+
 	$result = 0;
 	$result = $object->fetch($id);
 
-    if ($result > 0 && $id > 0)
-    {
-  		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
-    }
+	if (!$error && $result > 0 && $id > 0)
+	{
+  		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+
+  		if ($result == 0) {
+  			$langs->load("errors");
+  			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+  		}
+  		elseif ($result < 0) {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+  		$affecttotask=GETPOST('tasksavailable', 'intcomma');
+		if (!empty($affecttotask)) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+			$task_to_affect = explode(',', $affecttotask);
+			if (!empty($task_to_affect)) {
+				foreach ($task_to_affect as $task_id) {
+					if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
+						$tasksToAffect = new Task($db);
+						$result=$tasksToAffect->fetch($task_id);
+						if ($result < 0) {
+							setEventMessages($tasksToAffect->error, null, 'errors');
+						} else {
+							$result = $tasksToAffect->add_contact($contactid, GETPOST('person_role_'.$task_id), GETPOST("source", 'aZ09'));
+							if ($result < 0) {
+								if ($tasksToAffect->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+									$langs->load("errors");
+									setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+								} else {
+									setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
 	}
 }
 
@@ -89,7 +211,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
 	if ($object->fetch($id))
 	{
-	    $result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
@@ -111,6 +233,7 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
 }
 
 
+
 /*
  * View
  */
@@ -121,7 +244,6 @@ $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
-$formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
@@ -144,64 +266,74 @@ if ($id > 0 || !empty($ref))
 	$head = project_prepare_head($object);
 	print dol_get_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
+	$formconfirm = $formconfirmtoaddtasks;
 
-    // Project card
+	// Call Hook formConfirm
+	$parameters = array('formConfirm' => $formconfirm);
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	// Print form confirm
+	print $formconfirm;
 
-    $morehtmlref = '<div class="refidno">';
-    // Title
-    $morehtmlref .= $object->title;
-    // Thirdparty
-    if ($object->thirdparty->id > 0)
-    {
-        $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
-    }
-    $morehtmlref .= '</div>';
+	// Project card
 
-    // Define a complementary filter for search of next/prev ref.
-    if (!$user->rights->projet->all->lire)
-    {
-        $objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-        $object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
-    }
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $object->title;
+	// Thirdparty
+	if ($object->thirdparty->id > 0)
+	{
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
+
+	// Define a complementary filter for search of next/prev ref.
+	if (!$user->rights->projet->all->lire)
+	{
+		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
+		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	}
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-    print '<div class="fichecenter">';
-    print '<div class="fichehalfleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    // Usage
-    print '<tr><td class="tdtop">';
-    print $langs->trans("Usage");
-    print '</td>';
-    print '<td>';
-    if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-    {
-    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowOpportunity");
-    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-    	print '<br>';
-    }
-    if (empty($conf->global->PROJECT_HIDE_TASKS))
-    {
-    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectFollowTasks");
-    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-    	print '<br>';
-    }
-    if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-    {
-    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-    	$htmltext = $langs->trans("ProjectBillTimeDescription");
-    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-    	print '<br>';
-    }
-    print '</td></tr>';
+	// Usage
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	{
+		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	print '</td></tr>';
 
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -209,36 +341,36 @@ if ($id > 0 || !empty($ref))
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
-    if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->opp_status)
-    {
-    	// Opportunity status
-    	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-    	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-    	if ($code) print $langs->trans("OppStatus".$code);
-    	print '</td></tr>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->opp_status)
+	{
+		// Opportunity status
+		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+		$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+		if ($code) print $langs->trans("OppStatus".$code);
+		print '</td></tr>';
 
-        // Opportunity percent
-        print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-        if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
-        print '</td></tr>';
+		// Opportunity percent
+		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+		if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
+		print '</td></tr>';
 
-    	// Opportunity Amount
-    	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-    	if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
-    	print '</td></tr>';
-    }
+		// Opportunity Amount
+		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+		if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
+		print '</td></tr>';
+	}
 
-    // Date start - end
-    print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Date start - end
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
 	print ' - ';
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) print img_warning("Late");
-    print '</td></tr>';
+	print '</td></tr>';
 
-    // Budget
+	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency);
 	print '</td></tr>';
@@ -249,36 +381,36 @@ if ($id > 0 || !empty($ref))
 
 	print "</table>";
 
-    print '</div>';
-    print '<div class="fichehalfright">';
-    print '<div class="ficheaddleft">';
-    print '<div class="underbanner clearboth"></div>';
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
-    // Description
-    print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-    print nl2br($object->description);
-    print '</td></tr>';
+	// Description
+	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print nl2br($object->description);
+	print '</td></tr>';
 
-    // Categories
-    if ($conf->categorie->enabled) {
-        print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-        print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
-        print "</td></tr>";
-    }
+	// Categories
+	if ($conf->categorie->enabled) {
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
+		print "</td></tr>";
+	}
 
-    print '</table>';
+	print '</table>';
 
-    print '</div>';
-    print '</div>';
-    print '</div>';
+	print '</div>';
+	print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<br>';
+	print '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));

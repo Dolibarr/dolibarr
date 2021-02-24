@@ -120,7 +120,7 @@ if (empty($reshook))
 	// Actions to send emails
 	/*$triggersendname = 'MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
+	$trackid='stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
@@ -300,7 +300,7 @@ if ($object->id > 0)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
@@ -313,9 +313,9 @@ if ($object->id > 0)
 
 		print '<div class="center">';
 		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
 		print '</form>';
@@ -342,17 +342,17 @@ if ($object->id > 0)
 				if ($permissiontoadd)
 				{
 					/*
-    				if ($conf->barcode->enabled) {
+    				if (!empty($conf->barcode->enabled)) {
     					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
     				}
-    				if ($conf->productbatch->enabled) {
+    				if (!empty($conf->productbatch->enabled)) {
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
     				}*/
-					if ($conf->barcode->enabled || $conf->productbatch->enabled) {
+					if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
 					}
 				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
 				}
 			}
 
@@ -440,7 +440,7 @@ if ($object->id > 0)
 		print '<td class="right"></td>';
 		print '<td class="center">';
 		print '<input type="submit" class="button paddingrightonly" name="addline" value="'.$langs->trans("Add").'">';
-		//print '<input type="submit" class="button paddingrightonly" name="canceladdline" value="'.$langs->trans("Cancel").'">';
+		//print '<input type="submit" class="button paddingrightonly button-cancel" name="canceladdline" value="'.$langs->trans("Cancel").'">';
 		print '</td>';
 		// Actions
 		print '<td class="center">';
@@ -528,7 +528,7 @@ if ($object->id > 0)
 	// Save
 	if ($object->status == $object::STATUS_VALIDATED) {
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 		print '</div>';
 	}
 

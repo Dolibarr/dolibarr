@@ -142,7 +142,7 @@ print '</form>';
 //RESOURCE_HIDE_ADD_CONTACT_USER
 //RESOURCE_HIDE_ADD_CONTACT_THIPARTY
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

@@ -178,7 +178,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>

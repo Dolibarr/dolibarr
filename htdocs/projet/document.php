@@ -76,7 +76,7 @@ if (!$sortfield) $sortfield = "name";
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -151,7 +151,7 @@ if ($object->id > 0)
 	print '</div>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'project';
 	$permission = ($userWrite > 0);

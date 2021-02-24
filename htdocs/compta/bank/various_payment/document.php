@@ -66,7 +66,7 @@ $modulepart = 'banque';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -143,7 +143,7 @@ if ($object->id)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$modulepart = 'banque';
 	$permission = $user->rights->banque->modifier;

@@ -52,13 +52,14 @@ class EmailCollector extends CommonObject
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 0;
+
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'email';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_emailcollector';
 
@@ -158,7 +159,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $date_creation;
 
-
+	/**
+	 * @var int timestamp
+	 */
 	public $tms;
 
 	/**
@@ -171,6 +174,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 
@@ -195,7 +201,6 @@ class EmailCollector extends CommonObject
 	public $actions;
 
 	public $debuginfo;
-
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -227,7 +232,7 @@ class EmailCollector extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach ($this->fields as $key => $val)
 		{
-			if (is_array($val['arrayofkeyval']))
+			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 			{
 				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
@@ -246,6 +251,15 @@ class EmailCollector extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		global $langs;
+
+		// Check parameters
+		if ($this->host && preg_match('/^http:/i', trim($this->host))) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorHostMustNotStartWithHttp", $this->host);
+			return -1;
+		}
+
 		$id = $this->createCommon($user, $notrigger);
 
 		if (is_array($this->filters) && count($this->filters)) {
@@ -444,6 +458,15 @@ class EmailCollector extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		global $langs;
+
+		// Check parameters
+		if ($this->host && preg_match('/^http:/i', trim($this->host))) {
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorHostMustNotStartWithHttp", $this->host);
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -710,11 +733,15 @@ class EmailCollector extends CommonObject
 
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
-		if ($ssl) $flags .= '/ssl'; // '/tls'
+		if (!empty($conf->global->IMAP_FORCE_TLS)) {
+			$flags .= '/tls';
+		} elseif (empty($conf->global->IMAP_FORCE_NOSSL)) {
+			if ($ssl) $flags .= '/ssl';
+		}
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if ($norsh || !empty($conf->global->IMPA_FORCE_NORSH)) $flags .= '/norsh';
+		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) $flags .= '/norsh';
 
 		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
 
@@ -1342,6 +1369,15 @@ class EmailCollector extends CommonObject
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
+							// See also list into interface_50_modAgenda_ActionsAuto
+							if ($reg[1] == 'thi')
+							{
+								$objectemail = new Societe($this->db);
+							}
+							if ($reg[1] == 'ctc')
+							{
+								$objectemail = new Contact($this->db);
+							}
 							if ($reg[1] == 'inv')
 							{
 								$objectemail = new Facture($this->db);
@@ -1350,13 +1386,13 @@ class EmailCollector extends CommonObject
 							{
 								$objectemail = new Project($this->db);
 							}
+							if ($reg[1] == 'tas')
+							{
+								$objectemail = new Task($this->db);
+							}
 							if ($reg[1] == 'con')
 							{
 								$objectemail = new Contact($this->db);
-							}
-							if ($reg[1] == 'thi')
-							{
-								$objectemail = new Societe($this->db);
 							}
 							if ($reg[1] == 'use')
 							{
@@ -1369,6 +1405,10 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'recruitmentcandidature')
 							{
 								$objectemail = new RecruitmentCandidature($this->db);
+							}
+							if ($reg[1] == 'mem')
+							{
+								$objectemail = new Adherent($this->db);
 							}
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
@@ -1536,10 +1576,9 @@ class EmailCollector extends CommonObject
 					// Search and create thirdparty
 					if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
 					{
-						if (empty($operation['actionparam']))
-						{
+						if (empty($operation['actionparam'])) {
 							$errorforactions++;
-							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be a rule like 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to set or extract data";
 							$this->errors[] = $this->error;
 						} else {
 							$actionparam = $operation['actionparam'];

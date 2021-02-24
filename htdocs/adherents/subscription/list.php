@@ -110,22 +110,22 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-    // Purge search criteria
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_type = "";
-	    $search_ref = "";
-	    $search_lastname = "";
-	    $search_firstname = "";
-	    $search_login = "";
-	    $search_note = "";
-	    $search_amount = "";
-	    $search_account = "";
-	    $toselect = '';
-	    $search_array_options = array();
-    }
+		$search_ref = "";
+		$search_lastname = "";
+		$search_firstname = "";
+		$search_login = "";
+		$search_note = "";
+		$search_amount = "";
+		$search_account = "";
+		$toselect = '';
+		$search_array_options = array();
+	}
 }
 
 
@@ -142,6 +142,7 @@ $now = dol_now();
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut,";
+$sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
 $sql .= " c.fk_bank as bank, c.note,";
@@ -151,10 +152,9 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."subscription as c on d.rowid = c.fk_adherent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-if (isset($date_select) && $date_select != '')
-{
-    $sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
-    $sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
+if (isset($date_select) && $date_select != '') {
+	$sql .= " AND c.dateadh >= '".((int) $date_select)."-01-01 00:00:00'";
+	$sql .= " AND c.dateadh < '".((int) $date_select + 1)."-01-01 00:00:00'";
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (c.rowid = ".$db->escape($search_ref).")";
@@ -181,13 +181,13 @@ $sql .= $db->order($sortfield, $sortorder);
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-    $resql = $db->query($sql);
-    if ($resql) $nbtotalofrecords = $db->num_rows($resql);
-    else dol_print_error($db);
-    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	$resql = $db->query($sql);
+	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
+	else dol_print_error($db);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
-    	$offset = 0;
-    }
+		$offset = 0;
+	}
 }
 // Add limit
 $sql .= $db->plimit($limit + 1, $offset);
@@ -209,7 +209,8 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-llxHeader('', $langs->trans("ListOfSubscriptions"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $langs->trans("ListOfSubscriptions"), $help_url);
 
 $i = 0;
 
@@ -241,7 +242,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
 if ($user->rights->adherent->cotisation->creer) {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -253,7 +254,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $subscription->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "subscription";
@@ -395,6 +396,8 @@ while ($i < min($num, $limit)) {
 
 	$subscription->ref = $obj->crowid;
 	$subscription->id = $obj->crowid;
+	$subscription->dateh = $db->jdate($obj->dateadh);
+	$subscription->datef = $db->jdate($obj->datef);
 
 	$adherent->lastname = $obj->lastname;
 	$adherent->firstname = $obj->firstname;
@@ -403,11 +406,14 @@ while ($i < min($num, $limit)) {
 	$adherent->statut = $obj->statut;
 	$adherent->login = $obj->login;
 	$adherent->photo = $obj->photo;
+	$adherent->gender = $obj->gender;
+	$adherent->morphy = $obj->morphy;
+	$adherent->email = $obj->email;
 	$adherent->typeid = $obj->type;
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
-    $adht = new AdherentType($db);
-    $adht->fetch($typeid);
+	$adht = new AdherentType($db);
+	$adht->fetch($typeid);
 
 	print '<tr class="oddeven">';
 
@@ -416,21 +422,19 @@ while ($i < min($num, $limit)) {
 		print '<td>'.$subscription->getNomUrl(1).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
-    // Type
-    if (!empty($arrayfields['d.fk_type']['checked'])) {
-        print '<td class="nowraponall">';
-        if ($typeid > 0) {
-        	print $adht->getNomUrl(1);
-        }
-        print '</td>';
-        if (!$i) $totalarray['nbfield']++;
+	// Type
+	if (!empty($arrayfields['d.fk_type']['checked'])) {
+		print '<td class="nowraponall">';
+		if ($typeid > 0) {
+			print $adht->getNomUrl(1);
+		}
+		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Lastname
 	if (!empty($arrayfields['d.lastname']['checked'])) {
-		$adherent->firstname = '';
-		print '<td>'.$adherent->getNomUrl(-1).'</td>';
-		$adherent->firstname = $obj->firstname;
+		print '<td>'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Firstname

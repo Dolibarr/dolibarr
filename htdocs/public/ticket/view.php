@@ -33,6 +33,8 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 // If this page is public (can be called outside logged session)
 
 require '../../main.inc.php';
@@ -372,7 +374,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'object_conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';

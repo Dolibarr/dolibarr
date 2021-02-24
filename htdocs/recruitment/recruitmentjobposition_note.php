@@ -110,15 +110,15 @@ if ($id > 0 || !empty($ref))
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
-		$morehtmlref .= $langs->trans('Project') . ' ';
+		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd)
 		{
 			if ($action != 'classify')
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-			$morehtmlref .=' : ';
+			$morehtmlref .= ' : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -128,10 +128,10 @@ if ($id > 0 || !empty($ref))
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= ': '.$proj->getNomUrl();
@@ -155,7 +155,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

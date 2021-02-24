@@ -38,9 +38,9 @@ if ((array) $linked_resources && count($linked_resources) > 0)
 
 		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
 		{
-		    print '<div class="tagtr oddeven">';
-		    print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
-		    print '<input type="hidden" name="element" value="'.$element.'" />';
+			print '<div class="tagtr oddeven">';
+			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
+			print '<input type="hidden" name="element" value="'.$element.'" />';
 			print '<input type="hidden" name="element_id" value="'.$element_id.'" />';
 
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';

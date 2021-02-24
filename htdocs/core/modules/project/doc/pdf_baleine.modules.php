@@ -54,6 +54,11 @@ class pdf_baleine extends ModelePDFProjects
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -107,7 +112,7 @@ class pdf_baleine extends ModelePDFProjects
 
 	/**
 	 * Issuer
-	 * @var Societe object that emits
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 
@@ -126,6 +131,7 @@ class pdf_baleine extends ModelePDFProjects
 		$this->db = $db;
 		$this->name = "baleine";
 		$this->description = $langs->trans("DocumentModelBaleine");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -149,10 +155,10 @@ class pdf_baleine extends ModelePDFProjects
 		// Define position of columns
 		$this->posxref = $this->marge_gauche + 1;
 		$this->posxlabel = $this->marge_gauche + 25;
-		$this->posxworkload = $this->marge_gauche + 120;
-		$this->posxprogress = $this->marge_gauche + 140;
-		$this->posxdatestart = $this->marge_gauche + 152;
-		$this->posxdateend = $this->marge_gauche + 170;
+		$this->posxworkload = $this->marge_gauche + 117;
+		$this->posxprogress = $this->marge_gauche + 137;
+		$this->posxdatestart = $this->marge_gauche + 147;
+		$this->posxdateend = $this->marge_gauche + 169;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxref -= 20;
@@ -224,7 +230,7 @@ class pdf_baleine extends ModelePDFProjects
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 
 				if (class_exists('TCPDF'))
 				{
@@ -420,7 +426,8 @@ class pdf_baleine extends ModelePDFProjects
 					// Progress
 					$pdf->SetXY($this->posxprogress, $curY);
 					$pdf->MultiCell($this->posxdatestart - $this->posxprogress, 3, $progress, 0, 'R');
-					// Date
+
+					// Date start and end
 					$pdf->SetXY($this->posxdatestart, $curY);
 					$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $datestart, 0, 'C');
 					$pdf->SetXY($this->posxdateend, $curY);
@@ -538,7 +545,7 @@ class pdf_baleine extends ModelePDFProjects
 		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height);
 
-		// line takes a position y in 3rd parameter
+		// Line takes a position y in 3rd parameter
 		$pdf->line($this->marge_gauche, $tab_top + $heightoftitleline, $this->page_largeur - $this->marge_droite, $tab_top + $heightoftitleline);
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -556,11 +563,13 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetXY($this->posxprogress, $tab_top + 1);
 		$pdf->MultiCell($this->posxdatestart - $this->posxprogress, 3, '%', 0, 'R');
 
+		// Date start
 		$pdf->SetXY($this->posxdatestart, $tab_top + 1);
-		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, '', 0, 'C');
+		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->trans("Start"), 0, 'C');
 
+		// Date end
 		$pdf->SetXY($this->posxdateend, $tab_top + 1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdatestart, 3, '', 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $outputlangs->trans("End"), 0, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -667,7 +676,7 @@ class pdf_baleine extends ModelePDFProjects
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

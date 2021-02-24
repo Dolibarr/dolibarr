@@ -20,9 +20,9 @@
 
 /**
  *	    \file       htdocs/compta/payment_sc/card.php
- *		\ingroup    facture
- *		\brief      Onglet payment of a social contribution
- *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
+ *		\ingroup    tax
+ *		\brief      Tab with payment of a social contribution
+ *		\remarks	File similar to fourn/paiement/card.php
  */
 
 require '../../main.inc.php';
@@ -38,7 +38,7 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 // Security check
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
-$confirm = GETPOST('confirm');
+$confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) $socid = $user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
@@ -63,12 +63,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	$result = $object->delete($user);
 	if ($result > 0)
 	{
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
-        exit;
+		$db->commit();
+		header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php");
+		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -140,29 +140,29 @@ print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->no
 // Bank account
 if (!empty($conf->banque->enabled))
 {
-    if ($object->bank_account)
-    {
-    	$bankline = new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
+	if ($object->bank_account)
+	{
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
 		print $bankline->getNomUrl(1, 0, 'showall');
-    	print '</td>';
-    	print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
- * List of social contributions payed
+ * List of social contributions paid
  */
 
 $disable_delete = 0;
@@ -183,7 +183,7 @@ if ($resql)
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
-    print '<td>'.$langs->trans('Type').'</td>';
+	print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
@@ -203,17 +203,17 @@ if ($resql)
 			print $socialcontrib->getNomUrl(1);
 			print "</td>\n";
 			// Type
-            print '<td>';
-            print $socialcontrib->type_label;
-            /*print $socialcontrib->type;*/
-            print "</td>\n";
+			print '<td>';
+			print $socialcontrib->type_label;
+			/*print $socialcontrib->type;*/
+			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
 			print '<td class="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete

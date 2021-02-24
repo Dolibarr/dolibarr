@@ -88,9 +88,7 @@ print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
-	$var = !$var;
-
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key);
@@ -104,7 +102,7 @@ foreach ($list as $key) {
 
 print "</table>\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

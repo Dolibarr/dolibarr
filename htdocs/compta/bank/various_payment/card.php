@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -52,8 +51,12 @@ $sens = GETPOST("sens", "int");
 $amount = price2num(GETPOST("amount", "alpha"));
 $paymenttype = GETPOST("paymenttype", "int");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
-$subledger_account = GETPOST("subledger_account", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+if (!empty($conf->accounting->enabled) && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+	$subledger_account = GETPOST("subledger_account", "alpha") > 0 ? GETPOST("subledger_account", "alpha") : '';
+} else {
+	$subledger_account = GETPOST("subledger_account", "alpha");
+}
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -116,21 +119,15 @@ if (empty($reshook))
 		$object->category_transaction = GETPOST("category_transaction", 'alpha');
 
 		$object->accountancy_code = GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
-        $object->subledger_account = GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
+		$object->subledger_account = $subledger_account;
 
-		$object->sens = GETPOST('sens');
-		$object->fk_project = GETPOST('fk_project', 'int');
+		$object->sens = GETPOSTINT('sens');
+		$object->fk_project = GETPOSTINT('fk_project');
 
 		if (empty($datep) || empty($datev))
 		{
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-			$error++;
-		}
-		if (empty($object->type_payment) || $object->type_payment < 0)
-		{
-			$langs->load('errors');
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 			$error++;
 		}
 		if (empty($object->amount))
@@ -145,11 +142,22 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
 		}
-		// TODO Remove this and allow instead to edit a various payment to enter accounting code
+		if (empty($object->type_payment) || $object->type_payment < 0)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
+			$error++;
+		}
 		if (!empty($conf->accounting->enabled) && !$object->accountancy_code)
 		{
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
+			$error++;
+		}
+		if ($object->sens < 0)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Sens")), null, 'errors');
 			$error++;
 		}
 
@@ -212,9 +220,11 @@ if (empty($reshook))
 	}
 
 	if ($action == 'setsubledger_account') {
+		$db->begin();
+
 		$result = $object->fetch($id);
 
-		$object->subledger_account = (GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "");
+		$object->subledger_account = $subledger_account;
 
 		$res = $object->update($user);
 		if ($res > 0) {
@@ -255,6 +265,18 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->banque->m
 		} else {
 			$object->datev = $newdatepayment;
 		}
+
+        if (GETPOSTISSET("clone_sens")) {
+            $object->sens = GETPOST("clone_sens", 'int');
+        } else {
+            $object->sens = $object->sens;
+        }
+
+        if (GETPOST("clone_amount", "alpha")) {
+            $object->amount = price2num(GETPOST("clone_amount", "alpha"));
+        } else {
+            $object->amount = price2num($object->amount);
+        }
 
 		if ($object->check())
 		{
@@ -313,7 +335,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 $bankcateg = new BankCateg($db);
 
 foreach ($bankcateg->fetchAll() as $bankcategory) {
-    $options[$bankcategory->id] = $bankcategory->label;
+	$options[$bankcategory->id] = $bankcategory->label;
 }
 
 /* ************************************************************************** */
@@ -352,13 +374,6 @@ if ($action == 'create')
 	print '<input name="label" id="label" class="minwidth300 maxwidth150onsmartphone" value="'.($label ? $label : $langs->trans("VariousPayment")).'">';
 	print '</td></tr>';
 
-	// Sens
-	print '<tr><td>';
-	print $form->editfieldkey('Sens', 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
-    $sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
-    print $form->selectarray('sens', $sensarray, $sens);
-	print '</td></tr>';
-
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
@@ -370,7 +385,7 @@ if ($action == 'create')
 	{
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
+		$form->select_comptes($accountid, "accountid", 0, '', 2); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
@@ -390,76 +405,78 @@ if ($action == 'create')
 		print '<td><input name="num_payment" class="maxwidth150onsmartphone" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-    // Project
-    if (!empty($conf->projet->enabled))
-    {
-        $formproject = new FormProjets($db);
-
-        // Associated project
-        $langs->load("projects");
-
-        print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-        $numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-
-        print '</td></tr>';
-    }
-
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-
-    // Category
-    if (is_array($options) && count($options) && $conf->categorie->enabled)
-    {
-    	print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
-    	print Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1);
-    	print '</td></tr>';
-    }
-
 	// Accountancy account
-	if (!empty($conf->accounting->enabled))
-	{
+	if (!empty($conf->accounting->enabled)) {
 		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
-        print '<td>';
+		print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
-        print '</td></tr>';
-	} else // For external software
-	{
+		print '</td></tr>';
+	} else { // For external software
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td><input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
 		print '</td></tr>';
 	}
 
-    // Subledger account
-    if (!empty($conf->accounting->enabled))
-    {
-        print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
-        print '<td>';
-        if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
-        {
-            print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
-        } else {
-            print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
-        }
-        print '</td></tr>';
-    } else // For external software
-    {
-        print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
-        print '<td><input class="minwidth100 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
-        print '</td></tr>';
-    }
+	// Subledger account
+	if (!empty($conf->accounting->enabled)) {
+		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
+		print '<td>';
+		if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+			print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
+		} else {
+			print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
+		}
+		print '</td></tr>';
+	} else { // For external software
+		print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
+		print '<td><input class="minwidth100 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
+		print '</td></tr>';
+	}
+
+	// Sens
+	print '<tr><td>';
+	$labelsens = $form->textwithpicto('Sens', $langs->trans("AccountingDirectionHelp"));
+	print $form->editfieldkey($labelsens, 'sens', '', $object, 0, 'string', '', 1).'</td><td>';
+	$sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+	print $form->selectarray('sens', $sensarray, $sens, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+	print '</td></tr>';
+
+	// Project
+	if (!empty($conf->projet->enabled))
+	{
+		$formproject = new FormProjets($db);
+
+		// Associated project
+		$langs->load("projects");
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+
+		print '</td></tr>';
+	}
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	// Category
+	if (is_array($options) && count($options) && $conf->categorie->enabled) {
+		print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
+		print img_picto('', 'category').Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1, 0, 0, '', 0, 0, 0, '', 'minwidth300', 1);
+		print '</td></tr>';
+	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; ';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -481,14 +498,19 @@ if ($id)
 	// Clone confirmation
 	if ($action === 'clone')
 	{
+        $set_value_help = $form->textwithpicto('', $langs->trans($langs->trans("AccountingDirectionHelp")));
+        $sensarray = array('0' => $langs->trans("Debit"), '1' => $langs->trans("Credit"));
+
 		$formquestion = array(
 			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
-		);
-		$formquestion[] = array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1);
-		$formquestion[] = array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($accountid, "accountid", 0, '', 1));
+            array('type' => 'date', 'tdclass'=>'fieldrequired', 'name' => 'clone_date_payment', 'label' => $langs->trans("DatePayment"), 'value' => -1),
+		    array('type' => 'date', 'name' => 'clone_date_value', 'label' => $langs->trans("DateValue"), 'value' => -1),
+		    array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'clone_accountid', 'label' => $langs->trans("BankAccount"), 'value' => $form->select_comptes($object->fk_account, "accountid", 0, '', 1, '', 0, 'minwidth200', 1)),
+		    array('type' => 'text', 'name' => 'clone_amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount)),
+            array('type' => 'select', 'name' => 'clone_sens', 'label' => $langs->trans("Sens") . ' ' . $set_value_help, 'values' => $sensarray, 'default' => $object->sens),
+        );
 
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
 	}
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
@@ -570,12 +592,12 @@ if ($id)
 	}
 	print '</td></tr>';
 
-    // Subledger account
-    print '<tr><td class="nowrap">';
-    print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
-    print '</td><td>';
-    print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
-    print '</td></tr>';
+	// Subledger account
+	print '<tr><td class="nowrap">';
+	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+	print '</td><td>';
+	print $form->editfieldval('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $user->rights->banque->modifier), 'string', '', 0);
+	print '</td></tr>';
 
 	if (!empty($conf->banque->enabled))
 	{
@@ -603,7 +625,7 @@ if ($id)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	/*

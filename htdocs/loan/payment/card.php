@@ -57,7 +57,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
 	$db->query($sql);
 
-    $fk_loan = $payment->fk_loan;
+	$fk_loan = $payment->fk_loan;
 
 	$result = $payment->delete($user);
 	if ($result > 0)
@@ -149,7 +149,7 @@ print '</div>';
 
 
 /*
- * List of loans payed
+ * List of loans paid
  */
 
 $disable_delete = 0;
@@ -194,7 +194,7 @@ if ($resql)
 			// print '<td class="right">'.price($objp->capital).'</td>';
 			// Status
 			print '<td class="center">'.$loan->getLibStatut(4, $objp->amount_capital).'</td>';
-			// Amount payed
+			// Amount paid
 			$amount_payed = $objp->amount_capital + $objp->amount_insurance + $objp->amount_interest;
 
 			print '<td class="right">'.price($amount_payed).'</td>';

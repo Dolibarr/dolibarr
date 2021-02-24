@@ -67,7 +67,7 @@ if (empty($reshook))
 	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->loan->write)
 	{
 		$object->fetch($id);
-		$result = $object->set_paid($user);
+		$result = $object->setPaid($user);
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
@@ -179,7 +179,7 @@ if (empty($reshook))
 				$object->capital	        = $capital;
 				$object->nbterm		        = GETPOST("nbterm", 'int');
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
-                $object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
+				$object->insurance_amount = price2num(GETPOST('insurance_amount', 'int'));
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -315,7 +315,7 @@ if ($action == 'create')
 	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, true, ROWS_6, '90%');
+	$doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_6, '90%');
 	print $doleditor->Create(1);
 
 	print '</td></tr>';
@@ -324,7 +324,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, true, ROWS_6, '90%');
+	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_6, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -367,12 +367,12 @@ if ($action == 'create')
 	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -478,11 +478,11 @@ if ($id > 0)
 		// Insurance
 		if ($action == 'edit')
 		{
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
-		    print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
-		    print '</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
+			print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
+			print '</td></tr>';
 		} else {
-		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Date start
@@ -716,14 +716,14 @@ if ($id > 0)
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		if ($action == 'edit')
 		{
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

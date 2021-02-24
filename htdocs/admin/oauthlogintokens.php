@@ -156,7 +156,7 @@ if ($mode == 'setup' && $user->admin)
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
 			$shortscope = 'userinfo_email,userinfo_profile,cloud_print';
-			if (!empty($conf->global->OAUTH_GSUITE)){
+			if (!empty($conf->global->OAUTH_GSUITE)) {
 				$shortscope .= ',admin_directory_user';
 			}
 			//$scope.=',gmail_full';
@@ -402,7 +402,7 @@ if ($mode == 'userconf' && $user->admin)
 	print '</table>';
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

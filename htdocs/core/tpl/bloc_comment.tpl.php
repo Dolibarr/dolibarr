@@ -119,7 +119,7 @@ if (!empty($object->comments))
 		if ($action === 'editcomment' && $comment->id == $idcomment)
 		{
 			print '<input name="update" type="submit" class="button" value="'.$langs->trans("Update").'">';
-			print '<input name="cancel" type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input name="cancel" type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 
 			print '</form>';
 		} else {

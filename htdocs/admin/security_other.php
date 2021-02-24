@@ -121,8 +121,8 @@ if (function_exists("imagecreatefrompng"))
 		}
 	}
 } else {
-    $desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
-    print $desc;
+	$desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
+	print $desc;
 }
 print '</td></tr>';
 
@@ -184,7 +184,7 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 

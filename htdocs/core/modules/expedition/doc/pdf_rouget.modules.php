@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020	Frédéric France    	<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,11 @@ class pdf_rouget extends ModelePdfExpedition
 	 * @var string model description (short text)
 	 */
 	public $description;
+
+	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
 
 	/**
 	 * @var string document type
@@ -123,6 +128,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "rouget";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
@@ -142,8 +148,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
-		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 78;
-		$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 56;
+		$this->posxweightvol = $this->page_largeur - $this->marge_droite - 82;
+		$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 60;
 		$this->posxqtytoship = $this->page_largeur - $this->marge_droite - 28;
 		$this->posxpuht = $this->page_largeur - $this->marge_droite;
 
@@ -178,7 +184,7 @@ class pdf_rouget extends ModelePdfExpedition
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Object		$object			Object expedition to generate (or id if old method)
+	 *	@param		Expedition	$object				Object expedition to generate (or id if old method)
 	 *	@param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -291,7 +297,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$heightforinfotot = 8; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF'))
@@ -338,7 +344,7 @@ class pdf_rouget extends ModelePdfExpedition
 
 				// Incoterm
 				$height_incoterms = 0;
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -365,14 +371,15 @@ class pdf_rouget extends ModelePdfExpedition
 					$tab_top_alt = $tab_top;
 
 					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
 
-					$tab_top_alt = $pdf->GetY();
 					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (!empty($object->tracking_number))
 					{
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
+						$tab_top_alt = $pdf->GetY();
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url))
 						{
@@ -526,12 +533,12 @@ class pdf_rouget extends ModelePdfExpedition
 
 					$pdf->SetXY($this->posxweightvol, $curY);
 					$weighttxt = '';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->weight)
 					{
 						$weighttxt = round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units, 1);
 					}
 					$voltxt = '';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
+					if (empty($object->lines[$i]->fk_product_type) && $object->lines[$i]->volume)
 					{
 						$voltxt = round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units ? $object->lines[$i]->volume_units : 0, 1);
 					}
@@ -662,8 +669,8 @@ class pdf_rouget extends ModelePdfExpedition
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf           	Object PDF
+	 *	@param  Expedition	$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
@@ -712,8 +719,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 		if ($totalWeight != '') $totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
 		if ($totalVolume != '') $totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
-		if ($object->trueWeight) $totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
-		if ($object->trueVolume) $totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+		if (!empty($object->trueWeight)) $totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
+		if (!empty($object->trueVolume)) $totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -858,7 +865,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -1054,9 +1061,8 @@ class pdf_rouget extends ModelePdfExpedition
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1101,7 +1107,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	Object		$object				Object to show
+	 *  @param	Expedition	$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text
@@ -1109,7 +1115,7 @@ class pdf_rouget extends ModelePdfExpedition
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'SHIPPING_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

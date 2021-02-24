@@ -204,7 +204,9 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 			}
 		}
 
-		if ($_POST["nouvelleheuredebut"] == "vide" || (isset($_POST["nouvelleheuredebut"]) && isset($_POST["nouvelleheurefin"]) && (($_POST["nouvelleheuredebut"] < $_POST["nouvelleheurefin"]) || (($_POST["nouvelleheuredebut"] == $_POST["nouvelleheurefin"]) && ($_POST["nouvelleminutedebut"] < $_POST["nouvelleminutefin"]))))) {
+		if (GETPOST("nouvelleheuredebut") == "vide" || (GETPOSTISSET("nouvelleheuredebut") && GETPOSTISSET("nouvelleheurefin")
+			&& (GETPOST("nouvelleheuredebut") < GETPOST("nouvelleheurefin") || (GETPOST("nouvelleheuredebut") == GETPOST("nouvelleheurefin")
+				&& (GETPOST("nouvelleminutedebut") < GETPOST("nouvelleminutefin")))))) {
 			$erreur_ajout_date = false;
 		} else {
 			$erreur_ajout_date = "yes";
@@ -494,7 +496,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>'."\n";
 
@@ -530,7 +532,7 @@ if (GETPOST('ajoutsujet'))
 		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '<br><br>'."\n";
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -583,7 +585,7 @@ if (GETPOST('ajoutsujet'))
 		print '<br><br>';
 		print' <input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">'."\n";
 		print '&nbsp; &nbsp;';
-		print '<input type="submit" class="button" name="retoursondage" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.$langs->trans("Cancel").'">';
 	}
 
 	print '</form>'."\n";
@@ -907,13 +909,13 @@ while ($compteur < $num)
 	//demande de confirmation pour modification de ligne
 	for ($i = 0; $i < $nblines; $i++)
 	{
-		if (isset($_POST["modifierligne".$i]))
+		if (GETPOSTISSET("modifierligne".$i))
 		{
 			if ($compteur == $i)
 			{
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -938,7 +940,7 @@ if (empty($testligneamodifier))
 		if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst')))
 		{
 			print '<input type="checkbox" name="choix'.$i.'" value="1"';
-			if (isset($_POST['choix'.$i]) && $_POST['choix'.$i] == '1')
+			if (GETPOSTISSET('choix'.$i) && GETPOST('choix'.$i) == '1')
 			{
 				print ' checked';
 			}
@@ -1048,7 +1050,7 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
 			//var_dump($toutsujet);
-            if (strpos($toutsujet[$i], '@') !== false) {
+			if (strpos($toutsujet[$i], '@') !== false) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
 				$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0], '%A').')' : '').' - '.$toutsujetdate[1];
 			} else {

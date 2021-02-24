@@ -57,19 +57,19 @@ if ($action == 'addcomment')
 }
 if ($action === 'updatecomment')
 {
-    if ($comment->fetch($idcomment) >= 0)
-    {
-        $comment->description = GETPOST('comment_description', 'restricthtml');
-        if ($comment->update($user) > 0)
-        {
-            setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
-            header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1#comment' : ''));
-            exit;
-        } else {
-            setEventMessages($comment->error, $comment->errors, 'errors');
-            $action = '';
-        }
-    }
+	if ($comment->fetch($idcomment) >= 0)
+	{
+		$comment->description = GETPOST('comment_description', 'restricthtml');
+		if ($comment->update($user) > 0)
+		{
+			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
+			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1#comment' : ''));
+			exit;
+		} else {
+			setEventMessages($comment->error, $comment->errors, 'errors');
+			$action = '';
+		}
+	}
 }
 if ($action == 'deletecomment')
 {

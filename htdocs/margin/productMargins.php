@@ -63,8 +63,8 @@ if (!$sortfield)
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	} else {
-	    $sortfield = "p.ref";
-	    $sortorder = "ASC";
+		$sortfield = "p.ref";
+		$sortorder = "ASC";
 	}
 }
 
@@ -99,33 +99,25 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
-if ($id > 0) {
-    print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-    print '<td class="maxwidthonsmartpone" colspan="4">';
-    $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-    print '</td></tr>';
-
-    if (!$sortorder) $sortorder = "DESC";
-    if (!$sortfield) $sortfield = "f.datef";
-} else {
-	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-	print '<td class="maxwidthonsmartphone" colspan="4">';
-	$form->select_produits('', 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-	print '</td></tr>';
-}
+// Product
+print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
+print '<td class="maxwidthonsmartphone" colspan="4">';
+print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All', 0, '', 0, '', null, 1);
+print '</td></tr>';
 
 // Categories
 $TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
 
 print '<tr>';
-print '<td class="titlefield">'.$langs->trans('ChooseCategory').'</td>';
+print '<td class="titlefield">'.$langs->trans('Category').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'minwidth500');
+print img_picto('', 'category').$form->multiselectarray('categories', $TCats, $TSelectedCats, 0, 0, 'quatrevingtpercent widthcentpercentminusx');
 print '</td>';
 print '</tr>';
 
@@ -170,7 +162,7 @@ if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -224,15 +216,15 @@ if ($result)
 
 	//var_dump($conf->global->MARGIN_TYPE);
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
+		$labelcostprice = 'BuyingPrice';
 	else // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
 	$i = 0;
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($id > 0) {
@@ -287,27 +279,27 @@ if ($result)
 				print '<td>';
 				if ($objp->rowid > 0)
 				{
-    				$product_static->type = $objp->fk_product_type;
-    				$product_static->id = $objp->rowid;
-    				$product_static->ref = $objp->ref;
-    				$product_static->label = $objp->label;
-    				$product_static->entity = $objp->pentity;
-    				$text = $product_static->getNomUrl(1);
-    				print $text .= ' - '.$objp->label;
+					$product_static->type = $objp->fk_product_type;
+					$product_static->id = $objp->rowid;
+					$product_static->ref = $objp->ref;
+					$product_static->label = $objp->label;
+					$product_static->entity = $objp->pentity;
+					$text = $product_static->getNomUrl(1);
+					print $text .= ' - '.$objp->label;
 				} else {
-				    print img_object('', 'product').' '.$langs->trans("NotPredefinedProducts");
+					print img_object('', 'product').' '.$langs->trans("NotPredefinedProducts");
 				}
 				print "</td>\n";
 				//print "<td>".$product_static->getNomUrl(1)."</td>\n";
 			}
-			print "<td class=\"center\">".$qty."</td>\n";
-			print "<td class=\"nowrap right\">".price(price2num($pv, 'MT'))."</td>\n";
-			print "<td class=\"nowrap right\">".price(price2num($pa, 'MT'))."</td>\n";
-			print "<td class=\"nowrap right\">".price(price2num($marge, 'MT'))."</td>\n";
+			print '<td class="center">'.$qty.'</td>';
+			print '<td class="nowrap right">'.price(price2num($pv, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($pa, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($marge, 'MT')).'</td>';
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
+				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 			if (!empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+				print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 			print "</tr>\n";
 
 			$i++;
@@ -328,15 +320,15 @@ if ($result)
 	if ($id > 0)
 		print '<td colspan=2>';
 	else print '<td>';
-	print $langs->trans('TotalMargin')."</td>";
-	print "<td class=\"center\">".$cumul_qty."</td>";
-	print "<td class=\"nowrap right\">".price(price2num($cumul_vente, 'MT'))."</td>\n";
-	print "<td class=\"nowrap right\">".price(price2num($cumul_achat, 'MT'))."</td>\n";
-	print "<td class=\"nowrap right\">".price(price2num($totalMargin, 'MT'))."</td>\n";
+	print $langs->trans('TotalMargin').'</td>';
+	print '<td class="center">'.$cumul_qty.'</td>';
+	print '<td class="nowrap right">'.price(price2num($cumul_vente, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($cumul_achat, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($totalMargin, 'MT')).'</td>';
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-		print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
+		print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 	if (!empty($conf->global->DISPLAY_MARK_RATES))
-		print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+		print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 	print "</tr>\n";
 
 	print "</table>";
@@ -350,15 +342,10 @@ $db->free($result);
 print '
 <script type="text/javascript">
 $(document).ready(function() {
-
-  $("#id").change(function() {
-     $("div.fiche form").submit();
-  });
-
+  console.log("Init some values");
   $("#totalMargin").html("'.price(price2num($totalMargin, 'MT')).'");
   $("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
   $("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
-
 });
 </script>
 ';

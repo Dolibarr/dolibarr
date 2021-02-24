@@ -80,9 +80,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	 */
 	public $version = 'dolibarr';
 
-	 /**
-	  * @var int page_largeur
-	  */
+	/**
+	 * @var int page_largeur
+	 */
 	public $page_largeur;
 
 	/**
@@ -128,7 +128,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 
 	/**
-	 * @var array of document table collumns
+	 * @var array of document table columns
 	 */
 	public $cols;
 
@@ -661,10 +661,10 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) // Compute progress from previous situation
 					{
-						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+						if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						else $tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 					} else {
-						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+						if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
 						else $tvaligne = $sign * $object->lines[$i]->total_tva;
 					}
 
@@ -686,8 +686,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) // and there is local tax
 					{
 						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = $localtaxtmp_array[0];
-						$localtax2_type = $localtaxtmp_array[2];
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 					}
 
 					// retrieve global local tax
@@ -1091,7 +1091,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			}
 
 			// Recipient name
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1148,7 +1148,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
@@ -1300,7 +1300,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			),
 			'border-left' => true, // add left line separator
 		);
-		if ($conf->global->PRODUCT_USE_UNITS) {
+		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			$this->cols['unit']['status'] = true;
 		}
 

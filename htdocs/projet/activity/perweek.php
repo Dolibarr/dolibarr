@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'per
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 $hookmanager->initHooks(array('timesheetperweekcard'));
 
@@ -144,7 +143,7 @@ if (is_array($extrafields->attributes['projet_task']['label']) && count($extrafi
 	foreach ($extrafields->attributes['projet_task']['label'] as $key => $val)
 	{
 		if (!empty($extrafields->attributes['projet_task']['list'][$key]))
-			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet_task']['list'][$key]) != 3 && $extrafields->attributes['projet_task']['perms'][$key]));
+			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes['projet_task']['list'][$key]) != 3 && $extrafields->attributes['projet_task']['perms'][$key]));
 	}
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -174,8 +173,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty = '';
 	$search_declared_progress = '';
 
-    $search_array_options_project = array();
-    $search_array_options_task = array();
+	$search_array_options_project = array();
+	$search_array_options_task = array();
 
 	// We redefine $usertoprocess
 	$usertoprocess = $user;
@@ -347,22 +346,21 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			$param .= ($search_task_ref ? '&search_task_ref='.urlencode($search_task_ref) : '');
 			$param .= ($search_task_label ? '&search_task_label='.urlencode($search_task_label) : '');
 
-            /*$search_array_options=$search_array_options_project;
+			/*$search_array_options=$search_array_options_project;
             $search_options_pattern='search_options_';
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
             */
 
-            $search_array_options = $search_array_options_task;
-            $search_options_pattern = 'search_task_options_';
-            include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+			$search_array_options = $search_array_options_task;
+			$search_options_pattern = 'search_task_options_';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	   	    // Redirect to avoid submit twice on back
-	       	header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);
-	       	exit;
+	   		// Redirect to avoid submit twice on back
+		   	header('Location: '.$_SERVER["PHP_SELF"].'?'.$param);
+		   	exit;
 	   	}
 	}
 }
-
 
 
 /*
@@ -453,7 +451,7 @@ $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
 //$nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav .= ' <button type="submit" name="submitdateselect" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
-$picto = 'calendarweek';
+$picto = 'clock';
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -466,7 +464,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-print dol_get_fiche_head($head, 'inputperweek', $langs->trans('TimeSpent'), -1, 'projecttask');
+print dol_get_fiche_head($head, 'inputperweek', $langs->trans('TimeSpent'), -1, $picto);
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
@@ -486,7 +484,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
@@ -494,6 +492,7 @@ print '<div class="colorbacktimesheet float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
+print img_picto('', 'projecttask');
 $formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
@@ -530,11 +529,16 @@ for ($idw = 0; $idw < 7; $idw++)
 	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
 	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
 
-	$statusofholidaytocheck = '3';
+	$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+
+	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	if ($test) $isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 }
+//var_dump($isavailable);
+
 
 
 $moreforfilter = '';
@@ -552,22 +556,22 @@ if (! empty($conf->categorie->enabled))
 
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<div class="inline-block hideonsmartphone">'.$langs->trans('User').' </div>';
+$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
 $includeonly = 'hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
-$moreforfilter .= $form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
 
 if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
 {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<div class="inline-block">'.$langs->trans('Project').' </div>';
-	$moreforfilter .= '<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= '<div class="inline-block"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project').'<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<div class="inline-block">'.$langs->trans('ThirdParty').' </div>';
-	$moreforfilter .= '<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= '<div class="inline-block"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company').'<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
 	$moreforfilter .= '</div>';
 }
 
@@ -592,7 +596,7 @@ if (!empty($arrayfields['t.planned_workload']['checked'])) $addcolspan++;
 if (!empty($arrayfields['t.progress']['checked'])) $addcolspan++;
 foreach ($arrayfields as $key => $val)
 {
-    if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
+	if ($val['checked'] && substr($key, 0, 5) == 'efpt.') $addcolspan++;
 }
 
 print '<div class="div-table-responsive">';
@@ -610,11 +614,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
 }
 print '<td class="liste_titre"></td>';
 for ($idw = 0; $idw < 7; $idw++)
@@ -638,17 +642,17 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<th class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked']))
 {
-    print '<th class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</th>';
+	print '<th class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></th>';
-print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
 
 for ($idw = 0; $idw < 7; $idw++)
 {
@@ -656,7 +660,7 @@ for ($idw = 0; $idw < 7; $idw++)
 	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
 
 	$cssweekend = '';
-	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 	{
 		$cssweekend = 'weekend';
 	}
@@ -681,7 +685,7 @@ $colspan = 3 + (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT) 
 if ($conf->use_javascript_ajax)
 {
 	print '<tr class="liste_total">';
-    print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
+	print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 	print $langs->trans("Total");
 	print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 	print '</td>';
@@ -689,7 +693,7 @@ if ($conf->use_javascript_ajax)
 	for ($idw = 0; $idw < 7; $idw++)
 	{
 		$cssweekend = '';
-		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 		{
 			$cssweekend = 'weekend';
 		}
@@ -700,7 +704,6 @@ if ($conf->use_javascript_ajax)
 		if (!$isavailable[$tmpday]['morning'] && !$isavailable[$tmpday]['afternoon'])   $cssonholiday .= 'onholidayallday ';
 		elseif (!$isavailable[$tmpday]['morning'])   $cssonholiday .= 'onholidaymorning ';
 		elseif (!$isavailable[$tmpday]['afternoon']) $cssonholiday .= 'onholidayafternoon ';
-
 		print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
 	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
@@ -769,13 +772,13 @@ if (count($tasksarray) > 0)
 	if ($isdiff)
 	{
 		print '<tr class="oddeven othertaskwithtime">';
-        print '<td colspan="'.($colspan + $addcolspan).'" class="opacitymedium">';
+		print '<td colspan="'.($colspan + $addcolspan).'" class="opacitymedium">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
 		for ($idw = 0; $idw < 7; $idw++)
 		{
 			$cssweekend = '';
-			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 			{
 				$cssweekend = 'weekend';
 			}
@@ -791,8 +794,8 @@ if (count($tasksarray) > 0)
 			}
 			print '</td>';
 		}
-        print ' <td class="liste_total"></td>';
-    	print '</tr>';
+		print ' <td class="liste_total"></td>';
+		print '</tr>';
 	}
 
 	if ($conf->use_javascript_ajax)
@@ -803,10 +806,9 @@ if (count($tasksarray) > 0)
 				print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 				print '</td>';
 
-		for ($idw = 0; $idw < 7; $idw++)
-				{
+		for ($idw = 0; $idw < 7; $idw++) {
 			$cssweekend = '';
-			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday))	// This is a day is not inside the setup of working days, so we use a week-end css.
 			{
 				$cssweekend = 'weekend';
 			}
@@ -820,7 +822,7 @@ if (count($tasksarray) > 0)
 
 			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
-                print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
+				print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
 } else {
@@ -832,7 +834,7 @@ print '</div>';
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '</div>';
 
 print '</form>'."\n\n";

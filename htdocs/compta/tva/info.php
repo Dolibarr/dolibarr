@@ -83,13 +83,15 @@ dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0,
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
+print '<br>';
+
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

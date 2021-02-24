@@ -25,12 +25,14 @@
  *                  This token can be used to get more informations.
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 // For MultiCompany module.
-// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+// Do not use GETPOST here, function is not defined and this test must be done before including main.inc.php
+// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
@@ -236,7 +238,7 @@ if ($urllogo)
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }

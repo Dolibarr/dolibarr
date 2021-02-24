@@ -150,7 +150,7 @@ if ($id > 0 || $ref)
 
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	} else {
 	  	dol_print_error($db);
 	}

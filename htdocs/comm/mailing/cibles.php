@@ -78,13 +78,13 @@ if ($action == 'add')
 
 	foreach ($modulesdir as $dir)
 	{
-	    // Load modules attributes in arrays (name, numero, orders) from dir directory
-	    //print $dir."\n<br>";
-	    dol_syslog("Scan directory ".$dir." for modules");
+		// Load modules attributes in arrays (name, numero, orders) from dir directory
+		//print $dir."\n<br>";
+		dol_syslog("Scan directory ".$dir." for modules");
 
-	    // Loading Class
-	    $file = $dir."/".$module.".modules.php";
-	    $classname = "mailing_".$module;
+		// Loading Class
+		$file = $dir."/".$module.".modules.php";
+		$classname = "mailing_".$module;
 
 		if (file_exists($file))
 		{
@@ -131,8 +131,8 @@ if (GETPOST('exportcsv', 'int'))
 	header('Content-Disposition: attachment;filename='.$completefilename);
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
-	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
+	$sql .= " mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	$sql .= $db->order($sortfield, $sortorder);
@@ -146,16 +146,16 @@ if (GETPOST('exportcsv', 'int'))
 		while ($obj = $db->fetch_object($resql))
 		{
 			print $obj->rowid.$sep;
-			print $obj->lastname.$sep;
-			print $obj->firstname.$sep;
+			print '"'.$obj->lastname.'"'.$sep;
+			print '"'.$obj->firstname.'"'.$sep;
 			print $obj->email.$sep;
 			print $obj->other.$sep;
-			print $obj->date_envoi.$sep;
 			print $obj->tms.$sep;
-			print $obj->source_url.$sep;
-			print $obj->source_id.$sep;
 			print $obj->source_type.$sep;
-			print $obj->error_text.$sep;
+			print $obj->source_id.$sep;
+			print $obj->date_envoi.$sep;
+			print $obj->status.$sep;
+			print '"'.$obj->error_text.'"'.$sep;
 			print "\n";
 		}
 
@@ -305,7 +305,7 @@ if ($object->fetch($id) >= 0)
 
 	print "</div>";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 
@@ -337,12 +337,12 @@ if ($object->fetch($id) >= 0)
 
 		foreach ($modulesdir as $dir)
 		{
-		    $modulenames = array();
+			$modulenames = array();
 
-		    // Load modules attributes in arrays (name, numero, orders) from dir directory
-		    //print $dir."\n<br>";
-		    dol_syslog("Scan directory ".$dir." for modules");
-		    $handle = @opendir($dir);
+			// Load modules attributes in arrays (name, numero, orders) from dir directory
+			//print $dir."\n<br>";
+			dol_syslog("Scan directory ".$dir." for modules");
+			$handle = @opendir($dir);
 			if (is_resource($handle))
 			{
 				while (($file = readdir($handle)) !== false)
@@ -396,7 +396,7 @@ if ($object->fetch($id) >= 0)
 						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 					} else {
-					    print '<div '.$bctag[$var].'>';
+						print '<div '.$bctag[$var].'>';
 					}
 
 					print '<div class="tagtd">';
@@ -425,14 +425,14 @@ if ($object->fetch($id) >= 0)
 					print '<div class="tagtd left">';
 					if ($allowaddtarget)
 					{
-    					try {
-    						$filter = $obj->formFilter();
-    					} catch (Exception $e)
-    					{
-    						dol_syslog($e->getMessage(), LOG_ERR);
-    					}
-    					if ($filter) print $filter;
-    					else print $langs->trans("None");
+						try {
+							$filter = $obj->formFilter();
+						} catch (Exception $e)
+						{
+							dol_syslog($e->getMessage(), LOG_ERR);
+						}
+						if ($filter) print $filter;
+						else print $langs->trans("None");
 					}
 					print '</div>';
 
@@ -441,7 +441,7 @@ if ($object->fetch($id) >= 0)
 					{
 						print '<input type="submit" class="button" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
-					    print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
 						print "&nbsp;";
 					}
@@ -463,11 +463,27 @@ if ($object->fetch($id) >= 0)
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
-	if ($search_lastname)  $sql .= natural_search("mc.lastname", $search_lastname);
-	if ($search_firstname) $sql .= natural_search("mc.firstname", $search_firstname);
-	if ($search_email)     $sql .= natural_search("mc.email", $search_email);
-	if ($search_other)     $sql .= natural_search("mc.other", $search_other);
-	if ($search_dest_status != '' && $search_dest_status >= -1) $sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+	$asearchcriteriahasbeenset = 0;
+	if ($search_lastname)  {
+		$sql .= natural_search("mc.lastname", $search_lastname);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_firstname) {
+		$sql .= natural_search("mc.firstname", $search_firstname);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_email)     {
+		$sql .= natural_search("mc.email", $search_email);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_other)     {
+		$sql .= natural_search("mc.other", $search_other);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_dest_status != '' && $search_dest_status >= -1) {
+		$sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+		$asearchcriteriahasbeenset++;
+	}
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
@@ -476,10 +492,21 @@ if ($object->fetch($id) >= 0)
 	{
 	    $result = $db->query($sql);
 	    $nbtotalofrecords = $db->num_rows($result);
-	    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	    {
+	    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	    	$page = 0;
 	    	$offset = 0;
+	    }
+
+	    // Fix/update nbemail on emailing record if it differs (may happen if user edit lines from database directly)
+	    if (empty($asearchcriteriahasbeenset)) {
+	    	if ($nbtotalofrecords != $object->nbemail) {
+	    		dol_syslog("We found a difference in nb of record in target table and the property ->nbemail, we fix ->nbemail");
+	    		//print "nbemail=".$object->nbemail." nbtotalofrecords=".$nbtotalofrecords;
+	    		$resultrefresh = $object->refreshNbOfTargets();
+	    		if ($resultrefresh < 0) {
+	    			dol_print_error($db, $object->error, $object->errors);
+	    		}
+	    	}
 	    }
 	}
 
@@ -503,7 +530,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		$morehtmlcenter = '';
@@ -521,7 +548,7 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
 
@@ -548,17 +575,17 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		// Source
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '&nbsp;';
 		print '</td>';
 
 		// Date last update
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '&nbsp;';
 		print '</td>';
 
 		// Date sending
 		print '<td class="liste_titre">';
-		print '&nbsp';
+		print '&nbsp;';
 		print '</td>';
 
 		//Statut
@@ -611,30 +638,30 @@ if ($object->fetch($id) >= 0)
 				print '<td>'.$obj->firstname.'</td>';
 				print '<td>'.$obj->other.'</td>';
 				print '<td class="center">';
-                if (empty($obj->source_id) || empty($obj->source_type))
-                {
-                    print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
-                } else {
-                    if ($obj->source_type == 'member')
-                    {
+				if (empty($obj->source_id) || empty($obj->source_type))
+				{
+					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
+				} else {
+					if ($obj->source_type == 'member')
+					{
 						$objectstaticmember->fetch($obj->source_id);
-                        print $objectstaticmember->getNomUrl(1);
-                    } elseif ($obj->source_type == 'user')
-                    {
+						print $objectstaticmember->getNomUrl(1);
+					} elseif ($obj->source_type == 'user')
+					{
 						$objectstaticuser->fetch($obj->source_id);
-                        print $objectstaticuser->getNomUrl(1);
-                    } elseif ($obj->source_type == 'thirdparty')
-                    {
+						print $objectstaticuser->getNomUrl(1);
+					} elseif ($obj->source_type == 'thirdparty')
+					{
 						$objectstaticcompany->fetch($obj->source_id);
-                        print $objectstaticcompany->getNomUrl(1);
-                    } elseif ($obj->source_type == 'contact')
-                    {
-                    	$objectstaticcontact->fetch($obj->source_id);
-                    	print $objectstaticcontact->getNomUrl(1);
-                    } else {
-                        print $obj->source_url;
-                    }
-                }
+						print $objectstaticcompany->getNomUrl(1);
+					} elseif ($obj->source_type == 'contact')
+					{
+						$objectstaticcontact->fetch($obj->source_id);
+						print $objectstaticcontact->getNomUrl(1);
+					} else {
+						print $obj->source_url;
+					}
+				}
 				print '</td>';
 
 				// Date last update
@@ -680,9 +707,9 @@ if ($object->fetch($id) >= 0)
 		} else {
 			if ($object->statut < 2)
 			{
-			    print '<tr><td colspan="9" class="opacitymedium">';
-    			print $langs->trans("NoTargetYet");
-    			print '</td></tr>';
+				print '<tr><td colspan="9" class="opacitymedium">';
+				print $langs->trans("NoTargetYet");
+				print '</td></tr>';
 			}
 		}
 		print "</table><br>";

@@ -30,17 +30,17 @@ if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
 require_once '../../main.inc.php';
 
 if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/index.php'
-    || preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
+	|| preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    top_httphead('text/javascript; charset=UTF-8');
+	top_httphead('text/javascript; charset=UTF-8');
 
-    print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
+	print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
 	print 'var nowtime = Date.now();';
-    print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
-    print 'var time_js_next_test;'."\n";
-    ?>
+	print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
+	print 'var time_js_next_test;'."\n";
+	?>
 
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
@@ -51,7 +51,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
     //var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-    var time_first_execution = <?php echo max(3, $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+    var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
     if (login != '') {
     	setTimeout(first_execution, time_first_execution * 1000);
         time_js_next_test = nowtime + time_first_execution;
@@ -80,7 +80,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                 	//console.log(result);
                     var arrayofpastreminders = Object.values(result.pastreminders);
                     if (arrayofpastreminders && arrayofpastreminders.length > 0) {
-	                    console.log("Retreived "+arrayofpastreminders.length+" reminders to do.");
+	                    console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
                     	var audio = null;
                         <?php
 						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
@@ -105,8 +105,8 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 
                             if (value.type == 'agenda')
                             {
-                             	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-                                title = '<?php print $langs->trans('EventReminder') ?>';
+                             	url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
+                                title = '<?php print dol_escape_js($langs->trans('EventReminder')) ?>';
                             }
                             var extra = {
                                 icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',

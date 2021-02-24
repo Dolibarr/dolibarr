@@ -121,14 +121,14 @@ if ($modulepart == 'fckeditor') $modulepart = 'medias'; // For backward compatib
 
 if (GETPOST("cache", 'alpha'))
 {
-    // Important: Following code is to avoid page request by browser and PHP CPU at
-    // each Dolibarr page access.
-    if (empty($dolibarr_nocache))
-    {
-        header('Cache-Control: max-age=3600, public, must-revalidate');
-        header('Pragma: cache'); // This is to avoid having Pragma: no-cache
-    } else header('Cache-Control: no-cache');
-    //print $dolibarr_nocache; exit;
+	// Important: Following code is to avoid page request by browser and PHP CPU at
+	// each Dolibarr page access.
+	if (empty($dolibarr_nocache))
+	{
+		header('Cache-Control: max-age=3600, public, must-revalidate');
+		header('Pragma: cache'); // This is to avoid having Pragma: no-cache
+	} else header('Cache-Control: no-cache');
+	//print $dolibarr_nocache; exit;
 }
 
 // If we have a hash public (hashp), we guess the original_file.
@@ -195,7 +195,7 @@ if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
 } elseif (isset($_GET["publictakepos"])) {
-	if (! empty($conf->global->TAKEPOS_AUTO_ORDER)) {
+	if (!empty($conf->global->TAKEPOS_AUTO_ORDER)) {
 		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
 	}
 } else {
@@ -244,71 +244,71 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 
 if ($modulepart == 'barcode')
 {
-    $generator = GETPOST("generator", "alpha");
-    $code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
-    $encoding = GETPOST("encoding", "alpha");
-    $readable = GETPOST("readable", 'alpha') ?GETPOST("readable", "alpha") : "Y";
+	$generator = GETPOST("generator", "alpha");
+	$code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
+	$encoding = GETPOST("encoding", "alpha");
+	$readable = GETPOST("readable", 'alpha') ?GETPOST("readable", "alpha") : "Y";
 
-    if (empty($generator) || empty($encoding))
-    {
-        print 'Error: Parameter "generator" or "encoding" not defined';
-        exit;
-    }
+	if (empty($generator) || empty($encoding))
+	{
+		print 'Error: Parameter "generator" or "encoding" not defined';
+		exit;
+	}
 
-    $dirbarcode = array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
+	$dirbarcode = array_merge(array("/core/modules/barcode/doc/"), $conf->modules_parts['barcode']);
 
-    $result = 0;
+	$result = 0;
 
-    foreach ($dirbarcode as $reldir)
-    {
-        $dir = dol_buildpath($reldir, 0);
-        $newdir = dol_osencode($dir);
+	foreach ($dirbarcode as $reldir)
+	{
+		$dir = dol_buildpath($reldir, 0);
+		$newdir = dol_osencode($dir);
 
-        // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
-        if (!is_dir($newdir)) continue;
+		// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
+		if (!is_dir($newdir)) continue;
 
-        $result = @include_once $newdir.$generator.'.modules.php';
-        if ($result) break;
-    }
+		$result = @include_once $newdir.$generator.'.modules.php';
+		if ($result) break;
+	}
 
-    // Load barcode class
-    $classname = "mod".ucfirst($generator);
-    $module = new $classname($db);
-    if ($module->encodingIsSupported($encoding))
-    {
-        $result = $module->buildBarCode($code, $encoding, $readable);
-    }
+	// Load barcode class
+	$classname = "mod".ucfirst($generator);
+	$module = new $classname($db);
+	if ($module->encodingIsSupported($encoding))
+	{
+		$result = $module->buildBarCode($code, $encoding, $readable);
+	}
 } else {
-    // Open and return file
-    clearstatcache();
+	// Open and return file
+	clearstatcache();
 
-    $filename = basename($fullpath_original_file);
+	$filename = basename($fullpath_original_file);
 
-    // Output files on browser
-    dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
+	// Output files on browser
+	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
 
-    // This test is to avoid error images when image is not available (for example thumbs).
-    if (!dol_is_file($fullpath_original_file) && empty($_GET["noalt"]))
-    {
-        $fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
-        /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
+	// This test is to avoid error images when image is not available (for example thumbs).
+	if (!dol_is_file($fullpath_original_file) && empty($_GET["noalt"]))
+	{
+		$fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
+		/*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
         print $error;
         exit;*/
-    }
+	}
 
-    // Permissions are ok and file found, so we return it
-    if ($type)
-    {
-        top_httphead($type);
-        header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
-    } else {
-        top_httphead('image/png');
-        header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
-    }
+	// Permissions are ok and file found, so we return it
+	if ($type)
+	{
+		top_httphead($type);
+		header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
+	} else {
+		top_httphead('image/png');
+		header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
+	}
 
-    $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file);
+	$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file);
 
-    readfile($fullpath_original_file_osencoded);
+	readfile($fullpath_original_file_osencoded);
 }
 
 

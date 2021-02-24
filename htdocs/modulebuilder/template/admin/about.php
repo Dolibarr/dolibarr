@@ -45,7 +45,9 @@ require_once '../lib/mymodule.lib.php';
 $langs->loadLangs(array("errors", "admin", "mymodule@mymodule"));
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -82,6 +84,6 @@ $tmpmodule = new modMyModule($db);
 print $tmpmodule->getDescLong();
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 llxFooter();
 $db->close();

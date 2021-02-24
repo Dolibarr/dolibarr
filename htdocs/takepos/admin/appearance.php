@@ -47,19 +47,19 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 } elseif (GETPOST('action', 'alpha') == 'setmethod')
 {
-    dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -120,7 +120,7 @@ print '</table>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

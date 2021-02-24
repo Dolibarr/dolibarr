@@ -142,16 +142,16 @@ $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-    $prevquarter = 4;
-    $prevyear--;
+	$prevquarter = 4;
+	$prevyear--;
 }
 $nextyear = $year_start;
 $nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-    $nextquarter = 1;
-    $nextyear++;
+	$nextquarter = 1;
+	$nextyear++;
 }
 $description .= $fsearch;
 $builddate = dol_now();
@@ -370,12 +370,12 @@ if (!is_array($x_coll) || !is_array($x_paye))
 					} else {
 						if ($type) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
-			            if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
-			            {
-			                if ($reg[1] == 'DEPOSIT') $fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
-			                elseif ($reg[1] == 'CREDIT_NOTE') $fields['descr'] = $langs->transnoentitiesnoconv('CreditNote');
-			                else $fields['descr'] = $langs->transnoentitiesnoconv($reg[1]);
-			            }
+						if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
+						{
+							if ($reg[1] == 'DEPOSIT') $fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
+							elseif ($reg[1] == 'CREDIT_NOTE') $fields['descr'] = $langs->transnoentitiesnoconv('CreditNote');
+							else $fields['descr'] = $langs->transnoentitiesnoconv($reg[1]);
+						}
 						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
 
 						// Show range
@@ -438,36 +438,36 @@ if (!is_array($x_coll) || !is_array($x_paye))
 			}
 		}
 
-	    // Total customers for this vat rate
-	    print '<tr class="liste_total">';
-	    print '<td></td>';
-	    print '<td class="right">'.$langs->trans("Total").':</td>';
-	    if ($modetax != 1)
-	    {
-	        print '<td class="nowrap right">&nbsp;</td>';
-	        print '<td class="right">&nbsp;</td>';
-	    }
-	    print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-	    print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
-	    print '</tr>';
+		// Total customers for this vat rate
+		print '<tr class="liste_total">';
+		print '<td></td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1)
+		{
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+		print '</tr>';
 	}
 
-    if (count($x_coll) == 0)   // Show a total ine if nothing shown
-    {
-        print '<tr class="liste_total">';
-        print '<td>&nbsp;</td>';
-        print '<td class="right">'.$langs->trans("Total").':</td>';
-        if ($modetax == 0)
-        {
-            print '<td class="nowrap right">&nbsp;</td>';
-            print '<td class="right">&nbsp;</td>';
-        }
-        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
-        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
-        print '</tr>';
-    }
+	if (count($x_coll) == 0)   // Show a total ine if nothing shown
+	{
+		print '<tr class="liste_total">';
+		print '<td>&nbsp;</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax == 0)
+		{
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
+		print '</tr>';
+	}
 
-    // Blank line
+	// Blank line
 	print '<tr><td colspan="'.($span + 1).'">&nbsp;</td></tr>';
 	//print '</table>';
 	$diff = $x_coll_sum;
@@ -592,18 +592,18 @@ if (!is_array($x_coll) || !is_array($x_paye))
 			}
 		}
 
-	    // Total suppliers for this vat rate
-	    print '<tr class="liste_total">';
-	    print '<td>&nbsp;</td>';
-	    print '<td class="right">'.$langs->trans("Total").':</td>';
-	    if ($modetax != 1)
-	    {
-	        print '<td class="nowrap right">&nbsp;</td>';
-	        print '<td class="right">&nbsp;</td>';
-	    }
-	    print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-	    print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
-	    print '</tr>';
+		// Total suppliers for this vat rate
+		print '<tr class="liste_total">';
+		print '<td>&nbsp;</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1)
+		{
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+		print '</tr>';
 	}
 
 	if (count($x_paye) == 0) {  // Show a total line if nothing shown
@@ -620,7 +620,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 	}
 
 	// Total to pay
-    $diff = $x_coll_sum - $x_paye_sum;
+	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";

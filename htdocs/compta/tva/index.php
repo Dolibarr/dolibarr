@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
+$form = new Form($db);
 $now = dol_now();
 $current_date = dol_getdate($now);
 if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
@@ -57,11 +59,13 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
+		else {
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
+			}
+			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
 				if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
 					if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
 						$year_start--;
@@ -73,12 +77,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 				}
 				$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
+			}
+			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');
 				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 			}
 		}
-	} else {
+	}
+	else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -108,7 +114,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 function pt($db, $sql, $date)
 {
-    global $conf, $bc, $langs;
+    global $conf, $bc, $langs, $form;
 
     $result = $db->query($sql);
     if ($result) {
@@ -120,7 +126,7 @@ function pt($db, $sql, $date)
         print '<tr class="liste_titre">';
         print '<td class="nowrap">'.$date.'</td>';
         print '<td class="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
-        print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
+        print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").$form->textwithpicto('', $langs->trans('PaidDuringThisPeriodDesc'), 1).'</td>';
         print "</tr>\n";
 
         $totalclaimed = 0;
@@ -170,7 +176,8 @@ function pt($db, $sql, $date)
             	$amountpaid = 0;
             	$previousmode = '';
             	$previousmonth = '';
-            } else {
+            }
+            else {
             	$previousmode = $obj->mode;
             	$previousmonth = $obj->dm;
             }
@@ -199,7 +206,8 @@ function pt($db, $sql, $date)
         print "</table>";
 
         $db->free($result);
-    } else {
+    }
+    else {
         dol_print_error($db);
     }
 }
@@ -209,7 +217,6 @@ function pt($db, $sql, $date)
  * View
  */
 
-$form = new Form($db);
 $company_static = new Societe($db);
 $tva = new Tva($db);
 
@@ -362,7 +369,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
 				'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
 				//'link'				=>$expensereport->getNomUrl(1)
 				);
-			} else {
+			}
+			else {
 				//$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 				//$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 				//$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];
@@ -543,25 +551,26 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Payed
+ * Paid
  */
 
 print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 $sql = '';
 
-$sql .= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed' as mode";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
-$sql .= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
+$sql .= "SELECT SUM(amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'claimed' as mode";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva";
+$sql .= " WHERE tva.entity = ".$conf->entity;
+$sql .= " AND (tva.datev >= '".$db->idate($date_start)."' AND tva.datev <= '".$db->idate($date_end)."')";
 $sql .= " GROUP BY dm";
 
 $sql .= " UNION ";
 
-$sql .= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as mode";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
-$sql .= " WHERE f.entity = ".$conf->entity;
-$sql .= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
+$sql .= "SELECT SUM(ptva.amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'paid' as mode";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON (tva.rowid = ptva.fk_tva)";
+$sql .= " WHERE tva.entity = ".$conf->entity;
+$sql .= " AND (tva.datev >= '".$db->idate($date_start)."' AND tva.datev <= '".$db->idate($date_end)."')";
 $sql .= " GROUP BY dm";
 
 $sql .= " ORDER BY dm ASC, mode ASC";

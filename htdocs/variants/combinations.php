@@ -72,7 +72,7 @@ $selectedvariant = $_SESSION['addvariant_'.$object->id];
 
 if ($cancel) {
 	$action = '';
-	$massactions = '';
+	$massaction = '';
 	unset($_SESSION['addvariant_'.$object->id]);
 }
 
@@ -101,178 +101,178 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 
 $productCombination2ValuePairs1 = array();
 
-if ($_POST) {
-	if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
-	{
-		//$features = GETPOST('features', 'array');
-		$features = $_SESSION['addvariant_'.$object->id];
+if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
+{
+	//$features = GETPOST('features', 'array');
+	$features = $_SESSION['addvariant_'.$object->id];
 
-		if (!$features) {
+	if (!$features) {
+		if ($action == 'create') {
 			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-		} else {
-			$reference = trim($reference);
-			if (empty($reference)) {
-				$reference = false;
-			}
-			$weight_impact = price2num($weight_impact);
-			$price_impact = price2num($price_impact);
-
-			// for conf PRODUIT_MULTIPRICES
-			if ($conf->global->PRODUIT_MULTIPRICES) {
-				$level_price_impact = array_map('price2num', $level_price_impact);
-			}
-			else {
-				$level_price_impact = array(1 => $weight_impact);
-				$level_price_impact_percent = array(1 => $price_impact_percent);
-			}
-
-			$sanit_features = array();
-
-			//First, sanitize
-			foreach ($features as $feature) {
-				$explode = explode(':', $feature);
-
-				if ($prodattr->fetch($explode[0]) < 0) {
-					continue;
-				}
-
-				if ($prodattr_val->fetch($explode[1]) < 0) {
-					continue;
-				}
-
-				// Valuepair
-				$sanit_features[$explode[0]] = $explode[1];
-
-				$tmp = new ProductCombination2ValuePair($db);
-				$tmp->fk_prod_attr = $explode[0];
-				$tmp->fk_prod_attr_val = $explode[1];
-
-				$productCombination2ValuePairs1[] = $tmp;
-			}
-
-			$db->begin();
-
-			// sanit_feature is an array with 1 (and only 1) value per attribute.
-			// For example:  Color->blue, Size->Small, Option->2
-			//var_dump($sanit_features);
-			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
-			{
-				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
-				if ($result > 0)
-				{
-					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-					unset($_SESSION['addvariant_'.$object->id]);
-
-					$db->commit();
-					header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
-					exit();
-				} else {
-					$langs->load("errors");
-					setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
-				}
-			} else {
-				setEventMessages($langs->trans('ErrorRecordAlreadyExists'), null, 'errors');
-			}
-
-			$db->rollback();
 		}
-	} elseif (!empty($massaction))
-	{
-		$bulkaction = $massaction;
-		$error = 0;
-
-
-
-		$db->begin();
-
-		foreach ($toselect as $prodid) {
-			// need create new of Product to prevent rename dir behavior
-			$prodstatic = new Product($db);
-
-			if ($prodstatic->fetch($prodid) < 0) {
-				continue;
-			}
-
-			if ($bulkaction == 'on_sell') {
-				$prodstatic->status = 1;
-				$res = $prodstatic->update($prodstatic->id, $user);
-			} elseif ($bulkaction == 'on_buy') {
-				$prodstatic->status_buy = 1;
-				$res = $prodstatic->update($prodstatic->id, $user);
-			} elseif ($bulkaction == 'not_sell') {
-				$prodstatic->status = 0;
-				$res = $prodstatic->update($prodstatic->id, $user);
-			} elseif ($bulkaction == 'not_buy') {
-				$prodstatic->status_buy = 0;
-				$res = $prodstatic->update($prodstatic->id, $user);
-			} elseif ($bulkaction == 'delete') {
-				$res = $prodstatic->delete($user, $prodstatic->id);
-			} else {
-				break;
-			}
-
-			if ($res <= 0) {
-				$error++;
-				break;
-			}
+	} else {
+		$reference = trim($reference);
+		if (empty($reference)) {
+			$reference = false;
 		}
-
-		if ($error) {
-			$db->rollback();
-
-			if ($prodstatic->error) {
-				setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
-			}
-		} else {
-			$db->commit();
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		}
-	} elseif ($valueid > 0) {
-		if ($prodcomb->fetch($valueid) < 0) {
-			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
-			exit();
-		}
-
-		$prodcomb->variation_weight = $weight_impact;
+		$weight_impact = price2num($weight_impact);
+		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
 		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
-
-			$prodcomb->variation_price = $level_price_impact[1];
-			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
 		}
 		else {
-			$level_price_impact = array(1 => $weight_impact);
+			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
-
-			$prodcomb->variation_price = $price_impact;
-			$prodcomb->variation_price_percentage = $price_impact_percent;
 		}
 
-		if ($conf->global->PRODUIT_MULTIPRICES) {
-			$prodcomb->combination_price_levels = array();
-			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
-				$productCombinationLevel = new ProductCombinationLevel($db);
-				$productCombinationLevel->fk_product_attribute_combination = $prodcomb->id;
-				$productCombinationLevel->fk_price_level = $i;
-				$productCombinationLevel->variation_price = $level_price_impact[$i];
-				$productCombinationLevel->variation_price_percentage = (bool) $level_price_impact_percent[$i];
-				$prodcomb->combination_price_levels[$i] = $productCombinationLevel;
+		$sanit_features = array();
+
+		//First, sanitize
+		foreach ($features as $feature) {
+			$explode = explode(':', $feature);
+
+			if ($prodattr->fetch($explode[0]) < 0) {
+				continue;
 			}
+
+			if ($prodattr_val->fetch($explode[1]) < 0) {
+				continue;
+			}
+
+			// Valuepair
+			$sanit_features[$explode[0]] = $explode[1];
+
+			$tmp = new ProductCombination2ValuePair($db);
+			$tmp->fk_prod_attr = $explode[0];
+			$tmp->fk_prod_attr_val = $explode[1];
+
+			$productCombination2ValuePairs1[] = $tmp;
 		}
 
-		if ($prodcomb->update($user) > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
-			exit();
+		$db->begin();
+
+		// sanit_feature is an array with 1 (and only 1) value per attribute.
+		// For example:  Color->blue, Size->Small, Option->2
+		//var_dump($sanit_features);
+		if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
+		{
+			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
+			if ($result > 0)
+			{
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				unset($_SESSION['addvariant_'.$object->id]);
+
+				$db->commit();
+				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+				exit();
+			} else {
+				$langs->load("errors");
+				setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+			}
 		} else {
-			setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+			setEventMessages($langs->trans('ErrorRecordAlreadyExists'), null, 'errors');
+		}
+
+		$db->rollback();
+	}
+} elseif (!empty($massaction)) {
+	$bulkaction = $massaction;
+	$error = 0;
+
+
+
+	$db->begin();
+
+	foreach ($toselect as $prodid) {
+		// need create new of Product to prevent rename dir behavior
+		$prodstatic = new Product($db);
+
+		if ($prodstatic->fetch($prodid) < 0) {
+			continue;
+		}
+
+		if ($bulkaction == 'on_sell') {
+			$prodstatic->status = 1;
+			$res = $prodstatic->update($prodstatic->id, $user);
+		} elseif ($bulkaction == 'on_buy') {
+			$prodstatic->status_buy = 1;
+			$res = $prodstatic->update($prodstatic->id, $user);
+		} elseif ($bulkaction == 'not_sell') {
+			$prodstatic->status = 0;
+			$res = $prodstatic->update($prodstatic->id, $user);
+		} elseif ($bulkaction == 'not_buy') {
+			$prodstatic->status_buy = 0;
+			$res = $prodstatic->update($prodstatic->id, $user);
+		} elseif ($bulkaction == 'delete') {
+			$res = $prodstatic->delete($user, $prodstatic->id);
+		} else {
+			break;
+		}
+
+		if ($res <= 0) {
+			$error++;
+			break;
 		}
 	}
+
+	if ($error) {
+		$db->rollback();
+
+		if ($prodstatic->error) {
+			setEventMessages($prodstatic->error, $prodstatic->errors, 'errors');
+		} else {
+			setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
+		}
+	} else {
+		$db->commit();
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+	}
+} elseif ($action === 'update' && $valueid > 0) {
+	if ($prodcomb->fetch($valueid) < 0) {
+		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
+		exit();
+	}
+
+	$prodcomb->variation_weight = $weight_impact;
+
+	// for conf PRODUIT_MULTIPRICES
+	if ($conf->global->PRODUIT_MULTIPRICES) {
+		$level_price_impact = array_map('price2num', $level_price_impact);
+
+		$prodcomb->variation_price = $level_price_impact[1];
+		$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
+	}
+	else {
+		$level_price_impact = array(1 => $price_impact);
+		$level_price_impact_percent = array(1 => $price_impact_percent);
+
+		$prodcomb->variation_price = $price_impact;
+		$prodcomb->variation_price_percentage = $price_impact_percent;
+	}
+
+	if ($conf->global->PRODUIT_MULTIPRICES) {
+		$prodcomb->combination_price_levels = array();
+		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+			$productCombinationLevel = new ProductCombinationLevel($db);
+			$productCombinationLevel->fk_product_attribute_combination = $prodcomb->id;
+			$productCombinationLevel->fk_price_level = $i;
+			$productCombinationLevel->variation_price = $level_price_impact[$i];
+			$productCombinationLevel->variation_price_percentage = (bool) $level_price_impact_percent[$i];
+			$prodcomb->combination_price_levels[$i] = $productCombinationLevel;
+		}
+	}
+
+	if ($prodcomb->update($user) > 0) {
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
+		exit();
+	} else {
+		setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
+	}
 }
+
 
 // Reload variants
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
@@ -406,7 +406,7 @@ if (!empty($id) || !empty($ref))
 	print '</div>';
 	print '<div style="clear:both"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$listofvariantselected = '';
 
@@ -434,7 +434,7 @@ if (!empty($id) || !empty($ref))
 				}
 			}
 			$listofvariantselected .= '</div>';
-			//dol_fiche_end();
+			//print dol_get_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
@@ -699,13 +699,13 @@ if (!empty($id) || !empty($ref))
 			<?php
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 		?>
 
 		<div style="text-align: center">
-		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
+		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans("Save") ?>" class="button button-save">
 		&nbsp;
-		<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel'); ?>" class="button">
+		<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>" class="button button-cancel">
 		</div>
 
 		<?php
@@ -765,17 +765,12 @@ if (!empty($id) || !empty($ref))
 
 		print '	<div class="inline-block divButAction">';
 
-		print '<a href="combinations.php?id='.$object->id.'&action=add" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
+		print '<a href="combinations.php?id='.$object->id.'&action=add&token='.newToken().'" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 
 		if ($productCombinations)
 		{
-			print '<a href="combinations.php?id='.$object->id.'&action=copy" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
+			print '<a href="combinations.php?id='.$object->id.'&action=copy&token='.newToken().'" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
-
-		// Too much bugged page.
-		/*
-		print '<a href="generator.php?id='.$object->id.'" class="butAction">'.$langs->trans('ProductCombinationGenerator').'</a>';
-		*/
 
 		print '	</div>';
 

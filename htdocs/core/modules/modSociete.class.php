@@ -70,7 +70,7 @@ class modSociete extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modExpedition", "modFacture", "modFournisseur", "modFicheinter", "modPropale", "modContrat", "modCommande"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
@@ -122,20 +122,14 @@ class modSociete extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r = 0;
-		$this->boxes[$r][1] = "box_clients.php";
-		$r++;
-		$this->boxes[$r][1] = "box_prospect.php";
-		$r++;
-		$this->boxes[$r][1] = "box_contacts.php";
-		$r++;
-		$this->boxes[$r][1] = "box_activity.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
-		$this->boxes[$r][1] = "box_goodcustomers.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_clients.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_prospect.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_contacts.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_activity.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+			4=>array('file'=>'box_goodcustomers.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+		);
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
@@ -203,14 +197,24 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
-		// 262 : Resteindre l'acces des commerciaux
+		// 262 : Restrict access to sales representative
 		$r++;
 		$this->rights[$r][0] = 262;
-		$this->rights[$r][1] = 'Read all third parties by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		$this->rights[$r][1] = 'Read all third parties (and their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'client';
 		$this->rights[$r][5] = 'voir';
+
+		/*
+		$r++;
+		$this->rights[$r][0] = 263;
+		$this->rights[$r][1] = 'Read all third parties (without their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'client';
+		$this->rights[$r][5] = 'readallthirdparties_advance';
+		*/
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
@@ -295,7 +299,7 @@ class modSociete extends DolibarrModules
 			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
 			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
 			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.address'=>"Text", 's.zip'=>"Text",'s.town'=>"Text",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
 			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
 			's.phone'=>"Text", 's.fax'=>"Text",
 			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Canvas",
@@ -496,7 +500,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -676,7 +680,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',

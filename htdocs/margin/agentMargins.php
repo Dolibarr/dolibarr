@@ -61,15 +61,15 @@ $enddatemonth   = GETPOST('enddatemonth', 'int');
 $enddateyear    = GETPOST('enddateyear', 'int');
 
 if (!empty($startdatemonth))
-    $startdate  = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
+	$startdate = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
 if (!empty($enddatemonth))
-    $enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
+	$enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
 
 // Security check
 if ($user->rights->margins->read->all) {
-    $agentid = GETPOST('agentid', 'int');
+	$agentid = GETPOST('agentid', 'int');
 } else {
-    $agentid = $user->id;
+	$agentid = $user->id;
 }
 $result = restrictedArea($user, 'margins');
 
@@ -106,6 +106,7 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print dol_get_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
@@ -113,7 +114,7 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
@@ -130,7 +131,7 @@ print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->t
 print '</td></tr>';
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -201,9 +202,9 @@ if ($result)
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
+		$labelcostprice = 'BuyingPrice';
 	else // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
@@ -225,83 +226,106 @@ if ($result)
 		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-    if ($num > 0)
-    {
-        $group_list = array();
-        while ($objp = $db->fetch_object($result)) {
-            if ($agentid > 0) {
-                $group_id = $objp->socid;
-            } else {
-                $group_id = $objp->agent;
-            }
+	if ($num > 0)
+	{
+		$group_list = array();
+		while ($objp = $db->fetch_object($result)) {
+			if ($agentid > 0) {
+				$group_id = $objp->socid;
+			} else {
+				$group_id = $objp->agent;
+			}
 
-            if (!isset($group_list[$group_id])) {
-                if ($agentid > 0) {
-                    $group_name = $objp->name;
-                    $companystatic->id = $objp->socid;
-                    $companystatic->name = $objp->name;
-                    $companystatic->client = $objp->client;
-                    $group_htmlname = $companystatic->getNomUrl(1, 'customer');
-                } else {
-                    $group_name = $objp->lastname;
-                    $userstatic->fetch($objp->agent);
-                    $group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
-                }
-                $group_list[$group_id] = array('name' => $group_name, 'htmlname' => $group_htmlname, 'selling_price' => 0, 'buying_price' => 0, 'marge' => 0);
-            }
+			if (!isset($group_list[$group_id])) {
+				if ($agentid > 0) {
+					$group_name = $objp->name;
+					$companystatic->id = $objp->socid;
+					$companystatic->name = $objp->name;
+					$companystatic->client = $objp->client;
+					$group_htmlname = $companystatic->getNomUrl(1, 'customer');
+				} else {
+					$group_name = $objp->lastname;
+					$userstatic->fetch($objp->agent);
+					$group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
+				}
+				$group_list[$group_id] = array('name' => $group_name, 'htmlname' => $group_htmlname, 'selling_price' => 0, 'buying_price' => 0, 'marge' => 0);
+			}
 
-            $seller_nb = 1;
-            if ($objp->socid > 0) {
-                // sql nb sellers
-                $sql_seller  = "SELECT COUNT(sc.rowid) as nb";
-                $sql_seller .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-                $sql_seller .= " WHERE sc.fk_soc = ".$objp->socid;
-                $sql_seller .= " LIMIT 1";
+			$seller_nb = 1;
+			if ($objp->socid > 0) {
+				// sql nb sellers
+				$sql_seller  = "SELECT COUNT(sc.rowid) as nb";
+				$sql_seller .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				$sql_seller .= " WHERE sc.fk_soc = ".$objp->socid;
+				$sql_seller .= " LIMIT 1";
 
-                $resql_seller = $db->query($sql_seller);
-                if (!$resql_seller) {
-                    dol_print_error($db);
-                } else {
-                    if ($obj_seller = $db->fetch_object($resql_seller)) {
-                        if ($obj_seller->nb > 0) {
-                            $seller_nb = $obj_seller->nb;
-                        }
-                    }
-                }
-            }
+				$resql_seller = $db->query($sql_seller);
+				if (!$resql_seller) {
+					dol_print_error($db);
+				} else {
+					if ($obj_seller = $db->fetch_object($resql_seller)) {
+						if ($obj_seller->nb > 0) {
+							$seller_nb = $obj_seller->nb;
+						}
+					}
+				}
+			}
 
-            $group_list[$group_id]['selling_price'] += $objp->selling_price / $seller_nb;
-            $group_list[$group_id]['buying_price'] += $objp->buying_price / $seller_nb;
-            $group_list[$group_id]['marge'] += $objp->marge / $seller_nb;
-        }
+			$group_list[$group_id]['selling_price'] += $objp->selling_price / $seller_nb;
+			$group_list[$group_id]['buying_price'] += $objp->buying_price / $seller_nb;
+			$group_list[$group_id]['marge'] += $objp->marge / $seller_nb;
+		}
 
-        // sort group array by sortfield
-        if ($sortfield == 'u.lastname' || $sortfield == 's.nom') {
-            $sortfield = 'name';
-        }
-        $group_list = dol_sort_array($group_list, $sortfield, $sortorder);
+		// sort group array by sortfield
+		if ($sortfield == 'u.lastname' || $sortfield == 's.nom') {
+			$sortfield = 'name';
+		}
+		$group_list = dol_sort_array($group_list, $sortfield, $sortorder);
 
-        foreach ($group_list as $group_id => $group_array) {
-            $pa = $group_array['buying_price'];
-            $pv = $group_array['selling_price'];
-            $marge = $group_array['marge'];
+		foreach ($group_list as $group_id => $group_array) {
+			$pa = $group_array['buying_price'];
+			$pv = $group_array['selling_price'];
+			$marge = $group_array['marge'];
 
-            $marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
-            $markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
+			$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
+			$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
 
-            print '<tr class="oddeven">';
-            print "<td>".$group_array['htmlname']."</td>\n";
-            print "<td class=\"right\">".price(price2num($pv, 'MT'))."</td>\n";
-            print "<td class=\"right\">".price(price2num($pa, 'MT'))."</td>\n";
-            print "<td class=\"right\">".price(price2num($marge, 'MT'))."</td>\n";
-            if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-            	print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
-            if (!empty($conf->global->DISPLAY_MARK_RATES))
-            	print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
-            print "</tr>\n";
-        }
-    }
-	print "</table>";
+			print '<tr class="oddeven">';
+			print "<td>".$group_array['htmlname']."</td>\n";
+			print '<td class="nowrap right">'.price(price2num($pv, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($pa, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($marge, 'MT')).'</td>';
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
+			if (!empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
+			print "</tr>\n";
+
+			$i++;
+			$cumul_achat += $pa;
+			$cumul_vente += $pv;
+		}
+	}
+
+	// Show total margin
+	$totalMargin = $cumul_vente - $cumul_achat;
+
+	$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
+	$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
+
+	print '<tr class="liste_total">';
+	print '<td>';
+	print $langs->trans('TotalMargin')."</td>";
+	print '<td class="nowrap right">'.price(price2num($cumul_vente, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($cumul_achat, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($totalMargin, 'MT')).'</td>';
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES))
+		print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
+	if (!empty($conf->global->DISPLAY_MARK_RATES))
+		print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
+	print '</tr>';
+
+	print '</table>';
 	print '</div>';
 } else {
 	dol_print_error($db);
@@ -310,9 +334,10 @@ $db->free($result);
 
 print "\n".'<script type="text/javascript">
 $(document).ready(function() {
-  $("#agentid").change(function() {
-     $("div.fiche form").submit();
-  });
+	console.log("Init some values");
+  	$("#totalMargin").html("'.price(price2num($totalMargin, 'MT')).'");
+	$("#marginRate").html("'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'");
+	$("#markRate").html("'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'");
 });
 </script>'."\n";
 

@@ -33,7 +33,7 @@ $langs->loadLangs(array('admin', 'loan'));
 
 // Security check
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
@@ -50,22 +50,22 @@ $list = array(
 
 if ($action == 'update')
 {
-    $error = 0;
+	$error = 0;
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname, 'alpha');
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
 
-        if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
+	}
 
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*

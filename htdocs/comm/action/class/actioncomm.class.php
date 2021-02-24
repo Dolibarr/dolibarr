@@ -86,6 +86,11 @@ class ActionComm extends CommonObject
 	public $type_id;
 
 	/**
+	 * @var string Calendar of event (Type of type of event). 'system'=Default calendar, 'systemauto'=Auto calendar, 'birthdate', 'holiday', 'module'=Calendar specific to a module
+	 */
+	public $type;
+
+	/**
 	 * @var string Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
 	 */
 	public $type_code;
@@ -96,14 +101,14 @@ class ActionComm extends CommonObject
 	public $type_label;
 
 	/**
-	 * @var string Label into parent table llx_c_actioncomm (used only if option to use type is set)
-	 */
-	public $type;
-
-	/**
 	 * @var string Color into parent table llx_c_actioncomm (used only if option to use type is set)
 	 */
 	public $type_color;
+
+	/**
+	 * @var string Picto for type of event (used only if option to use type is set)
+	 */
+	public $type_picto;
 
 	/**
 	 * @var string Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
@@ -524,7 +529,7 @@ class ActionComm extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
+			$this->ref = $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
 
 			// Now insert assigned users
 			if (!$error)
@@ -626,7 +631,7 @@ class ActionComm extends CommonObject
 		// Load source object
 		$objFrom = clone $this;
 
-		// Retreive all extrafield
+		// Retrieve all extrafield
 		// fetch optionals attributes and labels
 		$this->fetch_optionals();
 
@@ -1000,7 +1005,7 @@ class ActionComm extends CommonObject
 
 		// Clean parameters
 		$this->label = trim($this->label);
-		$this->note_private = dol_htmlcleanlastbr(trim(empty($this->note_private) ? $this->note : $this->note_private));
+		$this->note_private = dol_htmlcleanlastbr(trim(!isset($this->note_private) ? $this->note : $this->note_private));
 		if (empty($this->percentage))    $this->percentage = 0;
 		if (empty($this->priority) || !is_numeric($this->priority)) $this->priority = 0;
 		if (empty($this->transparency))  $this->transparency = 0;
@@ -1206,28 +1211,36 @@ class ActionComm extends CommonObject
 	 * Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
 	 * @param	User	$user   			Objet user
-	 * @param	int		$load_state_board	Charge indicateurs this->nb de tableau de bord
-	 * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
+	 * @param	int		$load_state_board	Load indicator array this->nb
+	 * @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $load_state_board = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
 
-		if (empty($load_state_board)) $sql = "SELECT a.id, a.datep as dp";
-		else {
+		if (empty($load_state_board)) {
+			$sql = "SELECT a.id, a.datep as dp";
+		} else {
 			$this->nb = array();
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+    	if (!$user->rights->agenda->allactions->read) {
+    	    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".$user->id;
+    	}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE 1 = 1";
 		if (empty($load_state_board)) $sql .= " AND a.percent >= 0 AND a.percent < 100";
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 		if ($user->socid) $sql .= " AND a.fk_soc = ".$user->socid;
-		if (!$user->rights->agenda->allactions->read) $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
+		if (!$user->rights->agenda->allactions->read) {
+    	    $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id;
+    	    $sql .= " OR ar.fk_element = ".$user->id; // Added by PV
+    	    $sql .= ")";
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1243,13 +1256,14 @@ class ActionComm extends CommonObject
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
 			}
 			// This assignment in condition is not a bug. It allows walking the results.
-			while ($obj = $this->db->fetch_object($resql))
-			{
+			while ($obj = $this->db->fetch_object($resql)) {
 				if (empty($load_state_board)) {
 					$response->nbtodo++;
 					$agenda_static->datep = $this->db->jdate($obj->dp);
 					if ($agenda_static->hasDelay()) $response->nbtodolate++;
-				} else $this->nb["actionscomm"] = $obj->nb;
+				} else {
+					$this->nb["actionscomm"] = $obj->nb;
+				}
 			}
 
 			$this->db->free($resql);
@@ -1367,7 +1381,7 @@ class ActionComm extends CommonObject
 	 *  @param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
 	 *  @param	string	$classname				Force style class on a link
 	 *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
-	 *  @param	int		$overwritepicto			1 = Overwrite picto
+	 *  @param	int		$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int   	$notooltip		    	1 = Disable tooltip
 	 *  @param  int     $save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
@@ -1417,8 +1431,8 @@ class ActionComm extends CommonObject
 		if (!empty($this->note_private))
 			$tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
 		$linkclose = '';
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
-			$linkclose = ' style="background-color:#'.$this->type_color.'"';
+		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
+		//	$linkclose = ' style="background-color:#'.$this->type_color.'"';
 
 		if (empty($notooltip))
 		{
@@ -1444,6 +1458,7 @@ class ActionComm extends CommonObject
 		elseif ($option == 'holiday')
 			$url = DOL_URL_ROOT.'/holiday/card.php?id='.$this->id;
 		else $url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+
 		if ($option !== 'nolink')
 		{
 			// Add param to save lastsearch_values or not
@@ -1485,7 +1500,7 @@ class ActionComm extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), ($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto)	$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		$result .= $libelleshort;
 		$result .= $linkend;
 
@@ -1498,6 +1513,43 @@ class ActionComm extends CommonObject
 
 		return $result;
 	}
+
+	/**
+	 *  Return Picto of type of event
+	 *
+	 *  @return	string							HTML String
+	 */
+	public function getTypePicto()
+	{
+		global $conf;
+
+		$imgpicto = '';
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
+		{
+			$color = '';
+			if ($this->type_color) {
+				$color = 'style="color: #'.$this->type_color.' !important;"';
+			}
+			if ($this->type_picto) {
+				$imgpicto = img_picto('', $this->type_picto, 'class="paddingright"');
+			} else {
+				if ($this->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'meeting', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
+				elseif ($this->type != 'systemauto') $imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');
+				else $imgpicto = img_picto('', 'cog', $color, false, 0, 0, '', 'paddingright');
+			}
+		} else {
+			// 2 picto: 1 for auto, 1 for manual
+			if ($this->type != 'systemauto') $imgpicto = img_picto('', 'user-cog', '', false, 0, 0, '', 'paddingright');
+			else $imgpicto = img_picto('', 'cog', '', false, 0, 0, '', 'paddingright');
+		}
+		return $imgpicto;
+	}
+
 
 	/**
 	 * Sets object to supplied categories.
@@ -2052,6 +2104,7 @@ class ActionComm extends CommonObject
 		}
 
 		$now = dol_now();
+		$actionCommReminder = new ActionCommReminder($this->db);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -2066,7 +2119,6 @@ class ActionComm extends CommonObject
 
 		if ($resql) {
 			$formmail = new FormMail($this->db);
-			$actionCommReminder = new ActionCommReminder($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$res = $actionCommReminder->fetch($obj->id);
@@ -2075,16 +2127,15 @@ class ActionComm extends CommonObject
 					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					//Select email template
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
-					if ($res > 0)
-					{
+					if ($res > 0) {
 						// PREPARE EMAIL
+						$errormesg = '';
 
 						// Make substitution in email content
 						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
@@ -2100,43 +2151,65 @@ class ActionComm extends CommonObject
 						// Recipient
 						$recipient = new User($this->db);
 						$res = $recipient->fetch($actionCommReminder->fk_user);
-						if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
-						else {
-							$errorsMsg[] = "Failed to load recipient";
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
+							} else {
+								$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
+								$error++;
+							}
+						} else {
+							$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
 							$error++;
 						}
 
 						// Sender
 						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 						if (empty($from)) {
-							$errorsMsg[] = "Failed to load recipient";
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
 						}
 
-						// Errors Recipient
-						$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
 
-						// Mail Creation
-						$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
 
-						// Sending Mail
-						if ($cMailFile->sendfile())
-						{
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = $cMailFile->error.' : '.$to;
+								$error++;
+							}
+						}
+
+						if (!$error) {
 							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
 							$res = $actionCommReminder->update($user);
-							if ($res < 0)
-							{
-								$errorsMsg[] = "Failed to update status of ActionComm Reminder";
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
 								$error++;
 								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
 							} else {
-								$nbMailSend++;
+								$errorsMsg[] = $errormesg;
 							}
-						} else {
-							$errorsMsg[] = $cMailFile->error.' : '.$to;
-							$error++;
 						}
 					} else {
+						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
 						$error++;
 					}
 				}
@@ -2145,11 +2218,11 @@ class ActionComm extends CommonObject
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
+			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
@@ -2162,9 +2235,8 @@ class ActionComm extends CommonObject
 			$this->output = 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
 			return 0;
-		}
-		else {
-			$this->db->rollback();
+		} else {
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
 		}

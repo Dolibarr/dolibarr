@@ -1,6 +1,17 @@
 <?php
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+//if (!defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+//if (!defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+//if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOSTYLECHECK'))   define('NOSTYLECHECK', '1'); // Do not check style html tag into posted data
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+//if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+//if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+//if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+if (!defined("NOLOGIN"))        define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+
 
 require '../../main.inc.php';
 
@@ -76,14 +87,14 @@ if (empty($usedolheader))
 
 <h2>
 This page is a sample of page using tables. It is designed to make test with<br>
+</h2>
+<div class="wordbreak">
 - css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
-- jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=4&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=4&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 1000 to enable view with jmobile)<br>
 - jmobile (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
 - no javascript / usage for bind people (add parameter <a href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 - tablednd<br>
-</h2>
+</div>
 
-<?php  ?>
 
 <br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
 
@@ -124,7 +135,6 @@ This page is a sample of page using tables. It is designed to make test with<br>
     </tr>
 </table>
 
-<?php  ?>
 
 
 
@@ -153,6 +163,7 @@ $(document).ready(function() {
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $productspecimen = new Product($db);
 $productspecimen->initAsSpecimen();
+$object = $productspecimen;
 
 $sortfield = 'aaa';
 $sortorder = 'ASC';
@@ -162,8 +173,8 @@ if (!empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/aja
 
 $nav = '';
 $nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav .= '<input type="hidden" name="status" value="'.$status.'">';
+if ($actioncode || GETPOSTISSET('actioncode')) $nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+if ($status || GETPOSTISSET('status'))  $nav .= '<input type="hidden" name="status" value="'.$status.'">';
 if ($filter)  $nav .= '<input type="hidden" name="filter" value="'.$filter.'">';
 if ($filtert) $nav .= '<input type="hidden" name="filtert" value="'.$filtert.'">';
 if ($socid)   $nav .= '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -176,31 +187,30 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 $nav .= '</form>';
 
 $limit = 10;
-print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit);
-
+print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit, 0, 0, 1);
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('This is a select list for a filter A').': ';
+$moreforfilter .= $langs->trans('This is a select list for a filter A (no combo forced)').': ';
 $cate_arbo = array('field1'=>'value1a into the select list A', 'field2'=>'value2a');
-$moreforfilter .= $form->selectarray('search_aaa', $cate_arbo, '', 1); // List without js combo
+$moreforfilter .= $form->selectarray('search_aaa', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 0); // List with no js combo
 $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('This is a select list for a filter B').': ';
+$moreforfilter .= $langs->trans('This is a select list for a filter B (auto combo)').': ';
 $cate_arbo = array('field1'=>'value1b into the select list B', 'field2'=>'value2b');
-$moreforfilter .= $form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1); // List with js combo
+$moreforfilter .= $form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', -1); // List with js combo auto
 $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('This is a select list for a filter C').': ';
+$moreforfilter .= $langs->trans('This is a select list for a filter C (combo forced)').': ';
 $cate_arbo = array('field1'=>'value1c into the select list C', 'field2'=>'value2c');
-$moreforfilter .= $form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1); // List with js combo
+$moreforfilter .= $form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 1); // List with js combo forced
 $moreforfilter .= '</div>';
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('This is a select list for a filter D').': ';
+$moreforfilter .= $langs->trans('This is a select list for a filter D (combo forced)').': ';
 $cate_arbo = array('field1'=>'value1d into the select list D', 'field2'=>'value2d');
-$moreforfilter .= $form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1); // List with js combo
+$moreforfilter .= $form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidth300', 1); // List with js combo forced
 $moreforfilter .= '</div>';
 
 if (!empty($moreforfilter))
@@ -219,14 +229,14 @@ if (!empty($moreforfilter))
 <thead>
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'), 0, $_SERVER["PHP_SELF"], 'aaa', '', '', 'align="left"', $sortfield, $sortorder); ?>
-<?php print getTitleFieldOfList($langs->trans('title2'), 0, $_SERVER["PHP_SELF"], 'bbb', '', '', 'align="right"', $sortfield, $sortorder); ?>
-<?php print getTitleFieldOfList($langs->trans('title3'), 0, $_SERVER["PHP_SELF"], 'ccc', '', '', 'align="center"', $sortfield, $sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title2'), 0, $_SERVER["PHP_SELF"], 'bbb', '', '', 'align="center"', $sortfield, $sortorder); ?>
+<?php print getTitleFieldOfList($langs->trans('title3'), 0, $_SERVER["PHP_SELF"], 'ccc', '', '', 'align="right"', $sortfield, $sortorder); ?>
 </tr>
 </thead>
 <tbody>
-<tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td class="right">b1</td><td class="tdlineupdown left">c1</td></tr>
-<tr class="impair nowrap"><td>a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2</td><td align="right">b2</td><td class="tdlineupdown left">c2</td></tr>
-<tr class="pair"><td>a3</td><td class="right">b3</td><td class="tdlineupdown left">c3</td></tr>
+<tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td class="center">b1</td><td class="tdlineupdown right">c1</td></tr>
+<tr class="impair nowrap"><td>a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2</td><td align="center">b2</td><td class="tdlineupdown right">c2</td></tr>
+<tr class="pair"><td>a3</td><td class="center">b3</td><td class="tdlineupdown right">c3</td></tr>
 </tbody>
 </table>
 
@@ -236,8 +246,6 @@ if (!empty($moreforfilter))
 
 <!--
 <br><hr><br>Example 1b : Table using tags: table/thead/tbody/tr/th-td + dataTable => Use this for short result tables<br>
-
-
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -282,7 +290,6 @@ $(document).ready(function(){
     })
 });
 </script>
-
  -->
 
 
@@ -304,13 +311,13 @@ $(document).ready(function(){
     <div class="pair tagtr">
         <div class="tagtd">line4<input type="hidden" name="cartitem" value="3"></div>
         <div class="tagtd">dfsdf</div>
-        <div class="tagtd"><input name="count" value="4"></div>
+        <div class="tagtd"><input name="count" value="4" class="maxwidth50"></div>
         <div class="tagtd tdlineupdown">bbbb</div>
     </div>
     <div class="impair tagtr">
         <div class="tagtd">line5<input type="hidden" name="cartitemb" value="3"></div>
         <div class="tagtd">dfsdf</div>
-        <div class="tagtd"><input name="countb" value="4"></div>
+        <div class="tagtd"><input name="countb" value="4" class="maxwidth50"></div>
         <div class="tagtd tdlineupdown">bbbb</div>
     </div>
     <div class="pair tagtr">

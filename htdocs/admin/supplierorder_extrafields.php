@@ -78,7 +78,7 @@ print dol_get_fiche_head($head, 'supplierorder', $langs->trans("Suppliers"), -1,
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

@@ -47,8 +47,11 @@ $type = GETPOST('type', 'aZ09');
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
+$id_bankaccount = GETPOST('id_bankaccount', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -60,28 +63,42 @@ $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 /*
  * Actions
  */
+if (GETPOST('cancel', 'alpha')) { $massaction = ''; }
 
 $parameters = array('mode' => $mode, 'format' => $format, 'limit' => $limit, 'page' => $page, 'offset' => $offset);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Change customer bank information to withdraw
-	if ($action == 'modify')
-	{
-		for ($i = 1; $i < 9; $i++)
-		{
+	if ($action == 'modify') {
+		for ($i = 1; $i < 9; $i++) {
 			dolibarr_set_const($db, GETPOST("nom$i"), GETPOST("value$i"), 'chaine', 0, '', $conf->entity);
 		}
 	}
-	if ($action == 'create')
-	{
+	if ($action == 'create') {
+		$default_account=($type == 'bank-transfer' ? 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT' : 'PRELEVEMENT_ID_BANKACCOUNT');
+
+		if ($id_bankaccount != $conf->global->{$default_account}){
+			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity);	//Set as default
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$bank = new Account($db);
+		$bank->fetch($conf->global->{$default_account});
+		if (empty($bank->ics) || empty($bank->ics_transfer)){
+			$errormessage = str_replace('{url}', $bank->getNomUrl(1), $langs->trans("ErrorICSmissing", '{url}'));
+			setEventMessages($errormessage, null, 'errors');
+			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/create.php');
+			exit;
+		}
+
+
 		$delayindays = 0;
 		if ($type != 'bank-transfer') {
-			$conf->global->PRELEVEMENT_ADDDAYS;
+			$delayindays = $conf->global->PRELEVEMENT_ADDDAYS;
 		} else {
-			$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
+			$delayindays = $conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
 		}
 		$bprev = new BonPrelevement($db);
 		$executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
@@ -94,8 +111,7 @@ if (empty($reshook))
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
 			$mesg .= '<br>'."\n";
-			foreach ($bprev->invoice_in_error as $key => $val)
-			{
+			foreach ($bprev->invoice_in_error as $key => $val) {
 				$mesg .= '<span class="warning">'.$val."</span><br>\n";
 			}
 		} else {
@@ -109,6 +125,9 @@ if (empty($reshook))
 			exit;
 		}
 	}
+	$objectclass = "BonPrelevement";
+	$uploaddir = $conf->prelevement->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -125,14 +144,20 @@ if ($type != 'bank-transfer') {
 	$invoicestatic = new FactureFournisseur($db);
 }
 $bprev = new BonPrelevement($db);
+$arrayofselected = is_array($toselect) ? $toselect : array();
+// List of mass actions available
+$arrayofmassactions = array(
+);
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
 
-if (prelevement_check_config() < 0)
-{
+if (prelevement_check_config($type) < 0) {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
+
 
 /*$h=0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/create.php';
@@ -188,10 +213,15 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
-	if ($pricetowithdraw) {
-		print $langs->trans('ExecutionDate').' ';
-		$datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-		print $form->selectDate($datere, 're');
+    if ($pricetowithdraw) {
+    	print $langs->trans('BankToReceiveWithdraw').': ';
+    	$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'id_bankaccount', 0, "courant=1");
+    	print ' - ';
+
+        print $langs->trans('ExecutionDate').' ';
+        $datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        print $form->selectDate($datere, 're');
+
 
 		if ($mysoc->isInEEC()) {
 			$title = $langs->trans("CreateForSepa");
@@ -214,8 +244,7 @@ if ($nb) {
 			print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
 	} else {
-		if ($mysoc->isInEEC())
-		{
+		if ($mysoc->isInEEC()) {
 			$title = $langs->trans("CreateForSepaFRST");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
@@ -256,7 +285,7 @@ print '<br>';
  */
 
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
-$sql .= " pfd.date_demande, pfd.amount";
+$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount";
 if ($type == 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 } else {
@@ -266,12 +295,11 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s,";
 $sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
-{
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
 //$sql .= " AND pfd.amount > 0";
-$sql .= " AND f.total_ttc > 0";		// Avoid credit notes
+$sql .= " AND f.total_ttc > 0"; // Avoid credit notes
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 if ($type == 'bank-transfer') {
@@ -282,12 +310,11 @@ if ($type == 'bank-transfer') {
 if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {
+		// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -317,7 +344,7 @@ if ($resql)
 	if ($type == 'bank-transfer') {
 		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
 	}
-	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 
 	$tradinvoice = "Invoice";
 	if ($type == 'bank-transfer') {
@@ -332,6 +359,10 @@ if ($resql)
 	print '<td>'.$langs->trans("RUM").'</td>';
 	print '<td class="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td class="right">'.$langs->trans("DateRequest").'</td>';
+	if ($massactionbutton || $massaction ) // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+	}
 	print '</tr>';
 
 	if ($num)
@@ -376,7 +407,7 @@ if ($resql)
 					if ($format) print ' ('.$format.')';
 				}
 			} else {
-				print img_warning($langs->trans("NoBankAccount"));
+				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
 			// Amount
@@ -387,6 +418,15 @@ if ($resql)
 			print '<td class="right">';
 			print dol_print_date($db->jdate($obj->date_demande), 'day');
 			print '</td>';
+			// Action column
+			if ($massactionbutton || $massaction ) // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			{
+				print '<td class="nowrap center">';
+				$selected = 0;
+				if (in_array($obj->request_row_id, $arrayofselected)) $selected = 1;
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '</td>';
+			}
 			print '</tr>';
 			$i++;
 		}

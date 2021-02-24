@@ -130,7 +130,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -174,7 +174,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
 	{
 		if (!is_array($records))
 		{

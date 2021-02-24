@@ -196,11 +196,11 @@ $doleditor->Create();
 print '</td></tr>';
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //Buttons
 print '<div class="center">';
-print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
 if ($eid == 0)
 {

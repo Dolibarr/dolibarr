@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2019		JC Prieto			<jcprieto@virtual20.com><prietojc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,10 +165,12 @@ class BonPrelevement extends CommonObject
 					$result = 0;
 				} else {
 					$result = -1;
+					$this->errors[] = get_class($this)."::AddFacture ".$this->db->lasterror;
 					dol_syslog(get_class($this)."::AddFacture Error $result");
 				}
 			} else {
 				$result = -2;
+				$this->errors[] = get_class($this)."::AddFacture linedid Empty";
 				dol_syslog(get_class($this)."::AddFacture Error $result");
 			}
 		} else {
@@ -245,6 +248,7 @@ class BonPrelevement extends CommonObject
 				$line_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
 				$result = 0;
 			} else {
+				$this->errors[] = get_class($this)."::addline Error -2 ".$this->db->lasterror;
 				dol_syslog(get_class($this)."::addline Error -2");
 				$result = -2;
 			}
@@ -367,11 +371,11 @@ class BonPrelevement extends CommonObject
 				$num = count($facs);
 				for ($i = 0; $i < $num; $i++)
 				{
-					/* Tag invoice as payed */
+					/* Tag invoice as paid */
 					dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
 					$fac = new Facture($this->db);
 					$fac->fetch($facs[$i]);
-					$result = $fac->set_paid($user);
+					$result = $fac->setPaid($user);
 				}
 			}
 
@@ -478,7 +482,7 @@ class BonPrelevement extends CommonObject
 
 					// @TODO Move this after creation of payment
 					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
-						$result = $fac->set_paid($user);
+						$result = $fac->setPaid($user);
 						if ($result < 0) {
 							$this->error = $fac->error;
 							$this->errors = $fac->errors;
@@ -1121,7 +1125,8 @@ class BonPrelevement extends CommonObject
 						if (!$resql)
 						{
 							$error++;
-							dol_syslog(__METHOD__."::Update Error=".$this->db->error(), LOG_ERR);
+							$this->errors[] = $this->db->lasterror();
+							dol_syslog(__METHOD__."::Update Error=".$this->db->lasterror(), LOG_ERR);
 						}
 					}
 				}
@@ -1154,7 +1159,7 @@ class BonPrelevement extends CommonObject
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
-						$this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS; // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
 
 						$this->raison_sociale              = $account->proprio;
 					}
@@ -1316,7 +1321,7 @@ class BonPrelevement extends CommonObject
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		if ($this->type == 'bank-transfer') {
-			$url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/card.php?id='.$this->id;
+			$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		}
 
 		if ($option != 'nolink')
@@ -1585,7 +1590,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
-				fputs($this->file, '						<Id>'.$conf->global->PRELEVEMENT_ICS.'</Id>'.$CrLf);
+				fputs($this->file, '						<Id>'.$this->emetteur_ics.'</Id>'.$CrLf);
 				fputs($this->file, '					</Othr>'.$CrLf);
 				fputs($this->file, '				    </PrvtId>'.$CrLf);
 				fputs($this->file, '				</Id>'.$CrLf);
@@ -1699,7 +1704,7 @@ class BonPrelevement extends CommonObject
 				fputs($this->file, '				<Id>'.$CrLf);
 				fputs($this->file, '				    <PrvtId>'.$CrLf);
 				fputs($this->file, '					<Othr>'.$CrLf);
-				fputs($this->file, '						<Id>'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'</Id>'.$CrLf);
+				fputs($this->file, '						<Id>'.$this->emetteur_ics.'</Id>'.$CrLf);
 				fputs($this->file, '					</Othr>'.$CrLf);
 				fputs($this->file, '				    </PrvtId>'.$CrLf);
 				fputs($this->file, '				</Id>'.$CrLf);
@@ -2126,7 +2131,7 @@ class BonPrelevement extends CommonObject
 			$this->emetteur_iban = $account->iban;
 			$this->emetteur_bic = $account->bic;
 
-			$this->emetteur_ics = $conf->global->PRELEVEMENT_ICS; // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+			$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);  // Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
 			$this->raison_sociale = $account->proprio;
 		}

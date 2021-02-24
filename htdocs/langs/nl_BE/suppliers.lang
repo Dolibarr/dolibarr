@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Verkoper
 ApproveThisOrder=Opdracht goedkeuren
+DenyingThisOrder=Wijger deze bestelling

@@ -93,18 +93,18 @@ if (empty($reshook))
 	// Ajout entrepot
 	if ($action == 'add' && $user->rights->stock->creer)
 	{
-		$object->ref         = GETPOST("ref");
-		$object->fk_parent   = GETPOST("fk_parent");
-		$object->label = GETPOST("libelle");
-		$object->description = GETPOST("desc");
+		$object->ref = (string) GETPOST("ref", "alpha");
+		$object->fk_parent = (int) GETPOST("fk_parent", "int");
+		$object->label = (string) GETPOST("libelle", "alpha");
+		$object->description = (string) GETPOST("desc", "alpha");
 		$object->statut      = GETPOST("statut");
-		$object->lieu        = GETPOST("lieu");
-		$object->address     = GETPOST("address");
-		$object->zip         = GETPOST("zipcode");
-		$object->town        = GETPOST("town");
-		$object->country_id  = GETPOST("country_id");
-		$object->phone = GETPOST("phone");
-		$object->fax = GETPOST("fax");
+		$object->lieu = (string) GETPOST("lieu", "alpha");
+		$object->address = (string) GETPOST("address", "alpha");
+		$object->zip = (string) GETPOST("zipcode", "alpha");
+		$object->town = (string) GETPOST("town", "alpha");
+		$object->country_id = GETPOST("country_id");
+		$object->phone = (string) GETPOST("phone", "alpha");
+		$object->fax = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formproduct->selectWarehouses('ifone', 'fk_parent', '', 1);
+	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Description
@@ -319,17 +319,17 @@ if ($action == 'create')
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -468,7 +468,7 @@ if ($action == 'create')
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			/* ************************************************************************** */
@@ -690,7 +690,7 @@ if ($action == 'create')
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" class="minwidth300" value="'.$object->lieu.'"></td></tr>';
 
 			// Parent entrepot
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
@@ -767,18 +767,18 @@ if ($action == 'create')
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

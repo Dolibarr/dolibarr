@@ -48,10 +48,10 @@ create table llx_propal
   remise_absolue		real         DEFAULT 0,			-- remise globale absolue (obsolete)
   remise				real         DEFAULT 0,			-- remise calculee (obsolete)
   total_ht				double(24,8) DEFAULT 0,			-- montant total ht apres remise globale
-  tva					double(24,8) DEFAULT 0,			-- montant total tva apres remise globale
+  total_tva             double(24,8) DEFAULT 0,			-- montant total tva apres remise globale
   localtax1				double(24,8) DEFAULT 0,			-- amount total localtax1
   localtax2				double(24,8) DEFAULT 0,			-- amount total localtax2
-  total					double(24,8) DEFAULT 0,			-- montant total ttc apres remise globale
+  total_ttc				double(24,8) DEFAULT 0,			-- montant total ttc apres remise globale
 
   fk_account			integer,						-- bank account
   fk_currency			varchar(3),						-- currency code
@@ -66,6 +66,7 @@ create table llx_propal
   
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id
+  fk_warehouse		    integer DEFAULT NULL,           -- warehouse id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   fk_incoterms          integer,										-- for incoterms
@@ -75,9 +76,9 @@ create table llx_propal
   fk_delivery_address	integer,							-- delivery address (deprecated)
   
   fk_multicurrency			integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code		varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
   multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

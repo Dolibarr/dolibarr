@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,11 @@ abstract class CommonDocGenerator
 	public $extrafieldsCache;
 
 	/**
+	 * @var int	If set to 1, save the fullname of generated file with path as the main doc when generating a doc with this template.
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -77,11 +82,11 @@ abstract class CommonDocGenerator
 	public function get_substitutionarray_user($user, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $extrafields;
 
 		$logotouse = $conf->user->dir_output.'/'.get_exdir($user->id, 2, 0, 1, $user, 'user').'/'.$user->photo;
 
-		return array(
+		$array_user = array(
 			'myuser_lastname'=>$user->lastname,
 			'myuser_firstname'=>$user->firstname,
 			'myuser_fullname'=>$user->getFullName($outputlangs, 1),
@@ -101,6 +106,57 @@ abstract class CommonDocGenerator
 			'myuser_job'=>$user->job,
 			'myuser_web'=>''	// url not exist in $user object
 		);
+		// Retrieve extrafields
+		if (is_array($user->array_options) && count($user->array_options)) {
+			$array_user = $this->fill_substitutionarray_with_extrafields($user, $array_user, $extrafields, 'myuser', $outputlangs);
+		}
+		return $array_user;
+	}
+
+
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Adherent	$member         Member
+	 * @param   Translate	$outputlangs    Language object for output
+	 * @return	array						Array of substitution key->code
+	 */
+	public function getSubstitutionarrayMember($member, $outputlangs)
+	{
+		global $conf, $extrafields;
+
+		if ($member->photo) {
+			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
+		} else {
+			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
+		}
+
+		$array_member = array(
+			'mymember_lastname' => $member->lastname,
+			'mymember_firstname' => $member->firstname,
+			'mymember_fullname' => $member->getFullName($outputlangs, 1),
+			'mymember_login' => $member->login,
+			'mymember_address' => $member->address,
+			'mymember_zip' => $member->zip,
+			'mymember_town' => $member->town,
+			'mymember_country_code' => $member->country_code,
+			'mymember_country' => $member->country,
+			'mymember_state_code' => $member->state_code,
+			'mymember_state' => $member->state,
+			'mymember_phone_perso' => $member->phone_perso,
+			'mymember_phone_pro' => $member->phone,
+			'mymember_phone_mobile' => $member->phone_mobile,
+			'mymember_email' => $member->email,
+			'mymember_logo' => $logotouse,
+			'mymember_gender' => $member->gender,
+			'mymember_birth_locale' => dol_print_date($member->birth, 'day', 'tzuser', $outputlangs),
+			'mymember_birth' => dol_print_date($member->birth, 'day', 'tzuser'),
+		);
+		// Retrieve extrafields
+		if (is_array($member->array_options) && count($member->array_options)) {
+			$array_member = $this->fill_substitutionarray_with_extrafields($member, $array_member, $extrafields, 'mymember', $outputlangs);
+		}
+		return $array_member;
 	}
 
 
@@ -531,10 +587,13 @@ abstract class CommonDocGenerator
 		$resarray = array(
 			'line_pos' => $linenumber,
 			'line_fulldesc'=>doc_getlinedesc($line, $outputlangs),
-			'line_product_ref'=>$line->product_ref,
-			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
-			'line_product_label'=>$line->product_label,
-			'line_product_type'=>$line->product_type,
+
+			'line_product_ref'=>(empty($line->product_ref) ? '' : $line->product_ref),
+			'line_product_ref_fourn'=>(empty($line->ref_fourn) ? '' : $line->ref_fourn), // for supplier doc lines
+			'line_product_label'=>(empty($line->product_label) ? '' : $line->product_label),
+			'line_product_type'=>(empty($line->product_type) ? '' : $line->product_type),
+			'line_product_barcode'=>(empty($line->product_barcode) ? '' : $line->product_barcode),
+
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
 			'line_localtax1_rate'=>vatrate($line->localtax1_tx),
@@ -571,7 +630,7 @@ abstract class CommonDocGenerator
 		);
 
 		// Units
-		if ($conf->global->PRODUCT_USE_UNITS)
+		if (!empty($conf->global->PRODUCT_USE_UNITS))
 		{
 			  $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
 			  $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
@@ -598,7 +657,7 @@ abstract class CommonDocGenerator
 			{
 				$columns = "";
 
-				foreach ($extralabels as $key)
+				foreach ($extralabels as $key => $label)
 				{
 					$columns .= "$key, ";
 				}
@@ -612,7 +671,7 @@ abstract class CommonDocGenerator
 					{
 						$resql = $this->db->fetch_object($resql);
 
-						foreach ($extralabels as $key)
+						foreach ($extralabels as $key => $label)
 						{
 							$resarray['line_product_supplier_'.$key] = $resql->{$key};
 						}
@@ -687,6 +746,12 @@ abstract class CommonDocGenerator
 			$object->fetch_optionals();
 
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
+		}
+
+		// Add infor from $object->xxx where xxx has been loaded by fetch_origin() of shipment
+		if (!empty($object->commande) && is_object($object->commande)) {
+			$array_shipment['order_ref'] = $object->commande->ref;
+			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}
 
 		return $array_shipment;
@@ -1249,7 +1314,7 @@ abstract class CommonDocGenerator
 		$html = '';
 		$fields = array();
 
-		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
+		if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 			{
 				// Enable extrafield ?
@@ -1335,7 +1400,7 @@ abstract class CommonDocGenerator
 						if ($itemsInRow > 0) {
 							// close table row and empty cols
 							for ($i = $itemsInRow; $i <= $maxItemsInRow; $i++) {
-								$html .= "<td ></td><td></td>";
+								$html .= "<td></td><td></td>";
 							}
 							$html .= "</tr>";
 

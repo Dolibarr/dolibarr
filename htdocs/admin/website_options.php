@@ -116,7 +116,7 @@ if ($action == 'edit')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '</div>';
 
 	print '</form>';
@@ -140,7 +140,7 @@ if ($action == 'edit')
 }
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

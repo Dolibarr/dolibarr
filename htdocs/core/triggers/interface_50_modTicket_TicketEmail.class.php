@@ -31,11 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceTicketEmail extends DolibarrTriggers
 {
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
 	 *   Constructor
 	 *
 	 *   @param DoliDB $db Database handler
@@ -47,51 +42,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "ticket";
 		$this->description = "Triggers of the module ticket to send notifications to internal users and to third-parties";
-		$this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
+		$this->version = self::VERSION_DOLIBARR; // 'development', 'experimental', 'dolibarr' or version
 		$this->picto = 'ticket';
-	}
-
-	/**
-	 *   Return name of trigger file
-	 *
-	 *   @return string      Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 *   Return description of trigger file
-	 *
-	 *   @return string      Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
-	/**
-	 *   Return version of trigger file
-	 *
-	 *   @return string      Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("Development");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("Experimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
-		}
 	}
 
 	/**
@@ -115,16 +67,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			case 'TICKET_ASSIGNED':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id)
-				{
+				if ($object->fk_user_assign > 0 && $object->fk_user_assign != $user->id) {
 					$userstat = new User($this->db);
 					$res = $userstat->fetch($object->fk_user_assign);
-					if ($res > 0)
-					{
+					if ($res > 0) {
 						// Send email to notification email
 
-						if (empty($conf->global->TICKET_DISABLE_ALL_MAILS))
-						{
+						if (empty($conf->global->TICKET_DISABLE_ALL_MAILS)) {
 							// Init to avoid errors
 							$filepath = array();
 							$filename = array();
@@ -183,11 +132,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				$langs->load('ticket');
 
 				// Send email to notification email
-				$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail']))
-				{
-					if ($sendto)
-					{
+				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail'])) {
+					$sendto = empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? '' : $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+
+					if ($sendto) {
 						// Init to avoid errors
 						$filepath = array();
 						$filename = array();
@@ -248,14 +196,23 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				// Send email to customer
 
-				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
-				{
+				if (empty($conf->global->TICKET_DISABLE_CUSTOMER_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create) {
 					$sendto = '';
-					if (empty($user->socid) && empty($user->email)) {
-							  $object->fetch_thirdparty();
-							  $sendto = $object->thirdparty->email;
-					} else {
-						$sendto = $user->email;
+
+					//if contact selected send to email's contact else send to email's thirdparty
+
+					$contactid = GETPOST('contactid', 'alpha');
+
+					if (!empty($contactid)) {
+						$contact = new Contact($this->db);
+						$res = $contact->fetch($contactid);
+					}
+
+					if ($res > 0 && !empty($contact->email) && !empty($contact->statut)) {
+						$sendto = $contact->email;
+					} elseif (!empty($object->fk_soc)) {
+						$object->fetch_thirdparty();
+						$sendto = $object->thirdparty->email;
 					}
 
 					if ($sendto) {
@@ -272,16 +229,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
 
 						// Extrafields
-						foreach ($this->attributes[$object->table_element]['label'] as $key => $value)
-						{
+						foreach ($this->attributes[$object->table_element]['label'] as $key => $value) {
 							$enabled = 1;
-							if ($enabled && isset($this->attributes[$object->table_element]['list'][$key]))
-							{
+							if ($enabled && isset($this->attributes[$object->table_element]['list'][$key])) {
 								$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
 							}
 							$perms = 1;
-							if ($perms && isset($this->attributes[$object->table_element]['perms'][$key]))
-							{
+							if ($perms && isset($this->attributes[$object->table_element]['perms'][$key])) {
 								$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
 							}
 
@@ -303,7 +257,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$message_customer .= '<p>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 						$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-						$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 						$replyto = $from;
 
 						$trackid = 'tic'.$object->id;

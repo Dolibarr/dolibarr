@@ -242,68 +242,68 @@ class pdf_standard extends CommonStickerGenerator
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
 
 		$this->code = $srctemplatepath;
 
 		if (is_object($object))
 		{
-		    if ($object->country == '-') $object->country = '';
+			if ($object->country == '-') $object->country = '';
 
 			$now = dol_now();
 			$year = dol_print_date($now, '%Y');
 			$month = dol_print_date($now, '%m');
 			$day = dol_print_date($now, '%d');
 
-    		// List of values to scan for a replacement
-    		$substitutionarray = array(
-    		    '__ID__' => $object->id,
-    		    '__LOGIN__'=>$object->login,
-    		    '__FIRSTNAME__'=>$object->firstname,
-    		    '__LASTNAME__'=>$object->lastname,
-    		    '__FULLNAME__'=>$object->getFullName($langs),
-    		    '__COMPANY__'=>$object->company,
-    		    '__ADDRESS__'=>$object->address,
-    		    '__ZIP__'=>$object->zip,
-    		    '__TOWN__'=>$object->town,
-    		    '__COUNTRY__'=>$object->country,
-    		    '__COUNTRY_CODE__'=>$object->country_code,
-    		    '__EMAIL__'=>$object->email,
-    		    '__BIRTH__'=>dol_print_date($object->birth, 'day'),
-    		    '__TYPE__'=>$object->type,
-    		    '__YEAR__'=>$year,
-    		    '__MONTH__'=>$month,
-    		    '__DAY__'=>$day,
-    		    '__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-    		    '__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
-    		);
-    		complete_substitutions_array($substitutionarray, $langs);
+			// List of values to scan for a replacement
+			$substitutionarray = array(
+				'__ID__' => $object->id,
+				'__LOGIN__'=>$object->login,
+				'__FIRSTNAME__'=>$object->firstname,
+				'__LASTNAME__'=>$object->lastname,
+				'__FULLNAME__'=>$object->getFullName($langs),
+				'__COMPANY__'=>$object->company,
+				'__ADDRESS__'=>$object->address,
+				'__ZIP__'=>$object->zip,
+				'__TOWN__'=>$object->town,
+				'__COUNTRY__'=>$object->country,
+				'__COUNTRY_CODE__'=>$object->country_code,
+				'__EMAIL__'=>$object->email,
+				'__BIRTH__'=>dol_print_date($object->birth, 'day'),
+				'__TYPE__'=>$object->type,
+				'__YEAR__'=>$year,
+				'__MONTH__'=>$month,
+				'__DAY__'=>$day,
+				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+				'__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
+			);
+			complete_substitutions_array($substitutionarray, $langs);
 
-    		// For business cards
-		    $textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
-		    $textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
-		    $textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
-		    $textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+			// For business cards
+			$textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
+			$textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
+			$textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
+			$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
 
-		    $nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
-		    if ($nb <= 0) $nb = 1; // Protection to avoid empty page
+			$nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
+			if ($nb <= 0) $nb = 1; // Protection to avoid empty page
 
-		    for ($j = 0; $j < $nb; $j++)
-	        {
-	            $arrayofmembers[] = array(
-	                'textleft'=>$textleft,
-	                'textheader'=>$textheader,
-	                'textfooter'=>$textfooter,
-	                'textright'=>$textright,
-	                'id'=>$object->rowid,
-	                'photo'=>$object->photo
-	            );
-	        }
+			for ($j = 0; $j < $nb; $j++)
+			{
+				$arrayofmembers[] = array(
+					'textleft'=>$textleft,
+					'textheader'=>$textheader,
+					'textfooter'=>$textfooter,
+					'textright'=>$textright,
+					'id'=>$object->rowid,
+					'photo'=>$object->photo
+				);
+			}
 
-    		$arrayofrecords = $arrayofmembers;
+			$arrayofrecords = $arrayofmembers;
 		} else {
-		    $arrayofrecords = $object;
+			$arrayofrecords = $object;
 		}
 
 		//var_dump($arrayofrecords);exit;

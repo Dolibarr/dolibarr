@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ class Don extends CommonObject
 	public $table_element = 'don';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_donation';
 
@@ -97,6 +97,10 @@ class Don extends CommonObject
 	 * @var string Email
 	 */
 	public $email;
+
+	/**
+	 * @var int 0 or 1
+	 */
 	public $public;
 
 	/**
@@ -111,6 +115,10 @@ class Don extends CommonObject
 
 	public $num_payment;
 	public $date_valid;
+
+	/**
+	 * @var int payment mode id
+	 */
 	public $modepaymentid = 0;
 
 	/**
@@ -144,8 +152,8 @@ class Don extends CommonObject
 	/**
 	 * 	Returns the donation status label (draft, valid, abandoned, paid)
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *  @return string        		Libelle
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string        			Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -156,9 +164,9 @@ class Don extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id statut
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Libelle du statut
+	 *  @param	int		$status        Id statut
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -230,7 +238,7 @@ class Don extends CommonObject
 		$this->socid = 1;
 		$this->date = $now;
 		$this->date_valid = $now;
-		$this->amount = 100;
+		$this->amount = 100.90;
 		$this->public = 1;
 		$this->societe = 'The Company';
 		$this->address = 'Twist road';
@@ -239,7 +247,8 @@ class Don extends CommonObject
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
 		$this->email = 'email@email.com';
-		$this->note = '';
+		$this->phone = '0123456789';
+		$this->phone_mobile = '0606060606';
 		$this->statut = 1;
 	}
 
@@ -392,17 +401,17 @@ class Don extends CommonObject
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", '".$this->db->escape($this->zip)."'";
 		$sql .= ", '".$this->db->escape($this->town)."'";
-		$sql .= ", ".($this->country_id > 0 ? $this->country_id : '0');
-		$sql .= ", ".((int) $this->public);
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
+		$sql .= ", ".(int) ($this->country_id > 0 ? $this->country_id : 0);
+		$sql .= ", ".(int) $this->public;
+		$sql .= ", ".($this->fk_project > 0 ? (int) $this->fk_project : "null");
 	   	$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ", ".$user->id;
 		$sql .= ", null";
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", '".$this->db->escape($this->email)."'";
-		$sql .= ", '".$this->db->escape($this->phone)."'";
-		$sql .= ", '".$this->db->escape($this->phone_mobile)."'";
+		$sql .= ", '".$this->db->escape(trim($this->email))."'";
+		$sql .= ", '".$this->db->escape(trim($this->phone))."'";
+		$sql .= ", '".$this->db->escape(trim($this->phone_mobile))."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -426,13 +435,9 @@ class Don extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error)
-			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
@@ -490,9 +495,9 @@ class Don extends CommonObject
 		$sql .= ",note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
 		$sql .= ",datedon='".$this->db->idate($this->date)."'";
 		$sql .= ",date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
-		$sql .= ",email='".$this->db->escape($this->email)."'";
-		$sql .= ",phone='".$this->db->escape($this->phone)."'";
-		$sql .= ",phone_mobile='".$this->db->escape($this->phone_mobile)."'";
+		$sql .= ",email='".$this->db->escape(trim($this->email))."'";
+		$sql .= ",phone='".$this->db->escape(trim($this->phone))."'";
+		$sql .= ",phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
 		$sql .= ",fk_statut=".$this->statut;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -511,13 +516,10 @@ class Don extends CommonObject
 			// Update extrafield
 			if (!$error)
 			{
-			  	if (!$error)
+			   	$result = $this->insertExtraFields();
+			   	if ($result < 0)
 			   	{
-			   		$result = $this->insertExtraFields();
-			   		if ($result < 0)
-			   		{
-			   			$error++;
-			   		}
+			   		$error++;
 			   	}
 			}
 
@@ -555,18 +557,14 @@ class Don extends CommonObject
 
 		$this->db->begin();
 
-   		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('DON_DELETE', $user);
+   		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('DON_DELETE', $user);
 
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 		}
 
 		// Delete donation
@@ -687,9 +685,9 @@ class Don extends CommonObject
 				$this->note_private	      = $obj->note_private;
 				$this->note_public = $obj->note_public;
 				$this->model_pdf          = $obj->model_pdf;
-				$this->modelpdf           = $obj->model_pdf;	// deprecated
+				$this->modelpdf           = $obj->model_pdf; // deprecated
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}
@@ -737,8 +735,7 @@ class Don extends CommonObject
 		{
 			if ($this->db->affected_rows($resql))
 			{
-				if (!$notrigger)
-				{
+				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('DON_VALIDATE', $user);
 					if ($result < 0) { $error++; }
@@ -750,8 +747,8 @@ class Don extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
+			$this->statut = 1;
 			$this->db->commit();
 			return 1;
 		} else {
@@ -764,13 +761,28 @@ class Don extends CommonObject
 	/**
 	 *    Classify the donation as paid, the donation was received
 	 *
-	 *    @param	int		$id           	    id of donation
-	 *    @param    int		$modepayment   	    mode of payment
-	 *    @return   int      					<0 if KO, >0 if OK
+	 *	@deprecated
+	 *  @see setPaid()
+	 *  @param	int		$id           	    id of donation
+	 *  @param    int		$modepayment   	    mode of payment
+	 *  @return   int      					<0 if KO, >0 if OK
 	 */
 	public function set_paid($id, $modepayment = 0)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($id, $modepayment);
+	}
+
+	/**
+	 *    Classify the donation as paid, the donation was received
+	 *
+	 *    @param	int		$id           	    id of donation
+	 *    @param    int		$modepayment   	    mode of payment
+	 *    @return   int      					<0 if KO, >0 if OK
+	 */
+	public function setPaid($id, $modepayment = 0)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 		if ($modepayment)
 		{
@@ -779,10 +791,9 @@ class Don extends CommonObject
 		$sql .= " WHERE rowid = ".$id." AND fk_statut = 1";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->affected_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
+				$this->statut = 2;
 				return 1;
 			} else {
 				return 0;
@@ -806,10 +817,9 @@ class Don extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->affected_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
+				$this->statut = -1;
 				return 1;
 			} else {
 				return 0;
@@ -818,6 +828,30 @@ class Don extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->statut != self::STATUS_CANCELED) {
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -899,9 +933,13 @@ class Don extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Donation").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Donation").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		if (!empty($this->id)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
 		}
 		if ($moretitle) $label .= ' - '.$moretitle;
 

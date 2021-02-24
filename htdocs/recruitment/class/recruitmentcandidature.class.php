@@ -68,6 +68,7 @@ class RecruitmentCandidature extends CommonObject
 	//const STATUS_INTERVIEW_SCHEDULED = 2;
 	const STATUS_CONTRACT_PROPOSED = 3;
 	const STATUS_CONTRACT_SIGNED = 5;
+	const STATUS_CONTRACT_REFUSED = 6;
 	const STATUS_REFUSED = 8;
 	const STATUS_CANCELED = 9;
 
@@ -86,7 +87,7 @@ class RecruitmentCandidature extends CommonObject
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
@@ -114,7 +115,7 @@ class RecruitmentCandidature extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'lastname' => array('type'=>'varchar(128)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>1,),
 		'firstname' => array('type'=>'varchar(128)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>1,),
-		'email' => array('type'=>'varchar(255)', 'label'=>'EMail', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1,),
+		'email' => array('type'=>'varchar(255)', 'label'=>'EMail', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'picto'=>'email'),
 		'phone' => array('type'=>'varchar(64)', 'label'=>'Phone', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1,),
 		'date_birth' => array('type'=>'date', 'label'=>'DateOfBirth', 'enabled'=>'1', 'position'=>70, 'visible'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
@@ -152,42 +153,6 @@ class RecruitmentCandidature extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'recruitment_recruitmentcandidatureline';
-
-	/**
-	 * @var int    Field with ID of parent key if this object has a parent
-	 */
-	//public $fk_element = 'fk_recruitmentcandidature';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'RecruitmentCandidatureline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables = array();
-
-	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	 */
-	//protected $childtablesoncascade = array('recruitment_recruitmentcandidaturedet');
-
-	/**
-	 * @var RecruitmentCandidatureLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -222,7 +187,7 @@ class RecruitmentCandidature extends CommonObject
 		{
 			foreach ($this->fields as $key => $val)
 			{
-				if (is_array($val['arrayofkeyval']))
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
 				{
 					foreach ($val['arrayofkeyval'] as $key2 => $val2)
 					{
@@ -276,11 +241,13 @@ class RecruitmentCandidature extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
-
 		// Clear fields
-		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
-		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		$object->status = self::STATUS_DRAFT;
+		if (property_exists($object, 'ref')) $object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+		if (property_exists($object, 'label')) $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		if (property_exists($object, 'status')) { $object->status = self::STATUS_DRAFT; }
+		if (property_exists($object, 'date_creation')) { $object->date_creation = dol_now(); }
+		if (property_exists($object, 'date_modification')) { $object->date_modification = null; }
+
 		// ...
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0)
@@ -679,7 +646,7 @@ class RecruitmentCandidature extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_REFUSED && $this->status != self::STATUS_CANCELED && $this->status != self::STATUS_CONTRACT_REFUSED)
 		{
 			return 0;
 		}
@@ -712,14 +679,14 @@ class RecruitmentCandidature extends CommonObject
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("RecruitmentCandidature").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("RecruitmentCandidature").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
 		$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->getFullName($langs);
-		if (isset($this->status)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-		}
 
 		$url = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.$this->id;
 
@@ -821,13 +788,15 @@ class RecruitmentCandidature extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Received').' ('.$langs->trans("InterviewToDo").')';
 			$this->labelStatus[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
 			$this->labelStatus[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
+			$this->labelStatus[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Received');
 			$this->labelStatusShort[self::STATUS_CONTRACT_PROPOSED] = $langs->trans('ContractProposed');
 			$this->labelStatusShort[self::STATUS_CONTRACT_SIGNED] = $langs->trans('ContractSigned');
+			$this->labelStatusShort[self::STATUS_CONTRACT_REFUSED] = $langs->trans('ContractRefused');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('Refused');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
@@ -1003,18 +972,17 @@ class RecruitmentCandidature extends CommonObject
 		$langs->load("recruitment@recruitment");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_recruitmentcandidature';
-
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF)) {
+			if (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF))
+			{
 				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
+			} else {
+				$modele = ''; // No default value. For job application, we allow to disable all PDF generation
 			}
 		}
 
 		$modelpath = "core/modules/recruitment/doc/";
 
-		if ($includedocgeneration) {
+		if ($includedocgeneration && !empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 

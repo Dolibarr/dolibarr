@@ -19,7 +19,6 @@ ActionsOnPropal=Événements sur proposition
 RefProposal=Référence de la proposition commerciale
 SendPropalByMail=Envoyer proposition commerciale par courriel
 DateEndPropal=Date de validité se terminant
-CloseAs=Définir l'état sur
 SetAcceptedRefused=Accepté/refusé
 ErrorPropalNotFound=Pas de proposition %s trouvées
 AddToDraftProposals=Ajouter un brouillon de proposition

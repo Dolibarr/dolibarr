@@ -212,8 +212,7 @@ foreach ($dirmodels as $reldir)
 		{
 			while (($file = readdir($handle)) !== false)
 			{
-				if (substr($file, 0, 15) == 'mod_expedition_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-				{
+				if (preg_match('/^mod_expedition_([a-z0-9_]*)\.php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -226,7 +225,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						print '<tr><td>'.$module->nom."</td>\n";
+						print '<tr><td>'.$module->name."</td>\n";
 						print '<td>';
 						print $module->info();
 						print '</td>';
@@ -235,7 +234,8 @@ foreach ($dirmodels as $reldir)
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
-							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
@@ -415,7 +415,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'sending').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}

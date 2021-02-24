@@ -68,22 +68,22 @@ class PrestaShopWebservice
 	 * @param string $url Root URL for the shop
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
-	*/
-    public function __construct($url, $key, $debug = true)
-    {
+	 */
+	public function __construct($url, $key, $debug = true)
+	{
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;
 		$this->key = $key;
 		$this->debug = $debug;
 		$this->version = 'unknown';
-    }
+	}
 
 	/**
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
-     * @return void
+	 * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
@@ -221,7 +221,9 @@ class PrestaShopWebservice
 	 * Load XML from string. Can throw exception
 	 *
 	 * @param 	string 				$response 	String from a CURL response
-	 * @return 	SimpleXMLElement 				status_code, response
+	 * @return 	SimpleXMLElement|boolean		status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	protected function parseXML($response)
 	{
@@ -250,7 +252,9 @@ class PrestaShopWebservice
 	 * Examples are given in the tutorial</p>
 	 *
 	 * @param 	array 				$options	Options
-	 * @return 	SimpleXMLElement 				status_code, response
+	 * @return 	SimpleXMLElement|boolean 		status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function add($options)
 	{
@@ -268,14 +272,14 @@ class PrestaShopWebservice
 		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
 		}
-		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $xml));
+		$request = $this->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $xml));
 
-		self::checkStatusCode($request['status_code']);
-		return self::parseXML($request['response']);
+		$this->checkStatusCode($request['status_code']);
+		return $this->parseXML($request['response']);
 	}
 
 	/**
- 	 * Retrieve (GET) a resource
+	 * Retrieve (GET) a resource
 	 * <p>Unique parameter must take : <br><br>
 	 * 'url' => Full URL for a GET request of Webservice (ex: http://mystore.com/api/customers/1/)<br>
 	 * OR<br>
@@ -300,7 +304,9 @@ class PrestaShopWebservice
 	 * ?>
 	 * </code>
 	 * @param 	array 			$options 	Array representing resource to get.
-	 * @return 	SimpleXMLElement 			status_code, response
+	 * @return 	SimpleXMLElement|boolean	status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function get($options)
 	{
@@ -326,16 +332,18 @@ class PrestaShopWebservice
 			throw new PrestaShopWebserviceException('Bad parameters given ');
 		}
 
-		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-		self::checkStatusCode($request['status_code']); // check the response validity
-		return self::parseXML($request['response']);
+		$request = $this->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
+		$this->checkStatusCode($request['status_code']); // check the response validity
+		return $this->parseXML($request['response']);
 	}
 
 	/**
- 	 * Head method (HEAD) a resource
+	 * Head method (HEAD) a resource
 	 *
 	 * @param 	array 				$options 	Array representing resource for head request.
 	 * @return 	SimpleXMLElement 				status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function head($options)
 	{
@@ -358,8 +366,8 @@ class PrestaShopWebservice
 		} else {
 			throw new PrestaShopWebserviceException('Bad parameters given');
 		}
-		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'HEAD', CURLOPT_NOBODY => true));
-		self::checkStatusCode($request['status_code']); // check the response validity
+		$request = $this->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'HEAD', CURLOPT_NOBODY => true));
+		$this->checkStatusCode($request['status_code']); // check the response validity
 		return $request['header'];
 	}
 	/**
@@ -371,7 +379,9 @@ class PrestaShopWebservice
 	 * Examples are given in the tutorial</p>
 	 *
 	 * @param 	array 				$options 	Array representing resource to edit.
-	 * @return	SimpleXMLElement 				status_code, response
+	 * @return	SimpleXMLElement|boolean 		status_code, response
+	 *
+	 * @throw PrestaShopWebserviceException
 	 */
 	public function edit($options)
 	{
@@ -390,9 +400,9 @@ class PrestaShopWebservice
 			throw new PrestaShopWebserviceException('Bad parameters given');
 		}
 
-		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
-		self::checkStatusCode($request['status_code']); // check the response validity
-		return self::parseXML($request['response']);
+		$request = $this->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
+		$this->checkStatusCode($request['status_code']); // check the response validity
+		return $this->parseXML($request['response']);
 	}
 }
 

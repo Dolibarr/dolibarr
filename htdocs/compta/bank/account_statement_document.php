@@ -133,7 +133,7 @@ if (!empty($numref))
 	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($numref);
 }
 $backtopage = $_SERVER['PHP_SELF']."?account=".$id."&num=".$numref;
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -182,7 +182,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		$modulepart = 'bank';

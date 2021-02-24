@@ -70,7 +70,7 @@ class modProduct extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modStock", "modBarcode", "modProductBatch", "modVariants"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
@@ -192,6 +192,7 @@ class modProduct extends DolibarrModules
 			'p.duration'=>"Duration",
 			'p.finished' => 'Nature',
 			'p.price_base_type'=>"PriceBase", 'p.price'=>"UnitPriceHT", 'p.price_ttc'=>"UnitPriceTTC",
+			'p.price_min'=>"MinPriceHT",'p.price_min_ttc'=>"MinPriceTTC",
 			'p.tva_tx'=>'VATRate',
 			'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 		);
@@ -216,7 +217,9 @@ class modProduct extends DolibarrModules
 			'p.customcode'=>'Text',
 			'p.duration'=>"Text",
 			'p.finished' => 'Numeric',
-			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric',
+			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric",
+			'p.price_min'=>"Numeric", 'p.price_min_ttc'=>"Numeric",
+			'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
 		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('e.ref'=>'Text', 'p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
@@ -547,7 +550,7 @@ class modProduct extends DolibarrModules
 
 		// field order as per structure of table llx_product
 		$import_sample = array(
-			'p.ref' => "PREF123456",
+			'p.ref' => "ref:PREF123456",
 			'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
 			'p.label' => "Product name in default language",
 			'p.description' => "Product description in default language",
@@ -628,7 +631,7 @@ class modProduct extends DolibarrModules
 			$this->import_label[$r] = "SuppliersPricesOfProductsOrServices"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price','extra'=>MAIN_DB_PREFIX.'product_fournisseur_price_extrafields');
+			$this->import_tables_array[$r] = array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price', 'extra'=>MAIN_DB_PREFIX.'product_fournisseur_price_extrafields');
 			$this->import_tables_creator_array[$r] = array('sp'=>'fk_user');
 			$this->import_fields_array[$r] = array(//field order as per structure of table llx_product_fournisseur_price, without optional fields
 				'sp.fk_product'=>"ProductOrService*",
@@ -649,7 +652,7 @@ class modProduct extends DolibarrModules
 					'sp.remise_percent'=>'DiscountQtyMin'
 			));
 
-			if ($conf->multicurrency->enabled)
+			if (!empty($conf->multicurrency->enabled))
 			{
 				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 					'sp.fk_multicurrency'=>'CurrencyCodeId', //ideally this should be automatically obtained from the CurrencyCode on the next line
@@ -661,7 +664,7 @@ class modProduct extends DolibarrModules
 			}
 
 			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
+				$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('sp.packaging' => 'PackagingForThisProduct'));
 			}
 
 			// Add extra fields
@@ -670,13 +673,13 @@ class modProduct extends DolibarrModules
 			$resql = $this->db->query($sql);
 			if ($resql)    // This can fail when class is used on old database (during migration for example)
 			{
-			    while ($obj = $this->db->fetch_object($resql))
-		    	{
-		        	$fieldname = 'extra.'.$obj->name;
-			        $fieldlabel = ucfirst($obj->label);
-			        $this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			        $import_extrafield_sample[$fieldname] = $fieldlabel;
-			    }
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$fieldname = 'extra.'.$obj->name;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+					$import_extrafield_sample[$fieldname] = $fieldlabel;
+				}
 			}
 			// End add extra fields
 			$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product_fournisseur_price'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
@@ -687,7 +690,7 @@ class modProduct extends DolibarrModules
 			);
 
 			$this->import_examplevalues_array[$r] = array(
-				'sp.fk_product' => "PRODUCT_REF or id:123456",
+				'sp.fk_product' => "ref:PRODUCT_REF or id:123456",
 				'sp.fk_soc' => "My Supplier",
 				'sp.ref_fourn' => "XYZ-F123456",
 				'sp.quantity' => "5",
@@ -708,7 +711,7 @@ class modProduct extends DolibarrModules
 				// TODO Make this field not required and calculate it from price and qty
 				'sp.remise_percent' => '20'
 			));
-			if ($conf->multicurrency->enabled)
+			if (!empty($conf->multicurrency->enabled))
 			{
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 					'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',
@@ -749,13 +752,13 @@ class modProduct extends DolibarrModules
 			$this->import_convertvalue_array[$r] = array(
 				'pr.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r] = array('pr.fk_product'=>"PRODUCT_REF or id:123456",
+			$this->import_examplevalues_array[$r] = array('pr.fk_product'=>"ref:PRODUCT_REF or id:123456",
 				'pr.price_base_type'=>"HT (for excl tax) or TTC (for inc tax)", 'pr.price_level'=>"1",
 				'pr.price'=>"100", 'pr.price_ttc'=>"110",
 				'pr.price_min'=>"100", 'pr.price_min_ttc'=>"110",
 				'pr.tva_tx'=>'20',
 				'pr.recuperableonly'=>'0',
-				'pr.date_price'=>'2013-04-10');
+				'pr.date_price'=>'2020-12-31');
 		}
 
 		if (!empty($conf->global->MAIN_MULTILANGS))

@@ -55,6 +55,78 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 class pdf_beluga extends ModelePDFProjects
 {
 	/**
+	 * @var DoliDb Database handler
+	 */
+	public $db;
+
+	/**
+	 * @var string model name
+	 */
+	public $name;
+
+	/**
+	 * @var string model description (short text)
+	 */
+	public $description;
+
+	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
+
+	 /**
+	  * @var int page_largeur
+	  */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
+	 */
+	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
+
+	/**
 	 * Page orientation
 	 * @var string 'P' or 'Portait' (default), 'L' or 'Landscape'
 	 */
@@ -81,6 +153,7 @@ class pdf_beluga extends ModelePDFProjects
 		$this->db = $db;
 		$this->name = "beluga";
 		$this->description = $langs->trans("DocumentModelBeluga");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -111,14 +184,14 @@ class pdf_beluga extends ModelePDFProjects
 		if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
 			$this->posxref = $this->marge_gauche + 1;
 			$this->posxdate = $this->marge_gauche + 105;
-			$this->posxsociety = $this->marge_gauche + 125;
+			$this->posxsociety = $this->marge_gauche + 126;
 			$this->posxamountht = $this->marge_gauche + 190;
 			$this->posxamountttc = $this->marge_gauche + 215;
 			$this->posxstatut = $this->marge_gauche + 245;
 		} else {
 			$this->posxref = $this->marge_gauche + 1;
 			$this->posxdate = $this->marge_gauche + 25;
-			$this->posxsociety = $this->marge_gauche + 45;
+			$this->posxsociety = $this->marge_gauche + 46;
 			$this->posxamountht = $this->marge_gauche + 110;
 			$this->posxamountttc = $this->marge_gauche + 135;
 			$this->posxstatut = $this->marge_gauche + 165;
@@ -196,7 +269,7 @@ class pdf_beluga extends ModelePDFProjects
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 
 				if (class_exists('TCPDF'))
 				{
@@ -818,7 +891,7 @@ class pdf_beluga extends ModelePDFProjects
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

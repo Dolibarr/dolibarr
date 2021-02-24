@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,13 @@ $object = new Subscription($db);
 $errmsg = '';
 
 $action = GETPOST("action", 'alpha');
-$rowid = GETPOST("rowid", "int") ?GETPOST("rowid", "int") : GETPOST("id", "int");
+$rowid = GETPOST("rowid", "int") ? GETPOST("rowid", "int") : GETPOST("id", "int");
 $typeid = GETPOST("typeid", "int");
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
+$note = GETPOST('note', 'alpha');
+$typeid = (int) GETPOST('typeid', 'int');
+$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 if (!$user->rights->adherent->cotisation->lire)
 	 accessforbidden();
@@ -51,6 +54,11 @@ if (!$user->rights->adherent->cotisation->lire)
 $permissionnote = $user->rights->adherent->cotisation->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->adherent->cotisation->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the include of actions_lineupdonw.inc.php
+
+$hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
+
+// Security check
+$result = restrictedArea($user, 'subscription', 0);		// TODO Check on object id
 
 
 /*
@@ -84,7 +92,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 			} else {
 				$accountline->datev = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 				$accountline->dateo = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->amount = $_POST["amount"];
+				$accountline->amount = $amount;
 				$result = $accountline->update($user);
 				if ($result < 0) {
 					$errmsg = $accountline->error;
@@ -96,9 +104,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 			// Modify values
 			$object->dateh = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$object->datef = dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
-			$object->fk_type = $_POST["typeid"];
-			$object->note = $_POST["note"];
-			$object->amount = $_POST["amount"];
+			$object->fk_type = $typeid;
+			$object->note = $note;
+			$object->amount = $amount;
 			//print 'datef='.$object->datef.' '.$_POST['datesubendday'];
 
 			$result = $object->update($user);
@@ -145,8 +153,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
 
 $form = new Form($db);
 
-
-llxHeader('', $langs->trans("SubscriptionCard"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
 
 
 dol_htmloutput_errors($errmsg);
@@ -216,28 +224,26 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit') {
 	print '<input type="text" class="flat" size="60" name="note" value="'.$object->note.'"></td></tr>';
 
 	// Bank line
-	if (!empty($conf->banque->enabled)) {
-		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank) {
-			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
-			if ($object->fk_bank) {
-				$bankline = new AccountLine($db);
-				$result = $bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1, 0, 'showall');
-			} else {
-				print $langs->trans("NoneF");
-			}
-			print '</td></tr>';
+	if (!empty($conf->banque->enabled) && ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)) {
+		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+		if ($object->fk_bank) {
+			$bankline = new AccountLine($db);
+			$result = $bankline->fetch($object->fk_bank);
+			print $bankline->getNomUrl(1, 0, 'showall');
+		} else {
+			print $langs->trans("NoneF");
 		}
+		print '</td></tr>';
 	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -316,18 +322,16 @@ if ($rowid && $action != 'edit') {
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
 	// Bank line
-	if (!empty($conf->banque->enabled)) {
-		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank) {
-			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
-			if ($object->fk_bank) {
-				$bankline = new AccountLine($db);
-				$result = $bankline->fetch($object->fk_bank);
-				print $bankline->getNomUrl(1, 0, 'showall');
-			} else {
-				print $langs->trans("NoneF");
-			}
-			print '</td></tr>';
+	if (!empty($conf->banque->enabled) && ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)) {
+		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
+		if ($object->fk_bank) {
+			$bankline = new AccountLine($db);
+			$result = $bankline->fetch($object->fk_bank);
+			print $bankline->getNomUrl(1, 0, 'showall');
+		} else {
+			print $langs->trans("NoneF");
 		}
+		print '</td></tr>';
 	}
 
 	print "</table>\n";
@@ -335,7 +339,7 @@ if ($rowid && $action != 'edit') {
 
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
      * Barre d'actions

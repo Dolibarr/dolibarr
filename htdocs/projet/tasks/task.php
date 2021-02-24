@@ -93,13 +93,13 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
 		if (empty($task_parent)) $task_parent = 0; // If task_parent is ''
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
-		$object->label = $_POST["label"];
-		$object->description = $_POST['description'];
+		$object->label = GETPOST("label", "alphanohtml");
+		$object->description = GETPOST('description', "alphanohtml");
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
-		$object->date_start = dol_mktime($_POST['dateohour'], $_POST['dateomin'], 0, $_POST['dateomonth'], $_POST['dateoday'], $_POST['dateoyear']);
-		$object->date_end = dol_mktime($_POST['dateehour'], $_POST['dateemin'], 0, $_POST['dateemonth'], $_POST['dateeday'], $_POST['dateeyear']);
-		$object->progress = $_POST['progress'];
+		$object->date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
+		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
+		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -136,7 +136,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 	}
 }
 
-// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+// Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject))
 {
 	if ($projectstatic->fetch('', $project_ref) > 0)
@@ -182,7 +182,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 	{
 		$langs->load("other");
 		$upload_dir = $conf->projet->dir_output;
-		$file = $upload_dir.'/'.GETPOST('file');
+		$file = $upload_dir.'/'.dol_sanitizeFileName(GETPOST('file'));
 
 		$ret = dol_delete_file($file);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -190,10 +190,10 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 	}
 }
 
+
 /*
  * View
  */
-
 
 llxHeader('', $langs->trans("Task"));
 
@@ -214,7 +214,7 @@ if ($id > 0 || !empty($ref))
 
 		$object->project = clone $projectstatic;
 
-		$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
+		//$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
 
 		if (!empty($withproject))
 		{
@@ -337,7 +337,7 @@ if ($id > 0 || !empty($ref))
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<br>';
 		}
@@ -417,7 +417,7 @@ if ($id > 0 || !empty($ref))
 			print '</td></tr>';
 
 			// Date end
-			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print '<tr><td>'.$langs->trans("Deadline").'</td><td>';
 			print $form->selectDate($object->date_end ? $object->date_end : -1, 'datee', 1, 1, 0, '', 1, 0);
 			print '</td></tr>';
 
@@ -448,11 +448,11 @@ if ($id > 0 || !empty($ref))
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="update" value="'.$langs->trans("Modify").'"> &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';
@@ -513,7 +513,7 @@ if ($id > 0 || !empty($ref))
 			print '</td></tr>';
 
 			// Date start - Date end
-			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td colspan="3">';
 			$start = dol_print_date($object->date_start, 'dayhour');
 			print ($start ? $start : '?');
 			$end = dol_print_date($object->date_end, 'dayhour');
@@ -574,7 +574,7 @@ if ($id > 0 || !empty($ref))
 			print '</div>';
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		}
 
 
@@ -634,7 +634,8 @@ if ($id > 0 || !empty($ref))
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'task', $socid, 1, '', 10, 'withproject='.$withproject);
+			$defaultthirdpartyid = $socid > 0 ? $socid : $object->project->socid;
+			$formactions->showactions($object, 'task', $defaultthirdpartyid, 1, '', 10, 'withproject='.$withproject);
 
 			print '</div></div></div>';
 		}

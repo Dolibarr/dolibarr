@@ -118,7 +118,7 @@ for ($i = 0; $i < $nbtoshow; $i++)
 					$buyer = new Societe($db);
 					if ($_SESSION["CASHDESK_ID_THIRDPARTY"] > 0) $buyer->fetch($_SESSION["CASHDESK_ID_THIRDPARTY"]);
 					echo $form->load_tva('selTva', (GETPOSTISSET("selTva") ? GETPOST("selTva", 'alpha', 2) : $vatrate), $mysoc, $buyer, 0, 0, '', false, -1);
-			    ?>
+				?>
                 </td>
 				<td></td>
 			</tr>

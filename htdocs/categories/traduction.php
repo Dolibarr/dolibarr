@@ -39,7 +39,6 @@ $id     = GETPOST('id', 'int');
 $label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$type   = GETPOST('type', 'aZ09');
 
 if ($id == '' && $label == '')
 {
@@ -51,15 +50,12 @@ if ($id == '' && $label == '')
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label, $type);
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
-$object->fetch_optionals();
+$result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
+$type = $object->type;
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*
@@ -223,7 +219,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 
@@ -285,9 +281,9 @@ if ($action == 'edit')
 	print '<br>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -346,9 +342,9 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</table>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';

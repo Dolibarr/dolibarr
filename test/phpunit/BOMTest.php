@@ -75,10 +75,10 @@ class BOMTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
 	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -87,11 +87,11 @@ class BOMTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
 	public static function tearDownAfterClass()
 	{
 		global $conf,$user,$langs,$db;
@@ -129,7 +129,7 @@ class BOMTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testBOMCreate
 	 *
-     * @return int
+	 * @return int
 	 */
 	public function testBOMCreate()
 	{
@@ -146,6 +146,32 @@ class BOMTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
+		return $result;
+	}
+
+	/**
+	 * testBOMDelete
+	 *
+	 * @param	int		$id		Id of object
+	 * @return	void
+	 *
+	 * @depends	testBOMCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testBOMDelete($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new BOM($this->savdb);
+		$result=$localobject->fetch($id);
+		$result=$localobject->delete($user);
+
+		print __METHOD__." id=".$id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
 		return $result;
 	}
 }

@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills'));
+$langs->loadLangs(array("sendings", "deliveries", 'companies', 'bills', 'products'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -127,20 +127,14 @@ $arrayfields = array(
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(empty($conf->livraison_bon->enabled) ? 0 : 1)),
-	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(empty($conf->livraison_bon->enabled) ? 0 : 1)),
+	'l.ref'=>array('label'=>$langs->trans("DeliveryRef"), 'checked'=>1, 'enabled'=>(empty($conf->delivery_note->enabled) ? 0 : 1)),
+	'l.date_delivery'=>array('label'=>$langs->trans("DateReceived"), 'checked'=>1, 'enabled'=>(empty($conf->delivery_note->enabled) ? 0 : 1)),
 	'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
 
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -175,7 +169,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_state = "";
 	$search_type = '';
 	$search_country = '';
-	$search_tracking='';
+	$search_tracking = '';
 	$search_type_thirdparty = '';
 	$search_billed = '';
 	$search_datedelivery_start = '';
@@ -183,7 +177,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$search_status = '';
-    $toselect = '';
+	$toselect = '';
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }
@@ -217,8 +211,9 @@ $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Ex
 llxHeader('', $langs->trans('ListOfSendings'), $helpurl);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut, e.billed, e.tracking_number,";
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
+$sql .= " e.rowid, e.ref, e.ref_customer, e.date_expedition as date_expedition, e.weight, e.weight_units, e.date_delivery as delivery_date, e.fk_statut, e.billed, e.tracking_number,";
+$sql .= " l.date_delivery as date_reception,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ";
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -246,13 +241,14 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user_author = u.rowid';
-
+if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk_source
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
+}
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-if ($search_user > 0)
-{
+if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
@@ -277,9 +273,14 @@ if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_tracking)   $sql.= natural_search("e.tracking_number", $search_tracking);
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_tracking)   $sql .= natural_search("e.tracking_number", $search_tracking);
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_sale > 0)                        $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+if ($search_user > 0)
+{
+	// The contact on a shipment is also the contact of the order.
+	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = eesource.fk_source AND ec.fk_socpeople = ".$db->escape($search_user);
+}
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
@@ -335,9 +336,10 @@ if ($resql)
 	if ($search_user > 0) 			$param .= '&search_user='.urlencode($search_user);
 	if ($search_sale > 0) 			$param .= '&search_sale='.urlencode($search_sale);
 	if ($search_company)   $param .= "&amp;search_company=".urlencode($search_company);
-	if ($search_tracking)   $param.= "&amp;search_tracking=".urlencode($search_tracking);
+	if ($search_tracking)   $param .= "&amp;search_tracking=".urlencode($search_tracking);
 	if ($search_town)      $param .= '&search_town='.urlencode($search_town);
 	if ($search_zip)       $param .= '&search_zip='.urlencode($search_zip);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 
 	if ($search_datedelivery_start)	$param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
 	if ($search_datedelivery_end)	$param .= '&search_datedelivery_end='.urlencode($search_datedelivery_end);
@@ -346,7 +348,7 @@ if ($resql)
 
 	if ($search_product_category != '') $param .= '&search_product_category='.urlencode($search_product_category);
 	if ($search_categ_cus > 0)      $param .= '&search_categ_cus='.urlencode($search_categ_cus);
-	if ($search_status != '') $param .= '&viewstatut='.urlencode($search_status);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
 	if ($optioncss != '')  $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -489,7 +491,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Weight
@@ -514,7 +516,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Tracking number
-	if (! empty($arrayfields['e.tracking_number']['checked']))
+	if (!empty($arrayfields['e.tracking_number']['checked']))
 	{
 		print '<td class="liste_titre center">';
 		print '<input class="flat" size="6" type="text" name="search_tracking" value="'.dol_escape_htmltag($search_tracking).'">';
@@ -592,7 +594,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['e.weight']['checked']))         print_liste_field_titre($arrayfields['e.weight']['label'], $_SERVER["PHP_SELF"], "e.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['e.date_delivery']['checked']))  print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($arrayfields['e.tracking_number']['checked']))  print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['e.tracking_number']['checked']))  print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
@@ -624,6 +626,7 @@ if ($resql)
 
 		$object = new Expedition($db);
 		$object->fetch($obj->rowid);
+
 		print '<tr class="oddeven">';
 
 		// Ref
@@ -711,7 +714,7 @@ if ($resql)
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_livraison), "dayhour");
+			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 			/*$now = time();
     		if ( ($now - $db->jdate($obj->date_expedition)) > $conf->warnings->lim && $obj->statutid == 1 )
     		{
@@ -719,10 +722,10 @@ if ($resql)
 			print "</td>\n";
 		}
 		// Tracking number
-		if (! empty($arrayfields['e.tracking_number']['checked']))
+		if (!empty($arrayfields['e.tracking_number']['checked']))
 		{
 			print '<td class="center">'.$obj->tracking_number."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked']))

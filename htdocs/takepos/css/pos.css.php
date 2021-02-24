@@ -125,6 +125,10 @@ button.calcbutton2 {
     border-radius: 3px;
 }
 
+button.calcbutton2 .iconwithlabel {
+	padding-bottom: 10px;
+}
+
 button.calcbutton3 {
 	display: inline-block;
 	position: relative;
@@ -454,7 +458,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW;?>;
+    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
     overflow: hidden;
     padding-left: 2px;
     padding-right: 2px;
@@ -463,7 +467,7 @@ div.description_content {
 .header{
 	margin: 0 auto;
 	width: 100%;
-	height: 50px;
+	height: 52px;
 	background: rgb(60,70,100);
 }
 

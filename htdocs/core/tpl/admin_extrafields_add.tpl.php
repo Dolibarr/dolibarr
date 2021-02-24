@@ -57,17 +57,17 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
     		var list = jQuery("#list");
             var totalizable = jQuery("#totalizable");
     		<?php
-    		if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
-    		{
-    			print 'jQuery("#value_choice").hide();';
-    		}
+			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
+			{
+				print 'jQuery("#value_choice").hide();';
+			}
 
-    		if (GETPOST('type', 'alpha') == "separate")
-    		{
+			if (GETPOST('type', 'alpha') == "separate")
+			{
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
-    			print 'jQuery("#value_choice").hide();';
-    		}
-    		?>
+				print 'jQuery("#value_choice").hide();';
+			}
+			?>
 
     		// Case of computed field
     		if (type == '' || type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
@@ -153,7 +153,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>"> <span class="opacitymedium">(<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</span></td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type', $type2label, GETPOST('type', 'alpha')); ?>
+<?php print $form->selectarray('type', $type2label, GETPOST('type', 'alpha'), 0, 0, 0, '', 0, 0, 0, '', '', 1); ?>
 </td></tr>
 <!-- Size -->
 <tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size', 'alpha') ?GETPOST('size', 'alpha') : ''); ?>"></td></tr>
@@ -182,11 +182,14 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <!-- Language file -->
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile', 'alpha')); ?>"></td></tr>
 <!-- Computed Value -->
+<tr class="extra_computed_value">
 <?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
-	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" type="text" name="computed_value" class="quatrevingtpercent" value="<?php echo (GETPOSTISSET('computed_value') ? GETPOST('computed_value', 'none') : ''); ?>"></td></tr>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else { ?>
-	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
 <?php } ?>
+<td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo (GETPOST('computed_value', 'none') ?GETPOST('computed_value', 'none') : ''); ?></textarea></td>
+</tr>
 <!-- Default Value (at sql setup level) -->
 <tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo (GETPOST('default_value', 'alpha') ?GETPOST('default_value', 'alpha') : ''); ?>"></td></tr>
 <!-- Unique -->
@@ -211,10 +214,10 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <?php } ?>
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
-<div class="center"><input type="submit" name="button" class="button" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="submit" name="button" class="button" value="<?php echo $langs->trans("Cancel"); ?>"></div>
+<div class="center"><input type="submit" name="button" class="button button-save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="submit" name="button" class="button button-cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

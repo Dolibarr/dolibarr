@@ -45,14 +45,14 @@ class Task extends CommonObject
 	public $table_element = 'projet_task';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_task';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for myobject.
 	 */
-	public $picto = 'task';
+	public $picto = 'projecttask';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -317,7 +317,7 @@ class Task extends CommonObject
 					$this->task_parent_position = $obj->task_parent_position;
 				}
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				$this->fetch_optionals();
 			}
 
@@ -383,13 +383,35 @@ class Task extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (!$error)
+			$result = $this->insertExtraFields();
+			if ($result < 0)
 			{
-				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
+				$error++;
+			}
+		}
+
+		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
+			// Close the parent project if it is open (validated) and its tasks are 100% completed
+			$project = new Project($this->db);
+			if ($project->fetch($this->fk_project) > 0 && $project->statut == Project::STATUS_VALIDATED) {
+				$project->getLinesArray(null); // this method does not return <= 0 if fails
+				$projectCompleted = array_reduce(
+					$project->lines,
+					function ($allTasksCompleted, $task) {
+						return $allTasksCompleted && $task->progress >= 100;
+					},
+					1
+				);
+				if ($projectCompleted) {
+					if ($project->setClose($user) <= 0) {
+						$error++;
+					}
 				}
+			} else {
+				$error++;
+			}
+			if ($error) {
+				$this->errors[] = $project->error;
 			}
 		}
 
@@ -648,7 +670,7 @@ class Task extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("ShowTask").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Task").'</u>';
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->label))
@@ -673,7 +695,9 @@ class Task extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= ' class="classfortooltip nowraponall"';
+		} else {
+			$linkclose .= ' class="nowraponall"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -905,7 +929,13 @@ class Task extends CommonObject
 					$tasks[$i]->projectref		= $obj->ref;
 					$tasks[$i]->projectlabel = $obj->plabel;
 					$tasks[$i]->projectstatus = $obj->projectstatus;
+
+					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
+					$tasks[$i]->opp_amount = $obj->opp_amount;
+					$tasks[$i]->opp_percent = $obj->opp_percent;
+					$tasks[$i]->budget_amount = $obj->budget_amount;
 					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
+
 					$tasks[$i]->label = $obj->label;
 					$tasks[$i]->description = $obj->description;
 					$tasks[$i]->fk_parent = $obj->fk_task_parent; // deprecated
@@ -913,8 +943,10 @@ class Task extends CommonObject
 					$tasks[$i]->duration		= $obj->duration_effective;
 					$tasks[$i]->planned_workload = $obj->planned_workload;
 
-					$tasks[$i]->tobill  		= $obj->tobill;
-					$tasks[$i]->billed = $obj->billed;
+					if ($includebilltime) {
+						$tasks[$i]->tobill = $obj->tobill;
+						$tasks[$i]->billed = $obj->billed;
+					}
 
 					$tasks[$i]->progress		= $obj->progress;
 					$tasks[$i]->fk_statut = $obj->status;
@@ -927,13 +959,6 @@ class Task extends CommonObject
 					$tasks[$i]->thirdparty_id = $obj->thirdparty_id;
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email = $obj->thirdparty_email;
-
-
-					$tasks[$i]->fk_opp_status = $obj->fk_opp_status;
-					$tasks[$i]->opp_amount = $obj->opp_amount;
-					$tasks[$i]->opp_percent = $obj->opp_percent;
-					$tasks[$i]->budget_amount = $obj->budget_amount;
-					$tasks[$i]->usage_bill_time = $obj->usage_bill_time;
 
 					if (!empty($extrafields->attributes['projet']['label']))
 					{
@@ -1675,7 +1700,7 @@ class Task extends CommonObject
 				$clone_task->note_public = '';
 			} else {
 				$this->db->begin();
-				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES|ENT_HTML5), '_public');
+				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES | ENT_HTML5), '_public');
 				if ($res < 0)
 				{
 					$this->error .= $clone_task->error;
@@ -1686,7 +1711,7 @@ class Task extends CommonObject
 				}
 
 				$this->db->begin();
-				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES|ENT_HTML5), '_private');
+				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES | ENT_HTML5), '_private');
 				if ($res < 0)
 				{
 					$this->error .= $clone_task->error;
@@ -1702,7 +1727,7 @@ class Task extends CommonObject
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				//retreive project origin ref to know folder to copy
+				//retrieve project origin ref to know folder to copy
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($ori_project_id);
 				$ori_project_ref = $projectstatic->ref;
@@ -1893,14 +1918,16 @@ class Task extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
-		$langs->load("projects");
+		$outputlangs->load("projects");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'nodefault';
 
-			if ($this->modelpdf) {
+			if (!empty($this->model_pdf)) {
+				$modele = $this->model_pdf;
+			} elseif (!empty($this->modelpdf)) {	// deprecated
 				$modele = $this->modelpdf;
 			} elseif (!empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;

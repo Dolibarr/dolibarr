@@ -37,6 +37,7 @@
 if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
 if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
@@ -49,6 +50,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+// Hook to be used by external payment modules (ie Payzen, ...)
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('newpayment'));
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -201,6 +206,12 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->strip
 // Initialize $validpaymentmethod
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
+// This hook is used to push to $validpaymentmethod by external payment modules (ie Payzen, ...)
+$parameters = [
+	'paymentmethod' => $paymentmethod,
+	'validpaymentmethod' => &$validpaymentmethod
+];
+$reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
 
 // Check security token
 $valid = true;
@@ -379,7 +390,7 @@ if ($action == 'dopayment')
 
 // Called when choosing Stripe mode.
 // When using the Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
-// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentItent when showing payment page and the payment is already ok.
+// When using the PaymentIntent API architecture, the Stripe customer is already created when creating PaymentIntent when showing payment page and the payment is already ok.
 if ($action == 'charge' && !empty($conf->stripe->enabled))
 {
 	$amountstripe = $amount;
@@ -389,6 +400,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 	if (!in_array($currency, $arrayzerounitcurrency)) $amountstripe = $amountstripe * 100;
 
+	dol_syslog("--- newpayment.php Execute action = ".$action, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
@@ -406,42 +418,42 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
 
 	$error = 0;
-    $errormessage = '';
+	$errormessage = '';
 
-    // When using the Charge API architecture
-    if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-    {
-    	try {
-    		$metadata = array(
-    			'dol_version' => DOL_VERSION,
-    			'dol_entity'  => $conf->entity,
-    			'dol_company' => $mysoc->name, // Usefull when using multicompany
-    			'dol_tax_num' => $vatnumber,
-    		    'ipaddress'=> getUserRemoteIP()
-    		);
+	// When using the old Charge API architecture
+	if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+	{
+		try {
+			$metadata = array(
+				'dol_version' => DOL_VERSION,
+				'dol_entity'  => $conf->entity,
+				'dol_company' => $mysoc->name, // Usefull when using multicompany
+				'dol_tax_num' => $vatnumber,
+				'ipaddress'=> getUserRemoteIP()
+			);
 
-    		if (!empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
+			if (!empty($thirdparty_id)) $metadata["dol_thirdparty_id"] = $thirdparty_id;
 
-    		if ($thirdparty_id > 0)
-    		{
-    			dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+			if ($thirdparty_id > 0)
+			{
+				dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
 
-    			$service = 'StripeTest';
-    			$servicestatus = 0;
-    			if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'int'))
-    			{
-    				$service = 'StripeLive';
-    				$servicestatus = 1;
-    			}
+				$service = 'StripeTest';
+				$servicestatus = 0;
+				if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'int'))
+				{
+					$service = 'StripeLive';
+					$servicestatus = 1;
+				}
 
-    			$thirdparty = new Societe($db);
-    			$thirdparty->fetch($thirdparty_id);
+				$thirdparty = new Societe($db);
+				$thirdparty->fetch($thirdparty_id);
 
-    			// Create Stripe customer
-    			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-    			$stripe = new Stripe($db);
-                $stripeacc = $stripe->getStripeAccount($service);
-                $customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+				// Create Stripe customer
+				include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+				$stripe = new Stripe($db);
+				$stripeacc = $stripe->getStripeAccount($service);
+				$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 				if (empty($customer))
 				{
 					$error++;
@@ -450,51 +462,51 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 					$action = '';
 				}
 
-    			// Create Stripe card from Token
-    			if (!$error)
-    			{
-	    			if ($savesource) {
-	    				$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
-	    			} else {
-	    				$card = $stripeToken;
-	    			}
+				// Create Stripe card from Token
+				if (!$error)
+				{
+					if ($savesource) {
+						$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+					} else {
+						$card = $stripeToken;
+					}
 
-	    			if (empty($card))
-	    			{
-	    				$error++;
-	    				dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
-	    				setEventMessages('Failed to create card record', null, 'errors');
-	    				$action = '';
-	    			} else {
-	    				if (!empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
-	    				if (!empty($dol_id))        $metadata["dol_id"] = $dol_id;
-	    				if (!empty($dol_type))      $metadata["dol_type"] = $dol_type;
+					if (empty($card))
+					{
+						$error++;
+						dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
+						setEventMessages('Failed to create card record', null, 'errors');
+						$action = '';
+					} else {
+						if (!empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+						if (!empty($dol_id))        $metadata["dol_id"] = $dol_id;
+						if (!empty($dol_type))      $metadata["dol_type"] = $dol_type;
 
-	    				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
-	    				$charge = \Stripe\Charge::create(array(
-	    					'amount'   => price2num($amountstripe, 'MU'),
-	    					'currency' => $currency,
-	    					'capture'  => true, // Charge immediatly
-	    					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
-	    					'metadata' => $metadata,
-	    					'customer' => $customer->id,
-	    					'source' => $card,
-	    				  'statement_descriptor_suffix' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
-	    				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
-	    				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
-	    				if (empty($charge))
-	    				{
-	    					$error++;
-	    					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
-	    					setEventMessages('Failed to charge card', null, 'errors');
-	    					$action = '';
-	    				}
-	    			}
-    			}
-    		} else {
-    			$vatcleaned = $vatnumber ? $vatnumber : null;
+						dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
+						$charge = \Stripe\Charge::create(array(
+							'amount'   => price2num($amountstripe, 'MU'),
+							'currency' => $currency,
+							'capture'  => true, // Charge immediatly
+							'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+							'metadata' => $metadata,
+							'customer' => $customer->id,
+							'source' => $card,
+						  'statement_descriptor_suffix' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+						), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
+						// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
+						if (empty($charge))
+						{
+							$error++;
+							dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
+							setEventMessages('Failed to charge card', null, 'errors');
+							$action = '';
+						}
+					}
+				}
+			} else {
+				$vatcleaned = $vatnumber ? $vatnumber : null;
 
-    			/*$taxinfo = array('type'=>'vat');
+				/*$taxinfo = array('type'=>'vat');
     			if ($vatcleaned)
     			{
     				$taxinfo["tax_id"] = $vatcleaned;
@@ -503,18 +515,18 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
     			if (empty($vatcleaned)) $taxinfo=null;
     			*/
 
-    			dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
+				dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
 
-                $customer = \Stripe\Customer::create(array(
-    				'email' => $email,
-    				'description' => ($email ? 'Anonymous customer for '.$email : 'Anonymous customer'),
-    				'metadata' => $metadata,
-    				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
-    			));
-    			// Return $customer = array('id'=>'cus_XXXX', ...)
+				$customer = \Stripe\Customer::create(array(
+					'email' => $email,
+					'description' => ($email ? 'Anonymous customer for '.$email : 'Anonymous customer'),
+					'metadata' => $metadata,
+					'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
+				));
+				// Return $customer = array('id'=>'cus_XXXX', ...)
 
-                // Create the VAT record in Stripe
-                /* We don't know country of customer, so we can't create tax
+				// Create the VAT record in Stripe
+				/* We don't know country of customer, so we can't create tax
                 if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
                 {
                 	if (! empty($vatcleaned))
@@ -528,145 +540,145 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
                 	}
                 }*/
 
-    			if (!empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
-    			if (!empty($dol_id))        $metadata["dol_id"] = $dol_id;
-    			if (!empty($dol_type))      $metadata["dol_type"] = $dol_type;
+				if (!empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
+				if (!empty($dol_id))        $metadata["dol_id"] = $dol_id;
+				if (!empty($dol_type))      $metadata["dol_type"] = $dol_type;
 
-    			// The customer was just created with a source, so we can make a charge
-    			// with no card defined, the source just used for customer creation will be used.
-    			dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
-                $charge = \Stripe\Charge::create(array(
-    				'customer' => $customer->id,
-    				'amount'   => price2num($amountstripe, 'MU'),
-    				'currency' => $currency,
-    				'capture'  => true, // Charge immediatly
-    				'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
-    				'metadata' => $metadata,
-                    'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
-    			), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
-    			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
-    			if (empty($charge))
-    			{
-    				$error++;
-    				dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
-    				setEventMessages('Failed to charge card', null, 'errors');
-    				$action = '';
-    			}
-    		}
-    	} catch (\Stripe\Error\Card $e) {
-    		// Since it's a decline, \Stripe\Error\Card will be caught
-    		$body = $e->getJsonBody();
-    		$err  = $body['error'];
+				// The customer was just created with a source, so we can make a charge
+				// with no card defined, the source just used for customer creation will be used.
+				dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
+				$charge = \Stripe\Charge::create(array(
+					'customer' => $customer->id,
+					'amount'   => price2num($amountstripe, 'MU'),
+					'currency' => $currency,
+					'capture'  => true, // Charge immediatly
+					'description' => 'Stripe payment: '.$FULLTAG.' ref='.$ref,
+					'metadata' => $metadata,
+					'statement_descriptor' => dol_trunc($FULLTAG, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				), array("idempotency_key" => "$FULLTAG", "stripe_account" => "$stripeacc"));
+				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
+				if (empty($charge))
+				{
+					$error++;
+					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
+					setEventMessages('Failed to charge card', null, 'errors');
+					$action = '';
+				}
+			}
+		} catch (\Stripe\Error\Card $e) {
+			// Since it's a decline, \Stripe\Error\Card will be caught
+			$body = $e->getJsonBody();
+			$err  = $body['error'];
 
-    		print('Status is:'.$e->getHttpStatus()."\n");
-    		print('Type is:'.$err['type']."\n");
-    		print('Code is:'.$err['code']."\n");
-    		// param is '' in this case
-    		print('Param is:'.$err['param']."\n");
-    		print('Message is:'.$err['message']."\n");
+			print('Status is:'.$e->getHttpStatus()."\n");
+			print('Type is:'.$err['type']."\n");
+			print('Code is:'.$err['code']."\n");
+			// param is '' in this case
+			print('Param is:'.$err['param']."\n");
+			print('Message is:'.$err['message']."\n");
 
-    		$error++;
-    		$errormessage = "ErrorCard ".$e->getMessage()." err=".var_export($err, true);
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	} catch (\Stripe\Error\RateLimit $e) {
-    		// Too many requests made to the API too quickly
-    		$error++;
-    		$errormessage = "ErrorRateLimit ".$e->getMessage();
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	} catch (\Stripe\Error\InvalidRequest $e) {
-    		// Invalid parameters were supplied to Stripe's API
-    		$error++;
-    		$errormessage = "ErrorInvalidRequest ".$e->getMessage();
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	} catch (\Stripe\Error\Authentication $e) {
-    		// Authentication with Stripe's API failed
-    		// (maybe you changed API keys recently)
-    		$error++;
-    		$errormessage = "ErrorAuthentication ".$e->getMessage();
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	} catch (\Stripe\Error\ApiConnection $e) {
-    		// Network communication with Stripe failed
-    		$error++;
-    		$errormessage = "ErrorApiConnection ".$e->getMessage();
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	} catch (\Stripe\Error\Base $e) {
-    		// Display a very generic error to the user, and maybe send
-    		// yourself an email
-    		$error++;
-    		$errormessage = "ErrorBase ".$e->getMessage();
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	} catch (Exception $e) {
-    		// Something else happened, completely unrelated to Stripe
-    		$error++;
-    		$errormessage = "ErrorException ".$e->getMessage();
-    		dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-    		setEventMessages($e->getMessage(), null, 'errors');
-    		$action = '';
-    	}
-    }
+			$error++;
+			$errormessage = "ErrorCard ".$e->getMessage()." err=".var_export($err, true);
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		} catch (\Stripe\Error\RateLimit $e) {
+			// Too many requests made to the API too quickly
+			$error++;
+			$errormessage = "ErrorRateLimit ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		} catch (\Stripe\Error\InvalidRequest $e) {
+			// Invalid parameters were supplied to Stripe's API
+			$error++;
+			$errormessage = "ErrorInvalidRequest ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		} catch (\Stripe\Error\Authentication $e) {
+			// Authentication with Stripe's API failed
+			// (maybe you changed API keys recently)
+			$error++;
+			$errormessage = "ErrorAuthentication ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		} catch (\Stripe\Error\ApiConnection $e) {
+			// Network communication with Stripe failed
+			$error++;
+			$errormessage = "ErrorApiConnection ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		} catch (\Stripe\Error\Base $e) {
+			// Display a very generic error to the user, and maybe send
+			// yourself an email
+			$error++;
+			$errormessage = "ErrorBase ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		} catch (Exception $e) {
+			// Something else happened, completely unrelated to Stripe
+			$error++;
+			$errormessage = "ErrorException ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		}
+	}
 
-    // When using the PaymentIntent API architecture
-    if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-    {
-        $service = 'StripeTest';
-        $servicestatus = 0;
-        if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'int'))
-        {
-            $service = 'StripeLive';
-            $servicestatus = 1;
-        }
-        include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-        $stripe = new Stripe($db);
-        $stripeacc = $stripe->getStripeAccount($service);
+	// When using the PaymentIntent API architecture
+	if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+	{
+		$service = 'StripeTest';
+		$servicestatus = 0;
+		if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'int'))
+		{
+			$service = 'StripeLive';
+			$servicestatus = 1;
+		}
+		include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+		$stripe = new Stripe($db);
+		$stripeacc = $stripe->getStripeAccount($service);
 
-        // We go here if $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is set.
-        // In such a case, payment is always ok when we call the "charge" action.
-        $paymentintent_id = GETPOST("paymentintent_id", "alpha");
+		// We go here if $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is set.
+		// In such a case, payment is always ok when we call the "charge" action.
+		$paymentintent_id = GETPOST("paymentintent_id", "alpha");
 
-        // Force to use the correct API key
-        global $stripearrayofkeysbyenv;
-        \Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+		// Force to use the correct API key
+		global $stripearrayofkeysbyenv;
+		\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
-        try {
-        	if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-                $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id);
-            } else {
-                $paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id, array("stripe_account" => $stripeacc));
-            }
-        } catch (Exception $e)
-        {
-            $error++;
-            $errormessage = "CantRetreivePaymentIntent ".$e->getMessage();
-            dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-            setEventMessages($e->getMessage(), null, 'errors');
-            $action = '';
-        }
+		try {
+			if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+				$paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id);
+			} else {
+				$paymentintent = \Stripe\PaymentIntent::retrieve($paymentintent_id, array("stripe_account" => $stripeacc));
+			}
+		} catch (Exception $e)
+		{
+			$error++;
+			$errormessage = "CantRetrievePaymentIntent ".$e->getMessage();
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($e->getMessage(), null, 'errors');
+			$action = '';
+		}
 
-        if ($paymentintent->status != 'succeeded')
-        {
-            $error++;
-            $errormessage = "StatusOfRetreivedIntent is not succeeded: ".$paymentintent->status;
-            dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
-            setEventMessages($paymentintent->status, null, 'errors');
-            $action = '';
-        } else {
-        	// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
-        	// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
-        	//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
-        }
-    }
+		if ($paymentintent->status != 'succeeded')
+		{
+			$error++;
+			$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
+			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			setEventMessages($paymentintent->status, null, 'errors');
+			$action = '';
+		} else {
+			// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
+			// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
+			//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
+		}
+	}
 
 
 	$remoteip = getUserRemoteIP();
@@ -684,7 +696,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("Now call the redirect to paymentok or paymentko", LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Now call the redirect to paymentok or paymentko, URL = ".($error ? $urlko : $urlok), LOG_DEBUG, 0, '_stripe');
 
 	if ($error)
 	{
@@ -716,8 +728,8 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 	$langs->load("errors");
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
-    llxFooter();
-    $db->close();
+	llxFooter();
+	$db->close();
 	exit;
 }
 
@@ -776,7 +788,7 @@ if ($urllogo)
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
@@ -937,7 +949,7 @@ if ($source == 'order')
 	$directdownloadlink = $order->getLastMainDocLink('commande');
 	if ($directdownloadlink)
 	{
-		print '<br><a href="'.$directdownloadlink.'">';
+		print '<br><a href="'.$directdownloadlink.'" rel="nofollow noopener">';
 		print img_mime($order->last_main_doc, '');
 		print $langs->trans("DownloadDocument").'</a>';
 	}
@@ -1383,9 +1395,9 @@ if ($source == 'membersubscription')
 	print '</td></tr>'."\n";
 
 	if ($object->datefin > 0) {
-	    print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("DateEndSubscription");
-	    print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_print_date($member->datefin, 'day');
-	    print '</td></tr>'."\n";
+		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("DateEndSubscription");
+		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_print_date($member->datefin, 'day');
+		print '</td></tr>'."\n";
 	}
 
 	if ($member->last_subscription_date || $member->last_subscription_amount)
@@ -1640,26 +1652,37 @@ if ($action != 'dopayment')
 {
 	if ($found && !$error)	// We are in a management option and no error
 	{
+		// Check status of the object (Invoice) to verify if it is paid by external payment modules (ie Payzen, ...)
+		$parameters = [
+			'source' => $source,
+			'object' => $object
+		];
+		$reshook = $hookmanager->executeHooks('doCheckStatus', $parameters, $object, $action);
 		if ($source == 'order' && $object->billed)
 		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("OrderBilled").'</span>';
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("OrderBilled").'</span>';
 		} elseif ($source == 'invoice' && $object->paye)
 		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("InvoicePaid").'</span>';
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("InvoicePaid").'</span>';
 		} elseif ($source == 'donation' && $object->paid)
 		{
-			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
+			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("DonationPaid").'</span>';
 		} else {
-		    // Membership can be paid and we still allow to make renewal
-		    if ($source == 'membersubscription' && $object->datefin > dol_now())
-		    {
-		        $langs->load("members");
-		        print '<br><span class="amountpaymentcomplete">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
-		        print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';
-		    }
+			// Membership can be paid and we still allow to make renewal
+			if ($source == 'membersubscription' && $object->datefin > dol_now())
+			{
+				$langs->load("members");
+				print '<br><span class="amountpaymentcomplete size15x">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
+				print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';
+			}
 
 			// Buttons for all payments registration methods
 
+			// This hook is used to add Button to newpayment.php for external payment modules (ie Payzen, ...)
+			$parameters = [
+				'paymentmethod' => $paymentmethod
+			];
+			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
 			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 			{
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
@@ -1832,7 +1855,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			{
 				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
-				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already payed)
+				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);
 				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
 			}
@@ -1840,48 +1863,48 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
 		//{
-    	print '
+		print '
         <table id="dolpaymenttable" summary="Payment form" class="center">
         <tbody><tr><td class="textpublicpayment">';
 
-    	if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-    	{
-            print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
-    	}
+		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+		{
+			print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
+		}
 
-        print '<div class="form-row left">';
-    	print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
+		print '<div class="form-row left">';
+		print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
 
-        if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-        {
-            print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
-        }
+		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+		{
+			print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
+		}
 
-        print '<div id="card-element">
+		print '<div id="card-element">
         <!-- a Stripe Element will be inserted here. -->
         </div>';
 
-        print '<!-- Used to display form errors -->
+		print '<!-- Used to display form errors -->
         <div id="card-errors" role="alert"></div>
         </div>';
 
-        print '<br>';
-        print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
-        print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif">';
+		print '<br>';
+		print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
+		print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif">';
 
-        print '</td></tr></tbody>';
-        print '</table>';
+		print '</td></tr></tbody>';
+		print '</table>';
 		//}
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 		{
-		    if (empty($paymentintent))
-		    {
-                print '<center>'.$langs->trans("Error").'</center>';
-		    } else {
-		        print '<input type="hidden" name="paymentintent_id" value="'.$paymentintent->id.'">';
-		        //$_SESSION["paymentintent_id"] = $paymentintent->id;
-		    }
+			if (empty($paymentintent))
+			{
+				print '<center>'.$langs->trans("Error").'</center>';
+			} else {
+				print '<input type="hidden" name="paymentintent_id" value="'.$paymentintent->id.'">';
+				//$_SESSION["paymentintent_id"] = $paymentintent->id;
+			}
 		}
 
 		print '</form>'."\n";
@@ -1894,71 +1917,71 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			print info_admin($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Stripe")), 0, 0, 'error');
 		} else {
 			print '<!-- JS Code for Stripe components -->';
-    		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
-    		print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
+			print '<script src="https://js.stripe.com/v3/"></script>'."\n";
+			print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
-    	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
-    		print '<script type="text/javascript" language="javascript">'."\n";
+			// Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
+			print '<script type="text/javascript" language="javascript">'."\n";
 
-    		if (!empty($conf->global->STRIPE_USE_NEW_CHECKOUT))
-    		{
-    			$amountstripe = $amount;
+			if (!empty($conf->global->STRIPE_USE_NEW_CHECKOUT))
+			{
+				$amountstripe = $amount;
 
-    			// Correct the amount according to unit of currency
-    			// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
-    			$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-    			if (!in_array($currency, $arrayzerounitcurrency)) $amountstripe = $amountstripe * 100;
+				// Correct the amount according to unit of currency
+				// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+				$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (!in_array($currency, $arrayzerounitcurrency)) $amountstripe = $amountstripe * 100;
 
-    			$ipaddress = getUserRemoteIP();
-    			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
-    			if (is_object($object))
-    			{
-    				$metadata['dol_type'] = $object->element;
-    				$metadata['dol_id'] = $object->id;
+				$ipaddress = getUserRemoteIP();
+				$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
+				if (is_object($object))
+				{
+					$metadata['dol_type'] = $object->element;
+					$metadata['dol_id'] = $object->id;
 
-    				$ref = $object->ref;
-    			}
+					$ref = $object->ref;
+				}
 
-    			try {
-    				$arrayforpaymentintent = array(
-    					'description'=>'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-    					"metadata" => $metadata
-    				);
-    				if ($TAG) $arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 10, 'right', 'UTF-8', 1); // 22 chars that appears on bank receipt (company + description)
+				try {
+					$arrayforpaymentintent = array(
+						'description'=>'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+						"metadata" => $metadata
+					);
+					if ($TAG) $arrayforpaymentintent["statement_descriptor"] = dol_trunc($TAG, 10, 'right', 'UTF-8', 1); // 22 chars that appears on bank receipt (company + description)
 
-    				$arrayforcheckout = array(
-    					'payment_method_types' => array('card'),
-    					'line_items' => array(array(
-    						'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
-    						'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
-    						'amount' => $amountstripe,
-    						'currency' => $currency,
-    						//'images' => array($urllogofull),
-    						'quantity' => 1,
-    					)),
-    					'client_reference_id' => $FULLTAG,
-    					'success_url' => $urlok,
-    					'cancel_url' => $urlko,
-    					'payment_intent_data' => $arrayforpaymentintent
-    				);
-    				if ($stripecu) $arrayforcheckout['customer'] = $stripecu;
-    				elseif (GETPOST('email', 'alpha') && isValidEmail(GETPOST('email', 'alpha'))) $arrayforcheckout['customer_email'] = GETPOST('email', 'alpha');
-    				$sessionstripe = \Stripe\Checkout\Session::create($arrayforcheckout);
+					$arrayforcheckout = array(
+						'payment_method_types' => array('card'),
+						'line_items' => array(array(
+							'name' => $langs->transnoentitiesnoconv("Payment").' '.$TAG, // Label of product line
+							'description' => 'Stripe payment: '.$FULLTAG.($ref ? ' ref='.$ref : ''),
+							'amount' => $amountstripe,
+							'currency' => $currency,
+							//'images' => array($urllogofull),
+							'quantity' => 1,
+						)),
+						'client_reference_id' => $FULLTAG,
+						'success_url' => $urlok,
+						'cancel_url' => $urlko,
+						'payment_intent_data' => $arrayforpaymentintent
+					);
+					if ($stripecu) $arrayforcheckout['customer'] = $stripecu;
+					elseif (GETPOST('email', 'alpha') && isValidEmail(GETPOST('email', 'alpha'))) $arrayforcheckout['customer_email'] = GETPOST('email', 'alpha');
+					$sessionstripe = \Stripe\Checkout\Session::create($arrayforcheckout);
 
-    				$remoteip = getUserRemoteIP();
+					$remoteip = getUserRemoteIP();
 
-    				// Save some data for the paymentok
-    				$_SESSION["currencyCodeType"] = $currency;
-    				$_SESSION["paymentType"] = '';
-    				$_SESSION["FinalPaymentAmt"] = $amount;
-    				$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
-    				$_SESSION['payerID'] = is_object($stripecu) ? $stripecu->id : '';
-    				$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
-    			} catch (Exception $e)
-    			{
-    				print $e->getMessage();
-    			}
-    			?>
+					// Save some data for the paymentok
+					$_SESSION["currencyCodeType"] = $currency;
+					$_SESSION["paymentType"] = '';
+					$_SESSION["FinalPaymentAmt"] = $amount;
+					$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
+					$_SESSION['payerID'] = is_object($stripecu) ? $stripecu->id : '';
+					$_SESSION['TRANSACTIONID'] = $sessionstripe->id;
+				} catch (Exception $e)
+				{
+					print $e->getMessage();
+				}
+				?>
    			// Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
     	    // Create a Stripe client.
@@ -2002,9 +2025,9 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 
     			<?php
-    		} elseif (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-    		{
-            	?>
+			} elseif (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+			{
+				?>
     		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
 
     	    // Create a Stripe client.
@@ -2107,9 +2130,9 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
             });
 
     			<?php
-    		} else // Old method (not SCA ready)
-    		{
-    			?>
+			} else // Old method (not SCA ready)
+			{
+				?>
     		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
     	    // Create a Stripe client.
@@ -2159,9 +2182,9 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     	    form.addEventListener('submit', function(event) {
     	      event.preventDefault();
     			<?php
-    			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
-    			{
-    				?>
+				if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
+				{
+					?>
     				/* Use token */
     				stripe.createToken(card).then(function(result) {
     			        if (result.error) {
@@ -2174,9 +2197,9 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			        }
     				});
     				<?php
-    			} else // Ask credit card with 3DS test
-    			{
-    				?>
+				} else // Ask credit card with 3DS test
+				{
+					?>
     				/* Use 3DS source */
     				stripe.createSource(card).then(function(result) {
     				    if (result.error) {
@@ -2189,8 +2212,8 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     				    }
     				});
     				<?php
-    			}
-    			?>
+				}
+				?>
     	    });
 
 
@@ -2243,11 +2266,19 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		}
 
     	    	<?php
-    		}
+			}
 
-    		print '</script>';
+			print '</script>';
 		}
 	}
+	// This hook is used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+		'amount' => price2num(GETPOST("newamount"), 'MT'),
+		'tag' => GETPOST("tag", 'alpha'),
+		'dopayment' => GETPOST('dopayment', 'alpha')
+	];
+	$reshook = $hookmanager->executeHooks('doPayment', $parameters, $object, $action);
 }
 
 

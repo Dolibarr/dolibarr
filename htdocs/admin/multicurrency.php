@@ -34,7 +34,7 @@ $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
 if (!$user->admin) {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Parameters
@@ -52,9 +52,9 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	$value = GETPOST($code, 'alpha');
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -63,9 +63,9 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -132,17 +132,17 @@ if ($action == 'add_currency')
 	}
 } elseif ($action == 'setapilayer')
 {
-    if (GETPOSTISSET('modify_apilayer'))
-    {
-        dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
-        dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
-        //dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
-    } else {
-        $result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
-        if ($result > 0) {
-        	setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
-        }
-    }
+	if (GETPOSTISSET('modify_apilayer'))
+	{
+		dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
+		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
+		//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
+	} else {
+		$result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
+		if ($result > 0) {
+			setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
+		}
+	}
 }
 
 
@@ -189,10 +189,10 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
+	print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
 }
 print '</td></tr>';
 
@@ -201,26 +201,26 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
+	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
 }
 print '</td></tr>';
 
 // Online payment with currency on document. This option should be on by default.
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-    print '<tr class="oddeven">';
-    print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
-    print '<td class="center">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
-    }
-    print '</td></tr>';
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
+	print '<td class="center">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
+	}
+	print '</td></tr>';
 }
 
 /* TODO uncomment when the functionality will integrated
@@ -258,9 +258,9 @@ print '<br>';
 
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="setapilayer">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setapilayer">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';

@@ -252,7 +252,7 @@ if ($action == 'create')
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_8, '90%');
 	print $doleditor->Create(1);
 
 	print '</td></tr>';
@@ -264,7 +264,7 @@ if ($action == 'create')
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+		$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_8, '90%');
 		print $doleditor->Create(1);
 
 		print '</td></tr>';
@@ -278,9 +278,9 @@ if ($action == 'create')
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -349,7 +349,7 @@ if ($action == 'create')
 			print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td>';
 			print '<td>';
 
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_8, '90%');
 			print $doleditor->Create(1);
 
 			print "</td></tr>";
@@ -360,7 +360,7 @@ if ($action == 'create')
 				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
 				print '<td>';
 
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_8, '90%');
 				print $doleditor->Create(1);
 
 				print "</td></tr>";
@@ -374,9 +374,9 @@ if ($action == 'create')
 			print '</table>';
 
 			print '<br><div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

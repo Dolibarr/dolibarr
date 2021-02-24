@@ -108,7 +108,7 @@ class modBom extends DolibarrModules
 		$this->requiredby = array('modMrp'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
-		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+		//$this->phpmin = array(5, 6));					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(9, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -300,6 +300,7 @@ class modBom extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bom_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';

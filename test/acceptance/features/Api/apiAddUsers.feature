@@ -60,8 +60,19 @@ Feature: Add user
     Then the response status code should be "200"
     And user with login "<login>" should exist
     Examples:
-      | last name                  | login                  |
-      | swi@                       | s$5^2       |
-      | g!!@%ui                    | नेपाली                 |
-      | swikriti@h                 | सिमप्ले $%#?&@name.txt |
-      | !@#$%^&*()-_+              | España§àôœ€            |
+      | last name     | login                  |
+      | swi@          | s$5^2                  |
+      | g!!@%ui       | नेपाली                 |
+      | swikriti@h    | सिमप्ले $%#?&@name.txt |
+      | !@#$%^&*()-_+ | España§àôœ€            |
+
+  Scenario: Non-admin user with api key adds user
+    Given the admin has created the following users
+      | login | last name | password | api_key     |
+      | Harry | Potter    | hello123 | harrypotter |
+    When the non-admin user "Harry" with password "hello123" creates user with following details using API
+      | last name | Potter   |
+      | login     | Ginny    |
+      | password  | password |
+    Then the response status code should be "200"
+    And user with login "Ginny" should exist

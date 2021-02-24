@@ -44,16 +44,29 @@ class Cchargesociales
 	 */
 	public $table_element = 'c_chargesociales';
 
+	/**
+	 * @var string Label
+	 * @deprecated
+	 */
 	public $libelle;
+
+	/**
+	 * @var string Label
+	 */
+	public $label;
+
 	public $deductible;
 	public $active;
 	public $code;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_pays;
 
+	/**
+	 * @var string module
+	 */
 	public $module;
 	public $accountancy_code;
 
@@ -82,25 +95,24 @@ class Cchargesociales
 
 		$error = 0;
 
-        // Clean parameters
-        $this->trimParameters(
-            array(
-                'libelle',
-                'deductible',
-                'active',
-                'code',
-                'fk_pays',
-                'module',
-                'accountancy_code',
-            )
-        );
+		// Clean parameters
+		$this->trimParameters(
+			array(
+				'libelle',
+				'deductible',
+				'active',
+				'code',
+				'fk_pays',
+				'module',
+				'accountancy_code',
+			)
+		);
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
-
 		$sql .= 'libelle,';
 		$sql .= 'deductible,';
 		$sql .= 'active,';
@@ -108,10 +120,7 @@ class Cchargesociales
 		$sql .= 'fk_pays,';
 		$sql .= 'module';
 		$sql .= 'accountancy_code';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : $this->deductible).',';
 		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
@@ -119,8 +128,6 @@ class Cchargesociales
 		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : $this->fk_pays).',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
 		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -172,7 +179,7 @@ class Cchargesociales
 
 		$sql = 'SELECT';
 		$sql .= " t.id,";
-		$sql .= " t.libelle,";
+		$sql .= " t.libelle as label,";
 		$sql .= " t.deductible,";
 		$sql .= " t.active,";
 		$sql .= " t.code,";
@@ -194,7 +201,8 @@ class Cchargesociales
 
 				$this->id = $obj->id;
 
-				$this->libelle = $obj->libelle;
+				$this->libelle = $obj->label;
+				$this->label = $obj->label;
 				$this->deductible = $obj->deductible;
 				$this->active = $obj->active;
 				$this->code = $obj->code;
@@ -233,17 +241,17 @@ class Cchargesociales
 
 		// Clean parameters
 
-        $this->trimParameters(
-            array(
-                'libelle',
-                'deductible',
-                'active',
-                'code',
-                'fk_pays',
-                'module',
-                'accountancy_code',
-            )
-        );
+		$this->trimParameters(
+			array(
+				'libelle',
+				'deductible',
+				'active',
+				'code',
+				'fk_pays',
+				'module',
+				'accountancy_code',
+			)
+		);
 
 
 		// Check parameters
@@ -398,34 +406,34 @@ class Cchargesociales
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
+	 *  @param	integer	$notooltip			1=Disable tooltip
+	 *  @param	int		$maxlen				Max length of visible user name
+	 *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
 
-        $result = '';
-        $companylink = '';
+		$result = '';
+		$companylink = '';
 
-        $label = '<u>'.$langs->trans("MyModule").'</u>';
-        $label .= '<div width="100%">';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label = '<u>'.$langs->trans("MyModule").'</u>';
+		$label .= '<div width="100%">';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/tax/card.php?id='.$this->id.'"';
-        $link .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
-        $link .= '>';
+		$link = '<a href="'.DOL_URL_ROOT.'/tax/card.php?id='.$this->id.'"';
+		$link .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
+		$link .= '>';
 		$linkend = '</a>';
 
-        if ($withpicto)
-        {
-            $result .= ($link.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
-            if ($withpicto != 2) $result .= ' ';
+		if ($withpicto)
+		{
+			$result .= ($link.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+			if ($withpicto != 2) $result .= ' ';
 		}
 		$result .= $link.$this->ref.$linkend;
 		return $result;
@@ -442,7 +450,7 @@ class Cchargesociales
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -452,7 +460,7 @@ class Cchargesociales
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
@@ -494,6 +502,7 @@ class Cchargesociales
 		$this->id = 0;
 
 		$this->libelle = '';
+		$this->label = '';
 		$this->deductible = '';
 		$this->active = '';
 		$this->code = '';
@@ -502,19 +511,18 @@ class Cchargesociales
 		$this->accountancy_code = '';
 	}
 
-    /**
-     * Trim object parameters
-     * @param string[] $parameters array of parameters to trim
-     *
-     * @return void
-     */
-    private function trimParameters($parameters)
-    {
-        if (!is_array($parameters)) return;
-        foreach ($parameters as $parameter) {
-            if (isset($this->$parameter)) {
-                $this->$parameter = trim($this->$parameter);
-            }
-        }
-    }
+	/**
+	 * Trim object parameters
+	 *
+	 * @param string[] $parameters array of parameters to trim
+	 * @return void
+	 */
+	private function trimParameters($parameters)
+	{
+		foreach ($parameters as $parameter) {
+			if (isset($this->$parameter)) {
+				$this->$parameter = trim($this->$parameter);
+			}
+		}
+	}
 }

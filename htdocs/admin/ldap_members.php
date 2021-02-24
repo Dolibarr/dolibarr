@@ -366,7 +366,7 @@ print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 

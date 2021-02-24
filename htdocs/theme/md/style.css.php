@@ -297,6 +297,9 @@ a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; fo
 a:hover { text-decoration: underline; color: rgb(<?php print $colortextlink; ?>); }
 a.commonlink { color: rgb(<?php print $colortextlink; ?>) !important; text-decoration: none; }
 
+input {
+	font-size: unset;
+}
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
     background-color: #FDFDFD;
 }
@@ -459,9 +462,13 @@ input.buttonpaymentstripe {
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
 }
-a.buttonticket {
+a.butStatus {
 	padding-left: 5px;
 	padding-right: 5px;
+	background-color: transparent;
+    color: var(--colortext) !important;
+    border: 2px solid var( --butactionbg);
+    margin: 0 0.45em !important;
 }
 
 /* Used by timesheets */
@@ -499,6 +506,10 @@ input.pageplusone {
     padding-top: 4px;
 }
 
+.saturatemedium {
+	filter: saturate(0.8);
+}
+
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
 }
@@ -524,6 +535,13 @@ input.pageplusone {
 	color: #000;
 }
 
+.vmirror {
+    transform: scale(1, -1);
+}
+.hmirror {
+    transform: scale(-1, 1);
+}
+
 select:invalid {
 	color: gray;
 }
@@ -545,19 +563,23 @@ input.removedfile {
 }
 
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
-input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
-input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
+input[type=radio]    { background-color: transparent; border: none; box-shadow: none; vertical-align: middle; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
 input:-webkit-autofill {
 	background-color: #FBFFEA !important;
 	background-image:none !important;
 	-webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
+
+/* CSS for placeholder */
+.placeholder { color: #ccc; }
 ::-webkit-input-placeholder { color:#ccc; }
 :-moz-placeholder { color:#bbb; } 			/* firefox 18- */
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
+
 input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
@@ -725,6 +747,9 @@ textarea.centpercent {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
 }
+.nowraponsmartphone {
+	white-space: <?php print ($dol_optimize_smallscreen ? 'nowrap' : 'normal'); ?>;
+}
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
@@ -751,6 +776,15 @@ textarea.centpercent {
 }
 .nounderline {
     text-decoration: none;
+}
+.nopadding {
+	padding: 0;
+}
+.nopaddingleft {
+	padding-left: 0;
+}
+.nopaddingright {
+	padding-right: 0;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -822,7 +856,8 @@ body[class*="colorblind-"] .text-success{
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
-.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.size15x { font-size: 1.5em !important; }
+.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
 	font-size: 1.5em; vertical-align: text-bottom;
@@ -840,6 +875,11 @@ body[class*="colorblind-"] .text-success{
 {
 	border-right: 1px solid #f4f4f4;
 }
+.borderleftlight
+{
+	border-left: 1px solid #f4f4f4;
+}
+
 #formuserfile {
 	margin-top: 4px;
 }
@@ -1007,6 +1047,12 @@ select.flat.selectlimit {
 }
 .tdoverflowmax100imp {			/* For tdoverflow, the max-midth become a minimum ! */
     max-width: 100px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax125 {			/* For tdoverflow, the max-midth become a minimum ! */
+    max-width: 125px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1200,6 +1246,7 @@ table[summary="list_of_modules"] .fa-cog {
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
+.width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
@@ -1269,6 +1316,7 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth500imp { min-width: 250px !important; }
 }
 
+/* Set a width. Note: add also a max-width, for example maxwidth500, that will be used in priority */
 .widthcentpercentminusx {
 	width: calc(100% - 50px) !important;
 	display: inline-block;
@@ -1299,12 +1347,24 @@ table[summary="list_of_modules"] .fa-cog {
 	body {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?>;
 	}
+
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
 
 	.login_vertical_align {
     	padding-left: 0;
+    }
+    .login_table input#username, .login_table input#password, .login_table input#securitycode {
+		margin-left: 5px !important;
+    }
+	div#login_left, div#login_right {
+	    min-width: 150px !important;
+	    padding-left: 5px !important;
+	    padding-right: 5px !important;
+    }
+    .login_table div#login_right .tdinputlogin, .login_table div#login_right .tdinputlogin input {
+	    min-width: 150px !important;
     }
 
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
@@ -1419,7 +1479,7 @@ table[summary="list_of_modules"] .fa-cog {
 }
 .linkobject { cursor: pointer; }
 
-table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+table.tableforfield tr>td:first-of-type, tr.trforfield>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 	color: #666;
 }
 
@@ -1790,7 +1850,7 @@ div.nopadding {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -1811,6 +1871,11 @@ div.nopadding {
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
 }
+.pictofixedwidth {
+    text-align: left;
+    width: 16px;
+}
+
 .colorthumb {
 	padding-left: 1px !important;
 	padding-right: 1px;
@@ -1872,6 +1937,11 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+
+div.photoref .fa, div.photoref .fas, div.photoref .far {
+    font-size: 2.5em;
+}
+
 img.fitcontain {
     object-fit: contain;
 }
@@ -2216,30 +2286,30 @@ div.mainmenu.website {
 		$found = 0; $url = '';
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-		    if (file_exists($dirroot."/".$val."/img/".$val.".png"))
+			if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 			{
-			    $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-			    $found = 1;
-			    break;
+				$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				$found = 1;
+				break;
 			}
 		}
 		// Img file not found
 		if (!$found)
 		{
-		    if (!defined('DISABLE_FONT_AWSOME')) {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-		        print 'div.mainmenu.'.$val.'::before {
+			if (!defined('DISABLE_FONT_AWSOME')) {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+				print 'div.mainmenu.'.$val.'::before {
 	                    content: "\f249";
 	                }';
-		    } else {
-		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
-		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
-		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-		        print "div.mainmenu.".$val." {\n";
-		        print "	background-image: url(".$url.");\n";
-		        print "}\n";
-	    	}
-	    	$generic++;
+			} else {
+				print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+				print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
+				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+				print "div.mainmenu.".$val." {\n";
+				print "	background-image: url(".$url.");\n";
+				print "}\n";
+			}
+			$generic++;
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
@@ -2335,9 +2405,11 @@ form#login {
 }
 .login_table .tdinputlogin {
     background-color: #fff;
-    border: 2px solid #ccc;
     min-width: 220px;
     border-radius: 2px;
+}
+.login_table .tdinputlogin {
+	border-bottom: 1px solid #ccc;
 }
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
@@ -2510,6 +2582,12 @@ img.userphotosmall {			/* size for user photo in lists */
     background-size: contain;
     vertical-align: middle;
 }
+img.userphoto[alt="Gravatar avatar"] {
+    background: #fff;
+}
+form[name="addtime"] img.userphoto {
+    border: 1px solid #444;
+}
 .span-icon-user {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/object_user.png', 1); ?>);
 	background-repeat: no-repeat;
@@ -2555,7 +2633,7 @@ div.vmenu, td.vmenu {
 .searchform { padding-top: 10px; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
+font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
@@ -2564,6 +2642,17 @@ a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; wh
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align: <?php print $left; ?>; font-weight: normal; color: #999; text-decoration: none; }
+
+.helppresentcircle {
+    color: var(--colorbackhmenu1);
+    filter: invert(0.5);
+    margin-left: -7px;
+    display: inline-block;
+    margin-top: -10px;
+    font-size: x-small;
+    vertical-align: super;
+    opacity: 0.95;
+}
 
 div.blockvmenulogo
 {
@@ -2960,6 +3049,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .unsetcolor {
 	color: unset !important;
 }
+
+.smallpaddingimp {
+    padding: 4px !important;
+}
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
@@ -3165,6 +3258,12 @@ td.borderright {
 	border-right-width: 1px !important;
 	border-right-color: #BBB !important;
 	border-right-style: solid !important;
+}
+td.borderleft {
+    border: none;	/* to erase value for table.nobordernopadding td */
+	border-left-width: 1px !important;
+	border-left-color: #BBB !important;
+	border-left-style: solid !important;
 }
 
 /* For table with no filter before */
@@ -3867,7 +3966,7 @@ img.boxhandle, img.boxclose {
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
-.green   { color: #118822; }
+.green   { color: #118822 !important; }
 
 div.ok {
   color: #114466;
@@ -4024,7 +4123,6 @@ div.titre {
     padding-bottom: 5px;
     text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
-	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -4304,7 +4402,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
     display: none;
 }
 
@@ -4409,6 +4507,10 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 }
 .websitebar input#previewpageurl {
     line-height: 1em;
+}
+
+#divbodywebsite section p {
+    margin: unset;
 }
 
 
@@ -4950,7 +5052,15 @@ td.gminorheading {
     max-width: 40px !important;
     width: 40px !important;
 }
-
+td.gtaskheading.gstartdate, td.gtaskheading.genddate {
+    white-space: break-spaces;
+}
+.gtasktableh tr:nth-child(2) td:nth-child(2), .gtasktableh tr:nth-child(2) td:nth-child(3), .gtasktableh tr:nth-child(2) td:nth-child(4), .gtasktableh tr:nth-child(2) td:nth-child(5), .gtasktableh tr:nth-child(2) td:nth-child(6), .gtasktableh tr:nth-child(2) td:nth-child(7) {
+    color: transparent !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
 
 
 /* ============================================================================== */
@@ -6435,12 +6545,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 		padding-right: 5px;
 	}
     img.photoref, div.photoref {
-    	border: none;
+    	border: 1px solid rgba(0, 0, 0, 0.2);
     	-webkit-box-shadow: none;
         box-shadow: none;
         padding: 4px;
-    	height: 20px;
-    	width: 20px;
         object-fit: contain;
     }
 

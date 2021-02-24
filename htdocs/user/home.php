@@ -128,7 +128,7 @@ if ($resql)
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
 	print '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-	print '</tr>';
+	print '</tr>'."\n";
 	$i = 0;
 
 	while ($i < $num && $i < $max)
@@ -152,7 +152,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
-        print $fuserstatic->getNomUrl(-1);
+		print $fuserstatic->getNomUrl(-1);
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
@@ -165,7 +165,7 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_soc)
 		{
-            print $companystatic->getNomUrl(1);
+			print $companystatic->getNomUrl(1);
 		} else {
 			print $langs->trans("InternalUser");
 		}
@@ -176,7 +176,7 @@ if ($resql)
 
 		$entity = $obj->entity;
 		$entitystring = '';
-        // TODO Set of entitystring should be done with a hook
+		// TODO Set of entitystring should be done with a hook
 		if (!empty($conf->multicompany->enabled) && is_object($mc))
 		{
 			if (empty($entity))
@@ -187,13 +187,13 @@ if ($resql)
 				$entitystring = $mc->label;
 			}
 		}
-        print ($entitystring ? ' ('.$entitystring.')' : '');
+		print ($entitystring ? ' ('.$entitystring.')' : '');
 
 		print '</td>';
 		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-        print '<td class="right">';
-        print $fuserstatic->getLibStatut(3);
-        print '</td>';
+		print '<td class="right">';
+		print $fuserstatic->getLibStatut(3);
+		print '</td>';
 
 		print '</tr>';
 		$i++;
@@ -259,10 +259,10 @@ if ($canreadperms)
 			print "</td>";
 			if (!empty($conf->multicompany->enabled) && is_object($mc))
 			{
-	        	$mc->getInfo($obj->entity);
-	        	print '<td>';
-	        	print $mc->label;
-	        	print '</td>';
+				$mc->getInfo($obj->entity);
+				print '<td>';
+				print $mc->label;
+				print '</td>';
 			}
 			print '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 			print "</tr>";
@@ -277,7 +277,6 @@ if ($canreadperms)
 	}
 }
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array

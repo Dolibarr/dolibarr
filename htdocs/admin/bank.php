@@ -112,7 +112,7 @@ if ($actionsave)
 		if ($color == '-1') $color = '';
 
 		$res = dolibarr_set_const($db, 'BANK_COLORIZE_MOVEMENT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		$i++;
 	}
 
@@ -391,7 +391,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -495,10 +495,10 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 
 print "</tr>\n";
 print '</table>';
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';
+print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print "</form>\n";

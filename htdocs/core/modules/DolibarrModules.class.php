@@ -316,7 +316,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
 	 */
 	public $phpmin;
 
@@ -353,15 +353,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Enables a module.
-	 * Inserts all informations into database
+	 * Inserts all informations into database.
 	 *
-	 * @param array  $array_sql SQL requests to be executed when enabling module
-	 * @param string $options   String with options when disabling module:
-	 *                          - 'noboxes' = Do not insert boxes -
-	 *                          'newboxdefonly' = For boxes, insert def of
-	 *                          boxes only and not boxes activation
-	 *
-	 * @return int                         1 if OK, 0 if KO
+	 * @param array  $array_sql 	SQL requests to be executed when enabling module
+	 * @param string $options   	String with options when disabling module:
+	 *                          	- 'noboxes' = Do all actions but do not insert boxes
+	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
+	 * @return int                  1 if OK, 0 if KO
 	 */
 	protected function _init($array_sql, $options = '')
 	{
@@ -391,7 +389,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err += $this->insert_const(); // Test on newboxdefonly to avoid to erase value during upgrade
 		}
 
-		// Insert boxes def into llx_boxes_def and boxes setup (into llx_boxes)
+		// Insert boxes def (into llx_boxes_def) and boxes setup (into llx_boxes)
 		if (!$err && !preg_match('/noboxes/', $options)) {
 			$err += $this->insert_boxes($options);
 		}
@@ -622,6 +620,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
+		$content='';
 		$pathoffile = $this->getDescLongReadmeFound();
 
 		if ($pathoffile)     // Mostly for external modules
@@ -1250,12 +1249,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				//print "Remove box ".$file.'<br>';
 				if ($file == 'box_graph_product_distribution.php') {
 					if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-						dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
+						dol_syslog("We discard deleting module ".$file." because another module still active requires it.");
 						continue;
 					}
 				}
 
-				if (empty($file)) { $file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
+				if (empty($file)) {
+					$file = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
 				}
 
 				if ($this->db->type == 'sqlite3') {
@@ -1284,7 +1284,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql .= " WHERE file = '".$this->db->escape($file)."'";
-				$sql .= " AND entity = ".$conf->entity;
+				$sql .= " AND entity = ".$conf->entity;		// Do not use getEntity here, we want to delete only in current company
 
 				dol_syslog(get_class($this)."::delete_boxes", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1679,13 +1679,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$r_id       = $this->rights[$key][0];
 					$r_desc     = $this->rights[$key][1];
 					$r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
-					$r_def      = $this->rights[$key][3];
+					$r_def      = empty($this->rights[$key][3]) ? 0 : $this->rights[$key][3];
 					$r_perms    = $this->rights[$key][4];
 					$r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
 					$r_modul = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
 
 					if (empty($r_type)) { $r_type = 'w'; }
-					if (empty($r_def)) { $r_def = 0; }
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
@@ -1816,7 +1815,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// phpcs:enable
 		global $user;
 
-		if (!is_array($this->menu) || empty($this->menu)) { return 0;
+		if (!is_array($this->menu) || empty($this->menu)) {
+			return 0;
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
@@ -1868,8 +1868,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->mainmenu = isset($this->menu[$key]['mainmenu']) ? $this->menu[$key]['mainmenu'] : (isset($menu->fk_mainmenu) ? $menu->fk_mainmenu : '');
 			$menu->leftmenu = isset($this->menu[$key]['leftmenu']) ? $this->menu[$key]['leftmenu'] : '';
 			$menu->title = $this->menu[$key]['titre'];
+			$menu->prefix = isset($this->menu[$key]['prefix']) ? $this->menu[$key]['prefix'] : '';
 			$menu->url = $this->menu[$key]['url'];
-			$menu->langs = $this->menu[$key]['langs'];
+			$menu->langs = isset($this->menu[$key]['langs']) ? $this->menu[$key]['langs'] : '';
 			$menu->position = $this->menu[$key]['position'];
 			$menu->perms = $this->menu[$key]['perms'];
 			$menu->target = isset($this->menu[$key]['target']) ? $this->menu[$key]['target'] : '';
@@ -2172,9 +2173,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * The init function adds tabs, constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 * It also creates data directories
 	 *
-	 * @param  string $options Options when enabling module ('', 'newboxdefonly', 'noboxes')
-	 *                         'noboxes' = Do not insert boxes 'newboxdefonly' = For boxes,
-	 *                         insert def of boxes only and not boxes activation
+	 * @param  string $options Options when enabling module ('', 'newboxdefonly', 'noboxes', 'menuonly')
+	 *                         'noboxes' = Do not insert boxes 'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
 	 * @return int                1 if OK, 0 if KO
 	 */
 	public function init($options = '')

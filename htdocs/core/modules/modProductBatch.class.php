@@ -40,9 +40,9 @@ class modProductBatch extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs, $conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 		$this->numero = 39000;
 
 		$this->family = "products";
@@ -72,25 +72,25 @@ class modProductBatch extends DolibarrModules
 		$this->depends = array("modProduct", "modStock", "modExpedition", "modFournisseur"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("productbatch");
 
 		// Constants
 		$this->const = array();
 
-        $this->tabs = array();
+		$this->tabs = array();
 
-        // Dictionaries
-	    if (!isset($conf->productbatch->enabled))
-        {
-        	$conf->productbatch = new stdClass();
-        	$conf->productbatch->enabled = 0;
-        }
+		// Dictionaries
+		if (!isset($conf->productbatch->enabled))
+		{
+			$conf->productbatch = new stdClass();
+			$conf->productbatch->enabled = 0;
+		}
 		$this->dictionaries = array();
 
-        // Boxes
-        $this->boxes = array(); // List of boxes
+		// Boxes
+		$this->boxes = array(); // List of boxes
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
@@ -111,20 +111,20 @@ class modProductBatch extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
-	    global $db, $conf;
+		global $db, $conf;
 
 		$sql = array();
 
 		if (!empty($conf->cashdesk->enabled)) {
-    		if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
-    		    include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-    		    $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
-    		}
+			if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+			}
 		}
 
 		return $this->_init($sql, $options);

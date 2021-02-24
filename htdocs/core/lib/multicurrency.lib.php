@@ -40,6 +40,11 @@ function multicurrencyAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/multicurrency/multicurrency_rate.php", 1);
+	$head[$h][1] = $langs->trans("TabTitleMulticurrencyRate");
+	$head[$h][2] = 'ratelist';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency', 'remove');

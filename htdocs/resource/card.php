@@ -40,7 +40,7 @@ $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
 $description			= GETPOST('description', 'restricthtml');
 $confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource  = GETPOST('fk_code_type_resource', 'alpha');
+$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
@@ -265,12 +265,12 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '</table>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans($action == "create" ? "Create" : "Modify").'">';
 		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '</div>';
 
@@ -320,10 +320,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		print '<td>';
 		print $object->description;
 		print '</td>';
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
 		print '</tr>';
 
 		// Origin country code
@@ -332,6 +328,11 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 		print '<td>';
 		print getCountry($object->country_id, 0, $db);
 		print '</td>';
+
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 		print '</tr>';
 
 		print '</table>';
@@ -340,7 +341,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0)
 
 		print '<div class="clearboth"></div><br>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 	}
 
 

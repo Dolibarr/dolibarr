@@ -92,7 +92,7 @@ if ($action == 'update' || $action == 'add') {
 
 	$res = dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -136,7 +136,7 @@ form_constantes($constantes, 0, $helptext);
 //print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 //print '</form>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

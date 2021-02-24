@@ -75,12 +75,12 @@ if ($action == 'updateoptions')
 	{
 		$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		if (!$error)
-	    {
-		    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	    } else {
-		    setEventMessages($langs->trans("Error"), null, 'errors');
+		{
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 
@@ -88,7 +88,7 @@ if ($action == 'updateoptions')
 	{
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		if (!$error)
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -101,7 +101,7 @@ if ($action == 'updateoptions')
 	{
 		$customertypedefault = GETPOST('defaultcustomertype', 'int');
 		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) $error++;
 		if (!$error)
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -154,7 +154,7 @@ if ($action == 'setdoc')
 	$sql_del .= " WHERE nom = '".$db->escape(GETPOST('value', 'alpha'))."'";
 	$sql_del .= " AND type = '".$db->escape($type)."'";
 	$sql_del .= " AND entity = ".$conf->entity;
-    dol_syslog("societe.php ".$sql);
+	dol_syslog("societe.php ".$sql);
 	$result1 = $db->query($sql_del);
 
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -162,13 +162,13 @@ if ($action == 'setdoc')
 	$sql .= ($label ? "'".$db->escape($label)."'" : 'null').", ";
 	$sql .= (!empty($scandir) ? "'".$db->escape($scandir)."'" : "null");
 	$sql .= ")";
-    dol_syslog("societe.php", LOG_DEBUG);
+	dol_syslog("societe.php", LOG_DEBUG);
 	$result2 = $db->query($sql);
 	if ($result1 && $result2)
 	{
 		$db->commit();
 	} else {
-	    $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -176,7 +176,7 @@ if ($action == 'setdoc')
 if ($action == "setaddrefinlist") {
 	$setaddrefinlist = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ADD_REF_IN_LIST", $setaddrefinlist, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -189,9 +189,21 @@ if ($action == "setaddrefinlist") {
 if ($action == "setaddadressinlist") {
 	$val = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+//Activate Set email phone town in contact list
+if ($action == "setaddemailphonetownincontactlist") {
+	$val = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST", $val, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) $error++;
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -202,7 +214,7 @@ if ($action == "setaddadressinlist") {
 if ($action == "setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ASK_FOR_SHIPPING_METHOD", $setaskforshippingmet, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -213,15 +225,15 @@ if ($action == "setaskforshippingmet") {
 
 //Activate "Disable prospect/customer type"
 if ($action == "setdisableprospectcustomer") {
-    $setdisableprospectcustomer = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0) $error++;
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	$setdisableprospectcustomer = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) $error++;
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 //Activate ProfId unique
@@ -283,15 +295,15 @@ if ($action == 'sethideinactivethirdparty')
 	}
 }
 if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
-    $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
-    if (!$res > 0) $error++;
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) $error++;
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -336,34 +348,34 @@ foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot, 0);
 
-    $handle = @opendir($dir);
-    if (is_resource($handle))
-    {
-    	// Loop on each module find in opened directory
-    	while (($file = readdir($handle)) !== false)
-    	{
-    		if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
-    		{
-    			$file = substr($file, 0, dol_strlen($file) - 4);
+	$handle = @opendir($dir);
+	if (is_resource($handle))
+	{
+		// Loop on each module find in opened directory
+		while (($file = readdir($handle)) !== false)
+		{
+			if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
+			{
+				$file = substr($file, 0, dol_strlen($file) - 4);
 
-    			try {
-        			dol_include_once($dirroot.$file.'.php');
-    			} catch (Exception $e)
-    			{
-    			    dol_syslog($e->getMessage(), LOG_ERR);
-    			}
+				try {
+					dol_include_once($dirroot.$file.'.php');
+				} catch (Exception $e)
+				{
+					dol_syslog($e->getMessage(), LOG_ERR);
+				}
 
-    			$modCodeTiers = new $file;
+				$modCodeTiers = new $file;
 
-    			// Show modules according to features level
-    			if ($modCodeTiers->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-    			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+				// Show modules according to features level
+				if ($modCodeTiers->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+				if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-    			$arrayofmodules[$file] = $modCodeTiers;
-    		}
-    	}
-    	closedir($handle);
-    }
+				$arrayofmodules[$file] = $modCodeTiers;
+			}
+		}
+		closedir($handle);
+	}
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
@@ -383,7 +395,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers)
 	} else {
 		$disabled = (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
-		if (!$disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;token='.newToken().'&amp;value='.$file.'">';
+		if (!$disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		if (!$disabled) print '</a>';
 		print '</td>';
@@ -423,28 +435,28 @@ foreach ($dirsociete as $dirroot)
 	$dir = dol_buildpath($dirroot, 0);
 
 	$handle = @opendir($dir);
-    if (is_resource($handle))
-    {
-    	while (($file = readdir($handle)) !== false)
-    	{
-    		if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
-    		{
-    			$file = substr($file, 0, dol_strlen($file) - 4);
+	if (is_resource($handle))
+	{
+		while (($file = readdir($handle)) !== false)
+		{
+			if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
+			{
+				$file = substr($file, 0, dol_strlen($file) - 4);
 
-    		    try {
-        			dol_include_once($dirroot.$file.'.php');
-    			} catch (Exception $e)
-    			{
-    			    dol_syslog($e->getMessage(), LOG_ERR);
-    			}
+				try {
+					dol_include_once($dirroot.$file.'.php');
+				} catch (Exception $e)
+				{
+					dol_syslog($e->getMessage(), LOG_ERR);
+				}
 
-    			$modCodeCompta = new $file;
+				$modCodeCompta = new $file;
 
-    			$arrayofmodules[$file] = $modCodeCompta;
-    		}
-    	}
-        closedir($handle);
-    }
+				$arrayofmodules[$file] = $modCodeCompta;
+			}
+		}
+		closedir($handle);
+	}
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
@@ -452,27 +464,27 @@ $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
 
 foreach ($arrayofmodules as $file => $modCodeCompta)
 {
-    print '<tr class="oddeven">';
-    print '<td>'.$modCodeCompta->name."</td><td>\n";
-    print $modCodeCompta->info($langs);
-    print '</td>';
-    print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
+	print '<tr class="oddeven">';
+	print '<td>'.$modCodeCompta->name."</td><td>\n";
+	print $modCodeCompta->info($langs);
+	print '</td>';
+	print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 
-    if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
-    {
-    	print '<td class="center">';
-    	print img_picto($langs->trans("Activated"), 'switch_on');
-    	print '</td>';
-    } else {
-    	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
-    	print img_picto($langs->trans("Disabled"), 'switch_off');
-    	print '</a></td>';
-    }
-    print '<td class="center">';
-    $s = $modCodeCompta->getToolTip($langs, null, -1);
-    print $form->textwithpicto('', $s, 1);
-    print '</td>';
-    print "</tr>\n";
+	if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
+	{
+		print '<td class="center">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</td>';
+	} else {
+		print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '<td class="center">';
+	$s = $modCodeCompta->getToolTip($langs, null, -1);
+	print $form->textwithpicto('', $s, 1);
+	print '</td>';
+	print "</tr>\n";
 }
 print "</table>\n";
 print '</div>';
@@ -529,14 +541,14 @@ foreach ($dirsociete as $dirroot)
 				$name = substr($file, 4, dol_strlen($file) - 16);
 				$classname = substr($file, 0, dol_strlen($file) - 12);
 
-			    try {
-        			dol_include_once($dirroot.'doc/'.$file);
-    			} catch (Exception $e)
-    			{
-    			    dol_syslog($e->getMessage(), LOG_ERR);
-    			}
+				try {
+					dol_include_once($dirroot.'doc/'.$file);
+				} catch (Exception $e)
+				{
+					dol_syslog($e->getMessage(), LOG_ERR);
+				}
 
-    			$module = new $classname($db);
+				$module = new $classname($db);
 
 				$modulequalified = 1;
 				if (!empty($module->version)) {
@@ -559,7 +571,7 @@ foreach ($dirsociete as $dirroot)
 						print "<td class=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						//}
@@ -571,12 +583,12 @@ foreach ($dirsociete as $dirroot)
 					} else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0)
 						{
-							print "<td class=\"center\">\n";
+							print '<td class="center">'."\n";
 							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						} else {
-							print "<td class=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<td class="center">'."\n";
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -599,7 +611,7 @@ foreach ($dirsociete as $dirroot)
 					print '<td class="center nowrap">';
 					if ($module->type == 'pdf')
 					{
-						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 					} else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
@@ -714,6 +726,7 @@ $form = new Form($db);
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
 print '<div class="div-table-responsive-no-min">';
@@ -736,12 +749,12 @@ if (!$conf->use_javascript_ajax)
 	print '<td width="60" class="right">';
 	$arrval = array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -763,7 +776,7 @@ if (!$conf->use_javascript_ajax)
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -772,7 +785,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
@@ -787,7 +800,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 {
@@ -800,11 +813,25 @@ if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 print '</a></td>';
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AddEmailPhoneTownInContactList").'</td>';
+print '<td>&nbsp;</td>';
+print '<td class="center">';
+if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddemailphonetownincontactlist&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
 if (!empty($conf->expedition->enabled)) {
-	if (! empty($conf->global->MAIN_FEATURES_LEVEL)) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
+	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
 		print '<tr class="oddeven">';
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
-		print '<td>&nbsp</td>';
+		print '<td>&nbsp;</td>';
 		print '<td class="center">';
 		if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 		{
@@ -822,29 +849,31 @@ if (!empty($conf->expedition->enabled)) {
 // Disable Prospect/Customer thirdparty type
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("DisableProspectCustomerType").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
 {
-    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&token='.newToken().'&value=0">';
-    print img_picto($langs->trans("Activated"), 'switch_on');
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&token='.newToken().'&value=1">';
-    print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
 print '</tr>';
 
-// Default Prospect/Customer thirdparty type on customer création
-print '<tr class="oddeven">';
-print '<td width="80%">'.$langs->trans("DefaultCustomerType").'</td>';
-print '<td>';
-print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
-print '</td>';
-print '<td class="center">';
-print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
-print '</td>';
-print '</tr>';
+if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+	// Default Prospect/Customer thirdparty type on customer création
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
+	print '<td>';
+	print $formcompany->selectProspectCustomerType($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT, 'defaultcustomertype', 'defaultcustomertype', 'admin');
+	print '</td>';
+	print '<td class="center">';
+	print '<input type="submit" class="button reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+	print '</td>';
+	print '</tr>';
+}
 
 print '</table>';
 print '</div>';
@@ -852,7 +881,7 @@ print '</div>';
 print '</form>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

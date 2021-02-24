@@ -25,7 +25,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box.info-box-sm {
     min-height: 80px;
     margin-bottom: 10px;
-    background: #fff;
+    /* background: #fff; */
 }
 .opened-dash-board-wrap .info-box.info-box-sm {
     border-radius: 0 0 0 20px;
@@ -214,6 +214,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	text-transform: uppercase;
 	font-weight: bold;
 	margin-bottom: 3px;	/* not too much space so we can add another lines */
+	opacity: 0.6;
+	/* color: var(--colortexttitlenotab); */
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -435,18 +437,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 	    min-width: 315px;
 	    max-width: 315px;
 	}
 }
+
 @media only screen and (max-width: 767px) {
 	.info-box-module {
 		min-width: 260px;
 	}
 }
-
 
 .info-box-module .info-box-content {
 	height: 98px;
@@ -463,9 +466,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	    margin: 0 0 0 0px !important;
 	    width: 100% !important;
 	}
-
 	.info-box-module {
 		width: 100%;
 		max-width: unset;
 	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
+	.info-box {
+		border: 1px solid #e0e0e0;
+	}
+}
 }

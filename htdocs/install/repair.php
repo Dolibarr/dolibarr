@@ -223,9 +223,9 @@ if ($ok && GETPOST('standard', 'alpha'))
 {
 	$extrafields = new ExtraFields($db);
 	$listofmodulesextra = array('societe'=>'societe', 'adherent'=>'adherent', 'product'=>'product',
-				'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
+				'socpeople'=>'socpeople', 'propal'=>'propal', 'commande'=>'commande', 'facture'=>'facture',
 				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
-				'actioncomm'=>'actioncomm',
+				'actioncomm'=>'actioncomm', 'bom_bom'=>'bom_bom', 'mrp_mo'=>'mrp_mo',
 				'adherent_type'=>'adherent_type', 'user'=>'user', 'projet'=>'projet', 'projet_task'=>'projet_task');
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach ($listofmodulesextra as $tablename => $elementtype)
@@ -1473,7 +1473,7 @@ if (empty($actiondone))
 
 if ($oneoptionset)
 {
-	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
+	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
 } else {

@@ -243,7 +243,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="checkbox_sql_structure">'.$langs->trans('ExportStructure').'</label>';
 	print '</legend>';
 
-	print '<input type="checkbox" name="drop"'.((! GETPOSTISSET("drop") || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
+	print '<input type="checkbox" name="drop"'.((!GETPOSTISSET("drop") || GETPOST('drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
 	print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
 	print '<br>';
 	print '</fieldset>';
@@ -304,7 +304,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	print '<br>';
 	print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
-	print '<input type="checkbox" name="nobin_drop"'.((! GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
+	print '<input type="checkbox" name="nobin_drop"'.((!GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
 	print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
 	print '<br>';
 	print '</fieldset>';

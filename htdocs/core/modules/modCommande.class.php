@@ -145,7 +145,7 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'order_advance';
-        $this->rights[$r][5] = 'send';
+		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 87;
@@ -205,11 +205,11 @@ class modCommande extends DolibarrModules
 		);
 		if (!empty($conf->multicurrency->enabled))
 		{
-		    $this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
-		    $this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
-		    $this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
-		    $this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
-		    $this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
@@ -263,6 +263,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('commande').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+
 		// Imports
 		//--------
 		$r = 0;
@@ -270,7 +271,7 @@ class modCommande extends DolibarrModules
 
 		$r++;
 		$this->import_code[$r] = 'commande_'.$r;
-		$this->import_label[$r] = 'Sales Orders';
+		$this->import_label[$r] = 'CustomersOrders';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields'];
@@ -287,7 +288,7 @@ class modCommande extends DolibarrModules
 			'c.fk_user_valid'     => 'ValidatedById',
 			'c.fk_statut'         => 'Status*',
 			'c.remise_percent'    => 'GlobalDiscount',
-			'c.tva'               => 'TotalTVA',
+			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',
@@ -356,7 +357,7 @@ class modCommande extends DolibarrModules
 		//Import CPV Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
-		$this->import_label[$r] = 'Order Details';
+		$this->import_label[$r] = 'OrderLine';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];
@@ -426,7 +427,7 @@ class modCommande extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')

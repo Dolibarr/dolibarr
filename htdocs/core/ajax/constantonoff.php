@@ -31,7 +31,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN'))  define('CSRFCHECK_WITH_TOKEN', '1'); // T
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$action = GETPOST('action', 'aZ09');	// set or del
+$action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
 
 

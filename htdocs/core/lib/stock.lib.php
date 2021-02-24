@@ -66,20 +66,20 @@ function stock_prepare_head($object)
 	}
 	*/
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock');
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'remove');
 
-    return $head;
+	return $head;
 }
 
 /**
@@ -89,28 +89,28 @@ function stock_prepare_head($object)
  */
 function stock_admin_prepare_head()
 {
-    global $langs, $conf, $user;
+	global $langs, $conf, $user;
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/admin/stock.php';
-    $head[$h][1] = $langs->trans("Miscellaneous");
-    $head[$h][2] = 'general';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/admin/stock.php';
+	$head[$h][1] = $langs->trans("Miscellaneous");
+	$head[$h][2] = 'general';
+	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
 
-    $head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'attributes';
+	$h++;
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin', 'remove');
 
-    return $head;
+	return $head;
 }

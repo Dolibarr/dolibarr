@@ -27,29 +27,29 @@
  */
 class FormIntervention
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 
-    /**
-     * Constructor
-     *
-     * @param		DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show a combo list with contracts qualified for a third party
 	 *
@@ -62,7 +62,7 @@ class FormIntervention
 	 */
 	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $db, $user, $conf, $langs;
 
 		$out = '';

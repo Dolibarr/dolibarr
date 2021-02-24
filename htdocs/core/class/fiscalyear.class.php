@@ -35,6 +35,9 @@ class Fiscalyear extends CommonObject
 	 */
 	public $element = 'fiscalyear';
 
+	/**
+	 * @var string picto
+	 */
 	public $picto = 'technic';
 
 	/**
@@ -43,12 +46,12 @@ class Fiscalyear extends CommonObject
 	public $table_element = 'accounting_fiscalyear';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 
@@ -69,25 +72,25 @@ class Fiscalyear extends CommonObject
 	public $label;
 
 	/**
-     * Date start (date_start)
-     *
-     * @var integer
-     */
+	 * Date start (date_start)
+	 *
+	 * @var integer
+	 */
 	public $date_start;
 
 	/**
-     * Date end (date_end)
-     *
-     * @var integer
-     */
+	 * Date end (date_end)
+	 *
+	 * @var integer
+	 */
 	public $date_end;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	public $statut; // 0=open, 1=closed
 
@@ -214,11 +217,11 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @return	int				<0 if KO, >0 if OK
-	*/
+	 * Load an object from database
+	 *
+	 * @param	int		$id		Id of record to load
+	 * @return	int				<0 if KO, >0 if OK
+	 */
 	public function fetch($id)
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
@@ -245,7 +248,7 @@ class Fiscalyear extends CommonObject
 		}
 	}
 
-    /**
+	/**
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete

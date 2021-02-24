@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sup
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$_GET["action"] = '';
 	$socid = $user->socid;
@@ -109,6 +108,7 @@ $year_lim	= GETPOST('year_lim', 'int');
 $toselect = GETPOST('toselect', 'array');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
+$search_categ_sup = trim(GETPOST("search_categ_sup", 'int'));
 
 $option = GETPOST('option');
 if ($option == 'late') {
@@ -188,14 +188,8 @@ $arrayfields = array(
 	'f.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -260,6 +254,7 @@ if (empty($reshook))
 		$filter = '';
 		$option = '';
 		$socid = "";
+		$search_categ_sup = 0;
 	}
 
 	// Mass actions
@@ -270,6 +265,183 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->fournisseur->facture->supprimer;
 	$uploaddir = $conf->fournisseur->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($massaction == 'banktransfertrequest')
+	{
+		$langs->load("withdrawals");
+
+		if (!$user->rights->paymentbybanktransfer->create)
+		{
+			$error++;
+			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+		} else {
+			//Checking error
+			$error = 0;
+
+			$arrayofselected = is_array($toselect) ? $toselect : array();
+			$listofbills = array();
+			foreach ($arrayofselected as $toselectid)
+			{
+				$objecttmp = new FactureFournisseur($db);
+				$result = $objecttmp->fetch($toselectid);
+				if ($result > 0)
+				{
+					$totalpaye = $objecttmp->getSommePaiement();
+					$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
+					$totaldeposits = $objecttmp->getSumDepositsUsed();
+					$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+					if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+					} elseif ($objecttmp->resteapayer < 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+					}
+					if (!($objecttmp->statut > FactureFournisseur::STATUS_DRAFT)) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+					}
+
+					$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+					$rsql .= " , pfd.date_traite as date_traite";
+					$rsql .= " , pfd.amount";
+					$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+					$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+					$rsql .= " , ".MAIN_DB_PREFIX."user as u";
+					$rsql .= " WHERE fk_facture_fourn = ".$objecttmp->id;
+					$rsql .= " AND pfd.fk_user_demande = u.rowid";
+					$rsql .= " AND pfd.traite = 0";
+					$rsql .= " ORDER BY pfd.date_demande DESC";
+
+					$result_sql = $db->query($rsql);
+					if ($result_sql)
+					{
+						$numprlv = $db->num_rows($result_sql);
+					}
+
+					if ($numprlv > 0) {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+						$error++;
+						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					} else {
+						$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
+					}
+				}
+			}
+
+			//Massive withdraw request for request with no errors
+			if (!empty($listofbills))
+			{
+				$nbwithdrawrequestok = 0;
+				foreach ($listofbills as $aBill)
+				{
+					$db->begin();
+					$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
+					if ($result > 0)
+					{
+						$db->commit();
+						$nbwithdrawrequestok++;
+					} else {
+						$db->rollback();
+						setEventMessages($aBill->error, $aBill->errors, 'errors');
+					}
+				}
+				if ($nbwithdrawrequestok > 0)
+				{
+					setEventMessages($langs->trans("WithdrawRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+				}
+			}
+		}
+	}
+}
+
+
+if ($massaction == 'transfer_request')
+{
+	$langs->load("withdrawals");
+
+	if (!$user->rights->paymentbybanktransfer->create) {
+		$error++;
+		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+	} else {
+		//Checking error
+		$error = 0;
+
+		$arrayofselected = is_array($toselect) ? $toselect : array();
+		$listofbills = array();
+		foreach ($arrayofselected as $toselectid)
+		{
+			$objecttmp = new FactureFournisseur($db);
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				$totalpaye = $objecttmp->getSommePaiement();
+				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
+				$totaldeposits = $objecttmp->getSumDepositsUsed();
+				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+				if ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+				} elseif ($objecttmp->resteapayer < 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+				}
+				if (!($objecttmp->statut > FactureFournisseur::STATUS_DRAFT)) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
+				}
+
+				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
+				$rsql .= " , pfd.date_traite as date_traite";
+				$rsql .= " , pfd.amount";
+				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
+				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
+				$rsql .= " WHERE fk_facture_fourn = ".$objecttmp->id;
+				$rsql .= " AND pfd.fk_user_demande = u.rowid";
+				$rsql .= " AND pfd.traite = 0";
+				$rsql .= " ORDER BY pfd.date_demande DESC";
+
+				$result_sql = $db->query($rsql);
+				if ($result_sql)
+				{
+					$numprlv = $db->num_rows($result_sql);
+				}
+
+				if ($numprlv > 0) {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+				}
+				elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
+					$error++;
+					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				} else {
+					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
+				}
+			}
+		}
+
+		//Massive withdraw request for request with no errors
+		if (!empty($listofbills)) {
+			$nbwithdrawrequestok = 0;
+			foreach ($listofbills as $aBill) {
+				$db->begin();
+				$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
+				if ($result > 0) {
+					$db->commit();
+					$nbwithdrawrequestok++;
+				} else {
+					$db->rollback();
+					setEventMessages($aBill->error, $aBill->errors, 'errors');
+				}
+			}
+			if ($nbwithdrawrequestok > 0) {
+				setEventMessages($langs->trans("BankTransferRequestsDone", $nbwithdrawrequestok), null, 'mesgs');
+			}
+		}
+	}
 }
 
 
@@ -289,7 +461,7 @@ $thirdparty = new Societe($db);
 
 $sql = "SELECT";
 if ($search_all || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement,";
+$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_update,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
@@ -304,6 +476,7 @@ $sql .= " u.login";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) $sql .= ', SUM(pf.amount) as dynamount_payed';
+if ($search_categ_sup) $sql .= ", cs.fk_categorie, cs.fk_soc";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -316,6 +489,8 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+if (!empty($search_categ_sup)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc";
+
 $sql .= ', '.MAIN_DB_PREFIX.'facture_fourn as f';
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 if (!$search_all) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -357,7 +532,7 @@ if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_montant_ht != '') $sql .= natural_search('f.total_ht', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search('f.total_tva', $search_montant_vat, 1);
 if ($search_montant_localtax1 != '') $sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
@@ -376,6 +551,8 @@ $sql .= dolSqlDateFilter("f.datef", $day, $month, $year);
 $sql .= dolSqlDateFilter("f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
 if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 if ($search_label) $sql .= natural_search('f.libelle', $search_label);
+if ($search_categ_sup > 0) $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ_sup);
+if ($search_categ_sup == -2)   $sql .= " AND cs.fk_categorie IS NULL";
 if ($search_status != '' && $search_status >= 0)
 {
 	$sql .= " AND f.fk_statut = ".$search_status;
@@ -403,10 +580,12 @@ $sql .= $hookmanager->resPrint;
 
 if (!$search_all)
 {
-	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement, f.fk_mode_reglement,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement, f.fk_mode_reglement, f.fk_cond_reglement,";
 	$sql .= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql .= " f.localtax1, f.localtax2,";
+	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
 	$sql .= " f.note_public, f.note_private,";
+	$sql .= " f.fk_user_author,";
 	$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
@@ -497,6 +676,9 @@ if ($resql)
 	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
 	if ($option)                $param .= "&option=".urlencode($option);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
+	if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -505,9 +687,17 @@ if ($resql)
 		'validate'=>$langs->trans("Validate"),
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		//'builddoc'=>$langs->trans("PDFMerge"),
-	    //'presend'=>$langs->trans("SendByMail"),
+		//'presend'=>$langs->trans("SendByMail"),
 	);
+	if ($conf->paymentbybanktransfer->enabled) {
+        	$langs->load("withdrawals");
+        	$arrayofmassactions['transfer_request'] = $langs->trans("MakeBankTransferOrder");
+	}
 	//if($user->rights->fournisseur->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+	if (!empty($conf->paymentbybanktransfer->enabled) && !empty($user->rights->paymentbybanktransfer->create)) {
+		$langs->load('withdrawals');
+		$arrayofmassactions['banktransfertrequest'] = $langs->trans("MakeBankTransferOrder");
+	}
 	if ($user->rights->fournisseur->facture->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -569,7 +759,7 @@ if ($resql)
 		print '<br>';
 		print '<div class="center">';
 		print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisCustomer').'">  ';
-		print '<input type="submit" class="button" id="cancel" name="cancel" value="'.$langs->trans('Cancel').'">';
+		print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
 	}
@@ -606,6 +796,15 @@ if ($resql)
 		$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= '</div>';
+	}
+
+	if (!empty($conf->categorie->enabled))
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
+		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -653,7 +852,7 @@ if ($resql)
 				FactureFournisseur::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
 				FactureFournisseur::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
 		);
-        /*
+		/*
 		if (! empty($conf->global->INVOICE_USE_SITUATION))
 		{
 			$listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
@@ -721,7 +920,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Condition of payment
@@ -969,12 +1168,12 @@ if ($resql)
 			$facturestatic->type = $obj->type;
 
 
-            //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
-            if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-                if ($facturestatic->isCreditNoteUsed()) {
-                    $remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();
-                }
-            }
+			//If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
+			if ($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+				if ($facturestatic->isCreditNoteUsed()) {
+					$remaintopay = -$facturestatic->getSumFromThisCreditNotesNotUsed();
+				}
+			}
 
 			print '<tr class="oddeven">';
 			if (!empty($arrayfields['f.ref']['checked']))
@@ -1102,7 +1301,7 @@ if ($resql)
 			if (!empty($arrayfields['typent.code']['checked']))
 			{
 				print '<td class="center">';
-				if (count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
+				if (empty($typenArray)) $typenArray = $formcompany->typent_array(1);
 				print $typenArray[$obj->typent_code];
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1308,16 +1507,16 @@ if ($resql)
 	$hidegeneratedfilelistifempty = 1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
 
-    // Show list of available documents
-    $urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-    $urlsource .= str_replace('&amp;', '&', $param);
+	// Show list of available documents
+	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	$urlsource .= str_replace('&amp;', '&', $param);
 
-    $filedir = $diroutputmassaction;
-    $genallowed = $user->rights->facture->lire;
-    $delallowed = $user->rights->facture->creer;
-    $title = '';
+	$filedir = $diroutputmassaction;
+	$genallowed = $user->rights->facture->lire;
+	$delallowed = $user->rights->facture->creer;
+	$title = '';
 
-    print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {
 	dol_print_error($db);
 }

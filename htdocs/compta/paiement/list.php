@@ -48,29 +48,29 @@ $langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 $action				= GETPOST('action', 'alpha');
 $massaction			= GETPOST('massaction', 'alpha');
 $confirm			= GETPOST('confirm', 'alpha');
-$optioncss			= GETPOST('optioncss', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
 
 $facid				= GETPOST('facid', 'int');
 $socid				= GETPOST('socid', 'int');
-$userid				= GETPOST('userid', 'int');
-$day				= GETPOST('day', 'int');
+$userid = GETPOST('userid', 'int');
+$day = GETPOST('day', 'int');
 $month				= GETPOST('month', 'int');
-$year				= GETPOST('year', 'int');
+$year = GETPOST('year', 'int');
 
-$search_ref			= GETPOST("search_ref", "alpha");
+$search_ref = GETPOST("search_ref", "alpha");
 $search_company		= GETPOST("search_company", 'alpha');
 $search_paymenttype	= GETPOST("search_paymenttype");
 $search_account		= GETPOST("search_account", "int");
 $search_payment_num	= GETPOST('search_payment_num', 'alpha');
-$search_amount		= GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
+$search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
 
-$limit				= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
 $sortorder			= GETPOST("sortorder", 'alpha');
-$page				= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
-if (empty($page) || $page == -1) $page = 0;      // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) $page = 0; // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -78,7 +78,7 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "p.ref";
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOSTISSET("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -89,15 +89,15 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'p.ref'				=> array('label'=>"RefPayment",				'checked'=>1, 'position'=>10),
-	'p.datep'			=> array('label'=>"Date",					'checked'=>1, 'position'=>20),
-	's.nom'				=> array('label'=>"ThirdParty",				'checked'=>1, 'position'=>30),
-	'c.libelle'			=> array('label'=>"Type",					'checked'=>1, 'position'=>40),
-	'transaction'		=> array('label'=>"BankTransactionLine",	'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->banque->enabled))),
-	'ba.label'			=> array('label'=>"Account",				'checked'=>1, 'position'=>60, 'enabled'=>(!empty($conf->banque->enabled))),
-	'p.num_paiement'	=> array('label'=>"Numero",					'checked'=>1, 'position'=>70, 'tooltip'=>"ChequeOrTransferNumber"),
-	'p.amount'			=> array('label'=>"Amount",					'checked'=>1, 'position'=>80),
-	'p.statut'			=> array('label'=>"Status",					'checked'=>1, 'position'=>90, 'enabled'=>(!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))),
+	'p.ref'				=> array('label'=>"RefPayment", 'checked'=>1, 'position'=>10),
+	'p.datep'			=> array('label'=>"Date", 'checked'=>1, 'position'=>20),
+	's.nom'				=> array('label'=>"ThirdParty", 'checked'=>1, 'position'=>30),
+	'c.libelle'			=> array('label'=>"Type", 'checked'=>1, 'position'=>40),
+	'transaction'		=> array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->banque->enabled))),
+	'ba.label'			=> array('label'=>"Account", 'checked'=>1, 'position'=>60, 'enabled'=>(!empty($conf->banque->enabled))),
+	'p.num_paiement'	=> array('label'=>"Numero", 'checked'=>1, 'position'=>70, 'tooltip'=>"ChequeOrTransferNumber"),
+	'p.amount'			=> array('label'=>"Amount", 'checked'=>1, 'position'=>80),
+	'p.statut'			=> array('label'=>"Status", 'checked'=>1, 'position'=>90, 'enabled'=>(!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -148,7 +148,7 @@ llxHeader('', $langs->trans('ListPayment'));
 
 if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happend. For debug only.
-	$sql = "SELECT p.ref, p.datep, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 
 	// Add fields from hooks
@@ -166,7 +166,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= $hookmanager->resPrint;
 } else {
 	// DISTINCT is to avoid duplicate when there is a link to sales representatives
-	$sql = "SELECT DISTINCT p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
+	$sql = "SELECT DISTINCT p.rowid, p.ref, p.datep, p.fk_bank, p.amount, p.statut, p.num_paiement";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
@@ -390,7 +390,7 @@ while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
 	$object->id = $objp->rowid;
-	$object->ref = $objp->ref;
+	$object->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -496,6 +496,14 @@ while ($i < min($num, $limit)) {
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+// If no record found
+if ($num == 0)
+{
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+}
 
 print "</table>";
 print "</div>";

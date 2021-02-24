@@ -183,17 +183,18 @@ function getObjectFromID(id){
 }
 
 // Called after selection of a date to save details into detailed fields
-function dpChangeDay(dateFieldID,format)
+function dpChangeDay(dateFieldID, format)
 {
 	//showDP.datefieldID=dateFieldID;
-	console.log("Call dpChangeDay, we save date into detailed fields.");
+	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
 	var thefield=getObjectFromID(dateFieldID);
 	var thefieldday=getObjectFromID(dateFieldID+"day");
 	var thefieldmonth=getObjectFromID(dateFieldID+"month");
 	var thefieldyear=getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value,format);
+	var date=getDateFromFormat(thefield.value, format);
+	//console.log(date);
 	if (date)
 	{
 		thefieldday.value=date.getDate();
@@ -573,11 +574,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#set_" + key).hide();
 					$("#del_" + key).show();
-					$.get( url, {
+					$.post( url, {
 						action: "set",
 						name: key,
 						value: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
@@ -643,10 +645,11 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#del_" + value).hide();
 					$("#set_" + value).show();
-					$.get( url, {
+					$.post( url, {
 						action: "del",
 						name: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
@@ -1105,7 +1108,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
-    ?>
+	?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')
@@ -1135,7 +1138,7 @@ $(document).ready(function() {
 	if (window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
-		jQuery(".side-nav-vert, .side-nav").hide();
+		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
 
 	}

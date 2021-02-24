@@ -257,7 +257,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -270,21 +270,21 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
 
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
-        // standard format or custom
-        if ($this->Tformat['paper-size'] != 'custom') {
-            $this->format = $this->Tformat['paper-size'];
-        } else {
-            //custom
-            $resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
-            $this->format = $resolution;
-        }
+		// standard format or custom
+		if ($this->Tformat['paper-size'] != 'custom') {
+			$this->format = $this->Tformat['paper-size'];
+		} else {
+			//custom
+			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
+			$this->format = $resolution;
+		}
 
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -359,23 +359,6 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		if (!empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-		// Output to http stream
-		clearstatcache();
-
-		$attachment = true;
-		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
-		$type = dol_mimetype($filename);
-
-		//if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)		 header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-		else header('Content-Disposition: inline; filename="'.$filename.'"');
-
-		// Ajout directives pour resoudre bug IE
-		header('Cache-Control: Public, must-revalidate');
-		header('Pragma: public');
-
-		readfile($file);
 
 		$this->result = array('fullpath'=>$file);
 

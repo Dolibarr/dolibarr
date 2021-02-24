@@ -105,8 +105,8 @@ $coldisplay++;
 	if (is_object($hookmanager))
 	{
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	    $parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
-	    $reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
+		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
 	// Do not allow editing during a situation cycle
@@ -123,6 +123,17 @@ $coldisplay++;
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">'.$line->description.'</textarea>';
+	}
+
+	//Line extrafield
+	if (!empty($extrafields))
+	{
+		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+		if (!empty($temps)) {
+			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+			print $temps;
+			print '</div>';
+		}
 	}
 
 	// Show autofill date for recuring invoices
@@ -142,7 +153,7 @@ $coldisplay++;
 	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
-	    $coldisplay++;
+		$coldisplay++;
 		?>
 		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
@@ -161,7 +172,7 @@ $coldisplay++;
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-	    $coldisplay++;
+		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
@@ -189,11 +200,21 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
-	{
-	    $coldisplay++;
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$unit_type = false;
+		// limit unit select to unit type
+		if (!empty($line->fk_unit) && empty($conf->global->MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+			$cUnit = new CUnits($line->db);
+			if ($cUnit->fetch($line->fk_unit) > 0) {
+				if (!empty($cUnit->unit_type)) {
+					$unit_type = $cUnit->unit_type;
+				}
+			}
+		}
+		$coldisplay++;
 		print '<td class="left">';
-		print $form->selectUnits($line->fk_unit, "units");
+		print $form->selectUnits($line->fk_unit, "units", 0, $unit_type);
 		print '</td>';
 	}
 	?>
@@ -217,10 +238,10 @@ $coldisplay++;
 	}
 	if (!empty($usemargins))
 	{
-        if (!empty($user->rights->margins->creer))
-        {
-            $coldisplay++;
-        	?>
+		if (!empty($user->rights->margins->creer))
+		{
+			$coldisplay++;
+			?>
         <td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
@@ -231,10 +252,10 @@ $coldisplay++;
 		</td>
 		<?php }
 
-        if ($user->rights->margins->creer) {
+		if ($user->rights->margins->creer) {
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				$margin_rate = (isset($_POST["np_marginRate"]) ?GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
+				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -242,7 +263,7 @@ $coldisplay++;
 				$coldisplay++;
 			} elseif (!empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				$mark_rate = (isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
+				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
@@ -255,18 +276,10 @@ $coldisplay++;
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+		<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
-
-<?php
-//Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', 1);
-}
-?>
 
 <?php if (!empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
@@ -307,20 +320,20 @@ if (!empty($extrafields))
 <script>
 
 <?php
-if (! empty($usemargins) && $user->rights->margins->creer)
+if (!empty($usemargins) && $user->rights->margins->creer)
 {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
 	<?php
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
 	}
-	if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
@@ -404,9 +417,9 @@ jQuery(document).ready(function()
 	});
 
     <?php
-    if (!empty($conf->margin->enabled))
-    {
-        ?>
+	if (!empty($conf->margin->enabled))
+	{
+		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -434,7 +447,8 @@ jQuery(document).ready(function()
 		});
 
 		/* Init field buying_price and fournprice */
-		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': '<?php echo newToken(); ?>'}, function(data) {
+		var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': token }, function(data) {
           if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;
@@ -470,8 +484,8 @@ jQuery(document).ready(function()
 		}
 		}, 'json');
         <?php
-    }
-    ?>
+	}
+	?>
 });
 
 </script>

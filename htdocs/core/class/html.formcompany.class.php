@@ -186,13 +186,13 @@ class FormCompany extends Form
 	{
 		global $user, $langs;
 
-		print '<form method="post" action="' . $page . '">';
+		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setprospectcontactlevel">';
-		print '<input type="hidden" name="token" value="' . newToken() . '">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectcontactlevel";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
@@ -220,8 +220,8 @@ class FormCompany extends Form
 			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		if (!empty($htmlname) && $user->admin) print ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
+		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -757,30 +757,37 @@ class FormCompany extends Form
 	 *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
 	 *  @param  int			$showempty      1=Add en empty line
 	 *  @param  string      $morecss        Add more css to select component
+	 *  @param  int      	$output         0=return HTML, 1= direct print
+	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
 	 *  @return	void
 	 */
-	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '')
+	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		global $user, $langs;
-
+		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 
-			print '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($showempty) print '<option value="0"></option>';
+			$out .= '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			if ($showempty) $out .= '<option value="0"></option>';
 			foreach ($lesTypes as $key=>$value)
 			{
-				print '<option value="'.$key.'"';
-				if ($key == $selected) print ' selected';
-				print '>'.$value.'</option>';
+				$out .= '<option value="'.$key.'"';
+				if ($key == $selected) $out .= ' selected';
+				$out .= '>'.$value.'</option>';
 			}
-			print "</select>";
-			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= "</select>";
+			if ($user->admin && empty($forcehidetooltip)) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
-			print ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname);
 
-			print "\n";
+			$out .= "\n";
+		}
+		if (empty($output)) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 
@@ -798,7 +805,7 @@ class FormCompany extends Form
 		if ($rendermode === 'view') {
 			$toprint = array();
 			foreach ($contact->roles as $key => $val) {
-				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa;">'.$val['label'].'</li>';
+				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb;">'.$val['label'].'</li>';
 			}
 			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="'.$htmlname.'"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 		}
@@ -817,7 +824,7 @@ class FormCompany extends Form
 				}
 				if (count($newselected) > 0) $selected = $newselected;
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected);
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, 'minwidth500');
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -829,7 +836,7 @@ class FormCompany extends Form
 	 *
 	 *    @param	string		$selected				Preselected value
 	 *    @param    string		$htmlname				HTML select name
-	 *    @param    string		$fields					Fields
+	 *    @param    array		$fields					Array with key of fields to refresh after selection
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable ajax autocomplete features (browser autocomplete may still occurs)
 	 *    @param	string		$moreattrib				Add more attribute on HTML input field
@@ -1007,5 +1014,46 @@ class FormCompany extends Form
 		$out .= ajax_combobox($htmlidname);
 
 		return $out;
+	}
+
+	/**
+	 *  Output html select to select third-party type
+	 *
+	 *  @param	string	$page       	Page
+	 *  @param  string	$selected   	Id preselected
+	 *  @param  string	$htmlname		Name of HTML select
+	 *  @param  string	$filter         optional filters criteras
+	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @return	void|string
+	 */
+	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		$out = '';
+		if ($htmlname != "none") {
+			$out .= '<form method="post" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+			$out .= $this->selectarray($htmlname, $this->typent_array(0, $filter), $selected, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
+		} else {
+			if ($selected) {
+				$arr = $this->typent_array(0);
+				$typent = $arr[$selected];
+				$out .= $typent;
+			} else {
+				$out .= "&nbsp;";
+			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
 	}
 }

@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Objednávky k fakturám
 NbDaysToDelivery=Dodací lhůta (dny)
 DescNbDaysToDelivery=Nejdelší dodací lhůta produktů z této objednávky
 SupplierReputation=Reputace prodejce
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Ne objednávejte
 NotTheGoodQualitySupplier=Nízká kvalita
 ReputationForThisProduct=Pověst

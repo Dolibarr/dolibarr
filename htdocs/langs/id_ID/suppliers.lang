@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Beli pesanan untuk ditagih
 NbDaysToDelivery=Keterlambatan pengiriman (hari)
 DescNbDaysToDelivery=Penundaan pengiriman produk terlama dari pesanan ini
 SupplierReputation=Reputasi vendor
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Jangan memesan
 NotTheGoodQualitySupplier=Kualitas rendah
 ReputationForThisProduct=Reputasi

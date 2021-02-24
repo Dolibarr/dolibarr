@@ -43,20 +43,30 @@ $search_label = GETPOST('search_label', 'alpha');
 $search_type = GETPOST('search_type', 'int');
 
 // Security check
-if ($user->socid > 0) accessforbidden();
-if (!$user->rights->accounting->chartofaccount) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!$user->rights->accounting->chartofaccount) {
+	accessforbidden();
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "label";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) {
+	$sortfield = "label";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
 
 $arrayfields = array(
 	'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
@@ -65,27 +75,35 @@ $arrayfields = array(
 	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
 );
 
-if ($conf->global->MAIN_FEATURES_LEVEL < 2) unset($arrayfields['reconcilable']);
+if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+	unset($arrayfields['reconcilable']);
+}
 
 /*
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha')) { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list'; $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha')) {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if (!empty($cancel)) $action = '';
+if (empty($reshook)) {
+	if (!empty($cancel)) {
+		$action = '';
+	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_subaccount = "";
 		$search_label = "";
 		$search_type = "";
@@ -105,7 +123,7 @@ $title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 llxHeader('', $title);
 
 // Customer
-$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '0' as type, sa.entity";
+$sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta <> ''";
@@ -132,23 +150,28 @@ if (strlen(trim($search_subaccount))) {
 			$search_subaccount_tmp_clean = $search_subaccount_tmp;
 			$search_subaccount_clean = $search_subaccount;
 			$startchar = '%';
-			if (strpos($search_subaccount_tmp, '^') === 0)
-			{
+			if (strpos($search_subaccount_tmp, '^') === 0) {
 				$startchar = '';
 				$search_subaccount_tmp_clean = preg_replace('/^\^/', '', $search_subaccount_tmp);
 				$search_subaccount_clean = preg_replace('/^\^/', '', $search_subaccount);
 			}
 			$sql .= " AND (sa.code_compta LIKE '".$db->escape($startchar.$search_subaccount_tmp_clean)."'";
 			$sql .= " OR sa.code_compta LIKE '".$db->escape($startchar.$search_subaccount_clean)."%')";
-		} else $sql .= natural_search("sa.code_compta", $search_subaccount_tmp);
+		} else {
+			$sql .= natural_search("sa.code_compta", $search_subaccount_tmp);
+		}
 	}
 }
-if (strlen(trim($search_label)))				$sql .= natural_search("sa.nom", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
+if (strlen(trim($search_label))) {
+	$sql .= natural_search("sa.nom", $search_label);
+}
+if (!empty($search_type) && $search_type >= 0) {
+	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
+}
 
 // Supplier
 $sql .= " UNION ";
-$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '1' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
+$sql .= " SELECT sa.rowid, sa.nom as label, sa.code_compta_fournisseur as subaccount, '2' as type, sa.entity FROM ".MAIN_DB_PREFIX."societe sa";
 $sql .= " WHERE sa.entity IN (".getEntity('societe').")";
 $sql .= " AND sa.code_compta_fournisseur <> ''";
 //print $sql;
@@ -174,23 +197,28 @@ if (strlen(trim($search_subaccount))) {
 			$search_subaccount_tmp_clean = $search_subaccount_tmp;
 			$search_subaccount_clean = $search_subaccount;
 			$startchar = '%';
-			if (strpos($search_subaccount_tmp, '^') === 0)
-			{
+			if (strpos($search_subaccount_tmp, '^') === 0) {
 				$startchar = '';
 				$search_subaccount_tmp_clean = preg_replace('/^\^/', '', $search_subaccount_tmp);
 				$search_subaccount_clean = preg_replace('/^\^/', '', $search_subaccount);
 			}
 			$sql .= " AND (sa.code_compta_fournisseur LIKE '".$db->escape($startchar.$search_subaccount_tmp_clean)."'";
 			$sql .= " OR sa.code_compta_fournisseur LIKE '".$db->escape($startchar.$search_subaccount_clean)."%')";
-		} else $sql .= natural_search("sa.code_compta_fournisseur", $search_subaccount_tmp);
+		} else {
+			$sql .= natural_search("sa.code_compta_fournisseur", $search_subaccount_tmp);
+		}
 	}
 }
-if (strlen(trim($search_label)))				$sql .= natural_search("sa.nom", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
+if (strlen(trim($search_label))) {
+	$sql .= natural_search("sa.nom", $search_label);
+}
+if (!empty($search_type) && $search_type >= 0) {
+	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
+}
 
 // User
 $sql .= " UNION ";
-$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '2' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
+$sql .= " SELECT u.rowid, u.lastname as label, u.accountancy_code as subaccount, '3' as type, u.entity FROM ".MAIN_DB_PREFIX."user u";
 $sql .= " WHERE u.entity IN (".getEntity('user').")";
 $sql .= " AND u.accountancy_code <> ''";
 //print $sql;
@@ -216,30 +244,33 @@ if (strlen(trim($search_subaccount))) {
 			$search_subaccount_tmp_clean = $search_subaccount_tmp;
 			$search_subaccount_clean = $search_subaccount;
 			$startchar = '%';
-			if (strpos($search_subaccount_tmp, '^') === 0)
-			{
+			if (strpos($search_subaccount_tmp, '^') === 0) {
 				$startchar = '';
 				$search_subaccount_tmp_clean = preg_replace('/^\^/', '', $search_subaccount_tmp);
 				$search_subaccount_clean = preg_replace('/^\^/', '', $search_subaccount);
 			}
 			$sql .= " AND (u.accountancy_code LIKE '".$db->escape($startchar.$search_subaccount_tmp_clean)."'";
 			$sql .= " OR u.accountancy_code LIKE '".$db->escape($startchar.$search_subaccount_clean)."%')";
-		} else $sql .= natural_search("u.accountancy_code", $search_subaccount_tmp);
+		} else {
+			$sql .= natural_search("u.accountancy_code", $search_subaccount_tmp);
+		}
 	}
 }
-if (strlen(trim($search_label)))				$sql .= natural_search("u.lastname", $search_label);
-if (!empty($search_type) && $search_type >= 0)	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
+if (strlen(trim($search_label))) {
+	$sql .= natural_search("u.lastname", $search_label);
+}
+if (!empty($search_type) && $search_type >= 0) {
+	$sql .= " HAVING type LIKE '".$db->escape($search_type)."'";
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -250,19 +281,30 @@ $sql .= $db->plimit($limit + 1, $offset);
 dol_syslog('accountancy/admin/subaccount.php:: $sql='.$sql);
 $resql = $db->query($sql);
 
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($search_subaccount) $param .= '&search_subaccount='.urlencode($search_subaccount);
-	if ($search_label) $param .= '&search_label='.urlencode($search_label);
-	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($search_subaccount) {
+		$param .= '&search_subaccount='.urlencode($search_subaccount);
+	}
+	if ($search_label) {
+		$param .= '&search_label='.urlencode($search_label);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -285,10 +327,20 @@ if ($resql)
 
 	// Line for search fields
 	print '<tr class="liste_titre_filter">';
-	if (!empty($arrayfields['subaccount']['checked']))	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_subaccount" value="'.$search_subaccount.'"></td>';
-	if (!empty($arrayfields['label']['checked']))		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
-	if (!empty($arrayfields['type']['checked']))		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('0'=>$langs->trans('Customer'), '1'=>$langs->trans('Supplier'), '2'=>$langs->trans('Employee')), $search_type, 1).'</td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (!empty($arrayfields['reconcilable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
+	if (!empty($arrayfields['subaccount']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_subaccount" value="'.$search_subaccount.'"></td>';
+	}
+	if (!empty($arrayfields['label']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
+	}
+	if (!empty($arrayfields['type']['checked'])) {
+		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer'), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
+	}
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		if (!empty($arrayfields['reconcilable']['checked'])) {
+			print '<td class="liste_titre">&nbsp;</td>';
+		}
+	}
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
 	print $searchpicto;
@@ -296,62 +348,69 @@ if ($resql)
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	if (!empty($arrayfields['subaccount']['checked']))	print_liste_field_titre($arrayfields['subaccount']['label'], $_SERVER["PHP_SELF"], "subaccount", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['label']['checked']))		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], "label", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['type']['checked']))		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'center ');
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (!empty($arrayfields['reconcilable']['checked']))	print_liste_field_titre($arrayfields['reconcilable']['label'], $_SERVER["PHP_SELF"], 'reconcilable', '', $param, '', $sortfield, $sortorder, 'center '); }
+	if (!empty($arrayfields['subaccount']['checked'])) {
+		print_liste_field_titre($arrayfields['subaccount']['label'], $_SERVER["PHP_SELF"], "subaccount", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['label']['checked'])) {
+		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], "label", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['type']['checked'])) {
+		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		if (!empty($arrayfields['reconcilable']['checked'])) {
+			print_liste_field_titre($arrayfields['reconcilable']['label'], $_SERVER["PHP_SELF"], 'reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
+		}
+	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
 	$totalarray = array();
 	$i = 0;
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
 
 		// Account number
-		if (!empty($arrayfields['subaccount']['checked']))
-		{
+		if (!empty($arrayfields['subaccount']['checked'])) {
 			print "<td>";
 			print length_accounta($obj->subaccount);
 			print "</td>\n";
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Subaccount label
-		if (!empty($arrayfields['label']['checked']))
-		{
+		if (!empty($arrayfields['label']['checked'])) {
 			print "<td>";
 			print $obj->label;
 			print "</td>\n";
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Type
-		if (!empty($arrayfields['type']['checked']))
-		{
+		if (!empty($arrayfields['type']['checked'])) {
 			print '<td class="center">';
 			$s = '';
 			// Customer
-			if ($obj->type == 0)
-			{
+			if ($obj->type == 1) {
 				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
-			}
-			// Supplier
-			elseif ($obj->type == 1)
-			{
+			} elseif ($obj->type == 2) {
+				// Supplier
 				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
-			}
-			// User
-			elseif ($obj->type == 2)
-			{
+			} elseif ($obj->type == 3) {
+				// User
 				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->id.'">'.$langs->trans("Employee").'</a>';
 			}
 			print $s;
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
@@ -376,25 +435,22 @@ if ($resql)
 
 		// Action
 		print '<td class="center">';
-			$e = '';
-			// Customer
-		if ($obj->type == 0)
-			{
+		$e = '';
+		// Customer
+		if ($obj->type == 1) {
 			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
-		}
+		} elseif ($obj->type == 2) {
 			// Supplier
-		elseif ($obj->type == 1)
-			{
 			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
-		}
+		} elseif ($obj->type == 3) {
 			// User
-		elseif ($obj->type == 2)
-			{
 			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
-			print $e;
+		print $e;
 		print '</td>'."\n";
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		print '</tr>'."\n";
 		$i++;

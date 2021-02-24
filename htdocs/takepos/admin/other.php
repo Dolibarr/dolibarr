@@ -83,14 +83,10 @@ if (GETPOST('action', 'alpha') == 'set') {
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_AFFILIATE", GETPOST('TAKEPOS_SUMUP_AFFILIATE', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res = dolibarr_set_const($db, "TAKEPOS_SUMUP_APPID", GETPOST('TAKEPOS_SUMUP_APPID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-	if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
-		$extrafields = new ExtraFields($db);
-		$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
-	}
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error) {
 		$db->commit();

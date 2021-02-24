@@ -133,11 +133,11 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$idprod = GETPOST('idprod', 'int');
-		$qty = GETPOST('qty', 'int');
-		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$idprod = (int) GETPOST('idprod', 'int');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = GETPOST('efficiency', 'int');
+		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -155,8 +155,6 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$lastposition = 0;
-
 			$bomline = new BOMLine($db);
 			$bomline->fk_bom = $id;
 			$bomline->fk_product = $idprod;
@@ -172,8 +170,7 @@ if (empty($reshook))
    			$bomline->position = ($ranktouse + 1);
 
 			$result = $bomline->create($user);
-			if ($result <= 0)
-			{
+			if ($result <= 0) {
 				setEventMessages($bomline->error, $bomline->errors, 'errors');
 				$action = '';
 			} else {
@@ -182,8 +179,10 @@ if (empty($reshook))
 				unset($_POST['qty_frozen']);
 				unset($_POST['disable_stock_change']);
 
-				$object->fetchLines();
-			}
+    		    $object->fetchLines();
+
+    		    $object->calculateCosts();
+    		}
 		}
 	}
 
@@ -194,10 +193,10 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$qty = price2num(GETPOST('qty', 'int'));
-		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = price2num(GETPOST('efficiency', 'int'));
+		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -222,7 +221,9 @@ if (empty($reshook))
 			unset($_POST['qty_frozen']);
 			unset($_POST['disable_stock_change']);
 
-			$object->fetchLines();
+		    $object->fetchLines();
+
+		    $object->calculateCosts();
 		}
 	}
 }
@@ -275,12 +276,12 @@ if ($action == 'create')
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -311,10 +312,10 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -535,7 +536,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 
@@ -640,12 +641,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-			// Close / Cancel
-			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
-			}
-
 			// Re-open
 			if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
 			{
@@ -665,6 +660,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd)
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom">'.$langs->trans("ToClone").'</a>';
+			}
+
+			// Close / Cancel
+			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close">'.$langs->trans("Disable").'</a>';
 			}
 
 			/*

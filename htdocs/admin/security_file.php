@@ -116,7 +116,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max = @ini_get('upload_max_filesize');
-if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit", $max * 1024, $langs->trans("Kb")).'.';
+if (isset($max)) print ' '.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.';
 else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 print '</td>';
 print '<td class="nowrap">';
@@ -153,7 +153,7 @@ if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
 	}
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_COMMAND') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
 if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
@@ -167,7 +167,7 @@ print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
@@ -177,7 +177,7 @@ print '</tr>';
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 

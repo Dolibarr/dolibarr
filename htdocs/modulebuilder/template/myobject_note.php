@@ -41,6 +41,7 @@
 //if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
 //if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
 
 // Load Dolibarr environment
 $res = 0;
@@ -85,7 +86,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity]."/".$object->id;
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->mymodule->multidir_output[$object->entity]."/".$object->id;
+}
 
 $permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php
@@ -109,8 +112,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans('MyObject'), $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = myobjectPrepareHead($object);
@@ -174,7 +176,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

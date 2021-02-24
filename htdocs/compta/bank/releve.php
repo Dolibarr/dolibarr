@@ -93,8 +93,8 @@ if (!$sortfield) $sortfield = "s.nom";
 $object = new Account($db);
 if ($id > 0 || !empty($ref))
 {
-    $result = $object->fetch($id, $ref);
-    $account = $object->id; // Force the search field on id of account
+	$result = $object->fetch($id, $ref);
+	$account = $object->id; // Force the search field on id of account
 }
 
 
@@ -199,7 +199,7 @@ $chargestatic = new ChargeSociales($db);
 $memberstatic = new Adherent($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
-$paymentvatstatic = new TVA($db);
+$paymentvatstatic = new Tva($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
@@ -251,18 +251,40 @@ if (empty($numref))
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		print '<div class="tabsAction">';
 
 		if ($object->canBeConciliated() > 0) {
+			$allowautomaticconciliation = false; // TODO
+			$titletoconciliatemanual = $langs->trans("Conciliate");
+			$titletoconciliateauto = $langs->trans("Conciliate");
+			if ($allowautomaticconciliation) {
+				$titletoconciliatemanual .= ' ('.$langs->trans("Manual").')';
+				$titletoconciliateauto .= ' ('.$langs->trans("Auto").')';
+			}
+
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$langs->trans("Conciliate").'</a>';
+				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
 			} else {
-				print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+				$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
 			}
+
+
+			if ($allowautomaticconciliation) {
+				// If not cash account and can be reconciliate
+				if ($user->rights->banque->consolidate) {
+					$newparam = $param;
+					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&amp;sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+				} else {
+					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
+				}
+			}
+
+			print $buttonreconcile;
 		}
 
 		print '</div>';
@@ -305,7 +327,7 @@ if (empty($numref))
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
-					print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
 				print '</td>';
 
@@ -371,15 +393,15 @@ if (empty($numref))
 	$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
 	$morehtmlright .= '</ul></div>';
 
-    $title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-    print load_fiche_titre($title, $morehtmlright, '');
+	$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
+	print load_fiche_titre($title, $morehtmlright, '');
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'bank_account', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-    print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="center">'.$langs->trans("DateOperationShort").'</td>';
@@ -407,7 +429,7 @@ if (empty($numref))
 	}
 
 	// Recherche les ecritures pour le releve
-    $sql = $sqlrequestforbankline;
+	$sql = $sqlrequestforbankline;
 
 	$result = $db->query($sql);
 	if ($result)
@@ -441,17 +463,17 @@ if (empty($numref))
 			print "</td>\n";
 
 			// Type and num
-            if ($objp->fk_type == 'SOLD') {
-                $type_label = '&nbsp;';
-            } else {
-                $type_label = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $objp->fk_type;
-            }
-            $link = '';
-            if ($objp->fk_bordereau > 0) {
-                $remisestatic->id = $objp->fk_bordereau;
-                $remisestatic->ref = $objp->ref;
-                $link = ' '.$remisestatic->getNomUrl(1);
-            }
+			if ($objp->fk_type == 'SOLD') {
+				$type_label = '&nbsp;';
+			} else {
+				$type_label = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $objp->fk_type;
+			}
+			$link = '';
+			if ($objp->fk_bordereau > 0) {
+				$remisestatic->id = $objp->fk_bordereau;
+				$remisestatic->ref = $objp->ref;
+				$link = ' '.$remisestatic->getNomUrl(1);
+			}
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq ? $objp->num_chq : '').$link.'</td>';
 
 			// Description
@@ -548,9 +570,9 @@ if (empty($numref))
 						print ')';
 					}
 				} elseif ($links[$key]['type'] == 'company') {
-                    $societestatic->id = $links[$key]['url_id'];
-                    $societestatic->name = $links[$key]['label'];
-                    print $societestatic->getNomUrl(1, 'company', 24);
+					$societestatic->id = $links[$key]['url_id'];
+					$societestatic->name = $links[$key]['label'];
+					print $societestatic->getNomUrl(1, 'company', 24);
 					$newline = 0;
 				} elseif ($links[$key]['type'] == 'member') {
 					print '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$links[$key]['url_id'].'">';

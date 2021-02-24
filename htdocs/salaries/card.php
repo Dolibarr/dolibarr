@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2014       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
@@ -111,9 +111,9 @@ if ($action == 'add' && empty($cancel))
 	$fuser->fetch(GETPOST("fk_user", "int"));
 	$object->salary = $fuser->salary;
 
-    // Fill array 'array_options' with data from add form
-    $ret = $extrafields->setOptionalsFromPost(null, $object);
-    if ($ret < 0) $error++;
+	// Fill array 'array_options' with data from add form
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
+	if ($ret < 0) $error++;
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
@@ -256,7 +256,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'salary');
 
 	print dol_get_fiche_head('', '');
 
@@ -265,13 +265,20 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
-	print $form->selectDate((empty($datep) ?-1 : $datep), "datep", '', '', '', 'add', 1, 1);
+	print $form->selectDate((empty($datep) ? '' : $datep), "datep", 0, 0, 0, 'add', 1, 1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print $form->editfieldkey('DateValue', 'datev', '', $object, 0).'</td><td>';
 	print $form->selectDate((empty($datev) ?-1 : $datev), "datev", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
+
+	// Employee
+	print '<tr><td>';
+	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
+	$noactive = 0; // We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -292,28 +299,11 @@ if ($action == 'create')
 	print $form->selectDate($dateep, "dateep", '', '', '', 'add');
 	print '</td></tr>';
 
-	// Employee
-	print '<tr><td>';
-	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
-	$noactive = 0; // We keep active and unactive users
-	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
-	print '</td></tr>';
-
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
-
-	// Project
-	if (!empty($conf->projet->enabled))
-	{
-		$formproject = new FormProjets($db);
-
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-		print '</td></tr>';
-	}
 
 	// Bank
 	if (!empty($conf->banque->enabled))
@@ -340,25 +330,35 @@ if ($action == 'create')
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
-    // Other attributes
-    $parameters = array();
-    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    if (empty($reshook))
-    {
-        print $object->showOptionals($extrafields, 'edit');
-    }
+	// Project
+	if (!empty($conf->projet->enabled))
+	{
+	    $formproject = new FormProjets($db);
+
+	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
+	    $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+	    print '</td></tr>';
+	}
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook))
+	{
+		print $object->showOptionals($extrafields, 'edit');
+	}
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -375,7 +375,7 @@ if ($id)
 {
 	$head = salaries_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -425,7 +425,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -466,19 +466,18 @@ if ($id)
 		}
 	}
 
-    // Other attributes
-    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
-	/*
-	 * Action buttons
-	 */
+	// Action buttons
+
 	print '<div class="tabsAction">'."\n";
 	if ($object->rappro == 0)
 	{

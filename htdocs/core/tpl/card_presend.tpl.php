@@ -75,7 +75,7 @@ if ($action == 'presend')
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
 	}
 
 	$topicmail = '';
@@ -144,7 +144,7 @@ if ($action == 'presend')
 		$formmail->fromtype = 'special';
 	}
 
-	$formmail->trackid=$trackid;
+	$formmail->trackid = $trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 	{
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -196,7 +196,7 @@ if ($action == 'presend')
 	}
 
 	$formmail->withto = $liste;
-	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto') ? GETPOST('sendto') : '1') : '1');
+	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
 	$formmail->withtocc = $liste;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	$formmail->withtopic = $topicmail;
@@ -275,6 +275,9 @@ if ($action == 'presend')
 		foreach ($contactarr as $contact) {
 			$contactstatic->fetch($contact['id']);
 			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
+			$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;
+			$substitutionarray['__CONTACT_FIRSTNAME_'.$contact['code'].'__'] = $contactstatic->firstname;
+			$substitutionarray['__CONTACT_TITLE_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
 		}
 	}
 
@@ -292,5 +295,5 @@ if ($action == 'presend')
 	// Show form
 	print $formmail->get_form();
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }

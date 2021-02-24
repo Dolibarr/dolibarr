@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Commandes fournisseurs en facture
 NbDaysToDelivery=Délai de livraison en jours
 DescNbDaysToDelivery=Le plus gros délai de livraison parmi les produits de cette commande
 SupplierReputation=Réputation du fournisseur
+ReferenceReputation=Réputation
 DoNotOrderThisProductToThisSupplier=Ne pas commander
 NotTheGoodQualitySupplier=Mauvaise qualité
 ReputationForThisProduct=Réputation

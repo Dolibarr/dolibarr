@@ -213,8 +213,8 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-    if ($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
-    $sql .= ",".MAIN_DB_PREFIX."facture_fourn_det as l";
+	if ($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
+	$sql .= ",".MAIN_DB_PREFIX."facture_fourn_det as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
@@ -243,7 +243,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql .= ")";
 		$sql .= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
-    if ($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
+	if ($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql .= $db->order($sortfield, $sortorder);
@@ -279,10 +279,10 @@ if ($modecompta == 'CREANCES-DETTES')
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 
-    $moreforfilter = '';
+	$moreforfilter = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Category filter
 	print '<tr class="liste_titre">';
@@ -295,17 +295,17 @@ if ($modecompta == 'CREANCES-DETTES')
 		print ' checked';
 	}
 	print '>';
-    // type filter (produit/service)
-    print ' ';
-    print $langs->trans("Type").': ';
-    $form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
+	// type filter (produit/service)
+	print ' ';
+	print $langs->trans("Type").': ';
+	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', 1, 1, 1);
 
-    //select thirdparty
-    print '</br>';
-    print $langs->trans("ThirdParty").': '.$form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
-    print '</td>';
+	//select thirdparty
+	print '</br>';
+	print $langs->trans("ThirdParty").': '.$form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
+	print '</td>';
 
-    print '<td colspan="5" class="right">';
+	print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 

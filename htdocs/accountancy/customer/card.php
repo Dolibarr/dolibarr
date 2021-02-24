@@ -38,19 +38,20 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write)
-{
-	if (!$cancel)
-	{
-	    if ($codeventil < 0) $codeventil = 0;
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+	if (!$cancel) {
+		if ($codeventil < 0) {
+			$codeventil = 0;
+		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
 		$sql .= " SET fk_code_ventilation = ".$codeventil;
@@ -60,12 +61,11 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write)
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
 		} else {
-		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-		    if ($backtopage)
-		    {
-		    	header("Location: ".$backtopage);
-		    	exit();
-		    }
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+			if ($backtopage) {
+				header("Location: ".$backtopage);
+				exit();
+			}
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -137,12 +137,12 @@ if (!empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+			print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

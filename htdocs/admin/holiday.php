@@ -59,7 +59,7 @@ if ($action == 'updateMask')
 	$maskvalue = GETPOST('maskholiday', 'alpha');
 	if ($maskconst) $res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -229,7 +229,10 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering model
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; } elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -282,7 +285,7 @@ print '<br>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 	// End of page
 	llxFooter();
 	$db->close();
@@ -423,7 +426,7 @@ foreach ($dirmodels as $reldir)
 								print '<td class="center">';
 								if ($module->type == 'pdf')
 								{
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
@@ -494,14 +497,14 @@ print '</div>';
 
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
 
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

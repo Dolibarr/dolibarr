@@ -55,9 +55,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -86,14 +86,14 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    /**
-     *  Return description of module
-     *
-     *  @param	Translate	$langs		Object langs
-     *  @return string      			Description of module
-     */
-    public function info($langs)
-    {
+	/**
+	 *  Return description of module
+	 *
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Description of module
+	 */
+	public function info($langs)
+	{
 		global $conf, $mc;
 		global $form;
 
@@ -131,7 +131,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 
 	/**
@@ -142,7 +142,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-    public function getExample($langs, $objproduct = 0, $type = -1)
+	public function getExample($langs, $objproduct = 0, $type = -1)
 	{
 		if ($type == 0 || $type == -1)
 		{
@@ -226,7 +226,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
@@ -234,7 +234,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	public function verif_prefixIsUsed()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
@@ -300,7 +300,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -311,7 +311,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 */
 	public function verif_dispo($db, $code, $product)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE ref = '".$db->escape($code)."'";
 		if ($product->id > 0) $sql .= " AND rowid <> ".$product->id;

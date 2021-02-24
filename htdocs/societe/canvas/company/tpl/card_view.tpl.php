@@ -235,7 +235,7 @@ for ($i = 1; $i <= 4; $i++) {
 
 </table>
 
-<?php dol_fiche_end(); ?>
+<?php print dol_get_fiche_end(); ?>
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>

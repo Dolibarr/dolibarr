@@ -60,7 +60,7 @@ llxHeader();
 $title = $langs->trans("SalariesStatistics");
 $dir = $conf->salaries->dir_temp;
 
-print load_fiche_titre($title, '', 'object_payment');
+print load_fiche_titre($title, '', 'salary');
 
 dol_mkdir($dir);
 
@@ -270,7 +270,7 @@ print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

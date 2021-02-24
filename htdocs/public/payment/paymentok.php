@@ -25,12 +25,14 @@
  *                  This token can be used to get more informations.
  */
 
-define("NOLOGIN", 1); // This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
@@ -176,7 +178,7 @@ if ($urllogo)
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
 	print '</div>';
 }
@@ -407,7 +409,7 @@ if ($ispaymentok)
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 					} else {
-						$postactionmessages[] = 'Subscription created';
+						$postactionmessages[] = 'Subscription created (id='.$crowid.')';
 						$ispostactionok = 1;
 					}
 				}
@@ -469,8 +471,10 @@ if ($ispaymentok)
 						$thirdparty = new Societe($db);
 						$thirdparty->fetch($thirdparty_id);
 
-						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	// This also set $stripearrayofkeysbyenv
 						$stripe = new Stripe($db);
+						//$stripeacc = $stripe->getStripeAccount($service);		Already defined previously
+
 						$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
 
 						if (!$customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
@@ -478,22 +482,51 @@ if ($ispaymentok)
 							dol_syslog("No stripe profile found, so we add it for TRANSACTIONID = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
 							try {
-								$ch = \Stripe\Charge::retrieve($TRANSACTIONID); // contains the charge id
-								$stripecu = $ch->customer; // value 'cus_....'
+								global $stripearrayofkeysbyenv;
+								\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-								$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
-								$resql = $db->query($sql);
-								if (!$resql)
-								{
+								if (preg_match('/^pi_/', $TRANSACTIONID)) {
+									// This may throw an error if not found.
+									$chpi = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);	// payment_intent (pi_...)
+								} else {
+									// This throw an error if not found
+									$chpi = \Stripe\Charge::retrieve($TRANSACTIONID); // old method, contains the charge id (ch_...)
+								}
+
+								if ($chpi) {
+									$stripecu = $chpi->customer; // value 'cus_....'. WARNING: This property may be empty if first payment was recorded before the stripe customer was created.
+
+									if (empty($stripecu)) {
+										// This include the INSERT
+										$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
+
+										// Link this customer to the payment intent
+										if (preg_match('/^pi_/', $TRANSACTIONID) && $customer) {
+											\Stripe\PaymentIntent::update($chpi->id, array('customer' => $customer->id));
+										}
+									} else {
+										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
+										$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".$servicestatus.", ".$conf->entity.", '".$db->idate(dol_now())."', 0)";
+										$resql = $db->query($sql);
+										if (!$resql) {	// should not happen
+											$error++;
+											$errmsg = 'Failed to insert customer stripe id in database : '.$db->lasterror();
+											dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+											$postactionmessages[] = $errmsg;
+											$ispostactionok = -1;
+										}
+									}
+								} else {	// should not happen
 									$error++;
-									$errmsg = 'Failed to save customer stripe id in database ; '.$db->lasterror();
+									$errmsg = 'Failed to retreive paymentintent or charge from id';
+									dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 									$postactionmessages[] = $errmsg;
 									$ispostactionok = -1;
 								}
-							} catch (Exception $e) {
+							} catch (Exception $e) {	// should not happen
 								$error++;
-								$errmsg = 'Failed to save customer stripe id in database ; '.$e->getMessage();
+								$errmsg = 'Failed to get or save customer stripe id in database : '.$e->getMessage();
+								dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 								$postactionmessages[] = $errmsg;
 								$ispostactionok = -1;
 							}
@@ -501,8 +534,7 @@ if ($ispaymentok)
 					}
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$db->commit();
 				} else {
 					$db->rollback();
@@ -582,7 +614,7 @@ if ($ispaymentok)
 				$ispostactionok = -1;
 			}
 		} else {
-			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription payed was not found';
+			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription paid was not found';
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('INV', $tmptag) && $tmptag['INV'] > 0)
@@ -686,7 +718,7 @@ if ($ispaymentok)
 				$ispostactionok = -1;
 			}
 		} else {
-			$postactionmessages[] = 'Invoice payed '.$tmptag['INV'].' was not found';
+			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
 	} else {

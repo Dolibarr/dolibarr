@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,13 @@ if (empty($reshook))
 	// Seems to no be used and replaced with $action == 'infocredit'
 	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
 	{
-		$res = $object->set_credite();
+		if ($object->statut == 2) {
+			$res = -1;
+			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
+		} else {
+			$res = $object->set_credite();
+		}
+
 		if ($res >= 0)
 		{
 			header("Location: card.php?id=".$id);
@@ -145,10 +151,16 @@ if (empty($reshook))
 	{
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-		$error = $object->set_infocredit($user, $dt);
+		if ($object->statut == 2) {
+			$error = 1;
+			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
+		} else {
+			$error = $object->set_infocredit($user, $dt);
+		}
+
 		if ($error)
 		{
-			setEventMessages($object->error, $object->errors, 'errors');
+        	setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -250,7 +262,7 @@ if ($id > 0 || $ref)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$formconfirm = '';
@@ -354,8 +366,8 @@ if ($id > 0 || $ref)
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
+		if (($page * $limit) > $nbtotalofrecords) {
+			// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -445,15 +457,14 @@ if ($id > 0 || $ref)
 			$i++;
 		}
 
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
 			print '<td class="right">';
-			if (empty($offset) && $num <= $limit)	// If we have all record on same page, then the following test/warning can be done
-			{
-				if ($total != $object->amount) print img_warning("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines");
+			if (empty($offset) && $num <= $limit) {
+				// If we have all record on same page, then the following test/warning can be done
+				if ($total != $object->amount) print img_warning($langs->trans("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines"));
 			}
 			print price($total);
 			print "</td>\n";

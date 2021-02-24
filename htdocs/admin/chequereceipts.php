@@ -55,7 +55,7 @@ if ($action == 'updateMask')
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
 	if ($maskconstchequereceipts) $res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -76,7 +76,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 
 	$res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -168,8 +168,10 @@ foreach ($dirmodels as $reldir)
 							// Show example of numbering module
 							print '<td class="nowrap">';
 							$tmp = $module->getExample();
-							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-							elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+							if (preg_match('/^Error/', $tmp)) {
+								$langs->load("errors");
+								print '<div class="error">'.$langs->trans($tmp).'</div>';
+							} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 							else print $tmp;
 							print '</td>'."\n";
 
@@ -266,7 +268,7 @@ print "<br>";
 
 print '</table>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 

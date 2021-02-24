@@ -29,12 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'asset', $id);
 
 $object = new Asset($db);
@@ -82,7 +84,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

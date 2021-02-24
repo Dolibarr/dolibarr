@@ -16,6 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
 {
@@ -78,9 +81,9 @@ $(document).ready(function () {
 <!-- Title with version -->
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
-if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+if (!empty($disablenofollow)) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 echo dol_escape_htmltag($title);
-if ($disablenofollow) echo '</a>';
+if (!empty($disablenofollow)) echo '</a>';
 ?>
 </div>
 
@@ -104,13 +107,36 @@ if ($disablenofollow) echo '</a>';
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
-<span class="fa fa-user">
-</span>
+<span class="fa fa-user"></span>
 <input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </div>
 </div>
 
 <?php
+if (!empty($captcha)) {
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
+	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
+	// TODO: provide accessible captcha variants
+	?>
+	<!-- Captcha -->
+	<div class="trinputlogin">
+	<div class="tagtd tdinputlogin nowraponall none valignmiddle">
+
+	<span class="fa fa-unlock"></span>
+	<span class="nofa inline-block">
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	</span>
+	<span class="nowrap inline-block">
+	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
+	<a class="inline-block valignmiddle" href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a>
+	</span>
+
+	</div></div>
+	<?php
+}
+
 if (!empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
 		foreach ($morelogincontent as $format => $option)
@@ -126,31 +152,6 @@ if (!empty($morelogincontent)) {
 	}
 }
 ?>
-
-<?php if ($captcha) {
-	// Add a variable param to force not using cache (jmobile)
-	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
-	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
-	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
-	?>
-	<!-- Captcha -->
-	<div class="trinputlogin">
-	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
-
-	<table class="login_table_securitycode centpercent">
-	<tr class="valignmiddle">
-	<td>
-	<!-- <span class="span-icon-security"> -->
-	<span class="nofa">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width100" type="text" maxlength="5" name="code" tabindex="3" />
-	</span>
-	</td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
-	<td><a href="<?php echo $php_self; ?>" tabindex="4"><?php echo $captcha_refresh; ?></a></td>
-	</tr></table>
-
-	</div></div>
-<?php } ?>
 
 </div>
 
@@ -199,7 +200,7 @@ if (!empty($morelogincontent)) {
 
 <br>
 
-<?php if ($message) { ?>
+<?php if (!empty($message)) { ?>
 	<div class="center login_main_message">
 	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
 	</div>

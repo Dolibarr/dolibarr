@@ -32,12 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holiday', 'hrm'));
+$langs->loadLangs(array('users', 'other', 'holiday', 'hrm'));
 
 // Protection if external user
 if ($user->socid > 0) accessforbidden();
@@ -68,14 +68,14 @@ $result = restrictedArea($user, 'holiday', '', '');
 // If we are on the view of a specific user
 if ($id > 0)
 {
-    $canread = 0;
-    if ($id == $user->id) $canread = 1;
-    if (!empty($user->rights->holiday->read_all)) $canread = 1;
-    if (!empty($user->rights->holiday->read) && in_array($id, $childids)) $canread = 1;
-    if (!$canread)
-    {
-        accessforbidden();
-    }
+	$canread = 0;
+	if ($id == $user->id) $canread = 1;
+	if (!empty($user->rights->holiday->readall)) $canread = 1;
+	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
 }
 
 $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user->id;
@@ -106,7 +106,7 @@ $search_month_end    = GETPOST('search_month_end', 'int');
 $search_year_end     = GETPOST('search_year_end', 'int');
 $search_employee     = GETPOST('search_employee', 'int');
 $search_valideur     = GETPOST('search_valideur', 'int');
-$search_status       = GETPOST('search_status', 'int');
+$search_status       = GETPOST('search_statut', 'int');
 $search_type         = GETPOST('search_type', 'int');
 
 // Initialize technical objects
@@ -122,9 +122,9 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'cp.ref'=>'Ref',
-    'cp.description'=>'Description',
-    'uu.lastname'=>'EmployeeLastname',
-    'uu.firstname'=>'EmployeeFirstname',
+	'cp.description'=>'Description',
+	'uu.lastname'=>'EmployeeLastname',
+	'uu.firstname'=>'EmployeeFirstname',
 	'uu.login'=>'Login'
 );
 
@@ -143,15 +143,17 @@ $arrayfields = array(
 	'cp.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+if (empty($conf->holiday->enabled))
+{
+	llxHeader('', $langs->trans('CPTitreMenu'));
+	print '<div class="tabBar">';
+	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
+	print '</div>';
+	llxFooter();
+	exit();
+}
 
 
 /*
@@ -176,7 +178,7 @@ if (empty($reshook))
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
-	    $search_month_start = "";
+		$search_month_start = "";
 		$search_year_start = "";
 		$search_month_end = "";
 		$search_year_end = "";
@@ -318,7 +320,7 @@ if (!empty($search_status) && $search_status != -1) {
 	$sql .= " AND cp.statut = '".$db->escape($search_status)."'\n";
 }
 
-if (empty($user->rights->holiday->read_all)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
+if (empty($user->rights->holiday->readall)) $sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
 if ($id > 0) $sql .= " AND cp.fk_user IN (".$id.")";
 
 // Add where from extra fields
@@ -404,18 +406,18 @@ if ($resql)
 
 		print dol_get_fiche_head($head, 'paidholidays', $title, -1, 'user');
 
-	    dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 		if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
 		{
-		    print '<div class="underbanner clearboth"></div>';
+			print '<div class="underbanner clearboth"></div>';
 
-		    print '<br>';
+			print '<br>';
 
-		    showMyBalance($object, $user_id);
+			showMyBalance($object, $user_id);
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		// Buttons for actions
 
@@ -445,8 +447,8 @@ if ($resql)
 
 	if ($sall)
 	{
-	    foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-	    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter = '';
@@ -469,7 +471,7 @@ if ($resql)
 
 
 	$include = '';
-	if (empty($user->rights->holiday->read_all)) $include = 'hierarchyme'; // Can see only its hierarchyl
+	if (empty($user->rights->holiday->readall)) $include = 'hierarchyme'; // Can see only its hierarchyl
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -487,8 +489,8 @@ if ($resql)
 
 	if (!empty($arrayfields['cp.fk_user']['checked']))
 	{
-		$morefilter = 'AND employee = 1';
-		if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+		$morefilter = '';
+		if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) $morefilter = 'AND employee = 1';
 
 		// User
 		$disabled = 0;
@@ -507,18 +509,18 @@ if ($resql)
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked']))
 	{
-		if ($user->rights->holiday->read_all)
+		if ($user->rights->holiday->readall)
 		{
-		    print '<td class="liste_titre maxwidthonsmartphone left">';
-		    $validator = new UserGroup($db);
-		    $excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
-		    $valideurobjects = $validator->listUsersForGroup($excludefilter);
-		    $valideurarray = array();
-		    foreach ($valideurobjects as $val) $valideurarray[$val->id] = $val->id;
-		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
-		    print '</td>';
+			print '<td class="liste_titre maxwidthonsmartphone left">';
+			$validator = new UserGroup($db);
+			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+			$valideurobjects = $validator->listUsersForGroup($excludefilter);
+			$valideurarray = array();
+			foreach ($valideurobjects as $val) $valideurarray[$val->id] = $val->id;
+			print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth150');
+			print '</td>';
 		} else {
-		    print '<td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre">&nbsp;</td>';
 		}
 	}
 
@@ -631,15 +633,15 @@ if ($resql)
 
 
 	// If we ask a dedicated card and not allow to see it, we force on user.
-	if ($id && empty($user->rights->holiday->read_all) && !in_array($id, $childids)) {
+	if ($id && empty($user->rights->holiday->readall) && !in_array($id, $childids)) {
 		$langs->load("errors");
 		print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 		$result = 0;
 	} elseif ($num > 0 && !empty($mysoc->country_id))
 	{
-	    // Lines
-	    $userstatic = new User($db);
-	    $approbatorstatic = new User($db);
+		// Lines
+		$userstatic = new User($db);
+		$approbatorstatic = new User($db);
 
 		$typeleaves = $object->getTypes(1, -1);
 
@@ -756,14 +758,14 @@ if ($resql)
 				if (!$i) $totalarray['nbfield']++;
 			}
 
-		    // Action column
-		    print '<td class="nowrap center">';
+			// Action column
+			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		    {
-			    $selected = 0;
+			{
+				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		    }
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 

@@ -37,11 +37,11 @@ class modIncoterm extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
-    {
-        global $langs, $conf;
+	public function __construct($db)
+	{
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -68,7 +68,7 @@ class modIncoterm extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("incoterm");
 
@@ -76,28 +76,28 @@ class modIncoterm extends DolibarrModules
 			array('INCOTERM_ACTIVATE', 'chaine', 0, 'Description de INCOTERM_ACTIVATE')
 		);
 
-        $this->tabs = array();
+		$this->tabs = array();
 
-        // Dictionaries
+		// Dictionaries
 		if (!isset($conf->incoterm->enabled))
-        {
-        	$conf->incoterm = new stdClass();
-        	$conf->incoterm->enabled = 0;
-        }
+		{
+			$conf->incoterm = new stdClass();
+			$conf->incoterm->enabled = 0;
+		}
 		$this->dictionaries = array(
 			'langs'=>'incoterm',
-            'tabname'=>array(MAIN_DB_PREFIX."c_incoterms"), // List of tables we want to see into dictonnary editor
-            'tablib'=>array("Incoterms"), // Label of tables
-            'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
-            'tabsqlsort'=>array("rowid ASC"), // Sort order
-            'tabfield'=>array("code,libelle"), // List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,libelle"), // List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,libelle"), // List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->incoterm->enabled)
+			'tabname'=>array(MAIN_DB_PREFIX."c_incoterms"), // List of tables we want to see into dictonnary editor
+			'tablib'=>array("Incoterms"), // Label of tables
+			'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
+			'tabsqlsort'=>array("rowid ASC"), // Sort order
+			'tabfield'=>array("code,libelle"), // List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,libelle"), // List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,libelle"), // List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->incoterm->enabled)
 		);
 
-        $this->boxes = array(); // List of boxes
+		$this->boxes = array(); // List of boxes
 		$r = 0;
 
 		// Permissions

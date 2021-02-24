@@ -74,7 +74,7 @@ if ($object->fetch($id, $ref))
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -90,7 +90,7 @@ llxHeader('', $title, $helpurl);
 if ($object->id > 0)
 {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
 
 	$totalpaye = $object->getSommePaiement();
 
@@ -245,7 +245,7 @@ if ($object->id > 0)
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$modulepart = 'facture_fournisseur';

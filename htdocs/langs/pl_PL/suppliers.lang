@@ -38,6 +38,7 @@ MenuOrdersSupplierToBill=Zamówienia do zafakturowania
 NbDaysToDelivery=Delivery delay (days)
 DescNbDaysToDelivery=The longest delivery delay of the products from this order
 SupplierReputation=Reputacja dostawcy
+ReferenceReputation=Reference reputation
 DoNotOrderThisProductToThisSupplier=Nie zamawiaj
 NotTheGoodQualitySupplier=Low quality
 ReputationForThisProduct=Reputacja

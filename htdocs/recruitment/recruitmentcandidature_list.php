@@ -267,7 +267,7 @@ $sql .= $hookmanager->resPrint;
 
 /* If a group by is required
 $sql.= " GROUP BY ";
-foreach($object->fields as $key => $val)
+foreach ($object->fields as $key => $val)
 {
 	$sql.='t.'.$key.', ';
 }
@@ -277,9 +277,9 @@ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add where from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/','', $sql);
+$sql=preg_replace('/,\s*$/', '', $sql);
 */
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -433,7 +433,7 @@ foreach ($object->fields as $key => $val)
 	if (!empty($arrayfields['t.'.$key]['checked']))
 	{
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		elseif (strpos($val['type'], 'integer:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
 		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';

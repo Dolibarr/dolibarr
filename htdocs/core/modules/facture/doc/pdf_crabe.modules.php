@@ -220,7 +220,7 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
+	 *  @param		Facture		$object				Object to generate
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -276,9 +276,9 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = $object->getSommePaiement(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-			$amount_credit_notes_included = $object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
-			$amount_deposits_included = $object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+			$deja_regle = $object->getSommePaiement((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
+			$amount_credit_notes_included = $object->getSumCreditNotesUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
+			$amount_deposits_included = $object->getSumDepositsUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -322,9 +322,10 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+				if ($heightforinfotot > 220) $heightforinfotot = 220;
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 
 				if (class_exists('TCPDF'))
 				{
@@ -378,7 +379,7 @@ class pdf_crabe extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))    // retreive space not used by discount
+				if (empty($this->atleastonediscount))    // retrieve space not used by discount
 				{
 					$delta = ($this->posxprogress - $this->posxdiscount);
 					$this->posxpicture += $delta;
@@ -419,7 +420,7 @@ class pdf_crabe extends ModelePDFFactures
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
 				// Incoterm
-				if ($conf->incoterm->enabled)
+				if (!empty($conf->incoterm->enabled))
 				{
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
@@ -463,6 +464,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
@@ -631,10 +633,10 @@ class pdf_crabe extends ModelePDFFactures
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) // Compute progress from previous situation
 					{
-						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+						if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						else $tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 					} else {
-						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+						if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
 						else $tvaligne = $sign * $object->lines[$i]->total_tva;
 					}
 
@@ -656,8 +658,8 @@ class pdf_crabe extends ModelePDFFactures
 					&& (!empty($localtax1_rate) || !empty($localtax2_rate))) // and there is local tax
 					{
 						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = $localtaxtmp_array[0];
-						$localtax2_type = $localtaxtmp_array[2];
+						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 					}
 
 					// retrieve global local tax
@@ -781,7 +783,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  Show payments table
 	 *
 	 *  @param	TCPDF		$pdf            Object PDF
-	 *  @param  Object		$object         Object invoice
+	 *  @param  Facture		$object         Object invoice
 	 *  @param  int			$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
 	 *  @param  int			$heightforfooter height for footer
@@ -852,7 +854,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx, $tab3_top + $y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($obj->datef), 'day', false, $outputlangs, true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
@@ -900,7 +902,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx, $tab3_top + $y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), 'day', false, $outputlangs, true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price($sign * (($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount), 0, $outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($sign * ((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount), 0, $outputlangs), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 
@@ -966,7 +968,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		Object		$object			Object to show
+	 *   @param		Facture		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
@@ -1002,7 +1004,7 @@ class pdf_crabe extends ModelePDFFactures
 
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc);
+			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
@@ -1176,14 +1178,14 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = ((!empty($conf->multicurrency->enabled) && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248, 248, 248);
 
-		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+		$total_ttc = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 
 		$this->atleastoneratenotnull = 0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -1404,8 +1406,8 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
-		$creditnoteamount = $object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0); // Warning, this also include excess received
-		$depositsamount = $object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+		$creditnoteamount = $object->getSumCreditNotesUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0); // Warning, this also include excess received
+		$depositsamount = $object->getSumDepositsUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
 		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if (!empty($object->paye)) $resteapayer = 0;
@@ -1587,7 +1589,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -1841,9 +1843,8 @@ class pdf_crabe extends ModelePDFFactures
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
-			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+			// Recipient name
+			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1890,7 +1891,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -1898,7 +1899,7 @@ class pdf_crabe extends ModelePDFFactures
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

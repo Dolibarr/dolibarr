@@ -46,8 +46,7 @@ $taskid = GETPOST('taskid', 'int');
 $mine = 0;
 if ($mode == 'mine') $mine = 1;
 
-$projectid = '';
-$projectid = isset($_GET["id"]) ? $_GET["id"] : $_POST["projectid"];
+$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 // Security check
 $socid = 0;
@@ -362,7 +361,7 @@ $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
 //$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
-$picto = 'calendarweek';
+$picto = 'clock';
 
 print '<form name="addtime" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -373,7 +372,7 @@ print '<input type="hidden" name="month" value="'.$month.'">';
 print '<input type="hidden" name="year" value="'.$year.'">';
 
 $head = project_timesheet_prepare_head($mode, $usertoprocess);
-print dol_get_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'projecttask');
+print dol_get_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, $picto);
 
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
@@ -393,7 +392,7 @@ if ($mine || ($usertoprocess->id == $user->id))
 }
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
@@ -401,6 +400,7 @@ print '<div class="colorbacktimesheet float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
+print img_picto('', 'projecttask');
 $formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1);
 print '</div>';
 print ' ';
@@ -426,22 +426,22 @@ if (! empty($conf->categorie->enabled))
 
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<div class="inline-block hideonsmartphone">'.$langs->trans('User').' </div>';
+$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
 $includeonly = 'hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly = array($user->id);
-$moreforfilter .= $form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
 
 if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
 {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<div class="inline-block">'.$langs->trans('Project').' </div>';
-	$moreforfilter .= '<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= '<div class="inline-block"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project').'<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= '<div class="inline-block">'.$langs->trans('ThirdParty').' </div>';
-	$moreforfilter .= '<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= '<div class="inline-block"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company').'<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
 	$moreforfilter .= '</div>';
 }
 
@@ -488,7 +488,7 @@ print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").
  if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
 print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</td>';
 
 foreach ($TWeek as $week_number)
 {
@@ -502,7 +502,10 @@ $colspan = 5;
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask = (empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED) ? 1 : 0);
 
+// Get if user is available or not for each day
 $isavailable = array();
+// TODO See code into perweek.php to initialize isavailable array
+
 
 if (count($tasksarray) > 0)
 {
@@ -605,7 +608,7 @@ print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.cou
 print '<input type="hidden" id="numberOfFirstLine" name="numberOfFirstLine" value="'.(reset($TWeek)).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 print '</div>';
 
 print '</form>'."\n\n";

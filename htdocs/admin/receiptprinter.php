@@ -327,7 +327,7 @@ if ($mode == 'config' && $user->admin) {
 				print '<td>'.$printer->profileresprint.'</td>';
 				print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
 				print '<td>';
-				print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+				print '<div class="center"><input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 				print '</td>';
 				print '</tr>';
 			} else {
@@ -354,7 +354,7 @@ if ($mode == 'config' && $user->admin) {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</form>';
 
@@ -420,7 +420,7 @@ if ($mode == 'template' && $user->admin) {
 				print '<td></td>';
 			} else {
 				print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
-				print '<td>'.nl2br(htmlentities($printer->listprinterstemplates[$line]['template'])).'</td>';
+				print '<td>'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template']).'</td>';
 				// edit icon
 				print '<td><a class="editfielda paddingleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
 				print img_picto($langs->trans("Edit"), 'edit');
@@ -443,7 +443,6 @@ if ($mode == 'template' && $user->admin) {
 		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
 		print '<td>';
 		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
-		print GETPOSTISSET('template') ? GETPOST('template', 'alpha') : $printer->listprinterstemplates[$line]['template'];
 		print '</textarea>';
 		print '</td>';
 		print '<td></td>';
@@ -456,11 +455,11 @@ if ($mode == 'template' && $user->admin) {
 		print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
 	} else {
-		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+		print '<div class="center"><input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
 	}
 	print '</form>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

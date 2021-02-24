@@ -53,6 +53,11 @@ class pdf_merou extends ModelePdfExpedition
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -123,6 +128,7 @@ class pdf_merou extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "merou";
 		$this->description = $langs->trans("DocumentModelMerou");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
@@ -146,7 +152,7 @@ class pdf_merou extends ModelePdfExpedition
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Object		$object			Object expedition to generate (or id if old method)
+	 *	@param		Expedition	$object				Object expedition to generate (or id if old method)
 	 *	@param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -227,7 +233,7 @@ class pdf_merou extends ModelePdfExpedition
 				$heightforinfotot = 0; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
 				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF'))
@@ -453,7 +459,7 @@ class pdf_merou extends ModelePdfExpedition
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		// Translations
-		$langs->loadLangs(array("main", "bills"));
+		$langs->loadLangs(array("main", "bills", "orders"));
 
 		if (empty($hidetop))
 		{
@@ -481,7 +487,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	Expedition	$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
@@ -510,7 +516,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -620,12 +626,12 @@ class pdf_merou extends ModelePdfExpedition
 
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, 'day', false, $outputlangs, true), '', 'L');
+		$pdf->MultiCell(70, 8, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, 'day', false, $outputlangs, true), '', 'L');
 
 		$pdf->SetXY($blSocX - 80, $blSocY + 20);
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, '', 'L');
+		$pdf->MultiCell(70, 8, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, '', 'L');
 
 		// Deliverer
 		$pdf->SetXY($blSocX - 80, $blSocY + 23);
@@ -678,8 +684,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Recipient name
-		// You can use the name of the contact company
-		if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
+		if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 			$thirdparty = $object->contact;
 		} else {
 			$thirdparty = $object->thirdparty;
@@ -692,6 +697,8 @@ class pdf_merou extends ModelePdfExpedition
 		$blDestX = $blExpX + 55;
 		$blW = 54;
 		$Yoff = $Ydef + 1;
+
+		$widthrecbox = $blW;
 
 		// Show Recipient frame
 		$pdf->SetFont('', 'B', $default_font_size - 3);

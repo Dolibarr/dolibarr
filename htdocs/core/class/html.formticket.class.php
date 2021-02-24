@@ -247,6 +247,18 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
+		if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+			print '<span class="span-icon-security inline-block">';
+			print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
+			print '</span>';
+			print '<span class="nowrap inline-block">';
+			print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
+			print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+			print '</span>';
+			print '</td></tr>';
+		}
 
 		// Attached files
 		if (!empty($this->withfile)) {
@@ -368,7 +380,9 @@ class FormTicket
                                         if (response.num) {
                                             var selecthtml_str = response.value;
                                             var selecthtml_dom=$.parseHTML(selecthtml_str);
-                                            $("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+											if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
+                                            	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+											}
                                         } else {
                                             $("#inputautocomplete"+htmlname).val("");
                                         }
@@ -385,7 +399,7 @@ class FormTicket
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 				print img_picto('', 'contact', 'class="paddingright"');
-				$nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+				print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
 				print '</td></tr>';
@@ -408,7 +422,7 @@ class FormTicket
 		{
 			$formproject = new FormProjets($this->db);
 			print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-			print $formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+			print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print '</td></tr>';
 		}
 
@@ -422,13 +436,13 @@ class FormTicket
 
 		print '</table>';
 
-		if ($withdolfichehead) dol_fiche_end();
+		if ($withdolfichehead) print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")).'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; &nbsp;";
-			print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</div>';
 
@@ -999,8 +1013,8 @@ class FormTicket
 		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
-		if (isset($_POST["message"]) && !$_POST['modelselected']) {
-			$defaultmessage = GETPOST('message');
+		if (GETPOSTISSET("message") && !$_POST['modelselected']) {
+			$defaultmessage = GETPOST('message', 'restricthtml');
 		} else {
 			$defaultmessage = make_substitutions($defaultmessage, $this->substit);
 			// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
@@ -1075,7 +1089,7 @@ class FormTicket
 		print '<input class="button" type="submit" name="btn_add_message" value="'.$langs->trans("AddMessage").'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; ";
-			print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print "</center>\n";
 

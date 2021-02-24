@@ -80,7 +80,7 @@ $modulepart = 'actions';
 /*
  * Actions
  */
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -208,7 +208,7 @@ if ($object->id > 0)
 		if (!empty($object->userassigned))	// Now concat assigned users
 		{
 			// Restore array with key with same value than param 'id'
-			$tmplist1 = $object->userassigned; $tmplist2 = array();
+			$tmplist1 = $object->userassigned;
 			foreach ($tmplist1 as $key => $val)
 			{
 				if ($val['id'] && $val['id'] != $object->userownerid) $listofuserid[$val['id']] = $val;
@@ -254,7 +254,7 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$modulepart = 'actions';

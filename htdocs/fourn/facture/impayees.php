@@ -175,7 +175,7 @@ if ($user->rights->fournisseur->facture->lire)
 		$titre = ($socid ? $langs->trans("BillsSuppliersUnpaidForCompany", $soc->name) : $langs->trans("BillsSuppliersUnpaid"));
 
 		if ($option == 'late') $titre .= ' ('.$langs->trans("Late").')';
-	    else $titre .= ' ('.$langs->trans("All").')';
+		else $titre .= ' ('.$langs->trans("All").')';
 
 		$link = '';
 		if (empty($option)) $link = '<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
@@ -214,10 +214,10 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</td><td class="liste_titre right">';
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
-        print '<td class="liste_titre maxwidthsearch">';
-        $searchpicto = $form->showFilterAndCheckAddButtons(0);
-        print $searchpicto;
-        print '</td>';
+		print '<td class="liste_titre maxwidthsearch">';
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+		print '</td>';
 		print "</tr>\n";
 
 		if ($num > 0)

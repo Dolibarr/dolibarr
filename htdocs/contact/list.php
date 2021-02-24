@@ -203,20 +203,8 @@ if (!empty($conf->socialnetworks->enabled)) {
 }
 
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array(
-				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]),
-				'langfile'=>$extrafields->attributes[$object->table_element]['langfile'][$key],
-			);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -279,7 +267,7 @@ if (empty($reshook))
 		$search_categ_thirdparty = '';
 		$search_categ_supplier = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_roles = array();
 	}
@@ -289,6 +277,7 @@ if (empty($reshook))
 	$objectlabel = 'Contact';
 	$permissiontoread = $user->rights->societe->lire;
 	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -537,7 +526,8 @@ $arrayofmassactions = array(
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($user->rights->societe->creer) $arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = dolGetButtonTitle($langs->trans('NewContactAddress'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create', '', $user->rights->societe->contact->creer);
@@ -891,7 +881,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['p.lastname']['checked']))
 	{
 		print '<td class="middle tdoverflowmax200">';
-		print $contactstatic->getNomUrl(1, '', 0);
+		print $contactstatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -943,31 +933,31 @@ while ($i < min($num, $limit))
 	// Phone
 	if (!empty($arrayfields['p.phone']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Phone perso
 	if (!empty($arrayfields['p.phone_perso']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Phone mobile
 	if (!empty($arrayfields['p.phone_mobile']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Fax
 	if (!empty($arrayfields['p.fax']['checked']))
 	{
-		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL').'</td>';
+		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// EMail
 	if (!empty($arrayfields['p.email']['checked']))
 	{
-		print '<td>'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18).'</td>';
+		print '<td>'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// No EMail
@@ -979,7 +969,7 @@ while ($i < min($num, $limit))
 	if (!empty($conf->socialnetworks->enabled)) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
-				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key).'</td>';
+				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
 		}

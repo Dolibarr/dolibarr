@@ -59,13 +59,13 @@ llxHeader('', $langs->trans("Contacts"));
 
 if ($type == "c" || $type == "p")
 {
-    $label = $langs->trans("Customers");
-    $urlfiche = "card.php";
+	$label = $langs->trans("Customers");
+	$urlfiche = "card.php";
 }
 if ($type == "f")
 {
-    $label = $langs->trans("Suppliers");
-    $urlfiche = "card.php";
+	$label = $langs->trans("Suppliers");
+	$urlfiche = "card.php";
 }
 
 /*
@@ -88,29 +88,29 @@ if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 if (dol_strlen($stcomm))
 {
-    $sql .= " AND s.fk_stcomm=".$db->escape($stcomm);
+	$sql .= " AND s.fk_stcomm=".$db->escape($stcomm);
 }
 
 if (!empty($search_lastname))
 {
-    $sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+	$sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
 }
 
 if (!empty($search_firstname))
 {
-    $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
+	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
 }
 
 if (!empty($search_company))
 {
-    $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
+	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 
 if (!empty($contactname)) // acces a partir du module de recherche
 {
-    $sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
-    $sortfield = "p.name";
-    $sortorder = "ASC";
+	$sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
+	$sortfield = "p.name";
+	$sortorder = "ASC";
 }
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -171,7 +171,7 @@ if ($resql)
 
 	$db->free($resql);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

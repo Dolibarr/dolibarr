@@ -77,10 +77,9 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	//$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
+
 	print '<body id="mainbody" class="publicnewmemberform">';
-
-
 
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";
@@ -116,7 +115,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '>';
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref?utm_medium=website&utm_source=poweredby" href="https://www.dolibarr.org" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}

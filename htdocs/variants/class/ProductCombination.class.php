@@ -78,10 +78,10 @@ class ProductCombination
 	public $combination_price_levels;
 
 	/**
-     * External ref
-     * @var string
-     */
-    public $variation_ref_ext = '';
+	 * External ref
+	 * @var string
+	 */
+	public $variation_ref_ext = '';
 
 	/**
 	 * Constructor
@@ -126,7 +126,7 @@ class ProductCombination
 		$this->variation_price = $obj->variation_price;
 		$this->variation_price_percentage = $obj->variation_price_percentage;
 		$this->variation_weight = $obj->variation_weight;
-        $this->variation_ref_ext = $obj->variation_ref_ext;
+		$this->variation_ref_ext = $obj->variation_ref_ext;
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$this->fetchCombinationPriceLevels();
@@ -301,7 +301,7 @@ class ProductCombination
 			$tmp->variation_price = $result->variation_price;
 			$tmp->variation_price_percentage = $result->variation_price_percentage;
 			$tmp->variation_weight = $result->variation_weight;
-            $tmp->variation_ref_ext = $result->variation_ref_ext;
+			$tmp->variation_ref_ext = $result->variation_ref_ext;
 
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				$tmp->fetchCombinationPriceLevels();
@@ -383,7 +383,7 @@ class ProductCombination
 		$sql .= " SET fk_product_parent = ".(int) $this->fk_product_parent.", fk_product_child = ".(int) $this->fk_product_child.",";
 		$sql .= " variation_price = ".(float) $this->variation_price.", variation_price_percentage = ".(int) $this->variation_price_percentage.",";
 		$sql .= " variation_ref_ext = '".$this->db->escape($this->variation_ref_ext)."',";
-        $sql .= " variation_weight = ".(float) $this->variation_weight." WHERE rowid = ".((int) $this->id);
+		$sql .= " variation_weight = ".(float) $this->variation_weight." WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -671,7 +671,7 @@ class ProductCombination
 	 * @param bool|float 	$forced_pricevar 	If the price variation is forced
 	 * @param bool|float 	$forced_weightvar 	If the weight variation is forced
 	 * @param bool|string 	$forced_refvar 		If the reference is forced
-     * @param string 	    $ref_ext            External reference
+	 * @param string 	    $ref_ext            External reference
 	 * @return int 								<0 KO, >0 OK
 	 */
 	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false, $ref_ext = '')
@@ -790,7 +790,7 @@ class ProductCombination
 		$newcomb->variation_price_percentage = $price_var_percent;
 		$newcomb->variation_price = $price_impact[1];
 		$newcomb->variation_weight = $weight_impact;
-        $newcomb->variation_ref_ext = $this->db->escape($ref_ext);
+		$newcomb->variation_ref_ext = $this->db->escape($ref_ext);
 
 		// Init price level
 		if ($conf->global->PRODUIT_MULTIPRICES) {

@@ -205,7 +205,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 /**
  * Render a string of an HTML content and output it.
- * Used to ouput the page when viewed from server (Dolibarr or Apache).
+ * Used to ouput the page when viewed from a server (Dolibarr or Apache).
  *
  * @param   string  $content    	Content string
  * @param	string	$contenttype	Content type
@@ -296,7 +296,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	} else // REPLACEMENT OF LINKS When page called from virtual host
+	} else // REPLACEMENT OF LINKS When page called from virtual host web server
 	{
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
@@ -355,7 +355,9 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	}
 
-	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+	if (!defined('USEDOLIBARREDITOR')) {
+		$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+	}
 
 	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
@@ -554,7 +556,7 @@ function getStructuredData($type, $data = array())
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
 			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",';
-		if (! empty($data['ratingcount'])) {
+		if (!empty($data['ratingcount'])) {
 			$ret .= '
 				"aggregateRating": {
 					"@type": "AggregateRating",
@@ -594,11 +596,11 @@ function getStructuredData($type, $data = array())
 			$i = 0;
 			foreach ($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
-					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
 				} elseif ($key == 'youtube') {
-					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
 				} else {
-					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+					$ret .= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
 				}
 				$i++;
 				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
@@ -660,7 +662,7 @@ function getStructuredData($type, $data = array())
 				$i = 0;
 				$arrayofkeywords = explode(',', $websitepage->keywords);
 				foreach ($arrayofkeywords as $keyword) {
-					$ret.= '"'.dol_escape_json($keyword).'"';
+					$ret .= '"'.dol_escape_json($keyword).'"';
 					$i++;
 					if ($i < count($arrayofkeywords)) $ret .= ', ';
 				}
@@ -849,7 +851,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
 	{
 		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
-		if (is_array($otherfilters) && ! empty($otherfilters['category'])) {
+		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
 		}
 		$sql .= " WHERE wp.fk_website = ".$website->id;
@@ -879,7 +881,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($searchstring)."%'";
 		}
 		$sql .= $searchalgo;
-		if (is_array($otherfilters) && ! empty($otherfilters['category'])) {
+		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
 		}
 		$sql .= ")";

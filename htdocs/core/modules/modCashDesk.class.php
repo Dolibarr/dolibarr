@@ -66,7 +66,7 @@ class modCashDesk extends DolibarrModules
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2, 4); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
@@ -101,8 +101,8 @@ class modCashDesk extends DolibarrModules
 									'url'=>'/cashdesk/index.php?user=__USER_LOGIN__',
 									'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>900,
-                                    'enabled'=>'$conf->cashdesk->enabled',
-		                            'perms'=>'$user->rights->cashdesk->run', // Use 'perms'=>'1' if you want your menu with no permission rules
+									'enabled'=>'$conf->cashdesk->enabled',
+									'perms'=>'$user->rights->cashdesk->run', // Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'pointofsale',
 									'user'=>0); // 0=Menu for internal users, 1=external users, 2=both
 
@@ -120,24 +120,24 @@ class modCashDesk extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
-    }
+	}
 
 
-    /**
-     *  Function called when module is enabled.
-     *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *  It also creates data directories
-     *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
-     *  @return     int             	1 if OK, 0 if KO
-     */
-    public function init($options = '')
-    {
-        $sql = array();
+	/**
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
+	 *
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		$sql = array();
 
-        // Remove permissions and default values
-        $this->remove($options);
+		// Remove permissions and default values
+		$this->remove($options);
 
-        return $this->_init($sql, $options);
-    }
+		return $this->_init($sql, $options);
+	}
 }

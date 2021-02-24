@@ -80,11 +80,11 @@ print "<br>\n";
 
 $head = ecm_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributes_ecm_directories', $langs->trans("ECM"), -1, 'ecm');
+print dol_get_fiche_head($head, 'attributes_ecm_directories', '', -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

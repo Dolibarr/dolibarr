@@ -36,9 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mo.php';
 class mod_mo_advanced extends ModeleNumRefMos
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -52,14 +52,14 @@ class mod_mo_advanced extends ModeleNumRefMos
 	public $name = 'advanced';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -90,22 +90,22 @@ class mod_mo_advanced extends ModeleNumRefMos
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+	 	global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
@@ -114,7 +114,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * 	Return next free value
@@ -123,8 +123,8 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objprod, $object)
-    {
+	public function getNextValue($objprod, $object)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
