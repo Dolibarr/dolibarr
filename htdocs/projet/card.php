@@ -35,7 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects', 'companies'));
+$langsLoad=array('projects', 'companies');
+if (!empty($conf->eventorganization->enabled)) {
+	$langsLoad[]='eventorganization';
+}
+
+$langs->loadLangs($langsLoad);
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -223,7 +228,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
+	if ($action == 'update' && empty(GETPOST('cancel')) && $user->rights->projet->creer)
 	{
 		$error = 0;
 
@@ -569,10 +574,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
 		print '<br>';
 	}
-	/*
-	print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
-	$htmltext = $langs->trans("OrganizeEvent");
-	print $form->textwithpicto($langs->trans("OrganizeEvent"), $htmltext);*/
+
+	if (!empty($conf->eventorganization->enabled))
+	{
+		print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+	}
+
 	print '</td>';
 	print '</tr>';
 
@@ -855,6 +864,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
+		if (!empty($conf->eventorganization->enabled))
+		{
+			print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
 		print '</td></tr>';
 
 		// Thirdparty
@@ -1020,6 +1035,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
+
+		if (!empty($conf->eventorganization->enabled))
+		{
+			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
 		print '</td></tr>';
 
 		// Visibility
@@ -1110,7 +1132,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if ($action == 'edit' && $userWrite > 0)
 	{
 		print '<div class="center">';
-		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'">&nbsp; &nbsp; &nbsp;';
+		print '<input name="update" class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
@@ -1201,14 +1223,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 			// Send
 			if (empty($user->socid)) {
-				if ($object->statut != 2)
+				if ($object->statut != Project::STATUS_CLOSED)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 				}
 			}
 
 			// Modify
-			if ($object->statut != 2 && $user->rights->projet->creer)
+			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1219,7 +1241,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Validate
-			if ($object->statut == 0 && $user->rights->projet->creer)
+			if ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1230,7 +1252,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Close
-			if ($object->statut == 1 && $user->rights->projet->creer)
+			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1241,7 +1263,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Reopen
-			if ($object->statut == 2 && $user->rights->projet->creer)
+			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
@@ -1318,9 +1340,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 			}
 
 			// Delete
-			if ($user->rights->projet->supprimer || ($object->statut == 0 && $user->rights->projet->creer))
+			if ($user->rights->projet->supprimer || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer))
 			{
-				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
+				if ($userDelete > 0 || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer))
 				{
 					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
 				} else {

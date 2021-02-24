@@ -253,9 +253,9 @@ class Form
 
 				if (empty($notabletag)) $ret .= '<td class="left">';
 				//else $ret.='<div class="clearboth"></div>';
-				$ret .= '<input type="submit" class="button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
+				$ret .= '<input type="submit" class="smallpaddingimp button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
 				if (preg_match('/ckeditor|textarea/', $typeofdata) && empty($notabletag)) $ret .= '<br>'."\n";
-				$ret .= '<input type="submit" class="button button-cancel'.(empty($notabletag) ? '' : ' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$ret .= '<input type="submit" class="smallpaddingimp button button-cancel'.(empty($notabletag) ? '' : ' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
 				if (empty($notabletag)) $ret .= '</td>';
 
 				if (empty($notabletag)) $ret .= '</tr></table>'."\n";
@@ -672,7 +672,7 @@ class Form
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-				$ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		$ret .= '<input type="submit" disabled name="confirmmassaction"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display: none"').' class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax))
@@ -984,6 +984,7 @@ class Form
 			print '>'.$langs->trans("Service");
 
 			print '</select>';
+			print ajax_combobox('select_'.$htmlname);
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
 		if ((empty($forceall) && empty($conf->product->enabled) && !empty($conf->service->enabled)) || $forceall == 3)
@@ -1479,7 +1480,7 @@ class Form
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql .= " AND sp.statut <> 0";
 		$sql .= " ORDER BY sp.lastname ASC";
 
-		dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2753,9 +2754,10 @@ class Form
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		More CSS
+	 *  @param	string	$placeholder	Placeholder
 	 *	@return	void
 	 */
-	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '')
+	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '')
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -2776,9 +2778,9 @@ class Form
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid='.$socid.'&' : '').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
 			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
+			print ($hidelabel ? '' : $langs->trans("RefOrLabel").' : ').'<input type="text" class="minwidth300" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.$placeholder.'"' : '').'>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', -1, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
 		}
 	}
 
@@ -2798,9 +2800,10 @@ class Form
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @param	string	$morecss		Add more CSS
 	 *  @param	int		$showstockinlist	Show stock information (slower).
+	 *  @param	string	$placeholder	Placeholder
 	 *  @return array           		Array of keys for json
 	 */
-	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0)
+	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
 		// phpcs:enable
 		global $langs, $conf, $db, $user;
@@ -2884,9 +2887,9 @@ class Form
 			$num = $this->db->num_rows($result);
 
 			//$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-			$out .= '<select class="flat maxwidthonsmartphone'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-			if (!$selected) $out .= '<option value="0" selected>&nbsp;</option>';
-			else $out .= '<option value="0">&nbsp;</option>';
+			$out .= '<select class="flat '.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+			if (!$selected) $out .= '<option value="-1" selected>'.($placeholder ? $placeholder : '&nbsp;').'</option>';
+			else $out .= '<option value="-1">'.($placeholder ? $placeholder : '&nbsp;').'</option>';
 
 			$i = 0;
 			while ($i < $num)
@@ -3101,7 +3104,7 @@ class Form
 
 
 				// Add new entry
-				// "key" value of json key array is used by jQuery automatically as selected value
+				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
 				array_push($outarray,
@@ -3109,12 +3112,12 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'up'=>$objp->unitprice,
+						'price_ht'=>price2num($objp->unitprice, 'MT'),
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
 						'duration_unit'=>$outdurationunit,
-						'disabled'=>(empty($objp->idprodfournprice) ?true:false),
+						'disabled'=>(empty($objp->idprodfournprice) ? true : false),
 						'description'=>$objp->description
 					)
 				);
@@ -4164,6 +4167,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setbankaccount">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$nbaccountfound = $this->select_comptes($selected, $htmlname, 0, '', $addempty);
 			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
@@ -4308,7 +4312,7 @@ class Form
 	 *     @param	string			$question    	   	Question
 	 *     @param 	string			$action      	   	Action
 	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , 'size'=>, 'morecss'=>, 'moreattr'=>))
-	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
+	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', 'other' or 'onecolumn'...
 	 * 	   @param  	string			$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
 	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
@@ -4362,20 +4366,19 @@ class Form
 					$moreattr = (!empty($input['moreattr']) ? ' '.$input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' '.$input['morecss'] : '');
 
-					if ($input['type'] == 'text')
-					{
+					if ($input['type'] == 'text') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
-					} elseif ($input['type'] == 'password')
-					{
+					} elseif ($input['type'] == 'password')	{
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
-					} elseif ($input['type'] == 'select')
-					{
+					} elseif ($input['type'] == 'select') {
+						if (empty($morecss)) {
+							$morecss = 'minwidth100';
+						}
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd left">';
 						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
 						$more .= '</div></div>'."\n";
-					} elseif ($input['type'] == 'checkbox')
-					{
+					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
@@ -4384,8 +4387,7 @@ class Form
 						if (isset($input['disabled'])) $more .= ' disabled';
 						$more .= ' /></div>';
 						$more .= '</div>'."\n";
-					} elseif ($input['type'] == 'radio')
-					{
+					} elseif ($input['type'] == 'radio') {
 						$i = 0;
 						foreach ($input['values'] as $selkey => $selval)
 						{
@@ -4400,8 +4402,7 @@ class Form
 							$more .= '</div></div>'."\n";
 							$i++;
 						}
-					} elseif ($input['type'] == 'date')
-					{
+					} elseif ($input['type'] == 'date') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div>';
 						$more .= '<div class="tagtd">';
 						$more .= $this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
@@ -4411,17 +4412,19 @@ class Form
 						$formquestion[] = array('name'=>$input['name'].'year');
 						$formquestion[] = array('name'=>$input['name'].'hour');
 						$formquestion[] = array('name'=>$input['name'].'min');
-					} elseif ($input['type'] == 'other')
-					{
+					} elseif ($input['type'] == 'other') {
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd">';
 						$more .= $input['value'];
 						$more .= '</div></div>'."\n";
-					} elseif ($input['type'] == 'onecolumn')
-					{
+					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['value'];
 						$moreonecolumn .= '</div>'."\n";
+					} elseif ($input['type'] == 'hidden') {
+						// Do nothing more, already added by a previous loop
+					} else {
+						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}
 				}
 			}
@@ -4449,16 +4452,24 @@ class Form
 			}
 			$pageyes = $page.(preg_match('/\?/', $page) ? '&' : '?').'action='.$action.'&confirm=yes';
 			$pageno = ($useajax == 2 ? $page.(preg_match('/\?/', $page) ? '&' : '?').'confirm=no' : '');
+
 			// Add input fields into list of fields to read during submit (inputok and inputko)
-			if (is_array($formquestion))
-			{
-				foreach ($formquestion as $key => $input)
-				{
+			if (is_array($formquestion)) {
+				foreach ($formquestion as $key => $input) {
 					//print "xx ".$key." rr ".is_array($input)."<br>\n";
-					if (is_array($input) && isset($input['name'])) array_push($inputok, $input['name']);
+					// Add name of fields to propagate with the GET when submitting the form with button OK.
+					if (is_array($input) && isset($input['name'])) {
+						if (strpos($input['name'], ',') > 0) {
+							$inputok = array_merge($inputok, explode(',', $input['name']));
+						} else {
+							array_push($inputok, $input['name']);
+						}
+					}
+					// Add name of fields to propagate with the GET when submitting the form with button KO.
 					if (isset($input['inputko']) && $input['inputko'] == 1) array_push($inputko, $input['name']);
 				}
 			}
+
 			// Show JQuery confirm box.
 			$formconfirm .= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
 			if (is_array($formquestion) && !empty($formquestion['text'])) {
@@ -5030,7 +5041,7 @@ class Form
 				}
 			}
 			print $langs->trans($translationKey, price($amount, 0, $langs, 0, 0, -1, $conf->currency));
-			if (empty($hidelist)) print ': ';
+			if (empty($hidelist)) print ' ';
 			print '</div>';
 			if (empty($hidelist))
 			{
@@ -5689,6 +5700,9 @@ class Form
 		if ($h == 3) $shour = '';
 		if ($m == 3) $smin = '';
 
+		$nowgmt = dol_now('gmt');
+		//var_dump(dol_print_date($nowgmt, 'dayhourinputnoreduce', 'tzuserrel'));
+
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
 		if (!empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
@@ -5711,13 +5725,13 @@ class Form
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy")
 				{
-					// Zone de saisie manuelle de la date
+					// Input area to enter date manually
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
-					// Icone calendar
+					// Icon calendar
 					$retstringbuttom = '';
 					if (!$disabled) {
 						$retstringbuttom = '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
@@ -5901,8 +5915,7 @@ class Form
 		{
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
-			if ($addnowlink == 2) // local computer time
-			{
+			if ($addnowlink == 2) { // local computer time
 				// pad add leading 0 on numbers
 				$reset_scripts .= "Number.prototype.pad = function(size) {
                         var s = String(this);
@@ -5913,14 +5926,12 @@ class Form
 			}
 
 			// Generate the date part, depending on the use or not of the javascript calendar
-			if ($addnowlink == 1) // server time expressed in user time setup
-			{
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
-			} elseif ($addnowlink == 2)
-			{
+			if ($addnowlink == 1) { // server time expressed in user time setup
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($nowgmt, 'day', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date($nowgmt, '%d', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date($nowgmt, '%m', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date($nowgmt, '%Y', 'tzuserrel').'\');';
+			} elseif ($addnowlink == 2) {
 				/* Disabled because the output does not use the string format defined by FormatDateShort key to forge the value into #prefix.
             	 * This break application for foreign languages.
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(d.toLocaleDateString(\''.str_replace('_', '-', $langs->defaultlang).'\'));';
@@ -5928,10 +5939,10 @@ class Form
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(parseInt(d.getMonth().pad()) + 1);';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(d.getFullYear());';
                 */
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($nowgmt, 'day', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date($nowgmt, '%d', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date($nowgmt, '%m', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date($nowgmt, '%Y', 'tzuserrel').'\');';
 			}
 			/*if ($usecalendar == "eldy")
             {
@@ -5951,7 +5962,7 @@ class Form
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'HH\'); ';
 				if ($addnowlink == 1)
 				{
-					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date($nowgmt, '%H', 'tzuserrel').'\');';
 					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
 				} elseif ($addnowlink == 2)
 				{
@@ -5968,7 +5979,7 @@ class Form
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'min\'].value=formatDate(new Date(), \'mm\'); ';
 				if ($addnowlink == 1)
 				{
-					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date($nowgmt, '%M', 'tzuserrel').'\');';
 					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
 				} elseif ($addnowlink == 2)
 				{
@@ -5993,22 +6004,22 @@ class Form
 			$reset_scripts = "";
 
 			// Generate the date part, depending on the use or not of the javascript calendar
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($nowgmt, 'dayinputnoreduce', 'tzuserrel').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date($nowgmt, '%d', 'tzuserrel').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date($nowgmt, '%m', 'tzuserrel').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date($nowgmt, '%Y', 'tzuserrel').'\');';
 			// Update the hour part
 			if ($h)
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date($nowgmt, '%H', 'tzuserrel').'\');';
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// Update the minute part
 			if ($m)
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date($nowgmt, '%M', 'tzuserrel').'\');';
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
@@ -6020,12 +6031,12 @@ class Form
 			}
 		}
 
-		// Add a "Plus one hour" link
+		// Add a link to set data
 		if ($conf->use_javascript_ajax && $adddateof)
 		{
 			$tmparray = dol_getdate($adddateof);
 			if (empty($labeladddateof)) $labeladddateof = $langs->trans("DateInvoice");
-			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
+			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="console.log(\'Click on now link\'); jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
@@ -6290,7 +6301,7 @@ class Form
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		//print "$objecttmp->filter, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled";
 
@@ -6336,27 +6347,34 @@ class Form
 		}
 		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe')
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE 1=1";
-		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
-		if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
-			$sql .= ' AND parenttable.entity = t.'.$tmparray[0];
-		}
-		if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-			if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
-			else $sql .= " AND t.fk_soc = ".$user->socid;
-		}
-		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-		}
-		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-			/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
-			}*/
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
-		}
+
+		// Add where from hooks
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('selectForFormsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+        if (!empty($hookmanager->resPrint)) $sql .= $hookmanager->resPrint;
+		else {
+		    $sql .= " WHERE 1=1";
+            if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
+            if (isset($objecttmp->ismultientitymanaged) && !is_numeric($objecttmp->ismultientitymanaged)) {
+                $sql .= ' AND parenttable.entity = t.'.$tmparray[0];
+            }
+            if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+                if ($objecttmp->element == 'societe') $sql .= " AND t.rowid = ".$user->socid;
+                else $sql .= " AND t.fk_soc = ".$user->socid;
+            }
+            if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
+            if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+                if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+            }
+            if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+                /*if (! DolibarrApi::_checkFilters($objecttmp->filter))
+                {
+                    throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
+                }*/
+                $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+                $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
+            }
+        }
 		$sql .= $this->db->order($fieldstoshow, "ASC");
 		//$sql.=$this->db->plimit($limit, 0);
 		//print $sql;
@@ -6461,6 +6479,11 @@ class Form
 		if ($value_as_key) $array = array_combine($array, $array);
 
 		$out = '';
+
+		if ($addjscombo < 0) {
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $addjscombo = 1;
+			else $addjscombo = 0;
+		}
 
 		// Add code for jquery to use multiselect
 		if ($addjscombo && $jsbeautify) {

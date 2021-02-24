@@ -12,7 +12,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,7 +238,7 @@ if (empty($reshook))
 	elseif ($action == 'add' && $usercancreate)
 	{
 		$datecommande = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-		$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+		$date_delivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($datecommande == '') {
@@ -271,8 +271,8 @@ if (empty($reshook))
 			$object->fk_account = GETPOST('fk_account', 'int');
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id');
-			$object->date_livraison = $datelivraison; // deprecated
-			$object->delivery_date = $datelivraison;
+			$object->date_livraison = $date_delivery; // deprecated
+			$object->delivery_date = $date_delivery;
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
 			$object->fk_delivery_address = GETPOST('fk_address');
@@ -501,7 +501,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremise' && $usercancreate) {
-		$result = $object->set_remise($user, GETPOST('remise'));
+		$result = $object->setDiscount($user, GETPOST('remise'));
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -607,7 +607,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise($user, price2num(GETPOST('remise_percent'), 2));
+		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU'));
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha')) {
@@ -1603,7 +1603,7 @@ if ($action == 'create' && $usercancreate)
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact');
-		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -1628,7 +1628,7 @@ if ($action == 'create' && $usercancreate)
 	print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 	print '<td colspan="3">';
 	$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery);
-	print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
+	print $form->selectDate($date_delivery ? $date_delivery : -1, 'liv_', 1, 1, 1);
 	print "</td>\n";
 	print '</tr>';
 
@@ -1644,8 +1644,7 @@ if ($action == 'create' && $usercancreate)
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && !empty($conf->banque->enabled))
-	{
+	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && !empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 		print img_picto('', 'bank_account');
 		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);

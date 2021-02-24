@@ -185,9 +185,12 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 
 
 // Check consistency of NOREQUIREXXX DEFINES
-if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU'))
-{
-	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them';
+if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
+	print 'If define NOREQUIREDB or NOREQUIRETRAN are set, you must also set NOREQUIREMENU or not set them.';
+	exit;
+}
+if (defined('NOREQUIREUSER') && !defined('NOREQUIREMENU')) {
+	print 'If define NOREQUIREUSER is set, you must also set NOREQUIREMENU or not set it.';
 	exit;
 }
 
@@ -413,14 +416,16 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 }
 
 // Creation of a token against CSRF vulnerabilities
-if (!defined('NOTOKENRENEWAL'))
-{
+if (!defined('NOTOKENRENEWAL')) {
 	// Rolling token at each call ($_SESSION['token'] contains token of previous page)
-	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
+	if (isset($_SESSION['newtoken'])) {
+		$_SESSION['token'] = $_SESSION['newtoken'];
+	}
 
-	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
+	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = newToken();
 	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
+	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
 }
 
 //dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
@@ -454,8 +459,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		}
 	}
 
-	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
-	{
+	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token']) {
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -595,7 +599,7 @@ if (!defined('NOLOGIN'))
 		if ($test && GETPOST("username", "alpha", 2) && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) && !isset($_SESSION['dol_bypass_antispam']))
 		{
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'none'))));
 
 			// Check code
 			if (!$ok)
@@ -1007,8 +1011,6 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 {
 	$conf->dol_optimize_smallscreen = 1;
 }
-// If we force to use jmobile, then we reenable javascript
-if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 // Replace themes bugged with jmobile with eldy
 if (!empty($conf->dol_use_jmobile) && in_array($conf->theme, array('bureau2crea', 'cameleo', 'amarok')))
 {
@@ -1517,7 +1519,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					// To use external ckeditor 4 js lib
 					$pathckeditor = constant('JS_CKEDITOR');
 				}
-				print '<script><!-- enable ckeditor by main.inc.php -->';
+				print '<script>';
+                print '/* enable ckeditor by main.inc.php */';
 				print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
 				print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext ? '?'.$ext : ''), 1).'\';'."\n"; // $themesubdir='' in standard usage
 				print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
@@ -1525,8 +1528,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '</script>'."\n";
 				print '<script src="'.$pathckeditor.$jsckeditor.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script>';
-				if (GETPOST('mode', 'aZ09') == 'Full_inline')
-				{
+				if (GETPOST('mode', 'aZ09') == 'Full_inline') {
 					print 'CKEDITOR.disableAutoInline = false;'."\n";
 				} else {
 					print 'CKEDITOR.disableAutoInline = true;'."\n";

@@ -1649,6 +1649,7 @@ class Product extends CommonObject
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
 					$pu_ht = price($prodcustprice->lines[0]->price);
+					$price_min = price($prodcustprice->lines[0]->price_min);
 					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 					$price_base_type = $prodcustprice->lines[0]->price_base_type;
 					$tva_tx = $prodcustprice->lines[0]->tva_tx;

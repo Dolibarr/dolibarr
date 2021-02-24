@@ -506,7 +506,7 @@ if (empty($reshook))
 	} elseif ($action == 'classifybilled')
 	{
 		$object->fetch($id);
-		$result = $object->set_billed();
+		$result = $object->setBilled();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
@@ -860,13 +860,13 @@ if ($action == 'create')
 
 			// Document model
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
-			$liste = ModelePdfReception::liste_modeles($db);
+			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($liste) > 1)
+			if (count($list) > 1)
 			{
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
-				print $form->selectarray('model', $liste, $conf->global->RECEPTION_ADDON_PDF);
+				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);
 				print "</td></tr>\n";
 			}
 

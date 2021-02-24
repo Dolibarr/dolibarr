@@ -1749,7 +1749,7 @@ class Adherent extends CommonObject
 
 				if (!$error) {
 					// Set invoice as paid
-					$invoice->set_paid($user);
+					$invoice->setPaid($user);
 				}
 			}
 

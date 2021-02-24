@@ -326,7 +326,8 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
 //if (! empty($conf->global->MAIN_MULTILANGS))
 //{
-print $formadmin->select_language(GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0), 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
+$selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
+print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
 //} else {
 //	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
 //}

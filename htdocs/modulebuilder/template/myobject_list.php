@@ -231,6 +231,8 @@ $now = dol_now();
 //$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("MyObjects"));
+$morejs = array();
+$morecss = array();
 
 
 // Build and execute select
@@ -351,7 +353,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">

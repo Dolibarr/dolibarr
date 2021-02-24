@@ -91,7 +91,7 @@ $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), G
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_dv_start = dol_mktime(0, 0, 0, GETPOST('search_start_dvmonth', 'int'), GETPOST('search_start_dvday', 'int'), GETPOST('search_start_dvyear', 'int'));
 $search_dv_end = dol_mktime(0, 0, 0, GETPOST('search_end_dvmonth', 'int'), GETPOST('search_end_dvday', 'int'), GETPOST('search_end_dvyear', 'int'));
-$search_thirdparty = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
+$search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search_thirdparty", 'alpha') : GETPOST("thirdparty", 'alpha');
 $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
@@ -142,16 +142,16 @@ $extrafields->fetch_name_optionals_label('banktransaction');
 $search_array_options = $extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
 
 $arrayfields = array(
-	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'b.label'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
-	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
-	'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
-	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
-	'bu.label'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>500),
-	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || !empty($ref)) ? 0 : 1), 'position'=>1000),
-	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
-	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
+    'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+    'b.label'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
+    'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
+    'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
+    'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+    'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
+    'bu.label'=>array('label'=>$langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked'=>1, 'position'=>500),
+    'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || !empty($ref)) ? 0 : 1), 'position'=>1000),
+    'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
+    'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
 	'balancebefore'=>array('label'=>$langs->trans("BalanceBefore"), 'checked'=>0, 'position'=>1000),
 	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1001),
 	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
@@ -191,7 +191,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = "";
 	$search_req_nb = '';
 	$search_description = '';
-	$search_thirdparty = '';
+	$search_thirdparty_user = '';
 	$search_num_releve = '';
 	$search_conciliated = '';
 	$thirdparty = '';
@@ -255,7 +255,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		$param .= '&search_conciliated='.urlencode($search_conciliated);
 		if ($page) $param .= '&page='.urlencode($page);
 		if ($offset) $param .= '&offset='.urlencode($offset);
-		if ($search_thirdparty) $param .= '&search_thirdparty='.urlencode($search_thirdparty);
+		if ($search_thirdparty_user) $param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
 		if ($search_num_releve) $param .= '&search_num_releve='.urlencode($search_num_releve);
 		if ($search_description) $param .= '&search_description='.urlencode($search_description);
 		if ($search_start_dt) $param .= '&search_start_dt='.urlencode($search_start_dt);
@@ -359,6 +359,7 @@ $formaccounting = new FormAccounting($db);
 
 $companystatic = new Societe($db);
 $bankaccountstatic = new Account($db);
+$userstatic= new User($db);
 
 $banktransferstatic = new BonPrelevement($db);
 $societestatic = new Societe($db);
@@ -390,7 +391,7 @@ if (!empty($ref)) $param .= '&ref='.urlencode($ref);
 if (!empty($search_ref)) $param .= '&search_ref='.urlencode($search_ref);
 if (!empty($search_description)) $param .= '&search_description='.urlencode($search_description);
 if (!empty($search_type)) $param .= '&type='.urlencode($search_type);
-if (!empty($search_thirdparty)) $param .= '&search_thirdparty='.urlencode($search_thirdparty);
+if (!empty($search_thirdparty_user)) $param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
 if (!empty($search_debit)) $param .= '&search_debit='.urlencode($search_debit);
 if (!empty($search_credit)) $param .= '&search_credit='.urlencode($search_credit);
 if (!empty($search_account)) $param .= '&search_account='.urlencode($search_account);
@@ -481,9 +482,7 @@ if ($id > 0 || !empty($ref))
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type,";
-$sql .= " ba.rowid as bankid, ba.ref as bankref,";
-$sql .= " bu.url_id,";
-$sql .= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -497,8 +496,6 @@ if ($search_bid > 0) $sql .= MAIN_DB_PREFIX."bank_class as l,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) $sql .= " AND b.fk_account = ".$search_account;
@@ -512,7 +509,20 @@ if ($search_ref) $sql .= natural_search("b.rowid", $search_ref, 1);
 if ($search_req_nb) $sql .= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql .= natural_search("b.num_releve", $search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1') $sql .= " AND b.rappro = ".urlencode($search_conciliated);
-if ($search_thirdparty) $sql .= natural_search("s.nom", $search_thirdparty);
+if ($search_thirdparty_user) {
+	$sql.= " AND (b.rowid IN ";
+	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
+	$sql.= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1)."))";
+
+	$sql.= " OR b.rowid IN ";
+	$sql.= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
+	$sql.= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
+	$sql.= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql.= ")";
+}
 if ($search_description)
 {
 	$search_description_to_use = $search_description;
@@ -587,7 +597,7 @@ if (!empty($search_description)) $mode_balance_ok = false;
 if (!empty($search_type)) $mode_balance_ok = false;
 if (!empty($search_debit)) $mode_balance_ok = false;
 if (!empty($search_credit)) $mode_balance_ok = false;
-if (!empty($search_thirdparty)) $mode_balance_ok = false;
+if (!empty($search_thirdparty_user)) $mode_balance_ok = false;
 if ($search_conciliated != '' && $search_conciliated != '-1') $mode_balance_ok = false;
 if (!empty($search_num_releve)) $mode_balance_ok = false;
 
@@ -1012,6 +1022,8 @@ if ($resql)
 	while ($i < min($num, $limit))
 	{
 		$objp = $db->fetch_object($resql);
+		$links = $bankaccountstatic->get_url($objp->rowid);
+
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0'))
 		{
@@ -1202,7 +1214,6 @@ if ($resql)
 			//print "</a>&nbsp;";
 
 			// Add links after description
-			$links = $bankaccountstatic->get_url($objp->rowid);
 			$cachebankaccount = array();
 			foreach ($links as $key=>$val)
 			{
@@ -1369,27 +1380,42 @@ if ($resql)
 		}
 
 		// Third party
-		if (!empty($arrayfields['bu.label']['checked']))
-		{
+    	if (!empty($arrayfields['bu.label']['checked']))
+    	{
 			print '<td class="tdoverflowmax150">';
-			if ($objp->url_id)
-			{
-				$companystatic->id = $objp->url_id;
-				$companystatic->name = $objp->nom;
-				$companystatic->name_alias = $objp->name_alias;
-				$companystatic->client = $objp->client;
-				$companystatic->email = $objp->email;
-				$companystatic->fournisseur = $objp->fournisseur;
-				$companystatic->code_client = $objp->code_client;
-				$companystatic->code_fournisseur = $objp->code_fournisseur;
-				$companystatic->code_compta = $objp->code_compta;
-				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+
+			$companylinked_id = 0;
+				$userlinked_id = 0;
+
+				//payment line type to define user display and user or company linked
+			foreach ($links as $key=>$value){
+				if ($links[$key]['type'] == 'payment_sc') $type_link = 'payment_sc';
+				if ($links[$key]['type'] == 'payment_salary') $type_link = 'payment_salary';
+
+				if ($links[$key]['type'] == 'company') {
+					$companylinked_id = $links[$key]['url_id'];
+				}
+				if ($links[$key]['type'] == 'user') {
+					$userlinked_id = $links[$key]['url_id'];
+				}
+			}
+
+			if ($companylinked_id) {
+				// TODO Add a cache of loaded companies here
+				$companystatic->fetch($companylinked_id);
 				print $companystatic->getNomUrl(1);
+			} elseif ($userlinked_id &&
+					(($type_link == 'payment_salary' && !empty($user->rights->salaries->read))
+						|| ($type_link == 'payment_sc' && !empty($user->rights->tax->charges->lire)))){
+				// TODO Add a cache of loaded users here
+				$userstatic->fetch($userlinked_id);
+				print $userstatic->getNomUrl(1);
 			} else {
 				print '&nbsp;';
 			}
+
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+           	if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Bank account

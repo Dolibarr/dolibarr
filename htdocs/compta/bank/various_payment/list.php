@@ -58,6 +58,10 @@ $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) $search_accountancy_account = '';
 $search_accountancy_subledger = GETPOST("search_accountancy_subledger");
 if ($search_accountancy_subledger == - 1) $search_accountancy_subledger = '';
+if (empty($search_datep_start))  $search_datep_start = GETPOST("search_datep_start", 'int');
+if (empty($search_datep_end)) $search_datep_end = GETPOST("search_datep_end", 'int');
+if (empty($search_datev_start)) $search_datev_start = GETPOST("search_datev_start", 'int');
+if (empty($search_datev_end)) $search_datev_end = GETPOST("search_datev_end", 'int');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -247,7 +251,7 @@ if ($result)
 	if ($typeid > 0)						$param .= '&typeid='.urlencode($typeid);
 	if ($search_amount_deb)					$param .= '&search_amount_deb='.urlencode($search_amount_deb);
 	if ($search_amount_cred)				$param .= '&search_amount_cred='.urlencode($search_amount_cred);
-	if ($search_bank_account > 0)			$param .= '&search_amount='.urlencode($search_bank_account);
+	if ($search_bank_account > 0)			$param .= '&search_account='.urlencode($search_bank_account);
 	if ($search_accountancy_account > 0)	$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
 	if ($search_accountancy_subledger > 0)	$param .= '&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
 

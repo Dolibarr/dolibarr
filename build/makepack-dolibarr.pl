@@ -579,7 +579,6 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/workstation*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
@@ -624,7 +623,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor`;

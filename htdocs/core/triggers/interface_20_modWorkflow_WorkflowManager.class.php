@@ -307,7 +307,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
-							$ret = $element->set_billed();
+							$ret = $element->setBilled();
 						}
 					}
 				}

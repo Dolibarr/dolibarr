@@ -200,7 +200,11 @@ class Project extends CommonObject
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'usage_task' =>array('type'=>'integer', 'label'=>'UsageTasks', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'usage_organize_event' =>array('type'=>'integer', 'label'=>'Usage organize event', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+		'usage_organize_event' =>array('type'=>'integer', 'label'=>'UsageOrganizeEvent', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
+		'accept_conference_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestConf', 'enabled'=>1, 'visible'=>-1, 'position'=>146),
+		'accept_booth_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>147),
+		'price_registration' =>array('type'=>'double(24,8)', 'label'=>'PriceOfRegistration', 'enabled'=>1, 'visible'=>-1, 'position'=>148),
+		'price_booth' =>array('type'=>'double(24,8)', 'label'=>'PriceOfBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>149),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>-2, 'position'=>200),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>205),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>210),
@@ -232,6 +236,8 @@ class Project extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
@@ -241,20 +247,24 @@ class Project extends CommonObject
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			$this->fields['fk_opp_status']['enabled'] = 0;
 			$this->fields['opp_percent']['enabled'] = 0;
 			$this->fields['opp_amount']['enabled'] = 0;
 			$this->fields['usage_opportunity']['enabled'] = 0;
 		}
 
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!empty($conf->global->PROJECT_HIDE_TASKS)) {
 			$this->fields['usage_bill_time']['visible'] = 0;
 			$this->fields['usage_task']['visible'] = 0;
 		}
 
-		if (empty($conf->global->PROJECT_ORGANIZE_EVENTS)) {
+		if (empty($conf->eventorganization->enabled)) {
 			$this->fields['usage_organize_event']['visible'] = 0;
+			$this->fields['accept_conference_suggestions']['enabled'] = 0;
+			$this->fields['accept_booth_suggestions']['enabled'] = 0;
+			$this->fields['price_registration']['enabled'] = 0;
+			$this->fields['price_booth']['enabled'] = 0;
 		}
 	}
 
@@ -314,6 +324,10 @@ class Project extends CommonObject
 		$sql .= ", usage_task";
 		$sql .= ", usage_bill_time";
 		$sql .= ", usage_organize_event";
+		$sql .= ", accept_conference_suggestions";
+		$sql .= ", accept_booth_suggestions";
+		$sql .= ", price_registration";
+		$sql .= ", price_booth";
 		$sql .= ", email_msgid";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
@@ -337,6 +351,10 @@ class Project extends CommonObject
 		$sql .= ", ".($this->usage_task ? 1 : 0);
 		$sql .= ", ".($this->usage_bill_time ? 1 : 0);
 		$sql .= ", ".($this->usage_organize_event ? 1 : 0);
+		$sql .= ", ".($this->accept_conference_suggestions ? 1 : 0);
+		$sql .= ", ".($this->accept_booth_suggestions ? 1 : 0);
+		$sql .= ", ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : 'null');
+		$sql .= ", ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : 'null');
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
@@ -440,6 +458,10 @@ class Project extends CommonObject
 			$sql .= ", usage_task = ".($this->usage_task ? 1 : 0);
 			$sql .= ", usage_bill_time = ".($this->usage_bill_time ? 1 : 0);
 			$sql .= ", usage_organize_event = ".($this->usage_organize_event ? 1 : 0);
+			$sql .= ", accept_conference_suggestions = ".($this->accept_conference_suggestions ? 1 : 0);
+			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
+			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
+			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -529,7 +551,8 @@ class Project extends CommonObject
 
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
-		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid";
+		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid,";
+		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id))
 		{
@@ -586,6 +609,10 @@ class Project extends CommonObject
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
 				$this->usage_organize_event = (int) $obj->usage_organize_event;
+				$this->accept_conference_suggestions = (int) $obj->accept_conference_suggestions;
+				$this->accept_booth_suggestions = (int) $obj->accept_booth_suggestions;
+				$this->price_registration = $obj->price_registration;
+				$this->price_booth = $obj->price_booth;
 				$this->email_msgid = $obj->email_msgid;
 
 				$this->db->free($resql);

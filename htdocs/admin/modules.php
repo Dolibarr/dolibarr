@@ -525,7 +525,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacitymedium"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacitymedium"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
@@ -1073,9 +1073,9 @@ if ($mode == 'deploy') {
 		} else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
-			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
-			print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("DownloadPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
 		}
 

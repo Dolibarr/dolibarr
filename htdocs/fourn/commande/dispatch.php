@@ -525,7 +525,9 @@ $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js.php'));
+$morejs = array('/fourn/js/lib_dispatch.js.php');
+
+llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, $morejs);
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
@@ -724,7 +726,7 @@ if ($id > 0 || !empty($ref)) {
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " GROUP BY p.ref, p.label, p.tobatch, l.rowid, l.fk_product, l.subprice, l.remise_percent, p.fk_default_warehouse"; // Calculation of amount dispatched is done per fk_product so we must group by fk_product
+		$sql .= " GROUP BY p.ref, p.label, p.tobatch, p.fk_default_warehouse, l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref"; // Calculation of amount dispatched is done per fk_product so we must group by fk_product
 		$sql .= " ORDER BY p.ref, p.label";
 
 		$resql = $db->query($sql);

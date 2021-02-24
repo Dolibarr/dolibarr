@@ -757,30 +757,37 @@ class FormCompany extends Form
 	 *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
 	 *  @param  int			$showempty      1=Add en empty line
 	 *  @param  string      $morecss        Add more css to select component
+	 *  @param  int      	$output         0=return HTML, 1= direct print
+	 *  @param	int			$forcehidetooltip	Force hide tooltip for admin
 	 *  @return	void
 	 */
-	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '')
+	public function selectTypeContact($object, $selected, $htmlname = 'type', $source = 'internal', $sortorder = 'position', $showempty = 0, $morecss = '', $output = 1, $forcehidetooltip = 0)
 	{
 		global $user, $langs;
-
+		$out = '';
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
 
-			print '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($showempty) print '<option value="0"></option>';
+			$out .= '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			if ($showempty) $out .= '<option value="0"></option>';
 			foreach ($lesTypes as $key=>$value)
 			{
-				print '<option value="'.$key.'"';
-				if ($key == $selected) print ' selected';
-				print '>'.$value.'</option>';
+				$out .= '<option value="'.$key.'"';
+				if ($key == $selected) $out .= ' selected';
+				$out .= '>'.$value.'</option>';
 			}
-			print "</select>";
-			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			$out .= "</select>";
+			if ($user->admin && empty($forcehidetooltip)) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
-			print ajax_combobox($htmlname);
+			$out .= ajax_combobox($htmlname);
 
-			print "\n";
+			$out .= "\n";
+		}
+		if (empty($output)) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 
@@ -817,7 +824,7 @@ class FormCompany extends Form
 				}
 				if (count($newselected) > 0) $selected = $newselected;
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected);
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, 'minwidth500');
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -1022,11 +1029,10 @@ class FormCompany extends Form
 	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		$out = '';
-		if ($htmlname != "none")
-		{
+		if ($htmlname != "none") {
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="set_thirdpartytype">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1035,8 +1041,7 @@ class FormCompany extends Form
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
-			if ($selected)
-			{
+			if ($selected) {
 				$arr = $this->typent_array(0);
 				$typent = $arr[$selected];
 				$out .= $typent;
@@ -1045,7 +1050,10 @@ class FormCompany extends Form
 			}
 		}
 
-		if ($nooutput) return $out;
-		else print $out;
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
+		}
 	}
 }

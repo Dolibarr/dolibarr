@@ -183,17 +183,18 @@ function getObjectFromID(id){
 }
 
 // Called after selection of a date to save details into detailed fields
-function dpChangeDay(dateFieldID,format)
+function dpChangeDay(dateFieldID, format)
 {
 	//showDP.datefieldID=dateFieldID;
-	console.log("Call dpChangeDay, we save date into detailed fields.");
+	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
 	var thefield=getObjectFromID(dateFieldID);
 	var thefieldday=getObjectFromID(dateFieldID+"day");
 	var thefieldmonth=getObjectFromID(dateFieldID+"month");
 	var thefieldyear=getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value,format);
+	var date=getDateFromFormat(thefield.value, format);
+	//console.log(date);
 	if (date)
 	{
 		thefieldday.value=date.getDate();
@@ -573,11 +574,12 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#set_" + key).hide();
 					$("#del_" + key).show();
-					$.get( url, {
+					$.post( url, {
 						action: "set",
 						name: key,
 						value: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}
@@ -643,10 +645,11 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 				$.each(data, function(key, value) {
 					$("#del_" + value).hide();
 					$("#set_" + value).show();
-					$.get( url, {
+					$.post( url, {
 						action: "del",
 						name: value,
-						entity: entity
+						entity: entity,
+						token: token
 					});
 				});
 			}

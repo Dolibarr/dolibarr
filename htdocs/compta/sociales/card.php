@@ -74,14 +74,14 @@ $object = new ChargeSociales($db);
 if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes')
 {
 	$object->fetch($id);
-	$result = $object->set_paid($user);
+	$result = $object->setPaid($user);
 }
 
 if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 	$result = $object->fetch($id);
 	if ($object->paye)
 	{
-		$result = $object->set_unpaid($user);
+		$result = $object->setUnpaid($user);
 		if ($result > 0)
 		{
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
@@ -359,7 +359,7 @@ if ($action == 'create')
 	print '<tr><td>';
 	print $langs->trans('Employee');
 	print '</td>';
-	print '<td>'.$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
+	print '<td>'.img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fk_user, 'userid', 1).'</td></tr>';
 
 	// Project
 	if (!empty($conf->projet->enabled))
@@ -371,7 +371,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 
 		print '</td></tr>';
 	}
@@ -385,7 +385,7 @@ if ($action == 'create')
 	if (!empty($conf->banque->enabled))
 	{
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		$form->select_comptes($fk_account, 'fk_account', 0, '', 2);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 2, '', 0, '', 1);
 		print '</td></tr>';
 	}
 

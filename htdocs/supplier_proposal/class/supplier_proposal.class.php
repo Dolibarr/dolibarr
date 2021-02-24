@@ -481,12 +481,14 @@ class SupplierProposal extends CommonObject
 						if ($result < -1)
 						{
 							$this->error = $prod->error;
+			                $this->errors = $prod->errors;
 							$this->db->rollback();
 							dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
 							return -1;
 						}
 					} else {
 						$this->error = $prod->error;
+		                $this->errors = $prod->errors;
 						$this->db->rollback();
 						return -1;
 					}
@@ -622,12 +624,14 @@ class SupplierProposal extends CommonObject
 					$this->db->commit();
 					return $this->line->id;
 				} else {
-					$this->error = $this->db->error();
+					$this->error = $this->error();
+					$this->errors = $this->errors();
 					$this->db->rollback();
 					return -1;
 				}
 			} else {
 				$this->error = $this->line->error;
+                $this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -902,8 +906,8 @@ class SupplierProposal extends CommonObject
 		$sql .= ", remise";
 		$sql .= ", remise_percent";
 		$sql .= ", remise_absolue";
-		$sql .= ", tva";
-		$sql .= ", total";
+		$sql .= ", total_tva";
+		$sql .= ", total_ttc";
 		$sql .= ", datec";
 		$sql .= ", ref";
 		$sql .= ", fk_user_author";
@@ -1196,7 +1200,7 @@ class SupplierProposal extends CommonObject
 		global $conf;
 
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
-		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
+		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as delivery_date";
@@ -1235,12 +1239,11 @@ class SupplierProposal extends CommonObject
 				$this->remise               = $obj->remise;
 				$this->remise_percent       = $obj->remise_percent;
 				$this->remise_absolue       = $obj->remise_absolue;
-				$this->total                = $obj->total; // TODO deprecated
 				$this->total_ht             = $obj->total_ht;
-				$this->total_tva            = $obj->tva;
+				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
-				$this->total_ttc            = $obj->total;
+				$this->total_ttc            = $obj->total_ttc;
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_project;
 				$this->model_pdf            = $obj->model_pdf;
@@ -1699,13 +1702,13 @@ class SupplierProposal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : (empty($this->modelpdf) ? '' : $this->modelpdf);
+			$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : (empty($this->model_pdf) ? '' : $this->model_pdf);
 			$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_REFUSED';
 
 			if ($status == 2)
 			{
 				$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
-				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->modelpdf) ? '' : $this->modelpdf);
+				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->model_pdf) ? '' : $this->model_pdf);
 
 				if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL))     // TODO This option was not tested correctly. Error if product ref does not exists
 				{
@@ -2780,7 +2783,7 @@ class SupplierProposalLine extends CommonObjectLine
 	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
-	public $total_ht; // Total HT  de la ligne toute quantite et incluant la remise ligne
+	public $total_ht; // Total HT de la ligne toute quantite et incluant la remise ligne
 	public $total_tva; // Total TVA de la ligne toute quantite et incluant la remise ligne
 	public $total_ttc; // Total TTC de la ligne toute quantite et incluant la remise ligne
 

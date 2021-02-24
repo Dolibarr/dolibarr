@@ -174,7 +174,7 @@ class ChargeSocialesTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testChargeSocialesValid
 	 *
-	 * @param	Object		$localobject	Social contribution
+	 * @param	ChargeSociales		$localobject	Social contribution
 	 * @return	void
 	 *
 	 * @depends	testChargeSocialesFetch
@@ -188,7 +188,7 @@ class ChargeSocialesTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$result=$localobject->set_paid($user);
+		$result=$localobject->setPaid($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
 		$this->assertLessThan($result, 0);
@@ -198,7 +198,7 @@ class ChargeSocialesTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testChargeSocialesOther
 	 *
-	 * @param	Object	$localobject		Social contribution
+	 * @param	ChargeSociales	$localobject		Social contribution
 	 * @return	void
 	 *
 	 * @depends testChargeSocialesValid

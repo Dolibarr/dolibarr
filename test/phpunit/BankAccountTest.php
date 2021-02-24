@@ -180,7 +180,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testBankAccountOther
 	 *
-	 * @param   Object  $localobject    Object contract
+	 * @param   Account  $localobject    Account
 	 * @return  int
 	 *
 	 * @depends testBankAccountFetch

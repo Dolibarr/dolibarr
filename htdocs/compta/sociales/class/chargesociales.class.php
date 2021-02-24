@@ -432,12 +432,26 @@ class ChargeSociales extends CommonObject
 	/**
 	 *    Tag social contribution as paid completely
 	 *
-	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *	@deprecated
+	 *  @see setPaid()
+	 *  @param    User    $user       Object user making change
+	 *  @return   int					<0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
+		return $this->setPaid($user);
+	}
+
+	/**
+	 *    Tag social contribution as paid completely
+	 *
+	 *    @param    User    $user       Object user making change
+	 *    @return   int					<0 if KO, >0 if OK
+	 */
+	public function setPaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".$this->id;
@@ -450,12 +464,26 @@ class ChargeSociales extends CommonObject
 	/**
 	 *    Remove tag paid on social contribution
 	 *
-	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *	@deprecated
+	 *  @see setUnpaid()
+	 *  @param	User	$user       Object user making change
+	 *  @return	int					<0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
 		// phpcs:enable
+		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
+		return $this->setUnpaid($user);
+	}
+
+	/**
+	 *    Remove tag paid on social contribution
+	 *
+	 *    @param	User	$user       Object user making change
+	 *    @return	int					<0 if KO, >0 if OK
+	 */
+	public function setUnpaid($user)
+	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".$this->id;

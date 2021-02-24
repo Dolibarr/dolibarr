@@ -621,7 +621,7 @@ textarea.centpercent {
 }
 
 .flip {
-	transform: scaleX(-1);
+	transform: scaleX(-1) translate(2px, 0);
 }
 .center {
     text-align: center;
@@ -3503,6 +3503,7 @@ table.hidepaginationnext .paginationnext {
 }
 
 
+
 /* Set the color for hover lines */
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
@@ -4531,7 +4532,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden, span.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden, div.showifmore {
     display: none;
 }
 
@@ -4630,6 +4631,10 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 }
 .websitebar input#previewpageurl {
     line-height: 1em;
+}
+
+#divbodywebsite section p {
+    margin: unset;
 }
 
 

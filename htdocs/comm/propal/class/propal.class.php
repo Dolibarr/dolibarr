@@ -13,7 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2020 Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -285,10 +285,10 @@ class Propal extends CommonObject
 		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
-		'tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
+		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LocalTax1', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LocalTax2', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
-		'total' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
+		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>145, 'isameasure'=>1),
 		'fk_account' =>array('type'=>'integer', 'label'=>'BankAccount', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
@@ -485,6 +485,7 @@ class Propal extends CommonObject
 				}
 			} else {
 				$this->error = $line->error;
+				$this->errors = $line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -711,8 +712,8 @@ class Propal extends CommonObject
 
 				// Mise a jour informations denormalisees au niveau de la propale meme
 				$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
-				if ($result > 0)
-				{
+
+				if ($result > 0) {
 					$this->db->commit();
 					return $this->line->id;
 				} else {
@@ -722,6 +723,7 @@ class Propal extends CommonObject
 				}
 			} else {
 				$this->error = $this->line->error;
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -914,7 +916,7 @@ class Propal extends CommonObject
 				return $result;
 			} else {
 				$this->error = $this->line->error;
-
+				$this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -1;
 			}
@@ -1036,8 +1038,8 @@ class Propal extends CommonObject
 		$sql .= ", remise";
 		$sql .= ", remise_percent";
 		$sql .= ", remise_absolue";
-		$sql .= ", tva";
-		$sql .= ", total";
+		$sql .= ", total_tva";
+		$sql .= ", total_ttc";
 		$sql .= ", datep";
 		$sql .= ", datec";
 		$sql .= ", ref";
@@ -1423,7 +1425,7 @@ class Propal extends CommonObject
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
-		$sql .= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
+		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.datep as dp";
@@ -1461,14 +1463,14 @@ class Propal extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
-		} else $sql .= " WHERE p.rowid=".$rowid;
+		} else {
+			$sql .= " WHERE p.rowid=".$rowid;
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id                   = $obj->rowid;
@@ -1479,12 +1481,12 @@ class Propal extends CommonObject
 				$this->remise               = $obj->remise;
 				$this->remise_percent       = $obj->remise_percent;
 				$this->remise_absolue       = $obj->remise_absolue;
-				$this->total                = $obj->total; // TODO deprecated
+				$this->total                = $obj->total_ttc; // TODO deprecated
+				$this->total_ttc            = $obj->total_ttc;
 				$this->total_ht             = $obj->total_ht;
-				$this->total_tva            = $obj->tva;
+				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
-				$this->total_ttc            = $obj->total;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -1535,8 +1537,8 @@ class Propal extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->user_author_id = $obj->fk_user_author;
-				$this->user_valid_id  = $obj->fk_user_valid;
-				$this->user_close_id  = $obj->fk_user_cloture;
+				$this->user_valid_id = $obj->fk_user_valid;
+				$this->user_close_id = $obj->fk_user_cloture;
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
@@ -1548,11 +1550,10 @@ class Propal extends CommonObject
 				$this->multicurrency_code = $obj->multicurrency_code;
 				$this->multicurrency_tx 		= $obj->multicurrency_tx;
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
-				if ($obj->fk_statut == self::STATUS_DRAFT)
-				{
+				if ($obj->fk_statut == self::STATUS_DRAFT) {
 					$this->brouillon = 1;
 				}
 
@@ -1566,8 +1567,7 @@ class Propal extends CommonObject
 
 				// Lines
 				$result = $this->fetch_lines();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					return -3;
 				}
 
@@ -1616,11 +1616,11 @@ class Propal extends CommonObject
 		$sql .= " datep=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		if (!empty($this->fin_validite)) $sql .= " fin_validite=".(strval($this->fin_validite) != '' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
 		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_valid) ? $this->user_valid : "null").",";
@@ -1630,7 +1630,7 @@ class Propal extends CommonObject
 		$sql .= " fk_input_reason=".(isset($this->demand_reason_id) ? $this->demand_reason_id : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
+		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 		$sql .= " WHERE rowid=".$this->id;
 

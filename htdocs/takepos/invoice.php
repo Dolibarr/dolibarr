@@ -270,7 +270,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		if ($remaintopay == 0) {
 			dol_syslog("Invoice is paid, so we set it to status Paid");
-			$result = $invoice->set_paid($user);
+			$result = $invoice->setPaid($user);
 			if ($result > 0) $invoice->paye = 1;
 			// set payment method
 			$invoice->setPaymentMethods($paiementid);
@@ -530,7 +530,9 @@ if ($action == "freezone") {
 
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	if ($tva_tx != '') {
-		$tva_tx = price2num($tva_tx);
+		if (!preg_match('/\((.*)\)/', $tva_tx)) {
+			$tva_tx = price2num($tva_tx);
+		}
 	} else {
 		$tva_tx = get_default_tva($mysoc, $customer);
 	}

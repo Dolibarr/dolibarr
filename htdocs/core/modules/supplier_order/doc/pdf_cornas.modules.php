@@ -57,6 +57,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	public $description;
 
 	/**
+     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -130,6 +135,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->db = $db;
 		$this->name = "cornas";
 		$this->description = $langs->trans('SuppliersCommandModel');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -859,7 +865,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement);
+			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement, 0, 'L');
 

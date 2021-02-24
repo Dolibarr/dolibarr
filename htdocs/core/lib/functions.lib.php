@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
@@ -1970,7 +1970,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
  *                                      "%B"=Long text of month, "%A"=Long text of day, "%b"=Short text of month, "%a"=Short text of day
- *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
+ *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...inputnoreduce", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
@@ -2014,13 +2014,17 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	}
 	if (!is_object($outputlangs)) $outputlangs = $langs;
 	if (!$format) $format = 'daytextshort';
-	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;
+
+	// Do we have to reduce the length of date (year on 2 chars) to save space.
+	// Note: dayinputnoreduce is same than day but no reduction of year length will be done
+	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;	// Test on original $format param.
+	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat = 1; }  // so format 'dayreduceformat' is processed like day
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	// TODO Add format daysmallyear and dayhoursmallyear
-	if ($format == 'day')				$format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
+	if ($format == 'day') $format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
 	elseif ($format == 'hour')			$format = ($outputlangs->trans("FormatHourShort") != "FormatHourShort" ? $outputlangs->trans("FormatHourShort") : $conf->format_hour_short);
 	elseif ($format == 'hourduration')	$format = ($outputlangs->trans("FormatHourShortDuration") != "FormatHourShortDuration" ? $outputlangs->trans("FormatHourShortDuration") : $conf->format_hour_short_duration);
 	elseif ($format == 'daytext')			 $format = ($outputlangs->trans("FormatDateText") != "FormatDateText" ? $outputlangs->trans("FormatDateText") : $conf->format_date_text);
@@ -2446,21 +2450,32 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 function getArrayOfSocialNetworks()
 {
 	global $conf, $db;
-	$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-	$sql .= " WHERE entity=".$conf->entity;
+
 	$socialnetworks = array();
-	$resql = $db->query($sql);
-	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$socialnetworks[$obj->code] = array(
-				'rowid' => $obj->rowid,
-				'label' => $obj->label,
-				'url' => $obj->url,
-				'icon' => $obj->icon,
-				'active' => $obj->active,
-			);
+	// Enable caching of array
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'socialnetworks_' . $conf->entity;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$socialnetworks = $dataretrieved;
+	} else {
+		$sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+		$sql .= " WHERE entity=".$conf->entity;
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$socialnetworks[$obj->code] = array(
+					'rowid' => $obj->rowid,
+					'label' => $obj->label,
+					'url' => $obj->url,
+					'icon' => $obj->icon,
+					'active' => $obj->active,
+				);
+			}
 		}
+		dol_setcache($cachekey, $socialnetworks); // If setting cache fails, this is not a problem, so we do not test result.
 	}
+
 	return $socialnetworks;
 }
 
@@ -2480,12 +2495,14 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 
 	$htmllink = $value;
 
-	if (empty($value)) return '&nbsp;';
+	if (empty($value)) {
+		return '&nbsp;';
+	}
 
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
-		// TODO use dictionary definition for picto $dictsocialnetworks[$type]['icon']
-		$htmllink .= img_picto($langs->trans(dol_ucfirst($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
+		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
+		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
 			$htmllink .= $value;
 			$htmllink .= '&nbsp;';
@@ -2501,7 +2518,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
 				$addlink = 'AC_SKYPE';
 				$link = '';
-				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				if (!empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) {
+					$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
+				}
 				$htmllink .= ($link ? ' '.$link : '');
 			}
 		} else {
@@ -3165,15 +3184,15 @@ function dol_substr($string, $start, $length, $stringencoding = '', $trunconbyte
 
 
 /**
- *	Truncate a string to a particular length adding '...' if string larger than length.
- * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '...'.
+ *	Truncate a string to a particular length adding '…' if string larger than length.
+ * 	If length = max length+1, we do no truncate to avoid having just 1 char replaced with '…'.
  *  MAIN_DISABLE_TRUNC=1 can disable all truncings
  *
  *	@param	string	$string				String to truncate
- *	@param  int		$size				Max string size visible (excluding ...). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added ..., or if size was max+1 or max+2 or max+3 so it does not worse to replace with ...)
+ *	@param  int		$size				Max string size visible (excluding …). 0 for no limit. WARNING: Final string size can have 3 more chars (if we added …, or if size was max+1 so it does not worse to replace with ...)
  *	@param	string	$trunc				Where to trunc: 'right', 'left', 'middle' (size must be a 2 power), 'wrap'
  * 	@param	string	$stringencoding		Tell what is source string encoding
- *  @param	int		$nodot				Truncation do not add ... after truncation. So it's an exact truncation.
+ *  @param	int		$nodot				Truncation do not add … after truncation. So it's an exact truncation.
  *  @param  int     $display            Trunc is used to display data and can be changed for small screen. TODO Remove this param (must be dealt with CSS)
  *	@return string						Truncated string. WARNING: length is never higher than $size if $nodot is set, but can be 3 chars higher otherwise.
  */
@@ -3181,42 +3200,53 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 {
 	global $conf;
 
-	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
+		return $string;
+	}
 
-	if (empty($stringencoding)) $stringencoding = 'UTF-8';
+	if (empty($stringencoding)) {
+		$stringencoding = 'UTF-8';
+	}
 	// reduce for small screen
 	if ($conf->dol_optimize_smallscreen == 1 && $display == 1) $size = round($size / 3);
 
 	// We go always here
-	if ($trunc == 'right')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '...');
-		else //return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
-		return $string;
-	} elseif ($trunc == 'middle')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size + 1))
-		{
+	if ($trunc == 'right') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			return dol_substr($newstring, 0, $size, $stringencoding).($nodot ? '' : '…');
+		} else {
+			//return 'u'.$size.'-'.$newstring.'-'.dol_strlen($newstring,$stringencoding).'-'.$string;
+			return $string;
+		}
+	} elseif ($trunc == 'middle') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > 2 && dol_strlen($newstring, $stringencoding) > ($size + 1)) {
 			$size1 = round($size / 2);
 			$size2 = round($size / 2);
-			return dol_substr($newstring, 0, $size1, $stringencoding).'...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
-		} else return $string;
-	} elseif ($trunc == 'left')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 3)))    // If nodot is 0 and size is 1,2 or 3 chars more, we don't trunc and don't add ...
-		return '...'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
-		else return $string;
-	} elseif ($trunc == 'wrap')
-	{
-		$newstring = dol_textishtml($string) ?dol_string_nohtmltag($string, 1) : $string;
-		if (dol_strlen($newstring, $stringencoding) > ($size + 1))
-		return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
-		else return $string;
-	} else return 'BadParam3CallingDolTrunc';
+			return dol_substr($newstring, 0, $size1, $stringencoding).'…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size2, $size2, $stringencoding);
+		} else {
+			return $string;
+		}
+	} elseif ($trunc == 'left') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + ($nodot ? 0 : 1))) {
+			// If nodot is 0 and size is 1 chars more, we don't trunc and don't add …
+			return '…'.dol_substr($newstring, dol_strlen($newstring, $stringencoding) - $size, $size, $stringencoding);
+		} else {
+			return $string;
+		}
+	} elseif ($trunc == 'wrap') {
+		$newstring = dol_textishtml($string) ? dol_string_nohtmltag($string, 1) : $string;
+		if (dol_strlen($newstring, $stringencoding) > ($size + 1)) {
+			return dol_substr($newstring, 0, $size, $stringencoding)."\n".dol_trunc(dol_substr($newstring, $size, dol_strlen($newstring, $stringencoding) - $size, $stringencoding), $size, $trunc);
+		} else {
+			return $string;
+		}
+	} else {
+		return 'BadParam3CallingDolTrunc';
+	}
 }
 
 /**
@@ -3228,7 +3258,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *                                  				Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
  *                                  				Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  				Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
- *	@param		string		$moreatt				Add more attribute on img tag (For example 'style="float: right"')
+ *	@param		string		$moreatt				Add more attribute on img tag (For example 'class="pictofixedwidth"')
  *	@param		boolean|int	$pictoisfullpath		If true or 1, image path is a full path
  *	@param		int			$srconly				Return only content of the src attribute of img.
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
@@ -3241,7 +3271,6 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
-
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
@@ -3262,19 +3291,20 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
-				'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cron', 'cubes',
+				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
+				'cash-register', 'category', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot',
-				'margin', 'map-marker-alt', 'member', 'money-bill-alt', 'mrp', 'note', 'next',
+				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert', 'object_generic', 'object_folder',
+				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert',
+				'object_folder', 'object_folder-open','object_generic',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
 				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
 				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
-				'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
+				'object_margin', 'object_members', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
 				'object_lot', 'object_mrp', 'object_other',
 				'object_payment', 'object_pdf', 'object_product', 'object_propal',
 				'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
@@ -3288,11 +3318,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'supplier_invoice', 'ticket',
+				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
-				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
-				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
+				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'user-cog',
+				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'eventorganization', 'object_eventorganization'
 			)
 		)) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
@@ -3314,11 +3345,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
-				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 				'email'=>'at',
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
-				'member'=>'users', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
+				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
@@ -3337,7 +3368,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'title_agenda'=>'calendar-alt',
 				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas'
+				'website'=>'globe-americas',
+				'eventorganization'=>'id-badge'
 			);
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';
@@ -3365,11 +3397,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('member', 'contract'))) {
-				$fasize = '0.92em';
+			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan'))) {
-				$fasize = '0.80em';
+			if (in_array($pictowithouttext, array('holiday'))) {
+				$morecss = 'em088';
+			}
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
+				$morecss = 'em080';
 			}
 
 			// Define $marginleftonlyshort
@@ -3412,13 +3447,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $color
 			$arrayconvpictotocolor = array(
 				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
-				'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
+				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'uparrow'=>'#555', 'globe-americas'=>'#aaa',
+				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
 				'website'=>'#304'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -6242,17 +6277,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		)
 			);
 
-		$substitutionarray = array_merge($substitutionarray, array(
-		'__USER_ID__' => (string) $user->id,
-		'__USER_LOGIN__' => (string) $user->login,
-		'__USER_EMAIL__' => (string) $user->email,
-		'__USER_LASTNAME__' => (string) $user->lastname,
-		'__USER_FIRSTNAME__' => (string) $user->firstname,
-		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
-		'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
-		)
+		if (is_object($user)) {
+			$substitutionarray = array_merge($substitutionarray, array(
+				'__USER_ID__' => (string) $user->id,
+				'__USER_LOGIN__' => (string) $user->login,
+				'__USER_EMAIL__' => (string) $user->email,
+				'__USER_LASTNAME__' => (string) $user->lastname,
+				'__USER_FIRSTNAME__' => (string) $user->firstname,
+				'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+				'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+				'__USER_REMOTE_IP__' => (string) getUserRemoteIP()
+				)
 			);
+		}
 	}
 	if ((empty($exclude) || !in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
@@ -6266,7 +6303,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MYCOMPANY_PROFID5__' => $mysoc->idprof5,
 			'__MYCOMPANY_PROFID6__' => $mysoc->idprof6,
 			'__MYCOMPANY_CAPITAL__' => $mysoc->capital,
-			'__MYCOMPANY_FULLADDRESS__' => $mysoc->getFullAddress(1, ', '),
+			'__MYCOMPANY_FULLADDRESS__' => (method_exists($mysoc, 'getFullAddress') ? $mysoc->getFullAddress(1, ', ') : ''),	// $mysoc may be stdClass
 			'__MYCOMPANY_ADDRESS__' => $mysoc->address,
 			'__MYCOMPANY_ZIP__'     => $mysoc->zip,
 			'__MYCOMPANY_TOWN__'    => $mysoc->town,
@@ -6371,8 +6408,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
 			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
-
 			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
+			$substitutionarray['__DATE_DELIVERY_DAY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%d") : '');
+			$substitutionarray['__DATE_DELIVERY_DAY_TEXT__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%A") : '');
+			$substitutionarray['__DATE_DELIVERY_MON__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%m") : '');
+			$substitutionarray['__DATE_DELIVERY_MON_TEXT__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%b") : '');
+			$substitutionarray['__DATE_DELIVERY_YEAR__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%Y") : '');
+			$substitutionarray['__DATE_DELIVERY_HH__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%H") : '');
+			$substitutionarray['__DATE_DELIVERY_MM__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%M") : '');
+			$substitutionarray['__DATE_DELIVERY_SS__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%S") : '');
 
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
@@ -6547,6 +6591,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment = 'order';
 				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment = 'invoice';
 				if (is_object($object) && $object->element == 'member')   $typeforonlinepayment = 'member';
+				if (is_object($object) && $object->element == 'contrat')  $typeforonlinepayment = 'contract';
 				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
 				$paymenturl = $url;
 			}
@@ -6568,10 +6613,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				{
 					$substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $object->getLastMainDocLink($object->element);
 				} else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
+				if (!empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'contrat')
+				{
+					$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = $object->getLastMainDocLink($object->element);
+				} else $substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = '';
 
 				if (is_object($object) && $object->element == 'propal') $substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
+				if (is_object($object) && $object->element == 'contrat') $substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
 			}
 
 			if (is_object($object) && $object->element == 'action')
@@ -7868,7 +7918,10 @@ function printCommonFooter($zone = 'private')
 								// Add property 'required' on input
 								print 'jQuery("input[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
 								print 'jQuery("textarea[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
-								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n"; // required on a select works only if key is "", this does not happen in Dolibarr
+								print '// required on a select works only if key is "", so we add the required attributes but also we reset the key -1 or 0 to an empty string'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
+								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
 							}
 						}
 					}
@@ -8197,7 +8250,7 @@ function showDirectDownloadLink($object)
 
 	if ($url)
 	{
-		$out .= img_picto('', 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
 		$out .= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
 		$out .= ajax_autoselect("directdownloadlink", 0);
 	}

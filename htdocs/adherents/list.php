@@ -425,7 +425,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "member";
@@ -443,8 +443,7 @@ $moreforfilter = '';
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Categories').': ';
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1);
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1);
 	$moreforfilter .= '</div>';
 }
 $parameters = array();

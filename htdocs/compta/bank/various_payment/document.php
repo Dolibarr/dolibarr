@@ -66,7 +66,7 @@ $modulepart = 'banque';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*

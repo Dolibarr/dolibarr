@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,11 +111,10 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$paiement->amounts      = $amounts; // Tableau de montant
     		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
     		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$paiement->note         = GETPOST("note", 'restricthtml');
-    		$paiement->note_private = GETPOST("note", 'restricthtml');
+    		$paiement->note         = (string) GETPOST("note", 'restricthtml');
+    		$paiement->note_private = (string) GETPOST("note", 'restricthtml');
 
-    		if (!$error)
-    		{
+    		if (!$error) {
     		    $paymentid = $paiement->create($user, (GETPOST('closepaidvat') == 'on' ? 1 : 0));
                 if ($paymentid < 0)
                 {
@@ -193,7 +192,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	dol_fiche_head('', '');
+	print dol_get_fiche_head('', '');
 
 	print '<table class="border centpercent">';
 
@@ -208,8 +207,7 @@ if ($action == 'create')
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_vat as p";
 	$sql .= " WHERE p.fk_tva = ".$chid;
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
 		$db->free();
@@ -248,7 +246,7 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	/*
  	 * Autres charges impayees
@@ -314,8 +312,7 @@ if ($action == 'create')
 		$totalrecu += $objp->am;
 		$i++;
 	}
-	if ($i > 1)
-	{
+	if ($i > 1) {
 		// Print total
 		print '<tr class="oddeven">';
 		print '<td colspan="2" class="left">'.$langs->trans("Total").':</td>';

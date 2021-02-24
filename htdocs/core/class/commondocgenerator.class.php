@@ -56,6 +56,11 @@ abstract class CommonDocGenerator
 	public $extrafieldsCache;
 
 	/**
+	 * @var int	If set to 1, save the fullname of generated file with path as the main doc when generating a doc with this template.
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler

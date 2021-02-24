@@ -269,11 +269,11 @@ if ($resourceid > 0) $param .= "&search_resourceid=".urlencode($resourceid);
 if ($search_status != '' && $search_status > -1) $param .= "&search_status=".urlencode($search_status);
 if ($filter) $param .= "&search_filter=".urlencode($filter);
 if ($filtert) $param .= "&search_filtert=".urlencode($filtert);
-if ($socid) $param .= "&search_socid=".urlencode($socid);
+if ($usergroup > 0) $param .= "&search_usergroup=".urlencode($usergroup);
+if ($socid > 0) $param .= "&search_socid=".urlencode($socid);
 if ($showbirthday) $param .= "&search_showbirthday=1";
 if ($pid) $param .= "&search_projectid=".urlencode($pid);
 if ($type) $param .= "&search_type=".urlencode($type);
-if ($usergroup) $param .= "&search_usergroup=".urlencode($usergroup);
 if ($search_id != '') $param .= '&search_title='.urlencode($search_id);
 if ($search_title != '') $param .= '&search_title='.urlencode($search_title);
 if ($search_note != '') $param .= '&search_note='.$search_note;
@@ -286,6 +286,8 @@ if (GETPOST('dateendyear', 'int')) $param .= '&dateendyear='.GETPOST('dateendyea
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+$paramnoactionodate = $param;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -308,7 +310,7 @@ $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulld
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
-$sql .= " c.code as type_code, c.libelle as type_label,";
+$sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
 $sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
 // Add fields from extrafields
@@ -481,31 +483,31 @@ if ($resql)
 	}
 
 	$viewmode = '';
-	$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">';
+	$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 	$viewmode .= img_picto($langs->trans("List"), 'object_list-alt', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 	$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 	$viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 	$viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
 
-	$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+	$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 	$viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
@@ -657,6 +659,7 @@ if ($resql)
 		$actionstatic->type_code = $obj->type_code;
 		$actionstatic->type_label = $obj->type_label;
 		$actionstatic->type_picto = $obj->type_picto;
+		$actionstatic->type_color = $obj->type_color;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
@@ -688,28 +691,10 @@ if ($resql)
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
 			print '<td class="nowraponall">';
-			$actioncomm = $actionstatic;
-			// TODO Code common with code into showactions
-			$imgpicto = '';
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-			{
-				if ($actioncomm->type_picto) {
-					$imgpicto = img_picto('', $actioncomm->type_picto);
-				} else {
-					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_EMAIL' || $actioncomm->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
-					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
-				}
-			}
-			print $imgpicto;
-
+			print $actionstatic->getTypePicto();
 			$labeltype = $obj->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
-			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+			if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];

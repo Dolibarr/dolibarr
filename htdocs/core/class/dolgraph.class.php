@@ -1227,6 +1227,7 @@ class DolGraph
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }] }';
+
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
 				$this->stringtoshow .= ', tooltips: { mode: \'nearest\',
@@ -1325,12 +1326,15 @@ class DolGraph
 						$color = $this->datacolor[$i];
 					}
 					if (is_array($this->bordercolor[$i])) {
-						$bordercolor = $color;
+						$color = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {
-						$bordercolor = $this->bordercolor[$i];
+						if ($type != 'horizontalBar') {
+							$bordercolor = $color;
+						} else {
+							$bordercolor = $this->bordercolor[$i];
+						}
 					}
 				}
-
 				if ($i > 0) $this->stringtoshow .= ', ';
 				$this->stringtoshow .= "\n";
 				$this->stringtoshow .= '{';
