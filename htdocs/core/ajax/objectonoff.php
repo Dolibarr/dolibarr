@@ -77,10 +77,10 @@ if (($action == 'set') && !empty($id)) {
 	if ($tablename == 'websitepage') $tablename = 'website_page';
 
 	$format = 'int';
-	
+
 	$object->table_element = $tablename;
 	$object->id = $id;
 	$object->fields[$field] = array('type' => $format, 'enabled' => 1);
-	
+
 	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
 }
