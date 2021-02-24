@@ -1122,7 +1122,7 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
     if (!empty($conf->global->TAKEPOS_SHOW_HT)) { print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>'; }
-	else{
+	else {
 		print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
 	}
 }
