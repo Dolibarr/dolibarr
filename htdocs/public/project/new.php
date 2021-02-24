@@ -41,6 +41,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -137,10 +138,27 @@ function llxFooterVierge()
 }
 
 
+$arrayofdata = array();
+if (GETPOST('action') == 'addlead') {
+	// When a json request is sent
+	$entityBody = file_get_contents('php://input');
+
+	if ($entityBody) {
+		$arrayofdata = dol_json_decode($entityBody, true);
+	}
+
+	print 'Date received and lead created';
+
+	$db->close();
+	exit;
+}
+
+
 
 /*
  * Actions
  */
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -287,6 +305,13 @@ if (empty($reshook) && $action == 'add') {
 	} else {
 		$db->rollback();
 	}
+}
+
+// Create lead from $arrayofdata
+if (empty($reshook) && !empty($arrayofdata)) {
+	// TODO
+	dol_syslog(var_export($arrayofdata, true));
+	// ...
 }
 
 // Action called after a submitted was send and member created successfully
