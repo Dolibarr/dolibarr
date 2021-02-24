@@ -43,15 +43,30 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction
 #
 EventOrganizationConfOrBooth= Conference Or Booth
 ManageOrganizeEvent = Manage event organisation
+ConferenceOrBooth = Conference Or Booth
+ConferenceOrBoothTab = Conference Or Booth
 
 #
 # Template Mail
 #
-YourOragnisationEventConfRequestWasReceived = Your request for conference was received
-YourOragnisationEventBoothRequestWasReceived = Your request for booth was received
+YourOrganizationEventConfRequestWasReceived = Your request for conference was received
+YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
 EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
 EventOrganizationEmailSubsBooth = Subscription for booth
 EventOrganizationEmailSubsEvent = Subscription for an event
-EventOrganizationMassEmailAttendes = Communication to attendes
+EventOrganizationMassEmailAttendees = Communication to attendes
 EventOrganizationMassEmailSpeakers = Communication to speakers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
+AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
+PriceOfRegistration=Price of registration
+PriceOfRegistrationHelp=Price of registration
+PriceOfBooth=Price of subscription
+PriceOfBoothHelp=Price of subscription
+EventOrganizationICSLink=Link ICS for events
