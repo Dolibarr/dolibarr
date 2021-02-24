@@ -1121,7 +1121,7 @@ print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilep
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
-    if(!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>'; }
+    if (!empty($conf->global->TAKEPOS_SHOW_HT)) { print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>'; }
 	else{
 		print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
 	}
@@ -1158,7 +1158,7 @@ if ($_SESSION["basiclayout"] != 1)
 {
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	if($conf->global->TAKEPOS_SHOW_HT) {
+	if ($conf->global->TAKEPOS_SHOW_HT) {
         print '<td class="linecolht right nowraponall">';
         print '<span class="opacitymedium small">' . $langs->trans('TotalHTShort') . '</span><br>';
         // In phone version only show when it is invoice page
@@ -1394,7 +1394,7 @@ if ($placeid > 0)
 				}
 
 				$htmlforlines .= '</td>';
-                if($conf->global->TAKEPOS_SHOW_HT) {
+                if ($conf->global->TAKEPOS_SHOW_HT) {
                     $htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
                     $htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
                     if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
@@ -1424,13 +1424,13 @@ if ($placeid > 0)
 		}
 	} else {
 		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
-		if(!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<td></td>'; }
+		if (!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<td></td>'; }
 		print '</tr>';
 	}
 } else {      // No invoice generated yet
 	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
 
-    if(!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<td></td>'; }
+    if (!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<td></td>'; }
     print '</tr>';
 }
 

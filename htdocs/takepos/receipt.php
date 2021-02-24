@@ -140,7 +140,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
         <th class="center"><?php print $langs->trans("Label"); ?></th>
         <th class="right"><?php print $langs->trans("Qty"); ?></th>
         <th class="right"><?php if ($gift != 1) print $langs->trans("Price"); ?></th>
-        <?php  if(!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)){ ?>
+        <?php  if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
         <th class="right"><?php if ($gift != 1) print $langs->trans("TotalHT"); ?></th>
         <?php } ?>
         <th class="right"><?php if ($gift != 1) print $langs->trans("TotalTTC"); ?></th>
@@ -159,7 +159,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
         <td class="right"><?php echo $line->qty; ?></td>
         <td class="right"><?php if ($gift != 1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
         <?php
-        if(!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)){ ?>
+        if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
                     <td class="right"><?php if ($gift != 1) echo price($line->total_ht, 1); ?></td>
             <?php
         }
