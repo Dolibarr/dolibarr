@@ -367,6 +367,15 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
+	if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$langs->load("members");
+
+		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
+		$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+		$head[$h][2] = 'website';
+		$h++;
+	}
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_admin', 'remove');
 
 	return $head;
