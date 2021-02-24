@@ -144,7 +144,7 @@ if (GETPOST('action') == 'addlead') {
 	$entityBody = file_get_contents('php://input');
 
 	if ($entityBody) {
-		$arrayofdata = dol_json_decode($entityBody, true);
+		$arrayofdata = json_decode($entityBody, true);
 	}
 
 	print 'Date received and lead created';
