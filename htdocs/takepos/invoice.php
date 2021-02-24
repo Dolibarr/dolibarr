@@ -1,6 +1,7 @@
 <?php
 /**
  * Copyright (C) 2018    Andreu Bisquerra    <jove@bisquerra.com>
+ * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1120,7 +1121,10 @@ print '<!-- invoice.php place='.(int) $place.' invoice='.$invoice->ref.' mobilep
 print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 if ($sectionwithinvoicelink && ($mobilepage == "invoice" || $mobilepage == "")) {
-	print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
+    if(!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<tr><td colspan="5">'.$sectionwithinvoicelink.'</td></tr>'; }
+	else{
+		print '<tr><td colspan="4">'.$sectionwithinvoicelink.'</td></tr>';
+	}
 }
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
@@ -1154,6 +1158,23 @@ if ($_SESSION["basiclayout"] != 1)
 {
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
+	if($conf->global->TAKEPOS_SHOW_HT) {
+        print '<td class="linecolht right nowraponall">';
+        print '<span class="opacitymedium small">' . $langs->trans('TotalHTShort') . '</span><br>';
+        // In phone version only show when it is invoice page
+        if ($mobilepage == "invoice" || $mobilepage == "") {
+            print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">' . price($invoice->total_ht, 1, '', 1, -1, -1, $conf->currency) . '</span>';
+            if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+                //Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+                include_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
+                $multicurrency = new MultiCurrency($db);
+                $multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+                print '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">(' . price($invoice->total_ht * $multicurrency->rate->rate) . ' ' . $_SESSION["takeposcustomercurrency"] . ')</span>';
+            }
+            print '</td>';
+        }
+        print '</td>';
+    }
 	print '<td class="linecolht right nowraponall">';
 	print '<span class="opacitymedium small">'.$langs->trans('TotalTTCShort').'</span><br>';
 	// In phone version only show when it is invoice page
@@ -1373,6 +1394,18 @@ if ($placeid > 0)
 				}
 
 				$htmlforlines .= '</td>';
+                if($conf->global->TAKEPOS_SHOW_HT) {
+                    $htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
+                    $htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
+                    if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+                        //Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
+                        include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+                        $multicurrency = new MultiCurrency($db);
+                        $multicurrency->fetch(0, $_SESSION["takeposcustomercurrency"]);
+                        $htmlforlines .= '<br><span id="linecolht-span-total" style="font-size:0.9em; font-style:italic;">('.price($line->total_ht * $multicurrency->rate->rate).' '.$_SESSION["takeposcustomercurrency"].')</span>';
+                    }
+                    $htmlforlines .= '</td>';
+                }
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);
 				if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
@@ -1390,10 +1423,15 @@ if ($placeid > 0)
 			print $htmlforlines;
 		}
 	} else {
-		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
+		print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
+		if(!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<td></td>'; }
+		print '</tr>';
 	}
 } else {      // No invoice generated yet
-	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
+	print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td>';
+
+    if(!empty($conf->global->TAKEPOS_SHOW_HT)){ print '<td></td>'; }
+    print '</tr>';
 }
 
 print '</table>';

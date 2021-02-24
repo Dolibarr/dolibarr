@@ -4,6 +4,7 @@
  * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra    <jove@bisquerra.com>
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,6 +140,9 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
         <th class="center"><?php print $langs->trans("Label"); ?></th>
         <th class="right"><?php print $langs->trans("Qty"); ?></th>
         <th class="right"><?php if ($gift != 1) print $langs->trans("Price"); ?></th>
+        <?php  if(!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)){ ?>
+        <th class="right"><?php if ($gift != 1) print $langs->trans("TotalHT"); ?></th>
+        <?php } ?>
         <th class="right"><?php if ($gift != 1) print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
@@ -154,6 +158,12 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
         </td>
         <td class="right"><?php echo $line->qty; ?></td>
         <td class="right"><?php if ($gift != 1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
+        <?php
+        if(!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)){ ?>
+                    <td class="right"><?php if ($gift != 1) echo price($line->total_ht, 1); ?></td>
+            <?php
+        }
+        ?>
         <td class="right"><?php if ($gift != 1) echo price($line->total_ttc, 1); ?></td>
     </tr>
         <?php
