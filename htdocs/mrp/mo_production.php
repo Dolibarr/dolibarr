@@ -759,15 +759,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					if ($line->origin_type == 'free' && $object->qty > 0) {
 						// add free consume line cost to bomcost
-						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-						$productFournisseur = new ProductFournisseur($db);
-						$linecost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-						if (empty($linecost)) {
+						$costprice = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						if (empty($costprice)) {
+							require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+							$productFournisseur = new ProductFournisseur($db);
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0){
-								$linecost = $productFournisseur->fourn_unitprice;
+								$costprice = $productFournisseur->fourn_unitprice;
+							} else {
+								$costprice = 0;
 							}
 						}
-						$bomcost += price2num(($line->qty * $linecost) / $object->qty, 'MT');
+						$linecost = price2num(($line->qty * $costprice) / $object->qty, 'MT');
+						$bomcost += $linecost;
 					} elseif ($line->origin_id > 0 && $line->origin_type == 'bom' && $object->qty > 0) {
 						foreach ($bom->lines as $bomline) {
 							if ($bomline->id == $line->origin_id) {
