@@ -406,6 +406,15 @@ if (empty($action))
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div>';
+
+	// List of actions on element
+    print '<div class="fichehalfright"><div class="ficheaddleft">';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+	$formactions = new FormActions($db);
+	$somethingshown = $formactions->showactions($object, 'productlot', $socid, 1);
+    print '</div></div>';
+
+    print '</div>';
 }
 
 // End of page

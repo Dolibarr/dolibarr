@@ -1829,6 +1829,11 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'mrp';
 		$myobject = 'mo';
 	}
+	elseif ($objecttype == 'productlot') {
+		$classpath = 'product/stock/class';
+		$module = 'stock';
+		$myobject = 'productlot';
+	}
 
 	// Generic case for $classfile and $classname
 	$classfile = strtolower($myobject); $classname = ucfirst($myobject);
