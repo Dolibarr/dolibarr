@@ -1033,8 +1033,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			{
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 			}
-			else
-			{
+			else {
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			}
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
@@ -1499,8 +1498,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					{
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 					}
-					else
-					{
+					else {
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					}
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);

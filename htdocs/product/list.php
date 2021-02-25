@@ -840,8 +840,7 @@ if ($resql)
 		if ( empty($conf->global ->MAIN_ADVANCE_NUMLOT) )
 		{
 			print $form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1);
-		}
-		else
+		} else
 		{
 			$statutarray = array('-1' => '', '0' => $langs->trans("ProductStatusNotOnBatchShort"), '1' => $langs->trans("ProductStatusOnBatchShort"), '2' => $langs->trans("ProductStatusOnSerialShort"));
 			print $form->selectarray('search_tobatch', $statutarray, $search_tobatch);
@@ -1482,8 +1481,7 @@ if ($resql)
 			{
 				print yn($obj->tobatch);
 			}
-			else
-			{
+			else {
 				print $product_static->getLibStatut(1, 2);
 			}
 			print '</td>';
