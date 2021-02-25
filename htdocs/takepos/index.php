@@ -140,6 +140,7 @@ if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 		}
 	}
 }
+
 $levelofmaincategories = $levelofrootcategory + 1;
 
 $maincategories = array();
@@ -961,7 +962,13 @@ if (empty($paiementsModes)) {
 	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 }
 if (count($maincategories) == 0) {
-	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+		$tmpcategory = new Categorie($db);
+		$tmpcategory->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
+		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
+	} else {
+		setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
+	}
 }
 // User menu and external TakePOS modules
 $menus = array();

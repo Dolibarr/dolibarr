@@ -88,7 +88,7 @@ if ($absolute_creditnote > 0) {
 		}
 
 		if ($absolute_discount <= 0 || $isNewObject) {
-			$text .= '('.$addabsolutediscount.')';
+			$text .= ' ('.$addabsolutediscount.')';
 		}
 
 		if ($isNewObject) {

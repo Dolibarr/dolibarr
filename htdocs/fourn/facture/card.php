@@ -2530,7 +2530,12 @@ if ($action == 'create')
 			$discount = new DiscountAbsolute($db);
 			$result = $discount->fetch(0, 0, $object->id);
 			if ($result > 0) {
-				print ' '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
+				print ' <span class="opacitymediumbycolor paddingleft">';
+				$s = $langs->trans("CreditNoteConvertedIntoDiscount", '{s1}', '{s2}');
+				$s = str_replace('{s1}', $object->getLibType(1), $s);
+				$s = str_replace('{s2}', $discount->getNomUrl(1, 'discount'), $s);
+				print $s;
+				print '</span><br>';
 			}
 		}
 		print '</td></tr>';

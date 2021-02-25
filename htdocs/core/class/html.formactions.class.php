@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/class/html.formactions.class.php
  *      \ingroup    core
- *      \brief      Fichier de la classe des fonctions predefinie de composants html actions
+ *      \brief      File of class with predefined functions and HTML components
  */
 
 
@@ -355,7 +355,7 @@ class FormActions
 			if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200'.($morecss ? ' '.$morecss : ''), 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300'.($morecss ? ' '.$morecss : ''), 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)

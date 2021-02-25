@@ -224,7 +224,9 @@ if ($action == 'add') {
  *	View
  */
 
-llxHeader('', $langs->trans("RepeatableIntervention"), 'ch-fichinter.html#s-fac-fichinter-rec');
+$help_url = '';
+
+llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
 
 $form = new Form($db);
 $companystatic = new Societe($db);

@@ -176,8 +176,11 @@ class FactureFournisseur extends CommonInvoice
 	public $note_private;
 	public $note_public;
 	public $propalid;
+
 	public $cond_reglement_id;
 	public $cond_reglement_code;
+	public $cond_reglement_label;
+	public $cond_reglement_doc;
 
 	/**
 	 * @var int ID
@@ -641,8 +644,8 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.model_pdf,";
 		$sql .= " t.import_key,";
 		$sql .= " t.extraparams,";
-		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
-		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
+		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
+		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_label,";
 		$sql .= ' s.nom as socnom, s.rowid as socid,';
 		$sql .= ' t.fk_incoterms, t.location_incoterms,';
 		$sql .= " i.libelle as label_incoterms,";
@@ -697,12 +700,13 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code = $obj->cond_reglement_code;
-				$this->cond_reglement = $obj->cond_reglement_libelle;
-				$this->cond_reglement_doc = $obj->cond_reglement_libelle;
+				$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
+				$this->cond_reglement_label = $obj->cond_reglement_label;
+				$this->cond_reglement_doc = $obj->cond_reglement_doc;
 				$this->fk_account = $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
-				$this->mode_reglement = $obj->mode_reglement_libelle;
+				$this->mode_reglement = $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;

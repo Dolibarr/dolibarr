@@ -1568,13 +1568,16 @@ if (!dol_is_dir($dirins))
 }
 $dirins_ok = (dol_is_dir($dirins));
 
-llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
-	array(
+$help_url = '';
+$morejs = array(
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
 	'/includes/ace/src/ext-language_tools.js',
 	//'/includes/ace/src/ext-chromevox.js'
-	), array(), '', 'classforhorizontalscrolloftabs');
+);
+$morecss = array();
+
+llxHeader('', $langs->trans("ModuleBuilder"), $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
 
 $text = $langs->trans("ModuleBuilder");
@@ -1701,8 +1704,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 			foreach ($objMod->config_page_url as $page)
 			{
 				$urlpage = $page;
-				if ($i++)
-				{
+				if ($i++) {
 					$linktoenabledisable .= ' <a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page), "setup").'</a>';
 					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
 				} else {
@@ -1711,7 +1713,8 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
 						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 					} else {
-						// Case standard admin page (not a page provided by the module but a page 
+						// Case standard admin page (not a page provided by the
+						// module but a page provided by dolibarr)
 						$urltouse = DOL_URL_ROOT.'/admin/'.$urlpage;
 						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 					}

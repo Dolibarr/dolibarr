@@ -773,7 +773,6 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-
 		global $conf, $langs, $hookmanager;
 
 		$langs->load('blockedlog');
@@ -813,6 +812,8 @@ class BlockedLog
 		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done
 
 		$keyforsignature = $this->buildKeyForSignature();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
 		$this->signature = dol_hash($previoushash.$keyforsignature, '5');

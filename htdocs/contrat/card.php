@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2020	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -768,8 +768,7 @@ if (empty($reshook))
 	}
 
 	// Close all lines
-	elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
-	{
+	elseif ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer) {
 		$result = $object->closeAll($user);
 		if ($result < 0)
 		{
@@ -778,15 +777,13 @@ if (empty($reshook))
 	}
 
 	// Close all lines
-	elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer)
-	{
+	elseif ($action == 'confirm_activate' && $confirm == 'yes' && $user->rights->contrat->creer) {
 		$result = $object->activateAll($user);
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
-	{
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer) {
 		$result = $object->delete($user);
 		if ($result >= 0)
 		{
@@ -795,13 +792,12 @@ if (empty($reshook))
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer)
-	{
+	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer) {
 		if (GETPOST('newcid') > 0)
 		{
 			$contractline = new ContratLigne($db);
-			$result = $contractline->fetch(GETPOST('lineid'));
-			$contractline->fk_contrat = GETPOST('newcid');
+			$result = $contractline->fetch(GETPOSTINT('lineid'));
+			$contractline->fk_contrat = GETPOSTINT('newcid');
 			$result = $contractline->update($user, 1);
 			if ($result >= 0)
 			{
@@ -871,8 +867,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setref')
-	{
+	} elseif ($action == 'setref') {
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
 		if (!$cancelbutton) {
@@ -889,8 +884,8 @@ if (empty($reshook))
 				$action = 'editref';
 			} else {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				$old_filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($old_ref);
-				$new_filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
+				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
+				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 				$files = dol_dir_list($old_filedir);
 				if (!empty($files))
@@ -909,8 +904,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	} elseif ($action == 'setdate_contrat')
-	{
+	} elseif ($action == 'setdate_contrat') {
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
 		if (!$cancelbutton) {
@@ -935,7 +929,7 @@ if (empty($reshook))
 
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->dir_output;
+	$upload_dir = $conf->contrat->multidir_output[$object->entity];
 	$permissiontoadd = $user->rights->contrat->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -2137,19 +2131,25 @@ if ($action == 'create')
     		 * Documents generes
     		*/
 			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->contrat->dir_output."/".dol_sanitizeFileName($object->ref);
+			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->contrat->lire;
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			// Show direct download link
+			if ($object->statut != Contrat::STATUS_DRAFT && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD))
+			{
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($object).'<br>';
+			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -2168,7 +2168,7 @@ if ($action == 'create')
 		// Presend form
 		$modelmail = 'contract';
 		$defaulttopic = 'SendContractRef';
-		$diroutput = $conf->contrat->dir_output;
+		$diroutput = $conf->contrat->multidir_output[$object->entity];
 		$trackid = 'con'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

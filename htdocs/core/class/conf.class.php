@@ -98,7 +98,7 @@ class Conf
 	public $dol_hide_leftmenu; // Set if we force param dol_hide_leftmenu into login url
 	public $dol_optimize_smallscreen; // Set if we force param dol_optimize_smallscreen into login url or if browser is smartphone
 	public $dol_no_mouse_hover; // Set if we force param dol_no_mouse_hover into login url or if browser is smartphone
-	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url
+	public $dol_use_jmobile; // Set if we force param dol_use_jmobile into login url. 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 
 	public $liste_limit;
 

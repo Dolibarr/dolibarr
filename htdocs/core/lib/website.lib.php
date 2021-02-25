@@ -205,7 +205,7 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 
 /**
  * Render a string of an HTML content and output it.
- * Used to ouput the page when viewed from server (Dolibarr or Apache).
+ * Used to ouput the page when viewed from a server (Dolibarr or Apache).
  *
  * @param   string  $content    	Content string
  * @param	string	$contenttype	Content type
@@ -296,7 +296,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	} else // REPLACEMENT OF LINKS When page called from virtual host
+	} else // REPLACEMENT OF LINKS When page called from virtual host web server
 	{
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
@@ -355,7 +355,9 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	}
 
-	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+	if (!defined('USEDOLIBARREDITOR')) {
+		$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+	}
 
 	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);

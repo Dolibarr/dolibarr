@@ -525,7 +525,9 @@ $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js.php'));
+$morejs = array('/fourn/js/lib_dispatch.js.php');
+
+llxHeader('', $langs->trans("OrderDispatch"), $help_url, '', 0, 0, $morejs);
 
 if ($id > 0 || !empty($ref)) {
 	$soc = new Societe($db);
