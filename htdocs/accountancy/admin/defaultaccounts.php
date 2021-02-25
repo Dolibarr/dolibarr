@@ -38,8 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "loan"));
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 

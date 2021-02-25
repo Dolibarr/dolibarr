@@ -200,11 +200,11 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv('Nature'))."<br>\n";
 	}
-	if (empty($_POST["lastname"])) {
+	if (!GETPOST("lastname")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
 	}
-	if (empty($_POST["firstname"])) {
+	if (GETPOST("firstname")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
@@ -213,8 +213,8 @@ if (empty($reshook) && $action == 'add') {
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	$birthday = dol_mktime($_POST["birthhour"], $_POST["birthmin"], $_POST["birthsec"], $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
-	if ($_POST["birthmonth"] && empty($birthday)) {
+	$birthday = dol_mktime(GETPOST("birthhour", 'int'), GETPOST("birthmin", 'int'), GETPOST("birthsec", 'int'), GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
+	if (GETPOSTISSET("birthmonth") && empty($birthday)) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
@@ -226,7 +226,7 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
-	if (isset($public)) $public = 1;
+	if (GETPOSTISSET('public')) $public = 1;
 	else $public = 0;
 
 	if (!$error) {
@@ -234,25 +234,25 @@ if (empty($reshook) && $action == 'add') {
 		$adh = new Adherent($db);
 		$adh->statut      = -1;
 		$adh->public      = $public;
-		$adh->firstname   = $_POST["firstname"];
-		$adh->lastname    = $_POST["lastname"];
-		$adh->gender      = $_POST["gender"];
-		$adh->civility_id = $_POST["civility_id"];
-		$adh->societe     = $_POST["societe"];
-		$adh->address     = $_POST["address"];
-		$adh->zip         = $_POST["zipcode"];
-		$adh->town        = $_POST["town"];
-		$adh->email       = $_POST["email"];
+		$adh->firstname   = GETPOST("firstname");
+		$adh->lastname    = GETPOST("lastname");
+		$adh->gender      = GETPOST("gender");
+		$adh->civility_id = GETPOST("civility_id");
+		$adh->societe     = GETPOST("societe");
+		$adh->address     = GETPOST("address");
+		$adh->zip         = GETPOST("zipcode");
+		$adh->town        = GETPOST("town");
+		$adh->email       = GETPOST("email");
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			$adh->login       = $_POST["login"];
-			$adh->pass        = $_POST["pass1"];
+			$adh->login       = GETPOST("login");
+			$adh->pass        = GETPOST("pass1");
 		}
-		$adh->photo       = $_POST["photo"];
-		$adh->country_id  = $_POST["country_id"];
-		$adh->state_id    = $_POST["state_id"];
-		$adh->typeid      = $_POST["type"];
-		$adh->note_private = $_POST["note_private"];
-		$adh->morphy      = $_POST["morphy"];
+		$adh->photo       = GETPOST("photo");
+		$adh->country_id  = GETPOST("country_id", 'int');
+		$adh->state_id    = GETPOST("state_id", 'int');
+		$adh->typeid      = GETPOST("type", 'int');
+		$adh->note_private = GETPOST("note_private");
+		$adh->morphy      = GETPOST("morphy");
 		$adh->birth       = $birthday;
 
 
@@ -602,7 +602,7 @@ print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="ph
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Other attributes
-$tpl_context = 'public'; //BUG #11554 : define templae context to public
+$tpl_context = 'public'; // define templae context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

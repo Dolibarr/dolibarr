@@ -121,6 +121,17 @@ function project_prepare_head(Project $project)
 		$h++;
 	}
 
+	if ($conf->eventorganization->enabled) {
+		$langs->load('eventorganization');
+		//TODO : Count
+		$nbConfOrBooth = 1;
+		$head[$h][0] = DOL_URL_ROOT . '/projet/event.php?id=' . $project->id;
+		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
+		$head[$h][2] = 'eventorganisation';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -355,6 +366,15 @@ function project_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
 	$head[$h][2] = 'attributes_task';
 	$h++;
+
+	if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$langs->load("members");
+
+		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
+		$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+		$head[$h][2] = 'website';
+		$h++;
+	}
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_admin', 'remove');
 
