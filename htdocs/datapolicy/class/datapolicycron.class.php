@@ -464,43 +464,36 @@ class DataPolicyCron
 
 		$this->db->begin();
 
-		foreach ($arrayofparameters as $key => $params)
-		{
-			if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0)
-			{
+		foreach ($arrayofparameters as $key => $params) {
+			if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
 				$sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
 				$resql = $this->db->query($sql);
 
-				if ($resql && $this->db->num_rows($resql) > 0)
-				{
+				if ($resql && $this->db->num_rows($resql) > 0) {
 					$num = $this->db->num_rows($resql);
 					$i = 0;
 
 					require_once $params['file'];
 					$object = new $params['class']($this->db);
 
-					while ($i < $num && !$error)
-					{
+					while ($i < $num && !$error) {
 						$obj = $this->db->fetch_object($resql);
 
 						$object->fetch($obj->rowid);
 						$object->id = $obj->rowid;
 
-						if ($object->isObjectUsed($obj->rowid) > 0)			// If object to clean is used
-						{
+						if ($object->isObjectUsed($obj->rowid) > 0) {			// If object to clean is used
 							foreach ($params['fields_anonym'] as $fields => $val) {
 								$object->$fields = $val;
 							}
 							$result = $object->update($obj->rowid, $user);
-							if ($result > 0)
-							{
+							if ($result > 0) {
 								if ($params['class'] == 'Societe') {
 									// We delete contacts of thirdparty
 									$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$obj->rowid;
 									$result = $this->db->query($sql);
-									if ($result < 0)
-									{
+									if ($result < 0) {
 										$errormsg = $this->db->lasterror();
 										$error++;
 									}
@@ -516,8 +509,7 @@ class DataPolicyCron
 							} else {
 								$result = $object->delete($user);
 							}
-							if ($result < 0)
-							{
+							if ($result < 0) {
 								$errormsg = $object->error;
 								$error++;
 							}
@@ -533,8 +525,7 @@ class DataPolicyCron
 
 		$this->db->commit();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
 		} else {
 			$this->error = $errormsg;
