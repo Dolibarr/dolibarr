@@ -202,7 +202,11 @@ if (empty($reshook))
 							// Record stock movement
 							$id_product_batch = 0;
 							$stockmove->origin = $object;
-							$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+							if ($qtytoprocess >= 0) {
+								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+							} else {
+								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+							}
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -250,33 +254,32 @@ if (empty($reshook))
 					$qtytoprocess = price2num(GETPOST('qtytoproduce-'.$line->id.'-'.$i));
 					$pricetoprocess = GETPOST('pricetoproduce-'.$line->id.'-'.$i) ? price2num(GETPOST('pricetoproduce-'.$line->id.'-'.$i)) : 0;
 
+					// Check warehouse is set if we should have to
+					if (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
+						if (!(GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
+							$error++;
+						}
+						if (!empty($conf->productbatch->enabled) && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
+							$error++;
+						}
+					}
+
+					$idstockmove = 0;
+					if (!$error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
+						// Record stock movement
+						$id_product_batch = 0;
+						$stockmove->origin = $object;
+						$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+						if ($idstockmove < 0) {
+							$error++;
+							setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+						}
+					}
 					if ($qtytoprocess != 0) {
-						// Check warehouse is set if we should have to
-						if (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i)) {	// If there is a warehouse to set
-							if (!(GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0)) {	// If there is no warehouse set.
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-							if (!empty($conf->productbatch->enabled) && $tmpproduct->status_batch && (!GETPOST('batchtoproduce-'.$line->id.'-'.$i))) {
-								$langs->load("errors");
-								setEventMessages($langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref), null, 'errors');
-								$error++;
-							}
-						}
-
-						$idstockmove = 0;
-						if (!$error && GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) > 0) {
-							// Record stock movement
-							$id_product_batch = 0;
-							$stockmove->origin = $object;
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
-							if ($idstockmove < 0) {
-								$error++;
-								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-							}
-						}
-
 						if (!$error) {
 							// Record production
 							$moline = new MoLine($db);
