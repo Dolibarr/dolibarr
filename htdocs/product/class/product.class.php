@@ -4688,10 +4688,10 @@ class Product extends CommonObject
 			switch ($mode)
 			{
 				case 0:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
+                    $label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial')));
 					return dolGetStatus($label);
 				case 1:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
+					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort')));
 					return dolGetStatus($label);
 				case 2:
 					return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
@@ -4729,11 +4729,15 @@ class Product extends CommonObject
 				$labelStatus = $langs->trans('ProductStatusOnBuyShort');
 				$labelStatusShort = $langs->trans('ProductStatusOnBuy');
 			} elseif ($type == 2) {
-				$labelStatus = $langs->trans('ProductStatusOnBatch');
-				$labelStatusShort = $langs->trans('ProductStatusOnBatchShort');
+				$labelStatus = ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial'));
+				$labelStatusShort = ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort'));
 			}
 		}
-
+		elseif ( ! empty($conf->global->MAIN_ADVANCE_NUMLOT) && $type == 2 && $status == 2)
+        {
+			$labelStatus = $langs->trans('ProductStatusOnSerial');
+			$labelStatusShort = $langs->trans('ProductStatusOnSerialShort');
+		}
 
 		if ($mode > 6) {
 			return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
