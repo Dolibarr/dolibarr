@@ -5460,7 +5460,7 @@ class Product extends CommonObject
 	 */
 	public function hasbatch()
 	{
-		return ($this->status_batch == 1 ? true : false);
+		return ($this->status_batch > 0 ? true : false);
 	}
 
 
