@@ -1686,7 +1686,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".intval($this->socid)." AND fk_socpeople=".$this->id; ;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
