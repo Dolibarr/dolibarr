@@ -128,7 +128,7 @@ $arrayfields = array(
 	'm.type_mouvement'=>array('label'=>$langs->trans("TypeMovement"), 'checked'=>1, 'position'=>48),
 	'origin'=>array('label'=>$langs->trans("Origin"), 'enabled'=>0, 'checked'=>0, 'position'=>50),
 	'm.value'=>array('label'=>$langs->trans("Qty"), 'checked'=>1, 'position'=>60),
-	'm.price'=>array('label'=>$langs->trans("UnitPurchaseValue"), 'enabled'=>0, 'checked'=>0, 'position'=>62),
+	'm.price'=>array('label'=>$langs->trans("UnitCost"), 'enabled'=>0, 'checked'=>0, 'position'=>62),
 	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
@@ -148,7 +148,11 @@ $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
+$permissiontoupdatecost = $user->rights->bom->write; // User who can define cost must have knowledge of pricing
 
+if ($permissiontoupdatecost) {
+	$arrayfields['m.price']['enabled'] = 1;
+}
 
 /*
  * Actions

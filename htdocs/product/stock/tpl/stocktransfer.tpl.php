@@ -30,21 +30,23 @@ if (empty($conf) || !is_object($conf)) {
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
 $productref = '';
-if ($object->element == 'product') $productref = $object->ref;
+if ($object->element == 'product') {
+	$productref = $object->ref;
+}
 
 $langs->load("productbatch");
 
-if (empty($id)) $id = $object->id;
+if (empty($id)) {
+	$id = $object->id;
+}
 
 $pdluoid = GETPOST('pdluoid', 'int');
 
 $pdluo = new Productbatch($db);
 
-if ($pdluoid > 0)
-{
+if ($pdluoid > 0) {
 	$result = $pdluo->fetch($pdluoid);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$pdluoid = $pdluo->id;
 	} else {
 		dol_print_error($db, $pdluo->error, $pdluo->errors);
@@ -60,8 +62,7 @@ print dol_get_fiche_head();
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="transfert_stock">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-if ($pdluoid)
-{
+if ($pdluoid) {
 	print '<input type="hidden" name="pdluoid" value="'.$pdluoid.'">';
 }
 print '<table class="border centpercent">';
@@ -92,12 +93,10 @@ print '</tr>';
 if (!empty($conf->productbatch->enabled) &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
-)
-{
+) {
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
-	if ($pdluoid > 0)
-	{
+	if ($pdluoid > 0) {
 		// If form was opened for a specific pdluoid, field is disabled
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
