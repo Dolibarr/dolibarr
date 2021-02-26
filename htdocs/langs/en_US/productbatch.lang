@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Use lot/serial number
-ProductStatusOnBatch=Yes (lot/serial required)
+ProductStatusOnBatch=Lot (required)
+ProductStatusOnSerial=Serial number (must be unique for each equipment)
 ProductStatusNotOnBatch=No (lot/serial not used)
-ProductStatusOnBatchShort=Yes
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=No
 Batch=Lot/Serial
 atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
