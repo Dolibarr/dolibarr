@@ -158,7 +158,10 @@ if ($action == 'add') {
  * View
  */
 
-llxHeader();
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+$title = $langs->trans('MenuBankInternalTransfer');
+
+llxHeader('', $title, $help_url);
 
 print '		<script type="text/javascript">
         	$(document).ready(function () {
