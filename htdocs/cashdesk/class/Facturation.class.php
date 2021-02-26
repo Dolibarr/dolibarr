@@ -116,8 +116,7 @@ class Facturation
 		// Clean vat code
 		$reg = array();
 		$vat_src_code = '';
-		if (preg_match('/\((.*)\)/', $txtva, $reg))
-		{
+		if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 			$vat_src_code = $reg[1];
 			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 		}
@@ -133,8 +132,7 @@ class Facturation
 		$total_localtax2 = $resultarray[10];
 
 		// Calculation of the discount amount
-		if ($this->remisePercent())
-		{
+		if ($this->remisePercent()) {
 			$remise_percent = $this->remisePercent();
 		} else {
 			$remise_percent = 0;
@@ -155,10 +153,8 @@ class Facturation
 		$newcartarray[$i]['price'] = $product->price;
 		$newcartarray[$i]['price_ttc'] = $product->price_ttc;
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			if (isset($product->multiprices[$societe->price_level]))
-			{
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (isset($product->multiprices[$societe->price_level])) {
 				$newcartarray[$i]['price'] = $product->multiprices[$societe->price_level];
 				$newcartarray[$i]['price_ttc'] = $product->multiprices_ttc[$societe->price_level];
 			}
@@ -191,10 +187,8 @@ class Facturation
 
 		$j = 0;
 		$newposcart = array();
-		foreach ($poscart as $key => $val)
-		{
-			if ($poscart[$key]['id'] != $aArticle)
-			{
+		foreach ($poscart as $key => $val) {
+			if ($poscart[$key]['id'] != $aArticle) {
 				$newposcart[$j] = $poscart[$key];
 				$newposcart[$j]['id'] = $j;
 				$j++;
@@ -223,8 +217,7 @@ class Facturation
 		$tab = (!empty($_SESSION['poscart']) ? $_SESSION['poscart'] : array());
 
 		$tab_size = count($tab);
-		for ($i = 0; $i < $tab_size; $i++)
-		{
+		for ($i = 0; $i < $tab_size; $i++) {
 			// Total HT
 			$remise = $tab[$i]['remise'];
 			$total_ht += ($tab[$i]['total_ht']);
@@ -291,11 +284,9 @@ class Facturation
 	public function id($aId = null)
 	{
 
-		if (!$aId)
-		{
+		if (!$aId) {
 			return $this->id;
-		} elseif ($aId == 'RESET')
-		{
+		} elseif ($aId == 'RESET') {
 			$this->id = null;
 		} else {
 			$this->id = $aId;
@@ -311,11 +302,9 @@ class Facturation
 	public function ref($aRef = null)
 	{
 
-		if (is_null($aRef))
-		{
+		if (is_null($aRef)) {
 			return $this->ref;
-		} elseif ($aRef == 'RESET')
-		{
+		} elseif ($aRef == 'RESET') {
 			$this->ref = null;
 		} else {
 			$this->ref = $aRef;
@@ -330,11 +319,9 @@ class Facturation
 	 */
 	public function qte($aQte = null)
 	{
-		if (is_null($aQte))
-		{
+		if (is_null($aQte)) {
 			return $this->qte;
-		} elseif ($aQte == 'RESET')
-		{
+		} elseif ($aQte == 'RESET') {
 			$this->qte = null;
 		} else {
 			$this->qte = $aQte;
@@ -350,11 +337,9 @@ class Facturation
 	public function stock($aStock = null)
 	{
 
-		if (is_null($aStock))
-		{
+		if (is_null($aStock)) {
 			return $this->stock;
-		} elseif ($aStock == 'RESET')
-		{
+		} elseif ($aStock == 'RESET') {
 			$this->stock = null;
 		} else {
 			$this->stock = $aStock;
@@ -370,11 +355,9 @@ class Facturation
 	public function remisePercent($aRemisePercent = null)
 	{
 
-		if (is_null($aRemisePercent))
-		{
+		if (is_null($aRemisePercent)) {
 			return $this->remise_percent;
-		} elseif ($aRemisePercent == 'RESET')
-		{
+		} elseif ($aRemisePercent == 'RESET') {
 			$this->remise_percent = null;
 		} else {
 			$this->remise_percent = $aRemisePercent;
@@ -564,11 +547,9 @@ class Facturation
 	 */
 	public function amountWithTax($aTotalTtc = null)
 	{
-		if (is_null($aTotalTtc))
-		{
+		if (is_null($aTotalTtc)) {
 			return $this->prix_total_ttc;
-		} elseif ($aTotalTtc == 'RESET')
-		{
+		} elseif ($aTotalTtc == 'RESET') {
 			$this->prix_total_ttc = null;
 		} else {
 			$this->prix_total_ttc = $aTotalTtc;

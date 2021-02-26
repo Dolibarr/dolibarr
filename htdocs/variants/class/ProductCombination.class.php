@@ -174,8 +174,7 @@ class ProductCombination
 			 */
 			if ($fk_price_level > 0) {
 				$combination_price_levels[$fk_price_level] = ProductCombinationLevel::createFromParent($this->db, $this, $fk_price_level);
-			}
-			else {
+			} else {
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					$combination_price_levels[$i] = ProductCombinationLevel::createFromParent($this->db, $this, $i);
 				}
@@ -227,8 +226,7 @@ class ProductCombination
 
 		if ($error) {
 			return $error * -1;
-		}
-		else {
+		} else {
 			return 1;
 		}
 	}
@@ -327,7 +325,9 @@ class ProductCombination
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $nb = $obj->nb;
+			if ($obj) {
+				$nb = $obj->nb;
+			}
 		}
 
 		return $nb;
@@ -507,8 +507,7 @@ class ProductCombination
 
 			// MultiPrix
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-				{
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
@@ -710,8 +709,7 @@ class ProductCombination
 		//Final price impact
 		if (!is_array($forced_pricevar)) {
 			$price_impact[1] = (float) $forced_pricevar; // If false, return 0
-		}
-		else {
+		} else {
 			$price_impact = $forced_pricevar;
 		}
 
@@ -766,8 +764,7 @@ class ProductCombination
 
 				// Manage Price levels
 				if ($conf->global->PRODUIT_MULTIPRICES) {
-					for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
-					{
+					for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 						$price_impact[$i] += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 					}
 				}
@@ -827,8 +824,7 @@ class ProductCombination
 			$newproduct->barcode = -1;
 			$result = $newproduct->create($user);
 
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				//In case the error is not related with an already existing product
 				if ($newproduct->error != 'ErrorProductAlreadyExists') {
 					$this->error[] = $newproduct->error;
@@ -868,8 +864,7 @@ class ProductCombination
 			}
 		} else {
 			$result = $newproduct->update($newproduct->id, $user);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->db->rollback();
 				return -1;
 			}
@@ -877,8 +872,7 @@ class ProductCombination
 
 		$newcomb->fk_product_child = $newproduct->id;
 
-		if ($newcomb->update($user) < 0)
-		{
+		if ($newcomb->update($user) < 0) {
 			$this->error = $newcomb->error;
 			$this->errors = $newcomb->errors;
 			$this->db->rollback();
@@ -926,8 +920,7 @@ class ProductCombination
 				$combination->variation_price_percentage,
 				$combination->variation_price,
 				$combination->variation_weight
-				) < 0)
-			{
+			) < 0) {
 				return -1;
 			}
 		}
@@ -955,12 +948,10 @@ class ProductCombination
 
 			$i = 0;
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				if ($obj->label)
-				{
+				if ($obj->label) {
 					$label .= ' '.$obj->label;
 				}
 				$i++;
