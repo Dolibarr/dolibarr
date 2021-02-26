@@ -27,8 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $error = 0;
 
@@ -52,8 +53,12 @@ llxHeader('', $langs->trans("Establishments"));
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder     = GETPOST("sortorder", 'alpha');
 $sortfield     = GETPOST("sortfield", 'alpha');
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "e.rowid";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "e.rowid";
+}
 
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -79,8 +84,7 @@ $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
@@ -95,12 +99,10 @@ if ($result)
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$establishmentstatic = new Establishment($db);
 
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
 			$establishmentstatic->id = $obj->rowid;
