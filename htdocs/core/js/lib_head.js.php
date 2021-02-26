@@ -537,9 +537,9 @@ function hideMessage(fieldId,message) {
  * Used by button to set on/off.
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url
+ * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Input
+ * @param	string	intput		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
@@ -553,7 +553,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		entity: entity,
 		token: token
 	},
-	function() {
+	function() {	/* handler for success of post */
 		console.log("url request success forcereload="+forcereload);
 		$("#set_" + code).hide();
 		$("#del_" + code).show();
@@ -611,9 +611,9 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url
+ * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Input
+ * @param	string	intput		Array of complementary actions to do if success
  * @param	int		entity		Entity
  * @param	int		strict		Strict
  * @param   int     forcereload Force reload
@@ -678,12 +678,13 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 }
 
 /*
- * Used by button to set on/off
+ * Call the setConstant or delConstant but with a confirmation before.
+ * Used by button to set on/off.
  *
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Input
+ * @param	string	intput		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton

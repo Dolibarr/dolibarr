@@ -124,9 +124,9 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->stock->read;
-$permissiontoadd = $user->rights->stock->write;
-$permissiontodelete = $user->rights->stock->delete;
+$permissiontoread = $user->rights->stock->lire;
+$permissiontoadd = $user->rights->stock->mouvement->creer;
+//$permissiontodelete = $user->rights->stock->supprimer;
 
 
 
@@ -321,8 +321,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
-$newcardbutton = '';
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/product/stock/productlot_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 

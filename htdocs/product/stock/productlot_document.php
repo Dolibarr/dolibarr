@@ -26,7 +26,7 @@
 /**
  *       \file       htdocs/product/stock/productlot_document.php
  *       \ingroup    product
- *       \brief      Page des documents joints sur les lots produits
+ *       \brief      Page of attached documents for porudct lots
  */
 
 require '../../main.inc.php';
@@ -79,7 +79,7 @@ if ($id || $ref)
 	$object->fetch($id, $productid, $batch);
 	$object->ref = $object->batch; // For document management ( it use $object->ref)
 
-	if (!empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
+	if (!empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 }
 
 
@@ -141,6 +141,13 @@ if ($object->id)
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield" width="100%">';
+
+	// Product
+	print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
+	$producttmp = new Product($db);
+	$producttmp->fetch($object->fk_product);
+	print $producttmp->getNomUrl(1, 'stock')." - ".$producttmp->label;
+	print '</td></tr>';
 
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
