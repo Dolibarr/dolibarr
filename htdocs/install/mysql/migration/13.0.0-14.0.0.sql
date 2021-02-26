@@ -40,6 +40,9 @@ ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
 
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 
+-- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN montant double(24,8) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN montant DROP NOT NULL;
+
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
