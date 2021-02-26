@@ -1704,7 +1704,7 @@ class Contact extends CommonObject
 					$sql .= "fk_socpeople) ";
 					$sql .= " VALUES (".$conf->entity.",";
 					$sql .= "'".$this->db->idate(dol_now())."',";
-					$sql .= $this->socid.", ";
+					$sql .= ((int) $this->socid).", ";
 					$sql .= $valRoles." , ";
 					$sql .= $this->id;
 					$sql .= ")";
