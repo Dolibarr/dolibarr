@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/categories/info.php
  *      \ingroup    categories
- *		\brief      Category info page
+ *      \brief      Category info page
  */
 
 require '../main.inc.php';
@@ -40,7 +40,9 @@ $id = GETPOST('id', 'int');
 $label = GETPOST('label', 'alpha');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
@@ -50,7 +52,9 @@ if ($result <= 0) {
 }
 
 $type = $object->type;
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 /*
  * View
