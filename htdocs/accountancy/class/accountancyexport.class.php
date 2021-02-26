@@ -553,7 +553,7 @@ class AccountancyExport
             }*/
 			$Tab['sens'] = $data->sens; // C or D
 			$Tab['signe_montant'] = '+';
-			
+
 			// The amount must be in centimes without decimal points.
 			$Tab['montant'] = str_pad(abs(($data->debit - $abs->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$Tab['contrepartie'] = str_repeat(' ', 8);
@@ -646,7 +646,7 @@ class AccountancyExport
 			} else {
 				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
-				$Tab['montant_crebit'] = str_pad(number_format($data->credit), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$Tab['montant_crebit'] = str_pad(number_format($data->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			}
 
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30), 30);
