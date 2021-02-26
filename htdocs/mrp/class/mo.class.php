@@ -656,7 +656,7 @@ class Mo extends CommonObject
 
 							$moline->fk_mo = $this->id;
 							$moline->origin_id = $line->id;
-							$moline->origin_type = 'bom';
+							$moline->origin_type = 'bomline';
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
