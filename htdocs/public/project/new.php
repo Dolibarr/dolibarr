@@ -27,17 +27,29 @@
  *	\brief      Example of form to add a new lead
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -57,7 +69,9 @@ $action = GETPOST('action', 'aZ09');
 $langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 // Security check
-if (empty($conf->projet->enabled)) accessforbidden('', 0, 0, 1);
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("Form for public lead registration has not been enabled");
@@ -234,7 +248,9 @@ if (empty($reshook) && $action == 'add') {
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($proj->table_element);
 		$ret = $extrafields->setOptionalsFromPost(null, $proj);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 
 		$result = $proj->create($user);
 		if ($result > 0) {
@@ -257,7 +273,9 @@ if (empty($reshook) && $action == 'add') {
 				$arraydefaultmessage = null;
 				$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
 
-				if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
+				if (!empty($labeltouse)) {
+					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
+				}
 
 				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 					$subject = $arraydefaultmessage->topic;
@@ -275,9 +293,9 @@ if (empty($reshook) && $action == 'add') {
 					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
 				}
 				/*if ($result < 0) {
-            		$error++;
-            		setEventMessages($object->error, $object->errors, 'errors');
-            	}*/
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}*/
 			}
 
 			if (!empty($backtopage)) {
@@ -289,7 +307,9 @@ if (empty($reshook) && $action == 'add') {
 				$urlback = $_SERVER["PHP_SELF"]."?action=added";
 			}
 
-			if (!empty($entity)) $urlback .= '&entity='.$entity;
+			if (!empty($entity)) {
+				$urlback .= '&entity='.$entity;
+			}
 			dol_syslog("project lead ".$proj->ref." was created, we redirect to ".$urlback);
 		} else {
 			$error++;
@@ -414,7 +434,9 @@ if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	if ($country_code) {
 		$new_country_id = getCountry($country_code, 3, $db, $langs);
 		//print 'xxx'.$country_code.' - '.$new_country_id;
-		if ($new_country_id) $country_id = $new_country_id;
+		if ($new_country_id) {
+			$country_id = $new_country_id;
+		}
 	}
 }
 $country_code = getCountry($country_id, 2, $db, $langs);
@@ -423,8 +445,11 @@ print '</td></tr>';
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
-	if ($country_code) print $formcompany->select_state(GETPOST("state_id"), $country_code);
-	else print '';
+	if ($country_code) {
+		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+	} else {
+		print '';
+	}
 	print '</td></tr>';
 }
 // EMail
