@@ -970,7 +970,20 @@ if ($resql) {
 	}
 	// To batch
 	if (!empty($arrayfields['p.tobatch']['checked'])) {
-		print '<td class="liste_titre center">'.$form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1).'</td>';
+		print '<td class="liste_titre center">';
+
+		if (empty($conf->global ->MAIN_ADVANCE_NUMLOT)) {
+			print $form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1);
+		} else {
+			$statutarray = array(
+				'-1' => '',
+				'0' => $langs->trans("ProductStatusNotOnBatchShort"),
+				'1' => $langs->trans("ProductStatusOnBatchShort"),
+				'2' => $langs->trans("ProductStatusOnSerialShort")
+			);
+			print $form->selectarray('search_tobatch', $statutarray, $search_tobatch);
+		}
+		print '</td>';
 	}
 	// Country
 	if (!empty($arrayfields['p.fk_country']['checked'])) {
@@ -1659,7 +1672,13 @@ if ($resql) {
 		// Lot/Serial
 		if (!empty($arrayfields['p.tobatch']['checked'])) {
 			print '<td class="center">';
-			print yn($obj->tobatch);
+			if ( empty($conf->global->MAIN_ADVANCE_NUMLOT) )
+			{
+				print yn($obj->tobatch);
+			}
+			else {
+				print $product_static->getLibStatut(1, 2);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -559,7 +559,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Paid
+ * VAT Paid
  */
 
 print load_fiche_titre($langs->trans("VATPaid"), '', '');
@@ -585,47 +585,6 @@ $sql .= " ORDER BY dm ASC, mode ASC";
 //print $sql;
 
 pt($db, $sql, $langs->trans("Month"));
-
-
-if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
-	print '<br>';
-
-	/*
-	 * Recap
-	 */
-
-	print load_fiche_titre($langs->trans("VATBalance"), '', ''); // need to add translation
-
-	$sql1 = "SELECT SUM(amount) as mm";
-	$sql1 .= " FROM ".MAIN_DB_PREFIX."tva as f";
-	$sql1 .= " WHERE f.entity = ".$conf->entity;
-	$sql1 .= " AND f.datev >= '".$db->idate($date_start)."'";
-	$sql1 .= " AND f.datev <= '".$db->idate($date_end)."'";
-
-	$result = $db->query($sql1);
-	if ($result) {
-		$obj = $db->fetch_object($result);
-		print '<table class="noborder centpercent">';
-
-		print "<tr>";
-		print '<td class="right">'.$langs->trans("VATDue").'</td>';
-		print '<td class="nowrap right">'.price(price2num($total, 'MT')).'</td>';
-		print "</tr>\n";
-
-		print "<tr>";
-		print '<td class="right">'.$langs->trans("VATPaid").'</td>';
-		print '<td class="nowrap right">'.price(price2num($obj->mm, 'MT'))."</td>\n";
-		print "</tr>\n";
-
-		$restopay = $total - $obj->mm;
-		print "<tr>";
-		print '<td class="right">'.$langs->trans("RemainToPay").'</td>';
-		print '<td class="nowrap right">'.price(price2num($restopay, 'MT')).'</td>';
-		print "</tr>\n";
-
-		print '</table>';
-	}
-}
 
 print '</div></div>';
 
