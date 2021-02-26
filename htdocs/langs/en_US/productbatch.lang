@@ -1,7 +1,7 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Use lot/serial number
 ProductStatusOnBatch=Lot (required)
-ProductStatusOnSerial=Serial number (required)
+ProductStatusOnSerial=Serial number (must be unique for each equipment)
 ProductStatusNotOnBatch=No (lot/serial not used)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Serial
