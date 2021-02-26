@@ -1029,7 +1029,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->productbatch->enabled))
 		{
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
-			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+			if ( empty($conf->global ->MAIN_ADVANCE_NUMLOT) )
+			{
+				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+			}
+			else {
+				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
+			}
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
 			print '</td></tr>';
 		}
@@ -1488,7 +1494,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
-					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+					if ( empty($conf->global ->MAIN_ADVANCE_NUMLOT) )
+					{
+						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+					}
+					else {
+						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
+					}
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
 					print '</td></tr>';
 				}
@@ -1813,7 +1825,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Type
 			if (!empty($conf->product->enabled) && !empty($conf->service->enabled))
 			{
-				// TODO change for compatibility with edit in place
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
@@ -1996,7 +2007,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
-					if (!empty($conf->use_javascript_ajax) && $usercancreate && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+					if (!empty($conf->use_javascript_ajax) && $usercancreate && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE) && empty($conf->global->MAIN_ADVANCE_NUMLOT)) {
 						print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
 					} else {
 						print $object->getLibStatut(0, 2);

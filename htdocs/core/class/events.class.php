@@ -141,10 +141,14 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description = trim($this->description);
-		if (empty($this->user_agent)) $this->user_agent = (empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT']);
+		if (empty($this->user_agent)) {
+			$this->user_agent = (empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT']);
+		}
 
 		// Check parameters
-		if (empty($this->description)) { $this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1; }
+		if (empty($this->description)) {
+			$this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1;
+		}
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
@@ -169,8 +173,7 @@ class Events // extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
 			return $this->id;
 		} else {
@@ -206,8 +209,7 @@ class Events // extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -239,10 +241,8 @@ class Events // extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -278,8 +278,7 @@ class Events // extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}

@@ -1438,15 +1438,15 @@ function complete_elementList_with_modules(&$elementList)
 							$dirmod[$i] = $dir;
 							//print "x".$modName." ".$orders[$i]."\n<br>";
 
-                            if (!empty($objMod->module_parts['contactelement'])) {
-                            	if (is_array($objMod->module_parts['contactelement'])) {
+							if (!empty($objMod->module_parts['contactelement'])) {
+								if (is_array($objMod->module_parts['contactelement'])) {
 									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
 										$elementList[$elem] = $langs->trans($title);
 									}
 								} else {
 									$elementList[$objMod->name] = $langs->trans($objMod->name);
 								}
-                            }
+							}
 
 							$j++;
 							$i++;

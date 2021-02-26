@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 $langs->loadLangs(array("products", "suppliers"));
 
-if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
+if (!$user->rights->produit->lire && !$user->rights->service->lire) {
+	accessforbidden();
+}
 
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
@@ -46,15 +48,23 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "p.ref"; // Set here default search field
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) {
+	$sortfield = "p.ref"; // Set here default search field
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
-if ($user->socid) $fourn_id = $user->socid;
+if ($user->socid) {
+	$fourn_id = $user->socid;
+}
 
 $catid = GETPOST('catid', 'intcomma');
 
@@ -71,22 +81,26 @@ $extrafields = new ExtraFields($db);
  * Put here all code to do according to value of "action" parameter
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list'; $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$sref = '';
 		$sRefSupplier = '';
 		$snom = '';
@@ -109,8 +123,7 @@ $companystatic = new Societe($db);
 
 $title = $langs->trans("ProductsAndServices");
 
-if ($fourn_id)
-{
+if ($fourn_id) {
 	$supplier = new Fournisseur($db);
 	$supplier->fetch($fourn_id);
 }
@@ -122,8 +135,12 @@ $arrayofmassactions = array(
 	'builddoc'=>$langs->trans("PDFMerge"),
 	'presend'=>$langs->trans("SendByMail"),
 );
-if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+if ($user->rights->mymodule->supprimer) {
+	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+}
+if (in_array($massaction, array('presend', 'predelete'))) {
+	$arrayofmassactions = array();
+}
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 
@@ -133,54 +150,52 @@ $sql .= " s.rowid as socid, s.nom as name";
 // Add fields to SELECT from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action);
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-if ($catid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+if ($catid) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($sRefSupplier)
-{
+if ($sRefSupplier) {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
 }
-if (GETPOST('type'))
-{
+if (GETPOST('type')) {
 	$sql .= " AND p.fk_product_type = ".GETPOST('type', 'int');
 }
-if ($sref)
-{
+if ($sref) {
 	$sql .= natural_search('p.ref', $sref);
 }
-if ($snom)
-{
+if ($snom) {
 	$sql .= natural_search('p.label', $snom);
 }
-if ($catid)
-{
+if ($catid) {
 	$sql .= " AND cp.fk_categorie = ".$catid;
 }
-if ($fourn_id > 0)
-{
+if ($fourn_id > 0) {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
 
 // Add WHERE filters from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records without orderby and limit
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -190,30 +205,32 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
 
-	if ($num == 1 && (GETPOST("mode") == 'search'))
-	{
+	if ($num == 1 && (GETPOST("mode") == 'search')) {
 		$objp = $db->fetch_object($resql);
 		header("Location: ".DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
 		exit;
 	}
 
-	if (!empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
-	else $texte = $langs->trans("List");
+	if (!empty($supplier->id)) {
+		$texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
+	} else {
+		$texte = $langs->trans("List");
+	}
 
 	llxHeader("", "", $texte);
 
 	$param = "&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&amp;type=".$type : "").(empty($sRefSupplier) ? "" : "&amp;srefsupplier=".$sRefSupplier);
-	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($optioncss != '') {
+		$param .= '&optioncss='.$optioncss;
+	}
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
-	if (!empty($catid))
-	{
+	if (!empty($catid)) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$ways = $c->print_all_ways(' &gt; ', 'fourn/product/list.php');
@@ -222,9 +239,13 @@ if ($resql)
 	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
+	if ($fourn_id > 0) {
+		print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
+	}
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
@@ -256,7 +277,9 @@ if ($resql)
 	// add filters from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action);
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 	print $hookmanager->resPrint;
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
@@ -276,13 +299,14 @@ if ($resql)
 	// add header cells from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
-	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 	print $hookmanager->resPrint;
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($resql);
 
 		$productstatic->id = $objp->rowid;
@@ -307,7 +331,9 @@ if ($resql)
 		$companystatic->name = $objp->name;
 		$companystatic->id = $objp->socid;
 		print '<td>';
-		if ($companystatic->id > 0) print $companystatic->getNomUrl(1, 'supplier');
+		if ($companystatic->id > 0) {
+			print $companystatic->getNomUrl(1, 'supplier');
+		}
 		print '</td>';
 
 		print '<td class="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
@@ -319,7 +345,9 @@ if ($resql)
 		// add additional columns from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action);
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 		print $hookmanager->resPrint;
 
 		print '<td class="right"></td>';

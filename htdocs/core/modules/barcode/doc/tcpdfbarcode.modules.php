@@ -110,7 +110,9 @@ class modTcpdfbarcode extends ModeleBarCode
 		global $_GET;
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
 		$color = array(0, 0, 0);
 
@@ -159,7 +161,9 @@ class modTcpdfbarcode extends ModeleBarCode
 		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
 		$tcpdfEncoding = $this->getTcpdfEncodingType($encoding);
-		if (empty($tcpdfEncoding)) return -1;
+		if (empty($tcpdfEncoding)) {
+			return -1;
+		}
 
 		$color = array(0, 0, 0);
 

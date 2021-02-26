@@ -131,7 +131,7 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 *  Create object into database
 	 *
-	 *  @param	User	$user        User that creates
+	 *  @param	User    $user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 <0 if KO, Id of created object if OK
 	 */

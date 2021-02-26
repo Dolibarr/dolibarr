@@ -105,8 +105,7 @@ class modAsset extends DolibarrModules
 		$this->const = array();
 
 
-		if (!isset($conf->asset) || !isset($conf->asset->enabled))
-		{
+		if (!isset($conf->asset) || !isset($conf->asset->enabled)) {
 			$conf->asset = new stdClass();
 			$conf->asset->enabled = 0;
 		}

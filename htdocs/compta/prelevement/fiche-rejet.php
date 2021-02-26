@@ -35,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
 
 // Security check
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
@@ -48,7 +50,9 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -73,10 +77,8 @@ if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transf
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref)
-{
-  	if ($object->fetch($prev_id, $ref) >= 0)
-	{
+if ($prev_id > 0 || $ref) {
+	if ($object->fetch($prev_id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
 		print dol_get_fiche_head($head, 'rejects', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
@@ -92,8 +94,7 @@ if ($prev_id > 0 || $ref)
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-		if ($object->date_trans <> 0)
-		{
+		if ($object->date_trans <> 0) {
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
 
@@ -104,8 +105,7 @@ if ($prev_id > 0 || $ref)
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if ($object->date_credit <> 0)
-		{
+		if ($object->date_credit <> 0) {
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
@@ -123,22 +123,29 @@ if ($prev_id > 0 || $ref)
 
 		print '<tr><td class="titlefield">';
 		$labelofbankfield = "BankToReceiveWithdraw";
-		if ($object->type == 'bank-transfer') $labelofbankfield = 'BankToPayCreditTransfer';
+		if ($object->type == 'bank-transfer') {
+			$labelofbankfield = 'BankToPayCreditTransfer';
+		}
 		print $langs->trans($labelofbankfield);
 		print '</td>';
 		print '<td>';
-		if ($acc->id > 0)
+		if ($acc->id > 0) {
 			print $acc->getNomUrl(1);
+		}
 		print '</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">';
 		$labelfororderfield = 'WithdrawalFile';
-		if ($object->type == 'bank-transfer') $labelfororderfield = 'CreditTransferFile';
+		if ($object->type == 'bank-transfer') {
+			$labelfororderfield = 'CreditTransferFile';
+		}
 		print $langs->trans($labelfororderfield).'</td><td>';
 		$relativepath = 'receipts/'.$object->ref.'.xml';
 		$modulepart = 'prelevement';
-		if ($object->type == 'bank-transfer') $modulepart = 'paymentbybanktransfer';
+		if ($object->type == 'bank-transfer') {
+			$modulepart = 'paymentbybanktransfer';
+		}
 		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
 
@@ -146,7 +153,7 @@ if ($prev_id > 0 || $ref)
 
 		print dol_get_fiche_end();
 	} else {
-	  	dol_print_error($db);
+		dol_print_error($db);
 	}
 }
 
@@ -169,17 +176,17 @@ $sql .= " AND p.entity = ".$conf->entity;
 $sql .= " AND pl.fk_soc = s.rowid";
 $sql .= " AND pl.statut = 3 ";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
+}
 $sql .= " ORDER BY pl.amount DESC";
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -188,26 +195,23 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
- 	$num = $db->num_rows($resql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 
- 	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
-  	print"\n<!-- debut table -->\n";
-  	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-  	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  	print '<tr class="liste_titre">';
-  	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
-  	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
+	print"\n<!-- debut table -->\n";
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
+	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';
 
 	$total = 0;
 
-	if ($num > 0)
-	{
-	  	$i = 0;
-		while ($i < $num)
-		{
+	if ($num > 0) {
+		$i = 0;
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven"><td>';
@@ -233,8 +237,7 @@ if ($resql)
 		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
-  	if ($num > 0)
-	{
+	if ($num > 0) {
 		print '<tr class="liste_total"><td>&nbsp;</td>';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 		print '<td class="right">'.price($total)."</td>\n";

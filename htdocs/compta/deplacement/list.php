@@ -36,7 +36,9 @@ $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', '', '');
 
 $search_ref = GETPOST('search_ref', 'int');
@@ -47,19 +49,24 @@ $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "d.dated";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "d.dated";
+}
 
 $year = GETPOST("year");
 $month = GETPOST("month");
 $day = GETPOST("day");
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_ref = "";
 	$search_name = "";
 	$search_company = "";
@@ -89,20 +96,28 @@ $sql .= " u.lastname, u.firstname"; // Qui
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= ", ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+}
 $sql .= " WHERE d.fk_user = u.rowid";
 $sql .= " AND d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id." OR d.fk_soc IS NULL) ";
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+	$sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+}
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND (sc.fk_user = ".$user->id." OR d.fk_soc IS NULL) ";
+}
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
+}
 
-if ($search_ref)		$sql .= " AND d.rowid=".$search_ref;
-if ($search_name)
-{
+if ($search_ref) {
+	$sql .= " AND d.rowid=".$search_ref;
+}
+if ($search_name) {
 	$sql .= natural_search('u.lastname', $search_name);
 }
-if ($search_company)
-{
+if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
 }
 $sql .= dolSqlDateFilter("d.dated", $day, $month, $year);
@@ -112,8 +127,7 @@ $sql .= $db->plimit($limit + 1, $offset);
 
 //print $sql;
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	print_barre_liste($langs->trans("ListOfFees"), $page, $_SERVER["PHP_SELF"], "&socid=$socid", $sortfield, $sortorder, '', $num);
@@ -140,7 +154,9 @@ if ($resql)
 	print '&nbsp;';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
 	print '</td>';
@@ -159,12 +175,13 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
 		$soc = new Societe($db);
-		if ($obj->socid) $soc->fetch($obj->socid);
+		if ($obj->socid) {
+			$soc->fetch($obj->socid);
+		}
 
 		print '<tr class="oddeven">';
 		// Id
@@ -181,8 +198,11 @@ if ($resql)
 		print $userstatic->getNomUrl(1);
 		print '</td>';
 
-		if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
-		else print '<td>&nbsp;</td>';
+		if ($obj->socid) {
+			print '<td>'.$soc->getNomUrl(1).'</td>';
+		} else {
+			print '<td>&nbsp;</td>';
+		}
 
 		print '<td class="right">'.$obj->km.'</td>';
 

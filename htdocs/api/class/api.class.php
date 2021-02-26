@@ -51,7 +51,9 @@ class DolibarrApi
 	{
 		global $conf, $dolibarr_main_url_root;
 
-		if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
+		if (empty($cachedir)) {
+			$cachedir = $conf->api->dir_temp;
+		}
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
@@ -140,7 +142,7 @@ class DolibarrApi
 		unset($object->labelStatusShort);
 
 		unset($object->stats_propale);
-	  	unset($object->stats_commande);
+		unset($object->stats_commande);
 		unset($object->stats_contrat);
 		unset($object->stats_facture);
 		unset($object->stats_commande_fournisseur);
@@ -191,8 +193,7 @@ class DolibarrApi
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
 			$nboflines = count($object->lines);
-			for ($i = 0; $i < $nboflines; $i++)
-			{
+			for ($i = 0; $i < $nboflines; $i++) {
 				$this->_cleanObjectDatas($object->lines[$i]);
 
 				unset($object->lines[$i]->contact);
@@ -284,12 +285,14 @@ class DolibarrApi
 		$ok = 0;
 		$i = 0; $nb = strlen($tmp);
 		$counter = 0;
-		while ($i < $nb)
-		{
-			if ($tmp[$i] == '(') $counter++;
-			if ($tmp[$i] == ')') $counter--;
-			if ($counter < 0)
-			{
+		while ($i < $nb) {
+			if ($tmp[$i] == '(') {
+				$counter++;
+			}
+			if ($tmp[$i] == ')') {
+				$counter--;
+			}
+			if ($counter < 0) {
 				$error = "Bad sqlfilters=".$sqlfilters;
 				dol_syslog($error, LOG_WARNING);
 				return false;
@@ -313,14 +316,17 @@ class DolibarrApi
 		global $db;
 
 		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) return '';
+		if (empty($matches[1])) {
+			return '';
+		}
 		$tmp = explode(':', $matches[1]);
-		if (count($tmp) < 3) return '';
+		if (count($tmp) < 3) {
+			return '';
+		}
 
 		$tmpescaped = $tmp[2];
 		$regbis = array();
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
-		{
+		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
 			$tmpescaped = $db->escape($tmpescaped);

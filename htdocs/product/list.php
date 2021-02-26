@@ -833,7 +833,21 @@ if ($resql)
 	// Stock
 	if (!empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
 	// To batch
-	if (!empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1).'</td>';
+	if (!empty($arrayfields['p.tobatch']['checked']))
+	{
+		print '<td class="liste_titre center">';
+
+		if ( empty($conf->global ->MAIN_ADVANCE_NUMLOT) )
+		{
+			print $form->selectyesno('search_tobatch', $search_tobatch, 1, false, 1);
+		} else
+		{
+			$statutarray = array('-1' => '', '0' => $langs->trans("ProductStatusNotOnBatchShort"), '1' => $langs->trans("ProductStatusOnBatchShort"), '2' => $langs->trans("ProductStatusOnSerialShort"));
+			print $form->selectarray('search_tobatch', $statutarray, $search_tobatch);
+		}
+
+		'</td>';
+	}
 	// Country
 	if (!empty($arrayfields['p.fk_country']['checked'])) print '<td class="liste_titre center">'.$form->select_country($search_country, 'search_country', '', 0).'</td>';
 	// State
@@ -1113,17 +1127,10 @@ if ($resql)
 		{
 			print '<td class="center">';
 			$s = '';
-			if ($obj->fk_product_type == 0)
-			{
-				//$s .= '<a class="product-type-back" title="'.$langs->trans("Product").'">';
+			if ($obj->fk_product_type == 0) {
 				$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
-				//$s .= dol_substr($langs->trans("Product"), 0, 1);
-				//$s .= '</a>';
 			} else {
-				//$s .= '<span class="service-type-back" title="'.$langs->trans("Service").'">';
 				$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
-				//$s .= dol_substr($langs->trans("Service"), 0, 1);
-				//$s .= '</a>';
 			}
 			print $s;
 			print '</td>';
@@ -1463,7 +1470,13 @@ if ($resql)
 		if (!empty($arrayfields['p.tobatch']['checked']))
 		{
 			print '<td class="center">';
-			print yn($obj->tobatch);
+			if ( empty($conf->global->MAIN_ADVANCE_NUMLOT) )
+			{
+				print yn($obj->tobatch);
+			}
+			else {
+				print $product_static->getLibStatut(1, 2);
+			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
