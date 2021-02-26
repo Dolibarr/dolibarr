@@ -47,7 +47,7 @@ function project_prepare_head(Project $project)
 	$nbContacts = 0;
 	// Enable caching of project count Contacts
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-	$cachekey = 'count_contacts_project_'.$object->id;
+	$cachekey = 'count_contacts_project_'.$project->id;
 	$dataretrieved = dol_getcache($cachekey);
 
 	if (!is_null($dataretrieved)) {
@@ -69,7 +69,7 @@ function project_prepare_head(Project $project)
 		$nbTasks = 0;
 		// Enable caching of project count Tasks
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_tasks_project_'.$object->id;
+		$cachekey = 'count_tasks_project_'.$project->id;
 		$dataretrieved = dol_getcache($cachekey);
 
 		if (!is_null($dataretrieved)) {
@@ -90,7 +90,7 @@ function project_prepare_head(Project $project)
 
 		$nbTimeSpent = 0;
 		// Enable caching of project count Timespent
-		$cachekey = 'count_timespent_project_'.$object->id;
+		$cachekey = 'count_timespent_project_'.$project->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$nbTimeSpent = $dataretrieved;
@@ -128,7 +128,7 @@ function project_prepare_head(Project $project)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled)) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
-		$cachekey = 'count_elements_project_'.$object->id;
+		$cachekey = 'count_elements_project_'.$project->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$nbElements = $dataretrieved;
@@ -244,7 +244,7 @@ function project_prepare_head(Project $project)
 	$totalAttached = 0;
 	// Enable caching of thirdrparty count attached files and links
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-	$cachekey = 'count_attached_project_'.$object->id;
+	$cachekey = 'count_attached_project_'.$project->id;
 	$dataretrieved = dol_getcache($cachekey);
 	if (!is_null($dataretrieved)) {
 		$totalAttached = $dataretrieved;
@@ -270,7 +270,7 @@ function project_prepare_head(Project $project)
 		$nbComments = 0;
 		// Enable caching of thirdrparty count attached files and links
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_attached_project_'.$object->id;
+		$cachekey = 'count_attached_project_'.$project->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$nbComments = $dataretrieved;
