@@ -87,15 +87,17 @@ class Import
 		$modulesdir = dolGetModulesDirs();
 
 		// Load list of modules
-		foreach ($modulesdir as $dir)
-		{
+		foreach ($modulesdir as $dir) {
 			$handle = @opendir(dol_osencode($dir));
-			if (!is_resource($handle)) continue;
+			if (!is_resource($handle)) {
+				continue;
+			}
 
 			// Search module files
-			while (($file = readdir($handle)) !== false)
-			{
-				if (!preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) continue;
+			while (($file = readdir($handle)) !== false) {
+				if (!preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) {
+					continue;
+				}
 
 				$modulename = $reg[1];
 
@@ -103,10 +105,16 @@ class Import
 				$enabled = true;
 				$part = strtolower(preg_replace('/^mod/i', '', $modulename));
 				// Adds condition for propal module
-				if ($part === 'propale') $part = 'propal';
-				if (empty($conf->$part->enabled)) $enabled = false;
+				if ($part === 'propale') {
+					$part = 'propal';
+				}
+				if (empty($conf->$part->enabled)) {
+					$enabled = false;
+				}
 
-				if (empty($enabled)) continue;
+				if (empty($enabled)) {
+					continue;
+				}
 
 				// Init load class
 				$file = $dir."/".$modulename.".class.php";
@@ -114,11 +122,11 @@ class Import
 				require_once $file;
 				$module = new $classname($this->db);
 
-				if (isset($module->import_code) && is_array($module->import_code))
-				{
-					foreach ($module->import_code as $r => $value)
-					{
-						if ($filter && ($filter != $module->import_code[$r])) continue;
+				if (isset($module->import_code) && is_array($module->import_code)) {
+					foreach ($module->import_code as $r => $value) {
+						if ($filter && ($filter != $module->import_code[$r])) {
+							continue;
+						}
 
 						// Test if permissions are ok
 						/*$perm=$module->import_permission[$r][0];
@@ -137,10 +145,8 @@ class Import
 
 						// Load lang file
 						$langtoload = $module->getLangFilesArray();
-						if (is_array($langtoload))
-						{
-							foreach ($langtoload as $key)
-							{
+						if (is_array($langtoload)) {
+							foreach ($langtoload as $key) {
 								$langs->load($key);
 							}
 						}
@@ -246,9 +252,15 @@ class Import
 		dol_syslog("Import.class.php::create");
 
 		// Check parameters
-		if (empty($this->model_name)) { $this->error = 'ErrorWrongParameters'; return -1; }
-		if (empty($this->datatoimport)) { $this->error = 'ErrorWrongParameters'; return -1; }
-		if (empty($this->hexa)) { $this->error = 'ErrorWrongParameters'; return -1; }
+		if (empty($this->model_name)) {
+			$this->error = 'ErrorWrongParameters'; return -1;
+		}
+		if (empty($this->datatoimport)) {
+			$this->error = 'ErrorWrongParameters'; return -1;
+		}
+		if (empty($this->hexa)) {
+			$this->error = 'ErrorWrongParameters'; return -1;
+		}
 
 		$this->db->begin();
 
@@ -259,8 +271,7 @@ class Import
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -285,11 +296,9 @@ class Import
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			if ($obj)
-			{
+			if ($obj) {
 				$this->id                   = $obj->rowid;
 				$this->hexa                 = $obj->field;
 				$this->model_name           = $obj->label;
@@ -325,26 +334,24 @@ class Import
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
+		if (!$error) {
+			if (!$notrigger) {
 				/* Not used. This is not a business object. To convert it we must herit from CommonObject
-                // Call trigger
-                $result=$this->call_trigger('IMPORT_DELETE',$user);
-                if ($result < 0) $error++;
-                // End call triggers
-                 */
+				// Call trigger
+				$result=$this->call_trigger('IMPORT_DELETE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
+				 */
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
