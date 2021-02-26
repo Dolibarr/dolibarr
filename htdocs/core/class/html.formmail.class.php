@@ -455,7 +455,7 @@ class FormMail extends Form
 			// Zone to select email template
 			if (count($modelmail_array) > 0)
 			{
-				$model_mail_selected_id = GETPOSTISSET('modelmailselected') ? GETPOST('modelmailselected', 'int') : ( ($arraydefaultmessage->id) ? $arraydefaultmessage->id : 0 );
+				$model_mail_selected_id = GETPOSTISSET('modelmailselected') ? GETPOST('modelmailselected', 'int') : (($arraydefaultmessage->id) ? $arraydefaultmessage->id : 0);
 
 				// If list of template is filled
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
