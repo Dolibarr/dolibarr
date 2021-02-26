@@ -4580,6 +4580,9 @@ class Product extends CommonObject
 				$label .= "<br>".$labelsurfacevolume;
 			}
 		}
+		if (!empty($this->pmp) && $this->pmp) {
+			$label .= "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
+		}
 
 		if (!empty($conf->accounting->enabled) && $this->status) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
