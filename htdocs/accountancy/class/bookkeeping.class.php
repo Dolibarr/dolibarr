@@ -135,6 +135,7 @@ class BookKeeping extends CommonObject
 
 	/**
 	 * @var float FEC:Amount (Not necessary)
+	 * @deprecated No more used
 	 */
 	public $amount;
 
@@ -238,6 +239,9 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->montant)) {
 			$this->montant = (float) $this->montant;
+		}
+		if (isset($this->amount)) {
+			$this->amount = (float) $this->amount;
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -554,6 +558,9 @@ class BookKeeping extends CommonObject
 		if (isset($this->montant)) {
 			$this->montant = trim($this->montant);
 		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -695,7 +702,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
-		$sql .= " t.montant,";
+		$sql .= " t.montant as amount,";
 		$sql .= " t.sens,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.import_key,";
@@ -734,7 +741,8 @@ class BookKeeping extends CommonObject
 				$this->label_operation = $obj->label_operation;
 				$this->debit = $obj->debit;
 				$this->credit = $obj->credit;
-				$this->montant = $obj->montant;
+				$this->montant = $obj->amount;
+				$this->amount = $obj->amount;
 				$this->sens = $obj->sens;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->import_key = $obj->import_key;
@@ -1197,8 +1205,8 @@ class BookKeeping extends CommonObject
 		if (isset($this->credit)) {
 			$this->credit = trim($this->credit);
 		}
-		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -1641,7 +1649,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation";
+		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -1667,7 +1675,8 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
+				$line->montant = $obj->amount;
+				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
@@ -1700,7 +1709,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
+		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 
@@ -1730,7 +1739,8 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
+				$line->montant = $obj->amount;
+				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
