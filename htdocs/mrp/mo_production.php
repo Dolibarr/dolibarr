@@ -706,7 +706,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Product").'</td>';
 		print '<td class="right">'.$langs->trans("Qty").'</td>';
-		if ($permissiontoupdatecost) print '<td class="right">'.$langs->trans("UnitCost").'</td>';
+		if ($permissiontoupdatecost) {
+			print '<td class="right">'.$langs->trans("UnitCost").'</td>';
+		}
 		print '<td class="right">'.$langs->trans("QtyAlreadyConsumed").'</td>';
 		print '<td>';
 		if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
@@ -729,7 +731,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 			print '</td>';
 			print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
-			if ($permissiontoupdatecost) print '<td></td>';
+			if ($permissiontoupdatecost) {
+				print '<td></td>';
+			}
 			print '<td class="right"></td>';
 			print '<td>';
 			print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
@@ -765,7 +769,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if (empty($costprice)) {
 							require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 							$productFournisseur = new ProductFournisseur($db);
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0){
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								$costprice = $productFournisseur->fourn_unitprice;
 							} else {
 								$costprice = 0;
@@ -853,7 +857,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						print '<td></td>';
 						print '<td class="right">'.$line2['qty'].'</td>';
-						if ($permissiontoupdatecost) print '<td></td>';
+						if ($permissiontoupdatecost) {
+							print '<td></td>';
+						}
 						print '<td class="tdoverflowmax150">';
 						if ($line2['fk_warehouse'] > 0) {
 							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
@@ -882,7 +888,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$preselected = 0;
 						}
 						print '<td class="right"><input type="text" class="width50 right" name="qty-'.$line->id.'-'.$i.'" value="'.$preselected.'"></td>';
-						if ($permissiontoupdatecost) print '<td></td>';
+						if ($permissiontoupdatecost) {
+							print '<td></td>';
+						}
 						print '<td></td>';
 						print '<td>';
 						if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
@@ -1035,7 +1043,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						print '<td></td>';
 						print '<td class="right">'.$line2['qty'].'</td>';
-						if ($permissiontoupdatecost) print '<td></td>';
+						if ($permissiontoupdatecost) {
+							print '<td></td>';
+						}
 						print '<td class="tdoverflowmax150">';
 						if ($line2['fk_warehouse'] > 0) {
 							$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
