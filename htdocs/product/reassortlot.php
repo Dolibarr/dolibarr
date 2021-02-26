@@ -38,7 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 $langs->loadLangs(array('products', 'stocks', 'productbatch'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'produit|service');
 
 
@@ -59,11 +61,19 @@ $fourn_id = GETPOST("fourn_id", 'int');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0) $page = 0;
-if (!$sortfield) $sortfield = "p.ref";
-if (!$sortorder) $sortorder = "ASC";
+if (empty($page) || $page < 0) {
+	$page = 0;
+}
+if (!$sortfield) {
+	$sortfield = "p.ref";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
 // Load sale and categ filters
@@ -73,8 +83,7 @@ $search_categ = GETPOST("search_categ");
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = GETPOST("canvas");
 $objcanvas = null;
-if (!empty($canvas))
-{
+if (!empty($canvas)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('product', 'list', $canvas);
@@ -86,8 +95,7 @@ if (!empty($canvas))
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$sref = "";
 	$snom = "";
 	$sall = "";
@@ -129,32 +137,58 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+if ($search_categ) {
+	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+}
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) $sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
-if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
+if ($search_categ) {
+	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
+}
+if ($sall) {
+	$sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
+}
 // if the type is not 1, we show all products (type = 0,2,3)
-if (dol_strlen($type))
-{
-	if ($type == 1)
-	{
+if (dol_strlen($type)) {
+	if ($type == 1) {
 		$sql .= " AND p.fk_product_type = '1'";
 	} else {
 		$sql .= " AND p.fk_product_type <> '1'";
 	}
 }
-if ($sref)     $sql .= natural_search("p.ref", $sref);
-if ($search_barcode) $sql .= natural_search("p.barcode", $search_barcode);
-if ($snom)     $sql .= natural_search("p.label", $snom);
-if (!empty($tosell)) $sql .= " AND p.tosell = ".$tosell;
-if (!empty($tobuy))  $sql .= " AND p.tobuy = ".$tobuy;
-if (!empty($canvas)) $sql .= " AND p.canvas = '".$db->escape($canvas)."'";
-if ($catid) $sql .= " AND cp.fk_categorie = ".$catid;
-if ($fourn_id > 0) $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+if ($sref) {
+	$sql .= natural_search("p.ref", $sref);
+}
+if ($search_barcode) {
+	$sql .= natural_search("p.barcode", $search_barcode);
+}
+if ($snom) {
+	$sql .= natural_search("p.label", $snom);
+}
+if (!empty($tosell)) {
+	$sql .= " AND p.tosell = ".$tosell;
+}
+if (!empty($tobuy)) {
+	$sql .= " AND p.tobuy = ".$tobuy;
+}
+if (!empty($canvas)) {
+	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
+}
+if ($catid) {
+	$sql .= " AND cp.fk_categorie = ".$catid;
+}
+if ($fourn_id > 0) {
+	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+}
 // Insert categ filter
-if ($search_categ) $sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
-if ($search_warehouse) $sql .= natural_search("e.ref", $search_warehouse);
-if ($search_batch) $sql .= natural_search("pb.batch", $search_batch);
+if ($search_categ) {
+	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+}
+if ($search_warehouse) {
+	$sql .= natural_search("e.ref", $search_warehouse);
+}
+if ($search_batch) {
+	$sql .= natural_search("pb.batch", $search_batch);
+}
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms,";
 $sql .= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tosell, p.tobuy, p.tobatch,";
@@ -162,16 +196,16 @@ $sql .= " ps.fk_entrepot,";
 $sql .= " e.ref, e.lieu, e.fk_parent,";
 $sql .= " pb.batch, pb.eatby, pb.sellby,";
 $sql .= " pl.rowid, pl.eatby, pl.sellby";
-if ($toolowstock) $sql .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
+if ($toolowstock) {
+	$sql .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -180,43 +214,74 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
 
-	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall or $snom or $sref))
-	{
+	if ($num == 1 && GETPOST('autojumpifoneonly') && ($sall or $snom or $sref)) {
 		$objp = $db->fetch_object($resql);
 		header("Location: card.php?id=$objp->rowid");
 		exit;
 	}
 
-	if (isset($type))
-	{
-		if ($type == 1) { $texte = $langs->trans("Services"); } else { $texte = $langs->trans("Products"); }
+	if (isset($type)) {
+		if ($type == 1) {
+			$texte = $langs->trans("Services");
+		} else {
+			$texte = $langs->trans("Products");
+		}
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
 	$texte .= ' ('.$langs->trans("StocksByLotSerial").')';
 
 	$param = '';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($sall)		$param .= "&sall=".urlencode($sall);
-	if ($tosell)		$param .= "&tosell=".urlencode($tosell);
-	if ($tobuy)			$param .= "&tobuy=".urlencode($tobuy);
-	if ($type)			$param .= "&type=".urlencode($type);
-	if ($fourn_id)		$param .= "&fourn_id=".urlencode($fourn_id);
-	if ($snom)			$param .= "&snom=".urlencode($snom);
-	if ($sref)			$param .= "&sref=".urlencode($sref);
-	if ($search_batch)	$param .= "&search_batch=".urlencode($search_batch);
-	if ($sbarcode)		$param .= "&sbarcode=".urlencode($sbarcode);
-	if ($search_warehouse)	$param .= "&search_warehouse=".urlencode($search_warehouse);
-	if ($catid)			$param .= "&catid=".urlencode($catid);
-	if ($toolowstock)	$param .= "&toolowstock=".urlencode($toolowstock);
-	if ($search_sale)	$param .= "&search_sale=".urlencode($search_sale);
-	if ($search_categ)	$param .= "&search_categ=".urlencode($search_categ);
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($sall) {
+		$param .= "&sall=".urlencode($sall);
+	}
+	if ($tosell) {
+		$param .= "&tosell=".urlencode($tosell);
+	}
+	if ($tobuy) {
+		$param .= "&tobuy=".urlencode($tobuy);
+	}
+	if ($type) {
+		$param .= "&type=".urlencode($type);
+	}
+	if ($fourn_id) {
+		$param .= "&fourn_id=".urlencode($fourn_id);
+	}
+	if ($snom) {
+		$param .= "&snom=".urlencode($snom);
+	}
+	if ($sref) {
+		$param .= "&sref=".urlencode($sref);
+	}
+	if ($search_batch) {
+		$param .= "&search_batch=".urlencode($search_batch);
+	}
+	if ($sbarcode) {
+		$param .= "&sbarcode=".urlencode($sbarcode);
+	}
+	if ($search_warehouse) {
+		$param .= "&search_warehouse=".urlencode($search_warehouse);
+	}
+	if ($catid) {
+		$param .= "&catid=".urlencode($catid);
+	}
+	if ($toolowstock) {
+		$param .= "&toolowstock=".urlencode($toolowstock);
+	}
+	if ($search_sale) {
+		$param .= "&search_sale=".urlencode($search_sale);
+	}
+	if ($search_categ) {
+		$param .= "&search_categ=".urlencode($search_categ);
+	}
 	/*if ($eatby)		$param.="&eatby=".$eatby;
 	if ($sellby)	$param.="&sellby=".$sellby;*/
 
@@ -231,8 +296,7 @@ if ($resql)
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'product', 0, '', '', $limit, 0, 0, 1);
 
 
-	if (!empty($catid))
-	{
+	if (!empty($catid)) {
 		print "<div id='ways'>";
 		$c = new Categorie($db);
 		$c->fetch($catid);
@@ -242,18 +306,16 @@ if ($resql)
 	}
 
 	// Filter on categories
- 	$moreforfilter = '';
-	if (!empty($conf->categorie->enabled))
-	{
-	 	$moreforfilter .= '<div class="divsearchfield">';
-	 	$moreforfilter .= $langs->trans('Categories').': ';
+	$moreforfilter = '';
+	if (!empty($conf->categorie->enabled)) {
+		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= $langs->trans('Categories').': ';
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ');
-	 	$moreforfilter .= '</div>';
+		$moreforfilter .= '</div>';
 	}
 	//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
 
-	if (!empty($moreforfilter))
-	{
+	if (!empty($moreforfilter)) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		$parameters = array();
@@ -274,8 +336,7 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
 	print '</td>';
-	if (!empty($conf->service->enabled) && $type == 1)
-	{
+	if (!empty($conf->service->enabled) && $type == 1) {
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
@@ -302,7 +363,9 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
-	if (!empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", '', $sortfield, $sortorder, 'center ');
+	if (!empty($conf->service->enabled) && $type == 1) {
+		print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", $param, "", '', $sortfield, $sortorder, 'center ');
+	}
 	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref", $param, "", '', $sortfield, $sortorder);
 	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
 	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", $param, "", '', $sortfield, $sortorder, 'center ');
@@ -325,13 +388,11 @@ if ($resql)
 	$product_lot_static = new Productlot($db);
 	$warehousetmp = new Entrepot($db);
 
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($resql);
 
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-		{
+		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product=".$objp->rowid;
@@ -339,10 +400,11 @@ if ($resql)
 			$sql .= " LIMIT 1";
 
 			$result = $db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$objtp = $db->fetch_object($result);
-				if (!empty($objtp->label)) $objp->label = $objtp->label;
+				if (!empty($objtp->label)) {
+					$objp->label = $objtp->label;
+				}
 			}
 		}
 
@@ -379,13 +441,17 @@ if ($resql)
 		// Label
 		print '<td>'.$objp->label.'</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1)
-		{
+		if (!empty($conf->service->enabled) && $type == 1) {
 			print '<td class="center">';
-			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationYear");
-			elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-			elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) print $regs[1].' '.$langs->trans("DurationDay");
-			else print $objp->duration;
+			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
+				print $regs[1].' '.$langs->trans("DurationYear");
+			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
+				print $regs[1].' '.$langs->trans("DurationMonth");
+			} elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
+				print $regs[1].' '.$langs->trans("DurationDay");
+			} else {
+				print $objp->duration;
+			}
 			print '</td>';
 		}
 		//print '<td class="right">'.$objp->stock_theorique.'</td>';
@@ -394,16 +460,14 @@ if ($resql)
 
 		// Warehouse
 		print '<td class="nowrap">';
-		if ($objp->fk_entrepot > 0)
-		{
+		if ($objp->fk_entrepot > 0) {
 			print $warehousetmp->getNomUrl(1);
 		}
 		print '</td>';
 
 		// Lot
 		print '<td class="center nowrap">';
-		if ($product_lot_static->batch)
-		{
+		if ($product_lot_static->batch) {
 			print $product_lot_static->getNomUrl(1);
 		}
 		print '</td>';

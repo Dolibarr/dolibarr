@@ -43,14 +43,14 @@ $form = new Form($db);
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
-if ($_GET["id"])
-{
-	if ($mesg) print $mesg;
+if ($_GET["id"]) {
+	if ($mesg) {
+		print $mesg;
+	}
 
 	$entrepot = new Entrepot($db);
 	$result = $entrepot->fetch($_GET["id"]);
-	if ($result < 0)
-	{
+	if ($result < 0) {
 		dol_print_error($db);
 	}
 
@@ -120,13 +120,11 @@ if ($_GET["id"])
 
 
 
-	if (file_exists($file))
-	{
+	if (file_exists($file)) {
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
 		print '<img src="'.$url.'" alt="Valorisation du stock annee '.($year).'">';
 
-		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year - 1).'.png'))
-		{
+		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year - 1).'.png')) {
 			$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year - 1).'.png';
 			print '<br><img src="'.$url.'" alt="Valorisation du stock annee '.($year - 1).'">';
 		}
