@@ -142,6 +142,13 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield" width="100%">';
 
+	// Product
+	print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
+	$producttmp = new Product($db);
+	$producttmp->fetch($object->fk_product);
+	print $producttmp->getNomUrl(1, 'stock')." - ".$producttmp->label;
+	print '</td></tr>';
+
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 	print '</table>';
