@@ -34,7 +34,9 @@ require_once '../lib/zapier.lib.php';
 $langs->loadLangs(array("errors", "admin", "zapier@zapier"));
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
