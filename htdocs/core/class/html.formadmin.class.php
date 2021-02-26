@@ -67,45 +67,59 @@ class FormAdmin
 		// phpcs:enable
 		global $conf, $langs;
 
-		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) $filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
+		if (!empty($conf->global->MAIN_DEFAULT_LANGUAGE_FILTER)) {
+			$filter[$conf->global->MAIN_DEFAULT_LANGUAGE_FILTER] = 1;
+		}
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
 		$out = '';
 
 		$out .= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($disabled ? ' disabled' : '').'>';
-		if ($showempty && !$multiselect)
-		{
+		if ($showempty && !$multiselect) {
 			$out .= '<option value="0"';
-			if ($selected === '') $out .= ' selected';
+			if ($selected === '') {
+				$out .= ' selected';
+			}
 			$out .= '>';
-			if ($showempty != '1') $out .= $showempty;
-			else $out .= '&nbsp;';
+			if ($showempty != '1') {
+				$out .= $showempty;
+			} else {
+				$out .= '&nbsp;';
+			}
 			$out .= '</option>';
 		}
-		if ($showauto)
-		{
+		if ($showauto) {
 			$out .= '<option value="auto"';
-			if ($selected === 'auto') $out .= ' selected';
+			if ($selected === 'auto') {
+				$out .= ' selected';
+			}
 			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
 		asort($langs_available);
 
-		foreach ($langs_available as $key => $value)
-		{
+		foreach ($langs_available as $key => $value) {
 			$valuetoshow = $value;
 			if ($showcode == 1) {
-				if ($mainlangonly) $valuetoshow = '<span class="opacitymedium">'.preg_replace('/[_-].*$/', '', $key).'</span> - '.$value;
-				else $valuetoshow = '<span class="opacitymedium">'.$key.'</span> - '.$value;
+				if ($mainlangonly) {
+					$valuetoshow = '<span class="opacitymedium">'.preg_replace('/[_-].*$/', '', $key).'</span> - '.$value;
+				} else {
+					$valuetoshow = '<span class="opacitymedium">'.$key.'</span> - '.$value;
+				}
 			}
 			if ($showcode == 2) {
-				if ($mainlangonly) $valuetoshow = $value.' <span class="opacitymedium">('.preg_replace('/[_-].*$/', '', $key).')</span>';
-				else $valuetoshow = $value.' <span class="opacitymedium">('.$key.')</span>';
+				if ($mainlangonly) {
+					$valuetoshow = $value.' <span class="opacitymedium">('.preg_replace('/[_-].*$/', '', $key).')</span>';
+				} else {
+					$valuetoshow = $value.' <span class="opacitymedium">('.$key.')</span>';
+				}
 			}
 
 			$keytouse = $key;
-			if ($mainlangonly) $keytouse = preg_replace('/[_-].*$/', '', $key);
+			if ($mainlangonly) {
+				$keytouse = preg_replace('/[_-].*$/', '', $key);
+			}
 
 			if ($filter && is_array($filter) && array_key_exists($keytouse, $filter)) {
 				continue;
@@ -124,8 +138,7 @@ class FormAdmin
 		$out .= '</select>';
 
 		// Make select dynamic
-		if (!$forcecombo)
-		{
+		if (!$forcecombo) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$out .= ajax_combobox($htmlname);
 		}
@@ -152,38 +165,45 @@ class FormAdmin
 
 
 		// Check parameters
-		if (!is_array($dirmenuarray)) return -1;
+		if (!is_array($dirmenuarray)) {
+			return -1;
+		}
 
 		$menuarray = array();
-		foreach ($conf->file->dol_document_root as $dirroot)
-		{
-			foreach ($dirmenuarray as $dirtoscan)
-			{
+		foreach ($conf->file->dol_document_root as $dirroot) {
+			foreach ($dirmenuarray as $dirtoscan) {
 				$dir = $dirroot.$dirtoscan;
 				//print $dir.'<br>';
-				if (is_dir($dir))
-				{
+				if (is_dir($dir)) {
 					$handle = opendir($dir);
-					if (is_resource($handle))
-					{
-						while (($file = readdir($handle)) !== false)
-						{
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index')
-							{
-								if (preg_match('/lib\.php$/i', $file)) continue; // We exclude library files
-								if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i', $file)) continue; // We exclude all menu manager files
-								if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i', $file)) continue; // We exclude all menu manager files
-								if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i', $file)) continue; // We exclude all menu manager files
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && substr($file, 0, 5) != 'index') {
+								if (preg_match('/lib\.php$/i', $file)) {
+									continue; // We exclude library files
+								}
+								if (preg_match('/eldy_(backoffice|frontoffice)\.php$/i', $file)) {
+									continue; // We exclude all menu manager files
+								}
+								if (preg_match('/auguria_(backoffice|frontoffice)\.php$/i', $file)) {
+									continue; // We exclude all menu manager files
+								}
+								if (preg_match('/smartphone_(backoffice|frontoffice)\.php$/i', $file)) {
+									continue; // We exclude all menu manager files
+								}
 
 								$filelib = preg_replace('/\.php$/i', '', $file);
 								$prefix = '';
 								// 0=Recommanded, 1=Experimental, 2=Developpement, 3=Other
-								if (preg_match('/^eldy/i', $file)) $prefix = '0';
-								elseif (preg_match('/^smartphone/i', $file)) $prefix = '2';
-								else $prefix = '3';
+								if (preg_match('/^eldy/i', $file)) {
+									$prefix = '0';
+								} elseif (preg_match('/^smartphone/i', $file)) {
+									$prefix = '2';
+								} else {
+									$prefix = '3';
+								}
 
-								if ($file == $selected)
-								{
+								if ($file == $selected) {
 									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected>'.$filelib.'</option>';
 								} else {
 									$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'">'.$filelib.'</option>';
@@ -200,20 +220,30 @@ class FormAdmin
 		// Output combo list of menus
 		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 		$oldprefix = '';
-		foreach ($menuarray as $key => $val)
-		{
+		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			$newprefix = $tab[0];
-			if ($newprefix == '1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
-			if ($newprefix == '2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
-			if ($newprefix != $oldprefix)	// Add separators
-			{
+			if ($newprefix == '1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) {
+				continue;
+			}
+			if ($newprefix == '2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) {
+				continue;
+			}
+			if ($newprefix != $oldprefix) {	// Add separators
 				// Affiche titre
 				print '<option value="-1" disabled>';
-				if ($newprefix == '0') print '-- '.$langs->trans("VersionRecommanded").' --';
-				if ($newprefix == '1') print '-- '.$langs->trans("VersionExperimental").' --';
-				if ($newprefix == '2') print '-- '.$langs->trans("VersionDevelopment").' --';
-				if ($newprefix == '3') print '-- '.$langs->trans("Other").' --';
+				if ($newprefix == '0') {
+					print '-- '.$langs->trans("VersionRecommanded").' --';
+				}
+				if ($newprefix == '1') {
+					print '-- '.$langs->trans("VersionExperimental").' --';
+				}
+				if ($newprefix == '2') {
+					print '-- '.$langs->trans("VersionDevelopment").' --';
+				}
+				if ($newprefix == '3') {
+					print '-- '.$langs->trans("Other").' --';
+				}
 				print '</option>';
 				$oldprefix = $newprefix;
 			}
@@ -241,26 +271,30 @@ class FormAdmin
 
 		$menuarray = array();
 
-		foreach ($dirmenuarray as $dirmenu)
-		{
-			foreach ($conf->file->dol_document_root as $dirroot)
-			{
+		foreach ($dirmenuarray as $dirmenu) {
+			foreach ($conf->file->dol_document_root as $dirroot) {
 				$dir = $dirroot.$dirmenu;
-				if (is_dir($dir))
-				{
+				if (is_dir($dir)) {
 					$handle = opendir($dir);
-					if (is_resource($handle))
-					{
-						while (($file = readdir($handle)) !== false)
-						{
-							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-							{
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if (is_file($dir."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
 								$filelib = preg_replace('/(_backoffice|_frontoffice)?\.php$/i', '', $file);
-								if (preg_match('/^index/i', $filelib)) continue;
-								if (preg_match('/^default/i', $filelib)) continue;
-								if (preg_match('/^empty/i', $filelib)) continue;
-								if (preg_match('/\.lib/i', $filelib)) continue;
-								if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) continue;
+								if (preg_match('/^index/i', $filelib)) {
+									continue;
+								}
+								if (preg_match('/^default/i', $filelib)) {
+									continue;
+								}
+								if (preg_match('/^empty/i', $filelib)) {
+									continue;
+								}
+								if (preg_match('/\.lib/i', $filelib)) {
+									continue;
+								}
+								if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) {
+									continue;
+								}
 
 								$menuarray[$filelib] = 1;
 							}
@@ -277,18 +311,19 @@ class FormAdmin
 		// Affichage liste deroulante des menus
 		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		$oldprefix = '';
-		foreach ($menuarray as $key => $val)
-		{
+		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			$newprefix = $tab[0];
 			print '<option value="'.$key.'"';
-			if ($key == $selected)
-			{
+			if ($key == $selected) {
 				print '	selected';
 			}
 			print '>';
-			if ($key == 'all') print $langs->trans("AllMenus");
-			else print $key;
+			if ($key == 'all') {
+				print $langs->trans("AllMenus");
+			} else {
+				print $key;
+			}
 			print '</option>'."\n";
 		}
 		print '</select>';
@@ -340,7 +375,9 @@ class FormAdmin
 		);
 		foreach ($arraytz as $lib => $gmt) {
 			print '<option value="'.$lib.'"';
-			if ($selected == $lib || $selected == $gmt) print ' selected';
+			if ($selected == $lib || $selected == $gmt) {
+				print ' selected';
+			}
 			print '>'.$gmt.'</option>'."\n";
 		}
 		print '</select>';
@@ -368,15 +405,15 @@ class FormAdmin
 		$sql = "SELECT code, label, width, height, unit";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_paper_format";
 		$sql .= " WHERE active=1";
-		if ($filter) $sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";
+		if ($filter) {
+			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";
+		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 				$unitKey = $langs->trans('SizeUnit'.$obj->unit);
 
@@ -391,16 +428,15 @@ class FormAdmin
 		$out = '';
 
 		$out .= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty)
-		{
+		if ($showempty) {
 			$out .= '<option value=""';
-			if ($selected == '') $out .= ' selected';
+			if ($selected == '') {
+				$out .= ' selected';
+			}
 			$out .= '>&nbsp;</option>';
 		}
-		foreach ($paperformat as $key => $value)
-		{
-			if ($selected == $key)
-			{
+		foreach ($paperformat as $key => $value) {
+			if ($selected == $key) {
 				$out .= '<option value="'.$key.'" selected>'.$value.'</option>';
 			} else {
 				$out .= '<option value="'.$key.'">'.$value.'</option>';

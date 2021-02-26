@@ -32,7 +32,9 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 
@@ -42,8 +44,7 @@ $result = restrictedArea($user, 'deplacement', $id, '');
 
 llxHeader();
 
-if ($id)
-{
+if ($id) {
 	$object = new Deplacement($db);
 	$object->fetch($id);
 	$object->info($id);

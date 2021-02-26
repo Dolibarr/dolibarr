@@ -131,7 +131,7 @@ if (empty($reshook)) {
 			$subject  = $object->sujet;
 			$message  = $object->body;
 			$from     = $object->email_from;
-			$replyto  = $object->email_replyto;
+			$replyto = $object->email_replyto;
 			$errorsto = $object->email_errorsto;
 			// Is the message in html
 			$msgishtml = -1; // Unknown by default

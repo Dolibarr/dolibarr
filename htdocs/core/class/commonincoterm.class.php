@@ -59,12 +59,10 @@ trait CommonIncoterm
 		$out = '';
 
 		$this->label_incoterms = '';
-		if (!empty($this->fk_incoterms))
-		{
+		if (!empty($this->fk_incoterms)) {
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$res = $this->db->fetch_object($result);
 				$out .= $res->code;
 			}
@@ -84,11 +82,9 @@ trait CommonIncoterm
 	{
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num > 0)
-			{
+			if ($num > 0) {
 				$res = $this->db->fetch_object($resql);
 				return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
 			} else {
@@ -109,23 +105,20 @@ trait CommonIncoterm
 	 */
 	public function setIncoterms($id_incoterm, $location)
 	{
-		if ($this->id && $this->table_element)
-		{
+		if ($this->id && $this->table_element) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
 			$sql .= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
 			$sql .= " WHERE rowid = ".$this->id;
 			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$this->fk_incoterms = $id_incoterm;
 				$this->location_incoterms = $location;
 
 				$sql = 'SELECT libelle as label_incotermsFROM '.MAIN_DB_PREFIX.'c_incoterms WHERE rowid = '.(int) $this->fk_incoterms;
 				$res = $this->db->query($sql);
-				if ($res)
-				{
+				if ($res) {
 					$obj = $this->db->fetch_object($res);
 					$this->label_incoterms = $obj->label_incoterms;
 				}

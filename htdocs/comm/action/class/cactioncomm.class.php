@@ -106,15 +106,16 @@ class CActionComm
 	{
 		$sql = "SELECT id, code, type, libelle as label, color, active, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
-		if (is_numeric($id)) $sql .= " WHERE id=".(int) $id;
-		else $sql .= " WHERE code='".$this->db->escape($id)."'";
+		if (is_numeric($id)) {
+			$sql .= " WHERE id=".(int) $id;
+		} else {
+			$sql .= " WHERE code='".$this->db->escape($id)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id      = $obj->id;
@@ -165,62 +166,76 @@ class CActionComm
 		if ($active != '') {
 			$sql .= " AND active=".(int) $active;
 		}
-		if (!empty($excludetype)) $sql .= " AND type <> '".$this->db->escape($excludetype)."'";
-		if ($morefilter) $sql .= " AND ".$morefilter;
+		if (!empty($excludetype)) {
+			$sql .= " AND type <> '".$this->db->escape($excludetype)."'";
+		}
+		if ($morefilter) {
+			$sql .= " AND ".$morefilter;
+		}
 		$sql .= " ORDER BY type, position, module";
 
 		dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$nump = $this->db->num_rows($resql);
-			if ($nump)
-			{
+			if ($nump) {
 				$idforallfornewmodule = 97;
 				$i = 0;
-				while ($i < $nump)
-				{
+				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
 
 					$qualified = 1;
 
 					// $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
-					if ($qualified && $onlyautoornot > 0 && preg_match('/^system/', $obj->type) && !preg_match('/^AC_OTH/', $obj->code)) $qualified = 0; // We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
-
-					if ($qualified && $obj->module)
-					{
-						if ($obj->module == 'invoice' && !$conf->facture->enabled)	$qualified = 0;
-						if ($obj->module == 'order' && !$conf->commande->enabled) $qualified = 0;
-						if ($obj->module == 'propal' && !$conf->propal->enabled)	  $qualified = 0;
-						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_invoice->enabled))	$qualified = 0;
-						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_order->enabled))	$qualified = 0;
-						if ($obj->module == 'shipping' && !$conf->expedition->enabled)	 $qualified = 0;
+					if ($qualified && $onlyautoornot > 0 && preg_match('/^system/', $obj->type) && !preg_match('/^AC_OTH/', $obj->code)) {
+						$qualified = 0; // We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 					}
 
-					if ($qualified)
-					{
+					if ($qualified && $obj->module) {
+						if ($obj->module == 'invoice' && !$conf->facture->enabled) {
+							$qualified = 0;
+						}
+						if ($obj->module == 'order' && !$conf->commande->enabled) {
+							$qualified = 0;
+						}
+						if ($obj->module == 'propal' && !$conf->propal->enabled) {
+							$qualified = 0;
+						}
+						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_invoice->enabled)) {
+							$qualified = 0;
+						}
+						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_order->enabled)) {
+							$qualified = 0;
+						}
+						if ($obj->module == 'shipping' && !$conf->expedition->enabled) {
+							$qualified = 0;
+						}
+					}
+
+					if ($qualified) {
 						$keyfortrans = '';
 						$transcode = '';
 						$code = $obj->code;
 						$typecalendar = $obj->type;
 
-						if ($onlyautoornot > 0 && $typecalendar == 'system') $code = 'AC_MANUAL';
-						elseif ($onlyautoornot > 0 && $typecalendar == 'systemauto') $code = 'AC_AUTO';
-						elseif ($onlyautoornot > 0) $code = 'AC_'.strtoupper($obj->module);
+						if ($onlyautoornot > 0 && $typecalendar == 'system') {
+							$code = 'AC_MANUAL';
+						} elseif ($onlyautoornot > 0 && $typecalendar == 'systemauto') {
+							$code = 'AC_AUTO';
+						} elseif ($onlyautoornot > 0) {
+							$code = 'AC_'.strtoupper($obj->module);
+						}
 
-						if ($shortlabel)
-						{
+						if ($shortlabel) {
 							$keyfortrans = "Action".$code.'Short';
 							$transcode = $langs->trans($keyfortrans);
 						}
-						if (empty($keyfortrans) || $keyfortrans == $transcode)
-						{
+						if (empty($keyfortrans) || $keyfortrans == $transcode) {
 							$keyfortrans = "Action".$code;
 							$transcode = $langs->trans($keyfortrans);
 						}
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
-						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE))
-						{
+						if ($onlyautoornot == -1 && !empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 							if ($typecalendar == 'system') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$repid[-99] = $langs->trans("ActionAC_MANUAL");
@@ -252,9 +267,13 @@ class CActionComm
 				}
 			}
 
-			if ($idorcode == 'id') $this->liste_array = $repid;
-			elseif ($idorcode == 'code') $this->liste_array = $repcode;
-			else $this->liste_array = $repall;
+			if ($idorcode == 'id') {
+				$this->liste_array = $repid;
+			} elseif ($idorcode == 'code') {
+				$this->liste_array = $repcode;
+			} else {
+				$this->liste_array = $repall;
+			}
 
 			return $this->liste_array;
 		} else {
@@ -276,6 +295,8 @@ class CActionComm
 
 		// Check if translation available
 		$transcode = $langs->trans("Action".$this->code);
-		if ($transcode != "Action".$this->code) return $transcode;
+		if ($transcode != "Action".$this->code) {
+			return $transcode;
+		}
 	}
 }

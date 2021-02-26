@@ -62,7 +62,9 @@ if ($result <= 0) {
 }
 
 $type = $object->type;
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -90,7 +92,7 @@ if ($cancel) {
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer) {
 	$object->oldcopy = dol_clone($object);
-	$object->label          = $label;
+	$object->label = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
 	$object->socid          = ($socid > 0 ? $socid : 0);
@@ -105,10 +107,11 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 	}
 	if (!$error && empty($object->error)) {
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 
-		if (!$error && $object->update($user) > 0)
-		{
+		if (!$error && $object->update($user) > 0) {
 			if ($backtopage) {
 				header("Location: ".$backtopage);
 				exit;

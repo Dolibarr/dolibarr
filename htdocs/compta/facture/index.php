@@ -34,8 +34,7 @@ $langs->load('bills');
 
 // Filter to show only result of one customer
 $socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0)
-{
+if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -58,8 +57,7 @@ print '<div class="fichecenter">';
 print '<div class="fichethirdleft">';
 
 // This is useless due to the global search combo
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
 	print getAreaSearchFrom();
 	print '<br>';
 }
@@ -129,16 +127,21 @@ function getPieChart($socid = 0)
 	$sql = "SELECT count(f.rowid), f.fk_statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
-	if ($user->socid) $sql .= ' AND f.fk_soc = '.$user->socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($user->socid) {
+		$sql .= ' AND f.fk_soc = '.$user->socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 	$sql .= " GROUP BY f.fk_statut";
 
 	$resql = $db->query($sql);
-	if (!$resql)
-	{
+	if (!$resql) {
 		dol_print_error($db);
 		return '';
 	}
@@ -149,11 +152,9 @@ function getPieChart($socid = 0)
 	$total = 0;
 	$vals = [];
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
-		if ($row)
-		{
+		if ($row) {
 			$vals[$row[1]] = $row[0];
 			$total += $row[0];
 		}
@@ -173,14 +174,12 @@ function getPieChart($socid = 0)
 	$array = [Facture::STATUS_DRAFT, Facture::STATUS_VALIDATED, Facture::STATUS_CLOSED, Facture::STATUS_ABANDONED];
 	$dataseries = [];
 
-	foreach ($array as $status)
-	{
+	foreach ($array as $status) {
 		$objectstatic->statut = $status;
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
 		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
-		if (!$conf->use_javascript_ajax)
-		{
+		if (!$conf->use_javascript_ajax) {
 			$result .= '<tr class="oddeven">';
 			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
 			$result .= '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
@@ -188,8 +187,7 @@ function getPieChart($socid = 0)
 		}
 	}
 
-	if ($conf->use_javascript_ajax)
-	{
+	if ($conf->use_javascript_ajax) {
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
 		$dolgraph->setShowLegend(2);
@@ -227,17 +225,22 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	$sql = "SELECT f.rowid, f.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client, f.total as total_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT;
-	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 	$sql .= $db->plimit($maxCount, 0);
 
 	$resql = $db->query($sql);
-	if (!$resql)
-	{
+	if (!$resql) {
 		dol_print_error($db);
 		return '';
 	}
@@ -256,8 +259,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	$result .= '</td>';
 	$result .= '</tr>';
 
-	if ($num < 1)
-	{
+	if ($num < 1) {
 		$result .= '</table>';
 		$result .= '</div>';
 		return $result;
@@ -269,8 +271,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	$total = 0;
 	$i = 0;
 
-	while ($i < $nbofloop)
-	{
+	while ($i < $nbofloop) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->rowid;
@@ -291,14 +292,11 @@ function getDraftTable($maxCount = 500, $socid = 0)
 		$total += $obj->total_ttc;
 	}
 
-	if ($num > $nbofloop)
-	{
+	if ($num > $nbofloop) {
 		$result .= '<tr class="liste_total">';
 		$result .= '<td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
 		$result .= '</tr>';
-	}
-	elseif ($total > 0)
-	{
+	} elseif ($total > 0) {
 		$result .= '<tr class="liste_total">';
 		$result .= '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
 		$result .= '<td class="right">'.price($total).'</td>';
@@ -325,17 +323,22 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " f.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
-	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($maxCount, 0);
 
 	$resql = $db->query($sql);
-	if (!$resql)
-	{
+	if (!$resql) {
 		dol_print_error($db);
 	}
 
@@ -348,8 +351,7 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 	$result .= '<td colspan="4">'.$langs->trans("LastCustomersBills", $maxCount).'</td>';
 	$result .= '</tr>';
 
-	if ($num < 1)
-	{
+	if ($num < 1) {
 		$result .= '</table>';
 		$result .= '</div>';
 		return $result;
@@ -360,8 +362,7 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 	$companystatic = new Societe($db);
 	$i = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->rowid;
@@ -421,18 +422,23 @@ function getOpenTable($maxCount = 500, $socid = 0)
 	$sql .= ", f.datef as df, f.date_lim_reglement as datelimite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND s.rowid = ".$socid;
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
+	if ($socid) {
+		$sql .= " AND s.rowid = ".$socid;
+	}
 	$sql .= " ORDER BY f.rowid DESC";
 	$sql .= $db->plimit($maxCount, 0);
 
 	$resql = $db->query($sql);
-	if (!$resql)
-	{
+	if (!$resql) {
 		dol_print_error($db);
 	}
 
@@ -450,8 +456,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 	$result .= '</td>';
 	$result .= '</tr>';
 
-	if ($num < 1)
-	{
+	if ($num < 1) {
 		$result .= '</table>';
 		$result .= '</div>';
 		return $result;
@@ -465,8 +470,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 	$total = 0;
 	$i = 0;
 
-	while ($i < $nbofloop)
-	{
+	while ($i < $nbofloop) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->id;
@@ -490,8 +494,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 
 		$result .= '<td width="18" class="nobordernopadding nowrap">';
 
-		if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay))
-		{
+		if ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) {
 			$result .= img_warning($langs->trans("Late"));
 		}
 
@@ -513,14 +516,11 @@ function getOpenTable($maxCount = 500, $socid = 0)
 		$total += $obj->total_ttc;
 	}
 
-	if ($num > $nbofloop)
-	{
+	if ($num > $nbofloop) {
 		$result .= '<tr class="liste_total">';
 		$result .= '<td colspan="4" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop)).'</td>';
 		$result .= '</tr>';
-	}
-	elseif ($total > 0)
-	{
+	} elseif ($total > 0) {
 		$result .= '<tr class="liste_total">';
 		$result .= '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
 		$result .= '<td align="right">'.price($total).'</td>';
