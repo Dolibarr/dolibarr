@@ -75,8 +75,8 @@ class box_last_modified_ticket extends ModeleBoxes
 
 		$text = $langs->trans("BoxLastModifiedTicketDescription", $max);
 		$this->info_box_head = array(
-		 	'text' => $text,
-		 	'limit' => dol_strlen($text)
+			'text' => $text,
+			'limit' => dol_strlen($text)
 		);
 
 		$this->info_box_contents[0][0] = array(

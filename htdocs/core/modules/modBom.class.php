@@ -80,19 +80,19 @@ class modBom extends DolibarrModules
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			/*
-		    'triggers' => 1,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
+			'triggers' => 1,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
 			'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
 			'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
 			'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
 			'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		    'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
+			'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
 			'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 			'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 			'css' => array('/bom/css/bom.css.php'),	// Set this to relative path of css file if module has its own css file
-	 		'js' => array('/bom/js/bom.js.php'),          // Set this to relative path of js file if module must load a js on all pages
+			 'js' => array('/bom/js/bom.js.php'),          // Set this to relative path of js file if module must load a js on all pages
 			'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 			'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
-		    */
+			*/
 		);
 
 		// Data directories to create when module is enabled.
@@ -132,8 +132,7 @@ class modBom extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->bom) || !isset($conf->bom->enabled))
-		{
+		if (!isset($conf->bom) || !isset($conf->bom->enabled)) {
 			$conf->bom = new stdClass();
 			$conf->bom->enabled = 0;
 		}
@@ -171,19 +170,19 @@ class modBom extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array();
 		/* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@bom',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->bom->enabled,$conf->bom->enabled,$conf->bom->enabled)												// Condition to show each dictionary
-        );
-        */
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@bom',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->bom->enabled,$conf->bom->enabled,$conf->bom->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
 		// Boxes/Widgets
@@ -247,7 +246,7 @@ class modBom extends DolibarrModules
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-        */
+		*/
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU BILLOFMATERIALS
@@ -321,7 +320,9 @@ class modBom extends DolibarrModules
 		global $conf, $langs;
 
 		$result = $this->_load_tables('/bom/sql/');
-		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
+		if ($result < 0) {
+			return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
+		}
 
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -343,13 +344,11 @@ class modBom extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/boms';
 		$dest = $dirodt.'/template_bom.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

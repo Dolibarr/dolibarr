@@ -121,7 +121,7 @@ abstract class CommonStickerGenerator
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @return int             				1=OK, 0=KO
 	 */
-	public abstract function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
+	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
 	// phpcs:enable
 
 	/**
@@ -132,7 +132,7 @@ abstract class CommonStickerGenerator
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
 	 */
-	public abstract function addSticker(&$pdf, $outputlangs, $param);
+	abstract public function addSticker(&$pdf, $outputlangs, $param);
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

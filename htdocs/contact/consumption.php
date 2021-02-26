@@ -37,8 +37,12 @@ $id = GETPOST('id', 'int');
 
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
-if ($id > 0) $object->fetch($id);
-if (empty($object->thirdparty)) $object->fetch_thirdparty();
+if ($id > 0) {
+	$object->fetch($id);
+}
+if (empty($object->thirdparty)) {
+	$object->fetch_thirdparty();
+}
 $socid = $object->thirdparty->id;
 
 // Sort & Order fields
@@ -46,12 +50,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = 'DESC';
-if (!$sortfield) $sortfield = 'dateprint';
+if (!$sortorder) {
+	$sortorder = 'DESC';
+}
+if (!$sortfield) {
+	$sortfield = 'dateprint';
+}
 
 // Search fields
 $sref = GETPOST("sref");
@@ -60,8 +70,7 @@ $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
 // Clean up on purge search criteria ?
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$sref = '';
 	$sprod_fulldescr = '';
 	$year = '';
@@ -84,7 +93,9 @@ $hookmanager->initHooks(array('consumptioncontact'));
 
 $parameters = array('id'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 
 /*
@@ -99,8 +110,7 @@ $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("C
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if (empty($id))
-{
+if (empty($id)) {
 	dol_print_error($db);
 	exit;
 }
@@ -111,13 +121,15 @@ print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref = '<div class="refidno">';
-if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-{
+if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$objsoc->fetch($socid);
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : ';
-	if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1, 'contact');
-	else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+	if ($objsoc->id > 0) {
+		$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
+	} else {
+		$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+	}
 }
 $morehtmlref .= '</div>';
 
@@ -133,22 +145,34 @@ print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
 print $object->getCivilityLabel();
 print '</td></tr>';
 
-if ($object->thirdparty->client)
-{
+if ($object->thirdparty->client) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
-	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
-	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
-	if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
+	if ($conf->propal->enabled && $user->rights->propal->lire) {
+		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
+	}
+	if ($conf->commande->enabled && $user->rights->commande->lire) {
+		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
+	}
+	if ($conf->facture->enabled && $user->rights->facture->lire) {
+		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
+	}
+	if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
+	}
 }
 
-if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
+if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) {
+	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
+}
 
-if ($object->thirdparty->fournisseur)
-{
+if ($object->thirdparty->fournisseur) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) $elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
+		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
+	}
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
+		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
+	}
 
 	// There no contact type for supplier proposals
 	// if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->supplier_proposal->lire) $elementTypeArray['supplier_proposal']=$langs->transnoentitiesnoconv('SupplierProposals');
@@ -166,8 +190,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $sql_select = '';
-if ($type_element == 'fichinter')
-{ 	// Customer : show products from invoices
+if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$documentstatic = new Fichinter($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, tc.libelle as type_contact_label, ';
@@ -178,8 +201,7 @@ if ($type_element == 'fichinter')
 	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
-} elseif ($type_element == 'invoice')
-{ 	// Customer : show products from invoices
+} elseif ($type_element == 'invoice') { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic = new Facture($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, tc.libelle as type_contact_label, ';
@@ -192,8 +214,7 @@ if ($type_element == 'fichinter')
 	$dateprint = 'f.datef';
 	$doc_number = 'f.ref';
 	$thirdTypeSelect = 'customer';
-} elseif ($type_element == 'propal')
-{
+} elseif ($type_element == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic = new Propal($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, tc.libelle as type_contact_label, ';
@@ -206,8 +227,7 @@ if ($type_element == 'fichinter')
 	$datePrint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
-} elseif ($type_element == 'order')
-{
+} elseif ($type_element == 'order') {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic = new Commande($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, tc.libelle as type_contact_label, ';
@@ -220,8 +240,7 @@ if ($type_element == 'fichinter')
 	$dateprint = 'c.date_commande';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
-} elseif ($type_element == 'supplier_invoice')
-{ 	// Supplier : Show products from invoices.
+} elseif ($type_element == 'supplier_invoice') { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic = new FactureFournisseur($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, tc.libelle as type_contact_label, ';
@@ -234,22 +253,19 @@ if ($type_element == 'fichinter')
 	$dateprint = 'f.datef';
 	$doc_number = 'f.ref';
 	$thirdTypeSelect = 'supplier';
-}
-//elseif ($type_element == 'supplier_proposal')
-//{
-//    require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-//    $documentstatic=new SupplierProposal($db);
-//    $sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
-//    $tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
-//    $where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
-//    $where.= " AND d.fk_supplier_proposal = c.rowid";
-//    $where.= " AND c.entity = ".$conf->entity;
-//    $dateprint = 'c.date_valid';
-//    $doc_number='c.ref';
-//    $thirdTypeSelect='supplier';
-//}
-elseif ($type_element == 'supplier_order')
-{ 	// Supplier : Show products from orders.
+	//} elseif ($type_element == 'supplier_proposal') {
+	//    require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+	//    $documentstatic=new SupplierProposal($db);
+	//    $sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
+	//    $tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
+	//    $where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	//    $where.= " AND d.fk_supplier_proposal = c.rowid";
+	//    $where.= " AND c.entity = ".$conf->entity;
+	//    $dateprint = 'c.date_valid';
+	//    $doc_number='c.ref';
+	//    $thirdTypeSelect='supplier';
+	//}
+} elseif ($type_element == 'supplier_order') { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic = new CommandeFournisseur($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, tc.libelle as type_contact_label, ';
@@ -262,8 +278,7 @@ elseif ($type_element == 'supplier_order')
 	$dateprint = 'c.date_valid';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'supplier';
-} elseif ($type_element == 'contract')
-{ 	// Order
+} elseif ($type_element == 'contract') { 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic = new Contrat($db);
 	$documentstaticline = new ContratLigne($db);
@@ -282,26 +297,40 @@ elseif ($type_element == 'supplier_order')
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 
-if (!empty($sql_select))
-{
+if (!empty($sql_select)) {
 	$sql = $sql_select;
 	$sql .= ' d.description as description';
-	if ($type_element != 'fichinter' && $type_element != 'contract' && $type_element != 'supplier_proposal') $sql .= ', d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
-	if ($type_element == 'supplier_proposal') $sql .= ', d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
-	if ($type_element == 'contract') $sql .= ', d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
-	if ($type_element != 'fichinter') $sql .= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity';
+	if ($type_element != 'fichinter' && $type_element != 'contract' && $type_element != 'supplier_proposal') {
+		$sql .= ', d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
+	}
+	if ($type_element == 'supplier_proposal') {
+		$sql .= ', d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
+	}
+	if ($type_element == 'contract') {
+		$sql .= ', d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty, d.total_ht as total_ht, ';
+	}
+	if ($type_element != 'fichinter') {
+		$sql .= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity';
+	}
 	$sql .= " ";
-	if ($type_element != 'fichinter') $sql .= ", p.ref as prod_ref, p.label as product_label";
+	if ($type_element != 'fichinter') {
+		$sql .= ", p.ref as prod_ref, p.label as product_label";
+	}
 	$sql .= " FROM "/*.MAIN_DB_PREFIX."societe as s, "*/.$tables_from;
 	// if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql .= $where;
 	$sql .= dolSqlDateFilter($dateprint, 0, $month, $year);
-	if ($sref) $sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
-	if ($sprod_fulldescr)
-	{
+	if ($sref) {
+		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+	}
+	if ($sprod_fulldescr) {
 		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
-		if (GETPOST('type_element') != 'fichinter') $sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
-		if (GETPOST('type_element') != 'fichinter') $sql .= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+		if (GETPOST('type_element') != 'fichinter') {
+			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
+		}
+		if (GETPOST('type_element') != 'fichinter') {
+			$sql .= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+		}
 		$sql .= ")";
 	}
 	$sql .= $db->order($sortfield, $sortorder);
@@ -332,21 +361,36 @@ $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
 
-if ($sql_select)
-{
+if ($sql_select) {
 	$resql = $db->query($sql);
-	if (!$resql) dol_print_error($db);
+	if (!$resql) {
+		dol_print_error($db);
+	}
 
 	$num = $db->num_rows($resql);
 
 	$param = "&socid=".urlencode($socid)."&type_element=".urlencode($type_element);
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($sprod_fulldescr) $param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
-	if ($sref) $param .= "&sref=".urlencode($sref);
-	if ($month) $param .= "&month=".urlencode($month);
-	if ($year) $param .= "&year=".urlencode($year);
-	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($sprod_fulldescr) {
+		$param .= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
+	}
+	if ($sref) {
+		$param .= "&sref=".urlencode($sref);
+	}
+	if ($month) {
+		$param .= "&month=".urlencode($month);
+	}
+	if ($year) {
+		$param .= "&year=".urlencode($year);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 
 	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
@@ -393,8 +437,7 @@ if ($sql_select)
 
 
 	$i = 0;
-	while (($objp = $db->fetch_object($resql)) && $i < min($num, $limit))
-	{
+	while (($objp = $db->fetch_object($resql)) && $i < min($num, $limit)) {
 		$documentstatic->id = $objp->doc_id;
 		$documentstatic->ref = $objp->doc_number;
 		$documentstatic->type = $objp->doc_type;
@@ -405,7 +448,9 @@ if ($sql_select)
 		$documentstatic->paye = $objp->paid;
 		$documentstatic->paid = $objp->paid;
 
-		if (is_object($documentstaticline)) $documentstaticline->statut = $objp->status;
+		if (is_object($documentstaticline)) {
+			$documentstaticline->statut = $objp->status;
+		}
 
 		print '<tr class="oddeven">';
 		print '<td class="nobordernopadding nowrap" width="100">';
@@ -415,8 +460,7 @@ if ($sql_select)
 
 		// Status
 		print '<td class="center">';
-		if ($type_element == 'contract')
-		{
+		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(2);
 		} else {
 			print $documentstatic->getLibStatut(2);
@@ -429,8 +473,7 @@ if ($sql_select)
 		$text = ''; $description = ''; $type = 0;
 
 		// Code to show product duplicated from commonobject->printObjectLine
-		if ($objp->fk_product > 0)
-		{
+		if ($objp->fk_product > 0) {
 			$product_static = new Product($db);
 
 			$product_static->type = $objp->fk_product_type;
@@ -441,20 +484,21 @@ if ($sql_select)
 		}
 
 		// Product
-		if ($objp->fk_product > 0)
-		{
+		if ($objp->fk_product > 0) {
 			// Define output language
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			{
+			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
 				$outputlangs = $langs;
 				$newlang = '';
-				if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-				if (empty($newlang)) $newlang = $object->default_lang;
-				if (!empty($newlang))
-				{
+				if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (empty($newlang)) {
+					$newlang = $object->default_lang;
+				}
+				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -468,42 +512,42 @@ if ($sql_select)
 			$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($objp->description));
 		}
 
-		if (($objp->info_bits & 2) == 2)
-		{
+		if (($objp->info_bits & 2) == 2) {
 			print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'">';
 			$txt = '';
 			print img_object($langs->trans("ShowReduc"), 'reduc').' ';
-			if ($objp->description == '(DEPOSIT)') $txt = $langs->trans("Deposit");
-			elseif ($objp->description == '(EXCESS RECEIVED)') $txt = $langs->trans("ExcessReceived");
-			elseif ($objp->description == '(EXCESS PAID)') $txt = $langs->trans("ExcessPaid");
+			if ($objp->description == '(DEPOSIT)') {
+				$txt = $langs->trans("Deposit");
+			} elseif ($objp->description == '(EXCESS RECEIVED)') {
+				$txt = $langs->trans("ExcessReceived");
+			} elseif ($objp->description == '(EXCESS PAID)') {
+				$txt = $langs->trans("ExcessPaid");
+			}
 			//else $txt=$langs->trans("Discount");
 			print $txt;
 			print '</a>';
-			if ($objp->description)
-			{
-				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0)
-				{
+			if ($objp->description) {
+				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 				}
-				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
-				{
+				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
-				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
-				{
+				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
-				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
-				{
+				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
-					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+						echo ' ('.dol_print_date($discount->datec).')';
+					}
 				} else {
 					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
@@ -516,15 +560,16 @@ if ($sql_select)
 				echo get_date_range($objp->date_start, $objp->date_end);
 
 				// Add description in form
-				if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
-				{
+				if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
 					print (!empty($objp->description) && $objp->description != $objp->product_label) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 				}
 			} else {
-				if (!empty($objp->label) || !empty($objp->description))
-				{
-					if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
-					else $text = img_object($langs->trans('Product'), 'product');
+				if (!empty($objp->label) || !empty($objp->description)) {
+					if ($type == 1) {
+						$text = img_object($langs->trans('Service'), 'service');
+					} else {
+						$text = img_object($langs->trans('Product'), 'product');
+					}
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
