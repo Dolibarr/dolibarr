@@ -28,7 +28,9 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-if (!empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+if (!empty($conf->ldap->enabled)) {
+	require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+}
 
 
 /**
@@ -154,8 +156,7 @@ class UserGroup extends CommonObject
 		global $conf;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		if (!empty($groupname))
-		{
+		if (!empty($groupname)) {
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
 		} else {
 			$result = $this->fetchCommon($id);
@@ -163,10 +164,8 @@ class UserGroup extends CommonObject
 
 		$this->name = $this->nom; // For compatibility with field name
 
-		if ($result)
-		{
-			if ($load_members)
-			{
+		if ($result) {
+			if ($load_members) {
 				$this->members = $this->listUsersForGroup();
 			}
 
@@ -196,8 +195,7 @@ class UserGroup extends CommonObject
 		$sql .= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql .= " WHERE ug.fk_usergroup = g.rowid";
 		$sql .= " AND ug.fk_user = ".$userid;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
-		{
+		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND g.entity IS NOT NULL";
 		} else {
 			$sql .= " AND g.entity IN (0,".$conf->entity.")";
@@ -206,12 +204,9 @@ class UserGroup extends CommonObject
 
 		dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			while ($obj = $this->db->fetch_object($result))
-			{
-				if (!array_key_exists($obj->rowid, $ret))
-				{
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				if (!array_key_exists($obj->rowid, $ret)) {
 					$newgroup = new UserGroup($this->db);
 					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid] = $newgroup;
@@ -243,37 +238,43 @@ class UserGroup extends CommonObject
 		$ret = array();
 
 		$sql = "SELECT u.rowid";
-		if (!empty($this->id)) $sql .= ", ug.entity as usergroup_entity";
+		if (!empty($this->id)) {
+			$sql .= ", ug.entity as usergroup_entity";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		if (!empty($this->id)) $sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+		if (!empty($this->id)) {
+			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+		}
 		$sql .= " WHERE 1 = 1";
-		if (!empty($this->id)) $sql .= " AND ug.fk_user = u.rowid";
-		if (!empty($this->id)) $sql .= " AND ug.fk_usergroup = ".$this->id;
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
-		{
+		if (!empty($this->id)) {
+			$sql .= " AND ug.fk_user = u.rowid";
+		}
+		if (!empty($this->id)) {
+			$sql .= " AND ug.fk_usergroup = ".$this->id;
+		}
+		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " AND u.entity IS NOT NULL";
 		} else {
 			$sql .= " AND u.entity IN (0,".$conf->entity.")";
 		}
-		if (!empty($excludefilter)) $sql .= ' AND ('.$excludefilter.')';
+		if (!empty($excludefilter)) {
+			$sql .= ' AND ('.$excludefilter.')';
+		}
 
 		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if (!array_key_exists($obj->rowid, $ret))
-				{
-					if ($mode != 1)
-					{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!array_key_exists($obj->rowid, $ret)) {
+					if ($mode != 1) {
 						$newuser = new User($this->db);
 						$newuser->fetch($obj->rowid);
 						$ret[$obj->rowid] = $newuser;
-					} else $ret[$obj->rowid] = $obj->rowid;
+					} else {
+						$ret[$obj->rowid] = $obj->rowid;
+					}
 				}
-				if ($mode != 1 && !empty($obj->usergroup_entity))
-				{
+				if ($mode != 1 && !empty($obj->usergroup_entity)) {
 					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
 				}
 			}
@@ -308,8 +309,7 @@ class UserGroup extends CommonObject
 
 		$this->db->begin();
 
-		if (!empty($rid))
-		{
+		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
 			// Si on a demande ajout d'un droit en particulier, on recupere
@@ -335,25 +335,27 @@ class UserGroup extends CommonObject
 			// Where pour la liste des droits a ajouter
 			$whereforadd = "id=".((int) $rid);
 			// Find also rights that are herited to add them too
-			if ($subperms)   $whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
-			elseif ($perms) $whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			if ($subperms) {
+				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
+			} elseif ($perms) {
+				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
+			}
 		} else {
 			// Where pour la liste des droits a ajouter
-			if (!empty($allmodule))
-			{
-				if ($allmodule == 'allmodules')
-				{
+			if (!empty($allmodule)) {
+				if ($allmodule == 'allmodules') {
 					$whereforadd = 'allmodules';
 				} else {
 					$whereforadd = "module='".$this->db->escape($allmodule)."'";
-					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+					if (!empty($allperms)) {
+						$whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
+					}
 				}
 			}
 		}
 
 		// Add permission of the list $whereforadd
-		if (!empty($whereforadd))
-		{
+		if (!empty($whereforadd)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
@@ -363,19 +365,21 @@ class UserGroup extends CommonObject
 			}
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid." AND entity = ".$entity;
-					if (!$this->db->query($sql)) $error++;
+					if (!$this->db->query($sql)) {
+						$error++;
+					}
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (entity, fk_usergroup, fk_id) VALUES (".$entity.", ".$this->id.", ".$nid.")";
-					if (!$this->db->query($sql)) $error++;
+					if (!$this->db->query($sql)) {
+						$error++;
+					}
 
 					$i++;
 				}
@@ -384,14 +388,15 @@ class UserGroup extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$langs->load("other");
 				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
@@ -426,8 +431,7 @@ class UserGroup extends CommonObject
 
 		$this->db->begin();
 
-		if (!empty($rid))
-		{
+		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
 			// Si on a demande supression d'un droit en particulier, on recupere
@@ -453,29 +457,32 @@ class UserGroup extends CommonObject
 			// Where pour la liste des droits a supprimer
 			$wherefordel = "id=".$this->db->escape($rid);
 			// Suppression des droits induits
-			if ($subperms == 'lire' || $subperms == 'read') $wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
-			if ($perms == 'lire' || $perms == 'read') $wherefordel .= " OR (module='".$this->db->escape($module)."')";
+			if ($subperms == 'lire' || $subperms == 'read') {
+				$wherefordel .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND subperms IS NOT NULL)";
+			}
+			if ($perms == 'lire' || $perms == 'read') {
+				$wherefordel .= " OR (module='".$this->db->escape($module)."')";
+			}
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
 			// Add permission of the list $wherefordel
-			if (!empty($allmodule))
-			{
-				if ($allmodule == 'allmodules')
-				{
+			if (!empty($allmodule)) {
+				if ($allmodule == 'allmodules') {
 					$wherefordel = 'allmodules';
 				} else {
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
-					if (!empty($allperms)) $wherefordel .= " AND perms='".$this->db->escape($allperms)."'";
+					if (!empty($allperms)) {
+						$wherefordel .= " AND perms='".$this->db->escape($allperms)."'";
+					}
 				}
 			}
 		}
 
 		// Suppression des droits de la liste wherefordel
-		if (!empty($wherefordel))
-		{
+		if (!empty($wherefordel)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
@@ -485,12 +492,10 @@ class UserGroup extends CommonObject
 			}
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$nid = 0;
 
 					$obj = $this->db->fetch_object($result);
@@ -501,7 +506,9 @@ class UserGroup extends CommonObject
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
 					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
 					$sql .= " AND entity = ".$entity;
-					if (!$this->db->query($sql)) $error++;
+					if (!$this->db->query($sql)) {
+						$error++;
+					}
 
 					$i++;
 				}
@@ -510,14 +517,15 @@ class UserGroup extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$langs->load("other");
 				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
@@ -542,14 +550,12 @@ class UserGroup extends CommonObject
 	{
 		global $conf;
 
-		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
-		{
+		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 			// Rights for this module are already loaded, so we leave
 			return;
 		}
 
-		if (!empty($this->all_permissions_are_loaded))
-		{
+		if (!empty($this->all_permissions_are_loaded)) {
 			// We already loaded all rights for this group, so we leave
 			return;
 		}
@@ -564,16 +570,16 @@ class UserGroup extends CommonObject
 		$sql .= " AND u.entity = ".$conf->entity;
 		$sql .= " AND u.fk_usergroup = ".$this->id;
 		$sql .= " AND r.perms IS NOT NULL";
-		if ($moduletag) $sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
+		if ($moduletag) {
+			$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
+		}
 
 		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
@@ -581,17 +587,25 @@ class UserGroup extends CommonObject
 					$perms = $obj->perms;
 					$subperms = $obj->subperms;
 
-					if ($perms)
-					{
-						if (!isset($this->rights)) $this->rights = new stdClass(); // For avoid error
-						if (!isset($this->rights->$module) || !is_object($this->rights->$module)) $this->rights->$module = new stdClass();
-						if ($subperms)
-						{
-							if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
-							if (empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
+					if ($perms) {
+						if (!isset($this->rights)) {
+							$this->rights = new stdClass(); // For avoid error
+						}
+						if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
+							$this->rights->$module = new stdClass();
+						}
+						if ($subperms) {
+							if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+								$this->rights->$module->$perms = new stdClass();
+							}
+							if (empty($this->rights->$module->$perms->$subperms)) {
+								$this->nb_rights++;
+							}
 							$this->rights->$module->$perms->$subperms = 1;
 						} else {
-							if (empty($this->rights->$module->$perms)) $this->nb_rights++;
+							if (empty($this->rights->$module->$perms)) {
+								$this->nb_rights++;
+							}
 							$this->rights->$module->$perms = 1;
 						}
 					}
@@ -602,8 +616,7 @@ class UserGroup extends CommonObject
 			$this->db->free($resql);
 		}
 
-		if ($moduletag == '')
-		{
+		if ($moduletag == '') {
 			// Si module etait non defini, alors on a tout charge, on peut donc considerer
 			// que les droits sont en cache (car tous charges) pour cet instance de group
 			$this->all_permissions_are_loaded = 1;
@@ -641,7 +654,9 @@ class UserGroup extends CommonObject
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}
 
-		if (!isset($this->entity)) $this->entity = $conf->entity; // If not defined, we use default value
+		if (!isset($this->entity)) {
+			$this->entity = $conf->entity; // If not defined, we use default value
+		}
 
 		return $this->createCommon($user, $notrigger);
 	}
@@ -708,7 +723,9 @@ class UserGroup extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) {
+			$withpicto = 0;
+		}
 
 		$result = ''; $label = '';
 
@@ -720,19 +737,20 @@ class UserGroup extends CommonObject
 
 		$url = DOL_URL_ROOT.'/user/group/card.php?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = "";
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$langs->load("users");
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
@@ -753,16 +771,23 @@ class UserGroup extends CommonObject
 		$linkend = '</a>';
 
 		$result = $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->name;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->name;
+		}
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -783,9 +808,15 @@ class UserGroup extends CommonObject
 		// phpcs:enable
 		global $conf;
 		$dn = '';
-		if ($mode == 0) $dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
-		if ($mode == 1) $dn = $conf->global->LDAP_GROUP_DN;
-		if ($mode == 2) $dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
+		if ($mode == 0) {
+			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
+		}
+		if ($mode == 1) {
+			$dn = $conf->global->LDAP_GROUP_DN;
+		}
+		if ($mode == 2) {
+			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
+		}
 		return $dn;
 	}
 
@@ -808,14 +839,16 @@ class UserGroup extends CommonObject
 		$info["objectclass"] = explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
-		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
+			$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+		}
 		//if ($this->name && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
-		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS))
-		{
+		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
+			$info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
+		}
+		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)) {
 			$valueofldapfield = array();
-			foreach ($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
-			{
+			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$muser = new User($this->db);
 				$muser->fetch($val->id);
 				$info2 = $muser->_load_ldap_info();
@@ -875,10 +908,8 @@ class UserGroup extends CommonObject
 		$langs->load("user");
 
 		// Positionne le modele sur le nom du modele a utiliser
-		if (!dol_strlen($modele))
-		{
-			if (!empty($conf->global->USERGROUP_ADDON_PDF))
-			{
+		if (!dol_strlen($modele)) {
+			if (!empty($conf->global->USERGROUP_ADDON_PDF)) {
 				$modele = $conf->global->USERGROUP_ADDON_PDF;
 			} else {
 				$modele = 'grass';
