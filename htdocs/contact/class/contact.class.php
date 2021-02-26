@@ -1737,7 +1737,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople=".$this->id." AND entity IN (".getEntity("societe_contact").")";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople=".((int) $this->id)." AND entity IN (".getEntity("societe_contact").")";
 
 		$result = $this->db->query($sql);
 		if (!$result) {
