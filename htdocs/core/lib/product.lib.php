@@ -38,7 +38,9 @@ function product_prepare_head($object)
 	$langs->load("products");
 
 	$label = $langs->trans('Product');
-	if ($object->isService()) $label = $langs->trans('Service');
+	if ($object->isService()) {
+		$label = $langs->trans('Service');
+	}
 
 	$h = 0;
 	$head = array();
@@ -48,20 +50,17 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($object->status))
-	{
+	if (!empty($object->status)) {
 		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SellingPrices");
 		$head[$h][2] = 'price';
 		$h++;
 	}
 
-	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
-	{
+	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
 		|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
-		)
-		{
+		) {
 			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
 			$head[$h][2] = 'suppliers';
@@ -70,8 +69,7 @@ function product_prepare_head($object)
 	}
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS))
-	{
+	if (!empty($conf->global->MAIN_MULTILANGS)) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
@@ -79,13 +77,14 @@ function product_prepare_head($object)
 	}
 
 	// Sub products
-	if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
-	{
+	if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/card.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
 		$nbFatherAndChild = $object->hasFatherOrChild();
-		if ($nbFatherAndChild > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
+		if ($nbFatherAndChild > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
+		}
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
@@ -97,22 +96,21 @@ function product_prepare_head($object)
 
 		$prodcomb = new ProductCombination($db);
 
-		if ($prodcomb->fetchByFkProductChild($object->id) <= 0)
-		{
+		if ($prodcomb->fetchByFkProductChild($object->id) <= 0) {
 			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
 			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
-			if ($nbVariant > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
+			if ($nbVariant > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
+			}
 		}
 
 		$h++;
 	}
 
-	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES)))    // If physical product we can stock (or service with option)
-	{
-		if (!empty($conf->stock->enabled) && $user->rights->stock->lire)
-		{
+	if ($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {    // If physical product we can stock (or service with option)
+		if (!empty($conf->stock->enabled) && $user->rights->stock->lire) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
 			$head[$h][2] = 'stock';
@@ -121,17 +119,14 @@ function product_prepare_head($object)
 	}
 
 	// Tab to link resources
-	if (!empty($conf->resource->enabled))
-	{
-		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS))
-		{
+	if (!empty($conf->resource->enabled)) {
+		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS)) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
 		}
-		if ($object->isService() && !empty($conf->global->RESOURCE_ON_SERVICES))
-		{
+		if ($object->isService() && !empty($conf->global->RESOURCE_ON_SERVICES)) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
@@ -156,14 +151,19 @@ function product_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'product');
 
 	// Notes
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -171,18 +171,28 @@ function product_prepare_head($object)
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-	if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) {
+		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	}
+	if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) {
+		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-		if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
-		if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+		if (!empty($conf->product->enabled) && ($object->type == Product::TYPE_PRODUCT)) {
+			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+		}
+		if (!empty($conf->service->enabled) && ($object->type == Product::TYPE_SERVICE)) {
+			$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+		}
 		$nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	}
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -191,8 +201,7 @@ function product_prepare_head($object)
 	// Log
 	$head[$h][0] = DOL_URL_ROOT.'/product/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-	{
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -231,7 +240,9 @@ function productlot_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -245,11 +256,11 @@ function productlot_prepare_head($object)
 
 	// Log
 	/*
-    $head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;
-    */
+	$head[$h][0] = DOL_URL_ROOT.'/product/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+	*/
 
 	return $head;
 }
@@ -273,8 +284,7 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL))
-	{
+	if (!empty($conf->global->PRODUIT_MULTIPRICES) && !empty($conf->global->PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL)) {
 		$head[$h] = array(
 			0 => DOL_URL_ROOT."/product/admin/price_rules.php",
 			1 => $langs->trans('MultipriceRules'),
@@ -358,11 +368,12 @@ function show_stats_for_company($product, $socid)
 	print '</tr>';
 
 	// Customer proposals
-	if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
-	{
+	if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 		$nblines++;
 		$ret = $product->load_stats_propale($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="propal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("Proposals").'</a>';
@@ -376,11 +387,12 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier proposals
-	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
-	{
+	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
 		$nblines++;
 		$ret = $product->load_stats_proposal_supplier($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("propal");
 		print '<tr><td>';
 		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal').' '.$langs->trans("SupplierProposals").'</a>';
@@ -394,11 +406,12 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer orders
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
-	{
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("CustomersOrders").'</a>';
@@ -412,11 +425,12 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
-	{
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
 		$nblines++;
 		$ret = $product->load_stats_commande_fournisseur($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("orders");
 		print '<tr><td>';
 		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order').' '.$langs->trans("SuppliersOrders").'</a>';
@@ -430,11 +444,12 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Customer invoices
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
-	{
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		$nblines++;
 		$ret = $product->load_stats_facture($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("CustomersInvoices").'</a>';
@@ -448,11 +463,12 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier invoices
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
-	{
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
 		$nblines++;
 		$ret = $product->load_stats_facture_fournisseur($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("bills");
 		print '<tr><td>';
 		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice').' '.$langs->trans("SuppliersInvoices").'</a>';
@@ -467,11 +483,12 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// Contracts
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
-	{
+	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 		$nblines++;
 		$ret = $product->load_stats_contrat($socid);
-		if ($ret < 0) dol_print_error($db);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
 		$langs->load("contracts");
 		print '<tr><td>';
 		print '<a href="contrat.php?id='.$product->id.'">'.img_object('', 'contract').' '.$langs->trans("Contracts").'</a>';
@@ -486,8 +503,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// BOM
-	if (!empty($conf->bom->enabled) && $user->rights->bom->read)
-	{
+	if (!empty($conf->bom->enabled) && $user->rights->bom->read) {
 		$nblines++;
 		$ret = $product->load_stats_bom($socid);
 		if ($ret < 0) {
@@ -510,8 +526,7 @@ function show_stats_for_company($product, $socid)
 	}
 
 	// MO
-	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
-	{
+	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read) {
 		$nblines++;
 		$ret = $product->load_stats_mo($socid);
 		if ($ret < 0) {
@@ -579,19 +594,16 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 		$outputlangs = $langs;
 	}
 
-	if (empty($measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label]))
-	{
+	if (empty($measuring_unit_cache[$unit.'_'.$measuring_style.'_'.$scale.'_'.$use_short_label])) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
 
-		if ($measuring_style == '' && $scale == '')
-		{
+		if ($measuring_style == '' && $scale == '') {
 			$arrayforfilter = array(
 				't.rowid' => $unit,
 				't.active' => 1
 			);
-		} elseif ($scale !== '')
-		{
+		} elseif ($scale !== '') {
 			$arrayforfilter = array(
 				't.scale' => $scale,
 				't.unit_type' => $measuring_style,
@@ -610,8 +622,11 @@ function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_sho
 			return -1;
 		} else {
 			if (is_array($measuringUnits->records) && count($measuringUnits->records) > 0) {
-				if ($use_short_label) $labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
-				else $labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+				if ($use_short_label) {
+					$labeltoreturn = $measuringUnits->records[key($measuringUnits->records)]->short_label;
+				} else {
+					$labeltoreturn = $outputlangs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+				}
 			} else {
 				$labeltoreturn = '';
 			}

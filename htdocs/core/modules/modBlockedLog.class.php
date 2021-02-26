@@ -80,14 +80,14 @@ class modBlockedLog extends DolibarrModules
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
 		/*if (! empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
-        {
-            $tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
-            $this->automatic_activation = array();
-            foreach($tmp as $key)
-            {
-                $this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
-            }
-        }*/
+		{
+			$tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+			$this->automatic_activation = array();
+			foreach($tmp as $key)
+			{
+				$this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
+			}
+		}*/
 		//var_dump($this->automatic_activation);
 
 		$this->always_enabled = (!empty($conf->blockedlog->enabled)
@@ -181,8 +181,7 @@ class modBlockedLog extends DolibarrModules
 
 		$b = new BlockedLog($this->db);
 		$result = $b->setObjectData($object, 'MODULE_SET', 0);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->erros;
 			return 0;
@@ -225,15 +224,13 @@ class modBlockedLog extends DolibarrModules
 
 		$b = new BlockedLog($this->db);
 		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->erros;
 			return 0;
 		}
 
-		if ($b->alreadyUsed(1))
-		{
+		if ($b->alreadyUsed(1)) {
 			$res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
 		} else {
 			$res = $b->create($user);

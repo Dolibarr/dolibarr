@@ -35,7 +35,9 @@
 function expedition_prepare_head(Expedition $object)
 {
 	global $langs, $conf, $user;
-	if (!empty($conf->expedition->enabled)) $langs->load("sendings");
+	if (!empty($conf->expedition->enabled)) {
+		$langs->load("sendings");
+	}
 	$langs->load("orders");
 
 	$h = 0;
@@ -51,8 +53,7 @@ function expedition_prepare_head(Expedition $object)
 	$hselected = $h;
 	$h++;
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$h++;
@@ -84,8 +85,7 @@ function expedition_admin_prepare_head()
 	$h++;
 
 
-	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 		$head[$h][1] = $langs->trans("Shipment");
 		$head[$h][2] = 'shipment';
@@ -93,40 +93,35 @@ function expedition_admin_prepare_head()
 	}
 
 
-	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/expedition_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$head[$h][2] = 'attributes_shipment';
 		$h++;
 	}
 
-	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/expeditiondet_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$head[$h][2] = 'attributeslines_shipment';
 		$h++;
 	}
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/delivery.php";
 		$head[$h][1] = $langs->trans("Receivings");
 		$head[$h][2] = 'receivings';
 		$h++;
 	}
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/delivery_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFields");
 		$head[$h][2] = 'attributes_receivings';
 		$h++;
 	}
 
-	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY))
-	{
+	if (!empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/deliverydet_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
 		$head[$h][2] = 'attributeslines_receivings';

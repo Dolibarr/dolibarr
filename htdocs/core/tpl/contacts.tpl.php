@@ -24,8 +24,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -73,8 +72,7 @@ $userstatic = new User($db);
 
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
 <?php
-if ($permission)
-{
+if ($permission) {
 	print '<div class="underbanner clearboth"></div>'."\n";
 
 	print '<div class="div-table-responsive-no-min">'."\n";
@@ -91,15 +89,16 @@ if ($permission)
 
 	<?php
 
-	if (empty($hideaddcontactforuser))
-	{
+	if (empty($hideaddcontactforuser)) {
 		?>
 	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="internal" />
-	    <?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
+		<?php if ($withproject) {
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		} ?>
 
 		<div class="tagtd"><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></div>
 		<!--  <div class="nowrap tagtd"><?php echo img_object('', 'user').' '.$langs->trans("Users"); ?></div> -->
@@ -107,14 +106,16 @@ if ($permission)
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject = $object;
-		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
+		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+			$tmpobject = $objectsrc;
+		}
 		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal');
 		?></div>
 		<div class="tagtd">&nbsp;</div>
 		<div class="tagtd center"><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></div>
 	</form>
 
-	    <?php
+		<?php
 	}
 
 	if (empty($hideaddcontactforthirdparty)) {
@@ -125,14 +126,15 @@ if ($permission)
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
 		<input type="hidden" name="source" value="external" />
-	    <?php if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">'; ?>
+		<?php if ($withproject) {
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		} ?>
 
 		<div class="tagtd nowrap maxwidthonsmartphone noborderbottom">
 			<?php $selectedCompany = isset($_GET["newcompany"]) ? $_GET["newcompany"] : $object->socid; ?>
 			<?php
 			// add company icon before select list
-			if ($selectedCompany)
-			{
+			if ($selectedCompany) {
 				echo img_object('', 'company', 'class="hideonsmartphone"');
 			}
 			?>
@@ -145,8 +147,7 @@ if ($permission)
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';
-			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer)
-			{
+			if (!empty($object->socid) && $object->socid > 1 && $user->rights->societe->creer) {
 				$newcardbutton .= '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$selectedCompany.'&action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'" title="'.$langs->trans('NewContact').'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
 			print $newcardbutton;
@@ -155,17 +156,21 @@ if ($permission)
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
 			$tmpobject = $object;
-			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) $tmpobject = $objectsrc;
+			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+				$tmpobject = $objectsrc;
+			}
 			$formcompany->selectTypeContact($tmpobject, $preselectedtypeofcontact, 'typecontact', 'external', 'position', 0, 'minwidth100imp');
 			?>
 		</div>
 		<div class="tagtd noborderbottom">&nbsp;</div>
 		<div class="tagtd center noborderbottom">
-			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) echo ' disabled'; ?>>
+			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (!$nbofcontacts) {
+				echo ' disabled';
+																				 } ?>>
 		</div>
 	</form>
 
-        <?php
+		<?php
 	}
 
 	print "</div>";
@@ -179,17 +184,14 @@ if ($permission)
 
 // TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
 $list = array();
-foreach (array('internal', 'external') as $source)
-{
-	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc))
-	{
+foreach (array('internal', 'external') as $source) {
+	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
 		$contactlist = $objectsrc->liste_contact(-1, $source);
 	} else {
 		$contactlist = $object->liste_contact(-1, $source);
 	}
 
-	foreach ($contactlist as $contact)
-	{
+	foreach ($contactlist as $contact) {
 		$entry = new stdClass();
 		$entry->id   = $contact['rowid'];
 		$entry->type = $contact['libelle'];
@@ -200,15 +202,13 @@ foreach (array('internal', 'external') as $source)
 		$entry->contact_name = "";
 		$entry->status = "";
 
-		if ($contact['source'] == 'internal')
-		{
+		if ($contact['source'] == 'internal') {
 			$entry->nature = $langs->trans("User");
 		} elseif ($contact['source'] == 'external') {
 			$entry->nature = $langs->trans("ThirdPartyContact");
 		}
 
-		if ($contact['socid'] > 0)
-		{
+		if ($contact['socid'] > 0) {
 			$companystatic->fetch($contact['socid']);
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
@@ -217,8 +217,7 @@ foreach (array('internal', 'external') as $source)
 			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
 		}
 
-		if ($contact['source'] == 'internal')
-		{
+		if ($contact['source'] == 'internal') {
 			$userstatic->fetch($contact['id']);
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
@@ -228,8 +227,7 @@ foreach (array('internal', 'external') as $source)
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
 		}
 
-		if ($contact['source'] == 'internal')
-		{
+		if ($contact['source'] == 'internal') {
 			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
 		} elseif ($contact['source'] == 'external') {
 			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
@@ -243,8 +241,12 @@ foreach (array('internal', 'external') as $source)
 $sortfield = GETPOST("sortfield", "aZ09comma");
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 
-if (!$sortfield) $sortfield = "nature";
-if (!$sortorder) $sortorder = "asc";
+if (!$sortfield) {
+	$sortfield = "nature";
+}
+if (!$sortorder) {
+	$sortorder = "asc";
+}
 
 // Re-sort list
 $list = dol_sort_array($list, $sortfield, $sortorder, 1, 0, 1);
@@ -286,8 +288,7 @@ print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
-foreach ($list as $entry)
-{
+foreach ($list as $entry) {
 	print '<tr class="oddeven">';
 
 	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
@@ -296,8 +297,7 @@ foreach ($list as $entry)
 	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
 	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
 
-	if ($permission)
-	{
+	if ($permission) {
 		$href = $_SERVER["PHP_SELF"];
 		$href .= '?id='.$object->id;
 		$href .= '&action=deletecontact&token='.newToken();

@@ -101,44 +101,44 @@ class modWorkflow extends DolibarrModules
 		$r = 0;
 
 		/*
-        $r++;
-        $this->rights[$r][0] = 6001; // id de la permission
-        $this->rights[$r][1] = "Lire les workflow"; // libelle de la permission
-        $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-        $this->rights[$r][4] = 'read';
-        */
+		$r++;
+		$this->rights[$r][0] = 6001; // id de la permission
+		$this->rights[$r][1] = "Lire les workflow"; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'read';
+		*/
 
 		// Main menu entries
 		$this->menus = array(); // List of menus to add
 		$r = 0;
 		/*
-        $this->menu[$r]=array('fk_menu'=>0,
-                                'type'=>'top',
-                                'titre'=>'Workflow',
-                                'mainmenu'=>'workflow',
-                                'url'=>'/workflow/index.php',
-                                'langs'=>'@workflow',
-                                'position'=>100,
-                                'perms'=>'$user->rights->workflow->read',
-                                'enabled'=>'$conf->workflow->enabled',
-                                'target'=>'',
-                                'user'=>0);
-        $r++;
+		$this->menu[$r]=array('fk_menu'=>0,
+								'type'=>'top',
+								'titre'=>'Workflow',
+								'mainmenu'=>'workflow',
+								'url'=>'/workflow/index.php',
+								'langs'=>'@workflow',
+								'position'=>100,
+								'perms'=>'$user->rights->workflow->read',
+								'enabled'=>'$conf->workflow->enabled',
+								'target'=>'',
+								'user'=>0);
+		$r++;
 
-        $this->menu[$r]=array(  'fk_menu'=>'r=0',
-                                'type'=>'left',
-                                'titre'=>'Workflow',
-                                'mainmenu'=>'workflow',
-                                'url'=>'/workflow/index.php',
-                                'langs'=>'@workflow',
-                                'position'=>101,
-                                'enabled'=>1,
-                                'perms'=>'$user->rights->workflow->read',
-                                'target'=>'',
-                                'user'=>0);
-        $r++;
-        */
+		$this->menu[$r]=array(  'fk_menu'=>'r=0',
+								'type'=>'left',
+								'titre'=>'Workflow',
+								'mainmenu'=>'workflow',
+								'url'=>'/workflow/index.php',
+								'langs'=>'@workflow',
+								'position'=>101,
+								'enabled'=>1,
+								'perms'=>'$user->rights->workflow->read',
+								'target'=>'',
+								'user'=>0);
+		$r++;
+		*/
 	}
 
 

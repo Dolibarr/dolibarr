@@ -78,15 +78,13 @@ function FindBadUtf8($string)
  */
 function ConvertToXmlAttribute($value)
 {
-	if (defined('PHP_OS'))
-	{
+	if (defined('PHP_OS')) {
 		$os = PHP_OS;
 	} else {
 		$os = php_uname();
 	}
 
-	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value))
-	{
+	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value)) {
 		return (utf8_encode(htmlspecialchars($value)));
 	} else {
 		return (htmlspecialchars($value));
@@ -102,13 +100,11 @@ function ConvertToXmlAttribute($value)
  */
 function IsHtmlExtension($ext, $formExtensions)
 {
-	if (!$formExtensions || !is_array($formExtensions))
-	{
+	if (!$formExtensions || !is_array($formExtensions)) {
 		return false;
 	}
 	$lcaseHtmlExtensions = array();
-	foreach ($formExtensions as $key => $val)
-	{
+	foreach ($formExtensions as $key => $val) {
 		$lcaseHtmlExtensions[$key] = strtolower($val);
 	}
 	return in_array($ext, $lcaseHtmlExtensions);
@@ -127,8 +123,7 @@ function DetectHtml($filePath)
 	$fp = @fopen($filePath, 'rb');
 
 	//open_basedir restriction, see #1906
-	if ($fp === false || !flock($fp, LOCK_SH))
-	{
+	if ($fp === false || !flock($fp, LOCK_SH)) {
 		return -1;
 	}
 
@@ -138,45 +133,38 @@ function DetectHtml($filePath)
 
 	$chunk = strtolower($chunk);
 
-	if (!$chunk)
-	{
+	if (!$chunk) {
 		return false;
 	}
 
 	$chunk = trim($chunk);
 
-	if (preg_match("/<!DOCTYPE\W*X?HTML/sim", $chunk))
-	{
+	if (preg_match("/<!DOCTYPE\W*X?HTML/sim", $chunk)) {
 		return true;
 	}
 
 	$tags = array('<body', '<head', '<html', '<img', '<pre', '<script', '<table', '<title');
 
-	foreach ($tags as $tag)
-	{
-		if (false !== strpos($chunk, $tag))
-		{
+	foreach ($tags as $tag) {
+		if (false !== strpos($chunk, $tag)) {
 			return true;
 		}
 	}
 
 	//type = javascript
-	if (preg_match('!type\s*=\s*[\'"]?\s*(?:\w*/)?(?:ecma|java)!sim', $chunk))
-	{
+	if (preg_match('!type\s*=\s*[\'"]?\s*(?:\w*/)?(?:ecma|java)!sim', $chunk)) {
 		return true;
 	}
 
 	//href = javascript
 	//src = javascript
 	//data = javascript
-	if (preg_match('!(?:href|src|data)\s*=\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk))
-	{
+	if (preg_match('!(?:href|src|data)\s*=\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk)) {
 		return true;
 	}
 
 	//url(javascript
-	if (preg_match('!url\s*\(\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk))
-	{
+	if (preg_match('!url\s*\(\s*[\'"]?\s*(?:ecma|java)script:!sim', $chunk)) {
 		return true;
 	}
 
