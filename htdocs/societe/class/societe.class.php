@@ -1601,7 +1601,8 @@ class Societe extends CommonObject
 		$sql .= ', fj.libelle as forme_juridique';
 		$sql .= ', e.libelle as effectif';
 		$sql .= ', c.code as country_code, c.label as country';
-		$sql .= ', d.code_departement as state_code, d.nom as state, r.code_region as region_code';
+		$sql .= ', d.code_departement as state_code, d.nom as state';
+		$sql .= ', r.rowid as region_id, r.code_region as region_code';
 		$sql .= ', st.libelle as stcomm, st.picto as stcomm_picto';
 		$sql .= ', te.code as typent_code';
 		$sql .= ', i.libelle as label_incoterms';
@@ -1690,6 +1691,7 @@ class Societe extends CommonObject
 
 				$this->state_id     = $obj->state_id;
 				$this->state_code   = $obj->state_code;
+				$this->region_id    = $obj->region_id;
 				$this->region_code   = $obj->region_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
