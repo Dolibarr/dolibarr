@@ -352,7 +352,7 @@ foreach ($search as $key => $val)
 		if (count($newarrayofstatus)) $sql .= natural_search($key, join(',', $newarrayofstatus), 2);
 		continue;
 	}
-	if ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key = 'fk_project')
+	if ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project')
 	{
 		if ($search[$key] > 0) $sql .= natural_search($key, $search[$key], 2);
 		continue;
