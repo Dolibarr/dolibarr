@@ -397,7 +397,7 @@ if (empty($action))
 	print '<a name="builddoc"></a>'; // ancre
 
 	// Documents
-	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').dol_sanitizeFileName($object->ref);
+	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch');
 	$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 	$genallowed = $usercanread;
 	$delallowed = $usercancreate;

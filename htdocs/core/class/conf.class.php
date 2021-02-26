@@ -437,8 +437,8 @@ class Conf
 		$this->service->dir_temp				= $rootfortemp."/produit/temp";
 
 		// Module productbatch
-		$this->productbatch->multidir_output = array($this->entity => $rootfordata."/produitlot");
-		$this->productbatch->multidir_temp = array($this->entity => $rootfortemp."/produitlot/temp");
+		$this->productbatch->multidir_output = array($this->entity => $rootfordata."/productlot");
+		$this->productbatch->multidir_temp = array($this->entity => $rootfortemp."/productlot/temp");
 
 		// Module contrat
 		$this->contrat->multidir_output = array($this->entity => $rootfordata."/contract");
