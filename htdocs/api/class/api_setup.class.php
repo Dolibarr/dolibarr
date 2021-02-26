@@ -310,7 +310,7 @@ class Setup extends DolibarrApi
 	 * Get state by ID.
 	 *
 	 * @param int       $id        ID of state
-	 * @return array 			   Array of cleaned object properties
+	 * @return array    		   Array of cleaned object properties
 	 *
 	 * @url     GET dictionary/states/{id}
 	 *
