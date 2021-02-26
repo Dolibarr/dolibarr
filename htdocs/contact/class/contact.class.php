@@ -1708,7 +1708,6 @@ class Contact extends CommonObject
 					$sql .= $valRoles." , ";
 					$sql .= $this->id;
 					$sql .= ")";
-					dol_syslog(__METHOD__, LOG_DEBUG);
 
 					$result = $this->db->query($sql);
 					if (!$result)
