@@ -2464,7 +2464,7 @@ class Product extends CommonObject
 		$this->stats_bom['qty_toconsume'] = 0;
 
 		$sql = "SELECT COUNT(DISTINCT b.rowid) as nb_toproduce,";
-		$sql .= " b.qty as qty_toproduce";
+		$sql .= " SUM(b.qty) as qty_toproduce";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
 		$sql .= " WHERE ";

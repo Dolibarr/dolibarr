@@ -37,8 +37,7 @@ $amounts = array();
 
 // Security check
 $socid = 0;
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
@@ -47,12 +46,10 @@ if ($user->socid > 0)
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes'))
-{
+if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
-	if ($_POST["cancel"])
-	{
+	if ($_POST["cancel"]) {
 		$loc = DOL_URL_ROOT.'/compta/tva/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
@@ -60,92 +57,79 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
 
-	if (!(GETPOST("paiementtype", 'int') > 0))
-	{
+	if (!(GETPOST("paiementtype", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
-        $action = 'create';
+		$action = 'create';
 	}
-	if ($datepaye == '')
-	{
+	if ($datepaye == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
-        $action = 'create';
+		$action = 'create';
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0))
-    {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
-        $error++;
-        $action = 'create';
-    }
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
+		$error++;
+		$action = 'create';
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$paymentid = 0;
 
 		// Read possible payments
-		foreach ($_POST as $key => $value)
-		{
-			if (substr($key, 0, 7) == 'amount_')
-			{
+		foreach ($_POST as $key => $value) {
+			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
 				$amounts[$other_chid] = price2num(GETPOST($key));
 			}
 		}
 
-        if (count($amounts) <= 0)
-        {
-            $error++;
-            setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-            $action = 'create';
-        }
+		if (count($amounts) <= 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
+			$action = 'create';
+		}
 
-        if (!$error)
-        {
-    		$db->begin();
+		if (!$error) {
+			$db->begin();
 
-    		// Create a line of payments
-    		$paiement = new PaymentVAT($db);
-    		$paiement->chid         = $chid;
-    		$paiement->datepaye     = $datepaye;
-    		$paiement->amounts      = $amounts; // Tableau de montant
-    		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
-    		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$paiement->note         = (string) GETPOST("note", 'restricthtml');
-    		$paiement->note_private = (string) GETPOST("note", 'restricthtml');
+			// Create a line of payments
+			$paiement = new PaymentVAT($db);
+			$paiement->chid         = $chid;
+			$paiement->datepaye     = $datepaye;
+			$paiement->amounts      = $amounts; // Tableau de montant
+			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
+			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+			$paiement->note         = (string) GETPOST("note", 'restricthtml');
+			$paiement->note_private = (string) GETPOST("note", 'restricthtml');
 
-    		if (!$error) {
-    		    $paymentid = $paiement->create($user, (GETPOST('closepaidvat') == 'on' ? 1 : 0));
-                if ($paymentid < 0)
-                {
-                	$error++;
-                	setEventMessages($paiement->error, null, 'errors');
-                	$action = 'create';
-                }
-    		}
+			if (!$error) {
+				$paymentid = $paiement->create($user, (GETPOST('closepaidvat') == 'on' ? 1 : 0));
+				if ($paymentid < 0) {
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
 
-            if (!$error)
-            {
-                $result = $paiement->addPaymentToBank($user, 'payment_vat', '(VATPayment)', GETPOST('accountid', 'int'), '', '');
-                if (!($result > 0))
-                {
-                	$error++;
-                	setEventMessages($paiement->error, null, 'errors');
-                	$action = 'create';
-                }
-            }
+			if (!$error) {
+				$result = $paiement->addPaymentToBank($user, 'payment_vat', '(VATPayment)', GETPOST('accountid', 'int'), '', '');
+				if (!($result > 0)) {
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
 
-    	    if (!$error)
-            {
-                $db->commit();
-                $loc = DOL_URL_ROOT.'/compta/tva/card.php?id='.$chid;
-                header('Location: '.$loc);
-                exit;
-            }
-            else {
-                $db->rollback();
-            }
-        }
+			if (!$error) {
+				$db->commit();
+				$loc = DOL_URL_ROOT.'/compta/tva/card.php?id='.$chid;
+				header('Location: '.$loc);
+				exit;
+			} else {
+				$db->rollback();
+			}
+		}
 	}
 }
 
@@ -160,16 +144,14 @@ $form = new Form($db);
 
 
 // Formulaire de creation d'un paiement de charge
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$tva = new Tva($db);
 	$tva->fetch($chid);
 	$tva->accountid = $tva->fk_account ? $tva->fk_account : $tva->accountid;
 	$tva->paiementtype = $tva->type_payment;
 
 	$total = $tva->amount;
-	if (!empty($conf->use_javascript_ajax))
-	{
+	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript" language="javascript">';
 
 		//Add js for AutoFill
@@ -249,7 +231,7 @@ if ($action == 'create')
 	print dol_get_fiche_end();
 
 	/*
- 	 * Autres charges impayees
+	  * Autres charges impayees
 	 */
 	$num = 1;
 	$i = 0;
@@ -267,17 +249,14 @@ if ($action == 'create')
 	$total = 0;
 	$totalrecu = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $tva;
 
 		print '<tr class="oddeven">';
 
-		if ($objp->datev > 0)
-		{
+		if ($objp->datev > 0) {
 			print '<td class="left">'.dol_print_date($objp->datev, 'day').'</td>'."\n";
-		}
-		else {
+		} else {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
@@ -289,8 +268,7 @@ if ($action == 'create')
 
 		print '<td class="center">';
 
-		if ($sumpaid <> $objp->amount)
-		{
+		if ($sumpaid <> $objp->amount) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
 			/* Disabled, we autofil the amount with remain to pay by default
@@ -300,8 +278,7 @@ if ($action == 'create')
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 			print '<input type="text" class="right width100" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
-		}
-		else {
+		} else {
 			print '-';
 		}
 		print "</td>";

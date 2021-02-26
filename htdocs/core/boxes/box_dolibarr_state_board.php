@@ -249,7 +249,9 @@ class box_dolibarr_state_board extends ModeleBoxes
 					$class = $classes[$val];
 					// Search in cache if load_state_board is already realized
 					$classkeyforcache = $class;
-					if ($classkeyforcache == 'ProductService') $classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
+					if ($classkeyforcache == 'ProductService') {
+						$classkeyforcache = 'Product'; // ProductService use same load_state_board than Product
+					}
 
 					if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache])) {
 						include_once $includes[$val]; // Loading a class cost around 1Mb

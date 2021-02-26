@@ -252,7 +252,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Update emailing record
 	 *
-	 *  @param	User	$user 		Object of user making change
+	 *  @param  User	$user 		Object of user making change
 	 *  @return int				    < 0 if KO, > 0 if OK
 	 */
 	public function update($user)

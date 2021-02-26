@@ -44,35 +44,29 @@ $keyforcontent = GETPOST('keyforcontent', 'aZ09');
  * View
  */
 
-if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL))
-{
+if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL)) {
 	llxHeader();
 	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
 	llxFooter();
 	exit;
 }
 
-if (!empty($keyforcontent))
-{
+if (!empty($keyforcontent)) {
 	llxHeader();
 
 	print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight'] - 90).'px">';
 
 	if (!preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent)
-		 && !preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
-	{
+		 && !preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent)) {
 		$langs->load("errors");
 		print $langs->trans("ErrorBadSyntaxForParamKeyForContent", 'EXTERNAL_SITE_CONTENT_', 'EXTERNAL_SITE_URL_');
-	} elseif (empty($conf->global->$keyforcontent))
-	{
+	} elseif (empty($conf->global->$keyforcontent)) {
 		$langs->load("errors");
 		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
 	} else {
-		if (preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent))
-		{
+		if (preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent)) {
 			print $conf->global->$keyforcontent;
-		} elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
-		{
+		} elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent)) {
 			/*print "
 			<html>
 			<head>
@@ -80,17 +74,17 @@ if (!empty($keyforcontent))
 			</head>
 
 			<frameset ".(empty($conf->global->MAIN_MENU_INVERT)?"rows":"cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
-			    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
+				<frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
 			  ";
 					print '<frame name="main" src="';
 					print $conf->global->$keyforcontent;
 					print '">';
 					print "
-			    <noframes>
-			    <body>
+				<noframes>
+				<body>
 
-			    </body>
-			    </noframes>
+				</body>
+				</noframes>
 			</frameset>
 
 			<noframes>
@@ -111,8 +105,7 @@ if (!empty($keyforcontent))
 	print '<div>';
 	llxFooter();
 } else {
-	if (preg_match('/^\//', $conf->global->EXTERNALSITE_URL) || preg_match('/^http/i', $conf->global->EXTERNALSITE_URL))
-	{
+	if (preg_match('/^\//', $conf->global->EXTERNALSITE_URL) || preg_match('/^http/i', $conf->global->EXTERNALSITE_URL)) {
 		print "
 	<html>
 	<head>
