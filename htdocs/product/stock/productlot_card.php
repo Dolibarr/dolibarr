@@ -352,7 +352,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_head($head, 'card', $langs->trans("Batch"), -1, $object->picto);
 
 	$formconfirm = '';
-	
+
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBatch'), $langs->trans('ConfirmDeleteBatch'), 'confirm_delete', '', 0, 1);
@@ -366,10 +366,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	} elseif ($reshook > 0) {
 		$formconfirm = $hookmanager->resPrint;
 	}
-	
+
 	// Print form confirm
 	print $formconfirm;
-	
+
 	// Object card
 	// ------------------------------------------------------------
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -378,7 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 	$morehtmlref = '';
-	
+
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch', $morehtmlref);
 
 	print '<div class="fichecenter">';
@@ -420,17 +420,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-	
+
 	print dol_get_fiche_end();
 
 	// Link to other lists
 	print '<a href="'.DOL_URL_ROOT.'/product/reassortlot.php?sref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowCurrentStockOfLot").'</a><br>';
 	print '<br>';
 	print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?search_product_ref='.urlencode($producttmp->ref).'&search_batch='.urlencode($object->batch).'">'.$langs->trans("ShowLogOfMovementIfLot").'</a><br>';
-	
+
 	print '<br>';
-	
-	
+
+
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="tabsAction">'."\n";
@@ -443,17 +443,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
-	
+
 			if ($user->rights->stock->supprimer)
 			{
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a></div>'."\n";
 			}
 			*/
 		}
-	
+
 		print '</div>'."\n";
 	}
-	
+
 }
 
 
@@ -467,12 +467,12 @@ if ($action != 'presend') {
 	print '<a name="builddoc"></a>'; // ancre
 
 	$includedocgeneration = 1;
-	
+
 	// Documents
 	if ($includedocgeneration) {
 		$objref = dol_sanitizeFileName($object->ref);
 		$relativepath = $objref.'/'.$objref.'.pdf';
-		$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').dol_sanitizeFileName($object->ref);
+		$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product_batch');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content
 		$delallowed = $usercancreate; // If you can create/edit, you can remove a file on card
@@ -480,12 +480,12 @@ if ($action != 'presend') {
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	
+
 	$MAXEVENT = 10;
-	
+
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, 'productlot', $socid, 1, '', $MAXEVENT);
+	$somethingshown = $formactions->showactions($object, 'productlot', 0, 1, '', $MAXEVENT);
 
 	print '</div></div></div>';
 }
