@@ -470,11 +470,12 @@ class ProductCombination
 	}
 
 	/**
-	 * Updates the weight of the child product. The price must be updated using Product::updatePrices
+	 * Updates the weight of the child product. The price must be updated using Product::updatePrices.
+	 * This method is called by the update() of a product.
 	 *
-	 * @param Product $parent Parent product
+	 * @param	Product $parent 	Parent product
 	 * @param	User	$user		Object user
-	 * @return int >0 OK <0 KO
+	 * @return 	int 				>0 if OK, <0 if KO
 	 */
 	public function updateProperties(Product $parent, User $user)
 	{
