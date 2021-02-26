@@ -1700,7 +1700,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid." AND fk_socpeople=".$this->id; ;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".((int) $this->socid)." AND fk_socpeople=".$this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1718,11 +1718,10 @@ class Contact extends CommonObject
 					$sql .= "fk_socpeople) ";
 					$sql .= " VALUES (".$conf->entity.",";
 					$sql .= "'".$this->db->idate(dol_now())."',";
-					$sql .= $this->socid.", ";
+					$sql .= ((int) $this->socid).", ";
 					$sql .= $valRoles." , ";
 					$sql .= $this->id;
 					$sql .= ")";
-					dol_syslog(__METHOD__, LOG_DEBUG);
 
 					$result = $this->db->query($sql);
 					if (!$result)
