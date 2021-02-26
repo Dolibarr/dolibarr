@@ -54,7 +54,7 @@ function project_prepare_head(Project $project)
 		$nbContacts = $dataretrieved;
 	} else {
 		$nbContacts = count($project->liste_contact(-1, 'internal')) + count($project->liste_contact(-1, 'external'));
-		dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		dol_setcache($cachekey, $nbContacts, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 	}
 	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
@@ -134,65 +134,66 @@ function project_prepare_head(Project $project)
 			$nbElements = $dataretrieved;
 		} else {
 			if (!empty($conf->propal->enabled)) {
-				$count += $project->getElementCount('propal', 'propal');
+				$nbElements += $project->getElementCount('propal', 'propal');
 			}
 			if (!empty($conf->commande->enabled)) {
-				$count += $project->getElementCount('order', 'commande');
+				$nbElements += $project->getElementCount('order', 'commande');
 			}
 			if (!empty($conf->facture->enabled)) {
-				$count += $project->getElementCount('invoice', 'facture');
+				$nbElements += $project->getElementCount('invoice', 'facture');
 			}
 			if (!empty($conf->facture->enabled)) {
-				$count += $project->getElementCount('invoice_predefined', 'facture_rec');
+				$nbElements += $project->getElementCount('invoice_predefined', 'facture_rec');
 			}
 			if (!empty($conf->supplier_proposal->enabled)) {
-				$count += $project->getElementCount('proposal_supplier', 'supplier_proposal');
+				$nbElements += $project->getElementCount('proposal_supplier', 'supplier_proposal');
 			}
 			if (!empty($conf->supplier_order->enabled)) {
-				$count += $project->getElementCount('order_supplier', 'commande_fournisseur');
+				$nbElements += $project->getElementCount('order_supplier', 'commande_fournisseur');
 			}
 			if (!empty($conf->supplier_invoice->enabled)) {
-				$count += $project->getElementCount('invoice_supplier', 'facture_fourn');
+				$nbElements += $project->getElementCount('invoice_supplier', 'facture_fourn');
 			}
 			if (!empty($conf->contrat->enabled)) {
-				$count += $project->getElementCount('contract', 'contrat');
+				$nbElements += $project->getElementCount('contract', 'contrat');
 			}
 			if (!empty($conf->ficheinter->enabled)) {
-				$count += $project->getElementCount('intervention', 'fichinter');
+				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
 			if (!empty($conf->expedition->enabled)) {
-				$count += $project->getElementCount('shipping', 'expedition');
+				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
 			if (!empty($conf->mrp->enabled)) {
-				$count += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
+				$nbElements += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
 			}
 			if (!empty($conf->deplacement->enabled)) {
-				$count += $project->getElementCount('trip', 'deplacement');
+				$nbElements += $project->getElementCount('trip', 'deplacement');
 			}
 			if (!empty($conf->expensereport->enabled)) {
-				$count += $project->getElementCount('expensereport', 'expensereport');
+				$nbElements += $project->getElementCount('expensereport', 'expensereport');
 			}
 			if (!empty($conf->don->enabled)) {
-				$count += $project->getElementCount('donation', 'don');
+				$nbElements += $project->getElementCount('donation', 'don');
 			}
 			if (!empty($conf->loan->enabled)) {
-				$count += $project->getElementCount('loan', 'loan');
+				$nbElements += $project->getElementCount('loan', 'loan');
 			}
 			if (!empty($conf->tax->enabled)) {
-				$count += $project->getElementCount('chargesociales', 'chargesociales');
+				$nbElements += $project->getElementCount('chargesociales', 'chargesociales');
 			}
 			if (!empty($conf->projet->enabled)) {
-				$count += $project->getElementCount('project_task', 'projet_task');
+				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
 			if (!empty($conf->stock->enabled)) {
-				$count += $project->getElementCount('stock_mouvement', 'stock');
+				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}
 			if (!empty($conf->salaries->enabled)) {
-				$count += $project->getElementCount('salaries', 'payment_salary');
+				$nbElements += $project->getElementCount('salaries', 'payment_salary');
 			}
 			if (!empty($conf->banque->enabled)) {
-				$count += $project->getElementCount('variouspayment', 'payment_various');
+				$nbElements += $project->getElementCount('variouspayment', 'payment_various');
 			}
+			dol_setcache($cachekey, $nbElements, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$project->id;
 		$head[$h][1] = $langs->trans("ProjectOverview");
