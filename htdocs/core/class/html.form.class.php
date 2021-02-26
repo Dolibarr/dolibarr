@@ -316,6 +316,13 @@ class Form
 						$arraylist[$tmp[0]] = $tmp[1];
 					}
 					$ret .= $arraylist[$value];
+					if ($htmlname == 'fk_product_type') {
+						if ($value == 0) {
+							$ret = img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"').$ret;
+						} else {
+							$ret = img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"').$ret;
+						}
+					}
 				} elseif (preg_match('/^ckeditor/', $typeofdata)) {
 					$tmpcontent = dol_htmlentitiesbr($value);
 					if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
