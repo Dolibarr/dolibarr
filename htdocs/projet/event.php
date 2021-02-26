@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->load('projects', 'enventorganization');
+$langs->load('projects', 'eventorganization');
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
