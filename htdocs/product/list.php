@@ -1672,11 +1672,9 @@ if ($resql) {
 		// Lot/Serial
 		if (!empty($arrayfields['p.tobatch']['checked'])) {
 			print '<td class="center">';
-			if ( empty($conf->global->MAIN_ADVANCE_NUMLOT) )
-			{
+			if (empty($conf->global->MAIN_ADVANCE_NUMLOT)) {
 				print yn($obj->tobatch);
-			}
-			else {
+			} else {
 				print $product_static->getLibStatut(1, 2);
 			}
 			print '</td>';

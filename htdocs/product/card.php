@@ -1084,11 +1084,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Batch number management
 		if (!empty($conf->productbatch->enabled)) {
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
-			if ( empty($conf->global ->MAIN_ADVANCE_NUMLOT) )
-			{
+			if (empty($conf->global ->MAIN_ADVANCE_NUMLOT)) {
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
-			}
-			else {
+			} else {
 				$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			}
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
@@ -1550,11 +1548,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($conf->productbatch->enabled) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
-					if ( empty($conf->global ->MAIN_ADVANCE_NUMLOT) )
-					{
+					if (empty($conf->global ->MAIN_ADVANCE_NUMLOT)) {
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
-					}
-					else {
+					} else {
 						$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					}
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
