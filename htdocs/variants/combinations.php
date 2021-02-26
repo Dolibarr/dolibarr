@@ -98,7 +98,7 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 $productCombination2ValuePairs1 = array();
 
 if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha')) {	// We click on Create all defined combinations
-//$features = GETPOST('features', 'array');
+	//$features = GETPOST('features', 'array');
 	$features = $_SESSION['addvariant_'.$object->id];
 
 	if (!$features) {
