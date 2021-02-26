@@ -82,7 +82,7 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
 	$champdatefin = dol_mktime(0, 0, 0, GETPOST('champdatefinmonth'), GETPOST('champdatefinday'), GETPOST('champdatefinyear'));
 
 	if ($champdatefin && ($champdatefin > 0)) {	// A date was provided
-	// Expire date is not before today
+		// Expire date is not before today
 		if ($champdatefin >= dol_now()) {
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
