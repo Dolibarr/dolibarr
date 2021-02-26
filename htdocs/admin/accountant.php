@@ -34,7 +34,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adm
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $error = 0;
 
@@ -45,11 +47,12 @@ $error = 0;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
-|| ($action == 'updateedit'))
-{
+|| ($action == 'updateedit')) {
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NAME", GETPOST("nom", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_ADDRESS", GETPOST("address", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_TOWN", GETPOST("town", 'nohtml'), 'chaine', 0, '', $conf->entity);
@@ -64,8 +67,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE", GETPOST("code", 'nohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note", 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
-	if ($action != 'updateedit' && !$error)
-	{
+	if ($action != 'updateedit' && !$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -131,7 +133,9 @@ print '<input name="town" class="minwidth100" id="town" value="'.(GETPOSTISSET('
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'country_id');
-if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+if ($user->admin) {
+	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+}
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
