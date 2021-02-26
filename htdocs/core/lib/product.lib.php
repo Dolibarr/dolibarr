@@ -381,7 +381,7 @@ function show_stats_for_company($product, $socid)
 		$nblines++;
 		$ret = $product->load_stats_proposal_supplier($socid);
 		if ($ret < 0) dol_print_error($db);
-		$langs->load("propal");
+		$langs->load("supplier_proposal");
 		print '<tr><td>';
 		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal').' '.$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
