@@ -268,7 +268,6 @@ class CActionComm
 								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($obj->module));
 								$repcode['AC_ALL_'.strtoupper($obj->module)] = '-- '.$langs->trans("Module").' '.ucfirst($obj->module);
 							}
-
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;
