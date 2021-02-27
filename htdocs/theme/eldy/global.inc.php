@@ -197,7 +197,7 @@ input, select {
 	margin-bottom: 1px;
 	margin-top: 1px;
 }
-#mainbody input.button:not(.buttongen):not(.bordertransp) {
+#mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody button.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
 	color: #FFF !important;
 	border-radius: 3px;
