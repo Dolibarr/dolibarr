@@ -195,7 +195,7 @@ if ($object->id > 0) {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table width="100%" class="border">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Type Prospect/Customer/Supplier
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
