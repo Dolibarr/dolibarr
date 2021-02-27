@@ -1339,7 +1339,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->barcode->enabled))
 		{
 			print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+			print '<td colspan="3">';
+			print img_picto('', 'barcode');
+			print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 			print '</td></tr>';
 		}
 
@@ -1994,10 +1996,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			}
 
 			// Barcode
-			if (!empty($conf->barcode->enabled))
-			{
+			if (!empty($conf->barcode->enabled)) {
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-				print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+				print '<td colspan="3">';
+				print img_picto('', 'barcode');
+				print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 				print '</td></tr>';
 			}
 
