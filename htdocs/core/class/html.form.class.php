@@ -1040,10 +1040,10 @@ class Form
 			}
 			$out .= '</select>';
 
-			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone" name="location_incoterms" value="'.$location_incoterms.'">';
+			$out .= '<input id="location_incoterms" class="maxwidth100onsmartphone nomargintop nomarginbottom" name="location_incoterms" value="'.$location_incoterms.'">';
 
 			if (!empty($page)) {
-				$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'"></form>';
+				$out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="'.$langs->trans("Modify").'"></form>';
 			}
 		} else {
 			dol_print_error($this->db);

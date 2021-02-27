@@ -209,7 +209,7 @@ if ($object->id > 0) {
 	if ($object->fournisseur) {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("SupplierCode").'</td><td>';
-		print $object->code_fournisseur;
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
