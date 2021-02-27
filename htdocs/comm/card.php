@@ -144,7 +144,6 @@ if ($id > 0 && empty($object->id)) {
 }
 
 
-
 /*
  * Actions
  */
@@ -341,7 +340,7 @@ if ($object->id > 0) {
 
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
-		print $object->code_client;
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -534,7 +533,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 	// Warehouse
-	if (!empty($conf->stock->enabled)) {
+	if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
 		$langs->load('stocks');
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);

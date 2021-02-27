@@ -1339,7 +1339,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->barcode->enabled))
 		{
 			print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-			print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+			print '<td colspan="3">';
+			print img_picto('', 'barcode');
+			print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 			print '</td></tr>';
 		}
 
@@ -1411,6 +1413,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					print '<tr>';
 					print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
 					print '<td colspan="3">';
+					if (!empty($value['icon'])) {
+						print '<span class="fa '.$value['icon'].'"></span>';
+					}
 					print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
 					print '</td>';
 					print '</tr>';
@@ -1529,7 +1534,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if (!empty($conf->global->MAIN_MULTILANGS))
 		{
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-			print $formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+			print img_picto('', 'language').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
 			print '</td>';
 			print '</tr>';
 		}
@@ -1606,7 +1611,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print '</td></tr>';
 
-		// Ajout du logo
+		// Add logo
 		print '<tr class="hideonsmartphone">';
 		print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 		print '<td colspan="3">';
@@ -1991,10 +1996,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			}
 
 			// Barcode
-			if (!empty($conf->barcode->enabled))
-			{
+			if (!empty($conf->barcode->enabled)) {
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-				print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+				print '<td colspan="3">';
+				print img_picto('', 'barcode');
+				print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 				print '</td></tr>';
 			}
 
@@ -2061,6 +2067,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 						print '<tr>';
 						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
 						print '<td colspan="3">';
+						if (!empty($value['icon'])) {
+							print '<span class="fa '.$value['icon'].'"></span>';
+						}
 						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.$object->socialnetworks[$key].'">';
 						print '</td>';
 						print '</tr>';
@@ -2201,7 +2210,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if (!empty($conf->global->MAIN_MULTILANGS))
 			{
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-				print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+				print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
 				print '</td>';
 				print '</tr>';
 			}
@@ -2587,7 +2596,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($object->tva_intra)
 		{
 			$s = '';
-			$s .= dol_escape_htmltag($object->tva_intra);
+			$s .= showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
 			$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object))
@@ -2677,6 +2686,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			//print ($s?$s.' ':'');
 			$langs->load("languages");
 			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+			print picto_from_langcode($object->default_lang, 'class="paddingrightonly"');
 			print $labellang;
 			print '</td></tr>';
 		}

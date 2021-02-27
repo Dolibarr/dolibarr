@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-if (!$user->rights->commande->lire) accessforbidden();
+if (!$user->rights->commande->lire) {
+	accessforbidden();
+}
 
 $hookmanager = new HookManager($db);
 
@@ -43,8 +45,7 @@ $langs->loadLangs(array('orders', 'bills'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -69,8 +70,7 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
 	// Search customer orders
 	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -90,16 +90,21 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 $sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('societe').")";
-if ($user->socid) $sql .= ' AND c.fk_soc = '.$user->socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($user->socid) {
+	$sql .= ' AND c.fk_soc = '.$user->socid;
+}
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
 $sql .= " GROUP BY c.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -109,14 +114,14 @@ if ($resql)
 	$colorseries = array();
 	$vals = array();
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
-		if ($row)
-		{
+		if ($row) {
 			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
 			{
-				if (!isset($vals[$row[1]])) $vals[$row[1]] = 0;
+			if (!isset($vals[$row[1]])) {
+				$vals[$row[1]] = 0;
+			}
 				$vals[$row[1]] += $row[0];
 				$totalinprocess += $row[0];
 			}
@@ -132,18 +137,28 @@ if ($resql)
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
 	$listofstatus = array(0, 1, 2, 3, -1);
-	foreach ($listofstatus as $status)
-	{
+	foreach ($listofstatus as $status) {
 		$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == Commande::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-		if ($status == Commande::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-		if ($status == Commande::STATUS_SHIPMENTONPROCESS) $colorseries[$status] = $badgeStatus4;
-		if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) $colorseries[$status] = $badgeStatus6;
-		if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) $colorseries[$status] = $badgeStatus6;
-		if ($status == Commande::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
+		if ($status == Commande::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == Commande::STATUS_VALIDATED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
+			$colorseries[$status] = $badgeStatus4;
+		}
+		if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+		if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+		if ($status == Commande::STATUS_CANCELED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
 
-		if (empty($conf->use_javascript_ajax))
-		{
+		if (empty($conf->use_javascript_ajax)) {
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($status, 0, 0, 1).'</td>';
 			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
@@ -152,8 +167,7 @@ if ($resql)
 			print "</tr>\n";
 		}
 	}
-	if ($conf->use_javascript_ajax)
-	{
+	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td align="center" colspan="2">';
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -181,35 +195,37 @@ if ($resql)
 /*
  * Draft orders
  */
-if (!empty($conf->commande->enabled))
-{
+if (!empty($conf->commande->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = 0";
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				$commandestatic->id = $obj->rowid;
@@ -254,29 +270,32 @@ $sql .= ", s.code_client";
 $sql .= ", s.canvas";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('commande').")";
 //$sql.= " AND c.fk_statut > 2";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if ($socid) {
+	$sql .= " AND c.fk_soc = ".$socid;
+}
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -319,32 +338,38 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 $max = 10;
 
 /*
  * Orders to process
  */
-if (!empty($conf->commande->enabled))
-{
+if (!empty($conf->commande->enabled)) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_VALIDATED;
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -352,11 +377,9 @@ if (!empty($conf->commande->enabled))
 		print '<tr class="liste_titre">';
 		print '<th colspan="4">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num && $i < $max)
-			{
+			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
@@ -405,31 +428,37 @@ if (!empty($conf->commande->enabled))
 		}
 
 		print "</table></div><br>";
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 }
 
 /*
  * Orders that are in process
  */
-if (!empty($conf->commande->enabled))
-{
+if (!empty($conf->commande->enabled)) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = ".Commande::STATUS_ACCEPTED;
-	if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid) {
+		$sql .= " AND c.fk_soc = ".$socid;
+	}
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	}
 	$sql .= " ORDER BY c.rowid DESC";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -437,11 +466,9 @@ if (!empty($conf->commande->enabled))
 		print '<tr class="liste_titre">';
 		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num && $i < $max)
-			{
+			while ($i < $num && $i < $max) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';
@@ -489,7 +516,9 @@ if (!empty($conf->commande->enabled))
 			}
 		}
 		print "</table></div><br>";
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 }
 
 

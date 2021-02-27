@@ -79,8 +79,7 @@ class modIncoterm extends DolibarrModules
 		$this->tabs = array();
 
 		// Dictionaries
-		if (!isset($conf->incoterm->enabled))
-		{
+		if (!isset($conf->incoterm->enabled)) {
 			$conf->incoterm = new stdClass();
 			$conf->incoterm->enabled = 0;
 		}

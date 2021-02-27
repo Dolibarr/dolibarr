@@ -113,8 +113,8 @@ class modPropale extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(
-		   	0=>array('file'=>'box_graph_propales_permonth.php', 'enabledbydefaulton'=>'Home'),
-		   	1=>array('file'=>'box_propales.php', 'enabledbydefaulton'=>'Home'),
+			0=>array('file'=>'box_graph_propales_permonth.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_propales.php', 'enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions
@@ -197,8 +197,7 @@ class modPropale extends DolibarrModules
 			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		);
-		if (!empty($conf->multicurrency->enabled))
-		{
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->export_fields_array[$r]['c.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['c.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['c.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -241,7 +240,9 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s ';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
 
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'propal as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON c.fk_projet = pj.rowid';
@@ -254,7 +255,9 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('propal').')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+		}
 
 		// Imports
 		//--------
@@ -446,13 +449,11 @@ class modPropale extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/proposals';
 		$dest = $dirodt.'/template_proposal.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

@@ -807,7 +807,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	{
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="2">';
-		print $object->code_client;
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -862,7 +862,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	{
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="2">';
-		print $object->code_fournisseur;
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';

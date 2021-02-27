@@ -71,7 +71,9 @@ function dol_setcache($memoryid, $data, $expire = 0)
 	$result = 0;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
-		if (empty($conf->global->MAIN_CACHE_COUNT)) return 0;
+		if (empty($conf->global->MAIN_CACHE_COUNT)) {
+			return 0;
+		}
 	}
 
 	if (!empty($conf->memcached->enabled) &&  class_exists('Memcached')) {
@@ -81,7 +83,9 @@ function dol_setcache($memoryid, $data, $expire = 0)
 			$dolmemcache = new Memcached();
 			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-			if (!$result) return -1;
+			if (!$result) {
+				return -1;
+			}
 		}
 
 		$memoryid = session_name() . '_' . $memoryid;
@@ -100,7 +104,9 @@ function dol_setcache($memoryid, $data, $expire = 0)
 			$dolmemcache = new Memcache();
 			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
 			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-			if (!$result) return -1;
+			if (!$result) {
+				return -1;
+			}
 		}
 
 		$memoryid = session_name() . '_' . $memoryid;
@@ -131,7 +137,9 @@ function dol_getcache($memoryid)
 	global $conf;
 
 	if (strpos($memoryid, 'count_') === 0) {	// The memoryid key start with 'count_...'
-		if (empty($conf->global->MAIN_CACHE_COUNT)) return null;
+		if (empty($conf->global->MAIN_CACHE_COUNT)) {
+			return null;
+		}
 	}
 
 	// Using a memcached server
@@ -141,7 +149,9 @@ function dol_getcache($memoryid)
 			$m = new Memcached();
 			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-			if (!$result) return -1;
+			if (!$result) {
+				return -1;
+			}
 		}
 
 		$memoryid = session_name() . '_' . $memoryid;
@@ -164,7 +174,9 @@ function dol_getcache($memoryid)
 			$m = new Memcache();
 			$tmparray = explode(':', $conf->global->MEMCACHED_SERVER);
 			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
-			if (!$result) return -1;
+			if (!$result) {
+				return -1;
+			}
 		}
 
 		$memoryid = session_name() . '_' . $memoryid;
@@ -235,9 +247,13 @@ function dol_setshmop($memoryid, $data, $expire)
 	global $shmkeys, $shmoffset;
 
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
-	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) return 0;
+	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) {
+		return 0;
+	}
 	$shmkey = dol_getshmopaddress($memoryid);
-	if (empty($shmkey)) return 0;	// No key reserved for this memoryid, we can't cache this memoryid
+	if (empty($shmkey)) {
+		return 0;	// No key reserved for this memoryid, we can't cache this memoryid
+	}
 
 	$newdata = serialize($data);
 	$size = strlen($newdata);
@@ -273,14 +289,19 @@ function dol_getshmop($memoryid)
 		return null;
 	}
 	$shmkey = dol_getshmopaddress($memoryid);
-	if (empty($shmkey)) return null;		// No key reserved for this memoryid, we can't cache this memoryid
+	if (empty($shmkey)) {
+		return null;		// No key reserved for this memoryid, we can't cache this memoryid
+	}
 
 	//print 'dol_getshmop memoryid='.$memoryid." shmkey=".$shmkey."<br>\n";
 	$handle = @shmop_open($shmkey, 'a', 0, 0);
 	if ($handle) {
 		$size = trim(shmop_read($handle, 0, 6));
-		if ($size) $data = unserialize(shmop_read($handle, 6, $size));
-		else return -1;
+		if ($size) {
+			$data = unserialize(shmop_read($handle, 6, $size));
+		} else {
+			return -1;
+		}
 		shmop_close($handle);
 	} else {
 		return null;	// Can't open existing block, so we suppose it was not created, so nothing were cached yet for the memoryid

@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019 Andreu Bisquerra Gaya		<jove@bisquerra.com>
+ * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,6 +232,14 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("AutoPrintTickets");
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AUTO_PRINT_TICKETS, 1);
+print "</td></tr>\n";
+
+
+// Show price without vat
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowPriceHTOnReceipt');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
