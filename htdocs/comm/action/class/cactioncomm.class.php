@@ -153,7 +153,7 @@ class CActionComm
 	public function liste_array($active = '', $idorcode = 'id', $excludetype = '', $onlyautoornot = 0, $morefilter = '', $shortlabel = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs, $conf, $user;
 		$langs->load("commercial");
 
 		$repid = array();
@@ -191,29 +191,29 @@ class CActionComm
 						$qualified = 0; // We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 					}
 
-					if ($qualified && $obj->module) {
-						if ($obj->module == 'invoice' && !$conf->facture->enabled) {
+					if ($qualified && !empty($obj->module)) {
+						if ($obj->module == 'invoice' && empty($conf->facture->enabled)  && empty($user->facture->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'order' && !$conf->commande->enabled) {
+						if ($obj->module == 'order' && empty($conf->commande->enabled) && empty($user->commande->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'propal' && !$conf->propal->enabled) {
+						if ($obj->module == 'propal' && empty($conf->propal->enabled)  && empty($user->propale->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_invoice->enabled)) {
+						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled)) && empty($user->fournisseur->facture->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !$conf->supplier_order->enabled)) {
+						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled)) && empty($user->fournisseur->commande->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'shipping' && !$conf->expedition->enabled) {
+						if ($obj->module == 'shipping' && empty($conf->expedition->enabled) && empty($user->expedition->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'eventorganization' && !$conf->eventorganization->enabled) {
+						if ($obj->module == 'eventorganization' && empty($conf->eventorganization->enabled) && empty($user->eventorganization->read)) {
 							$qualified = 0;
 						}
-						if (!empty($obj->module) && preg_match('/^system/', $obj->type) && isset($conf->{$obj->module}) && isset($conf->{$obj->module}->enabled) && !$conf->{$obj->module}->enabled) {
+						if (!preg_match('/^system/', $obj->type) && isset($conf->{$obj->module}) && empty($conf->{$obj->module}->enabled)) {
 							$qualified = 0;
 						}
 					}
@@ -252,6 +252,14 @@ class CActionComm
 								$repid[-98] = $langs->trans("ActionAC_AUTO");
 								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
 							}
+							if (preg_match('/^system@/', $typecalendar)) {
+								$label = '&nbsp;&nbsp; '.$label;
+								if (!isset($repcode['AC_ALL_'.strtoupper($obj->module)])) {	// If first time for this module
+									$idforallfornewmodule--;
+								}
+								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_".strtoupper($obj->module));
+								$repcode['AC_ALL_'.strtoupper($obj->module)] = '-- '.$langs->trans("Module").' '.ucfirst($obj->module);
+							}
 							if ($typecalendar == 'module') {
 								$label = '&nbsp;&nbsp; '.$label;
 								if (!isset($repcode['AC_ALL_'.strtoupper($obj->module)])) {	// If first time for this module
@@ -260,6 +268,7 @@ class CActionComm
 								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($obj->module));
 								$repcode['AC_ALL_'.strtoupper($obj->module)] = '-- '.$langs->trans("Module").' '.ucfirst($obj->module);
 							}
+
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;
