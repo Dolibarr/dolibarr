@@ -66,8 +66,10 @@ class ConferenceOrBooth extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_SUGGESTED = 1;
-	const STATUS_CONFIRMED = 1;
-	const STATUS_NOTSELECTED = 9;
+	const STATUS_CONFIRMED = 2;
+	const STATUS_NOTSELECTED = 3;
+	const STATUS_DONE = 4;
+	const STATUS_CANCELED = 5;
 
 
 	/**
@@ -793,14 +795,21 @@ class ConferenceOrBooth extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
+
 			global $langs;
 			//$langs->load("eventorganization@eventorganization");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
+			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
+			$this->labelStatus[self::STATUS_NOTSELECTED] = $langs->trans('NotSelected');
+			$this->labelStatus[self::STATUS_DONE] = $langs->trans('Done');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
+			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
+			$this->labelStatusShort[self::STATUS_NOTSELECTED] = $langs->trans('NotSelected');
+			$this->labelStatusShort[self::STATUS_DONE] = $langs->trans('Done');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
 		$statusType = 'status'.$status;
