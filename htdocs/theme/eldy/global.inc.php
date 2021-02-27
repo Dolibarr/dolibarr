@@ -502,7 +502,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	text-transform: uppercase;
 	color: #444;
 }
-.valuefield .button, .valuefieldcreate .button {
+.valuefield .button, .valuefieldcreate .button, .refidno .button {
 	margin-top: 0 !important;
 	margin-bottom: 0 !important;
 	font-size: 0.85em !important;

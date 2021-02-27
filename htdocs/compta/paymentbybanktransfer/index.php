@@ -59,7 +59,7 @@ llxHeader('', $langs->trans("SuppliersStandingOrdersArea"));
 
 if (prelevement_check_config('bank-transfer') < 0) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByBankTransfer")), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"));

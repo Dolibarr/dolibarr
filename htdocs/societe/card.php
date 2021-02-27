@@ -2686,7 +2686,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			//print ($s?$s.' ':'');
 			$langs->load("languages");
 			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
-			print picto_from_langcode($object->default_lang, 'class="paddingrightonly"');
+			print picto_from_langcode($object->default_lang, 'class="paddingrightonly saturatemedium opacitylow"');
 			print $labellang;
 			print '</td></tr>';
 		}

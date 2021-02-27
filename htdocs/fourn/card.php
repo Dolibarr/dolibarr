@@ -99,7 +99,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setsupplieraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta_fournisseur = $_POST["supplieraccountancycode"];
+		$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
 		$result = $object->update($object->id, $user, 1, 0, 1);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -250,7 +250,7 @@ if ($object->id > 0) {
 
 	// TVA Intra
 	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
-	print $object->tva_intra;
+	print showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
 	print '</td></tr>';
 
 	// Default terms of the settlement
