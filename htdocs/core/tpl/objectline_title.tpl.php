@@ -70,11 +70,15 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 	print img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"');
-	print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
+	print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); $("#submitforalllines").click(function() { var input = $("<input>")
+               .attr("type", "hidden")
+               .attr("name", "submitforalllines").val("'.$langs->trans("Update").'");
+$("#addproduct").append($(input));
+$("#addproduct").submit(); });}); });</script>';
 	print '<div class="classvatforalllines hidden inline-block nowraponall">';
 	//print '<input class="inline-block maxwidth50" type="text" name="vatforalllines" id="vatforalllines" value="">';
 	print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
-	print '<button class="inline-block button smallpaddingimp" name="submitforalllines" value="'.$langs->trans("Update").'">'.$langs->trans("Update").'</button>';
+	print '<input class="inline-block button smallpaddingimp" type="button" id="submitforalllines" value="'.$langs->trans("Update").'">';
 	print '</div>';
 }
 print '</td>';
