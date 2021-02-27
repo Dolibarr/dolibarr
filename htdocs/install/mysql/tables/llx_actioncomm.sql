@@ -71,6 +71,9 @@ create table llx_actioncomm
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
+
+  num_vote          integer,                        -- use for Event Organization module
+  is_booth_paid     smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
      
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
