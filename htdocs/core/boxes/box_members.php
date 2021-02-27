@@ -117,6 +117,10 @@ class box_members extends ModeleBoxes
 					$memberstatic->morphy = $objp->morphy;
 					$memberstatic->company = $objp->company;
 					$memberstatic->statut = $objp->status;
+					$memberstatic->date_creation = $datec;
+					$memberstatic->date_modification = $datem;
+					$memberstatic->need_subscription = $objp->subscription;
+					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
 
 					if (!empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
