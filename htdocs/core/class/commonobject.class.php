@@ -8388,9 +8388,10 @@ abstract class CommonObject
 	 * @param	int    $id				Id object
 	 * @param	string $ref				Ref
 	 * @param	string	$morewhere		More SQL filters (' AND ...')
+	 * @param	string	$idFieldName	Should always be rowid
 	 * @return 	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetchCommon($id, $ref = null, $morewhere = '')
+	public function fetchCommon($id, $ref = null, $morewhere = '', $idFieldName='rowid')
 	{
 		if (empty($id) && empty($ref) && empty($morewhere)) {
 			return -1;
@@ -8405,7 +8406,7 @@ abstract class CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if (!empty($id)) {
-			$sql .= ' WHERE rowid = '.$id;
+			$sql .= ' WHERE '.$idFieldName.' = '.$id;
 		} elseif (!empty($ref)) {
 			$sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		} else {
@@ -8494,9 +8495,10 @@ abstract class CommonObject
 	 *
 	 * @param  User $user      	User that modifies
 	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
+	 * @param	string	$idFieldName	Should always be rowid
 	 * @return int             	<0 if KO, >0 if OK
 	 */
-	public function updateCommon(User $user, $notrigger = false)
+	public function updateCommon(User $user, $notrigger = false, $idFieldName='rowid')
 	{
 		global $conf, $langs;
 		dol_syslog(get_class($this)."::updateCommon update", LOG_DEBUG);
@@ -8547,7 +8549,7 @@ abstract class CommonObject
 			}*/
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(', ', $tmp).' WHERE '.$idFieldName.'='.$this->id;
 
 		$this->db->begin();
 		if (!$error) {
@@ -8592,9 +8594,10 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
+	 * @param	string	$idFieldName	Should always be rowid
 	 * @return 	int             				<=0 if KO, >0 if OK
 	 */
-	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
+	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0, $idFieldName='rowid')
 	{
 		dol_syslog(get_class($this)."::deleteCommon delete", LOG_DEBUG);
 
@@ -8693,7 +8696,7 @@ abstract class CommonObject
 		}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE '.$idFieldName.'='.$this->id;
 
 			$res = $this->db->query($sql);
 			if ($res === false) {

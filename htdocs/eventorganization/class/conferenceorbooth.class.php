@@ -103,13 +103,12 @@ class ConferenceOrBooth extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
-		'format' => array('type'=>'sellist:c_eventorganization_fcob:label:rowid::type IN (\'conference\',\'booth\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
+		'fk_action' => array('type'=>'sellist:c_eventorganization_fcob:label:rowid::type IN (\'conference\',\'booth\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_author' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -118,20 +117,17 @@ class ConferenceOrBooth extends CommonObject
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;', '9'=>'Annul&eacute;'),),
 	);
 	public $rowid;
-	public $ref;
+	public $id;
 	public $label;
 	public $fk_soc;
 	public $fk_project;
 	public $note;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
+	public $fk_action;
+	public $datec;
 	public $tms;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $last_main_doc;
+	public $fk_user_author;
+	public $fk_user_mod;
 	public $import_key;
-	public $model_pdf;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
@@ -226,6 +222,16 @@ class ConferenceOrBooth extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if (empty($this->datec)) {
+			$this->datec = $this->db->idate(dol_now());
+		}
+		if (! (int) $this->fk_user_author > 0) {
+			$this->fk_user_author = $user->id;
+		}
+		if (! (int) $this->fk_user_mod > 0) {
+			$this->fk_user_mod = $user->id;
+		}
+
 		return $this->createCommon($user, $notrigger);
 	}
 
@@ -261,11 +267,9 @@ class ConferenceOrBooth extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) $object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		if (property_exists($object, 'label')) $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		if (property_exists($object, 'status')) { $object->status = self::STATUS_DRAFT; }
-		if (property_exists($object, 'date_creation')) { $object->date_creation = dol_now(); }
-		if (property_exists($object, 'date_modification')) { $object->date_modification = null; }
+		if (property_exists($object, 'datec')) { $object->date_creation = dol_now(); }
 		// ...
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0)
@@ -303,7 +307,7 @@ class ConferenceOrBooth extends CommonObject
 		if (!$error)
 		{
 			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid)
+			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid)
 			{
 				if ($this->copy_linked_contact($object, 'external') < 0)
 					$error++;
@@ -331,7 +335,7 @@ class ConferenceOrBooth extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
+		$result = $this->fetchCommon($id, $ref, '', 'id');
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
@@ -378,7 +382,7 @@ class ConferenceOrBooth extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
+				if ($key == 't.id') {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
@@ -437,7 +441,11 @@ class ConferenceOrBooth extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		return $this->updateCommon($user, $notrigger);
+		if (! (int) $this->fk_user_mod > 0) {
+			$this->fk_user_mod = $user->id;
+		}
+
+		return $this->updateCommon($user, $notrigger,'id');
 	}
 
 	/**
@@ -449,7 +457,7 @@ class ConferenceOrBooth extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
+		return $this->deleteCommon($user, $notrigger,0,'id');
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
@@ -489,9 +497,9 @@ class ConferenceOrBooth extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED)
+		if ($this->status == self::STATUS_CONFIRMED)
 		{
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandonned: already confirmed", LOG_WARNING);
 			return 0;
 		}
 
@@ -507,87 +515,32 @@ class ConferenceOrBooth extends CommonObject
 
 		$this->db->begin();
 
-		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		// Validate
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " status = ".self::STATUS_CONFIRMED;
+		$sql .= " WHERE id = ".$this->id;
+
+		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql)
 		{
-			$num = $this->getNextNumRef();
-		} else {
-			$num = $this->ref;
-		}
-		$this->newref = $num;
-
-		if (!empty($num)) {
-			// Validate
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."'";
-			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
-			$sql .= " WHERE rowid = ".$this->id;
-
-			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				dol_print_error($this->db);
-				$this->error = $this->db->lasterror();
-				$error++;
-			}
-
-			if (!$error && !$notrigger)
-			{
-				// Call trigger
-				$result = $this->call_trigger('CONFERENCEORBOOTH_VALIDATE', $user);
-				if ($result < 0) $error++;
-				// End call triggers
-			}
+			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			$error++;
 		}
 
-		if (!$error)
+		if (!$error && !$notrigger)
 		{
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref))
-			{
-				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'conferenceorbooth/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'conferenceorbooth/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$oldref;
-				$dirdest = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref;
-				if (!$error && file_exists($dirsource))
-				{
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest))
-					{
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry)
-						{
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
-			}
+			// Call trigger
+			$result = $this->call_trigger('CONFERENCEORBOOTH_VALIDATE', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Set new ref and current status
 		if (!$error)
 		{
-			$this->ref = $num;
-			$this->status = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_CONFIRMED;
 		}
 
 		if (!$error)
@@ -636,7 +589,7 @@ class ConferenceOrBooth extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_VALIDATED)
+		if ($this->status != self::STATUS_CONFIRMED)
 		{
 			return 0;
 		}
@@ -673,7 +626,7 @@ class ConferenceOrBooth extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'CONFERENCEORBOOTH_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_CONFIRMED, $notrigger, 'CONFERENCEORBOOTH_REOPEN');
 	}
 
 	/**
@@ -699,7 +652,7 @@ class ConferenceOrBooth extends CommonObject
 			$label .= ' '.$this->getLibStatut(5);
 		}
 		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->id;
 
 		$url = dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.$this->id;
 
@@ -827,10 +780,10 @@ class ConferenceOrBooth extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT rowid, datec as datec, tms as datem,';
+		$sql .= ' fk_user_author, fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.id = '.$id;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -845,23 +798,8 @@ class ConferenceOrBooth extends CommonObject
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid)
-				{
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture)
-				{
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);
@@ -901,65 +839,6 @@ class ConferenceOrBooth extends CommonObject
 		} else {
 			$this->lines = $result;
 			return $this->lines;
-		}
-	}
-
-	/**
-	 *  Returns the reference to the following non used object depending on the active numbering module.
-	 *
-	 *  @return string      		Object free reference
-	 */
-	public function getNextNumRef()
-	{
-		global $langs, $conf;
-		$langs->load("eventorganization@eventorganization");
-
-		if (empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON)) {
-			$conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON = 'mod_conferenceorbooth_standard';
-		}
-
-		if (!empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON))
-		{
-			$mybool = false;
-
-			$file = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON.".php";
-			$classname = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON;
-
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir)
-			{
-				$dir = dol_buildpath($reldir."core/modules/eventorganization/");
-
-				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
-			}
-
-			if ($mybool === false)
-			{
-				dol_print_error('', "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1')
-				{
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
-			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
-				return "";
-			}
-		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
-			return "";
 		}
 	}
 

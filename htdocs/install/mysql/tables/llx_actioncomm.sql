@@ -31,7 +31,7 @@ create table llx_actioncomm
 
   fk_action			integer,						-- type of action (optional link with id in llx_c_actioncomm or null)
   code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
-  
+
   datec				datetime,						-- date creation
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
   fk_user_author	integer,						-- user id of user that has created record
@@ -74,7 +74,8 @@ create table llx_actioncomm
 
   num_vote          integer,                        -- use for Event Organization module
   is_booth_paid     smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
-     
+  status            smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
+
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
 
