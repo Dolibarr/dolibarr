@@ -179,6 +179,13 @@ ALTER TABLE llx_projet ADD COLUMN accept_booth_suggestions integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN price_registration double(24,8);
 ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 
+ALTER TABLE llx_c_actioncomm MODIFY code varchar(50) NOT NULL;
+ALTER TABLE llx_c_actioncomm MODIFY module varchar(50) DEFAULT NULL;
+
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 60,'AC_EO_ONLINECONF','conference','Online/Virtual conference','eventorganization', 1, 60);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 61,'AC_EO_INDOORCONF','conference','Indoor conference','eventorganization', 1, 61);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 62,'AC_EO_ONLINEBOOTH','booth','Online/Virtual booth','eventorganization', 1, 62);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 63,'AC_EO_INDOORBOOTH','booth','Indoor booth','eventorganization', 1, 63);
 
 -- Code enhanced - Standardize field name
 ALTER TABLE llx_commande CHANGE COLUMN tva total_tva double(24,8) default 0;

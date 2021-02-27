@@ -48,3 +48,7 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 -- Code used from 3.3+ when type of event is not used
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 40,'AC_OTH_AUTO','systemauto','Other (automatically inserted events)',NULL, 1, 20);
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 50,'AC_OTH','system','Other (manually inserted events)',NULL, 1, 5);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 60,'AC_EO_ONLINECONF','conference','Online/Virtual conference','eventorganization', 1, 60);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 61,'AC_EO_INDOORCONF','conference','Indoor conference','eventorganization', 1, 61);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 62,'AC_EO_ONLINEBOOTH','booth','Online/Virtual booth','eventorganization', 1, 62);
+insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 63,'AC_EO_INDOORBOOTH','booth','Indoor booth','eventorganization', 1, 63);
