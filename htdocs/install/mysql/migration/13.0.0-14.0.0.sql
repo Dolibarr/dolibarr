@@ -187,6 +187,7 @@ ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 
 ALTER TABLE llx_actioncomm ADD COLUMN num_vote integer;
 ALTER TABLE llx_actioncomm ADD COLUMN is_booth_paid smallint NOT NULL DEFAULT 0;
+ALTER TABLE llx_actioncomm ADD COLUMN status smallint NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_c_actioncomm MODIFY code varchar(50) NOT NULL;
 ALTER TABLE llx_c_actioncomm MODIFY module varchar(50) DEFAULT NULL;
