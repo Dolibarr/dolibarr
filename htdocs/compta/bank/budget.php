@@ -43,7 +43,10 @@ $result = restrictedArea($user, 'banque');
 
 $companystatic = new Societe($db);
 
-llxHeader();
+$title = $langs->trans('ListTransactionsByCategory');
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+
+llxHeader('', $title, $help_url);
 
 // List movements bu category for bank transactions
 print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'bank_account');

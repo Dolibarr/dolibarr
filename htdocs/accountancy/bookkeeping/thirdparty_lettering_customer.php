@@ -145,7 +145,7 @@ print dol_get_fiche_end();
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, ";
 $sql .= " bk.subledger_account, bk.numero_compte , bk.label_compte, bk.debit, ";
-$sql .= " bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num, bk.lettering_code ";
+$sql .= " bk.credit, bk.montant, bk.sens, bk.code_journal, bk.piece_num, bk.lettering_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as bk";
 $sql .= " WHERE (bk.subledger_account =  '".$db->escape($object->code_compta)."' AND bk.numero_compte = '".$db->escape($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)."' )";
 

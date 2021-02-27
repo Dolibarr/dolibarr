@@ -21,6 +21,8 @@ Following changes may create regressions for some external modules, but were nec
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
 * Field "tva" renamed into "total_tva" in llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
 * Field "total" renamed into "total_ttc" in llx_propal, llx_supplier_proposal for better field name consistency
+* If your database is PostgreSql, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
+* If your database is MySql or MariaDB, you need at least version 5.1
 
 
 ***** ChangeLog for 13.0.1 compared to 13.0.0 *****
