@@ -2413,18 +2413,18 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
-				print_liste_field_titre("OpportunityStatus", "", "", "", "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("OpportunityStatus", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
 			}
-			print_liste_field_titre("OpportunityAmount", "", "", "", "", 'align="right"', $sortfield, $sortorder);
+			print_liste_field_titre("OpportunityAmount", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
 			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 			print_liste_field_titre("Tasks", "", "", "", "", 'align="right"', $sortfield, $sortorder);
 			if (!in_array('plannedworkload', $hiddenfields)) {
-				print_liste_field_titre("PlannedWorkload", "", "", "", "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("PlannedWorkload", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
 			}
 			if (!in_array('declaredprogress', $hiddenfields)) {
-				print_liste_field_titre("ProgressDeclared", "", "", "", "", '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'right ', $langs->trans("ProgressDeclared"));
 			}
 		}
 		if (!in_array('projectstatus', $hiddenfields)) {

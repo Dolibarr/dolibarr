@@ -502,6 +502,12 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	text-transform: uppercase;
 	color: #444;
 }
+.valuefield .button, .valuefieldcreate .button {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	font-size: 0.85em !important;
+	padding: 5px !important;
+}
 .button:focus, .buttonDelete:focus  {
 	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -1979,7 +1985,7 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: left;
-	width: 18px;
+	width: 20px;
 	padding-right: 0;
 }
 

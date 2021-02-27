@@ -483,9 +483,10 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
  * @param	integer	$withpleasewait		Add also please wait tags
+ * @param	string	$morehtml			Add more HTML content
  * @return	void
  */
-function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleasewait = 0)
+function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleasewait = 0, $morehtml = '')
 {
 	global $conf, $langs;
 
@@ -493,6 +494,10 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 
 	print '</td></tr></table>'."\n";
 	print '</td></tr></table>'."\n";
+
+	print '<!-- pFooter -->'."\n";
+
+	print $morehtml;
 
 	if (!$nonext || ($nonext == '2')) {
 		print '<div class="nextbutton" id="nextbutton">';

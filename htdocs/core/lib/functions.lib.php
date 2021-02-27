@@ -3436,7 +3436,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
 				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement',
 				'off', 'on', 'order',
-				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
@@ -3444,8 +3444,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
-				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'user-cog',
-				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'user-cog',
 				'eventorganization', 'object_eventorganization'
 			))) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
@@ -3453,7 +3454,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$fakey = $pictowithouttext;
 			$facolor = ''; $fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('clock', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
+			if (in_array($pictowithouttext, array('clock', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('black-tie', 'github', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
@@ -3480,13 +3481,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
-				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
 				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
 				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
-				'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
+				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
 				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
@@ -3524,7 +3525,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('holiday'))) {
+			if (in_array($pictowithouttext, array('holiday', 'project'))) {
 				$morecss = 'em088';
 			}
 			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
@@ -3555,7 +3556,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
 				'holiday'=>'infobox-holiday', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
-				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
+				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
@@ -3577,7 +3578,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
+				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
 				'website'=>'#304'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
