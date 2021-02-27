@@ -76,14 +76,14 @@ $search_fk_user_creat = GETPOST('search_fk_user_creat', 'int');
 $search_fk_user_modif = GETPOST('search_fk_user_modif', 'int');
 $search_import_key = GETPOST('search_import_key', 'int');
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'list';
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'list';
+}
 
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id || $ref)
-{
-	if ($ref)
-	{
+if ($id || $ref) {
+	if ($ref) {
 		$tmp = explode('_', $ref);
 		$productid = $tmp[0];
 		$batch = $tmp[1];
@@ -93,8 +93,7 @@ if ($id || $ref)
 }
 
 // Protection if external user
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	//accessforbidden();
 }
 //$result = restrictedArea($user, 'mymodule', $id);
@@ -133,18 +132,20 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/product/stock/productlot_list.php', 1);
 
-	if ($action == 'seteatby' && $user->rights->stock->creer)
-	{
+	if ($action == 'seteatby' && $user->rights->stock->creer) {
 		$newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
-	if ($action == 'setsellby' && $user->rights->stock->creer)
-	{
+	if ($action == 'setsellby' && $user->rights->stock->creer) {
 		$newvalue = dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	$triggermodname = 'PRODUCT_LOT_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -274,7 +275,7 @@ if (empty($reshook)) {
 			else setEventMessages($object->error, null, 'errors');
 		}
 	}
-*/
+	*/
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -375,7 +376,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		$shownav = 0;
+	}
 
 	$morehtmlref = '';
 
@@ -436,7 +439,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			/*TODO      if ($user->rights->stock->lire)
@@ -453,7 +458,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div>'."\n";
 	}
-
 }
 
 
