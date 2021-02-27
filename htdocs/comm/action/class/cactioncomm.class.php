@@ -210,6 +210,12 @@ class CActionComm
 						if ($obj->module == 'shipping' && !$conf->expedition->enabled) {
 							$qualified = 0;
 						}
+						if ($obj->module == 'eventorganization' && !$conf->eventorganization->enabled) {
+							$qualified = 0;
+						}
+						if (!empty($obj->module) && preg_match('/^system/', $obj->type) && isset($conf->{$obj->module}) && isset($conf->{$obj->module}->enabled) && !$conf->{$obj->module}->enabled) {
+							$qualified = 0;
+						}
 					}
 
 					if ($qualified) {
