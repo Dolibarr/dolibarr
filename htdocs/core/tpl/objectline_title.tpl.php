@@ -74,7 +74,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture')) && $objec
 	print '<div class="classvatforalllines hidden inline-block nowraponall">';
 	//print '<input class="inline-block maxwidth50" type="text" name="vatforalllines" id="vatforalllines" value="">';
 	print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
-	print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+	print '<button class="inline-block button smallpaddingimp" name="submitforalllines" value="'.$langs->trans("Update").'">'.$langs->trans("Update").'</button>';
 	print '</div>';
 }
 print '</td>';
