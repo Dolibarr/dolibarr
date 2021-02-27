@@ -1350,6 +1350,11 @@ class Product extends CommonObject
 					return -1;
 				}
 			} elseif (isset($this->multilangs[$key])) {
+				if (empty($this->multilangs["$key"]["label"])) {
+					$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label"));
+					return -1;
+				}
+
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 				$sql .= " WHERE fk_product=".$this->id;
