@@ -85,12 +85,18 @@ $permissiondellink = $user->rights->eventorganization->write; // Used by the inc
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
-if ($user->socid > 0) accessforbidden();
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -435,7 +441,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			// Send
