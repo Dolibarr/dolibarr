@@ -93,9 +93,7 @@ function addDispatchLine(index, type, mode)
 
 	if (qtyOrdered <= 1) {
 		window.alert("Quantity can't be split");
-	}
-	if (qtyDispatched < qtyOrdered)
-	{
+	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		$row.html($row.html().replace(/_0_/g,"_"+nbrTrs+"_"));
 		//create new select2 to avoid duplicate id of cloned one

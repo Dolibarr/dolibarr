@@ -252,7 +252,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay > 1) {
 				$dayTranslate = $langs->trans("Days");
 			}
-			$sTime .= $sDay.' '.$dayTranslate.' ';
+			$sTime .= $sDay.' '.strtolower(dol_substr($dayTranslate, 0, 1)).'. ';
 		}
 
 		if ($format == 'all') {

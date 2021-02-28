@@ -40,7 +40,9 @@ div.mainmenu.billing::before {
 }
 
 div.mainmenu.accountancy::before {
-	content: "\f53d";
+	/* content: "\f53d"; */
+	content: "\f688";
+	font-size: 1.2em;
 }
 
 div.mainmenu.agenda::before {

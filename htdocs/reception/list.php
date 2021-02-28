@@ -127,6 +127,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$error = 0;
+
 
 /*
  * Actions
@@ -527,6 +529,7 @@ if (!$resql) {
 	dol_print_error($db);
 	exit;
 }
+
 $num = $db->num_rows($resql);
 
 $reception = new Reception($db);
@@ -577,9 +580,9 @@ if ($search_type_thirdparty) {
 	$param .= "&amp;search_type_thirdparty=".urlencode($search_type_thirdparty);
 }
 if ($search_ref_supplier) {
-		$param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+	$param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);
 }
-	// Add $param from extra fields
+// Add $param from extra fields
 foreach ($search_array_options as $key => $val) {
 	$crit = $val;
 	$tmpkey = preg_replace('/search_options_/', '', $key);
@@ -590,7 +593,7 @@ foreach ($search_array_options as $key => $val) {
 
 
 $arrayofmassactions = array(
-// 'presend'=>$langs->trans("SendByMail"),
+	// 'presend'=>$langs->trans("SendByMail"),
 );
 
 if ($user->rights->fournisseur->facture->creer) {
@@ -614,7 +617,6 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, '', '', $limit, 0, 0, 1);
-
 
 if ($massaction == 'createbills') {
 	//var_dump($_REQUEST);
@@ -1009,7 +1011,8 @@ while ($i < min($num, $limit)) {
 
 	// Action column
 	print '<td class="center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	if ($massactionbutton || $massaction) {
+		// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
 		if (in_array($obj->rowid, $arrayofselected)) {
 			$selected = 1;
@@ -1024,6 +1027,17 @@ while ($i < min($num, $limit)) {
 	print "</tr>\n";
 
 	$i++;
+}
+
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 print "</table>";

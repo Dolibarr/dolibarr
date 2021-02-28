@@ -276,7 +276,7 @@ class SupplierOrders extends DolibarrApi
 			$this->order->$field = $value;
 		}
 
-		if ($this->order->update($id, DolibarrApiAccess::$user)) {
+		if ($this->order->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 

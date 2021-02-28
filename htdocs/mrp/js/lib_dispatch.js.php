@@ -94,9 +94,9 @@ function addDispatchLine(index, type, mode)
 
 	if (qtyOrdered <= 1) {
 		window.alert("Quantity can't be split");
-	}
-	if (qtyDispatched < qtyOrdered)
-	{
+	} else if (qtyDispatched >= qtyOrdered) {
+		window.alert("No remain qty to dispatch");
+	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		var re1 = new RegExp('_'+index+'_1', 'g');
 		var re2 = new RegExp('-'+index+'-1', 'g');
