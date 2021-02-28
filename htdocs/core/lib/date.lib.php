@@ -642,7 +642,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
  */
 function getGMTEasterDatetime($year)
 {
-	$base = new DateTime("$year-03-21");
+	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
 	$days = easter_days($year);	// Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
@@ -650,11 +650,11 @@ function getGMTEasterDatetime($year)
 
 /**
  *	Return the number of non working days including saturday and sunday (or not) between 2 dates in timestamp.
- *  Dates must be UTC with hour, day, min to 0.
+ *  Dates must be UTC with hour, min, sec to 0.
  *	Called by function num_open_day()
  *
- *	@param	    int			$timestampStart     Timestamp de debut
- *	@param	    int			$timestampEnd       Timestamp de fin
+ *	@param	    int			$timestampStart     Timestamp start (UTC with hour, min, sec = 0)
+ *	@param	    int			$timestampEnd       Timestamp end (UTC with hour, min, sec = 0)
  *  @param      string		$country_code       Country code
  *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *  @param		int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
@@ -755,33 +755,21 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			if (in_array('eastermonday', $specialdayrule)) {
 				// Calculation for the monday of easter date
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_lundi_paques = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 1,
-					gmdate("Y", $date_paques)
-				);
+				//print 'PPP'.$date_paques.' '.dol_print_date($date_paques, 'dayhour', 'gmt')." ";
+				$date_lundi_paques = $date_paques + (3600 * 24);
 				$jour_lundi_paques = gmdate("d", $date_lundi_paques);
 				$mois_lundi_paques = gmdate("m", $date_lundi_paques);
 				if ($jour_lundi_paques == $jour && $mois_lundi_paques == $mois) {
 					$ferie = true;
 				}
 				// Easter (monday)
+				//print 'annee='.$annee.' $jour='.$jour.' $mois='.$mois.' $jour_lundi_paques='.$jour_lundi_paques.' $mois_lundi_paques='.$mois_lundi_paques."\n";
 			}
 
 			if (in_array('ascension', $specialdayrule)) {
 				// Calcul du jour de l'ascension (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_ascension = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 39,
-					gmdate("Y", $date_paques)
-				);
+				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
 				$mois_ascension = gmdate("m", $date_ascension);
 				if ($jour_ascension == $jour && $mois_ascension == $mois) {
@@ -793,14 +781,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			if (in_array('pentecote', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_pentecote = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 49,
-					gmdate("Y", $date_paques)
-				);
+				$date_pentecote = $date_paques + (3600 * 24 * 49);
 				$jour_pentecote = gmdate("d", $date_pentecote);
 				$mois_pentecote = gmdate("m", $date_pentecote);
 				if ($jour_pentecote == $jour && $mois_pentecote == $mois) {
@@ -811,14 +792,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			if (in_array('pentecotemonday', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_pentecote = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 50,
-					gmdate("Y", $date_paques)
-				);
+				$date_pentecote = $date_paques + (3600 * 24 * 50);
 				$jour_pentecote = gmdate("d", $date_pentecote);
 				$mois_pentecote = gmdate("m", $date_pentecote);
 				if ($jour_pentecote == $jour && $mois_pentecote == $mois) {
@@ -830,14 +804,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			if (in_array('viernessanto', $specialdayrule)) {
 				// Viernes Santo
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_viernes = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) - 2,
-					gmdate("Y", $date_paques)
-				);
+				$date_viernes = $date_paques - (3600 * 24 * 2);
 				$jour_viernes = gmdate("d", $date_viernes);
 				$mois_viernes = gmdate("m", $date_viernes);
 				if ($jour_viernes == $jour && $mois_viernes == $mois) {
@@ -849,14 +816,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			if (in_array('fronleichnam', $specialdayrule)) {
 				// Fronleichnam (60 days after easter sunday)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_fronleichnam = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 60,
-					gmdate("Y", $date_paques)
-				);
+				$date_fronleichnam = $date_paques + (3600 * 24 * 60);
 				$jour_fronleichnam = gmdate("d", $date_fronleichnam);
 				$mois_fronleichnam = gmdate("m", $date_fronleichnam);
 				if ($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) {
