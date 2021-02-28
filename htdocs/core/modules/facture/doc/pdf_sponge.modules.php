@@ -1142,10 +1142,9 @@ class pdf_sponge extends ModelePDFFactures
 			&& empty($conf->global->FACTURE_CHQ_NUMBER)
 			&& empty($conf->global->FACTURE_RIB_NUMBER)) {
 				$this->error = $outputlangs->transnoentities("ErrorNoPaiementModeConfigured");
-			}
-			// Avoid having any valid PDF with setup that is not complete
-			elseif (($object->mode_reglement_code == 'CHQ' && empty($conf->global->FACTURE_CHQ_NUMBER) && empty($object->fk_account) && empty($object->fk_bank))
+			} elseif (($object->mode_reglement_code == 'CHQ' && empty($conf->global->FACTURE_CHQ_NUMBER) && empty($object->fk_account) && empty($object->fk_bank))
 				|| ($object->mode_reglement_code == 'VIR' && empty($conf->global->FACTURE_RIB_NUMBER) && empty($object->fk_account) && empty($object->fk_bank))) {
+				// Avoid having any valid PDF with setup that is not complete
 				$outputlangs->load("errors");
 
 				$pdf->SetXY($this->marge_gauche, $posy);
@@ -2116,7 +2115,8 @@ class pdf_sponge extends ModelePDFFactures
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
+			$mode =  'target';
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
 			// Show recipient
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;

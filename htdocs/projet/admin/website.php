@@ -35,7 +35,9 @@ $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -43,8 +45,11 @@ if (!$user->admin) accessforbidden();
  */
 
 if ($action == 'setPROJECT_ENABLE_PUBLIC') {
-	if (GETPOST('value')) dolibarr_set_const($db, 'PROJECT_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
-	else dolibarr_set_const($db, 'PROJECT_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+	if (GETPOST('value')) {
+		dolibarr_set_const($db, 'PROJECT_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
+	} else {
+		dolibarr_set_const($db, 'PROJECT_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 if ($action == 'update') {
@@ -52,9 +57,11 @@ if ($action == 'update') {
 
 	$res = dolibarr_set_const($db, "PROJECT_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error) {
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');

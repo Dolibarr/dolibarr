@@ -40,6 +40,9 @@ ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
 
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 
+-- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN montant double(24,8) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN montant DROP NOT NULL;
+
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
@@ -134,6 +137,9 @@ ALTER TABLE llx_socpeople MODIFY poste varchar(255);
 ALTER TABLE llx_menu ADD COLUMN prefix varchar(255) NULL AFTER titre;
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_user integer DEFAULT NULL;
+
+ALTER TABLE llx_mrp_production ADD COLUMN origin_id integer AFTER fk_mo;
+ALTER TABLE llx_mrp_production ADD COLUMN origin_type varchar(10) AFTER origin_id;
 
 ALTER TABLE llx_fichinter ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 ALTER TABLE llx_projet ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;

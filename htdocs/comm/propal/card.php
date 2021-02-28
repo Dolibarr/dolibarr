@@ -2047,7 +2047,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdate' && $usercancreate) {
 		print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2074,7 +2074,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editecheance' && $usercancreate) {
 		print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2104,7 +2104,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editconditions' && $usercancreate) {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	} else {
@@ -2117,7 +2117,7 @@ if ($action == 'create') {
 	$langs->load('deliveries');
 	print '<tr><td>';
 	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, $usercancreate, 'datepicker');
 	print '</td>';
 	print '</tr>';
@@ -2134,7 +2134,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editavailability' && $usercancreate) {
 		$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
 	} else {
@@ -2154,7 +2154,7 @@ if ($action == 'create') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td class="valuefield">';
 		if ($action == 'editshippingmethod' && $usercancreate) {
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
 		} else {
@@ -2172,7 +2172,7 @@ if ($action == 'create') {
 		print '<tr><td>';
 		$editenable = $usercancreate;
 		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $editenable);
-		print '</td><td>';
+		print '</td><td class="valuefieldcreate">';
 		if ($action == 'editwarehouse') {
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'warehouse_id', 1);
 		} else {
@@ -2191,7 +2191,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdemandreason' && $usercancreate) {
 		$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
@@ -2202,7 +2202,7 @@ if ($action == 'create') {
 
 	// Payment mode
 	print '<tr>';
-	print '<td>';
+	print '<td class="valuefield">';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
@@ -2210,7 +2210,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td>';
+	print '</td><td class="valuefieldcreate">';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmode' && $usercancreate) {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 	} else {
@@ -2230,7 +2230,7 @@ if ($action == 'create') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td class="valuefield">';
 		if ($object->statut == $object::STATUS_DRAFT && $action == 'editmulticurrencycode' && $usercancreate) {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
@@ -2250,7 +2250,7 @@ if ($action == 'create') {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td>';
+			print '</td><td class="valuefield">';
 			if ($object->statut == $object::STATUS_DRAFT && ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') && $usercancreate) {
 				if ($action == 'actualizemulticurrencyrate') {
 					list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
@@ -2272,7 +2272,7 @@ if ($action == 'create') {
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td class="right">';
+		print '</td><td class="valuefield">';
 		$arrayoutstandingbills = $soc->getOutstandingBills();
 		print price($arrayoutstandingbills['opened']).' / ';
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
@@ -2290,7 +2290,7 @@ if ($action == 'create') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td class="valuefield">';
 		if ($action == 'editbankaccount') {
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 		} else {
@@ -2305,13 +2305,13 @@ if ($action == 'create') {
 	$totalVolume = $tmparray['volume'];
 	if ($totalWeight) {
 		print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
-		print '<td>';
+		print '<td class="valuefield">';
 		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
 		print '</td></tr>';
 	}
 	if ($totalVolume) {
 		print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
-		print '<td>';
+		print '<td class="valuefield">';
 		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
 		print '</td></tr>';
 	}
@@ -2329,7 +2329,7 @@ if ($action == 'create') {
 		}
 		print '</td></tr></table>';
 		print '</td>';
-		print '<td>';
+		print '<td class="valuefield">';
 		if ($action != 'editincoterm') {
 			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		} else {

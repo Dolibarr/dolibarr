@@ -112,6 +112,8 @@ if ($action == "set") {
  *	View
  */
 
+$morehtml = '';
+
 pHeader($langs->trans("SetupEnd"), "step5");
 print '<br>';
 
@@ -424,11 +426,11 @@ if ($action == "set" && $success) {
 			print '<br><div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 		}
 
-		print "<br><br>";
+		print "<br>";
 
-		print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
-		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
-		print '</a></div><br>';
+		$morehtml = '<br><div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
+		$morehtml .= '</a></div><br>';
 	} else {
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
 		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
@@ -436,9 +438,9 @@ if ($action == "set" && $success) {
 
 		print "<br>";
 
-		print '<div class="center"><a href="../install/index.php">';
-		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
-		print '</a></div>';
+		$morehtml = '<br><div class="center"><a href="../install/index.php">';
+		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
+		$morehtml .= '</a></div>';
 	}
 } else {
 	dol_print_error('', 'step5.php: unknown choice of action');
@@ -455,7 +457,7 @@ dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("- step5: Dolibarr setup finished");
 
-pFooter(1, $setuplang);
+pFooter(1, $setuplang, '', 0, $morehtml);
 
 // Return code if ran from command line
 if ($ret) {

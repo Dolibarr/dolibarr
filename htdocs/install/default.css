@@ -20,6 +20,10 @@
 	opacity: 0.5;
 }
 
+.inline-block {
+	display: inline-block;	
+}
+
 body {
 	font-size:14px;
 	font-family: roboto,arial,tahoma,verdana,helvetica;
@@ -353,15 +357,16 @@ tr.choiceselected td.listofchoicesdesc {
 }
 
 tr.choiceselected td .button {
-    background: rgb(0,113,121);
+    background: rgba(150, 110, 162, 0.95);
     color: #fff;
 }
 
 a.button:link,a.button:visited,a.button:active {
     color: #888;
+    
 }
 .button {
-    background: #ddd;
+    background: rgb(234,228,225);
     color: #fff;
     /* border: 1px solid #e0e0e0; */
     padding: 0.5em 0.7em;

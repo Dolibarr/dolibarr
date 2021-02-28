@@ -601,7 +601,6 @@ if ($refresh === true) {
 	/*
 	 * Paid
 	 */
-
 	print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 	$sql = '';

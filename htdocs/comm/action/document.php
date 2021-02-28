@@ -180,9 +180,12 @@ if ($object->id > 0) {
 	// Affichage fiche action en mode visu
 	print '<table class="border tableforfield centpercent">';
 
-	// Type
+	// Type of event
 	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">';
+		print $object->getTypePicto();
+		print $langs->trans("Action".$object->type_code);
+		print '</td></tr>';
 	}
 
 	// Full day event

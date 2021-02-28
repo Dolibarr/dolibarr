@@ -372,7 +372,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 	//var_dump($theoricalamountforterminal); var_dump($theoricalnbofinvoiceforterminal);
 	if ($action != 'close') {
-		llxHeader();
+		llxHeader('', $langs->trans("NewCashFence"));
 
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
