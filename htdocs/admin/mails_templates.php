@@ -875,6 +875,7 @@ if ($resql) {
 			$valuetoshow = $langs->trans("Code");
 		}
 		if ($fieldlist[$field] == 'type_template') {
+			$align = 'center';
 			$valuetoshow = $langs->trans("TypeOfTemplate");
 		}
 		if ($fieldlist[$field] == 'private') {
