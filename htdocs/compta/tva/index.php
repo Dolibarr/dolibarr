@@ -621,7 +621,7 @@ if ($refresh === true) {
 	$sql .= " GROUP BY dm";
 
 	$sql .= " ORDER BY dm ASC, mode ASC";
-//print $sql;
+	//print $sql;
 
 	pt($db, $sql, $langs->trans("Month"));
 
