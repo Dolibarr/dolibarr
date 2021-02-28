@@ -3913,6 +3913,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
@@ -3983,6 +3984,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					}
 					print '</td>';
 
+					// Date last modification
+					print '<td class="center nowraponall">';
+					print dol_print_date($answerrecord->date_modification, 'dayhour');
+					print '</td>';
 
 					// Edit properties, HTML sources, status
 					print '<td class="tdwebsitesearchresult right nowraponall">';
@@ -4069,6 +4074,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<td>';
 					print '</td>';
 
+					// Date last modification
+					print '<td class="center nowraponall">';
+					//print dol_print_date(filemtime());
+					print '</td>';
+
 					// Edit properties, HTML sources, status
 					print '<td>';
 					print '</td>';
@@ -4105,6 +4115,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				// Nb of words
 				print '<td class="center nowraponall">';
 				print $totalnbwords.' '.$langs->trans("words");
+				print '</td>';
+
+				// Date last modification
+				print '<td>';
 				print '</td>';
 
 				// Edit properties, HTML sources, status

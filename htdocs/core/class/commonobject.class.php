@@ -493,6 +493,10 @@ abstract class CommonObject
 	 */
 	public $sendtoid;
 
+	/**
+	 * @var	float	Amount already paid (used to show correct status)
+	 */
+	public $alreadypaid;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -2447,7 +2451,8 @@ abstract class CommonObject
 									$line->date_end,
 									$line->array_options,
 									$line->fk_unit,
-									$line->multicurrency_subprice
+									$line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							case 'invoice_supplier':
@@ -2469,7 +2474,8 @@ abstract class CommonObject
 									$line->date_end,
 									$line->array_options,
 									$line->fk_unit,
-									$line->multicurrency_subprice
+									$line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							default:

@@ -128,7 +128,7 @@ class FormAdmin
 				continue;
 			}
 
-			$valuetoshow .= ' '.picto_from_langcode($key, 'class="saturatemedium"');
+			$valuetoshow = picto_from_langcode($key, 'class="saturatemedium"').' '.$valuetoshow;
 			if ((string) $selected == (string) $keytouse) {
 				$out .= '<option value="'.$keytouse.'" selected data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			} else {

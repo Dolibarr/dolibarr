@@ -37,8 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
@@ -56,23 +57,24 @@ $specimenthirdparty->initAsSpecimen();
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
 	$maskvalue = GETPOST('maskorder', 'alpha');
 
-	if ($maskconstorder)  $res = dolibarr_set_const($db, $maskconstorder, $maskvalue, 'chaine', 0, '', $conf->entity);
+	if ($maskconstorder) {
+		$res = dolibarr_set_const($db, $maskconstorder, $maskvalue, 'chaine', 0, '', $conf->entity);
+	}
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen')  // For orders
-{
+} elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
 	$commande = new CommandeFournisseur($db);
@@ -82,25 +84,21 @@ if ($action == 'updateMask')
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/supplier_order/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db, $commande);
 
-		if ($module->write_file($commande, $langs) > 0)
-		{
+		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -111,26 +109,19 @@ if ($action == 'updateMask')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-
-// Activate a model
-elseif ($action == 'set')
-{
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_SUPPLIER_ADDON_PDF', $conf->entity);
+	if ($ret > 0) {
+		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'COMMANDE_SUPPLIER_ADDON_PDF', $conf->entity);
+		}
 	}
-}
-
-// Set default model
-elseif ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
@@ -138,22 +129,18 @@ elseif ($action == 'setdoc')
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'setmod')
-{
+} elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'addcat')
-{
+} elseif ($action == 'addcat') {
 	$fourn = new Fournisseur($db);
 	$fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
-} elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
-{
+} elseif ($action == 'set_SUPPLIER_ORDER_OTHER') {
 	$freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED', 'alpha');
 	$doubleapproval = price2num($doubleapproval);
@@ -165,8 +152,7 @@ elseif ($action == 'setdoc')
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
 	$newmodule = new modFournisseur($db);
 
-	if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
-	{
+	if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
 		// clear default rights array
 		$newmodule->rights = array();
 		// add new right
@@ -187,17 +173,15 @@ elseif ($action == 'setdoc')
 		// Add all right without Permission1190
 		$newmodule->insert_permissions(1);
 	}
-}
-
-// Activate ask for payment bank
-elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER')
-{
+} elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER') {
+	// Activate ask for payment bank
 	$res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -240,30 +224,28 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 
 					$module = new $file;
 
-					if ($module->isEnabled())
-					{
+					if ($module->isEnabled()) {
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							continue;
+						}
 
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
@@ -276,13 +258,15 @@ foreach ($dirmodels as $reldir)
 						if (preg_match('/^Error/', $tmp)) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-						else print $tmp;
+						} elseif ($tmp == 'NotConfigured') {
+							print $langs->trans($tmp);
+						} else {
+							print $tmp;
+						}
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER == "$file")
-						{
+						if ($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -299,8 +283,9 @@ foreach ($dirmodels as $reldir)
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 									$nextval = $langs->trans($nextval);
+								}
 								$htmltooltip .= $nextval.'<br>';
 							} else {
 								$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -338,12 +323,10 @@ $sql .= " WHERE type = 'order_supplier'";
 $sql .= " AND entity = ".$conf->entity;
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows)
-	{
+	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
 		array_push($def, $array[0]);
 		$i++;
@@ -364,20 +347,15 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$realpath = $reldir."core/modules/supplier_order/doc";
 	$dir = dol_buildpath($realpath);
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 					$name = substr($file, 4, dol_strlen($file) - 16);
 					$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -392,16 +370,17 @@ foreach ($dirmodels as $reldir)
 					print "<td>\n";
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
-					if (method_exists($module, 'info')) print $module->info($langs);
-					else print $module->description;
+					if (method_exists($module, 'info')) {
+						print $module->info($langs);
+					} else {
+						print $module->description;
+					}
 					print "</td>\n";
 
 					// Active
-					if (in_array($name, $def))
-					{
+					if (in_array($name, $def)) {
 						print '<td class="center">'."\n";
-						if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name")
-						{
+						if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name") {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
@@ -417,8 +396,7 @@ foreach ($dirmodels as $reldir)
 
 					// Default
 					print '<td class="center">';
-					if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
-					{
+					if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name") {
 						print img_picto($langs->trans("Default"), 'on');
 					} else {
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -484,44 +462,45 @@ print "</td></tr>\n";
 if ($conf->banque->enabled)
 {
 
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
-    if (! empty($conf->use_javascript_ajax))
-    {
-        print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
-    }
-    else
-    {
-        if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-        }
-        else
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-        }
-    }
-    print '</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">';
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER');
+	}
+	else
+	{
+		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+		}
+		else
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+		}
+	}
+	print '</td></tr>';
 }
 else
 {
 
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 */
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_ORDER_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -537,8 +516,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
 print '<td></td>';
 print '<td class="center">';
-if ($conf->reception->enabled)
-{
+if ($conf->reception->enabled) {
 	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
 } else {
 	if ($conf->use_javascript_ajax) {

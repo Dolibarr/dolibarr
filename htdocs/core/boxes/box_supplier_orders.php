@@ -89,7 +89,7 @@ class box_supplier_orders extends ModeleBoxes
 			$sql .= ", c.total_ht";
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
-			$sql .= ", c.fk_statut";
+			$sql .= ", c.fk_statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 			if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -122,6 +122,7 @@ class box_supplier_orders extends ModeleBoxes
 
 					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
+					$supplierorderstatic->statut = $objp->status;
 
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
@@ -157,7 +158,7 @@ class box_supplier_orders extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $supplierorderstatic->LibStatut($objp->fk_statut, 3),
+						'text' => $supplierorderstatic->LibStatut($objp->status, 3),
 					);
 
 					$line++;
