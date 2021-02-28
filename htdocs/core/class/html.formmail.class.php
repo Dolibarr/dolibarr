@@ -1161,7 +1161,7 @@ class FormMail extends Form
 		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
-		if (!GETPOST('modelselected', 'alpha') && GETPOST('modelmailselected') != '-1') {
+		if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
 				$defaulttopic = $arraydefaultmessage->topic;
 			} elseif (!is_numeric($this->withtopic)) {
