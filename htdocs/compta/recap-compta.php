@@ -30,16 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
-if (!empty($conf->facture->enabled)) $langs->load("bills");
+if (!empty($conf->facture->enabled)) {
+	$langs->load("bills");
+}
 
 $id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid) $id = $user->socid;
+if ($user->socid) {
+	$id = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
@@ -49,12 +55,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "f.datef,f.rowid"; // Set here default search field
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "f.datef,f.rowid"; // Set here default search field
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 
 $arrayfields = array(
@@ -70,7 +82,9 @@ $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
  */
 $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 // None
 
@@ -83,15 +97,18 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Summary");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Summary");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name.' - '.$langs->trans("Summary");
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('', $title, $help_url);
 
-if ($id > 0)
-{
+if ($id > 0) {
 	$param = '';
-	if ($id > 0) $param .= '&socid='.$id;
+	if ($id > 0) {
+		$param .= '&socid='.$id;
+	}
 
 	$head = societe_prepare_head($object);
 
@@ -99,14 +116,15 @@ if ($id > 0)
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	print dol_get_fiche_end();
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
-	{
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
 		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
-		if (!empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		if (!empty($arrayfields['f.datef']['checked'])) {
+			print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		}
 		print '<td>'.$langs->trans("Element").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
 		print '<td class="right">'.$langs->trans("Debit").'</td>';
@@ -127,19 +145,16 @@ if ($id > 0)
 		$sql .= $db->order($sortfield, $sortorder);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
 			// Boucle sur chaque facture
-			for ($i = 0; $i < $num; $i++)
-			{
+			for ($i = 0; $i < $num; $i++) {
 				$objf = $db->fetch_object($resql);
 
 				$fac = new Facture($db);
 				$ret = $fac->fetch($objf->facid);
-				if ($ret < 0)
-				{
+				if ($ret < 0) {
 					print $fac->error."<br>";
 					continue;
 				}
@@ -160,7 +175,9 @@ if ($id > 0)
 
 				$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic);
 				$reshook = $hookmanager->executeHooks('facdao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
 
 				$TData[] = $values;
 
@@ -176,13 +193,11 @@ if ($id > 0)
 				$sql .= " ORDER BY p.datep ASC, p.rowid ASC";
 
 				$resqlp = $db->query($sql);
-				if ($resqlp)
-				{
+				if ($resqlp) {
 					$nump = $db->num_rows($resqlp);
 					$j = 0;
 
-					while ($j < $nump)
-					{
+					while ($j < $nump) {
 						$objp = $db->fetch_object($resqlp);
 
 						$paymentstatic = new Paiement($db);
@@ -203,7 +218,9 @@ if ($id > 0)
 
 						$parameters = array('socid' => $id, 'values' => &$values, 'fac' => $fac, 'userstatic' => $userstatic, 'paymentstatic' => $paymentstatic);
 						$reshook = $hookmanager->executeHooks('paydao', $parameters, $object); // Note that $parameters['values'] and $object may have been modified by some hooks
-						if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						if ($reshook < 0) {
+							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						}
 
 						$TData[] = $values;
 
@@ -241,14 +258,20 @@ if ($id > 0)
 			// Display array
 			foreach ($TData as $data) {
 				$html_class = '';
-				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
-				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];
+				if (!empty($data['fk_facture'])) {
+					$html_class = 'facid-'.$data['fk_facture'];
+				} elseif (!empty($data['fk_paiement'])) {
+					$html_class = 'payid-'.$data['fk_paiement'];
+				}
 
 				print '<tr class="oddeven '.$html_class.'">';
 
 				print "<td class=\"center\">";
-				if (!empty($data['fk_facture'])) print dol_print_date($data['date'], 'day');
-				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'], 'dayhour');
+				if (!empty($data['fk_facture'])) {
+					print dol_print_date($data['date'], 'day');
+				} elseif (!empty($data['fk_paiement'])) {
+					print dol_print_date($data['date'], 'dayhour');
+				}
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";

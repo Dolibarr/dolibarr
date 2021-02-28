@@ -39,8 +39,7 @@ $langs->load("commercial");
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -84,8 +83,7 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 //$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	$morehtmlref .= $langs->trans('Project').': ';
@@ -95,7 +93,9 @@ if (!empty($conf->projet->enabled))
 		$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
 		$morehtmlref .= $proj->ref;
 		$morehtmlref .= '</a>';
-		if ($proj->title) $morehtmlref .= ' - '.$proj->title;
+		if ($proj->title) {
+			$morehtmlref .= ' - '.$proj->title;
+		}
 	} else {
 		$morehtmlref .= '';
 	}

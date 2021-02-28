@@ -99,8 +99,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->NbRepeat = $tabConf[4];
 		$this->WithoutAmbi = $tabConf[5];
 
-		if ($this->WithoutAmbi)
-		{
+		if ($this->WithoutAmbi) {
 			$this->Maj = str_replace($this->Ambi, "", $this->Maj);
 			$this->Min = str_replace($this->Ambi, "", $this->Min);
 			$this->Nb  = str_replace($this->Ambi, "", $this->Nb);
@@ -215,7 +214,9 @@ class modGeneratePassPerso extends ModeleGenPassword
 	{
 		$last = "";
 
-		if (empty($this->NbRepeat)) return 1;
+		if (empty($this->NbRepeat)) {
+			return 1;
+		}
 
 		$count = 0;
 		$char = str_split($password);

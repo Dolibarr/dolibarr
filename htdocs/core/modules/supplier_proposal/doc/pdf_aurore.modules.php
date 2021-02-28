@@ -54,9 +54,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	public $description;
 
 	/**
-     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
-     */
-    public $update_main_doc_field;
+	 * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
 
 	/**
 	 * @var string document type

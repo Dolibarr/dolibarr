@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
-if (!empty($conf->facture->enabled)) $langs->load("bills");
+if (!empty($conf->facture->enabled)) {
+	$langs->load("bills");
+}
 
 // Security check
 $socid = $_GET["socid"];
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-
 
 
 /*
@@ -46,14 +46,13 @@ if ($user->socid > 0)
 
 llxHeader();
 
-if ($socid > 0)
-{
+if ($socid > 0) {
 	$societe = new Societe($db);
 	$societe->fetch($socid);
 
 	/*
-     * Affichage onglets
-     */
+	 * Affichage onglets
+	 */
 	$head = societe_prepare_head($societe);
 
 	print dol_get_fiche_head($head, 'prospect', $langs->trans("ThirdParty"), 0, 'company');
@@ -68,8 +67,7 @@ if ($socid > 0)
 	print '<tr><td width="20%">'.$langs->trans("Thirdpary").'</td><td width="80%" colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
+	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 		print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
 		print ($societe->prefix_comm ? $societe->prefix_comm : '&nbsp;');
 		print '</td></tr>';
@@ -84,7 +82,7 @@ if ($socid > 0)
 
 	print $langs->trans("FeatureNotYetAvailable");
 } else {
-  	dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

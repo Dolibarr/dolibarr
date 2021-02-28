@@ -2464,7 +2464,7 @@ class Product extends CommonObject
 		$this->stats_bom['qty_toconsume'] = 0;
 
 		$sql = "SELECT COUNT(DISTINCT b.rowid) as nb_toproduce,";
-		$sql .= " b.qty as qty_toproduce";
+		$sql .= " SUM(b.qty) as qty_toproduce";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as b";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bom_bomline as bl ON bl.fk_bom=b.rowid";
 		$sql .= " WHERE ";
@@ -4590,7 +4590,7 @@ class Product extends CommonObject
 				$result .= (img_object(($notooltip ? '' : $label), 'product', ($notooltip ? 'class="paddingright"' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1));
 			}
 			if ($this->type == Product::TYPE_SERVICE) {
-				$result .= (img_object(($notooltip ? '' : $label), 'service', ($notooltip ? 'class="paddinright"' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1));
+				$result .= (img_object(($notooltip ? '' : $label), 'service', ($notooltip ? 'class="paddingright"' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1));
 			}
 		}
 		$result .= $newref;

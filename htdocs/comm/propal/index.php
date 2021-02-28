@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file		htdocs/comm/propal/index.php
+ *  \file		htdocs/comm/propal/index.php
  *	\ingroup	propal
  *	\brief	Home page of proposal area
  */

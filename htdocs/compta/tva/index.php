@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,9 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 $form = new Form($db);
 $now = dol_now();
 $current_date = dol_getdate($now);
-if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
+if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) {
+	$conf->global->SOCIETE_FISCAL_MONTH_START = 1;
+}
 
 $refresh = GETPOSTISSET('submit') ? true : false;
 
@@ -133,12 +136,18 @@ if ($refresh === false) {
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (GETPOSTISSET("modetax")) $modetax = GETPOST("modetax", 'int');
-if (empty($modetax)) $modetax = 0;
+if (GETPOSTISSET("modetax")) {
+	$modetax = GETPOST("modetax", 'int');
+}
+if (empty($modetax)) {
+	$modetax = 0;
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -152,102 +161,95 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 function pt($db, $sql, $date)
 {
-    global $conf, $bc, $langs, $form;
+	global $conf, $bc, $langs, $form;
 
-    $result = $db->query($sql);
-    if ($result) {
-        $num = $db->num_rows($result);
-        $i = 0;
-        $total = 0;
-        print '<table class="noborder centpercent">';
+	$result = $db->query($sql);
+	if ($result) {
+		$num = $db->num_rows($result);
+		$i = 0;
+		$total = 0;
+		print '<table class="noborder centpercent">';
 
-        print '<tr class="liste_titre">';
-        print '<td class="nowrap">'.$date.'</td>';
-        print '<td class="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
-        print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").$form->textwithpicto('', $langs->trans('PaidDuringThisPeriodDesc'), 1).'</td>';
-        print "</tr>\n";
+		print '<tr class="liste_titre">';
+		print '<td class="nowrap">'.$date.'</td>';
+		print '<td class="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
+		print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").$form->textwithpicto('', $langs->trans('PaidDuringThisPeriodDesc'), 1).'</td>';
+		print "</tr>\n";
 
-        $totalclaimed = 0;
-        $totalpaid = 0;
-        $amountclaimed = 0;
-        $amountpaid = 0;
-        $previousmonth = '';
-        $previousmode = '';
-        $mode = '';
+		$totalclaimed = 0;
+		$totalpaid = 0;
+		$amountclaimed = 0;
+		$amountpaid = 0;
+		$previousmonth = '';
+		$previousmode = '';
+		$mode = '';
 
-        while ($i < $num) {
-            $obj = $db->fetch_object($result);
-            $mode = $obj->mode;
+		while ($i < $num) {
+			$obj = $db->fetch_object($result);
+			$mode = $obj->mode;
 
-            //print $obj->dm.' '.$obj->mode.' '.$previousmonth.' '.$previousmode;
-            if ($obj->mode == 'claimed' && !empty($previousmode))
-            {
-            	print '<tr class="oddeven">';
-            	print '<td class="nowrap">'.$previousmonth."</td>\n";
-            	print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
-            	print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
-            	print "</tr>\n";
+			//print $obj->dm.' '.$obj->mode.' '.$previousmonth.' '.$previousmode;
+			if ($obj->mode == 'claimed' && !empty($previousmode)) {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">'.$previousmonth."</td>\n";
+				print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
+				print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
+				print "</tr>\n";
 
-            	$amountclaimed = 0;
-            	$amountpaid = 0;
-            }
+				$amountclaimed = 0;
+				$amountpaid = 0;
+			}
 
-            if ($obj->mode == 'claimed')
-            {
-            	$amountclaimed = $obj->mm;
-            	$totalclaimed = $totalclaimed + $amountclaimed;
-            }
-            if ($obj->mode == 'paid')
-            {
-            	$amountpaid = $obj->mm;
-            	$totalpaid = $totalpaid + $amountpaid;
-            }
+			if ($obj->mode == 'claimed') {
+				$amountclaimed = $obj->mm;
+				$totalclaimed = $totalclaimed + $amountclaimed;
+			}
+			if ($obj->mode == 'paid') {
+				$amountpaid = $obj->mm;
+				$totalpaid = $totalpaid + $amountpaid;
+			}
 
-            if ($obj->mode == 'paid')
-            {
-            	print '<tr class="oddeven">';
-            	print '<td class="nowrap">'.$obj->dm."</td>\n";
-            	print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
-            	print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
-            	print "</tr>\n";
-            	$amountclaimed = 0;
-            	$amountpaid = 0;
-            	$previousmode = '';
-            	$previousmonth = '';
-            }
-            else {
-            	$previousmode = $obj->mode;
-            	$previousmonth = $obj->dm;
-            }
+			if ($obj->mode == 'paid') {
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">'.$obj->dm."</td>\n";
+				print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
+				print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
+				print "</tr>\n";
+				$amountclaimed = 0;
+				$amountpaid = 0;
+				$previousmode = '';
+				$previousmonth = '';
+			} else {
+				$previousmode = $obj->mode;
+				$previousmonth = $obj->dm;
+			}
 
-            $i++;
-        }
+			$i++;
+		}
 
-        if ($mode == 'claimed' && !empty($previousmode))
-        {
-        	print '<tr class="oddeven">';
-        	print '<td class="nowrap">'.$previousmonth."</td>\n";
-        	print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
-        	print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
-        	print "</tr>\n";
+		if ($mode == 'claimed' && !empty($previousmode)) {
+			print '<tr class="oddeven">';
+			print '<td class="nowrap">'.$previousmonth."</td>\n";
+			print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
+			print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
+			print "</tr>\n";
 
-        	$amountclaimed = 0;
-        	$amountpaid = 0;
-        }
+			$amountclaimed = 0;
+			$amountpaid = 0;
+		}
 
-        print '<tr class="liste_total">';
-        print '<td class="right">'.$langs->trans("Total").'</td>';
-        print '<td class="nowrap right">'.price($totalclaimed).'</td>';
-        print '<td class="nowrap right">'.price($totalpaid).'</td>';
-        print "</tr>";
+		print '<tr class="liste_total">';
+		print '<td class="right">'.$langs->trans("Total").'</td>';
+		print '<td class="nowrap right">'.price($totalclaimed).'</td>';
+		print '<td class="nowrap right">'.price($totalpaid).'</td>';
+		print "</tr>";
 
-        print "</table>";
+		print "</table>";
 
-        $db->free($result);
-    }
-    else {
-        dol_print_error($db);
-    }
+		$db->free($result);
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -267,20 +269,36 @@ $description = $fsearch;
 // Show report header
 $name = $langs->trans("VATReportByMonth");
 $calcmode = '';
-if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
-if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
-if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
+if ($modetax == 0) {
+	$calcmode = $langs->trans('OptionVATDefault');
+}
+if ($modetax == 1) {
+	$calcmode = $langs->trans('OptionVATDebitOption');
+}
+if ($modetax == 2) {
+	$calcmode = $langs->trans('OptionPaymentForProductAndServices');
+}
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 
 $description .= $langs->trans("VATSummary").'<br>';
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description .= $langs->trans("RulesVATDueProducts");
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description .= $langs->trans("RulesVATInProducts");
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description .= '<br>'.$langs->trans("RulesVATDueServices");
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description .= '<br>'.$langs->trans("RulesVATInServices");
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
+	$description .= $langs->trans("RulesVATDueProducts");
+}
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+	$description .= $langs->trans("RulesVATInProducts");
+}
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+	$description .= '<br>'.$langs->trans("RulesVATDueServices");
+}
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+	$description .= '<br>'.$langs->trans("RulesVATInServices");
+}
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
+if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
+}
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
@@ -607,7 +625,6 @@ if ($refresh === true) {
 //print $sql;
 
 	pt($db, $sql, $langs->trans("Month"));
-
 
 	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
 		print '<br>';
