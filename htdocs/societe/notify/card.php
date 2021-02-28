@@ -39,16 +39,24 @@ $actionid  = GETPOST('actionid');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "n.daten";
-if (empty($page) || $page == -1) { $page = 0; }
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "n.daten";
+}
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -68,39 +76,34 @@ $hookmanager->initHooks(array('thirdpartynotification', 'globalcard'));
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	$error = 0;
 
 	// Add a notification
-	if ($action == 'add')
-	{
-		if (empty($contactid))
-		{
+	if ($action == 'add') {
+		if (empty($contactid)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Contact")), null, 'errors');
 			$error++;
 		}
-		if ($actionid <= 0)
-		{
+		if ($actionid <= 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 			$sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$contactid." AND fk_action=".$actionid;
-			if ($db->query($sql))
-			{
+			if ($db->query($sql)) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
 				$sql .= " VALUES ('".$db->idate($now)."',".$socid.",".$contactid.",".$actionid.")";
 
-				if (!$db->query($sql))
-				{
+				if (!$db->query($sql)) {
 					$error++;
 					dol_print_error($db);
 				}
@@ -108,8 +111,7 @@ if (empty($reshook))
 				dol_print_error($db);
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$db->commit();
 			} else {
 				$db->rollback();
@@ -118,8 +120,7 @@ if (empty($reshook))
 	}
 
 	// Remove a notification
-	if ($action == 'delete')
-	{
+	if ($action == 'delete') {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST('actid', 'int');
 		$db->query($sql);
 	}
@@ -137,14 +138,15 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Notification");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name.' - '.$langs->trans("Notification");
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
 llxHeader('', $title, $help_url);
 
 
-if ($result > 0)
-{
+if ($result > 0) {
 	$langs->load("other");
 
 	$head = societe_prepare_head($object);
@@ -161,44 +163,43 @@ if ($result > 0)
 	print '<table class="border centpercent tableforfield">';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
+	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
-    if ($object->client) {
-        print '<tr><td class="titlefield">';
-        print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
-        $tmpcheck = $object->check_codeclient();
-        if ($tmpcheck != 0 && $tmpcheck != -5) {
-        	print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-        }
-        print '</td></tr>';
-    }
+	if ($object->client) {
+		print '<tr><td class="titlefield">';
+		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+		$tmpcheck = $object->check_codeclient();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		}
+		print '</td></tr>';
+	}
 
-    if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
-        print '<tr><td class="titlefield">';
-        print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
-        $tmpcheck = $object->check_codefournisseur();
-        if ($tmpcheck != 0 && $tmpcheck != -5) {
-        	print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-        }
-        print '</td></tr>';
-    }
+	if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire)) {
+		print '<tr><td class="titlefield">';
+		print $langs->trans('SupplierCode').'</td><td colspan="3">';
+		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+		$tmpcheck = $object->check_codefournisseur();
+		if ($tmpcheck != 0 && $tmpcheck != -5) {
+			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		}
+		print '</td></tr>';
+	}
 
 	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
-    print '<td colspan="3">';
-    $nbofrecipientemails=0;
-    $notify=new Notify($db);
-    $tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
-    foreach($tmparray as $tmpkey => $tmpval)
-    {
-        if (! empty($tmpkey)) $nbofrecipientemails++;
-    }
-    print $nbofrecipientemails;
-    print '</td></tr>';*/
+	print '<td colspan="3">';
+	$nbofrecipientemails=0;
+	$notify=new Notify($db);
+	$tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
+	foreach($tmparray as $tmpkey => $tmpval)
+	{
+		if (! empty($tmpkey)) $nbofrecipientemails++;
+	}
+	print $nbofrecipientemails;
+	print '</td></tr>';*/
 
 	print '</table>';
 
@@ -232,8 +233,7 @@ if ($result > 0)
 	$sql .= " AND c.fk_soc = ".$object->id;
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
 		dol_print_error($db);
@@ -261,17 +261,15 @@ if ($result > 0)
 
 	// Line to add a new subscription
 	$listofemails = $object->thirdparty_and_contact_email_array();
-	if (count($listofemails) > 0)
-	{
+	if (count($listofemails) > 0) {
 		$actions = array();
 
 		// Load array of available notifications
 		$notificationtrigger = new InterfaceNotification($db);
 		$listofmanagedeventfornotification = $notificationtrigger->getListOfManagedEvents();
 
-		foreach ($listofmanagedeventfornotification as $managedeventfornotification)
-		{
- 			$label = ($langs->trans("Notify_".$managedeventfornotification['code']) != "Notify_".$managedeventfornotification['code'] ? $langs->trans("Notify_".$managedeventfornotification['code']) : $managedeventfornotification['label']);
+		foreach ($listofmanagedeventfornotification as $managedeventfornotification) {
+			$label = ($langs->trans("Notify_".$managedeventfornotification['code']) != "Notify_".$managedeventfornotification['code'] ? $langs->trans("Notify_".$managedeventfornotification['code']) : $managedeventfornotification['label']);
 			$actions[$managedeventfornotification['rowid']] = $label;
 		}
 		print '<tr class="oddeven nohover">';
@@ -294,14 +292,12 @@ if ($result > 0)
 	}
 
 
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
 
 		$contactstatic = new Contact($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			$contactstatic->id = $obj->contact_id;
@@ -310,10 +306,8 @@ if ($result > 0)
 
 			print '<tr class="oddeven">';
 			print '<td>'.$contactstatic->getNomUrl(1);
-			if ($obj->type == 'email')
-			{
-				if (isValidEmail($obj->email))
-				{
+			if ($obj->type == 'email') {
+				if (isValidEmail($obj->email)) {
 					print ' &lt;'.$obj->email.'&gt;';
 				} else {
 					$langs->load("errors");
@@ -326,8 +320,12 @@ if ($result > 0)
 			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') print $langs->trans("Email");
-			if ($obj->type == 'sms') print $langs->trans("SMS");
+			if ($obj->type == 'email') {
+				print $langs->trans("Email");
+			}
+			if ($obj->type == 'sms') {
+				print $langs->trans("SMS");
+			}
 			print '</td>';
 			print '<td class="right"><a href="card.php?socid='.$socid.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 			print '</tr>';
@@ -338,9 +336,9 @@ if ($result > 0)
 
 	// List of notifications enabled for fixed email
 	/*
-    foreach($conf->global as $key => $val)
-    {
-    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+	foreach($conf->global as $key => $val)
+	{
+		if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
 		print '<tr class="oddeven"><td>';
 		$listtmp=explode(',',$val);
 		$first=1;
@@ -349,7 +347,7 @@ if ($result > 0)
 			if (! $first) print ', ';
 			$first=0;
 			$valemail=trim($valemail);
-    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+			//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
 			if (isValidEmail($valemail, 1))
 			{
 				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
@@ -377,14 +375,14 @@ if ($result > 0)
 		print '</td>';
 		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
-    }*/
+	}*/
 
 	/*if ($user->admin)
-    {
+	{
 		print '<tr class="oddeven"><td colspan="4">';
 		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 		print '</td></tr>';
-    }*/
+	}*/
 
 	print '</table>';
 	print '</div>';
@@ -406,12 +404,10 @@ if ($result > 0)
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-	{
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
+		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -420,19 +416,24 @@ if ($result > 0)
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
 		dol_print_error($db);
 	}
 
 	$param = '&socid='.$object->id;
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.$contextpage;
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.$limit;
+	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -454,19 +455,16 @@ if ($result > 0)
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, '', $sortfield, $sortorder, 'right ');
 	print '</tr>';
 
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$i = 0;
 
 		$contactstatic = new Contact($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven"><td>';
-			if ($obj->id > 0)
-			{
+			if ($obj->id > 0) {
 				$contactstatic->id = $obj->id;
 				$contactstatic->lastname = $obj->lastname;
 				$contactstatic->firstname = $obj->firstname;
@@ -481,18 +479,22 @@ if ($result > 0)
 			print $label;
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') print $langs->trans("Email");
-			if ($obj->type == 'sms') print $langs->trans("Sms");
+			if ($obj->type == 'email') {
+				print $langs->trans("Email");
+			}
+			if ($obj->type == 'sms') {
+				print $langs->trans("Sms");
+			}
 			print '</td>';
 			// TODO Add link to object here for other types
 			/*print '<td>';
-            if ($obj->object_type == 'order')
-            {
+			if ($obj->object_type == 'order')
+			{
 				$orderstatic->id=$obj->object_id;
 				$orderstatic->ref=...
 				print $orderstatic->getNomUrl(1);
-            }
-           	print '</td>';*/
+			}
+			   print '</td>';*/
 			// print
 			print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
 			print '</tr>';
@@ -507,7 +509,9 @@ if ($result > 0)
 	print '</div>';
 
 	print '</form>';
-} else dol_print_error('', 'RecordNotFound');
+} else {
+	dol_print_error('', 'RecordNotFound');
+}
 
 // End of page
 llxFooter();
