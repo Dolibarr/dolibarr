@@ -23,16 +23,26 @@
  *		\brief      File to offer a way to make an online signature for a particular Dolibarr entity
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -60,12 +70,12 @@ $suffix = GETPOST("suffix", 'aZ09');
 $source = GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 
-if (empty($source)) $source = 'proposal';
+if (empty($source)) {
+	$source = 'proposal';
+}
 
-if (!$action)
-{
-	if ($source && !$ref)
-	{
+if (!$action) {
+	if ($source && !$ref) {
 		print $langs->trans('ErrorBadParameters')." - ref missing";
 		exit;
 	}
@@ -81,23 +91,19 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 // Complete urls for post treatment
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
-if (!empty($source))
-{
+if (!empty($source)) {
 	$urlok .= 'source='.urlencode($source).'&';
 	$urlko .= 'source='.urlencode($source).'&';
 }
-if (!empty($REF))
-{
+if (!empty($REF)) {
 	$urlok .= 'ref='.urlencode($REF).'&';
 	$urlko .= 'ref='.urlencode($REF).'&';
 }
-if (!empty($SECUREKEY))
-{
+if (!empty($SECUREKEY)) {
 	$urlok .= 'securekey='.urlencode($SECUREKEY).'&';
 	$urlko .= 'securekey='.urlencode($SECUREKEY).'&';
 }
-if (!empty($entity))
-{
+if (!empty($entity)) {
 	$urlok .= 'entity='.urlencode($entity).'&';
 	$urlko .= 'entity='.urlencode($entity).'&';
 }
@@ -112,8 +118,7 @@ $creditor = $mysoc->name;
  */
 
 
-if ($action == 'dosign')
-{
+if ($action == 'dosign') {
 	// TODO
 }
 
@@ -123,7 +128,9 @@ if ($action == 'dosign')
  */
 
 $head = '';
-if (!empty($conf->global->MAIN_SIGN_CSS_URL)) $head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_SIGN_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+if (!empty($conf->global->MAIN_SIGN_CSS_URL)) {
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_SIGN_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+}
 
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
@@ -132,8 +139,7 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
 // Check link validity for param 'source'
-if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
-{
+if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', ''))) {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
@@ -161,24 +167,24 @@ print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
-elseif (!empty($conf->global->ONLINE_SIGN_LOGO)) $logosmall = $conf->global->ONLINE_SIGN_LOGO;
+if (!empty($conf->global->$paramlogo)) {
+	$logosmall = $conf->global->$paramlogo;
+} elseif (!empty($conf->global->ONLINE_SIGN_LOGO)) {
+	$logosmall = $conf->global->ONLINE_SIGN_LOGO;
+}
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo = '';
 $urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
-{
+if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
-{
+} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
 }
 // Output html code for logo
-if ($urllogo)
-{
+if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
@@ -192,16 +198,17 @@ if ($urllogo)
 
 // Output introduction text
 $text = '';
-if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
-{
+if (!empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT)) {
 	$langs->load("members");
 	$reg = array();
-	if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
-	else $text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
+	if (preg_match('/^\((.*)\)$/', $conf->global->ONLINE_SIGN_NEWFORM_TEXT, $reg)) {
+		$text .= $langs->trans($reg[1])."<br>\n";
+	} else {
+		$text .= $conf->global->ONLINE_SIGN_NEWFORM_TEXT."<br>\n";
+	}
 	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
 }
-if (empty($text))
-{
+if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
 	$text .= '<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom", $creditor).'<br><br></td></tr>'."\n";
 }
@@ -217,8 +224,7 @@ $error = 0;
 $var = false;
 
 // Payment on customer order
-if ($source == 'proposal')
-{
+if ($source == 'proposal') {
 	$found = true;
 	$langs->load("proposal");
 
@@ -226,8 +232,7 @@ if ($source == 'proposal')
 
 	$proposal = new Propal($db);
 	$result = $proposal->fetch('', $ref);
-	if ($result <= 0)
-	{
+	if ($result <= 0) {
 		$mesg = $proposal->error;
 		$error++;
 	} else {
@@ -258,9 +263,13 @@ if ($source == 'proposal')
 
 
 
-if (!$found && !$mesg) $mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
+if (!$found && !$mesg) {
+	$mesg = $langs->transnoentitiesnoconv("ErrorBadParameters");
+}
 
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+if ($mesg) {
+	print '<tr><td align="center" colspan="2"><br><div class="warning">'.dol_escape_htmltag($mesg).'</div></td></tr>'."\n";
+}
 
 print '</table>'."\n";
 print "\n";

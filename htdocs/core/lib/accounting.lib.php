@@ -203,11 +203,11 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	foreach ($moreparam as $key => $value) {
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
-	print '<table width="100%" class="border">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("Name").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("Name").'</td>';
 	print '<td colspan="3">';
 	print $nom;
 	print '</td>';
@@ -216,7 +216,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	// Calculation mode
 	if ($calcmode) {
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td>'.$langs->trans("CalculationMode").'</td>';
 		if (!$variante) {
 			print '<td colspan="3">';
 		} else {

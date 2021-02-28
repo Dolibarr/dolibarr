@@ -27,8 +27,9 @@ require '../../main.inc.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $radio_dump = GETPOST('radio_dump');
 $showpass = GETPOST('showpass');
@@ -58,8 +59,12 @@ jQuery(document).ready(function() {
 		jQuery("#postgresql_options").show();
 	});
 	<?php
-		if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
-		if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+	if ($label == 'MySQL') {
+		print 'jQuery("#radio_dump_mysql").click();';
+	}
+	if ($label == 'PostgreSQL') {
+		print 'jQuery("#radio_dump_postgresql").click();';
+	}
 	?>
 });
 </script>
@@ -96,23 +101,21 @@ print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
-    <?php
-	if (in_array($type, array('mysql', 'mysqli')))
-	{
+	<?php
+	if (in_array($type, array('mysql', 'mysqli'))) {
 		?>
-    <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($radio_dump == 'mysql_options' ? ' checked' : ''); ?> />
-        <label for="radio_dump_mysql">MySQL (mysql)</label>
-    </div>
-        <?php
-	} elseif (in_array($type, array('pgsql')))
-	{
+	<div class="formelementrow">
+		<input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($radio_dump == 'mysql_options' ? ' checked' : ''); ?> />
+		<label for="radio_dump_mysql">MySQL (mysql)</label>
+	</div>
+		<?php
+	} elseif (in_array($type, array('pgsql'))) {
 		?>
-    <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($radio_dump == 'postgresql_options' ? ' checked' : ''); ?> />
-        <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore or psql)</label>
-    </div>
-        <?php
+	<div class="formelementrow">
+		<input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($radio_dump == 'postgresql_options' ? ' checked' : ''); ?> />
+		<label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore or psql)</label>
+	</div>
+		<?php
 	} else {
 		print 'No method available with database '.$label;
 	}
@@ -126,23 +129,25 @@ print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
 
 <div id="div_container_sub_exportoptions" >
 <?php
-if (in_array($type, array('mysql', 'mysqli')))
-{
+if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<fieldset id="mysql_options">';
 	print '<legend>'.$langs->trans('RestoreMySQL').'</legend>';
 	print '<div class="formelementrow centpercent">';
 	// Parameteres execution
 	$command = $db->getPathOfRestore();
-	if (preg_match("/\s/", $command)) $command = $command = escapeshellarg($command); // Use quotes on command
+	if (preg_match("/\s/", $command)) {
+		$command = $command = escapeshellarg($command); // Use quotes on command
+	}
 
 	$param = $dolibarr_main_db_name;
 	$param .= " -h ".$dolibarr_main_db_host;
-	if (!empty($dolibarr_main_db_port)) $param .= " -P ".$dolibarr_main_db_port;
+	if (!empty($dolibarr_main_db_port)) {
+		$param .= " -P ".$dolibarr_main_db_port;
+	}
 	$param .= " -u ".$dolibarr_main_db_user;
 	$paramcrypted = $param;
 	$paramclear = $param;
-	if (!empty($dolibarr_main_db_pass))
-	{
+	if (!empty($dolibarr_main_db_pass)) {
 		$paramcrypted .= " -p".preg_replace('/./i', '*', $dolibarr_main_db_pass);
 		$paramclear .= " -p".$dolibarr_main_db_pass;
 	}
@@ -158,26 +163,29 @@ if (in_array($type, array('mysql', 'mysqli')))
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	print '</div>';
 	print '</fieldset>';
-} elseif (in_array($type, array('pgsql')))
-{
+} elseif (in_array($type, array('pgsql'))) {
 	print '<fieldset id="postgresql_options">';
 	print '<legend>Restore PostgreSQL</legend>';
 	print '<div class="formelementrow">';
 	// Parameteres execution
 	$command = $db->getPathOfRestore();
-	if (preg_match("/\s/", $command)) $command = $command = escapeshellarg($command); // Use quotes on command
+	if (preg_match("/\s/", $command)) {
+		$command = $command = escapeshellarg($command); // Use quotes on command
+	}
 
 	$param = " -d ".$dolibarr_main_db_name;
 	$param .= " -h ".$dolibarr_main_db_host;
-	if (!empty($dolibarr_main_db_port)) $param .= " -p ".$dolibarr_main_db_port;
+	if (!empty($dolibarr_main_db_port)) {
+		$param .= " -p ".$dolibarr_main_db_port;
+	}
 	$param .= " -U ".$dolibarr_main_db_user;
 	$paramcrypted = $param;
 	$paramclear = $param;
 	/*if (! empty($dolibarr_main_db_pass))
-    {
-        $paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
-        $paramclear.=" -p".$dolibarr_main_db_pass;
-    }*/
+	{
+		$paramcrypted.=" -p".preg_replace('/./i','*',$dolibarr_main_db_pass);
+		$paramclear.=" -p".$dolibarr_main_db_pass;
+	}*/
 	$paramcrypted .= " -W";
 	$paramclear .= " -W";
 	// With psql:
