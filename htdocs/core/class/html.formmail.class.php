@@ -330,7 +330,7 @@ class FormMail extends Form
 		$langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
+		if (GETPOST('mode', 'alpha') == 'init' && (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
 		{
 			$this->clear_attached_files();
 		}
@@ -383,7 +383,7 @@ class FormMail extends Form
 			$listofmimes = array();
 			$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
-			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
+			if (GETPOST('mode', 'alpha') == 'init' && (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
 			{
 				if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
 				{
@@ -1161,7 +1161,7 @@ class FormMail extends Form
 		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
-		if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
+		if (!GETPOST('modelselected', 'alpha') && GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
 				$defaulttopic = $arraydefaultmessage->topic;
 			} elseif (!is_numeric($this->withtopic)) {
