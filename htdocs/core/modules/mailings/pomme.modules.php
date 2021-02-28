@@ -172,16 +172,23 @@ class mailing_pomme extends MailingTargets
 		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 		$sql .= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') $sql .= " AND u.statut=1";
-		if (GETPOSTISSET("filter") && GETPOST("filter") == '0') $sql .= " AND u.statut=0";
-		if (GETPOSTISSET("filteremployee") && GETPOSt("filteremployee") == '1') $sql .= " AND u.employee=1";
-		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') $sql .= " AND u.employee=0";
+		if (GETPOSTISSET("filter") && GETPOST("filter") == '1') {
+			$sql .= " AND u.statut=1";
+		}
+		if (GETPOSTISSET("filter") && GETPOST("filter") == '0') {
+			$sql .= " AND u.statut=0";
+		}
+		if (GETPOSTISSET("filteremployee") && GETPOSt("filteremployee") == '1') {
+			$sql .= " AND u.employee=1";
+		}
+		if (GETPOSTISSET("filteremployee") && GETPOST("filteremployee") == '0') {
+			$sql .= " AND u.employee=0";
+		}
 		$sql .= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$j = 0;
@@ -189,11 +196,9 @@ class mailing_pomme extends MailingTargets
 			dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email)
-				{
+				if ($old <> $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
 						'fk_contact' => $obj->fk_contact,

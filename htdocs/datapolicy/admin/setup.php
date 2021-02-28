@@ -33,7 +33,9 @@ $langs->load('members');
 $langs->load('datapolicy@datapolicy');
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -104,8 +106,7 @@ print dol_get_fiche_head($head, 'settings', '', -1, "datapolicy@datapolicy");
 echo '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span><br><br>';
 
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -113,11 +114,9 @@ if ($action == 'edit')
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $title => $tab)
-	{
+	foreach ($arrayofparameters as $title => $tab) {
 		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
-		foreach ($tab as $key => $val)
-		{
+		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
 			print '</td><td>';
@@ -144,11 +143,9 @@ if ($action == 'edit')
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $title => $tab)
-	{
+	foreach ($arrayofparameters as $title => $tab) {
 		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
-		foreach ($tab as $key => $val)
-		{
+		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
 			print '</td><td>'.($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]).'</td></tr>';

@@ -77,7 +77,6 @@ if ($object->fetch($id) >= 0) {
 	dol_print_object_info($object, 0);
 	//print '</td></tr></table>';
 
-
 	print dol_get_fiche_end();
 }
 

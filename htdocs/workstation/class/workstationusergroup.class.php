@@ -64,23 +64,17 @@ class WorkstationUserGroup extends CommonObject
 		$this->db = $db;
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
 
 		// Translate some data of arrayofkeyval
-		if (is_object($langs))
-		{
-			foreach ($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach ($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
@@ -94,7 +88,7 @@ class WorkstationUserGroup extends CommonObject
 	 * @param	int		$fk_workstation		id of workstation we need to get linked usergroups
 	 * @return 	array						Array of record
 	 */
-	static public function getAllGroupsOfWorkstation($fk_workstation)
+	public static function getAllGroupsOfWorkstation($fk_workstation)
 	{
 		global $db;
 
@@ -108,7 +102,7 @@ class WorkstationUserGroup extends CommonObject
 	 * @param	int		$fk_workstation		Id of workstation we need to remove linked usergroups
 	 * @return 	int							<0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
-	static public function deleteAllGroupsOfWorkstation($fk_workstation)
+	public static function deleteAllGroupsOfWorkstation($fk_workstation)
 	{
 		global $db;
 

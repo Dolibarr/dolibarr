@@ -73,12 +73,15 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0) { $page = 0; }
+if (empty($page) || $page < 0) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield)
+if (!$sortfield) {
 	$sortfield = "f.datef, f.ref, l.rowid";
+}
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 		$sortorder = "DESC";
@@ -86,10 +89,12 @@ if (!$sortorder) {
 }
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
-if (!$user->rights->accounting->bind->write)
+}
+if (!$user->rights->accounting->bind->write) {
 	accessforbidden();
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('accountancysupplierlist'));
@@ -107,18 +112,22 @@ $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'acco
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list'; $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_societe = '';
 		$search_lineid = '';
 		$search_ref = '';
@@ -160,8 +169,7 @@ if ($massaction == 'ventil') {
 			$monId = $maLigneCourante[0];
 			$monCompte = GETPOST('codeventil'.$monId);
 
-			if ($monCompte <= 0)
-			{
+			if ($monCompte <= 0) {
 				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
@@ -200,8 +208,7 @@ $formother = new FormOther($db);
 
 llxHeader('', $langs->trans("SuppliersVentilation"));
 
-if (empty($chartaccountcode))
-{
+if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
 	// End of page
 	llxFooter();
@@ -269,16 +276,23 @@ $sql .= dolSqlDateFilter('f.datef', $search_day, $search_month, $search_year);
 if (strlen(trim($search_country))) {
 	$arrayofcode = getCountriesInEEC();
 	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
-	foreach ($arrayofcode as $key => $value)
-	{
+	foreach ($arrayofcode as $key => $value) {
 		$country_code_in_EEC .= ($country_code_in_EEC ? "," : "")."'".$value."'";
-		if ($value != $mysoc->country_code) $country_code_in_EEC_without_me .= ($country_code_in_EEC_without_me ? "," : "")."'".$value."'";
+		if ($value != $mysoc->country_code) {
+			$country_code_in_EEC_without_me .= ($country_code_in_EEC_without_me ? "," : "")."'".$value."'";
+		}
 	}
-	if ($search_country == 'special_allnotme')     $sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
-	elseif ($search_country == 'special_eec')      $sql .= " AND co.code IN (".$country_code_in_EEC.")";
-	elseif ($search_country == 'special_eecnotme') $sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
-	elseif ($search_country == 'special_noteec')   $sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
-	else $sql .= natural_search("co.code", $search_country);
+	if ($search_country == 'special_allnotme') {
+		$sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
+	} elseif ($search_country == 'special_eec') {
+		$sql .= " AND co.code IN (".$country_code_in_EEC.")";
+	} elseif ($search_country == 'special_eecnotme') {
+		$sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
+	} elseif ($search_country == 'special_noteec') {
+		$sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
+	} else {
+		$sql .= natural_search("co.code", $search_country);
+	}
 }
 if (strlen(trim($search_tvaintra))) {
 	$sql .= natural_search("s.tva_intra", $search_tvaintra);
@@ -299,12 +313,10 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -322,21 +334,51 @@ if ($result) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
-	if ($search_lineid)      $param .= '&search_lineid='.urlencode($search_lineid);
-	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
-	if ($search_month)       $param .= '&search_month='.urlencode($search_month);
-	if ($search_year)        $param .= '&search_year='.urlencode($search_year);
-	if ($search_invoice)     $param .= '&search_invoice='.urlencode($search_invoice);
-	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
-	if ($search_label)       $param .= '&search_label='.urlencode($search_label);
-	if ($search_desc)        $param .= '&search_desc='.urlencode($search_desc);
-	if ($search_amount)      $param .= '&search_amount='.urlencode($search_amount);
-	if ($search_vat)         $param .= '&search_vat='.urlencode($search_vat);
-	if ($search_country) 	 $param .= "&search_country=".urlencode($search_country);
-	if ($search_tvaintra)	 $param .= "&search_tvaintra=".urlencode($search_tvaintra);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($search_societe) {
+		$param .= '&search_societe='.urlencode($search_societe);
+	}
+	if ($search_lineid) {
+		$param .= '&search_lineid='.urlencode($search_lineid);
+	}
+	if ($search_day) {
+		$param .= '&search_day='.urlencode($search_day);
+	}
+	if ($search_month) {
+		$param .= '&search_month='.urlencode($search_month);
+	}
+	if ($search_year) {
+		$param .= '&search_year='.urlencode($search_year);
+	}
+	if ($search_invoice) {
+		$param .= '&search_invoice='.urlencode($search_invoice);
+	}
+	if ($search_ref) {
+		$param .= '&search_ref='.urlencode($search_ref);
+	}
+	if ($search_label) {
+		$param .= '&search_label='.urlencode($search_label);
+	}
+	if ($search_desc) {
+		$param .= '&search_desc='.urlencode($search_desc);
+	}
+	if ($search_amount) {
+		$param .= '&search_amount='.urlencode($search_amount);
+	}
+	if ($search_vat) {
+		$param .= '&search_vat='.urlencode($search_vat);
+	}
+	if ($search_country) {
+		$param .= "&search_country=".urlencode($search_country);
+	}
+	if ($search_tvaintra) {
+		$param .= "&search_tvaintra=".urlencode($search_tvaintra);
+	}
 
 	$arrayofmassactions = array(
 		'ventil'=>$langs->trans("Ventilate")
@@ -349,7 +391,9 @@ if ($result) {
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -360,7 +404,9 @@ if ($result) {
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
 
-	if ($msg) print $msg.'<br>';
+	if ($msg) {
+		print $msg.'<br>';
+	}
 
 	$moreforfilter = '';
 
@@ -373,9 +419,11 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre center nowraponall minwidth100imp">';
-   	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
-   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
-   	$formother->select_year($search_year, 'search_year', 1, 20, 5);
+	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
+	}
+	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
+	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
@@ -411,7 +459,9 @@ if ($result) {
 	print_liste_field_titre("AccountAccountingSuggest", '', '', '', '', '', '', '', 'nowraponall ');
 	print_liste_field_titre("IntoAccount", '', '', '', '', '', '', '', 'center ');
 	$checkpicto = '';
-	if ($massactionbutton) $checkpicto = $form->showCheckAddButtons('checkforselect', 1);
+	if ($massactionbutton) {
+		$checkpicto = $form->showCheckAddButtons('checkforselect', 1);
+	}
 	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
@@ -496,7 +546,9 @@ if ($result) {
 				}
 			}
 		}
-		if ($objp->code_sell_l == -1) $objp->code_sell_l = '';
+		if ($objp->code_sell_l == -1) {
+			$objp->code_sell_l = '';
+		}
 
 		// Level 2: Search suggested account for product/service (similar code exists in page index.php to make automatic binding)
 		$suggestedaccountingaccountfor = '';
@@ -528,7 +580,9 @@ if ($result) {
 		} else {
 			$code_buy_p_notset = 'color:orange';
 		}
-		if (empty($objp->code_buy_l) && empty($objp->code_buy_p)) $code_buy_p_notset = 'color:red';
+		if (empty($objp->code_buy_l) && empty($objp->code_buy_p)) {
+			$code_buy_p_notset = 'color:red';
+		}
 
 		// $objp->code_buy_l is now default code of product/service
 		// $objp->code_buy_p is now code of product/service
@@ -551,9 +605,12 @@ if ($result) {
 
 		// Ref Product
 		print '<td class="tdoverflowmax150">';
-		if ($product_static->id > 0)
+		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
-		if ($objp->product_label) print '<br><span class="opacitymedium small">'.$objp->product_label.'</span>';
+		}
+		if ($objp->product_label) {
+			print '<br><span class="opacitymedium small">'.$objp->product_label.'</span>';
+		}
 		print '</td>';
 
 		// Description
@@ -568,8 +625,9 @@ if ($result) {
 		print '</td>';
 
 		// Vat rate
-		if ($objp->vat_tx_l != $objp->vat_tx_p)
+		if ($objp->vat_tx_l != $objp->vat_tx_p) {
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
+		}
 		print '<td style="'.$code_vat_differ.'" class="right">';
 		print vatrate($objp->tva_tx_line.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : ''));
 		print '</td>';
@@ -590,17 +648,22 @@ if ($result) {
 		print '<td>';
 		$s = '<span class="small">1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
 		$shelp = '';
-		if ($suggestedaccountingaccountbydefaultfor == 'eec') $shelp .= $langs->trans("SaleEEC");
-		elseif ($suggestedaccountingaccountbydefaultfor == 'export') $shelp .= $langs->trans("SaleExport");
+		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
+			$shelp .= $langs->trans("SaleEEC");
+		} elseif ($suggestedaccountingaccountbydefaultfor == 'export') {
+			$shelp .= $langs->trans("SaleExport");
+		}
 		$s .= ($objp->code_buy_l > 0 ? length_accountg($objp->code_buy_l) : '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>');
 		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
-		if ($objp->product_id > 0)
-		{
+		if ($objp->product_id > 0) {
 			print '<br>';
 			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
 			$shelp = '';
-			if ($suggestedaccountingaccountfor == 'eec') $shelp = $langs->trans("SaleEEC");
-			elseif ($suggestedaccountingaccountfor == 'export') $shelp = $langs->trans("SaleExport");
+			if ($suggestedaccountingaccountfor == 'eec') {
+				$shelp = $langs->trans("SaleEEC");
+			} elseif ($suggestedaccountingaccountfor == 'export') {
+				$shelp = $langs->trans("SaleExport");
+			}
 			$s .= (empty($objp->code_buy_p) ? '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($objp->code_buy_p));
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		} else {
@@ -620,10 +683,8 @@ if ($result) {
 		// Suggested accounting account
 		print '<td>';
 		$suggestedid = $objp->aarowid_suggest;
-		if (empty($suggestedid) && empty($objp->code_buy_p) && !empty($objp->code_buy_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
-		{
-			if (empty($accountingaccount_codetotid_cache[$objp->code_buy_l]))
-			{
+		if (empty($suggestedid) && empty($objp->code_buy_p) && !empty($objp->code_buy_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC)) {
+			if (empty($accountingaccount_codetotid_cache[$objp->code_buy_l])) {
 				$tmpaccount = new AccountingAccount($db);
 				$tmpaccount->fetch(0, $objp->code_buy_l, 1);
 				if ($tmpaccount->id > 0) {

@@ -43,34 +43,38 @@ function facturefourn_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
 	//if ($fac->mode_reglement_code == 'PRE')
-	if (!empty($conf->paymentbybanktransfer->enabled))
-	{
+	if (!empty($conf->paymentbybanktransfer->enabled)) {
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 		$sql .= " WHERE pfd.fk_facture_fourn = ".$object->id;
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $nbStandingOrders = $obj->nb;
+			if ($obj) {
+				$nbStandingOrders = $obj->nb;
+			}
+		} else {
+			dol_print_error($db);
 		}
-		else dol_print_error($db);
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer';
 		$head[$h][1] = $langs->trans('BankTransfer');
-		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		if ($nbStandingOrders > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		}
 		$head[$h][2] = 'standingorders';
 		$h++;
 	}
@@ -81,14 +85,19 @@ function facturefourn_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -100,7 +109,9 @@ function facturefourn_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -133,18 +144,18 @@ function ordersupplier_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
-	if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)))
-	{
+	if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
@@ -158,14 +169,19 @@ function ordersupplier_prepare_head($object)
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_order');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-	{
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -177,14 +193,15 @@ function ordersupplier_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
 	$head[$h][1] .= $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-	{
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}

@@ -40,15 +40,16 @@ if (!empty($discount_type)) {
 	$fixedDiscount = $thirdparty->remise_supplier_percent;
 }
 
-if ($fixedDiscount > 0)
-{
+if ($fixedDiscount > 0) {
 	$translationKey = (!empty($discount_type)) ? 'HasRelativeDiscountFromSupplier' : 'CompanyHasRelativeDiscount';
 	print $langs->trans($translationKey, $fixedDiscount).'.';
 } else {
 	$translationKey = (!empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
 	print '<span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 }
-if ($isNewObject) print ' ('.$addrelativediscount.')';
+if ($isNewObject) {
+	print ' ('.$addrelativediscount.')';
+}
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {

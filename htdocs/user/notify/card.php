@@ -39,16 +39,24 @@ $action = GETPOST('action', 'aZ09');
 $actionid = GETPOST('actionid');
 
 // Security check
-if ($user->socid) $id = $user->socid;
+if ($user->socid) {
+	$id = $user->socid;
+}
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "n.daten";
-if (empty($page) || $page == -1) { $page = 0; }
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "n.daten";
+}
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -61,29 +69,24 @@ $now = dol_now();
  */
 
 // Add a notification
-if ($action == 'add')
-{
+if ($action == 'add') {
 	$error = 0;
 
-	if ($actionid <= 0)
-	{
+	if ($actionid <= 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 		$sql .= " WHERE fk_user=".$id." AND fk_action=".$actionid;
-		if ($db->query($sql))
-		{
+		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
 			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
 
-			if (!$db->query($sql))
-			{
+			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
@@ -91,8 +94,7 @@ if ($action == 'add')
 			dol_print_error($db);
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -101,8 +103,7 @@ if ($action == 'add')
 }
 
 // Remove a notification
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST("actid", "int");
 	$db->query($sql);
 }
@@ -120,13 +121,14 @@ $result = $object->fetch($id, '', '', 1);
 $object->getrights();
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Notification");
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name.' - '.$langs->trans("Notification");
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 
-if ($result > 0)
-{
+if ($result > 0) {
 	$langs->load("other");
 
 	$head = user_prepare_head($object);
@@ -144,8 +146,7 @@ if ($result > 0)
 
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0)
-	{
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
 		print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 	} else {
 		print '<td>'.$object->login.'</td>';
@@ -153,16 +154,16 @@ if ($result > 0)
 	print '</tr>'."\n";
 
 	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
-    print '<td colspan="3">';
-    $nbofrecipientemails=0;
-    $notify=new Notify($db);
-    $tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
-    foreach($tmparray as $tmpkey => $tmpval)
-    {
-        $nbofrecipientemails++;
-    }
-    print $nbofrecipientemails;
-    print '</td></tr>';*/
+	print '<td colspan="3">';
+	$nbofrecipientemails=0;
+	$notify=new Notify($db);
+	$tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
+	foreach($tmparray as $tmpkey => $tmpval)
+	{
+		$nbofrecipientemails++;
+	}
+	print $nbofrecipientemails;
+	print '</td></tr>';*/
 
 	print '</table>';
 
@@ -203,23 +204,20 @@ if ($result > 0)
 
 
 	// $listofemails=$object->thirdparty_and_contact_email_array();
-	if ($object->email)
-	{
+	if ($object->email) {
 		$actions = array();
 
 		// Load array of available notifications
 		$notificationtrigger = new InterfaceNotification($db);
 		$listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
-		foreach ($listofnotifiedevents as $notifiedevent)
-		{
- 			$label = ($langs->trans("Notify_".$notifiedevent['code']) != "Notify_".$notifiedevent['code'] ? $langs->trans("Notify_".$notifiedevent['code']) : $notifiedevent['label']);
+		foreach ($listofnotifiedevents as $notifiedevent) {
+			$label = ($langs->trans("Notify_".$notifiedevent['code']) != "Notify_".$notifiedevent['code'] ? $langs->trans("Notify_".$notifiedevent['code']) : $notifiedevent['label']);
 			$actions[$notifiedevent['rowid']] = $label;
 		}
 		print '<tr class="oddeven nohover"><td>';
 		print $object->getNomUrl(1);
-		if (isValidEmail($object->email))
-		{
+		if (isValidEmail($object->email)) {
 			print ' &lt;'.$object->email.'&gt;';
 		} else {
 			$langs->load("errors");
@@ -258,8 +256,7 @@ if ($result > 0)
 	$sql .= " AND c.rowid = ".$object->id;
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
 		dol_print_error($db);
@@ -280,24 +277,20 @@ if ($result > 0)
 	$langs->load("errors");
 	$langs->load("other");
 
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
 
 		$userstatic = new user($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			$userstatic->id = $obj->userid;
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
-			if ($obj->type == 'email')
-			{
-				if (isValidEmail($obj->email))
-				{
+			if ($obj->type == 'email') {
+				if (isValidEmail($obj->email)) {
 					print ' &lt;'.$obj->email.'&gt;';
 				} else {
 					$langs->load("errors");
@@ -310,8 +303,12 @@ if ($result > 0)
 			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') print $langs->trans("Email");
-			if ($obj->type == 'sms') print $langs->trans("SMS");
+			if ($obj->type == 'email') {
+				print $langs->trans("Email");
+			}
+			if ($obj->type == 'sms') {
+				print $langs->trans("SMS");
+			}
 			print '</td>';
 			print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 			print '</tr>';
@@ -322,8 +319,8 @@ if ($result > 0)
 
 	// List of notifications enabled for fixed email
 	/*
-    foreach($conf->global as $key => $val) {
-    	if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+	foreach($conf->global as $key => $val) {
+		if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
 		print '<tr class="oddeven"><td>';
 		$listtmp=explode(',',$val);
 		$first=1;
@@ -332,7 +329,7 @@ if ($result > 0)
 			if (! $first) print ', ';
 			$first=0;
 			$valemail=trim($valemail);
-    		//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+			//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
 			if (isValidEmail($valemail, 1))
 			{
 				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
@@ -359,14 +356,14 @@ if ($result > 0)
 		print '</td>';
 		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 		print '</tr>';
-    }*/
+	}*/
 	/*if ($user->admin)
-    {
-	    $var = ! $var;
+	{
+		$var = ! $var;
 		print '<tr class="oddeven"><td colspan="4">';
 		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 		print '</td></tr>';
-    }*/
+	}*/
 
 	print '</table>';
 
@@ -387,12 +384,10 @@ if ($result > 0)
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-	{
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
+		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -401,19 +396,24 @@ if ($result > 0)
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 	} else {
 		dol_print_error($db);
 	}
 
 	$param = '&id='.$object->id;
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.$contextpage;
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.$limit;
+	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -434,19 +434,16 @@ if ($result > 0)
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "n.daten", '', $param, '', $sortfield, $sortorder, 'right ');
 	print '</tr>';
 
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
 
 		$userstatic = new User($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven"><td>';
-			if ($obj->id > 0)
-			{
+			if ($obj->id > 0) {
 				$userstatic->id = $obj->id;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
@@ -461,18 +458,22 @@ if ($result > 0)
 			print $label;
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') print $langs->trans("Email");
-			if ($obj->type == 'sms') print $langs->trans("Sms");
+			if ($obj->type == 'email') {
+				print $langs->trans("Email");
+			}
+			if ($obj->type == 'sms') {
+				print $langs->trans("Sms");
+			}
 			print '</td>';
 			// TODO Add link to object here for other types
 			/*print '<td>';
-            if ($obj->object_type == 'order')
-            {
+			if ($obj->object_type == 'order')
+			{
 				$orderstatic->id=$obj->object_id;
 				$orderstatic->ref=...
 				print $orderstatic->getNomUrl(1);
-            }
-           	print '</td>';*/
+			}
+			   print '</td>';*/
 			// print
 			print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
 			print '</tr>';
@@ -486,7 +487,9 @@ if ($result > 0)
 	print '</table>';
 
 	print '</form>';
-} else dol_print_error('', 'RecordNotFound');
+} else {
+	dol_print_error('', 'RecordNotFound');
+}
 
 // End of page
 llxFooter();

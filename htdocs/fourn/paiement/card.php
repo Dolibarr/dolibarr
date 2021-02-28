@@ -48,7 +48,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
 // It should be enough because all payments are done on invoices of the same thirdparty.
 if ($socid && $socid != $object->thirdparty->id) {
@@ -60,14 +62,12 @@ if ($socid && $socid != $object->thirdparty->id) {
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
-{
+if ($action == 'setnote' && $user->rights->fournisseur->facture->creer) {
 	$db->begin();
 
 	$object->fetch($id);
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 		$action = '';
 	} else {
@@ -76,14 +76,12 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
-{
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer) {
 	$db->begin();
 
 	$object->fetch($id);
 	$result = $object->delete();
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 		header('Location: '.DOL_URL_ROOT.'/fourn/paiement/list.php');
 		exit;
@@ -96,13 +94,11 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
 	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
-)
-{
+) {
 	$db->begin();
 
 	$object->fetch($id);
-	if ($object->validate() >= 0)
-	{
+	if ($object->validate() >= 0) {
 		$db->commit();
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
@@ -112,25 +108,21 @@ if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	}
 }
 
-if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
-{
+if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
 	$object->fetch($id);
 	$res = $object->update_num($_POST['num_paiement']);
-	if ($res === 0)
-	{
+	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
 	}
 }
 
-if ($action == 'setdatep' && !empty($_POST['datepday']))
-{
+if ($action == 'setdatep' && !empty($_POST['datepday'])) {
 	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
-	if ($res === 0)
-	{
+	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
@@ -159,21 +151,18 @@ $head = payment_supplier_prepare_head($object);
 
 print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
 
-if ($result > 0)
-{
+if ($result > 0) {
 	/*
 	 * Confirmation of payment's delete
 	 */
-	if ($action == 'delete')
-	{
+	if ($action == 'delete') {
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
 	}
 
 	/*
 	 * Confirmation of payment's validation
 	 */
-	if ($action == 'validate')
-	{
+	if ($action == 'validate') {
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate');
 	}
 
@@ -189,7 +178,7 @@ if ($result > 0)
 
 	/*print '<tr>';
 	print '<td width="20%">'.$langs->trans('Ref').'</td><td>';
-    print $form->showrefnav($object,'id','',1,'rowid','ref');
+	print $form->showrefnav($object,'id','',1,'rowid','ref');
 	print '</td></tr>';*/
 
 	// Date of payment
@@ -211,28 +200,24 @@ if ($result > 0)
 	print '<td>';
 	print $form->editfieldval("Numero",'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
-    */
+	*/
 
 	// Amount
 	print '<tr><td>'.$langs->trans('Amount').'</td>';
 	print '<td>'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
 
-	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-	{
+	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		print '<tr><td>'.$langs->trans('Status').'</td>';
 		print '<td>'.$object->getLibStatut(4).'</td></tr>';
 	}
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled))
-	{
-		if ($object->fk_account)
-		{
+	if (!empty($conf->banque->enabled)) {
+		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
-			if ($bankline->rappro)
-			{
+			if ($bankline->rappro) {
 				$allow_delete = 0;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
 			}
@@ -276,8 +261,7 @@ if ($result > 0)
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 
 		$i = 0;
@@ -293,12 +277,10 @@ if ($result > 0)
 		print '<td class="right">'.$langs->trans('Status').'</td>';
 		print "</tr>\n";
 
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			$facturestatic = new FactureFournisseur($db);
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				$facturestatic->id = $objp->facid;
@@ -328,8 +310,7 @@ if ($result > 0)
 				print '<td class="right">'.$facturestatic->LibStatut($objp->paye, $objp->status, 6, 1).'</td>';
 				print "</tr>\n";
 
-				if ($objp->paye == 1)
-				{
+				if ($objp->paye == 1) {
 					$allow_delete = 0;
 					$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 				}
@@ -353,23 +334,17 @@ if ($result > 0)
 	 */
 
 	print '<div class="tabsAction">';
-	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-	{
-		if ($user->socid == 0 && $object->statut == 0 && $action == '')
-		{
+	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+		if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
-		   	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
-			{
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate))) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Valid').'</a>';
 			}
 		}
 	}
-	if ($user->socid == 0 && $action == '')
-	{
-		if ($user->rights->fournisseur->facture->supprimer)
-		{
-			if ($allow_delete)
-			{
+	if ($user->socid == 0 && $action == '') {
+		if ($user->rights->fournisseur->facture->supprimer) {
+			if ($allow_delete) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
@@ -385,8 +360,7 @@ if ($result > 0)
 
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
-	if (is_array($modellist))
-	{
+	if (is_array($modellist)) {
 		$ref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;

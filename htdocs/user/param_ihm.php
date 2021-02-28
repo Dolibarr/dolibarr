@@ -38,8 +38,7 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userihm'; // To manage different context of search
 
-if ($id)
-{
+if ($id) {
 	// $user est le user qui edite, $id est l'id de l'utilisateur edite
 	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
 	|| (($user->id != $id) && $user->rights->user->user->creer));
@@ -47,11 +46,15 @@ if ($id)
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-if ($user->id <> $id && !$canreaduser) accessforbidden();
+if ($user->id <> $id && !$canreaduser) {
+	accessforbidden();
+}
 
 $dirtop = "../core/menus/standard";
 $dirleft = "../core/menus/standard";
@@ -81,7 +84,9 @@ $hookmanager->initHooks(array('usercard', 'userihm', 'globalcard'));
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
@@ -122,16 +127,20 @@ if (empty($reshook)) {
 			if ($val == '') {
 				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array()));
+				$tabparam['THEME_ELDY_TOPMENU_BACK1'] = join(
+					',',
+					colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1', 'alphanohtml'), array())
+				);
 			}
 
 			$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array()))));
 			if ($val == '') {
 				$tabparam['THEME_ELDY_BACKTITLE1'] = '';
 			} else {
-				$tabparam['THEME_ELDY_BACKTITLE1'] = join(',',
-					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array()));
+				$tabparam['THEME_ELDY_BACKTITLE1'] = join(
+					',',
+					colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1', 'alphanohtml'), array())
+				);
 			}
 
 			if (GETPOST('check_THEME_ELDY_USE_HOVER') == 'on') {
@@ -174,21 +183,36 @@ llxHeader();
 
 // List of possible landing pages
 $tmparray = array('index.php'=>'Dashboard');
-if (!empty($conf->societe->enabled)) $tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
-if (!empty($conf->projet->enabled)) $tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
-if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) $tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) $tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
-if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) $tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
-if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
-if (!empty($conf->adherent->enabled)) $tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
-if (!empty($conf->agenda->enabled)) $tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
+if (!empty($conf->societe->enabled)) {
+	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
+}
+if (!empty($conf->projet->enabled)) {
+	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
+}
+if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
+	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
+}
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
+}
+if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {
+	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
+}
+if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
+	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
+}
+if (!empty($conf->adherent->enabled)) {
+	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
+}
+if (!empty($conf->agenda->enabled)) {
+	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
+}
 
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -196,8 +220,7 @@ if ($action == 'edit')
 }
 
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '';
@@ -208,22 +231,20 @@ if ($action == 'edit')
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-	if (!empty($conf->use_javascript_ajax))
-	{/*
-        print '<script type="text/javascript" language="javascript">
-    	jQuery(document).ready(function() {
-    		$("#main_lang_default").change(function() {
-    			$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
-    		});
-    		$("#main_size_liste_limit").keyup(function() {
-    			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
-    			else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
-    		});
-    	});
-    	</script>';*/
+	if (!empty($conf->use_javascript_ajax)) {/*
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			$("#main_lang_default").change(function() {
+				$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
+			});
+			$("#main_size_liste_limit").keyup(function() {
+				if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
+				else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
+			});
+		});
+		</script>';*/
 	}
-	if (!empty($conf->use_javascript_ajax))
-	{
+	if (!empty($conf->use_javascript_ajax)) {
 		print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
         	function init_myfunc()
@@ -357,10 +378,11 @@ if ($action == 'edit')
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
-	if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE]))
-	{
+	if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
 		print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
-	} else print $object->conf->MAIN_LANDING_PAGE;
+	} else {
+		print $object->conf->MAIN_LANDING_PAGE;
+	}
 	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
 
@@ -371,7 +393,9 @@ if ($action == 'edit')
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->AGENDA_DEFAULT_VIEW) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'."\n";
 	$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-	if (!empty($object->conf->AGENDA_DEFAULT_VIEW)) print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $object->conf->AGENDA_DEFAULT_VIEW, 0, 0, 0, '', 0, 0, 1);
+	if (!empty($object->conf->AGENDA_DEFAULT_VIEW)) {
+		print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $object->conf->AGENDA_DEFAULT_VIEW, 0, 0, 0, '', 0, 0, 1);
+	}
 	print '</td></tr>'."\n";
 
 	// Max size for lists
@@ -390,12 +414,10 @@ if ($action == 'edit')
 
 
 	print '<div class="tabsAction">';
-	if (empty($user->admin) && !empty($dolibarr_main_demo))
-	{
+	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
 		print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
 	} else {
-		if ($caneditfield || !empty($user->admin))       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
-		{
+		if ($caneditfield || !empty($user->admin)) {       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		} else {
 			print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
@@ -405,8 +427,7 @@ if ($action == 'edit')
 	print '</div>';
 }
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '</form>';
 }
 

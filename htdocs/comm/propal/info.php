@@ -19,9 +19,9 @@
  */
 
 /**
- *      \file       htdocs/comm/propal/info.php
- *      \ingroup    propal
- *      \brief      Page d'affichage des infos d'une proposition commerciale
+ *	\file       htdocs/comm/propal/info.php
+ *	\ingroup    propal
+ *	\brief      Page d'affichage des infos d'une proposition commerciale
  */
 
 require '../../main.inc.php';
@@ -40,12 +40,13 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if (!empty($user->socid)) $socid = $user->socid;
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
-if (!$object->fetch($id, $ref) > 0)
-{
+if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 	exit;
 }
@@ -80,12 +81,10 @@ $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_cl
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->propal->creer)
-	{
+	if ($user->rights->propal->creer) {
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref .= ' : ';
