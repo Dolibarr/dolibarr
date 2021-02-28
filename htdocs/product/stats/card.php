@@ -209,7 +209,7 @@ if ($result || empty($id)) {
 	print '</td></tr>';
 	print '</table>';
 	print '<div class="center"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></div>';
-	print '</form>';
+	print '</form><br>';
 
 	print '<br>';
 

@@ -1519,7 +1519,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td class="valuefield">';
 	if ($action == 'editconditions') {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
 	} else {
@@ -1538,7 +1538,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td class="valuefield">';
 	if ($action == 'editdate_livraison') {
 		print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" class="formconsumeproduce">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1562,7 +1562,7 @@ if ($action == 'create') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
-	print '</td><td colspan="3">';
+	print '</td><td class="valuefield">';
 	if ($action == 'editmode') {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'DBIT', 1, 1);
 	} else {
@@ -1582,7 +1582,7 @@ if ($action == 'create') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td class="valuefield">';
 		if ($action == 'editmulticurrencycode') {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
@@ -1601,7 +1601,7 @@ if ($action == 'create') {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
-			print '</td><td colspan="3">';
+			print '</td><td class="valuefield">';
 			if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
 				if ($action == 'actualizemulticurrencyrate') {
 					list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
@@ -1625,7 +1625,7 @@ if ($action == 'create') {
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td class=right colspan="3">';
+		print '</td><td class="valuefield">';
 		$arrayoutstandingbills = $soc->getOutstandingBills('supplier');
 		$outstandingBills = $arrayoutstandingbills['opened'];
 		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
@@ -1643,7 +1643,7 @@ if ($action == 'create') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td class="valuefield">';
 		if ($action == 'editbankaccount') {
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 		} else {
@@ -1654,7 +1654,6 @@ if ($action == 'create') {
 	}
 
 	// Other attributes
-	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
@@ -1669,45 +1668,45 @@ if ($action == 'create') {
 	if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount HT
 		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td>'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="valuefield">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount VAT
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td>'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="valuefield">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 
 		// Multicurrency Amount TTC
 		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td>'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
+		print '<td class="valuefield">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
 		print '</tr>';
 	}
 
 	// Amount HT
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans('AmountHT').'</td>';
-	print '<td>'.price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+	print '<td class="valuefield">'.price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 	print '</tr>';
 
 	// Amount VAT
 	print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
-	print '<td>'.price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+	print '<td class="valuefield">'.price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { 	// Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td class="nowrap">'.price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+		print '<td class="valuefield nowrap">'.price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { 	// Localtax2
 		print '<tr><td height="10">'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td class="nowrap">'.price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+		print '<td class="valuefield nowrap">'.price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 		print '</tr>';
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td class="nowrap">'.price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
+	print '<td class="valuefield nowrap">'.price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency).'</td>';
 	print '</tr>';
 
 	print '</table>';

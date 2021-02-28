@@ -28,7 +28,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions", "errors", 'sendings'));
@@ -148,7 +150,8 @@ if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['w
 
 // remove not available workflows (based on activated modules and global defined keys)
 $workflowcodes = array_filter($workflowcodes, function ($var) {
-	return $var['enabled']; });
+	return $var['enabled'];
+});
 
 /*
  * View
@@ -194,12 +197,24 @@ foreach ($workflowcodes as $key => $params) {
 			$header = $langs->trans("AutomaticCreation");
 		} elseif (preg_match('/classify_(.*)/', $params['family'], $reg)) {
 			$header = $langs->trans("AutomaticClassification");
-			if ($reg[1] == 'proposal') 			$header .= ' - '.$langs->trans('Proposal');
-			if ($reg[1] == 'order') 			$header .= ' - '.$langs->trans('Order');
-			if ($reg[1] == 'supplier_proposal')	$header .= ' - '.$langs->trans('SupplierProposal');
-			if ($reg[1] == 'supplier_order')	$header .= ' - '.$langs->trans('SupplierOrder');
-			if ($reg[1] == 'reception')			$header .= ' - '.$langs->trans('Reception');
-			if ($reg[1] == 'shipping')			$header .= ' - '.$langs->trans('Shipment');
+			if ($reg[1] == 'proposal') {
+				$header .= ' - '.$langs->trans('Proposal');
+			}
+			if ($reg[1] == 'order') {
+				$header .= ' - '.$langs->trans('Order');
+			}
+			if ($reg[1] == 'supplier_proposal') {
+				$header .= ' - '.$langs->trans('SupplierProposal');
+			}
+			if ($reg[1] == 'supplier_order') {
+				$header .= ' - '.$langs->trans('SupplierOrder');
+			}
+			if ($reg[1] == 'reception') {
+				$header .= ' - '.$langs->trans('Reception');
+			}
+			if ($reg[1] == 'shipping') {
+				$header .= ' - '.$langs->trans('Shipment');
+			}
 		} else {
 			$header = $langs->trans("Description");
 		}

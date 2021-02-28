@@ -208,14 +208,14 @@ if ($id > 0 || !empty($ref)) {
 
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("Nature").'</td><td>';
 				print $object->getLibFinished();
 				print '</td></tr>';
 			}
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Price
-				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
 					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 				} else {

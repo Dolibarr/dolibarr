@@ -46,17 +46,33 @@
 // Load Dolibarr environment
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
+	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+}
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
+	$i--; $j--;
+}
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
+	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+}
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+}
 // Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) $res = @include "../main.inc.php";
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
+if (!$res && file_exists("../main.inc.php")) {
+	$res = @include "../main.inc.php";
+}
+if (!$res && file_exists("../../main.inc.php")) {
+	$res = @include "../../main.inc.php";
+}
+if (!$res && file_exists("../../../main.inc.php")) {
+	$res = @include "../../../main.inc.php";
+}
+if (!$res) {
+	die("Include of main fails");
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -132,7 +148,9 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
+	if ($val['searchall']) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
 }
 
 // Definition of array of fields for columns
@@ -161,7 +179,9 @@ $permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write;
 $permissiontodelete = $user->rights->eventorganization->conferenceorbooth->delete;
 
 // Security check
-if (empty($conf->eventorganization->enabled)) accessforbidden('Module not enabled');
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('Module not enabled');
+}
 $socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
@@ -258,14 +278,21 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
-else $sql .= " WHERE 1 = 1";
+if ($object->ismultientitymanaged == 1) {
+	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
+} else {
+	$sql .= " WHERE 1 = 1";
+}
 foreach ($search as $key => $val) {
 	if (in_array($key, $object->fields)) {
-		if ($key == 'status' && $search[$key] == -1) continue;
+		if ($key == 'status' && $search[$key] == -1) {
+			continue;
+		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
-			if ($search[$key] == '-1') $search[$key] = '';
+			if ($search[$key] == '-1') {
+				$search[$key] = '';
+			}
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
@@ -328,7 +355,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
-	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
+	if ($limit) {
+		$sql .= $db->plimit($limit + 1, $offset);
+	}
 
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -548,7 +577,9 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) $needToFetchEachLine++; // There is at least one compute field that use $object
+		if (preg_match('/\$object/', $val)) {
+			$needToFetchEachLine++; // There is at least one compute field that use $object
+		}
 	}
 }
 
@@ -616,11 +647,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
-		if (in_array($object->id, $arrayofselected)) $selected = 1;
+		if (in_array($object->id, $arrayofselected)) {
+			$selected = 1;
+		}
 		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '</tr>'."\n";
 

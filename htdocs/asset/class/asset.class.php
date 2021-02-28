@@ -313,9 +313,11 @@ class Asset extends CommonObject
 		}
 
 		$result = '';
-		$companylink = '';
 
-		$label = '<u>'.$langs->trans("Asset").'</u>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Asset").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 

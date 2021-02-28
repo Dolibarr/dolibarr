@@ -457,22 +457,24 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		} else {
 			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}
-		//if (! empty($conf->use_javascript_ajax)) {
-			print '<script type="text/javascript" language="javascript">
-			jQuery(document).ready(function() {
-				function init_trrunsql()
-				{
-					console.log("toggle .trforrunsql");
-					jQuery(".trforrunsql").toggle();
-				}
+
+		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			function init_trrunsql()
+			{
+				console.log("toggle .trforrunsql");
+				jQuery(".trforrunsql").toggle();
+			}
+			init_trrunsql();
+			jQuery(".trforrunsqlshowhide").click(function() {
 				init_trrunsql();
-				jQuery(".trforrunsqlshowhide").click(function() {
-					init_trrunsql();
-				});
 			});
-			</script>';
-			print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		});
+		</script>';
+		print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
+
 		print '</td></tr>'."\n";
 	}
 

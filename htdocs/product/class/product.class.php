@@ -1350,6 +1350,11 @@ class Product extends CommonObject
 					return -1;
 				}
 			} elseif (isset($this->multilangs[$key])) {
+				if (empty($this->multilangs["$key"]["label"])) {
+					$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label"));
+					return -1;
+				}
+
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 				$sql .= " WHERE fk_product=".$this->id;
@@ -4579,6 +4584,9 @@ class Product extends CommonObject
 			if ($labelsurfacevolume) {
 				$label .= "<br>".$labelsurfacevolume;
 			}
+		}
+		if (!empty($this->pmp) && $this->pmp) {
+			$label .= "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 		}
 
 		if (!empty($conf->accounting->enabled) && $this->status) {

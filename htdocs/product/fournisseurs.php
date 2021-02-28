@@ -358,6 +358,8 @@ if (empty($reshook)) {
  * view
  */
 
+$form = new Form($db);
+
 $title = $langs->trans('ProductServiceCard');
 $helpurl = '';
 $shortlabel = dol_trunc($object->label, 16);
@@ -371,8 +373,6 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 }
 
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
-
-$form = new Form($db);
 
 if ($id > 0 || $ref) {
 	if ($result) {

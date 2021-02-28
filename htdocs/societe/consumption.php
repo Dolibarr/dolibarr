@@ -139,7 +139,7 @@ if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 if ($object->client) {
 	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
-	print $object->code_client;
+	print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 	$tmpcheck = $object->check_codeclient();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
 		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -176,7 +176,7 @@ if ($object->fournisseur) {
 	$langs->load("supplier_proposal");
 	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
-	print $object->code_fournisseur;
+	print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 	$tmpcheck = $object->check_codefournisseur();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
 		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';

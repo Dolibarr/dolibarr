@@ -1030,12 +1030,12 @@ if ($resql) {
 		print '</td>';
 	}
 	if (!empty($arrayfields['p.tosell']['checked'])) {
-		print '<td class="liste_titre right">';
+		print '<td class="liste_titre center">';
 		print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'), '1'=>$langs->trans('ProductStatusOnSellShort')), $search_tosell, 1);
 		print '</td >';
 	}
 	if (!empty($arrayfields['p.tobuy']['checked'])) {
-		print '<td class="liste_titre right">';
+		print '<td class="liste_titre center">';
 		print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1);
 		print '</td>';
 	}
@@ -1188,10 +1188,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['p.tms']['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
 	if (!empty($arrayfields['p.tosell']['checked'])) {
-		print_liste_field_titre($arrayfields['p.tosell']['label'], $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['p.tosell']['label'], $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['p.tobuy']['checked'])) {
-		print_liste_field_titre($arrayfields['p.tobuy']['label'], $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['p.tobuy']['label'], $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -1765,7 +1765,7 @@ if ($resql) {
 
 		// Status (to sell)
 		if (!empty($arrayfields['p.tosell']['checked'])) {
-			print '<td class="right nowrap">';
+			print '<td class="center nowrap">';
 			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 			} else {
@@ -1778,7 +1778,7 @@ if ($resql) {
 		}
 		// Status (to buy)
 		if (!empty($arrayfields['p.tobuy']['checked'])) {
-			print '<td class="right nowrap">';
+			print '<td class="center nowrap">';
 			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
