@@ -83,8 +83,8 @@ class DateLibTzFranceTest extends PHPUnit\Framework\TestCase
     {
     	global $conf,$user,$langs,$db;
 
-    	if (getServerTimeZoneString() != 'Europe/Paris') {
-    		print "\n".__METHOD__." This PHPUnit test can be launched manually only onto a server with PHP timezone set to TZ+1 Europe/Paris, not a TZ=".getServerTimeZoneString().".\n"; die();
+    	if (getServerTimeZoneString() != 'Europe/Paris' && getServerTimeZoneString() != 'Europe/Berlin') {
+    		print "\n".__METHOD__." This PHPUnit test can be launched manually only onto a server with PHP timezone set to TZ=Europe/Paris, not a TZ=".getServerTimeZoneString().".\n"; die();
     	}
 
     	$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
