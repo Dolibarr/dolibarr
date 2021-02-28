@@ -2214,14 +2214,16 @@ abstract class CommonObject
 								$this->updateline(
 									$line->id, ($line->description ? $line->description : $line->desc), $line->subprice, $line->qty, $line->remise_percent,
 									$line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, false,
-									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							case 'invoice_supplier':
 								$this->updateline(
 									$line->id, ($line->description ? $line->description : $line->desc), $line->subprice, $line->tva_tx, $line->localtax1_tx,
 									$line->localtax2_tx, $line->qty, 0, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, false,
-									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							default:
