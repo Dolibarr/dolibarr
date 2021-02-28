@@ -174,8 +174,8 @@
 	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
 	</rule>
 
-	<!-- Disallow usage of tab -->
-	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
+	<!-- Disallow usage of space -->
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent" />
 
 	<!-- Check indent are done with spaces and with correct number -->
 	<!-- Disabled as this does not support tab -->

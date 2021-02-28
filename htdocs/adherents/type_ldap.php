@@ -51,7 +51,9 @@ $hookmanager->initHooks(array('membertypeldapcard', 'globalcard'));
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	if ($action == 'dolibarr2ldap') {
@@ -128,7 +130,9 @@ if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) {
 
 print "</div>\n";
 
-if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) print "<br>\n";
+if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) {
+	print "<br>\n";
+}
 
 
 

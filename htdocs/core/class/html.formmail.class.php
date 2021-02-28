@@ -1273,8 +1273,7 @@ class FormMail extends Form
 		//print $sql;
 
 		$resql = $db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			dol_print_error($db);
 			return -1;
 		}
