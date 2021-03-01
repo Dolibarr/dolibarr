@@ -35,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -49,8 +51,7 @@ if ($cancel) {
 	$action = '';
 }
 
-if ($action == 'update')
-{
+if ($action == 'update') {
 	dolibarr_set_const($db, "MAIN_PDF_FORMAT", GETPOST("MAIN_PDF_FORMAT"), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", GETPOST("MAIN_PDF_MARGIN_LEFT"), 'chaine', 0, '', $conf->entity);
@@ -111,30 +112,34 @@ $arraydetailsforpdffoot = array(
 $s = $langs->trans("LibraryToBuildPDF")."<br>";
 $i = 0;
 $pdf = pdf_getInstance('A4');
-if (class_exists('FPDF') && !class_exists('TCPDF'))
-{
-	if ($i) $s .= ' + ';
+if (class_exists('FPDF') && !class_exists('TCPDF')) {
+	if ($i) {
+		$s .= ' + ';
+	}
 	$s .= 'FPDF';
 	$s .= ' ('.@constant('FPDF_PATH').')';
 	$i++;
 }
-if (class_exists('TCPDF'))
-{
-	if ($i) $s .= ' + ';
+if (class_exists('TCPDF')) {
+	if ($i) {
+		$s .= ' + ';
+	}
 	$s .= 'TCPDF';
 	$s .= ' ('.@constant('TCPDF_PATH').')';
 	$i++;
 }
-if (class_exists('FPDI'))
-{
-	if ($i) $s .= ' + ';
+if (class_exists('FPDI')) {
+	if ($i) {
+		$s .= ' + ';
+	}
 	$s .= 'FPDI';
 	$s .= ' ('.@constant('FPDI_PATH').')';
 	$i++;
 }
-if (class_exists('TCPDI'))
-{
-	if ($i) $s .= ' + ';
+if (class_exists('TCPDI')) {
+	if ($i) {
+		$s .= ' + ';
+	}
 	$s .= 'TCPDI';
 	$s .= ' ('.@constant('TCPDI_PATH').')';
 	$i++;
@@ -162,7 +167,9 @@ print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 $selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
-if (empty($selected)) $selected = dol_getDefaultFormat();
+if (empty($selected)) {
+	$selected = dol_getDefaultFormat();
+}
 
 // Show pdf format
 
@@ -203,17 +210,16 @@ print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS', (!empty($conf->global->
 print '</td></tr>';
 
 // Show prof id in address into pdf
-for ($i = 1; $i <= 6; $i++)
-{
-	if (!$noCountryCode)
-	{
+for ($i = 1; $i <= 6; $i++) {
+	if (!$noCountryCode) {
 		$pid = $langs->transcountry("ProfId".$i, $mysoc->country_code);
-		if ($pid == '-') $pid = false;
+		if ($pid == '-') {
+			$pid = false;
+		}
 	} else {
 		$pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 	}
-	if ($pid)
-	{
+	if ($pid) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
 		$keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
 		print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
@@ -231,18 +237,15 @@ print '<br>';
 // Localtaxes
 $locales = '';
 $text = '';
-if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
-{
-	if ($mysoc->useLocalTax(1))
-	{
+if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
+	if ($mysoc->useLocalTax(1)) {
 		$locales = $langs->transcountry("LT1", $mysoc->country_code);
 		$text = '<tr class="oddeven"><td>'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT1", $mysoc->country_code)).'</td><td>';
 		$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_SECOND_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX : 0, 1);
 		$text .= '</td></tr>';
 	}
 
-	if ($mysoc->useLocalTax(2))
-	{
+	if ($mysoc->useLocalTax(2)) {
 		$locales .= ($locales ? ' & ' : '').$langs->transcountry("LT2", $mysoc->country_code);
 
 		$text .= '<tr class="oddeven"><td>'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT2", $mysoc->country_code)).'</td><td>';
@@ -252,8 +255,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
 }
 
 $title = $langs->trans("PDFRulesForSalesTax");
-if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
-{
+if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 	$title .= ' - '.$langs->trans("PDFLocaltax", $locales);
 }
 

@@ -529,7 +529,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['cs.date_ech']['checked'])) {
-		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

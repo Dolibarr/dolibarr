@@ -165,7 +165,8 @@ if ($resql) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
+		$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
+		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</td></tr>';
 	}
 	print "</table></div><br>";
 } else {

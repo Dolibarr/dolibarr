@@ -100,9 +100,12 @@ div.mainmenu.generic4::before {
 	margin-left: 30px;
 }
 
-
 .menu_titre .em092 {
 	font-size: 0.92em;
+}
+
+.menu_titre .em088 {
+	font-size: 0.88em;
 }
 
 .menu_titre .em080 {

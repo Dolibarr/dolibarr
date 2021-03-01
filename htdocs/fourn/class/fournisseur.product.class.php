@@ -952,7 +952,7 @@ class ProductFournisseur extends Product
 			}
 			$out .= '</table>';
 		} else {
-			$out = ($showunitprice ?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; (' : '').($showsuptitle ? $langs->trans("Supplier").': ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice ? ')' : '');
+			$out = ($showunitprice ?price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '').($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->fourn_ref.($showunitprice ? '<span class="opacitymedium">)</span>' : '');
 		}
 		return $out;
 	}

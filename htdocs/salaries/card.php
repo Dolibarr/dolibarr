@@ -32,15 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
-if (!empty($conf->projet->enabled))	$langs->load("projects");
+if (!empty($conf->projet->enabled)) {
+	$langs->load("projects");
+}
 
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
@@ -58,7 +59,9 @@ $label = GETPOST('label');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new Salary($db);
@@ -75,15 +78,13 @@ $hookmanager->initHooks(array('salarycard', 'globalcard'));
  * Actions
  */
 
-if ($cancel)
-{
+if ($cancel) {
 	header("Location: list.php");
 	exit;
 }
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier)
-{
+if ($action == 'classin' && $user->rights->banque->modifier) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -96,8 +97,7 @@ if ($action == 'setlabel' && $user->rights->salaries->write) {
 }
 
 // Classify paid
-if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == 'yes')
-{
+if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == 'yes') {
 	$object->fetch($id);
 	$result = $object->set_paid($user);
 }
@@ -105,11 +105,9 @@ if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == '
 // Reopen
 if ($action == 'reopen' && $user->rights->salaries->write) {
 	$result = $object->fetch($id);
-	if ($object->paye)
-	{
+	if ($object->paye) {
 		$result = $object->set_unpaid($user);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 			exit();
 		} else {
@@ -135,8 +133,7 @@ if ($action == 'setbankaccount' && $user->rights->salaries->write) {
 	}
 }
 
-if ($action == 'add' && empty($cancel))
-{
+if ($action == 'add' && empty($cancel)) {
 	$error = 0;
 
 	if (empty($datev)) $datev = $datep;
@@ -164,44 +161,40 @@ if ($action == 'add' && empty($cancel))
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
 	if (!empty($auto_create_paiement) && empty($datep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DATE_PAIEMENT")), null, 'errors');
 		$error++;
 	}
-	if (empty($datesp) || empty($dateep))
-	{
+	if (empty($datesp) || empty($dateep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->fk_user) || $object->fk_user < 0)
-	{
+	if (empty($object->fk_user) || $object->fk_user < 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
 		$error++;
 	}
-	if (!empty($auto_create_paiement) && (empty($type_payment) || $type_payment < 0))
-	{
+	if (!empty($auto_create_paiement) && (empty($type_payment) || $type_payment < 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->amount))
-	{
+	if (empty($object->amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !empty($auto_create_paiement) && !$object->accountid > 0)
-	{
+	if (!empty($conf->banque->enabled) && !empty($auto_create_paiement) && !$object->accountid > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
+
 		$ret = $object->create($user);
 		if ($ret < 0) $error++;
-		if (!empty($auto_create_paiement) && !$error)
-		{
+		if (!empty($auto_create_paiement) && !$error) {
 			$db->begin();
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
@@ -213,32 +206,26 @@ if ($action == 'add' && empty($cancel))
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$paiement->note = GETPOST("note", 'none');
 
-			if (!$error)
-			{
+			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidsalary'));
-				if ($paymentid < 0)
-				{
+				if ($paymentid < 0) {
 					$error++;
 					setEventMessages($paiement->error, null, 'errors');
 					$action = 'create';
 				}
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_salary', '(SalaryPayment)', GETPOST('accountid', 'int'), '', '');
-				if (!($result > 0))
-				{
+				if (!($result > 0)) {
 					$error++;
 					setEventMessages($paiement->error, null, 'errors');
 				}
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$db->commit();
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
 		}
@@ -258,13 +245,11 @@ if ($action == 'add' && empty($cancel))
 	$action = 'create';
 }
 
-if ($action == 'confirm_delete')
-{
+if ($action == 'confirm_delete') {
 	$result = $object->fetch($id);
 	$totalpaye = $object->getSommePaiement();
 
-	if (empty($totalpaye))
-	{
+	if (empty($totalpaye)) {
 		$db->begin();
 
 		$ret = $object->delete($user);
@@ -285,21 +270,17 @@ if ($action == 'confirm_delete')
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write)
-{
+if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) {
 	$amount = price2num(GETPOST('amount'));
 
-	if (empty($amount))
-	{
+	if (empty($amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'edit';
 	}
-	elseif (!is_numeric($amount))
-	{
+	elseif (!is_numeric($amount)) {
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
-	}
-	else {
+	} else {
 		$result = $object->fetch($id);
 
 		$object->amount = price2num($amount);
@@ -315,8 +296,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write)
 
 if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
 
-if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write))
-{
+if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
 	$db->begin();
 
 	$originalId = $id;
@@ -375,25 +355,21 @@ llxHeader("", $langs->trans("Salary"));
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-if ($id)
-{
+if ($id) {
 	$object = new Salary($db);
 	$result = $object->fetch($id);
-	if ($result <= 0)
-	{
+	if ($result <= 0) {
 		dol_print_error($db);
 		exit;
 	}
 }
 
 // Create
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$year_current = strftime("%Y", dol_now());
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
-	if ($pastmonth == 0)
-	{
+	if ($pastmonth == 0) {
 		$pastmonth = 12;
 		$pastmonthyear--;
 	}
@@ -407,8 +383,7 @@ if ($action == 'create')
 	$datesp = dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
 	$dateep = dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
-	if (empty($datesp) || empty($dateep)) // We define date_start and date_end
-	{
+	if (empty($datesp) || empty($dateep)) { // We define date_start and date_end
 		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
@@ -418,8 +393,7 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'salary');
 
-	if (!empty($conf->use_javascript_ajax))
-	{
+	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript" language="javascript">';
 		print '$(document).ready(function () {
                 $("#radiopayment").click(function() {
@@ -492,8 +466,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
         // Project
-	if (!empty($conf->projet->enabled))
-        {
+	if (!empty($conf->projet->enabled)) {
 		$formproject = new FormProjets($db);
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
@@ -502,8 +475,7 @@ if ($action == 'create')
 	}
 
 	// Bank
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		print '<tr><td id="label_fk_account">';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
@@ -533,8 +505,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Number
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		// Number
 		print '<tr class="hide_if_no_auto_create_payment"><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -557,8 +528,7 @@ if ($action == 'create')
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -584,12 +554,10 @@ if ($action == 'create')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($id)
-{
+if ($id) {
 	$head = salaries_prepare_head($object);
 
-	if ($action === 'clone')
-	{
+	if ($action === 'clone') {
 		$formquestion = array(
 			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
 		);
@@ -601,20 +569,17 @@ if ($id)
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
 	}
 
-	if ($action == 'paid')
-	{
+	if ($action == 'paid') {
 		$text = $langs->trans('ConfirmPaySalary');
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySalary'), $text, "confirm_paid", '', '', 2);
 	}
 
-	if ($action == 'delete')
-	{
+	if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteSalary');
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSalary'), $text, 'confirm_delete', '', '', 2);
 	}
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 	}
@@ -631,11 +596,9 @@ if ($id)
 	$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->salaries->write)
-		{
+		if ($user->rights->salaries->write) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
@@ -692,8 +655,7 @@ if ($id)
 
 	print '<table class="border centpercent tableforfield">';
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print '<tr><td>'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
@@ -706,8 +668,7 @@ if ($id)
 	}
 
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print '<tr><td>'.$langs->trans("DateEndPeriod")."</td><td>";
 		print $form->selectDate($object->dateep, 'dateep', 0, 0, 0, 'dateep', 1);
 		print "</td></tr>";
@@ -751,8 +712,7 @@ if ($id)
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
@@ -803,8 +763,7 @@ if ($id)
 
 	//print $sql;
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$totalpaye = 0;
 
 		$num = $db->num_rows($resql);
@@ -822,11 +781,9 @@ if ($id)
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print '</tr>';
 
-		if ($num > 0)
-		{
+		if ($num > 0) {
 			$bankaccountstatic = new Account($db);
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td>';
@@ -834,8 +791,7 @@ if ($id)
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-				if (!empty($conf->banque->enabled))
-				{
+				if (!empty($conf->banque->enabled)) {
 					$bankaccountstatic->id = $objp->baid;
 					$bankaccountstatic->ref = $objp->baref;
 					$bankaccountstatic->label = $objp->baref;
@@ -893,8 +849,7 @@ if ($id)
 
 	dol_fiche_end();
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print '<div align="center">';
 		print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
@@ -909,23 +864,19 @@ if ($id)
 	// Action buttons
 
 	print '<div class="tabsAction">'."\n";
-	if ($action != 'edit')
-	{
+	if ($action != 'edit') {
 		// Reopen
-		if ($object->paye && $user->rights->salaries->write)
-		{
+		if ($object->paye && $user->rights->salaries->write) {
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
-		if ($object->paye == 0 && $user->rights->salaries->write)
-		{
+		if ($object->paye == 0 && $user->rights->salaries->write) {
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write)
-		{
+		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write) {
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/paiement_salary.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
 		}
 
@@ -935,19 +886,16 @@ if ($id)
 				(round($resteapayer) <= 0 && $object->amount > 0)
 				|| (round($resteapayer) >= 0 && $object->amount < 0)
 			)
-			&& $user->rights->salaries->write)
-		{
+			&& $user->rights->salaries->write) {
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
-		if ($user->rights->salaries->write)
-		{
+		if ($user->rights->salaries->write) {
 			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
 		}
 
-		if (!empty($user->rights->salaries->delete) && empty($totalpaye))
-		{
+		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
 		else {

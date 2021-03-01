@@ -28,8 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -71,8 +72,7 @@ $head = dav_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'webdav', '', -1, 'action');
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -80,9 +80,10 @@ if ($action == 'edit')
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val)
-	{
-		if (isset($val['enabled']) && empty($val['enabled'])) continue;
+	foreach ($arrayofparameters as $key => $val) {
+		if (isset($val['enabled']) && empty($val['enabled'])) {
+			continue;
+		}
 
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
@@ -93,11 +94,9 @@ if ($action == 'edit')
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
-		{
+		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
-		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
-		{
+		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
 			print $form->selectyesno($key, $conf->global->$key, 1);
 		} else {
 			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'">';
@@ -117,8 +116,7 @@ if ($action == 'edit')
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val)
-	{
+	foreach ($arrayofparameters as $key => $val) {
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
@@ -128,11 +126,9 @@ if ($action == 'edit')
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
-		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
-		{
+		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
-		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
-		{
+		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
 			print yn($conf->global->$key);
 		} else {
 			print $conf->global->$key;
@@ -174,8 +170,7 @@ $message = '';
 $url = '<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $url, $langs->trans("WebDavServer", 'WebDAV', '{url}'));
 $message .= '<br>';
-if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
-{
+if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
 	$urlEntity = (!empty($conf->multicompany->enabled) ? '?entity='.$conf->entity : '');
 	$url = '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
 	$message .= img_picto('', 'globe').' '.str_replace('{url}', $url, $langs->trans("WebDavServer", 'WebDAV public', '{url}'));
