@@ -362,7 +362,7 @@ foreach ($search as $key => $val)
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
-//if ($search_fk_project) $sql .= natural_search('fk_project', $search_fk_project, 2);
+if ($search_fk_project) $sql .= natural_search('fk_project', $search_fk_project, 2);
 if ($search_date_start)			$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)			$sql .= " AND t.datec <= '".$db->idate($search_date_end)."'";
 if ($search_dateread_start)		$sql .= " AND t.date_read >= '".$db->idate($search_dateread_start)."'";
