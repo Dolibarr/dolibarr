@@ -28,23 +28,29 @@
 // $id must be defined (object is loaded in this file with fetch)
 
 // Set public note
-if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha'))
-{
-	if (empty($action) || !is_object($object) || empty($id)) dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
-	if (empty($object->id)) $object->fetch($id); // Fetch may not be already done
+if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
+	if (empty($action) || !is_object($object) || empty($id)) {
+		dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
+	}
+	if (empty($object->id)) {
+		$object->fetch($id); // Fetch may not be already done
+	}
 
 	$result_update = $object->update_note(dol_html_entity_decode(GETPOST('note_public', 'restricthtml'), ENT_QUOTES | ENT_HTML5, 'UTF-8', 1), '_public');
 
-	if ($result_update < 0) setEventMessages($object->error, $object->errors, 'errors');
-	elseif (in_array($object->table_element, array('supplier_proposal', 'propal', 'commande_fournisseur', 'commande', 'facture_fourn', 'facture')))
-	{
+	if ($result_update < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	} elseif (in_array($object->table_element, array('supplier_proposal', 'propal', 'commande_fournisseur', 'commande', 'facture_fourn', 'facture'))) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				$newlang = GETPOST('lang_id', 'aZ09');
+			}
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -56,13 +62,21 @@ if ($action == 'setnote_public' && !empty($permissionnote) && !GETPOST('cancel',
 
 			$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-			if ($result < 0) dol_print_error($db, $result);
+			if ($result < 0) {
+				dol_print_error($db, $result);
+			}
 		}
 	}
 } elseif ($action == 'setnote_private' && !empty($permissionnote) && !GETPOST('cancel', 'alpha')) {
 	// Set public note
-	if (empty($action) || !is_object($object) || empty($id)) dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
-	if (empty($object->id)) $object->fetch($id); // Fetch may not be already done
+	if (empty($action) || !is_object($object) || empty($id)) {
+		dol_print_error('', 'Include of actions_setnotes.inc.php was done but required variable was not set before');
+	}
+	if (empty($object->id)) {
+		$object->fetch($id); // Fetch may not be already done
+	}
 	$result = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5), '_private');
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }

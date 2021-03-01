@@ -183,7 +183,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureFetch
 	 *
-	 * @param   Object $localobject Invoice
+	 * @param   Facture $localobject Invoice
 	 * @return  int
 	 *
 	 * @depends testFactureFetch
@@ -208,7 +208,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureValid
 	 *
-	 * @param   Object $localobject Invoice
+	 * @param   Facture $localobject Invoice
 	 * @return  void
 	 *
 	 * @depends testFactureUpdate
@@ -257,7 +257,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureOther
 	 *
-	 * @param   Object $localobject Invoice
+	 * @param   Facture $localobject Invoice
 	 * @return  int
 	 *
 	 * @depends testFactureValid
@@ -345,7 +345,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Edit an object to test updates
 	 *
-	 * @param   mixed $localobject        Object Facture
+	 * @param   Facture $localobject        Object Facture
 	 * @return  void
 	 */
 	public function changeProperties(&$localobject)

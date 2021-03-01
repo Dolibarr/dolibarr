@@ -45,8 +45,7 @@ print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_se
 
 $vatNumber = GETPOST("vatNumber", 'alpha');
 
-if (!$vatNumber)
-{
+if (!$vatNumber) {
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
 } else {
@@ -76,8 +75,7 @@ if (!$vatNumber)
 
 	// Check for an error
 	$err = $soapclient->getError();
-	if ($err)
-	{
+	if ($err) {
 		dol_syslog("Constructor error ".$WS_DOL_URL, LOG_ERR);
 	}
 
@@ -96,42 +94,38 @@ if (!$vatNumber)
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
-	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring']))
-	{
+	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring'])) {
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
-	{
+	} elseif (preg_match('/TIMEOUT/i', $result['faultstring'])) {
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
-	{
+	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring'])) {
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow = $soapclient->response;
-	} elseif ($result['faultstring'])
-	{
+	} elseif ($result['faultstring']) {
 		print '<font class="error">'.$langs->trans("Error").'</font><br>';
 		$messagetoshow = $result['faultstring'];
-	}
-	// Syntaxe ko
-	elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
-	|| ($result['requestDate'] && !$result['valid']))
-	{
-		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
+	} elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
+	|| ($result['requestDate'] && !$result['valid'])) {
+		// Syntaxe ko
+		if ($result['requestDate']) {
+			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
+		}
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	} else {
 		// Syntaxe ok
-		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
+		if ($result['requestDate']) {
+			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
+		}
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
 		print $langs->trans("ValueIsValid").': ';
-		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring']))
-		{
+		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring'])) {
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
 		} else {
-			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true'))
-			{
+			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true')) {
 				print '<font class="ok">'.$langs->trans("Yes").'</font>';
 				print '<br>';
 				print $langs->trans("Name").': '.$result['name'].'<br>';
@@ -144,10 +138,10 @@ if (!$vatNumber)
 	}
 
 	// Show log data into page
-	print "\n";
-	print '<!-- ';
-	var_dump($result);
-	print '-->';
+	// print "\n";
+	// print '<!-- ';
+	// var_dump($result);
+	// print '-->';
 }
 
 print '<br>';
@@ -155,8 +149,7 @@ print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $l
 print '<br>';
 print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 
-if ($messagetoshow)
-{
+if ($messagetoshow) {
 	print '<br><br>';
 	print "\n".'Error returned:<br>';
 	print nl2br($messagetoshow);

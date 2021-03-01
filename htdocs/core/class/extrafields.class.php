@@ -243,30 +243,39 @@ class ExtraFields
 	 */
 	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
-		if (empty($attrname)) return -1;
-		if (empty($label)) return -1;
+		if (empty($attrname)) {
+			return -1;
+		}
+		if (empty($label)) {
+			return -1;
+		}
 
-		if ($type == 'separate') { $unique = 0; $required = 0; }	// Force unique and not required if this is a separator field to avoid troubles.
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($type == 'separate') {
+			$unique = 0; $required = 0;
+		}	// Force unique and not required if this is a separator field to avoid troubles.
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
 		// Create field into database except for separator type which is not stored in database
-		if ($type != 'separate')
-		{
+		if ($type != 'separate') {
 			$result = $this->create($attrname, $type, $size, $elementtype, $unique, $required, $default_value, $param, $perms, $list, $computed, $help);
 		}
 		$err1 = $this->errno;
-		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
-		{
+		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
 			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
 			$err2 = $this->errno;
-			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
-			{
+			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
 				$this->errno = 0;
 				return 1;
-			} else return -2;
+			} else {
+				return -2;
+			}
 		} else {
 			return -1;
 		}
@@ -292,14 +301,19 @@ class ExtraFields
 	 */
 	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '')
 	{
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
 		$table = $elementtype.'_extrafields';
-		if ($elementtype == 'categorie') $table = 'categories_extrafields';
+		if ($elementtype == 'categorie') {
+			$table = 'categories_extrafields';
+		}
 
-		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/", $attrname) && !is_numeric($attrname))
-		{
+		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9_]*$/", $attrname) && !is_numeric($attrname)) {
 			if ($type == 'boolean') {
 				$typedb = 'int';
 				$lengthdb = '1';
@@ -330,7 +344,9 @@ class ExtraFields
 			} else {
 				$typedb = $type;
 				$lengthdb = $length;
-				if ($type == 'varchar' && empty($lengthdb)) $lengthdb = '255';
+				if ($type == 'varchar' && empty($lengthdb)) {
+					$lengthdb = '255';
+				}
 			}
 			$field_desc = array(
 				'type'=>$typedb,
@@ -340,10 +356,8 @@ class ExtraFields
 			);
 
 			$result = $this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
-			if ($result > 0)
-			{
-				if ($unique)
-				{
+			if ($result > 0) {
+				if ($unique) {
 					$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
@@ -390,25 +404,40 @@ class ExtraFields
 		// phpcs:enable
 		global $conf, $user;
 
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
 		// Clean parameters
-		if (empty($pos)) $pos = 0;
-		if (empty($list)) $list = '0';
-		if (empty($required)) $required = 0;
-		if (empty($unique)) $unique = 0;
-		if (empty($printable)) $printable = 0;
-		if (empty($alwayseditable)) $alwayseditable = 0;
-		if (empty($totalizable)) $totalizable = 0;
+		if (empty($pos)) {
+			$pos = 0;
+		}
+		if (empty($list)) {
+			$list = '0';
+		}
+		if (empty($required)) {
+			$required = 0;
+		}
+		if (empty($unique)) {
+			$unique = 0;
+		}
+		if (empty($printable)) {
+			$printable = 0;
+		}
+		if (empty($alwayseditable)) {
+			$alwayseditable = 0;
+		}
+		if (empty($totalizable)) {
+			$totalizable = 0;
+		}
 
-		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname))
-		{
-			if (is_array($param) && count($param) > 0)
-			{
+		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname)) {
+			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
-			} elseif (strlen($param) > 0)
-			{
+			} elseif (strlen($param) > 0) {
 				$params = trim($param);
 			} else {
 				$params = '';
@@ -465,8 +494,7 @@ class ExtraFields
 			$sql .= ')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
-			if ($this->db->query($sql))
-			{
+			if ($this->db->query($sql)) {
 				return 1;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -485,40 +513,40 @@ class ExtraFields
 	 */
 	public function delete($attrname, $elementtype = 'member')
 	{
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
 		$table = $elementtype.'_extrafields';
-		if ($elementtype == 'categorie') $table = 'categories_extrafields';
+		if ($elementtype == 'categorie') {
+			$table = 'categories_extrafields';
+		}
 
 		$error = 0;
 
-		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
-		{
+		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$result = $this->delete_label($attrname, $elementtype);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->db->lasterror();
 				$error++;
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$sql = "SELECT COUNT(rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 				$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'";
 				$sql .= " AND name = '".$this->db->escape($attrname)."'";
 				//$sql.= " AND entity IN (0,".$conf->entity.")";      Do not test on entity here. We want to see if there is still on field remaning in other entities before deleting field in table
 				$resql = $this->db->query($sql);
-				if ($resql)
-				{
+				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
-					if ($obj->nb <= 0)
-					{
+					if ($obj->nb <= 0) {
 						$result = $this->db->DDLDropField(MAIN_DB_PREFIX.$table, $attrname); // This also drop the unique key
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
 							$error++;
@@ -546,11 +574,14 @@ class ExtraFields
 		// phpcs:enable
 		global $conf;
 
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
-		{
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 			$sql .= " WHERE name = '".$this->db->escape($attrname)."'";
 			$sql .= " AND entity IN  (0,".$conf->entity.')';
@@ -558,8 +589,7 @@ class ExtraFields
 
 			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				return 1;
 			} else {
 				dol_print_error($this->db);
@@ -598,14 +628,19 @@ class ExtraFields
 	 */
 	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0)
 	{
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
 		$table = $elementtype.'_extrafields';
-		if ($elementtype == 'categorie') $table = 'categories_extrafields';
+		if ($elementtype == 'categorie') {
+			$table = 'categories_extrafields';
+		}
 
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
-		{
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			if ($type == 'boolean') {
 				$typedb = 'int';
 				$lengthdb = '1';
@@ -638,21 +673,16 @@ class ExtraFields
 			}
 			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
 
-			if ($type != 'separate') // No table update when separate type
-			{
+			if ($type != 'separate') { // No table update when separate type
 				$result = $this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			}
-			if ($result > 0 || $type == 'separate')
-			{
-				if ($label)
-				{
+			if ($result > 0 || $type == 'separate') {
+				if ($label) {
 					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable);
 				}
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					$sql = '';
-					if ($unique)
-					{
+					if ($unique) {
 						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
 					} else {
 						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
@@ -707,34 +737,44 @@ class ExtraFields
 		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable.", ".$printable);
 
 		// Clean parameters
-		if ($elementtype == 'thirdparty') $elementtype = 'societe';
-		if ($elementtype == 'contact') $elementtype = 'socpeople';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
 
-		if (empty($pos)) $pos = 0;
-		if (empty($list)) $list = '0';
+		if (empty($pos)) {
+			$pos = 0;
+		}
+		if (empty($list)) {
+			$list = '0';
+		}
 		if (empty($totalizable)) {
 			$totalizable = 0;
 		}
-		if (empty($required)) $required = 0;
-		if (empty($unique)) $unique = 0;
-		if (empty($alwayseditable)) $alwayseditable = 0;
+		if (empty($required)) {
+			$required = 0;
+		}
+		if (empty($unique)) {
+			$unique = 0;
+		}
+		if (empty($alwayseditable)) {
+			$alwayseditable = 0;
+		}
 
-		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname))
-		{
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$this->db->begin();
 
-			if (is_array($param) && count($param) > 0)
-			{
+			if (is_array($param) && count($param) > 0) {
 				$params = serialize($param);
-			} elseif (strlen($param) > 0)
-			{
+			} elseif (strlen($param) > 0) {
 				$params = trim($param);
 			} else {
 				$params = '';
 			}
 
-			if ($entity === '' || $entity != '0')
-			{
+			if ($entity === '' || $entity != '0') {
 				// We dont want on all entities, we delete all and current
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 				$sql_del .= " WHERE name = '".$this->db->escape($attrname)."'";
@@ -801,8 +841,7 @@ class ExtraFields
 
 			$resql2 = $this->db->query($sql);
 
-			if ($resql1 && $resql2)
-			{
+			if ($resql1 && $resql2) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -829,42 +868,48 @@ class ExtraFields
 		// phpcs:enable
 		global $conf;
 
-		if (empty($elementtype)) return array();
+		if (empty($elementtype)) {
+			return array();
+		}
 
-		if ($elementtype == 'thirdparty')     $elementtype = 'societe';
-		if ($elementtype == 'contact')        $elementtype = 'socpeople';
-		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
-		if ($elementtype == 'stock_mouvement') $elementtype = 'movement';
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+		if ($elementtype == 'order_supplier') {
+			$elementtype = 'commande_fournisseur';
+		}
+		if ($elementtype == 'stock_mouvement') {
+			$elementtype = 'movement';
+		}
 
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,printable,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
-		if ($elementtype) $sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
+		if ($elementtype) {
+			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
+		}
 		$sql .= " ORDER BY pos";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
-				while ($tab = $this->db->fetch_object($resql))
-				{
-					if ($tab->entity != 0 && $tab->entity != $conf->entity)
-					{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				while ($tab = $this->db->fetch_object($resql)) {
+					if ($tab->entity != 0 && $tab->entity != $conf->entity) {
 						// This field is not in current entity. We discard but before we save it into the array of mandatory fields if it is a mandatory field without default value
-						if ($tab->fieldrequired && is_null($tab->fielddefault))
-						{
+						if ($tab->fieldrequired && is_null($tab->fielddefault)) {
 							$this->attributes[$tab->elementtype]['mandatoryfieldsofotherentities'][$tab->name] = $tab->type;
 						}
 						continue;
 					}
 
 					// We can add this attribute to object. TODO Remove this and return $this->attributes[$elementtype]['label']
-					if ($tab->type != 'separate')
-					{
+					if ($tab->type != 'separate') {
 						$array_name_label[$tab->name] = $tab->label;
 					}
 
@@ -910,7 +955,9 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 				}
 			}
-			if ($elementtype) $this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+			if ($elementtype) {
+				$this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
@@ -939,21 +986,18 @@ class ExtraFields
 	{
 		global $conf, $langs, $form;
 
-		if (!is_object($form))
-		{
+		if (!is_object($form)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
 		$out = '';
 
-		if (!preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
-		{
+		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
 			$keyprefix = $keyprefix.'options_';
 		}
 
-		if (!empty($extrafieldsobjectkey))
-		{
+		if (!empty($extrafieldsobjectkey)) {
 			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
 			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
@@ -985,10 +1029,12 @@ class ExtraFields
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
-		if ($computed)
-		{
-			if (!preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
-			else return '';
+		if ($computed) {
+			if (!preg_match('/^search_/', $keyprefix)) {
+				return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
+			} else {
+				return '';
+			}
 		}
 
 		if (empty($morecss)) {
@@ -1022,7 +1068,9 @@ class ExtraFields
 			$showtime = in_array($type, array('datetime')) ? 1 : 0;
 
 			// Do not show current date when field not required (see selectDate() method)
-			if (!$required && $value == '') $value = '-1';
+			if (!$required && $value == '') {
+				$value = '-1';
+			}
 
 			if ($mode == 1) {
 				// search filter on a date extrafield shows two inputs to select a date range
@@ -1039,41 +1087,32 @@ class ExtraFields
 				// TODO Must also support $moreparam
 				$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 			}
-		} elseif (in_array($type, array('int', 'integer')))
-		{
+		} elseif (in_array($type, array('int', 'integer'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		} elseif (preg_match('/varchar/', $type))
-		{
+		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		} elseif (in_array($type, array('mail', 'phone', 'url')))
-		{
+		} elseif (in_array($type, array('mail', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
-		} elseif ($type == 'text')
-		{
-			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
-			{
+		} elseif ($type == 'text') {
+			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		} elseif ($type == 'html')
-		{
-			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
-			{
+		} elseif ($type == 'html') {
+			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		} elseif ($type == 'boolean')
-		{
-			if (empty($mode))
-			{
+		} elseif ($type == 'boolean') {
+			if (empty($mode)) {
 				$checked = '';
 				if (!empty($value)) {
 					$checked = ' checked value="1" ';
@@ -1084,59 +1123,56 @@ class ExtraFields
 			} else {
 				$out .= $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
-		} elseif ($type == 'price')
-		{
+		} elseif ($type == 'price') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
-		} elseif ($type == 'double')
-		{
+		} elseif ($type == 'double') {
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
-		} elseif ($type == 'select')
-		{
+		} elseif ($type == 'select') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
-			{
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 			$out .= '<option value="0">&nbsp;</option>';
-			foreach ($param['options'] as $key => $val)
-			{
-				if ((string) $key == '') continue;
+			foreach ($param['options'] as $key => $val) {
+				if ((string) $key == '') {
+					continue;
+				}
 				$valarray = explode('|', $val);
 				$val = $valarray[0];
 				$parent = '';
 				if (!empty($valarray[1])) {
-				    $parent = $valarray[1];
+					$parent = $valarray[1];
 				}
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 				$out .= '>';
-				if ($langfile && $val) $out .= $langs->trans($val);
-				else $out .= $val;
+				if ($langfile && $val) {
+					$out .= $langs->trans($val);
+				} else {
+					$out .= $val;
+				}
 				$out .= '</option>';
 			}
 			$out .= '</select>';
-		} elseif ($type == 'sellist')
-		{
+		} elseif ($type == 'sellist') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
-			{
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if (is_array($param['options']))
-			{
+			if (is_array($param['options'])) {
 				$param_list = array_keys($param['options']);
 				$InfoFieldList = explode(":", $param_list[0]);
 				$parentName = '';
@@ -1151,17 +1187,14 @@ class ExtraFields
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4]))
-				{
-					if (strpos($InfoFieldList[4], 'extra.') !== false)
-					{
+				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3]))
-				{
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
@@ -1254,7 +1287,9 @@ class ExtraFields
 									$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 									$labeltoshow = $translabel;
 								}
-								if (empty($labeltoshow)) $labeltoshow = '(not defined)';
+								if (empty($labeltoshow)) {
+									$labeltoshow = '(not defined)';
+								}
 
 								if (!empty($InfoFieldList[3]) && $parentField) {
 									$parent = $parentName.':'.$obj->{$parentField};
@@ -1284,23 +1319,19 @@ class ExtraFields
 				}
 			}
 			$out .= '</select>';
-		} elseif ($type == 'checkbox')
-		{
+		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
-		} elseif ($type == 'radio')
-		{
+		} elseif ($type == 'radio') {
 			$out = '';
-			foreach ($param['options'] as $keyopt => $val)
-			{
+			foreach ($param['options'] as $keyopt => $val) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
 				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
 			}
-		} elseif ($type == 'chkbxlst')
-		{
+		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
 				$value_arr = $value;
 			} else {
@@ -1473,8 +1504,9 @@ class ExtraFields
 										$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
 									}
 								}
-								if (empty($labeltoshow))
+								if (empty($labeltoshow)) {
 									$labeltoshow = '(not defined)';
+								}
 
 								if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 									$data[$obj->rowid] = $labeltoshow;
@@ -1501,13 +1533,11 @@ class ExtraFields
 					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
 				}
 			}
-		} elseif ($type == 'link')
-		{
+		} elseif ($type == 'link') {
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 			$showempty = (($required && $default != '') ? 0 : 1);
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
-		} elseif ($type == 'password')
-		{
+		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
 			$out .= '<input autocomplete="new-password" type="'.($keyprefix == 'search_' ? 'text' : 'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'>';
@@ -1539,8 +1569,7 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if (!empty($extrafieldsobjectkey))
-		{
+		if (!empty($extrafieldsobjectkey)) {
 			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
 			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
@@ -1572,58 +1601,55 @@ class ExtraFields
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
-		if ($hidden) return ''; // This is a protection. If field is hidden, we should just not call this method.
+		if ($hidden) {
+			return ''; // This is a protection. If field is hidden, we should just not call this method.
+		}
 
 		//if ($computed) $value =		// $value is already calculated into $value before calling this method
 
 		$showsize = 0;
-		if ($type == 'date')
-		{
+		if ($type == 'date') {
 			$showsize = 10;
 			$value = dol_print_date($value, 'day');
-		} elseif ($type == 'datetime')
-		{
+		} elseif ($type == 'datetime') {
 			$showsize = 19;
 			$value = dol_print_date($value, 'dayhour');
-		} elseif ($type == 'int')
-		{
+		} elseif ($type == 'int') {
 			$showsize = 10;
-		} elseif ($type == 'double')
-		{
+		} elseif ($type == 'double') {
 			if (!empty($value)) {
 				//$value=price($value);
 				$sizeparts = explode(",", $size);
 				$number_decimals = $sizeparts[1];
 				$value = price($value, 0, $langs, 0, 0, $number_decimals, '');
 			}
-		} elseif ($type == 'boolean')
-		{
+		} elseif ($type == 'boolean') {
 			$checked = '';
 			if (!empty($value)) {
 				$checked = ' checked ';
 			}
 			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
-		} elseif ($type == 'mail')
-		{
+		} elseif ($type == 'mail') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
-		} elseif ($type == 'url')
-		{
+		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
-		} elseif ($type == 'phone')
-		{
+		} elseif ($type == 'phone') {
 			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
-		} elseif ($type == 'price')
-		{
+		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
-			if ($value || $value == '0') $value = price($value, 0, $langs, 0, 0, -1);
+			if ($value || $value == '0') {
+				$value = price($value, 0, $langs, 0, 0, -1);
+			}
 		} elseif ($type == 'select') {
 			$valstr = $param['options'][$value];
-			if (($pos = strpos($valstr, "|")) !== false)
-			{
+			if (($pos = strpos($valstr, "|")) !== false) {
 				$valstr = substr($valstr, 0, $pos);
 			}
-			if ($langfile && $valstr) $value = $langs->trans($valstr);
-			else $value = $valstr;
+			if ($langfile && $valstr) {
+				$value = $langs->trans($valstr);
+			} else {
+				$value = $valstr;
+			}
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -1631,8 +1657,7 @@ class ExtraFields
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3)
-			{
+			if (count($InfoFieldList) >= 3) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -1652,8 +1677,7 @@ class ExtraFields
 
 			$sql = 'SELECT '.$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false)
-			{
+			if (strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -1668,8 +1692,7 @@ class ExtraFields
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				if ($filter_categorie === false) {
 					$value = ''; // value was used, so now we reste it to use it to build final output
 
@@ -1714,24 +1737,22 @@ class ExtraFields
 					}
 					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 				}
-			} else dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
-		} elseif ($type == 'radio')
-		{
+			} else {
+				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
+			}
+		} elseif ($type == 'radio') {
 			$value = $param['options'][$value];
-		} elseif ($type == 'checkbox')
-		{
+		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
 			$toprint = array();
-			if (is_array($value_arr))
-			{
-				foreach ($value_arr as $keyval=>$valueval) {
+			if (is_array($value_arr)) {
+				foreach ($value_arr as $keyval => $valueval) {
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-		} elseif ($type == 'chkbxlst')
-		{
+		} elseif ($type == 'chkbxlst') {
 			$value_arr = explode(',', $value);
 
 			$param_list = array_keys($param['options']);
@@ -1820,23 +1841,19 @@ class ExtraFields
 			} else {
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
-		} elseif ($type == 'link')
-		{
+		} elseif ($type == 'link') {
 			$out = '';
 
 			// Only if something to display (perf)
-			if ($value)		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
-			{
+			if ($value) {		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 
 				$InfoFieldList = explode(":", $param_list[0]);
 				$classname = $InfoFieldList[0];
 				$classpath = $InfoFieldList[1];
-				if (!empty($classpath))
-				{
+				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
-					if ($classname && class_exists($classname))
-					{
+					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						$object->fetch($value);
 						$value = $object->getNomUrl(3);
@@ -1846,18 +1863,17 @@ class ExtraFields
 					return 'Error bad setup of extrafield';
 				}
 			}
-		} elseif ($type == 'text')
-		{
+		} elseif ($type == 'text') {
 			$value = dol_htmlentitiesbr($value);
-		} elseif ($type == 'html')
-		{
+		} elseif ($type == 'html') {
 			$value = dol_htmlentitiesbr($value);
-		} elseif ($type == 'password')
-		{
+		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} else {
 			$showsize = round($size);
-			if ($showsize > 48) $showsize = 48;
+			if ($showsize > 48) {
+				$showsize = 48;
+			}
 		}
 
 		//print $type.'-'.$size;
@@ -1877,37 +1893,31 @@ class ExtraFields
 	{
 		global $conf, $langs;
 
-		if (!empty($extrafieldsobjectkey)) $type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-		else $type = $this->attribute_type[$key];
+		if (!empty($extrafieldsobjectkey)) {
+			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
+		} else {
+			$type = $this->attribute_type[$key];
+		}
 
 		$align = '';
 
-		if ($type == 'date')
-		{
+		if ($type == 'date') {
 			$align = "center";
-		} elseif ($type == 'datetime')
-		{
+		} elseif ($type == 'datetime') {
 			$align = "center";
-		} elseif ($type == 'int')
-		{
+		} elseif ($type == 'int') {
 			$align = "right";
-		} elseif ($type == 'price')
-		{
+		} elseif ($type == 'price') {
 			$align = "right";
-		} elseif ($type == 'double')
-		{
+		} elseif ($type == 'double') {
 			$align = "right";
-		} elseif ($type == 'boolean')
-		{
+		} elseif ($type == 'boolean') {
 			$align = "center";
-		} elseif ($type == 'radio')
-		{
+		} elseif ($type == 'radio') {
 			$align = "center";
-		} elseif ($type == 'checkbox')
-		{
+		} elseif ($type == 'checkbox') {
 			$align = "center";
-		} elseif ($type == 'price')
-		{
+		} elseif ($type == 'price') {
 			$align = "right";
 		}
 
@@ -1930,7 +1940,7 @@ class ExtraFields
 		if ($display_type=='card') {
 			$tagtype='tr';
 			$tagtype_dyn='td';
-		}elseif ($display_type=='line') {
+		} elseif ($display_type=='line') {
 			$tagtype='div';
 			$tagtype_dyn='span';
 			$colspan=0;
@@ -2003,42 +2013,48 @@ class ExtraFields
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
 
-		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels = $this->attributes[$object->table_element]['label'];
+		if (is_array($this->attributes[$object->table_element]['label'])) {
+			$extralabels = $this->attributes[$object->table_element]['label'];
+		}
 
-		if (is_array($extralabels))
-		{
+		if (is_array($extralabels)) {
 			// Get extra fields
-			foreach ($extralabels as $key => $value)
-			{
-				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) continue;
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key)) continue;
+			foreach ($extralabels as $key => $value) {
+				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) {
+					continue;
+				}
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key)) {
+					continue;
+				}
 
 				$key_type = $this->attributes[$object->table_element]['type'][$key];
-				if ($key_type == 'separate') continue;
+				if ($key_type == 'separate') {
+					continue;
+				}
 
 				$enabled = 1;
-				if (isset($this->attributes[$object->table_element]['list'][$key]))
-				{
+				if (isset($this->attributes[$object->table_element]['list'][$key])) {
 					$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
 				}
 				$perms = 1;
-				if (isset($this->attributes[$object->table_element]['perms'][$key]))
-				{
+				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
 				}
-				if (empty($enabled)) continue;
-				if (empty($perms)) continue;
+				if (empty($enabled)) {
+					continue;
+				}
+				if (empty($perms)) {
+					continue;
+				}
 
-				if ($this->attributes[$object->table_element]['required'][$key])	// Value is required
-				{
+				if ($this->attributes[$object->table_element]['required'][$key]) {	// Value is required
 					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
 					// technically non-empty value may be treated as empty functionally).
 					// value can be alpha, int, array, etc...
-				    if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-				        || (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
-				        || (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
-						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
-					{
+					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
+						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
+						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 						$nofillrequired++;
 						$error_field_required[] = $langs->transnoentitiesnoconv($value);
@@ -2069,7 +2085,9 @@ class ExtraFields
 					$value_key = GETPOST("options_".$key, 'alphanohtml');
 				} else {
 					$value_key = GETPOST("options_".$key);
-					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
+					if (in_array($key_type, array('link')) && $value_key == '-1') {
+						$value_key = '';
+					}
 				}
 
 				$object->array_options["options_".$key] = $value_key;
@@ -2099,43 +2117,44 @@ class ExtraFields
 	{
 		global $_POST;
 
-		if (is_string($extrafieldsobjectkey) && !empty($this->attributes[$extrafieldsobjectkey]['label']) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
-		{
+		if (is_string($extrafieldsobjectkey) && !empty($this->attributes[$extrafieldsobjectkey]['label']) && is_array($this->attributes[$extrafieldsobjectkey]['label'])) {
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
 		} else {
 			$extralabels = $extrafieldsobjectkey;
 		}
 
-		if (is_array($extralabels))
-		{
+		if (is_array($extralabels)) {
 			$array_options = array();
 
 			// Get extra fields
-			foreach ($extralabels as $key => $value)
-			{
+			foreach ($extralabels as $key => $value) {
 				$key_type = '';
-				if (is_string($extrafieldsobjectkey))
-				{
+				if (is_string($extrafieldsobjectkey)) {
 					$key_type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
 				}
 
-				if (in_array($key_type, array('date', 'datetime')))
-				{
+				if (in_array($key_type, array('date', 'datetime'))) {
 					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
 						$value_key = array(
 							'start' => dol_mktime(
-								0, 0, 0,
+								0,
+								0,
+								0,
 								GETPOST($dateparamname_start . 'month', 'int'),
 								GETPOST($dateparamname_start . 'day', 'int'),
-								GETPOST($dateparamname_start . 'year', 'int')),
+								GETPOST($dateparamname_start . 'year', 'int')
+							),
 							'end' => dol_mktime(
-								23, 59, 59,
+								23,
+								59,
+								59,
 								GETPOST($dateparamname_end . 'month', 'int'),
 								GETPOST($dateparamname_end . 'day', 'int'),
-								GETPOST($dateparamname_end . 'year', 'int'))
+								GETPOST($dateparamname_end . 'year', 'int')
+							)
 						);
 					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters
@@ -2143,20 +2162,24 @@ class ExtraFields
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
-				} elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
-				{
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
+				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						continue; // Value was not provided, we should not set it.
+					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
-				} elseif (in_array($key_type, array('price', 'double', 'int')))
-				{
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
+				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						continue; // Value was not provided, we should not set it.
+					}
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key = price2num($value_arr);
 				} else {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+						continue; // Value was not provided, we should not set it.
+					}
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 				}
 

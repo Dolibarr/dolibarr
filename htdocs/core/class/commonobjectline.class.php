@@ -80,15 +80,21 @@ abstract class CommonObjectLine extends CommonObject
 		$label_type = 'label';
 
 		$label_type = 'label';
-		if ($type == 'short') $label_type = 'short_label';
-		elseif ($type == 'code') $label_type = 'code';
+		if ($type == 'short') {
+			$label_type = 'short_label';
+		} elseif ($type == 'code') {
+			$label_type = 'code';
+		}
 
 		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);
-			if ($label_type == 'code') $label = 'unit'.$res['code'];
-			else $label = $res[$label_type];
+			if ($label_type == 'code') {
+				$label = 'unit'.$res['code'];
+			} else {
+				$label = $res[$label_type];
+			}
 			$this->db->free($resql);
 			return $label;
 		} else {

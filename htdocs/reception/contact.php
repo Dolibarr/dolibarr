@@ -44,17 +44,17 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'reception', $id, '');
 
 $object = new Reception($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 
-	if (!empty($object->origin))
-	{
+	if (!empty($object->origin)) {
 		$origin = $object->origin;
 
 		$object->fetch_origin();
@@ -62,8 +62,7 @@ if ($id > 0 || !empty($ref))
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && !empty($conf->fournisseur->enabled))
-	{
+	if ($origin == 'order_supplier' && $object->$typeobject->id && !empty($conf->fournisseur->enabled)) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -74,22 +73,18 @@ if ($id > 0 || !empty($ref))
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->reception->creer)
-{
-	if ($result > 0 && $id > 0)
-	{
+if ($action == 'addcontact' && $user->rights->reception->creer) {
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $objectsrc->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 		} else {
@@ -98,21 +93,14 @@ if ($action == 'addcontact' && $user->rights->reception->creer)
 		}
 		setEventMessages($mesg, $mesgs, 'errors');
 	}
-}
-
-// bascule du statut d'un contact
-elseif ($action == 'swapstatut' && $user->rights->reception->creer)
-{
+} elseif ($action == 'swapstatut' && $user->rights->reception->creer) {
+	// bascule du statut d'un contact
 	$result = $objectsrc->swapContactStatus(GETPOST('ligne'));
-}
-
-// Efface un contact
-elseif ($action == 'deletecontact' && $user->rights->reception->creer)
-{
+} elseif ($action == 'deletecontact' && $user->rights->reception->creer) {
+	// Efface un contact
 	$result = $objectsrc->delete_contact(GETPOST("lineid"));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -147,8 +135,7 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
 
 	$head = reception_prepare_head($object);
@@ -210,8 +197,7 @@ if ($id > 0 || !empty($ref))
 
 	print '<table class="border centpercent">';
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && !empty($conf->fournisseur->enabled))
-	{
+	if ($origin == 'order_supplier' && $object->$typeobject->id && !empty($conf->fournisseur->enabled)) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -221,8 +207,7 @@ if ($id > 0 || !empty($ref))
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-	{
+	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -256,10 +241,11 @@ if ($id > 0 || !empty($ref))
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach ($dirtpls as $reldir)
-	{
+	foreach ($dirtpls as $reldir) {
 		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) break;
+		if ($res) {
+			break;
+		}
 	}
 }
 

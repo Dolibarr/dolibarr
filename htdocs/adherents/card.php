@@ -81,6 +81,9 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('adherent', 'membercard', $canvas);
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('membercard', 'globalcard'));
+
 // Security check
 $result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
 
@@ -106,9 +109,6 @@ $canaddmember = $user->rights->adherent->creer;
 if ($id) {
 	$caneditfieldmember = $user->rights->adherent->creer;
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membercard', 'globalcard'));
 
 
 
@@ -796,7 +796,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		$adht = new AdherentType($db);
 
-		print load_fiche_titre($langs->trans("NewMember"), '', 'members');
+		print load_fiche_titre($langs->trans("NewMember"), '', $object->picto);
 
 		if ($conf->use_javascript_ajax) {
 			print "\n".'<script type="text/javascript" language="javascript">';

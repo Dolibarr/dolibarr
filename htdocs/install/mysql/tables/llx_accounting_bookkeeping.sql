@@ -35,7 +35,7 @@ CREATE TABLE llx_accounting_bookkeeping
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
   debit                 double(24,8) NOT NULL,		-- FEC:Debit
   credit                double(24,8) NOT NULL,		-- FEC:Credit
-  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
+  montant               double(24,8) NULL,	   	    -- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
   multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise

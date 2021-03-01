@@ -46,13 +46,19 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
-	if (empty($minLength)) $minLength = 1;
+	if (empty($minLength)) {
+		$minLength = 1;
+	}
 
 	$dataforrenderITem = 'ui-autocomplete';
 	$dataforitem = 'ui-autocomplete-item';
 	// Allow two constant to use other values for backward compatibility
-	if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
-	if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+	if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) {
+		$dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+	}
+	if (defined('JS_QUERY_AUTOCOMPLETE_ITEM')) {
+		$dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+	}
 
 	// Input search_htmlname is original field
 	// Input htmlname is a second input field used when using ajax autocomplete.
@@ -137,9 +143,10 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 update: update, textarea: textarea,
 												 pbq: item.pbq,
 												 type: item.type, qty: item.qty, discount: item.discount,
-												 pricebasetype: item.pricebasetype, price_ht: item.price_ht,
+												 pricebasetype: item.pricebasetype,
+												 price_ht: item.price_ht,
 												 price_ttc: item.price_ttc,
-												 up: item.up, description : item.description,
+												 description : item.description,
 												 ref_customer: item.ref_customer }
 									}));
 								}
@@ -152,32 +159,24 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties");
+							console.log("Propagate before some properties retrieved by ajax into data-xxx properties");
 
-							//console.log(ui.item);
-							//For supplier price
-							$("#'.$htmlname.'").attr("data-up", ui.item.up);
-							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
+							// For supplier price and customer when price by quantity is off
+							$("#'.$htmlname.'").attr("data-up", ui.item.price_ht);
+							$("#'.$htmlname.'").attr("data-base", ui.item.pricebasetype);
 							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
 							$("#'.$htmlname.'").attr("data-description", ui.item.description);
 							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
-
-							//For customer price
-		';
+	';
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 		$script .= '
-							$("#' . $htmlname . '").attr("data-pbq", ui.item.pbq);
-							$("#' . $htmlname . '").attr("data-pbqup", ui.item.price_ht);
-							$("#' . $htmlname . '").attr("data-pbqbase", ui.item.pricebasetype);
-							$("#' . $htmlname . '").attr("data-pbqqty", ui.item.qty);
-							$("#' . $htmlname . '").attr("data-pbqpercent", ui.item.discount);
-		';
-	} else {
-		$script .= '
-							$("#' . $htmlname . '").attr("data-up", ui.item.price_ht);
-							$("#' . $htmlname . '").attr("data-base", ui.item.pricebasetype);
-							$("#' . $htmlname . '").attr("data-qty", ui.item.qty);
-							$("#' . $htmlname . '").attr("data-discount", ui.item.discount);
+							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
+							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
+							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
+							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
 		';
 	}
 	$script .= '
@@ -217,6 +216,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							console.log("Make action update on each ui.item.update")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
+									console.log("Set value "+value+" into #"+key);
     								$("#" + key).val(value).trigger("change");
     							});
     						}
@@ -419,14 +419,26 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	global $conf;
 
 	// select2 can be disabled for smartphones
-	if (!empty($conf->browser->layout) && $conf->browser->layout == 'phone' && !empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) return '';
+	if (!empty($conf->browser->layout) && $conf->browser->layout == 'phone' && !empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) {
+		return '';
+	}
 
-	if (!empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
-	if (empty($conf->use_javascript_ajax)) return '';
-	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) return '';
-	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
+	if (!empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) {
+		return '';
+	}
+	if (empty($conf->use_javascript_ajax)) {
+		return '';
+	}
+	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) {
+		return '';
+	}
+	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		return '';
+	}
 
-	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete = 0;
+	if (empty($minLengthToAutocomplete)) {
+		$minLengthToAutocomplete = 0;
+	}
 
 	$tmpplugin = 'select2';
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
@@ -456,11 +468,12 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					},
 					dropdownCssClass: \'ui-dialog\'
 				})';
-	if ($forcefocus) $msg .= '.select2(\'focus\')';
+	if ($forcefocus) {
+		$msg .= '.select2(\'focus\')';
+	}
 	$msg .= ';'."\n";
 
-	if (is_array($events) && count($events))    // If an array of js events to do were provided.
-	{
+	if (is_array($events) && count($events)) {    // If an array of js events to do were provided.
 		$msg .= '
 			jQuery("#'.$htmlname.'").change(function () {
 				var obj = '.json_encode($events).';
@@ -500,7 +513,9 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 							if (response.num) {
 								var selecthtml_str = response.value;
 								var selecthtml_dom=$.parseHTML(selecthtml_str);
-								$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+								if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
+                                   	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+								}
 							} else {
 								$("#inputautocomplete"+htmlname).val("");
 							}
@@ -520,13 +535,13 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * 	On/off button for constant
  *
  * 	@param	string	$code					Name of constant
- * 	@param	array	$input					Array of options. ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
- * 	@param	int		$entity					Entity to set. Use current entity if null.
+ * 	@param	array	$input					Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param	int		$entity					Entity. Current entity is used if null.
  *  @param	int		$revertonoff			Revert on/off
  *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
  *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin. Works for fontawesome picto only.
- *  @param	int		$forcenoajax			1=Force to use a ahref link instead of ajax code.
+ *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
  * 	@return	string
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0)
@@ -534,12 +549,16 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	global $conf, $langs, $user;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
-	if (!isset($input)) $input = array();
+	if (!isset($input)) {
+		$input = array();
+	}
 
-	if (empty($conf->use_javascript_ajax) || $forcenoajax)
-	{
-		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
+		if (empty($conf->global->$code)) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 		<script>

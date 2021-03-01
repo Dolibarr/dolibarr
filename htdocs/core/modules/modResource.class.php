@@ -188,7 +188,7 @@ class modResource extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=tools',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
@@ -268,10 +268,8 @@ class modResource extends DolibarrModules
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');

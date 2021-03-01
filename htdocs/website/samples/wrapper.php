@@ -1,8 +1,12 @@
 <?php
 // BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
-if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) die("Sample file for website module. Can be called directly.");
-if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded
+if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
+	die("Sample file for website module. Can be called directly.");
+}
+if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
+	require_once './master.inc.php';
+} // Load master if not already loaded
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
@@ -17,42 +21,36 @@ $limit = GETPOST('limit', 'int');
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
-if ($rss) $original_file = 'blog.rss';
+if ($rss) {
+	$original_file = 'blog.rss';
+}
 
 // If we have a hash public (hashp), we guess the original_file.
-if (!empty($hashp))
-{
+if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	$ecmfile = new EcmFiles($db);
 	$result = $ecmfile->fetch(0, '', '', '', $hashp);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
 		// filepath can be 'users/X' or 'X/propale/PR11111'
-		if (is_numeric($tmp[0])) // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
-		{
+		if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
 			$tmp = explode('/', $tmp[1], 2);
 		}
 		$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
 
-		if ($modulepart)	// Not required, so often not defined, for link using public hashp parameter.
-		{
-			if ($moduleparttocheck == $modulepart)
-			{
+		if ($modulepart) {	// Not required, so often not defined, for link using public hashp parameter.
+			if ($moduleparttocheck == $modulepart) {
 				// We remove first level of directory
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
-			}
-			else {
+			} else {
 				print 'Bad link. File is from another module part.';
 			}
-		}
-		else {
+		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
-	}
-	else {
+	} else {
 		print "ErrorFileNotFoundWithSharedLink";
 		exit;
 	}
@@ -60,21 +58,29 @@ if (!empty($hashp))
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
-if (preg_match('/\.(html|htm)$/i', $original_file)) $attachment = false;
-if (isset($_GET["attachment"])) $attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) $attachment = false;
+if (preg_match('/\.(html|htm)$/i', $original_file)) {
+	$attachment = false;
+}
+if (isset($_GET["attachment"])) {
+	$attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
+}
+if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) {
+	$attachment = false;
+}
 
 // Define mime type
 $type = 'application/octet-stream';
-if (GETPOSTISSET('type')) $type = GETPOST('type', 'alpha');
-else $type = dol_mimetype($original_file);
+if (GETPOSTISSET('type')) {
+	$type = GETPOST('type', 'alpha');
+} else {
+	$type = dol_mimetype($original_file);
+}
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
 
 // Cache or not
-if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0)
-{
+if (GETPOST("cache", 'aZ09') || image_format_supported($original_file) >= 0) {
 	// Important: Following code is to avoid page request by browser and PHP CPU at
 	// each Dolibarr page access.
 	header('Cache-Control: max-age=3600, public, must-revalidate');
@@ -99,7 +105,9 @@ if ($rss) {
 	$website->fetch('', $websitekey);
 
 	$filters = array('type_container'=>'blogpost');
-	if ($l) $filters['lang'] = $l;
+	if ($l) {
+		$filters['lang'] = $l;
+	}
 
 	$MAXNEWS = ($limit ? $limit : 20);
 	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
@@ -118,8 +126,7 @@ if ($rss) {
 	dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
 	// Clean parameters
-	if (!$filename)
-	{
+	if (!$filename) {
 		$extension = 'rss';
 		$filename = $format.'.'.$extension;
 	}
@@ -132,19 +139,16 @@ if ($rss) {
 
 	$buildfile = true;
 
-	if ($cachedelay)
-	{
+	if ($cachedelay) {
 		$nowgmt = dol_now();
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay))
-		{
+		if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay)) {
 			dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
 			$buildfile = false;
 		}
 	}
 
-	if ($buildfile)
-	{
+	if ($buildfile) {
 		$langs->load("other");
 		$title = $desc = $langs->transnoentities('LatestBlogPosts');
 
@@ -155,18 +159,17 @@ if ($rss) {
 		// Write file
 		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1'.($l ? '&l='.$l : ''), $l);
 
-		if ($result >= 0)
-		{
-			if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result = 1;
-			else {
+		if ($result >= 0) {
+			if (dol_move($outputfiletmp, $outputfile, 0, 1)) {
+				$result = 1;
+			} else {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
 				dol_syslog("build_exportfile ".$error, LOG_ERR);
 				dol_delete_file($outputfiletmp, 0, 1);
 				print $error;
 				exit(-1);
 			}
-		}
-		else {
+		} else {
 			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			dol_delete_file($outputfiletmp, 0, 1);
 			$langs->load("errors");
@@ -175,56 +178,63 @@ if ($rss) {
 		}
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) $attachment = $_GET["attachment"];
+		if (isset($_GET["attachment"])) {
+			$attachment = $_GET["attachment"];
+		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) $contenttype = $_GET["contenttype"];
+		if (isset($_GET["contenttype"])) {
+			$contenttype = $_GET["contenttype"];
+		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';
 
-		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
-		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
+		if ($contenttype) {
+			header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
+		}
+		if ($attachment) {
+			header('Content-Disposition: attachment; filename="'.$filename.'"');
+		}
 
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
-		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-		else header('Cache-Control: private, must-revalidate');
+		if ($cachedelay) {
+			header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+		} else {
+			header('Cache-Control: private, must-revalidate');
+		}
 
 		// Clean parameters
 		$outputfile = $dir_temp.'/'.$filename;
 		$result = readfile($outputfile);
-		if (!$result) print 'File '.$outputfile.' was empty.';
+		if (!$result) {
+			print 'File '.$outputfile.' was empty.';
+		}
 
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
-}
-// Get logos
-elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file))
-{
+} elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
+	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
-}
-else {
+} else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 	$accessallowed              = $check_access['accessallowed'];
 	$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-	if ($hashp)
-	{
+	if ($hashp) {
 		$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 		$sqlprotectagainstexternals = '';
 	}
 
 	// Security:
 	// Limit access if permissions are wrong
-	if (!$accessallowed)
-	{
+	if (!$accessallowed) {
 		print 'Access forbidden';
 		exit;
 	}
@@ -238,8 +248,7 @@ else {
 	$fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // New file name encoded in OS encoding charset
 
 	// This test if file exists should be useless. We keep it to find bug more easily
-	if (!file_exists($fullpath_original_file_osencoded))
-	{
+	if (!file_exists($fullpath_original_file_osencoded)) {
 		print "ErrorFileDoesNotExists: ".$original_file;
 		exit;
 	}
@@ -248,13 +257,20 @@ else {
 	//top_httphead($type);
 	header('Content-Type: '.$type);
 	header('Content-Description: File Transfer');
-	if ($encoding)   header('Content-Encoding: '.$encoding);
+	if ($encoding) {
+		header('Content-Encoding: '.$encoding);
+	}
 	// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
-	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-	else header('Content-Disposition: inline; filename="'.$filename.'"');
+	if ($attachment) {
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+	} else {
+		header('Content-Disposition: inline; filename="'.$filename.'"');
+	}
 	header('Content-Length: '.dol_filesize($fullpath_original_file));
 
 	readfile($fullpath_original_file_osencoded);
 }
-if (is_object($db)) $db->close();
+if (is_object($db)) {
+	$db->close();
+}
 // END PHP

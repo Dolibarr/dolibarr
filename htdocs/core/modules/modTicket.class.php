@@ -208,7 +208,7 @@ class modTicket extends DolibarrModules
 		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket',
 			'type' => 'left',
 			'titre' => 'Ticket',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticket',
 			'url' => '/ticket/index.php',
@@ -295,13 +295,11 @@ class modTicket extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
 		$dest = $dirodt.'/template_order.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

@@ -24,6 +24,8 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
+print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
+
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
@@ -38,15 +40,16 @@ if (!empty($discount_type)) {
 	$fixedDiscount = $thirdparty->remise_supplier_percent;
 }
 
-if ($fixedDiscount > 0)
-{
+if ($fixedDiscount > 0) {
 	$translationKey = (!empty($discount_type)) ? 'HasRelativeDiscountFromSupplier' : 'CompanyHasRelativeDiscount';
 	print $langs->trans($translationKey, $fixedDiscount).'.';
 } else {
 	$translationKey = (!empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
 	print '<span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 }
-if ($isNewObject) print ' ('.$addrelativediscount.')';
+if ($isNewObject) {
+	print ' ('.$addrelativediscount.')';
+}
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
@@ -86,7 +89,7 @@ if ($absolute_creditnote > 0) {
 		}
 
 		if ($absolute_discount <= 0 || $isNewObject) {
-			$text .= '('.$addabsolutediscount.')';
+			$text .= ' ('.$addabsolutediscount.')';
 		}
 
 		if ($isNewObject) {
@@ -109,3 +112,5 @@ if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 		print ' ('.$addabsolutediscount.')';
 	}
 }
+
+print '<!-- END template -->';

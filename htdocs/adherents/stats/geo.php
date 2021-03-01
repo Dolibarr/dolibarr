@@ -25,6 +25,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', 700);
 $mapratio = 0.5;
@@ -52,6 +53,8 @@ $langs->loadLangs(array("companies", "members", "banks"));
  * View
  */
 
+$memberstatic = new Adherent($db);
+
 $arrayjs = array('https://www.google.com/jsapi');
 if (!empty($conf->dol_use_jmobile)) $arrayjs = array();
 
@@ -63,7 +66,7 @@ if ($mode == 'memberbyregion') $title = $langs->trans("MembersStatisticsByRegion
 
 llxHeader('', $title, '', '', 0, 0, $arrayjs);
 
-print load_fiche_titre($title, '', 'object_group');
+print load_fiche_titre($title, '',  $memberstatic->picto);
 
 dol_mkdir($dir);
 
@@ -196,7 +199,7 @@ if ($mode) {
 
 $head = member_stats_prepare_head($adh);
 
-print dol_get_fiche_head($head, $tab, $langs->trans("Statistics"), -1, 'user');
+print dol_get_fiche_head($head, $tab, '', -1, '');
 
 
 // Print title
@@ -268,7 +271,6 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 
 	// print the div tag that will contain the map
 	print '<div class="center" id="'.$mode.'"></div>'."\n";
-	print '<br>';
 }
 
 if ($mode) {
