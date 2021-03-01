@@ -25,7 +25,12 @@ class DBase
 	private $recordLength = 0;
 	private $recordCount = 0;
 
-	//resource dbase_open ( string $filename , int $mode )
+	/**
+	 * resource dbase_open
+	 * @param	string	$filename 	filename
+	 * @param	int		$mode		mode
+	 * @return 	DBase
+	 */
 	public static function open($filename, $mode)
 	{
 		if (!file_exists($filename)) {
@@ -40,7 +45,13 @@ class DBase
 		return new DBase($fd);
 	}
 
-	//resource dbase_create ( string $filename , array $fields [, int $type = DBASE_TYPE_DBASE ] )
+	/**
+	 * resource dbase_create
+	 * @param	string 	$filename	filename
+	 * @param	array 	$fields		fields
+	 * @param 	int 	$type 		DBASE_TYPE_DBASE
+	 * @return	DBase
+	 */
 	public static function create($filename, $fields, $type = DBASE_TYPE_DBASE)
 	{
 		if (file_exists($filename)) {
@@ -131,31 +142,47 @@ class DBase
 		}
 	}
 
-	//bool dbase_close ( resource $dbase_identifier )
+	/**
+	 * dbase_close
+	 * @return void
+	 */
 	public function close()
 	{
 		fclose($this->fd);
 	}
 
-	//array dbase_get_header_info ( resource $dbase_identifier )
+	/**
+	 * dbase_get_header_info
+	 * @return array
+	 */
 	public function get_header_info()
 	{
 		return $this->fields;
 	}
 
-	//int dbase_numfields ( resource $dbase_identifier )
+	/**
+	 * dbase_numfields
+	 * @return int
+	 */
 	public function numfields()
 	{
 		return $this->fieldCount;
 	}
 
-	//int dbase_numrecords ( resource $dbase_identifier )
+	/**
+	 * dbase_numrecords
+	 * @return int
+	 */
 	public function numrecords()
 	{
 		return $this->recordCount;
 	}
 
-	//bool dbase_add_record ( resource $dbase_identifier , array $record )
+	/**
+	 * dbase_add_record
+	 * @param array $record record
+	 * @return bool
+	 */
 	public function add_record($record)
 	{
 		if (count($record) != $this->fieldCount) {
@@ -175,7 +202,12 @@ class DBase
 		return true;
 	}
 
-	//bool dbase_replace_record ( resource $dbase_identifier , array $record , int $record_number )
+	/**
+	 * dbase_replace_record
+	 * @param array $record record
+	 * @param int $record_number record number
+	 * @return bool
+	 */
 	public function replace_record($record, $record_number)
 	{
 		if (count($record) != $this->fieldCount) {
@@ -189,7 +221,11 @@ class DBase
 		return $this->putRecord($record);
 	}
 
-	//bool dbase_delete_record ( resource $dbase_identifier , int $record_number )
+	/**
+	 * dbase_delete_record
+	 * @param int $record_number record number
+	 * @return bool
+	 */
 	public function delete_record($record_number)
 	{
 		if ($record_number < 1 || $record_number > $this->recordCount) {
@@ -200,7 +236,11 @@ class DBase
 		return true;
 	}
 
-	//array dbase_get_record ( resource $dbase_identifier , int $record_number )
+	/**
+	 * dbase_get_record
+	 * @param int $record_number record number
+	 * @return array
+	 */
 	public function get_record($record_number)
 	{
 		if ($record_number < 1 || $record_number > $this->recordCount) {
@@ -227,7 +267,11 @@ class DBase
 		return $record;
 	}
 
-	//array dbase_get_record_with_names ( resource $dbase_identifier , int $record_number )
+	/**
+	 * dbase_get_record_with_names
+	 * @param int $record_number record number
+	 * @return array
+	 */
 	public function get_record_with_names($record_number)
 	{
 		if ($record_number < 1 || $record_number > $this->recordCount) {
@@ -241,7 +285,10 @@ class DBase
 		return $record;
 	}
 
-	//bool dbase_pack ( resource $dbase_identifier )
+	/**
+	 * dbase_pack
+	 * @return void
+	 */
 	public function pack()
 	{
 		$in_offset = $out_offset = $this->headerLength;
@@ -270,6 +317,10 @@ class DBase
 	 * A few utilitiy functions
 	 */
 
+	 /**
+	 * @param string $field field
+	 * @return int
+	 */
 	private static function length($field)
 	{
 		switch ($field[1]) {
@@ -292,16 +343,33 @@ class DBase
 	 * Functions for reading and writing bytes
 	 */
 
+	 /**
+	 * getChar8
+	 * @param mixed $fd file descriptor
+	 * @return int
+	 */
 	private static function getChar8($fd)
 	{
 		return ord(fread($fd, 1));
 	}
 
+	/**
+	 * putChar8
+	 * @param mixed $fd file descriptor
+	 * @param mixed $value value
+	 * @return bool
+	 */
 	private static function putChar8($fd, $value)
 	{
 		return fwrite($fd, chr($value));
 	}
 
+	/**
+	 * getInt16
+	 * @param mixed $fd file descriptor
+	 * @param int $n n
+	 * @return bool
+	 */
 	private static function getInt16($fd, $n = 1)
 	{
 		$data = fread($fd, 2 * $n);
@@ -313,11 +381,23 @@ class DBase
 		}
 	}
 
+	/**
+	 * putInt16
+	 * @param mixed $fd file descriptor
+	 * @param mixed $value value
+	 * @return bool
+	 */
 	private static function putInt16($fd, $value)
 	{
 		return fwrite($fd, pack('S', $value));
 	}
 
+	/**
+	 * getInt32
+	 * @param mixed $fd file descriptor
+	 * @param int $n n
+	 * @return bool
+	 */
 	private static function getInt32($fd, $n = 1)
 	{
 		$data = fread($fd, 4 * $n);
@@ -329,16 +409,34 @@ class DBase
 		}
 	}
 
+	/**
+	 * putint32
+	 * @param mixed $fd file descriptor
+	 * @param mixed $value value
+	 * @return bool
+	 */
 	private static function putInt32($fd, $value)
 	{
 		return fwrite($fd, pack('L', $value));
 	}
 
+	/**
+	 * putString
+	 * @param mixed $fd file descriptor
+	 * @param mixed $value value
+	 * @param int $length length
+	 * @return bool
+	 */
 	private static function putString($fd, $value, $length = 254)
 	{
 		$ret = fwrite($fd, pack('A' . $length, $value));
 	}
 
+	/**
+	 * putRecord
+	 * @param mixed $record record
+	 * @return bool
+	 */
 	private function putRecord($record)
 	{
 		foreach ($this->fields as $i => &$field) {
@@ -354,62 +452,130 @@ class DBase
 }
 
 if (!function_exists('dbase_open')) {
-
+	/**
+	 * dbase_open
+	 * @param string $filename filename
+	 * @param int $mode mode
+	 * @return DBase
+	 */
 	function dbase_open($filename, $mode)
 	{
 		return DBase::open($filename, $mode);
 	}
 
+	/**
+	 * dbase_create
+	 * @param string $filename filename
+	 * @param array $fields fields
+	 * @param int $type type
+	 * @return DBase
+	 */
 	function dbase_create($filename, $fields, $type = DBASE_TYPE_DBASE)
 	{
 		return DBase::create($filename, $fields, $type);
 	}
 
+	/**
+	 * dbase_close
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @return bool
+	 */
 	function dbase_close($dbase_identifier)
 	{
 		return $dbase_identifier->close();
 	}
 
+	/**
+	 * dbase_get_header_info
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @return string
+	 */
 	function dbase_get_header_info($dbase_identifier)
 	{
 		return $dbase_identifier->get_header_info();
 	}
 
+	/**
+	 * dbase_numfields
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @return int
+	 */
 	function dbase_numfields($dbase_identifier)
 	{
 		$dbase_identifier->numfields();
 	}
 
+	/**
+	 * dbase_numrecords
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @return int
+	 */
 	function dbase_numrecords($dbase_identifier)
 	{
 		return $dbase_identifier->numrecords();
 	}
 
+	/**
+	 * dbase_add_record
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @param array $record record
+	 * @return bool
+	 */
 	function dbase_add_record($dbase_identifier, $record)
 	{
 		return $dbase_identifier->add_record($record);
 	}
 
+	/**
+	 * dbase_delete_record
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @param int $record_number record number
+	 * @return bool
+	 */
 	function dbase_delete_record($dbase_identifier, $record_number)
 	{
 		return $dbase_identifier->delete_record($record_number);
 	}
 
+	/**
+	 * dbase_replace_record
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @param array $record record
+	 * @param int $record_number record number
+	 * @return bool
+	 */
 	function dbase_replace_record($dbase_identifier, $record, $record_number)
 	{
 		return $dbase_identifier->replace_record($record, $record_number);
 	}
 
+	/**
+	 * dbase_get_record
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @param int $record_number record number
+	 * @return bool
+	 */
 	function dbase_get_record($dbase_identifier, $record_number)
 	{
 		return $dbase_identifier->get_record($record_number);
 	}
 
+	/**
+	 * dbase_get_record_with_names
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @param int $record_number record number
+	 * @return bool
+	 */
 	function dbase_get_record_with_names($dbase_identifier, $record_number)
 	{
 		return $dbase_identifier->get_record_with_names($record_number);
 	}
 
+	/**
+	 * dbase_pack
+	 * @param Resource $dbase_identifier dbase identifier
+	 * @return bool
+	 */
 	function dbase_pack($dbase_identifier)
 	{
 		return $dbase_identifier->pack();
