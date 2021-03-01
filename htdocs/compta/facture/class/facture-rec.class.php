@@ -82,8 +82,18 @@ class FactureRec extends CommonInvoice
 	public $number;
 	public $date;
 	public $remise;
-	public $tva;
+
+	/**
+	 * @deprecated
+	 * @see $total_ht
+	 */
 	public $total;
+
+	/**
+	 * @deprecated
+	 * @see $total_tva
+	 */
+	public $tva;
 	public $db_table;
 	public $propalid;
 

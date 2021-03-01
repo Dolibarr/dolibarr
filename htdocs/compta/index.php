@@ -433,14 +433,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num) {
-			$total_ttc = $totalam = $total = 0;
+			$total_ttc = $totalam = $total_ht = 0;
 			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -499,7 +499,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
-				$total += $obj->total_ht;
+				$total_ht += $obj->total_ht;
 				$totalam += $obj->am;
 
 				$i++;
@@ -577,7 +577,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		print "</tr>\n";
 		if ($num) {
 			$i = 0;
-			$total = $total_ttc = $totalam = 0;
+			$total_ht = $total_ttc = $totalam = 0;
 			$othernb = 0;
 
 			while ($i < $num) {
@@ -586,7 +586,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -624,7 +624,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->getLibStatut(3).'</td>';
 				print '</tr>';
-				$total += $obj->total_ht;
+				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
 				$i++;
@@ -687,7 +687,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire) {
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num) {
-			$total_ttc = $totalam = $total = 0;
+			$total_ttc = $totalam = $total_ht = 0;
 
 			while ($i < $num && $i < $max) {
 				$objp = $db->fetch_object($result);
@@ -695,7 +695,7 @@ if (!empty($conf->don->enabled) && $user->rights->don->lire) {
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -786,7 +786,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 					if ($i >= $max) {
 						$othernb += 1;
 						$i++;
-						$total += $obj->total_ht;
+						$total_ht += $obj->total_ht;
 						$total_ttc += $obj->total_ttc;
 						continue;
 					}
@@ -840,7 +840,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 
-	$sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
+	$sql = "SELECT sum(f.total_ht) as tot_fht, sum(f.total_ttc) as tot_fttc";
 	$sql .= ", s.nom as name, s.email";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta";
@@ -905,7 +905,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -1048,14 +1048,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		print '</tr>';
 		if ($num) {
 			$societestatic = new Societe($db);
-			$total_ttc = $totalam = $total = 0;
+			$total_ttc = $totalam = $total_ht = 0;
 			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -1114,7 +1114,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
-				$total += $obj->total_ht;
+				$total_ht += $obj->total_ht;
 				$totalam += $obj->am;
 
 				$i++;
@@ -1135,7 +1135,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-				print '<td class="right">'.price($total).'</td>';
+				print '<td class="right">'.price($total_ht).'</td>';
 			}
 			print '<td class="nowrap right">'.price($total_ttc).'</td>';
 			print '<td class="nowrap right">'.price($totalam).'</td>';
@@ -1221,14 +1221,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		$societestatic = new Societe($db);
 		if ($num) {
 			$i = 0;
-			$total = $total_ttc = $totalam = 0;
+			$total_ht = $total_ttc = $totalam = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -1264,7 +1264,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '<td class="nowrap right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->getLibStatut(3, $obj->am).'</td>';
 				print '</tr>';
-				$total += $obj->total_ht;
+				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
 				$i++;
@@ -1285,7 +1285,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc - $totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-				print '<td class="right">'.price($total).'</td>';
+				print '<td class="right">'.price($total_ht).'</td>';
 			}
 			print '<td class="nowrap right">'.price($total_ttc).'</td>';
 			print '<td class="nowrap right">'.price($totalam).'</td>';
