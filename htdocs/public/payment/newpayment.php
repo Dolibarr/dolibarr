@@ -1038,7 +1038,7 @@ if ($source == 'invoice') {
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed() + $invoice->getSumDepositsUsed()));
-		if (GETPOST("amount", 'int')) {
+		if (GETPOST("amount", 'alpha')) {
 			$amount = GETPOST("amount", 'alpha');
 		}
 		$amount = price2num($amount);
