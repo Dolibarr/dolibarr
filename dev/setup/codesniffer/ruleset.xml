@@ -104,9 +104,9 @@
 		</rule>
 	-->
 	<!--  We want to allow 'if () { ...small code... }' on same line for better code compacity and readability -->
-	<rule ref="Generic.Formatting.DisallowMultipleStatements">
+	<!-- <rule ref="Generic.Formatting.DisallowMultipleStatements">
 		<severity>0</severity>
-	</rule>
+	</rule> -->
 
 
 	<!-- Check assignement have the = align on each line. Have 20 chars padding maximum and always show as errors -->
