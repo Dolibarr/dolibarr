@@ -334,7 +334,6 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertSame('1 '.strtolower(dol_substr($langs->trans("Day"), 0, 1).'.'), $result);
 
-
 		return $result;
 	}
 
