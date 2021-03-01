@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "receiptprinter"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
@@ -49,7 +51,9 @@ $templateid = GETPOST('templateid', 'int');
 
 $printer = new dolReceiptPrinter($db);
 
-if (!$mode) $mode = 'config';
+if (!$mode) {
+	$mode = 'config';
+}
 
 // used in library escpos maybe useful if php doesn't support gzdecode
 if (!function_exists('gzdecode')) {
@@ -84,10 +88,11 @@ if ($action == 'addprinter' && $user->admin) {
 	if (!$error) {
 		$db->begin();
 		$result = $printer->addPrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter);
-		if ($result > 0) $error++;
+		if ($result > 0) {
+			$error++;
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			setEventMessages($langs->trans("PrinterAdded", $printername), null);
 		} else {
@@ -108,10 +113,11 @@ if ($action == 'deleteprinter' && $user->admin) {
 	if (!$error) {
 		$db->begin();
 		$result = $printer->deletePrinter($printerid);
-		if ($result > 0) $error++;
+		if ($result > 0) {
+			$error++;
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			setEventMessages($langs->trans("PrinterDeleted", $printername), null);
 		} else {
@@ -132,7 +138,9 @@ if ($action == 'updateprinter' && $user->admin) {
 	if (!$error) {
 		$db->begin();
 		$result = $printer->updatePrinter($printername, GETPOST('printertypeid', 'int'), GETPOST('printerprofileid', 'int'), $parameter, $printerid);
-		if ($result > 0) $error++;
+		if ($result > 0) {
+			$error++;
+		}
 
 		if (!$error) {
 			$db->commit();
@@ -198,7 +206,9 @@ if ($action == 'updatetemplate' && $user->admin) {
 	if (!$error) {
 		$db->begin();
 		$result = $printer->updateTemplate($templatename, $template, $templateid);
-		if ($result > 0) $error++;
+		if ($result > 0) {
+			$error++;
+		}
 
 		if (!$error) {
 			$db->commit();
@@ -221,7 +231,9 @@ if ($action == 'addtemplate' && $user->admin) {
 	if (!$error) {
 		$db->begin();
 		$result = $printer->addTemplate($templatename, $template);
-		if ($result > 0) $error++;
+		if ($result > 0) {
+			$error++;
+		}
 
 		if (!$error) {
 			$db->commit();
@@ -244,7 +256,9 @@ if ($action == 'deletetemplate' && $user->admin) {
 	if (!$error) {
 		$db->begin();
 		$result = $printer->deleteTemplate($templateid);
-		if ($result > 0) $error++;
+		if ($result > 0) {
+			$error++;
+		}
 
 		if (!$error) {
 			$db->commit();
@@ -443,7 +457,6 @@ if ($mode == 'template' && $user->admin) {
 		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
 		print '<td>';
 		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
-		print GETPOSTISSET('template') ? GETPOST('template', 'alpha') : $printer->listprinterstemplates[$line]['template'];
 		print '</textarea>';
 		print '</td>';
 		print '<td></td>';

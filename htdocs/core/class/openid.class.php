@@ -39,8 +39,7 @@ class SimpleOpenID
 	 */
 	public function __construct()
 	{
-		if (!function_exists('curl_exec'))
-		{
+		if (!function_exists('curl_exec')) {
 			die('Error: Class SimpleOpenID requires curl extension to work');
 		}
 	}
@@ -147,18 +146,18 @@ class SimpleOpenID
 			$a = 'http://'.$a;
 		}
 		/*
-         $u = parse_url(trim($a));
-         if (!isset($u['path'])){
-         $u['path'] = '/';
-         }else if(substr($u['path'],-1,1) == '/'){
-         $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
-         }
-         if (isset($u['query'])){ // If there is a query string, then use identity as is
-         $identity = $a;
-         }else{
-         $identity = $u['scheme'] . '://' . $u['host'] . $u['path'];
-         }
-        */
+		 $u = parse_url(trim($a));
+		 if (!isset($u['path'])){
+		 $u['path'] = '/';
+		 }else if(substr($u['path'],-1,1) == '/'){
+		 $u['path'] = substr($u['path'], 0, strlen($u['path'])-1);
+		 }
+		 if (isset($u['query'])){ // If there is a query string, then use identity as is
+		 $identity = $a;
+		 }else{
+		 $identity = $u['scheme'] . '://' . $u['host'] . $u['path'];
+		 }
+		*/
 		$this->openid_url_identity = $a;
 	}
 
@@ -215,8 +214,7 @@ class SimpleOpenID
 	public function IsError()
 	{
 		// phpcs:enable
-		if (count($this->error) > 0)
-		{
+		if (count($this->error) > 0) {
 			return true;
 		} else {
 			return false;
@@ -253,8 +251,9 @@ class SimpleOpenID
 	public function OpenID_Standarize($openid_identity = null)
 	{
 		// phpcs:enable
-		if ($openid_identity === null)
-		$openid_identity = $this->openid_url_identity;
+		if ($openid_identity === null) {
+			$openid_identity = $this->openid_url_identity;
+		}
 
 		$u = parse_url(strtolower(trim($openid_identity)));
 
@@ -337,7 +336,9 @@ class SimpleOpenID
 	{
 		// phpcs:enable
 		// Remember, SSL MUST BE SUPPORTED
-		if (is_array($params)) $params = $this->array2url($params);
+		if (is_array($params)) {
+			$params = $this->array2url($params);
+		}
 
 		$curl = curl_init($url.($method == "GET" && $params != "" ? "?".$params : ""));
 		@curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
@@ -345,7 +346,9 @@ class SimpleOpenID
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_HTTPGET, ($method == "GET"));
 		curl_setopt($curl, CURLOPT_POST, ($method == "POST"));
-		if ($method == "POST") curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+		if ($method == "POST") {
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+		}
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($curl);
 
@@ -398,7 +401,9 @@ class SimpleOpenID
 		global $conf;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		if (empty($url)) $url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+		if (empty($url)) {
+			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+		}
 
 		$response = getURLContent($url);
 
@@ -451,8 +456,7 @@ class SimpleOpenID
 	{
 		// phpcs:enable
 		$redirect_to = $this->GetRedirectURL();
-		if (headers_sent())
-		{ // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
+		if (headers_sent()) { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
 			echo '<script language="JavaScript" type="text/javascript">window.location=\'';
 			echo $redirect_to;
 			echo '\';</script>';
@@ -478,8 +482,7 @@ class SimpleOpenID
 		// Send only required parameters to confirm validity
 		$arr_signed = explode(",", str_replace('sreg.', 'sreg_', $_GET['openid_signed']));
 		$num = count($arr_signed);
-		for ($i = 0; $i < $num; $i++)
-		{
+		for ($i = 0; $i < $num; $i++) {
 			$s = str_replace('sreg_', 'sreg.', $arr_signed[$i]);
 			$c = $_GET['openid_'.$arr_signed[$i]];
 			// if ($c != ""){
@@ -489,14 +492,12 @@ class SimpleOpenID
 		$params['openid.mode'] = "check_authentication";
 
 		$openid_server = $this->GetOpenIDServer();
-		if ($openid_server == false)
-		{
+		if ($openid_server == false) {
 			return false;
 		}
 		$response = $this->CURL_Request($openid_server, 'POST', $params);
 		$data = $this->splitResponse($response);
-		if ($data['is_valid'] == "true")
-		{
+		if ($data['is_valid'] == "true") {
 			return true;
 		} else {
 			return false;
@@ -517,35 +518,35 @@ class SimpleOpenID
 		global $conf;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		if (empty($url)) $url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+		if (empty($url)) {
+			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+		}
 
 		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
 
 		$addheaders = array('Accept: application/xrds+xml');
 		$response = getURLContent($url, 'GET', '', 1, $addheaders);
 		/* response should like this:
-        <?xml version="1.0" encoding="UTF-8"?>
-        <xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
-        <XRD>
-        <Service priority="0">
-        <Type>http://specs.openid.net/auth/2.0/server</Type>
-        <Type>http://openid.net/srv/ax/1.0</Type>
-        ...
-        <URI>https://www.google.com/accounts/o8/ud</URI>
-        </Service>
-        </XRD>
-        </xrds:XRDS>
-        */
+		<?xml version="1.0" encoding="UTF-8"?>
+		<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+		<XRD>
+		<Service priority="0">
+		<Type>http://specs.openid.net/auth/2.0/server</Type>
+		<Type>http://openid.net/srv/ax/1.0</Type>
+		...
+		<URI>https://www.google.com/accounts/o8/ud</URI>
+		</Service>
+		</XRD>
+		</xrds:XRDS>
+		*/
 		$content = $response['content'];
 
 		$server = '';
-		if (preg_match('/'.preg_quote('<URI>', '/').'(.*)'.preg_quote('</URI>', '/').'/is', $content, $reg))
-		{
+		if (preg_match('/'.preg_quote('<URI>', '/').'(.*)'.preg_quote('</URI>', '/').'/is', $content, $reg)) {
 			$server = $reg[1];
 		}
 
-		if (empty($server))
-		{
+		if (empty($server)) {
 			$this->ErrorStore('OPENID_NOSERVERSFOUND');
 			return false;
 		} else {

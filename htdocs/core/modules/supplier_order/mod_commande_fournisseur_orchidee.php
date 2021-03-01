@@ -111,8 +111,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -134,8 +133,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		// On defini critere recherche compteur
 		$mask = $conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

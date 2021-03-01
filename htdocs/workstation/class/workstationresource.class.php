@@ -42,15 +42,15 @@ class WorkstationResource extends CommonObject
 		'fk_resource' => array ('type' => 'integer')
 	);
 
-	 /**
-	  * @var int ID of workstation
-	  */
-	 public $fk_workstation;
+	/**
+	 * @var int ID of workstation
+	 */
+	public $fk_workstation;
 
-	 /**
-	  * @var int ID of dolresource
-	  */
-	 public $fk_resource;
+	/**
+	 * @var int ID of dolresource
+	 */
+	public $fk_resource;
 
 
 	/**
@@ -65,23 +65,17 @@ class WorkstationResource extends CommonObject
 		$this->db = $db;
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
 
 		// Translate some data of arrayofkeyval
-		if (is_object($langs))
-		{
-			foreach ($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach ($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
@@ -95,7 +89,7 @@ class WorkstationResource extends CommonObject
 	 * @param	int		$fk_workstation		Id of workstation we need to get linked resources
 	 * @return 	array						Array of record
 	 */
-	static public function getAllResourcesOfWorkstation($fk_workstation)
+	public static function getAllResourcesOfWorkstation($fk_workstation)
 	{
 		global $db;
 		$obj = new self($db);
@@ -108,7 +102,7 @@ class WorkstationResource extends CommonObject
 	 * @param	int		$fk_workstation		Id of workstation we need to remove linked resources
 	 * @return 	int							<0 if KO, 0 if nothing done, >0 if OK and something done
 	 */
-	static public function deleteAllResourcesOfWorkstation($fk_workstation)
+	public static function deleteAllResourcesOfWorkstation($fk_workstation)
 	{
 		global $db;
 		$obj = new self($db);

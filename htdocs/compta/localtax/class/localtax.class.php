@@ -122,19 +122,19 @@ class Localtax extends CommonObject
 		$sql .= " ".((int) $this->fk_user_modif);
 		$sql .= ")";
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."localtax");
 
 			// Call trigger
 			$result = $this->call_trigger('LOCALTAX_CREATE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return $this->id;
 			} else {
@@ -184,22 +184,21 @@ class Localtax extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			$error++;
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('LOCALTAX_MODIFY', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -239,10 +238,8 @@ class Localtax extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
@@ -265,7 +262,7 @@ class Localtax extends CommonObject
 
 			return 1;
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -281,16 +278,17 @@ class Localtax extends CommonObject
 	{
 		// Call trigger
 		$result = $this->call_trigger('LOCALTAX_DELETE', $user);
-		if ($result < 0) return -1;
+		if ($result < 0) {
+			return -1;
+		}
 		// End call triggers
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql .= " WHERE rowid=".$this->id;
 
-	   	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -355,16 +353,13 @@ class Localtax extends CommonObject
 		// phpcs:enable
 		$sql = "SELECT sum(f.localtax) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-		if ($year)
-		{
+		if ($year) {
 			$sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$ret = $obj->amount;
 				$this->db->free($result);
@@ -381,7 +376,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	localtax payed
+	 *	Total of localtax paid in invoice
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -392,16 +387,13 @@ class Localtax extends CommonObject
 
 		$sql = "SELECT sum(f.total_localtax) as total_localtax";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-		if ($year)
-		{
+		if ($year) {
 			$sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$ret = $obj->total_localtax;
 				$this->db->free($result);
@@ -419,8 +411,7 @@ class Localtax extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	localtax payed
-	 *  Total de la localtax payed
+	 *  Total of localtax paid
 	 *
 	 *	@param	int		$year		Year
 	 *	@return	int					???
@@ -431,16 +422,13 @@ class Localtax extends CommonObject
 
 		$sql = "SELECT sum(f.amount) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
-		if ($year)
-		{
+		if ($year) {
 			$sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$ret = $obj->amount;
 				$this->db->free($result);
@@ -470,62 +458,64 @@ class Localtax extends CommonObject
 
 		// Check parameters
 		$this->amount = price2num($this->amount);
-		if (!$this->label)
-		{
+		if (!$this->label) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 			return -3;
 		}
-		if ($this->amount <= 0)
-		{
+		if ($this->amount <= 0) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
-		{
+		if (!empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -5;
 		}
-		if (!empty($conf->banque->enabled) && (empty($this->paymenttype) || $this->paymenttype <= 0))
-		{
+		if (!empty($conf->banque->enabled) && (empty($this->paymenttype) || $this->paymenttype <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
 
 		// Insertion dans table des paiement localtax
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax (localtaxtype, datep, datev, amount";
-		if ($this->note)  $sql .= ", note";
-		if ($this->label) $sql .= ", label";
+		if ($this->note) {
+			$sql .= ", note";
+		}
+		if ($this->label) {
+			$sql .= ", label";
+		}
 		$sql .= ", fk_user_creat, fk_bank";
 		$sql .= ") ";
 		$sql .= " VALUES (".$this->ltt.", '".$this->db->idate($this->datep)."',";
 		$sql .= "'".$this->db->idate($this->datev)."',".$this->amount;
-		if ($this->note)  $sql .= ", '".$this->db->escape($this->note)."'";
-		if ($this->label) $sql .= ", '".$this->db->escape($this->label)."'";
+		if ($this->note) {
+			$sql .= ", '".$this->db->escape($this->note)."'";
+		}
+		if ($this->label) {
+			$sql .= ", '".$this->db->escape($this->label)."'";
+		}
 		$sql .= ", ".((int) $user->id).", NULL";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."localtax"); // TODO devrait s'appeler paiementlocaltax
-			if ($this->id > 0)
-			{
+			if ($this->id > 0) {
 				$ok = 1;
-				if (!empty($conf->banque->enabled))
-				{
+				if (!empty($conf->banque->enabled)) {
 					// Insertion dans llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
 					$result = $acc->fetch($this->accountid);
-					if ($result <= 0) dol_print_error($this->db);
+					if ($result <= 0) {
+						dol_print_error($this->db);
+					}
 
 					$bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 
 					// Mise a jour fk_bank dans llx_localtax. On connait ainsi la ligne de localtax qui a g�n�r� l'�criture bancaire
-					if ($bank_line_id > 0)
-					{
+					if ($bank_line_id > 0) {
 						$this->update_fk_bank($bank_line_id);
 					} else {
 						$this->error = $acc->error;
@@ -534,15 +524,13 @@ class Localtax extends CommonObject
 
 					// Mise a jour liens
 					$result = $acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/localtax/card.php?id=', "(VATPayment)", "payment_vat");
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$this->error = $acc->error;
 						$ok = 0;
 					}
 				}
 
-				if ($ok)
-				{
+				if ($ok) {
 					$this->db->commit();
 					return $this->id;
 				} else {
@@ -602,9 +590,15 @@ class Localtax extends CommonObject
 
 		$picto = 'payment';
 
-		if ($withpicto) $result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
-		if ($withpicto != 2) $result .= $link.$this->ref.$linkend;
+		if ($withpicto) {
+			$result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		}
+		if ($withpicto && $withpicto != 2) {
+			$result .= ' ';
+		}
+		if ($withpicto != 2) {
+			$result .= $link.$this->ref.$linkend;
+		}
 		return $result;
 	}
 

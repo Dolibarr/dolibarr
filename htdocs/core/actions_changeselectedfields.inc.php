@@ -28,14 +28,16 @@
 // $object must be defined (object is loaded in this file with fetch)
 
 // Save selection
-if (GETPOST('formfilteraction', 'alphanohtml') == 'listafterchangingselectedfields')
-{
+if (GETPOST('formfilteraction', 'alphanohtml') == 'listafterchangingselectedfields') {
 	$tabparam = array();
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
-	if (GETPOST("selectedfields")) $tabparam["MAIN_SELECTEDFIELDS_".$varpage] = GETPOST("selectedfields");
-	else $tabparam["MAIN_SELECTEDFIELDS_".$varpage] = '';
+	if (GETPOST("selectedfields")) {
+		$tabparam["MAIN_SELECTEDFIELDS_".$varpage] = GETPOST("selectedfields");
+	} else {
+		$tabparam["MAIN_SELECTEDFIELDS_".$varpage] = '';
+	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

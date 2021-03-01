@@ -200,56 +200,56 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
 
 		// Crabe (english)
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (japanese)
 		$newlangs1=new Translate("", $conf);
 		$newlangs1->setDefaultLang('ja_JP');
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs1);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (saudiarabia)
 		$newlangs2a=new Translate("", $conf);
 		$newlangs2a->setDefaultLang('sa_SA');
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2a);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (english_saudiarabia)
 		$newlangs2b=new Translate("", $conf);
 		$newlangs2b->setDefaultLang('en_SA');
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs2b);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (greek)
 		$newlangs3=new Translate("", $conf);
 		$newlangs3->setDefaultLang('el_GR');
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs3);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (chinese)
 		$newlangs4=new Translate("", $conf);
 		$newlangs4->setDefaultLang('zh_CN');
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs4);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Crabe (russian)
 		$newlangs5=new Translate("", $conf);
 		$newlangs5->setDefaultLang('ru_RU');
-		$localobject->modelpdf='crabe';
-		$result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
+		$localobject->model_pdf='crabe';
+		$result = $localobject->generateDocument($localobject->model_pdf, $newlangs5);
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
@@ -274,8 +274,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Canelle
-		$localobject->modelpdf='canelle';
-		$result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='canelle';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -301,8 +301,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Einstein
-		$localobject->modelpdf='einstein';
-		$result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='einstein';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -329,8 +329,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Muscadet
-		$localobject->modelpdf='muscadet';
-		$result= $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='muscadet';
+		$result= $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -356,8 +356,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Azur
-		$localobject->modelpdf='azur';
-		$result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='azur';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -382,8 +382,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Baleine
-		$localobject->modelpdf='baleine';
-		$result = $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='baleine';
+		$result = $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -409,8 +409,8 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Soleil
-		$localobject->modelpdf='soleil';
-		$result=fichinter_create($db, $localobject, $localobject->modelpdf, $langs);
+		$localobject->model_pdf='soleil';
+		$result=fichinter_create($db, $localobject, $localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
@@ -436,15 +436,15 @@ class BuildDocTest extends PHPUnit\Framework\TestCase
 		$localobject->initAsSpecimen();
 
 		// Merou
-		$localobject->modelpdf='merou';
-		$result= $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='merou';
+		$result= $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
 
 		// Rouget
-		$localobject->modelpdf='rouget';
-		$result= $localobject->generateDocument($localobject->modelpdf, $langs);
+		$localobject->model_pdf='rouget';
+		$result= $localobject->generateDocument($localobject->model_pdf, $langs);
 
 		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";

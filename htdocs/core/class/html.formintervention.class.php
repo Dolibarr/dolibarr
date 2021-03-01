@@ -73,53 +73,51 @@ class FormIntervention
 		$sql = 'SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter as f';
 		$sql .= " WHERE f.entity = ".$conf->entity;
-		if ($socid != '')
-		{
-			if ($socid == '0') $sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
-			else $sql .= " AND f.fk_soc = ".$socid;
+		if ($socid != '') {
+			if ($socid == '0') {
+				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";
+			} else {
+				$sql .= " AND f.fk_soc = ".$socid;
+			}
 		}
 
 		dol_syslog(get_class($this)."::select_intervention", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$out .= '<select id="interventionid" class="flat" name="'.$htmlname.'">';
-			if ($showempty) $out .= '<option value="0">&nbsp;</option>';
+			if ($showempty) {
+				$out .= '<option value="0">&nbsp;</option>';
+			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
+			if ($num) {
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire)
-					{
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire) {
 						// Do nothing
 					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
-						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
-						{
+						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0) {
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 						} else {
 							$disabled = 0;
-							if (!$obj->fk_statut > 0)
-							{
+							if (!$obj->fk_statut > 0) {
 								$disabled = 1;
 								$labeltoshow .= ' ('.$langs->trans("Draft").')';
 							}
-							if ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid))
-							{
+							if ($socid > 0 && (!empty($obj->fk_soc) && $obj->fk_soc != $socid)) {
 								$disabled = 1;
 								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
 							}
 
-							if ($hideunselectables && $disabled)
-							{
+							if ($hideunselectables && $disabled) {
 								$resultat = '';
 							} else {
 								$resultat = '<option value="'.$obj->rowid.'"';
-								if ($disabled) $resultat .= ' disabled';
+								if ($disabled) {
+									$resultat .= ' disabled';
+								}
 								$resultat .= '>'.$labeltoshow;
 								$resultat .= '</option>';
 							}

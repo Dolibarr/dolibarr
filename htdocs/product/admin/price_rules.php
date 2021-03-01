@@ -29,8 +29,9 @@ $langs->loadLangs(array('admin', 'products'));
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
 	accessforbidden();
+}
 
 $error = 0;
 
@@ -158,7 +159,7 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			<td></td>
 			<td style="text-align: center"><input type="text"  style="text-align: right" name="var_min_percent[1]" size="5" value="<?php echo price(isset($rules[1]) ? $rules[1]->var_min_percent : 0, 2) ?>"> <?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' 1') ?></td>
 		</tr>
-		<?php for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++): ?>
+		<?php for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) : ?>
 			<tr>
 				<td class="fieldrequired" style="text-align: center"><?php
 					echo $langs->trans('SellingPrice').' '.$i;

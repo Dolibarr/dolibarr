@@ -183,7 +183,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureFetch
 	 *
-	 * @param   Object $localobject Invoice
+	 * @param   Facture $localobject Invoice
 	 * @return  int
 	 *
 	 * @depends testFactureFetch
@@ -208,7 +208,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureValid
 	 *
-	 * @param   Object $localobject Invoice
+	 * @param   Facture $localobject Invoice
 	 * @return  void
 	 *
 	 * @depends testFactureUpdate
@@ -242,7 +242,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 			true,
 			array(
 				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
-				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+				'ref','statut','status','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc', 'modelpdf',
 				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
 				'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
@@ -257,7 +257,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testFactureOther
 	 *
-	 * @param   Object $localobject Invoice
+	 * @param   Facture $localobject Invoice
 	 * @return  int
 	 *
 	 * @depends testFactureValid
@@ -345,7 +345,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
 	/**
 	 * Edit an object to test updates
 	 *
-	 * @param   mixed $localobject        Object Facture
+	 * @param   Facture $localobject        Object Facture
 	 * @return  void
 	 */
 	public function changeProperties(&$localobject)

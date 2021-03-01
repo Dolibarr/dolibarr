@@ -47,8 +47,15 @@ function holiday_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/holiday/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
 	$h++;
 
 	// Show more tabs from modules

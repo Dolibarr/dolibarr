@@ -37,12 +37,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
 
 // Security check
-if (isset($_GET["account"]) || isset($_GET["ref"]))
-{
+if (isset($_GET["account"]) || isset($_GET["ref"])) {
 	$id = isset($_GET["account"]) ? $_GET["account"] : (isset($_GET["ref"]) ? $_GET["ref"] : '');
 }
 $fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
@@ -67,22 +68,18 @@ $socialcontribstatic = new ChargeSociales($db);
 
 $form = new Form($db);
 
-if ($_REQUEST["account"] || $_REQUEST["ref"])
-{
-	if ($vline)
-	{
+if ($_REQUEST["account"] || $_REQUEST["ref"]) {
+	if ($vline) {
 		$viewline = $vline;
 	} else {
 		$viewline = 20;
 	}
 
 	$object = new Account($db);
-	if ($_GET["account"])
-	{
+	if ($_GET["account"]) {
 		$result = $object->fetch($_GET["account"]);
 	}
-	if ($_GET["ref"])
-	{
+	if ($_GET["ref"]) {
 		$result = $object->fetch(0, $_GET["ref"]);
 		$_GET["account"] = $object->id;
 	}
@@ -101,8 +98,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<br>';
 
 	$solde = $object->solde(0);
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)$colspan = 6;
-	else $colspan = 5;
+	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+		$colspan = 6;
+	} else {
+		$colspan = 5;
+	}
 
 	// Show next coming entries
 	print '<div class="div-table-responsive">';
@@ -112,7 +112,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("DateDue").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)print '<td>'.$langs->trans("Entity").'</td>';
+	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+		print '<td>'.$langs->trans("Entity").'</td>';
+	}
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td class="right">'.$langs->trans("Debit").'</td>';
 	print '<td class="right">'.$langs->trans("Credit").'</td>';
@@ -193,37 +195,33 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 	// Sort array
-	if (!$error)
-	{
+	if (!$error) {
 		array_multisort($tab_sqlobjOrder, $tab_sqlobj);
 
 		// Apply distinct filter
-		foreach ($tab_sqlobj as $key=>$value) {
+		foreach ($tab_sqlobj as $key => $value) {
 			$tab_sqlobj[$key] = "'".serialize($value)."'";
 		}
 		$tab_sqlobj = array_unique($tab_sqlobj);
-		foreach ($tab_sqlobj as $key=>$value) {
+		foreach ($tab_sqlobj as $key => $value) {
 			$tab_sqlobj[$key] = unserialize(trim($value, "'"));
 		}
 
 		$num = count($tab_sqlobj);
 
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$ref = '';
 			$refcomp = '';
 			$totalpayment = '';
 
 			$obj = array_shift($tab_sqlobj);
 
-			if ($obj->family == 'invoice_supplier')
-			{
+			if ($obj->family == 'invoice_supplier') {
 				$showline = 1;
 				// Uncomment this line to avoid to count suppliers credit note (ff.type = 2)
 				//$showline=(($obj->total_ttc < 0 && $obj->type != 2) || ($obj->total_ttc > 0 && $obj->type == 2))
-				if ($showline)
-				{
+				if ($showline) {
 					$ref = $obj->ref;
 					$facturefournstatic->ref = $ref;
 					$facturefournstatic->id = $obj->objid;
@@ -237,8 +235,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					$totalpayment = -1 * $facturefournstatic->getSommePaiement(); // Payment already done
 				}
 			}
-			if ($obj->family == 'invoice')
-			{
+			if ($obj->family == 'invoice') {
 				$facturestatic->ref = $obj->ref;
 				$facturestatic->id = $obj->objid;
 				$facturestatic->type = $obj->type;
@@ -252,8 +249,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$totalpayment += $facturestatic->getSumDepositsUsed();
 				$totalpayment += $facturestatic->getSumCreditNotesUsed();
 			}
-			if ($obj->family == 'social_contribution')
-			{
+			if ($obj->family == 'social_contribution') {
 				$socialcontribstatic->ref = $obj->ref;
 				$socialcontribstatic->id = $obj->objid;
 				$socialcontribstatic->label = $obj->type;
@@ -271,17 +267,21 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			}
 
 			$total_ttc = $obj->total_ttc;
-			if ($totalpayment) $total_ttc = $obj->total_ttc - $totalpayment;
+			if ($totalpayment) {
+				$total_ttc = $obj->total_ttc - $totalpayment;
+			}
 			$solde += $total_ttc;
 
 			// We discard lines with a remainder to pay to 0
-			if (price2num($total_ttc) != 0)
-			{
+			if (price2num($total_ttc) != 0) {
 				// Show line
 				print '<tr class="oddeven">';
 				print '<td>';
-				if ($obj->dlr) print dol_print_date($db->jdate($obj->dlr), "day");
-				else print $langs->trans("NotDefined");
+				if ($obj->dlr) {
+					print dol_print_date($db->jdate($obj->dlr), "day");
+				} else {
+					print $langs->trans("NotDefined");
+				}
 				print "</td>";
 				print "<td>".$ref."</td>";
 				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
@@ -293,8 +293,12 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					}
 				}
 				print "<td>".$refcomp."</td>";
-				if ($obj->total_ttc < 0) { print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>"; };
-				if ($obj->total_ttc >= 0) { print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>"; };
+				if ($obj->total_ttc < 0) {
+					print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>";
+				};
+				if ($obj->total_ttc >= 0) {
+					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
+				};
 				print '<td class="nowrap right">'.price($solde).'</td>';
 				print "</tr>";
 			}

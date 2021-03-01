@@ -31,15 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm"));
-if (!empty($conf->projet->enabled))	$langs->load("projects");
+if (!empty($conf->projet->enabled)) {
+	$langs->load("projects");
+}
 
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
@@ -54,7 +55,9 @@ $dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);
@@ -71,24 +74,23 @@ $hookmanager->initHooks(array('salarycard', 'globalcard'));
  * Actions
  */
 
-if ($cancel)
-{
+if ($cancel) {
 	header("Location: list.php");
 	exit;
 }
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier)
-{
+if ($action == 'classin' && $user->rights->banque->modifier) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
-if ($action == 'add' && empty($cancel))
-{
+if ($action == 'add' && empty($cancel)) {
 	$error = 0;
 
-	if (empty($datev)) $datev = $datep;
+	if (empty($datev)) {
+		$datev = $datep;
+	}
 
 	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
@@ -113,41 +115,36 @@ if ($action == 'add' && empty($cancel))
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
-	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
-	{
+	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->fk_user) || $object->fk_user < 0)
-	{
+	if (empty($object->fk_user) || $object->fk_user < 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
 		$error++;
 	}
-	if (empty($type_payment) || $type_payment < 0)
-	{
+	if (empty($type_payment) || $type_payment < 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->amount))
-	{
+	if (empty($object->amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !$object->accountid > 0)
-	{
+	if (!empty($conf->banque->enabled) && !$object->accountid > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->begin();
 
 		$ret = $object->create($user);
-		if ($ret > 0)
-		{
+		if ($ret > 0) {
 			$db->commit();
 
 			if (GETPOST('saveandnew', 'alpha')) {
@@ -168,26 +165,23 @@ if ($action == 'add' && empty($cancel))
 	$action = 'create';
 }
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$result = $object->fetch($id);
 
-	if ($object->rappro == 0)
-	{
+	if ($object->rappro == 0) {
 		$db->begin();
 
 		$ret = $object->delete($user);
-		if ($ret > 0)
-		{
-			if ($object->fk_bank)
-			{
+		if ($ret > 0) {
+			if ($object->fk_bank) {
 				$accountline = new AccountLine($db);
 				$result = $accountline->fetch($object->fk_bank);
-				if ($result > 0) $result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				if ($result > 0) {
+					$result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
+				}
 			}
 
-			if ($result >= 0)
-			{
+			if ($result >= 0) {
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/salaries/list.php');
 				exit;
@@ -213,27 +207,25 @@ if ($action == 'delete')
 llxHeader("", $langs->trans("SalaryPayment"));
 
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
-if ($id)
-{
+if ($id) {
 	$object = new PaymentSalary($db);
 	$result = $object->fetch($id);
-	if ($result <= 0)
-	{
+	if ($result <= 0) {
 		dol_print_error($db);
 		exit;
 	}
 }
 
 // Create
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$year_current = strftime("%Y", dol_now());
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
-	if ($pastmonth == 0)
-	{
+	if ($pastmonth == 0) {
 		$pastmonth = 12;
 		$pastmonthyear--;
 	}
@@ -247,8 +239,7 @@ if ($action == 'create')
 	$datesp = dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
 	$dateep = dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
-	if (empty($datesp) || empty($dateep)) // We define date_start and date_end
-	{
+	if (empty($datesp) || empty($dateep)) { // We define date_start and date_end
 		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
@@ -256,7 +247,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'salary');
 
 	print dol_get_fiche_head('', '');
 
@@ -306,8 +297,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
@@ -321,8 +311,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Number
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		// Number
 		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
@@ -331,21 +320,19 @@ if ($action == 'create')
 	}
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
-	    $formproject = new FormProjets($db);
+	if (!empty($conf->projet->enabled)) {
+		$formproject = new FormProjets($db);
 
-	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
-	    $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-	    print '</td></tr>';
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+		print '</td></tr>';
 	}
 
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -371,11 +358,10 @@ if ($action == 'create')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($id)
-{
+if ($id) {
 	$head = salaries_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'salary');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -387,11 +373,9 @@ if ($id)
 	$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->salaries->write)
-		{
+		if ($user->rights->salaries->write) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
@@ -425,7 +409,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
@@ -450,10 +434,8 @@ if ($id)
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-	if (!empty($conf->banque->enabled))
-	{
-		if ($object->fk_account > 0)
-		{
+	if (!empty($conf->banque->enabled)) {
+		if ($object->fk_account > 0) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);
 
@@ -479,10 +461,8 @@ if ($id)
 	// Action buttons
 
 	print '<div class="tabsAction">'."\n";
-	if ($object->rappro == 0)
-	{
-		if (!empty($user->rights->salaries->delete))
-		{
+	if ($object->rappro == 0) {
+		if (!empty($user->rights->salaries->delete)) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';

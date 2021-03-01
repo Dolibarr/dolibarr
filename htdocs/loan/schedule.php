@@ -35,9 +35,15 @@ $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = 0;
-if (GETPOSTISSET('socid')) $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
-if (empty($user->rights->loan->calc)) accessforbidden();
+if (GETPOSTISSET('socid')) {
+	$socid = GETPOST('socid', 'int');
+}
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if (empty($user->rights->loan->calc)) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "loan"));
@@ -48,7 +54,9 @@ $object->fetch($loanid);
 $echeances = new LoanSchedule($db);
 $echeances->fetchAll($object->id);
 
-if ($object->paid > 0 && count($echeances->lines) == 0) $pay_without_schedule = 1;
+if ($object->paid > 0 && count($echeances->lines) == 0) {
+	$pay_without_schedule = 1;
+}
 
 /*
  * Actions
@@ -86,8 +94,9 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$echeances->lines[] = $new_echeance;
 		$i++;
 	}
-	var_dump($result);
-	if ($result > 0) $db->commit();
+	if ($result > 0) {
+		$db->commit();
+	}
 }
 
 if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
@@ -117,7 +126,9 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 		$echeances->lines[$i - 1] = $new_echeance;
 		$i++;
 	}
-	if ($result > 0) $db->commit();
+	if ($result > 0) {
+		$db->commit();
+	}
 }
 
 /*
@@ -138,24 +149,23 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->loadLangs(array("projects"));
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
-	if ($user->rights->loan->write)
-	{
-		if ($action != 'classify')
+	if ($user->rights->loan->write) {
+		if ($action != 'classify') {
 			//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-		if ($action == 'classify') {
-			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			$morehtmlref .= '</form>';
-		} else {
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
 		}
 	} else {
 		if (!empty($object->fk_project)) {
@@ -209,14 +219,14 @@ $(document).ready(function() {
 </script>
 <?php
 
-if ($pay_without_schedule == 1)
+if ($pay_without_schedule == 1) {
 	print '<div class="warning">'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'</div>'."\n";
+}
 
 print '<form name="createecheancier" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="loanid" value="'.$loanid.'">';
-if (count($echeances->lines) > 0)
-{
+if (count($echeances->lines) > 0) {
 	print '<input type="hidden" name="action" value="updateecheancier">';
 } else {
 	print '<input type="hidden" name="action" value="createecheancier">';
@@ -226,7 +236,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="border centpercent">';
 print '<tr class="liste_titre">';
 $colspan = 6;
-if (count($echeances->lines) > 0) $colspan++;
+if (count($echeances->lines) > 0) {
+	$colspan++;
+}
 print '<th class="center" colspan="'.$colspan.'">';
 print $langs->trans("FinancialCommitment");
 print '</th>';
@@ -242,18 +254,18 @@ print '<th class="center">'.$langs->trans("CapitalRemain");
 print '<br>('.price($object->capital, 0, '', 1, -1, -1, $conf->currency).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';
-if (count($echeances->lines) > 0) print '<th class="center">'.$langs->trans('DoPayment').'</th>';
+if (count($echeances->lines) > 0) {
+	print '<th class="center">'.$langs->trans('DoPayment').'</th>';
+}
 print '</tr>'."\n";
 
-if ($object->nbterm > 0 && count($echeances->lines) == 0)
-{
+if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$insurance = $object->insurance_amount / $object->nbterm;
 	$insurance = price2num($insurance, 'MT');
 	$regulInsurance = price2num($object->insurance_amount - ($insurance * $object->nbterm));
-	while ($i < $object->nbterm + 1)
-	{
+	while ($i < $object->nbterm + 1) {
 		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1), 'MT');
 		$int = ($capital * ($object->rate / 12)) / 100;
 		$int = price2num($int, 'MT');
@@ -270,8 +282,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0)
 		$i++;
 		$capital = $cap_rest;
 	}
-} elseif (count($echeances->lines) > 0)
-{
+} elseif (count($echeances->lines) > 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$insurance = $object->insurance_amount / $object->nbterm;
@@ -297,14 +308,12 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0)
 
 		print '<td class="center" id="capital'.$i.'">'.price($cap_rest, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '<td class="center">';
-		if (!empty($line->fk_bank))
-		{
+		if (!empty($line->fk_bank)) {
 			print $langs->trans('Paid');
-			if (!empty($line->fk_payment_loan))
+			if (!empty($line->fk_payment_loan)) {
 				print '&nbsp;<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$line->fk_payment_loan.'">('.img_object($langs->trans("Payment"), "payment").' '.$line->fk_payment_loan.')</a>';
-		}
-		elseif (!$printed)
-		{
+			}
+		} elseif (!$printed) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
 			$printed = true;
 		}
@@ -320,8 +329,11 @@ print '</div>';
 
 print '</br>';
 
-if (count($echeances->lines) == 0) $label = $langs->trans("Create");
-else $label = $langs->trans("Save");
+if (count($echeances->lines) == 0) {
+	$label = $langs->trans("Create");
+} else {
+	$label = $langs->trans("Save");
+}
 print '<div class="center"><input class="button" type="submit" value="'.$label.'" '.(($pay_without_schedule == 1) ? 'disabled title="'.$langs->trans('CantUseScheduleWithLoanStartedToPaid').'"' : '').'title=""></div>';
 print '</form>';
 

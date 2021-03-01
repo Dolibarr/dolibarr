@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'exports', 'other'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 

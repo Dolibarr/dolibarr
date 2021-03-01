@@ -107,36 +107,51 @@ class Productcustomerprice extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->entity))
+		if (isset($this->entity)) {
 			$this->entity = trim($this->entity);
-		if (isset($this->fk_product))
+		}
+		if (isset($this->fk_product)) {
 			$this->fk_product = trim($this->fk_product);
-		if (isset($this->fk_soc))
+		}
+		if (isset($this->fk_soc)) {
 			$this->fk_soc = trim($this->fk_soc);
-		if (isset($this->ref_customer))
+		}
+		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
-		if (isset($this->price))
+		}
+		if (isset($this->price)) {
 			$this->price = trim($this->price);
-		if (isset($this->price_ttc))
+		}
+		if (isset($this->price_ttc)) {
 			$this->price_ttc = trim($this->price_ttc);
-		if (isset($this->price_min))
+		}
+		if (isset($this->price_min)) {
 			$this->price_min = trim($this->price_min);
-		if (isset($this->price_min_ttc))
+		}
+		if (isset($this->price_min_ttc)) {
 			$this->price_min_ttc = trim($this->price_min_ttc);
-		if (isset($this->price_base_type))
+		}
+		if (isset($this->price_base_type)) {
 			$this->price_base_type = trim($this->price_base_type);
-		if (isset($this->tva_tx))
+		}
+		if (isset($this->tva_tx)) {
 			$this->tva_tx = trim($this->tva_tx);
-		if (isset($this->recuperableonly))
+		}
+		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
-		if (isset($this->localtax1_tx))
+		}
+		if (isset($this->localtax1_tx)) {
 			$this->localtax1_tx = trim($this->localtax1_tx);
-		if (isset($this->localtax2_tx))
+		}
+		if (isset($this->localtax2_tx)) {
 			$this->localtax2_tx = trim($this->localtax2_tx);
-		if (isset($this->fk_user))
+		}
+		if (isset($this->fk_user)) {
 			$this->fk_user = trim($this->fk_user);
-		if (isset($this->import_key))
+		}
+		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
+		}
 
 			// Check parameters
 			// Put here code to add control on parameters values
@@ -342,8 +357,12 @@ class Productcustomerprice extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if (empty($sortfield)) $sortfield = "t.rowid";
-		if (empty($sortorder)) $sortorder = "DESC";
+		if (empty($sortfield)) {
+			$sortfield = "t.rowid";
+		}
+		if (empty($sortorder)) {
+			$sortorder = "DESC";
+		}
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -394,7 +413,9 @@ class Productcustomerprice extends CommonObject
 			}
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
-		if (!empty($limit)) $sql .= ' '.$this->db->plimit($limit + 1, $offset);
+		if (!empty($limit)) {
+			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -457,8 +478,12 @@ class Productcustomerprice extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if (!empty($sortfield)) $sortfield = "t.rowid";
-		if (!empty($sortorder)) $sortorder = "DESC";
+		if (!empty($sortfield)) {
+			$sortfield = "t.rowid";
+		}
+		if (!empty($sortorder)) {
+			$sortorder = "DESC";
+		}
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -493,8 +518,7 @@ class Productcustomerprice extends CommonObject
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) 				// To allow $filter['YEAR(s.dated)']=>$year
-				{
+				if (strpos($key, 'date')) { 				// To allow $filter['YEAR(s.dated)']=>$year
 					$sql .= ' AND '.$key.' = \''.$value.'\'';
 				} elseif ($key == 'soc.nom') {
 					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
@@ -505,7 +529,9 @@ class Productcustomerprice extends CommonObject
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
-		if (!empty($limit)) $sql .= ' '.$this->db->plimit($limit + 1, $offset);
+		if (!empty($limit)) {
+			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
+		}
 
 		dol_syslog(get_class($this)."::fetch_all_log", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -566,36 +592,51 @@ class Productcustomerprice extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->entity))
+		if (isset($this->entity)) {
 			$this->entity = trim($this->entity);
-		if (isset($this->fk_product))
+		}
+		if (isset($this->fk_product)) {
 			$this->fk_product = trim($this->fk_product);
-		if (isset($this->fk_soc))
+		}
+		if (isset($this->fk_soc)) {
 			$this->fk_soc = trim($this->fk_soc);
-		if (isset($this->ref_customer))
+		}
+		if (isset($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
-		if (isset($this->price))
+		}
+		if (isset($this->price)) {
 			$this->price = trim($this->price);
-		if (isset($this->price_ttc))
+		}
+		if (isset($this->price_ttc)) {
 			$this->price_ttc = trim($this->price_ttc);
-		if (isset($this->price_min))
+		}
+		if (isset($this->price_min)) {
 			$this->price_min = trim($this->price_min);
-		if (isset($this->price_min_ttc))
+		}
+		if (isset($this->price_min_ttc)) {
 			$this->price_min_ttc = trim($this->price_min_ttc);
-		if (isset($this->price_base_type))
+		}
+		if (isset($this->price_base_type)) {
 			$this->price_base_type = trim($this->price_base_type);
-		if (isset($this->tva_tx))
+		}
+		if (isset($this->tva_tx)) {
 			$this->tva_tx = trim($this->tva_tx);
-		if (isset($this->recuperableonly))
+		}
+		if (isset($this->recuperableonly)) {
 			$this->recuperableonly = trim($this->recuperableonly);
-		if (isset($this->localtax1_tx))
+		}
+		if (isset($this->localtax1_tx)) {
 			$this->localtax1_tx = trim($this->localtax1_tx);
-		if (isset($this->localtax2_tx))
+		}
+		if (isset($this->localtax2_tx)) {
 			$this->localtax2_tx = trim($this->localtax2_tx);
-		if (isset($this->fk_user))
+		}
+		if (isset($this->fk_user)) {
 			$this->fk_user = trim($this->fk_user);
-		if (isset($this->import_key))
+		}
+		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
+		}
 
 			// Check parameters
 			// Put here code to add a control on parameters values
@@ -722,11 +763,12 @@ class Productcustomerprice extends CommonObject
 			$this->errors [] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_UPDATE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 

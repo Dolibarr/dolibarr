@@ -22,12 +22,24 @@
  *       \brief     File to return Ajax response on zipcode or town request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -51,8 +63,7 @@ dol_syslog("GET is ".join(',', $_GET).', MAIN_USE_ZIPTOWN_DICTIONNARY='.(empty($
 //var_dump($_GET);
 
 // Generation of list of zip-town
-if (!empty($_GET['zipcode']) || !empty($_GET['town']))
-{
+if (!empty($_GET['zipcode']) || !empty($_GET['town'])) {
 	$return_arr = array();
 	$formcompany = new FormCompany($db);
 
@@ -60,8 +71,7 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 	$zipcode = $_GET['zipcode'] ? $_GET['zipcode'] : '';
 	$town = $_GET['town'] ? $_GET['town'] : '';
 
-	if (!empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY))   // Use zip-town table
-	{
+	if (!empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)) {   // Use zip-town table
 		$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
 		$sql .= ", c.rowid as fk_country, c.code as country_code, c.label as country";
 		$sql .= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
@@ -71,8 +81,12 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 		$sql .= " ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE z.fk_pays = c.rowid";
 		$sql .= " AND z.active = 1 AND c.active = 1";
-		if ($zipcode) $sql .= " AND z.zip LIKE '".$db->escape($zipcode)."%'";
-		if ($town)    $sql .= " AND z.town LIKE '%".$db->escape($town)."%'";
+		if ($zipcode) {
+			$sql .= " AND z.zip LIKE '".$db->escape($zipcode)."%'";
+		}
+		if ($town) {
+			$sql .= " AND z.town LIKE '%".$db->escape($town)."%'";
+		}
 		$sql .= " ORDER BY z.zip, z.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
 	} else // Use table of third parties
@@ -84,8 +98,12 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON s.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
 		$sql .= " WHERE";
-		if ($zipcode) $sql .= " s.zip LIKE '".$db->escape($zipcode)."%'";
-		if ($town)    $sql .= " s.town LIKE '%".$db->escape($town)."%'";
+		if ($zipcode) {
+			$sql .= " s.zip LIKE '".$db->escape($zipcode)."%'";
+		}
+		if ($town) {
+			$sql .= " s.town LIKE '%".$db->escape($town)."%'";
+		}
 		$sql .= " ORDER BY s.fk_pays, s.zip, s.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
 	}
@@ -93,10 +111,8 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 	//print $sql;
 	$resql = $db->query($sql);
 	//var_dump($db);
-	if ($resql)
-	{
-		while ($row = $db->fetch_array($resql))
-		{
+	if ($resql) {
+		while ($row = $db->fetch_array($resql)) {
 			$country = $row['fk_country'] ? ($langs->transnoentitiesnoconv('Country'.$row['country_code']) != 'Country'.$row['country_code'] ? $langs->transnoentitiesnoconv('Country'.$row['country_code']) : $row['country']) : '';
 			$county = $row['fk_county'] ? ($langs->transnoentitiesnoconv($row['county_code']) != $row['county_code'] ? $langs->transnoentitiesnoconv($row['county_code']) : ($row['county'] != '-' ? $row['county'] : '')) : '';
 
@@ -106,13 +122,11 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 			$row_array['label'] .= ($county && $country ? ' - ' : '');
 			$row_array['label'] .= $country;
 			$row_array['label'] .= ($county || $country) ? ')' : '';
-			if ($zipcode)
-			{
+			if ($zipcode) {
 				$row_array['value'] = $row['zip'];
 				$row_array['town'] = $row['town'];
 			}
-			if ($town)
-			{
+			if ($town) {
 				$row_array['value'] = $row['town'];
 				$row_array['zipcode'] = $row['zip'];
 			}

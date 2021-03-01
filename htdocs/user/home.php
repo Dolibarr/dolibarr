@@ -284,7 +284,6 @@ if ($canreadperms) {
 	}
 }
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 // boxes

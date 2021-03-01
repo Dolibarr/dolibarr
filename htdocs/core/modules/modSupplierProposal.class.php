@@ -70,7 +70,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->depends = array('modFournisseur'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("supplier_proposal");
 
 		// Constants
@@ -141,7 +141,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'cloturer';
 
- 		// Main menu entries
+		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
 	}
@@ -167,13 +167,11 @@ class modSupplierProposal extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_proposals';
 		$dest = $dirodt.'/template_supplier_proposal.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

@@ -32,8 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
+}
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('accountancyindex'));
@@ -43,8 +44,8 @@ $hookmanager->initHooks(array('accountancyindex'));
  * Actions
  */
 
-if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
-{
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOST('areacode', 'aZ09');
 	$userid = GETPOST('userid', 'int');
@@ -52,7 +53,9 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
 }
 
 
@@ -60,10 +63,11 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-llxHeader('', $langs->trans("AccountancyArea"));
+$help_url = '';
 
-if ($conf->accounting->enabled)
-{
+llxHeader('', $langs->trans("AccountancyArea"), $help_url);
+
+if ($conf->accounting->enabled) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
@@ -71,8 +75,7 @@ if ($conf->accounting->enabled)
 	$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
-	if (!$helpisexpanded)
-	{
+	if (!$helpisexpanded) {
 		$showtutorial  = '<div align="right"><a href="#" id="show_hide">';
 		$showtutorial .= img_picto('', 'chevron-down');
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
@@ -90,7 +93,7 @@ if ($conf->accounting->enabled)
 	}
 
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'title_accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
@@ -141,8 +144,7 @@ if ($conf->accounting->enabled)
 	$s = str_replace('{s}', $textlink, $s);
 	print $s;
 	print "<br>\n";
-	if (!empty($conf->tax->enabled))
-	{
+	if (!empty($conf->tax->enabled)) {
 		$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, '{s}');
@@ -150,8 +152,7 @@ if ($conf->accounting->enabled)
 		print $s;
 		print "<br>\n";
 	}
-	if (!empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
-	{
+	if (!empty($conf->expensereport->enabled)) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '{s}');
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);
@@ -190,8 +191,7 @@ if ($conf->accounting->enabled)
 	print $s;
 	print "<br>\n";
 
-	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled))
-	{
+	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled)) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '{s}')."\n";
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>', $s);
@@ -218,8 +218,8 @@ if ($conf->accounting->enabled)
 	print '<div class="fichecenter fichecenterbis">';
 
 	/*
-     * Show boxes
-     */
+	 * Show boxes
+	 */
 	$boxlist .= '<div class="twocolumns">';
 
 	$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';

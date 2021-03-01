@@ -290,7 +290,7 @@ print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
-print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
+print '<tr><td class="titlefieldcreate">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
 /*print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
@@ -321,7 +321,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // Link for internal download
-print '<tr><td>'.$langs->trans("DirectDownloadInternalLink").'</td><td>';
+print '<tr><td>';
+print $form->textwithpicto($langs->trans("DirectDownloadInternalLink"), $langs->trans("PrivateDownloadLinkDesc"));
+print '</td><td>';
 $modulepart = 'ecm';
 $forcedownload = 1;
 $rellink = '/document.php?modulepart='.$modulepart;
@@ -347,9 +349,9 @@ print '</td></tr>';
 // Link for direct external download
 print '<tr><td>';
 if ($action != 'edit') {
-	print $langs->trans("DirectDownloadLink");
+	print $form->textwithpicto($langs->trans("DirectDownloadLink"), $langs->trans("PublicDownloadLinkDesc"));
 } else {
-	print $langs->trans("FileSharedViaALink");
+	print $form->textwithpicto($langs->trans("FileSharedViaALink"), $langs->trans("PublicDownloadLinkDesc"));
 }
 print '</td><td>';
 if (!empty($object->share)) {

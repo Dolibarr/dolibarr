@@ -32,7 +32,9 @@ $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
@@ -58,15 +60,18 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(cf.rowid), cf.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+}
 $sql .= " WHERE cf.fk_soc = s.rowid ";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND sc.fk_user = ".$user->id;
+}
 $sql .= " AND cf.entity = ".$conf->entity;
 $sql .= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -74,8 +79,7 @@ if ($resql)
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td class="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven">';
@@ -95,35 +99,37 @@ if ($resql)
 
 
 // Draft orders
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))
-{
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) {
 	$langs->load("orders");
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
 	$sql .= " s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+	}
 	$sql .= " WHERE cf.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND sc.fk_user = ".$user->id;
+	}
 	$sql .= " AND cf.entity = ".$conf->entity;
 	$sql .= " AND cf.fk_statut = 0";
-	if ($socid) $sql .= " AND cf.fk_soc = ".$socid;
+	if ($socid) {
+		$sql .= " AND cf.fk_soc = ".$socid;
+	}
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">'.$langs->trans("DraftOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td  class="nowrap">';
@@ -141,8 +147,7 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 				$i++;
 				$total += $obj->total_ttc;
 			}
-			if ($total > 0)
-			{
+			if ($total > 0) {
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";
@@ -152,34 +157,36 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 }
 
 // Draft invoices
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
-{
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+	if (!$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND sc.fk_user = ".$user->id;
+	}
 	$sql .= " AND ff.entity = ".$conf->entity;
 	$sql .= " AND ff.fk_statut = 0";
-	if ($socid)	$sql .= " AND f.fk_soc = ".$socid;
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".$socid;
+	}
 
 	$resql = $db->query($sql);
 
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">'.$langs->trans("DraftBills").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
 
-			while ($i < $num && $i < 20)
-			{
+			while ($i < $num && $i < 20) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td class="nowrap">';
@@ -226,18 +233,23 @@ $sql = "SELECT s.rowid as socid, s.nom as name, s.town, s.datec, s.tms, s.prefix
 $sql .= ", st.libelle as stcomm";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.fournisseur = 1";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
+}
 $sql .= " ORDER BY s.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$langs->load("boxes");
 	$num = $db->num_rows($resql);
 	$i = 0;
@@ -248,8 +260,7 @@ if ($resql)
 	print '<td class="right">'.$langs->trans("DateModification")."</td>\n";
 	print "</tr>\n";
 
-	while ($obj = $db->fetch_object($resql))
-	{
+	while ($obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 		print '<td><a href="card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"), "company").'</a>';
 		print "&nbsp;<a href=\"card.php?socid=".$obj->socid."\">".$obj->name."</a></td>\n";
@@ -271,8 +282,7 @@ if ($resql)
 $companystatic->LoadSupplierCateg();
 $categstatic = new Categorie($db);
 
-if (count($companystatic->SupplierCategories))
-{
+if (count($companystatic->SupplierCategories)) {
 	print '<br>';
 
 	print '<table class="liste centpercent">';
@@ -280,8 +290,7 @@ if (count($companystatic->SupplierCategories))
 	print $langs->trans("Category");
 	print "</td></tr>\n";
 
-	foreach ($companystatic->SupplierCategories as $rowid => $label)
-	{
+	foreach ($companystatic->SupplierCategories as $rowid => $label) {
 		print '<tr class="oddeven">'."\n";
 		print '<td>';
 		$categstatic->id = $rowid;

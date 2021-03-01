@@ -124,7 +124,7 @@ class modWorkstation extends DolibarrModules
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
-		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -324,26 +324,26 @@ class modWorkstation extends DolibarrModules
 		);
 		*/
 
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=mrp',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>$langs->trans('Workstations'),
-            'mainmenu'=>'mrp',
-            'leftmenu'=>'workstation_workstation',
-            'url'=>'',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'mrp',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->workstation->enabled',
-            // Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-            'perms'=>'$user->rights->workstation->workstation->read',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=mrp',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>$langs->trans('Workstations'),
+			'mainmenu'=>'mrp',
+			'leftmenu'=>'workstation_workstation',
+			'url'=>'',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'mrp',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->workstation->enabled',
+			// Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->workstation->workstation->read',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2,
+		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'fk_menu'=>'fk_mainmenu=mrp,fk_leftmenu=workstation_workstation',
@@ -451,7 +451,9 @@ class modWorkstation extends DolibarrModules
 		global $conf, $langs;
 
 		$result = $this->_load_tables('/workstation/sql/');
-		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -473,19 +475,19 @@ class modWorkstation extends DolibarrModules
 		$myTmpObjects['Workstation'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Workstation') continue;
+			if ($myTmpObjectKey == 'Workstation') {
+				continue;
+			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/workstation/template_workstations.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/workstation';
 				$dest = $dirodt.'/template_workstations.odt';
 
-				if (file_exists($src) && !file_exists($dest))
-				{
+				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
 					$result = dol_copy($src, $dest, 0, 0);
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 						return 0;
