@@ -1449,7 +1449,12 @@ if ($source == 'membersubscription')
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'"'.(empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?' disabled':' ').'>';
+		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled>';
+			print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+		} else {
+			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
+		}
 	} else {
 		$valtoshow = $amount;
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
