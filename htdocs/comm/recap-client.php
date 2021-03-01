@@ -28,9 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
-if (!empty($conf->facture->enabled)) {
+if (!empty($conf->facture->enabled))
 	$langs->load("bills");
-}
+
 
 // Security check
 $socid = $_GET["socid"];
