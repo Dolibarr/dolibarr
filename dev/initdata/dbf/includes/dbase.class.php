@@ -118,7 +118,11 @@ class DBase
 		return new DBase($fd);
 	}
 
-	// Create DBase instance
+	/**
+	 * Create DBase instance
+	 * @param mixed $fd file descriptor
+	 * @return void
+	 */
 	private function __construct($fd)
 	{
 		$this->fd = $fd;
@@ -151,12 +155,14 @@ class DBase
 		fclose($this->fd);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * dbase_get_header_info
 	 * @return array
 	 */
 	public function get_header_info()
 	{
+		// phpcs:disable
 		return $this->fields;
 	}
 
@@ -178,6 +184,7 @@ class DBase
 		return $this->recordCount;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * dbase_add_record
 	 * @param array $record record
@@ -185,6 +192,7 @@ class DBase
 	 */
 	public function add_record($record)
 	{
+		// phpcs:enable
 		if (count($record) != $this->fieldCount) {
 			return false;
 		}
@@ -202,6 +210,7 @@ class DBase
 		return true;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * dbase_replace_record
 	 * @param array $record record
@@ -210,6 +219,7 @@ class DBase
 	 */
 	public function replace_record($record, $record_number)
 	{
+		// phpcs:enable
 		if (count($record) != $this->fieldCount) {
 			return false;
 		}
@@ -221,6 +231,7 @@ class DBase
 		return $this->putRecord($record);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * dbase_delete_record
 	 * @param int $record_number record number
@@ -228,6 +239,7 @@ class DBase
 	 */
 	public function delete_record($record_number)
 	{
+		// phpcs:enable
 		if ($record_number < 1 || $record_number > $this->recordCount) {
 			return false;
 		}
@@ -236,6 +248,7 @@ class DBase
 		return true;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * dbase_get_record
 	 * @param int $record_number record number
@@ -243,6 +256,7 @@ class DBase
 	 */
 	public function get_record($record_number)
 	{
+		// phpcs:enable
 		if ($record_number < 1 || $record_number > $this->recordCount) {
 			return false;
 		}
@@ -267,6 +281,7 @@ class DBase
 		return $record;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * dbase_get_record_with_names
 	 * @param int $record_number record number
@@ -274,6 +289,7 @@ class DBase
 	 */
 	public function get_record_with_names($record_number)
 	{
+		// phpcs:enable
 		if ($record_number < 1 || $record_number > $this->recordCount) {
 			return false;
 		}
