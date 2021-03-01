@@ -49,7 +49,7 @@ $accountid = GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
 $label = GETPOST("label", "alpha");
 $sens = GETPOST("sens", "int");
 $amount = price2num(GETPOST("amount", "alpha"));
-$paymenttype = GETPOST("paymenttype", "int");
+$paymenttype = GETPOST("paymenttype", "aZ09");
 $accountancy_code = GETPOST("accountancy_code", "alpha");
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 if (!empty($conf->accounting->enabled) && !empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
@@ -113,7 +113,7 @@ if (empty($reshook))
 		$object->amount = price2num(GETPOST("amount", 'alpha'));
 		$object->label = GETPOST("label", 'restricthtml');
 		$object->note = GETPOST("note", 'restricthtml');
-		$object->type_payment = GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->type_payment = dol_getIdFromCode($db, GETPOST('paymenttype'), 'c_paiement', 'code', 'id', 1);
 		$object->num_payment = GETPOST("num_payment", 'alpha');
 		$object->chqemetteur = GETPOST("chqemetteur", 'alpha');
 		$object->chqbank = GETPOST("chqbank", 'alpha');
