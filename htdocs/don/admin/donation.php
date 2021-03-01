@@ -322,23 +322,25 @@ print '<td width="60" class="center">'.$langs->trans("Value")."</td>\n";
 print '<td></td>';
 print "</tr>\n";
 
+if (!empty($conf->societe->enabled)) {
+	print '<tr class="oddeven">';
+	print '<td colspan="2">';
+	print $langs->trans("DonationUseThirdparties");
+	print '</td>';
+	print '<td class="center">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
+	}
+	print "</td>\n";
+	print "</tr>\n";
+}
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="set_DONATION_ACCOUNTINGACCOUNT" />';
-
-print '<tr class="oddeven">';
-print '<td colspan="2">';
-print $form->textwithpicto($langs->trans("DonationUserThirdparties"), $langs->trans("DonationUserThirdpartiesDesc"));
-print '</td>';
-print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
-}
-print "</td>\n";
-print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>';

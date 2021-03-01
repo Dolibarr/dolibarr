@@ -1457,7 +1457,10 @@ if ($source == 'membersubscription')
 		}
 	} else {
 		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
+			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+			$amount = $valtoshow;
+		}
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
@@ -1596,7 +1599,10 @@ if ($source == 'donation')
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	} else {
 		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
+			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+			$amount = $valtoshow;
+		}
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
