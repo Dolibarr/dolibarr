@@ -235,12 +235,11 @@ class DefaultValues extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id   Id object
-	 * @param string $ref  Ref
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id)
 	{
-		$result = $this->fetchCommon($id, $ref);
+		$result = $this->fetchCommon($id, null);
 		return $result;
 	}
 
@@ -272,11 +271,13 @@ class DefaultValues extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
+				if ($key == 't.rowid' || ($key == 't.entity' && !is_array($value)) || $key == 't.user_id') {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				} elseif ($key == 'customsql') {
+				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type'){
+					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
+				}  elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (is_array($value)) {
 					$sqlwhere[] = $key.' IN ('.implode(',',$value).')';
