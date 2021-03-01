@@ -332,6 +332,15 @@ if ($action == "sign") {
 					$tmpproposal->statut = 2;
 					if ($tmpproposal->update($user)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+						//Triger
+						//Notification
+						if (!empty($conf->notification->enabled)) {
+							require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+							$notify = new Notify($db);
+							$formquestion = array_merge($formquestion, array(
+								array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $tmpproposal->fk_soc, $tmpproposal)),
+							));
+						}
 					} else {
 						dol_print_error($db);
 						$error++;
