@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
- * Copyright (C) 2015-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		$tmpentry = array('enabled'=>((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && !empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
+		$tmpentry = array('enabled'=>((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && !empty($conf->stock->enabled)), 'perms'=>!empty($user->rights->stock->lire), 'module'=>'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
 	}
@@ -86,8 +86,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
-		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
-		{
+		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire) {
 			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
 			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
@@ -96,11 +95,14 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
 			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			$sql .= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
-			if (empty($user->rights->produit->lire)) $sql .= ' AND p.fk_product_type != 0';
-			if (empty($user->rights->service->lire)) $sql .= ' AND p.fk_product_type != 1';
+			if (empty($user->rights->produit->lire)) {
+				$sql .= ' AND p.fk_product_type != 0';
+			}
+			if (empty($user->rights->service->lire)) {
+				$sql .= ' AND p.fk_product_type != 1';
+			}
 			// Add where from hooks
-			if (is_object($hookmanager))
-			{
+			if (is_object($hookmanager)) {
 				$parameters = array('boxproductalertstocklist'=>1);
 				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
@@ -113,8 +115,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$langs->load("stocks");
 				$num = $this->db->num_rows($result);
 				$line = 0;
@@ -125,8 +126,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 					$price_base_type = '';
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-					{
+					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sqld .= " WHERE fk_product=".$objp->rowid;
@@ -134,11 +134,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
-						if ($resultd)
-						{
+						if ($resultd) {
 							$objtp = $this->db->fetch_object($resultd);
-							if (isset($objtp->label) && $objtp->label != '')
+							if (isset($objtp->label) && $objtp->label != '') {
 								$objp->label = $objtp->label;
+							}
 						}
 					}
 					$productstatic->id = $objp->rowid;
@@ -167,18 +167,16 @@ class box_produits_alerte_stock extends ModeleBoxes
 						'text' => $objp->label,
 					);
 
-					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression))
-					{
+					if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
 						$price_base_type = $langs->trans($objp->price_base_type);
 						$price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
 					} else //Parse the dynamic price
-				   	{
+					{
 						$productstatic->fetch($objp->rowid, '', '', 1);
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($productstatic);
 						if ($price_result >= 0) {
-							if ($objp->price_base_type == 'HT')
-							{
+							if ($objp->price_base_type == 'HT') {
 								$price_base_type = $langs->trans("HT");
 							} else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
@@ -186,7 +184,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 							}
 							$price = price($price_result);
 						}
-				   	}
+					}
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right nowraponall"',
@@ -206,23 +204,24 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'</span>',
 						'asis' => 1
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'<span>',
+						'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy, 3, 0).'</span>',
 						'asis' => 1
 					);
 
 					$line++;
 				}
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoTooLowStockProducts"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

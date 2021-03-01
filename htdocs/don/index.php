@@ -66,12 +66,10 @@ $sql .= " GROUP BY d.fk_statut";
 $sql .= " ORDER BY d.fk_statut";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$i = 0;
 	$num = $db->num_rows($result);
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		$somme[$objp->fk_statut] = $objp->somme;
@@ -90,25 +88,25 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
-	if (!empty($conf->don->enabled) && $user->rights->don->lire)
-	{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
+	if (!empty($conf->don->enabled) && $user->rights->don->lire) {
 		$listofsearchfields['search_donation'] = array('text'=>'Donation');
 	}
 
-	if (count($listofsearchfields))
-	{
+	if (count($listofsearchfields)) {
 		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<table class="noborder nohover centpercent">';
 		$i = 0;
-		foreach ($listofsearchfields as $key => $value)
-		{
-			if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		foreach ($listofsearchfields as $key => $value) {
+			if ($i == 0) {
+				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+			}
 			print '<tr '.$bc[false].'>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'"></td>';
-			if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			if ($i == 0) {
+				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+			}
 			print '</tr>';
 			$i++;
 		}
@@ -129,17 +127,23 @@ print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listofstatus = array(0, 1, -1, 2);
-foreach ($listofstatus as $status)
-{
+foreach ($listofstatus as $status) {
 	$dataseries[] = array($donstatic->LibStatut($status, 1), (isset($nb[$status]) ? (int) $nb[$status] : 0));
-	if ($status == Don::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-	if ($status == Don::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-	if ($status == Don::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
-	if ($status == Don::STATUS_PAID) $colorseries[$status] = $badgeStatus6;
+	if ($status == Don::STATUS_DRAFT) {
+		$colorseries[$status] = '-'.$badgeStatus0;
+	}
+	if ($status == Don::STATUS_VALIDATED) {
+		$colorseries[$status] = $badgeStatus1;
+	}
+	if ($status == Don::STATUS_CANCELED) {
+		$colorseries[$status] = $badgeStatus9;
+	}
+	if ($status == Don::STATUS_PAID) {
+		$colorseries[$status] = $badgeStatus6;
+	}
 }
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print '<tr><td class="center" colspan="4">';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -165,8 +169,7 @@ print '</tr>';
 
 $total = 0;
 $totalnb = 0;
-foreach ($listofstatus as $status)
-{
+foreach ($listofstatus as $status) {
 	print '<tr class="oddeven">';
 	print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
 	print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
@@ -203,18 +206,15 @@ $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -246,7 +246,9 @@ if ($resql)
 		}
 	}
 	print "</table><br>";
-} else dol_print_error($db);
+} else {
+	dol_print_error($db);
+}
 
 
 print '</div></div></div>';

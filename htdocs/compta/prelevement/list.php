@@ -44,7 +44,9 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $type = GETPOST('type', 'aZ09');
@@ -53,12 +55,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "p.datec";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "p.datec";
+}
 
 $search_line = GETPOST('search_line', 'alpha');
 $search_bon = GETPOST('search_bon', 'alpha');
@@ -77,8 +85,7 @@ $hookmanager->initHooks(array('withdrawalsreceiptslineslist'));
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_line = "";
 	$search_bon = "";
 	$search_code = "";
@@ -117,26 +124,36 @@ if ($type == 'bank-transfer') {
 }
 $sql .= " AND f.fk_soc = s.rowid";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) $sql .= " AND s.rowid = ".$socid;
-if ($search_line) $sql .= " AND pl.rowid = '".$db->escape($search_line)."'";
-if ($search_bon) $sql .= natural_search("p.ref", $search_bon);
-if ($type == 'bank-transfer') {
-	if ($search_code) $sql .= natural_search("s.code_fourn", $search_code);
-} else {
-	if ($search_code) $sql .= natural_search("s.code_client", $search_code);
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
 }
-if ($search_company) $sql .= natural_search("s.nom", $search_company);
+if ($search_line) {
+	$sql .= " AND pl.rowid = '".$db->escape($search_line)."'";
+}
+if ($search_bon) {
+	$sql .= natural_search("p.ref", $search_bon);
+}
+if ($type == 'bank-transfer') {
+	if ($search_code) {
+		$sql .= natural_search("s.code_fourn", $search_code);
+	}
+} else {
+	if ($search_code) {
+		$sql .= natural_search("s.code_client", $search_code);
+	}
+}
+if ($search_company) {
+	$sql .= natural_search("s.nom", $search_company);
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -145,18 +162,21 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
 	$param = "&amp;statut=".urlencode($statut);
 	$param .= "&amp;search_bon=".urlencode($search_bon);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
 
 	print"\n<!-- debut table -->\n";
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -206,8 +226,7 @@ if ($result)
 	print "</tr>\n";
 
 	if ($num) {
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
 			$bon->id = $obj->rowid;

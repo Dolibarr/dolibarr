@@ -35,24 +35,26 @@ $permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? 
 $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
-{
+if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES)) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action', 'aZ09') == 'edit'.$note_public)
-	{
+	if (GETPOST('action', 'aZ09') == 'edit'.$note_public) {
 		$value_public = dol_concatdesc($value_public, ($value_public ? "\n" : "")."-- ".$stringtoadd);
-		if (dol_textishtml($value_public)) $value_public .= "<br>\n";
-		else $value_public .= "\n";
+		if (dol_textishtml($value_public)) {
+			$value_public .= "<br>\n";
+		} else {
+			$value_public .= "\n";
+		}
 	}
 }
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
-{
+if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action', 'aZ09') == 'edit'.$note_private)
-	{
+	if (GETPOST('action', 'aZ09') == 'edit'.$note_private) {
 		$value_private = dol_concatdesc($value_private, ($value_private ? "\n" : "")."-- ".$stringtoadd);
-		if (dol_textishtml($value_private)) $value_private .= "<br>\n";
-		else $value_private .= "\n";
+		if (dol_textishtml($value_private)) {
+			$value_private .= "<br>\n";
+		} else {
+			$value_private .= "\n";
+		}
 	}
 }
 
@@ -79,11 +81,16 @@ if ($module == 'propal') {
 	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'product') {
 	$permission = $user->rights->produit->creer;
+} elseif ($module == 'ecmfiles') {
+	$permission = $user->rights->ecm->setup;
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
-else $typeofdata = 'textarea:12:95%';
+if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+	$typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
+} else {
+	$typeofdata = 'textarea:12:95%';
+}
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";

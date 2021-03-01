@@ -92,7 +92,7 @@ MailingModuleDescEmailsFromUser=Emails input by user
 MailingModuleDescDolibarrUsers=Users with Emails
 MailingModuleDescThirdPartiesByCategories=Third parties (by categories)
 SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
-EmailCollectorFilterDesc=All filters must match to have an email being collected 
+EmailCollectorFilterDesc=All filters must match to have an email being collected
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Line %s in file
@@ -175,3 +175,5 @@ Answered=Answered
 IsNotAnAnswer=Is not answer (initial email)
 IsAnAnswer=Is an answer of an initial email
 RecordCreatedByEmailCollector=Record created by the Email Collector %s from email %s
+DefaultBlacklistMailingStatus=Default contact status for refuse bulk emailing
+DefaultStatusEmptyMandatory=Empty but mandatory

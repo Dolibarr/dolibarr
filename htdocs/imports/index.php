@@ -27,8 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 // Load translation files required by the page
 $langs->load("exports");
 
-if (!$user->socid == 0)
-  accessforbidden();
+if (!$user->socid == 0) {
+	accessforbidden();
+}
 
 $import = new Import($db);
 $import->load_arrays($user);
@@ -49,8 +50,7 @@ print '<br>';
 
 
 print '<div class="center">';
-if (count($import->array_import_code))
-{
+if (count($import->array_import_code)) {
 	print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
 }
 print '</div>';
@@ -68,10 +68,9 @@ print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 $model = new ModeleImports();
-$liste = $model->liste_modeles($db);
+$list = $model->liste_modeles($db);
 
-foreach ($liste as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text = $model->getDriverDescForKey($key);

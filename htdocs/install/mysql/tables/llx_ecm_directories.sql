@@ -33,5 +33,7 @@ CREATE TABLE llx_ecm_directories
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
+  note_private		text,
+  note_public		text,
   acl				text
 ) ENGINE=innodb;

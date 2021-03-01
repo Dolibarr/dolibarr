@@ -1,22 +1,40 @@
 <?php
-
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1); // File must be accessed by logon page so without login
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
+if ($dolibarr_main_prod) {
+	accessforbidden();
+}
+
 ?>
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="Documentation and examples for theme.">
 
@@ -25,10 +43,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
   <body class="docpage" style="padding: 20px;">
 
   <main  role="main"  >
-          <h1 class="bd-title" id="content">Badges</h1>
-          <p class="bd-lead">Documentation and examples for badges, our small count and labeling component.</p>
+		  <h1 class="bd-title" id="content">Badges</h1>
+		  <p class="bd-lead">Documentation and examples for badges, our small count and labeling component.</p>
 
-          <h2 id="example">Example</h2>
+		  <h2 id="example">Example</h2>
 
 		<p>Badges scale to match the size of the immediate parent element by using relative font sizing and em units.</p>
 
@@ -42,7 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		</div>
 
 		<figure class="highlight">
-    		<pre>
+			<pre>
 
 &lt;h1&gt;Example heading &lt;span class=&quot;badge badge-secondary&quot;&gt;New&lt;/span&gt;&lt;/h1&gt;
 &lt;h2&gt;Example heading &lt;span class=&quot;badge badge-secondary&quot;&gt;New&lt;/span&gt;&lt;/h2&gt;
@@ -51,7 +69,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;h5&gt;Example heading &lt;span class=&quot;badge badge-secondary&quot;&gt;New&lt;/span&gt;&lt;/h5&gt;
 &lt;h6&gt;Example heading &lt;span class=&quot;badge badge-secondary&quot;&gt;New&lt;/span&gt;&lt;/h6&gt;
 
-    		</pre>
+			</pre>
 		</figure>
 
 		<p>Badges can be used as part of links or buttons to provide a counter.</p>
@@ -84,7 +102,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		</div>
 
 		<figure class="highlight">
-    		<pre>
+			<pre>
 
 
 &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot;&gt;
@@ -93,7 +111,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;/button&gt;
 
 
-    		</pre>
+			</pre>
 		</figure>
 
 		<h2 id="contextual-variations">Contextual variations</h2>
@@ -113,7 +131,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		</div>
 
 		<figure class="highlight">
-    		<pre>
+			<pre>
 
 &lt;span class=&quot;badge badge-primary&quot;&gt;Primary&lt;/span&gt;
 &lt;span class=&quot;badge badge-secondary&quot;&gt;Secondary&lt;/span&gt;
@@ -124,7 +142,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;span class=&quot;badge badge-light&quot;&gt;Light&lt;/span&gt;
 &lt;span class=&quot;badge badge-dark&quot;&gt;Dark&lt;/span&gt;
 
-    		</pre>
+			</pre>
 		</figure>
 
 		<div class="warning">
@@ -140,13 +158,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<p>Add any of the below mentioned modifier classes to change the appearance of a badge to be linked to a default status.</p>
 
 		<div class="bd-example">
-		<?php for ($i = 0; $i <= 9; $i++): ?>
+		<?php for ($i = 0; $i <= 9; $i++) : ?>
 		<span class="badge badge-status<?php print $i; ?>" >status-<?php print $i; ?></span>
 		<?php endfor; ?>
 		</div>
 
 		<figure class="highlight"><pre><pre>
-<?php for ($i = 0; $i <= 9; $i++): ?>
+<?php for ($i = 0; $i <= 9; $i++) : ?>
 &lt;span class="badge badge-status<?php print $i; ?>" &gt;status<?php print $i; ?>&lt;/span&gt;
 <?php endfor; ?>
 		</pre></figure>
@@ -167,7 +185,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<span class="badge badge-pill badge-light">Light</span>
 		<span class="badge badge-pill badge-dark">Dark</span>
 
-		<?php for ($i = 0; $i <= 9; $i++): ?>
+		<?php for ($i = 0; $i <= 9; $i++) : ?>
 		<span class="badge badge-pill badge-status<?php print $i; ?>" >status<?php print $i; ?></span>
 		<?php endfor; ?>
 
@@ -184,7 +202,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;span class=&quot;badge badge-pill badge-info&quot;&gt;Info&lt;/span&gt;
 &lt;span class=&quot;badge badge-pill badge-light&quot;&gt;Light&lt;/span&gt;
 &lt;span class=&quot;badge badge-pill badge-dark&quot;&gt;Dark&lt;/span&gt;
-<?php for ($i = 0; $i <= 9; $i++): ?>
+<?php for ($i = 0; $i <= 9; $i++) : ?>
 &lt;span class="badge badge-pill badge-status<?php print $i; ?>" &gt;status<?php print $i; ?>&lt;/span&gt;
 <?php endfor; ?>
 		</pre></figure>
@@ -206,7 +224,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<span class="badge badge-dot badge-light"></span>
 		<span class="badge badge-dot badge-dark"></span>
 
-		<?php for ($i = 0; $i <= 9; $i++): ?>
+		<?php for ($i = 0; $i <= 9; $i++) : ?>
 		<span class="badge badge-dot badge-status<?php print $i; ?>" ></span>
 		<?php endfor; ?>
 
@@ -223,7 +241,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;span class=&quot;badge badge-dot badge-info&quot;&gt;&lt;/span&gt;
 &lt;span class=&quot;badge badge-dot badge-light&quot;&gt;&lt;/span&gt;
 &lt;span class=&quot;badge badge-dot badge-dark&quot;&gt;&lt;/span&gt;
-<?php for ($i = 0; $i <= 9; $i++): ?>
+<?php for ($i = 0; $i <= 9; $i++) : ?>
 &lt;span class="badge badge-dot badge-status<?php print $i; ?>" &gt;&lt;/span&gt;
 <?php endfor; ?>
 		</pre></figure>
@@ -252,7 +270,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		<a href="#" class="badge badge-info">Info</a>
 		<a href="#" class="badge badge-light">Light</a>
 		<a href="#" class="badge badge-dark">Dark</a>
-		<?php for ($i = 0; $i <= 9; $i++): ?>
+		<?php for ($i = 0; $i <= 9; $i++) : ?>
 		<a href="#" class="badge badge-status<?php print $i; ?>" >status<?php print $i; ?></a>
 		<?php endfor; ?>
 
@@ -267,7 +285,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 &lt;a href=&quot;#&quot; class=&quot;badge badge-info&quot;&gt;Info&lt;/a&gt;
 &lt;a href=&quot;#&quot; class=&quot;badge badge-light&quot;&gt;Light&lt;/a&gt;
 &lt;a href=&quot;#&quot; class=&quot;badge badge-dark&quot;&gt;Dark&lt;/a&gt;
-<?php for ($i = 0; $i <= 9; $i++): ?>
+<?php for ($i = 0; $i <= 9; $i++) : ?>
 &lt;a href=&quot;#&quot; class="badge badge-status<?php print $i; ?>" &gt;status<?php print $i; ?>&lt;/a&gt;
 <?php endfor; ?>
 		</pre></figure>
@@ -322,7 +340,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 		</pre></figure>
 
 
-        </main>
+		</main>
 
   </body>
 </html>
