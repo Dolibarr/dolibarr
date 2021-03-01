@@ -488,7 +488,8 @@ class Form
 				$out .= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
 			} elseif (preg_match('/^(select|autocomplete)/', $inputType)) {
 				$tmp = explode(':', $inputType);
-				$inputType = $tmp[0]; $loadmethod = $tmp[1];
+				$inputType = $tmp[0];
+				$loadmethod = $tmp[1];
 				if (!empty($tmp[2])) {
 					$savemethod = $tmp[2];
 				}
@@ -502,7 +503,8 @@ class Form
 				$cols = (empty($tmp[2]) ? '80' : $tmp[2]);
 			} elseif (preg_match('/^ckeditor/', $inputType)) {
 				$tmp = explode(':', $inputType);
-				$inputType = $tmp[0]; $toolbar = $tmp[1];
+				$inputType = $tmp[0];
+				$toolbar = $tmp[1];
 				if (!empty($tmp[2])) {
 					$width = $tmp[2];
 				}
@@ -594,15 +596,18 @@ class Form
 
 		$extrastyle = '';
 		if ($direction < 0) {
-			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : ''); $extrastyle = 'padding: 0px; padding-left: 3px !important;';
+			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : '');
+			$extrastyle = 'padding: 0px; padding-left: 3px !important;';
 		}
 		if ($direction > 0) {
-			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : ''); $extrastyle = 'padding: 0px; padding-right: 3px !important;';
+			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : '');
+			$extrastyle = 'padding: 0px; padding-right: 3px !important;';
 		}
 
 		$classfortooltip = 'classfortooltip';
 
-		$s = ''; $textfordialog = '';
+		$s = '';
+		$textfordialog = '';
 
 		if ($tooltiptrigger == '') {
 			$htmltext = str_replace('"', '&quot;', $htmltext);
@@ -2084,7 +2089,8 @@ class Form
 		if ($nbassignetouser) {
 			$out .= '<ul class="attendees">';
 		}
-		$i = 0; $ownerid = 0;
+		$i = 0;
+		$ownerid = 0;
 		foreach ($assignedtouser as $key => $value) {
 			if ($value['id'] == $ownerid) {
 				continue;
@@ -2094,7 +2100,8 @@ class Form
 			$userstatic->fetch($value['id']);
 			$out .= $userstatic->getNomUrl(-1);
 			if ($i == 0) {
-				$ownerid = $value['id']; $out .= ' ('.$langs->trans("Owner").')';
+				$ownerid = $value['id'];
+				$out .= ' ('.$langs->trans("Owner").')';
 			}
 			if ($nbassignetouser > 1 && $action != 'view') {
 				$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
@@ -5811,7 +5818,8 @@ class Form
 			}
 
 			// Disabled if seller is not subject to VAT
-			$disabled = false; $title = '';
+			$disabled = false;
+			$title = '';
 			if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") {
 				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
 				// of using supplier invoices (this is a very bad idea !)
@@ -5991,10 +5999,12 @@ class Form
 			$stepminutes = 1;
 		}
 		if ($empty == 1) {
-			$emptydate = 1; $emptyhours = 1;
+			$emptydate = 1;
+			$emptyhours = 1;
 		}
 		if ($empty == 2) {
-			$emptydate = 0; $emptyhours = 1;
+			$emptydate = 0;
+			$emptyhours = 1;
 		}
 		$orig_set_time = $set_time;
 
@@ -6149,9 +6159,8 @@ class Form
 				} else {
 					$retstring .= "Bad value of MAIN_POPUP_CALENDAR";
 				}
-			}
-			// Show date with combo selects
-			else {
+			} else {
+				// Show date with combo selects
 				// Day
 				$retstring .= '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
 
@@ -6448,7 +6457,8 @@ class Form
 
 		$retstring = '';
 
-		$hourSelected = 0; $minSelected = 0;
+		$hourSelected = 0;
+		$minSelected = 0;
 
 		// Hours
 		if ($iSecond != '') {
@@ -6914,7 +6924,8 @@ class Form
 					$style = empty($tmpvalue['css']) ? ' class="'.$tmpvalue['css'].'"' : '';
 				} else {
 					$value = $tmpvalue;
-					$disabled = ''; $style = '';
+					$disabled = '';
+					$style = '';
 				}
 				if (!empty($disablebademail)) {
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
@@ -7720,9 +7731,8 @@ class Form
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
 				if ($num > 0) {
 					$linktoelemlist .= '<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">'.$langs->trans($possiblelink['label']).' ('.$num.')</a></li>';
-				}
-				//else $linktoelem.=$langs->trans($possiblelink['label']);
-				else {
+					// } else $linktoelem.=$langs->trans($possiblelink['label']);
+				} else {
 					$linktoelemlist .= '<li><span class="linktodisabled">'.$langs->trans($possiblelink['label']).' (0)</span></li>';
 				}
 			}
@@ -7777,7 +7787,8 @@ class Form
 	{
 		global $langs;
 
-		$yes = "yes"; $no = "no";
+		$yes = "yes";
+		$no = "no";
 		if ($option) {
 			$yes = "1";
 			$no = "0";
@@ -8093,7 +8104,13 @@ class Form
 		$entity = (!empty($object->entity) ? $object->entity : $conf->entity);
 		$id = (!empty($object->id) ? $object->id : $object->rowid);
 
-		$ret = ''; $dir = ''; $file = ''; $originalfile = ''; $altfile = ''; $email = ''; $capture = '';
+		$ret = '';
+		$dir = '';
+		$file = '';
+		$originalfile = '';
+		$altfile = '';
+		$email = '';
+		$capture = '';
 		if ($modulepart == 'societe') {
 			$dir = $conf->societe->multidir_output[$entity];
 			if (!empty($object->logo)) {

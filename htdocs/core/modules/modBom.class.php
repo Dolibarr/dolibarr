@@ -287,14 +287,23 @@ class modBom extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'BomAndBomLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'bom';
-		$keyforclass = 'BOM'; $keyforclassfile = '/bom/class/bom.class.php'; $keyforelement = 'bom';
+		$keyforclass = 'BOM';
+		$keyforclassfile = '/bom/class/bom.class.php';
+		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforclass = 'BOMLine'; $keyforclassfile = '/bom/class/bom.class.php'; $keyforelement = 'bomline'; $keyforalias = 'tl';
+		$keyforclass = 'BOMLine';
+		$keyforclassfile = '/bom/class/bom.class.php';
+		$keyforelement = 'bomline';
+		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		unset($this->export_fields_array[$r]['tl.fk_bom']);
-		$keyforselect = 'bom_bom'; $keyforaliasextra = 'extra'; $keyforelement = 'bom';
+		$keyforselect = 'bom_bom';
+		$keyforaliasextra = 'extra';
+		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'bom_bomline'; $keyforaliasextra = 'extraline'; $keyforelement = 'bomline';
+		$keyforselect = 'bom_bomline';
+		$keyforaliasextra = 'extraline';
+		$keyforelement = 'bomline';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

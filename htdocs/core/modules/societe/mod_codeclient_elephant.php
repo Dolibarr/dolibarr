@@ -223,7 +223,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			return '';
 		}
 
-		$field = ''; $where = '';
+		$field = '';
+		$where = '';
 		if ($type == 0) {
 			$field = 'code_client';
 			//$where = ' AND client in (1,2)';

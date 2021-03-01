@@ -908,9 +908,8 @@ class DolGraph
 			$this->stringtoshow .= 'legend: {show: ' . ($showlegend ? 'true' : 'false') . ', position: \'ne\' }
 		});
 		}' . "\n";
-		}
-		// Other cases, graph of type 'bars', 'lines'
-		else {
+		} else {
+			// Other cases, graph of type 'bars', 'lines'
 			// Add code to support tooltips
 			// TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow .= '
@@ -1262,9 +1261,8 @@ class DolGraph
 			$this->stringtoshow .= ']' . "\n";
 			$this->stringtoshow .= '}' . "\n";
 			$this->stringtoshow .= '});' . "\n";
-		}
-		// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-		else {
+		} else {
+			// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
 			$type = 'bar';
 
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {

@@ -911,7 +911,8 @@ class FormMail extends Form
 				}
 
 				// Complete substitution array with the url to make online payment
-				$paymenturl = ''; $validpaymentmethod = array();
+				$paymenturl = '';
+				$validpaymentmethod = array();
 				if (empty($this->substit['__REF__'])) {
 					$paymenturl = '';
 				} else {

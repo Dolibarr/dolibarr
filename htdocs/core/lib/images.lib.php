@@ -23,8 +23,10 @@
  */
 
 // Define size of logo small and mini
-$maxwidthsmall = 480; $maxheightsmall = 270; // Near 16/9eme
-$maxwidthmini = 128; $maxheightmini = 72; // 16/9eme
+$maxwidthsmall = 480;
+$maxheightsmall = 270; // Near 16/9eme
+$maxwidthmini = 128;
+$maxheightmini = 72; // 16/9eme
 $quality = 80;
 
 

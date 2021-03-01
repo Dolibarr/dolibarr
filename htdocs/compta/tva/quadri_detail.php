@@ -66,7 +66,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
 		if (GETPOST("month", "int")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
+			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false);
+			$date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
 		} else {
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
@@ -90,16 +91,20 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		}
 	} else {
 		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+			$date_start = dol_get_first_day($year_start, 1, false);
+			$date_end = dol_get_last_day($year_start, 3, false);
 		}
 		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+			$date_start = dol_get_first_day($year_start, 4, false);
+			$date_end = dol_get_last_day($year_start, 6, false);
 		}
 		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+			$date_start = dol_get_first_day($year_start, 7, false);
+			$date_end = dol_get_last_day($year_start, 9, false);
 		}
 		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+			$date_start = dol_get_first_day($year_start, 10, false);
+			$date_end = dol_get_last_day($year_start, 12, false);
 		}
 	}
 }
@@ -179,7 +184,8 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $year_start; $prevquarter = $q;
+$prevyear = $year_start;
+$prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {

@@ -61,7 +61,8 @@ class DolGeoIP
 				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} else {
-			print 'ErrorBadParameterInConstructor'; return 0;
+			print 'ErrorBadParameterInConstructor';
+			return 0;
 		}
 
 		// Here, function exists (embedded into PHP or exists because we made include)
