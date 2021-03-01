@@ -500,13 +500,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
 	if (isset($sortfield) && $sortfield != '') {
-	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	}
 	if (isset($sortorder) && $sortorder != '') {
-	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	}
 	if (isset($page) && $page != '') {
-	    print '<input type="hidden" name="page" value="'.$page.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 	}
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
@@ -1073,9 +1073,9 @@ if ($mode == 'deploy') {
 		} else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
-			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
-			print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("DownloadPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
 		}
 
@@ -1094,36 +1094,36 @@ if ($mode == 'deploy') {
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
-			    $maxphp = preg_replace('/k$/i', '', $maxphp);
+				$maxphp = preg_replace('/k$/i', '', $maxphp);
 				$maxphp = $maxphp * 1;
 			}
 			if (preg_match('/m$/i', $maxphp)) {
-			    $maxphp = preg_replace('/m$/i', '', $maxphp);
+				$maxphp = preg_replace('/m$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024;
 			}
 			if (preg_match('/g$/i', $maxphp)) {
-			    $maxphp = preg_replace('/g$/i', '', $maxphp);
+				$maxphp = preg_replace('/g$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp)) {
-			    $maxphp = preg_replace('/t$/i', '', $maxphp);
+				$maxphp = preg_replace('/t$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024 * 1024 * 1024;
 			}
 			$maxphp2 = @ini_get('post_max_size'); // In unknown
 			if (preg_match('/k$/i', $maxphp2)) {
-			    $maxphp2 = preg_replace('/k$/i', '', $maxphp2);
+				$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1;
 			}
 			if (preg_match('/m$/i', $maxphp2)) {
-			    $maxphp2 = preg_replace('/m$/i', '', $maxphp2);
+				$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024;
 			}
 			if (preg_match('/g$/i', $maxphp2)) {
-			    $maxphp2 = preg_replace('/g$/i', '', $maxphp2);
+				$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp2)) {
-			    $maxphp2 = preg_replace('/t$/i', '', $maxphp2);
+				$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 			}
 			// Now $max and $maxphp and $maxphp2 are in Kb

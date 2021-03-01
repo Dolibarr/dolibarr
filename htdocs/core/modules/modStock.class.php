@@ -148,8 +148,7 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-		{
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$this->rights[5][0] = 1011;
 			$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
 			$this->rights[5][3] = 0; // Permission by default for new user (0/1)
@@ -254,8 +253,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
 		// Export stock including batch number
-		if (!empty($conf->productbatch->enabled))
-		{
+		if (!empty($conf->productbatch->enabled)) {
 			$langs->load("productbatch");
 
 			// This request is same than previous but without field ps.stock (real stock in warehouse) and with link to subtable productbatch
@@ -327,8 +325,7 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product", 'p.datec'=>'product', 'p.tms'=>'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
-		if (!empty($conf->productbatch->enabled))
-		{
+		if (!empty($conf->productbatch->enabled)) {
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';
 			$this->export_entities_array[$r]['sm.batch'] = 'movement';
@@ -383,9 +380,9 @@ class modStock extends DolibarrModules
 				'e.phone'=>'(+33)(0)123456789',
 				'e.fax'=>'(+33)(0)123456790',
 				'e.statut'=>'1',
-                'e.fk_parent'=>'id or ref of warehouse'
-        );
-        $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
+				'e.fk_parent'=>'id or ref of warehouse'
+		);
+		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
 
 		// Import stocks
 		$r++;
@@ -401,7 +398,7 @@ class modStock extends DolibarrModules
 			'ps.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		  );
 		$this->import_examplevalues_array[$r] = array(
-		    'ps.fk_product'=>"id or ref of product", 'ps.fk_entrepot'=>"id or ref of warehouse", 'ps.reel'=>"10"
+			'ps.fk_product'=>"id or ref of product", 'ps.fk_entrepot'=>"id or ref of warehouse", 'ps.reel'=>"10"
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product'=>'Product', 'ps.fk_entrepot'=>"Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.
@@ -430,13 +427,11 @@ class modStock extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
 		$dest = $dirodt.'/template_warehouse.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

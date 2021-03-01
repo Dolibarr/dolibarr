@@ -27,8 +27,7 @@
 $supportedoauth2array = array(
 	'OAUTH_GOOGLE_NAME'=>'google',
 );
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = 'stripetest';
 	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = 'stripelive';
 }

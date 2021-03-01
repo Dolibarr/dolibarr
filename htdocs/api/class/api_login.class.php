@@ -61,14 +61,16 @@ class Login
 		// TODO Remove the API login. The token must be generated from backoffice only.
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'dolibarr';
+		if (empty($dolibarr_main_authentication)) {
+			$dolibarr_main_authentication = 'dolibarr';
+		}
 
 		// Authentication mode: forceuser
-		if ($dolibarr_main_authentication == 'forceuser')
-		{
-			if (empty($dolibarr_auto_user)) $dolibarr_auto_user = 'auto';
-			if ($dolibarr_auto_user != $login)
-			{
+		if ($dolibarr_main_authentication == 'forceuser') {
+			if (empty($dolibarr_auto_user)) {
+				$dolibarr_auto_user = 'auto';
+			}
+			if ($dolibarr_auto_user != $login) {
 				dol_syslog("Warning: your instance is set to use the automatic forced login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
 				throw new RestException(403, "Your instance is set to use the automatic login '".$dolibarr_auto_user."' that is not the requested login. API usage is forbidden in this mode.");
 			}
@@ -77,16 +79,16 @@ class Login
 		// Set authmode
 		$authmode = explode(',', $dolibarr_main_authentication);
 
-		if ($entity != '' && !is_numeric($entity))
-		{
+		if ($entity != '' && !is_numeric($entity)) {
 			throw new RestException(403, "Bad value for entity, must be the numeric ID of company.");
 		}
-		if ($entity == '') $entity = 1;
+		if ($entity == '') {
+			$entity = 1;
+		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');
-		if (empty($login))
-		{
+		if (empty($login)) {
 			throw new RestException(403, 'Access denied');
 		}
 
@@ -94,17 +96,14 @@ class Login
 
 		$tmpuser = new User($this->db);
 		$tmpuser->fetch(0, $login, 0, 0, $entity);
-		if (empty($tmpuser->id))
-		{
+		if (empty($tmpuser->id)) {
 			throw new RestException(500, 'Failed to load user');
 		}
 
 		// Renew the hash
-		if (empty($tmpuser->api_key) || $reset)
-		{
+		if (empty($tmpuser->api_key) || $reset) {
 			$tmpuser->getrights();
-			if (empty($tmpuser->rights->user->self->creer))
-			{
+			if (empty($tmpuser->rights->user->self->creer)) {
 				throw new RestException(403, 'User need write permission on itself to reset its API token');
 			}
 
@@ -118,8 +117,7 @@ class Login
 
 			dol_syslog(get_class($this)."::login", LOG_DEBUG); // No log
 			$result = $this->db->query($sql);
-			if (!$result)
-			{
+			if (!$result) {
 				throw new RestException(500, 'Error when updating api_key for user :'.$this->db->lasterror());
 			}
 		} else {

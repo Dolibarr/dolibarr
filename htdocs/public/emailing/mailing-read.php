@@ -25,13 +25,27 @@
  *      \brief      Script use to update mail status if destinaries read it (if images during mail read are display)
  */
 
-if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
 
 /**
  * Header empty
@@ -63,14 +77,12 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
-{
+if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
 	print 'Bad security key value.';
 	exit;
 }
 
-if (!empty($tag))
-{
+if (!empty($tag)) {
 	$statut = '2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
 	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);

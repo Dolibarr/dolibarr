@@ -67,16 +67,14 @@ class FactureStats extends Stats
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
 
-		if ($mode == 'customer')
-		{
+		if ($mode == 'customer') {
 			$object = new Facture($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field = 'total';
 			$this->field_line = 'total_ht';
 		}
-		if ($mode == 'supplier')
-		{
+		if ($mode == 'supplier') {
 			$object = new FactureFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
@@ -87,24 +85,30 @@ class FactureStats extends Stats
 
 		$this->where = " f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
-		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-		if ($mode == 'customer') $this->where .= " AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')"; // Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
-		if ($this->socid)
-		{
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		}
+		if ($mode == 'customer') {
+			$this->where .= " AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')"; // Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
+		}
+		if ($this->socid) {
 			$this->where .= " AND f.fk_soc = ".$this->socid;
 		}
-		if ($this->userid > 0) $this->where .= ' AND f.fk_user_author = '.$this->userid;
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where .= " AND f.type IN (0,1,2,5)";
-		else $this->where .= " AND f.type IN (0,1,2,3,5)";
+		if ($this->userid > 0) {
+			$this->where .= ' AND f.fk_user_author = '.$this->userid;
+		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			$this->where .= " AND f.type IN (0,1,2,5)";
+		} else {
+			$this->where .= " AND f.type IN (0,1,2,3,5)";
+		}
 
-		if ($typentid)
-		{
+		if ($typentid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = f.fk_soc';
 			$this->where .= ' AND s.fk_typent = '.$typentid;
 		}
 
-		if ($categid)
-		{
+		if ($categid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = f.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
 			$this->where .= ' AND c.rowid = '.$categid;
@@ -125,7 +129,9 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -149,7 +155,9 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(f.datef,'%Y') as dm, COUNT(*), SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -172,7 +180,9 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -196,7 +206,9 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -217,7 +229,9 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
@@ -239,7 +253,9 @@ class FactureStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " AND f.rowid = tl.fk_facture AND tl.fk_product = product.rowid";

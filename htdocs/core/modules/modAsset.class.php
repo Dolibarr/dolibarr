@@ -79,7 +79,7 @@ class modAsset extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/asset/temp","/asset/subdir");
-		$this->dirs = array();
+		$this->dirs = array("/asset/temp");
 
 		// Config pages. Put here list of php page, stored into asset/admin directory, to use to setup module.
 		$this->config_page_url = array("setup.php@asset");
@@ -105,8 +105,7 @@ class modAsset extends DolibarrModules
 		$this->const = array();
 
 
-		if (!isset($conf->asset) || !isset($conf->asset->enabled))
-		{
+		if (!isset($conf->asset) || !isset($conf->asset->enabled)) {
 			$conf->asset = new stdClass();
 			$conf->asset->enabled = 0;
 		}

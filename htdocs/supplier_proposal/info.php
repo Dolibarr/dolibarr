@@ -39,7 +39,9 @@ $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if (!empty($user->socid)) $socid = $user->socid;
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
 
@@ -72,12 +74,10 @@ $morehtmlref = '<div class="refidno">';
 // Thirdparty
 $morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->supplier_proposal->creer)
-	{
+	if ($user->rights->supplier_proposal->creer) {
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';
