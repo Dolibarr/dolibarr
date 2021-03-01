@@ -30,9 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-// Security check
-if (!$user->rights->facture->lire) accessforbidden();
-
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
@@ -47,6 +44,9 @@ if (!$user->rights->societe->client->voir || $socid) $dir .= '/private/'.$user->
 
 $year = GETPOST('year', 'int');
 if (!$year) { $year = date("Y"); }
+
+// Security check
+if (empty($user->rights->facture->lire)) accessforbidden();
 
 
 /*

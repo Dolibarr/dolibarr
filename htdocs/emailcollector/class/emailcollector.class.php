@@ -56,7 +56,7 @@ class EmailCollector extends CommonObject
 	/**
 	 * @var string String with name of icon for emailcollector. Must be the part after the 'object_' into object_emailcollector.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'email';
 
 	/**
 	 * @var string    Field with ID of parent key if this field has a parent
@@ -201,7 +201,6 @@ class EmailCollector extends CommonObject
 	public $actions;
 
 	public $debuginfo;
-
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -716,11 +715,15 @@ class EmailCollector extends CommonObject
 
 		// Connect to IMAP
 		$flags = '/service=imap'; // IMAP
-		if ($ssl) $flags .= '/ssl'; // '/tls'
+		if (!empty($conf->global->IMAP_FORCE_TLS)) {
+			$flags .= '/tls';
+		} elseif (empty($conf->global->IMAP_FORCE_NOSSL)) {
+			if ($ssl) $flags .= '/ssl';
+		}
 		$flags .= '/novalidate-cert';
 		//$flags.='/readonly';
 		//$flags.='/debug';
-		if ($norsh || !empty($conf->global->IMPA_FORCE_NORSH)) $flags .= '/norsh';
+		if ($norsh || !empty($conf->global->IMAP_FORCE_NORSH)) $flags .= '/norsh';
 
 		$connectstringserver = '{'.$this->host.':993'.$flags.'}';
 
@@ -1555,10 +1558,9 @@ class EmailCollector extends CommonObject
 					// Search and create thirdparty
 					if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
 					{
-						if (empty($operation['actionparam']))
-						{
+						if (empty($operation['actionparam'])) {
 							$errorforactions++;
-							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be a rule like 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to set or extract data";
 							$this->errors[] = $this->error;
 						} else {
 							$actionparam = $operation['actionparam'];

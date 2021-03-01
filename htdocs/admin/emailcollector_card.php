@@ -135,12 +135,13 @@ if ($action == 'deletefilter')
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
 	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
-	$result = $emailcollectorfilter->delete($user);
-	if ($result > 0)
-	{
-		$object->fetchFilters();
-	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+	if ($emailcollectorfilter->id > 0) {
+		$result = $emailcollectorfilter->delete($user);
+		if ($result > 0) {
+			$object->fetchFilters();
+		} else {
+			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		}
 	}
 }
 
@@ -153,13 +154,25 @@ if (GETPOST('addoperation', 'alpha'))
 	$emailcollectoroperation->status = 1;
 	$emailcollectoroperation->position = 50;
 
-	$result = $emailcollectoroperation->create($user);
+	if ($emailcollectoroperation->type == '-1') {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Operation")), null, 'errors');
+	}
+	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
+		&& empty($emailcollectoroperation->actionparam)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+	}
 
-	if ($result > 0)
-	{
-		$object->fetchActions();
-	} else {
-		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	if (!$error) {
+		$result = $emailcollectoroperation->create($user);
+
+		if ($result > 0) {
+			$object->fetchActions();
+		} else {
+			$error++;
+			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+		}
 	}
 }
 
@@ -170,25 +183,35 @@ if ($action == 'updateoperation')
 
 	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'restricthtml');
 
-	$result = $emailcollectoroperation->update($user);
+	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
+		&& empty($emailcollectoroperation->actionparam)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorAParameterIsRequiredForThisOperation"), null, 'errors');
+	}
 
-	if ($result > 0)
-	{
-		$object->fetchActions();
-	} else {
-		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	if (!$error) {
+		$result = $emailcollectoroperation->update($user);
+
+		if ($result > 0)
+		{
+			$object->fetchActions();
+		} else {
+			$error++;
+			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+		}
 	}
 }
 if ($action == 'deleteoperation')
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
-	$result = $emailcollectoroperation->delete($user);
-	if ($result > 0)
-	{
-		$object->fetchActions();
-	} else {
-		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+	if ($emailcollectoroperation->id > 0) {
+		$result = $emailcollectoroperation->delete($user);
+		if ($result > 0) {
+			$object->fetchActions();
+		} else {
+			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+		}
 	}
 }
 
@@ -392,7 +415,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (function_exists('imap_open'))
 	{
-		$connectstringserver = $object->getConnectStringIMAP();
+		// Note: $object->host has been loaded by the fetch
+		$usessl = 1;
+
+		$connectstringserver = $object->getConnectStringIMAP($usessl);
 
 		try {
 			if ($sourcedir) {
@@ -458,7 +484,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive">';
 	print '<table class="border centpercent tableforfield">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
+	print '<td>'.$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
 	print '<tr class="oddeven">';
@@ -491,7 +517,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
 		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
 	);
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth500', 0, '', 2);
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth500', 1, '', 2);
 
 	print "\n";
 	print '<script>';
@@ -544,7 +570,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow tableforfield">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
+	print '<td>'.$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
 	print '<tr class="oddeven">';
@@ -561,13 +587,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$parameters = array('arrayoftypes' => $arrayoftypes);
 	$res = $hookmanager->executeHooks('addMoreActionsEmailCollector', $parameters, $object, $action);
 
-	if ($res)
+	if ($res) {
 		$arrayoftypes = $hookmanager->resArray;
-	else foreach ($hookmanager->resArray as $k=>$desc)
+	} else {
+		foreach ($hookmanager->resArray as $k=>$desc) {
 			$arrayoftypes[$k] = $desc;
+		}
+	}
 
-
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300');
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	print '</td>';

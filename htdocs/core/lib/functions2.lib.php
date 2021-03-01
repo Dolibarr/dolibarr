@@ -246,8 +246,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateCreation");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_creation, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -280,8 +280,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateLastModification");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_modification, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_modification, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -314,8 +314,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateValidation");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_validation, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -348,8 +348,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateApprove");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_approve, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -376,8 +376,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateApprove2");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_approve2, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2 + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -412,8 +412,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateClosing");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_closing, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -446,8 +446,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateConciliating");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_rappro, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -459,8 +459,8 @@ function dol_print_object_info($object, $usetable = 0)
 		print $langs->trans("DateLastSend");
 		if ($usetable) print '</td><td>';
 		else print ': ';
-		print dol_print_date($object->date_envoi, 'dayhour');
-		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi + ($deltadateforuser * 3600), "dayhour").' &nbsp;'.$langs->trans("ClientHour");
+		print dol_print_date($object->date_envoi, 'dayhour', 'tzserver');
+		if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		if ($usetable) print '</td></tr>';
 		else print '<br>';
 	}
@@ -1252,7 +1252,7 @@ function check_value($mask, $value)
 	//print "masktri=".$masktri." maskcounter=".$maskcounter." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 
 	if (function_exists('mb_strrpos')) {
-		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
+		$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 0, 'UTF-8');
 	}
 	else {
 		$posnumstart = strrpos($maskwithnocode, $maskcounter);

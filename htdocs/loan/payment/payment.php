@@ -152,14 +152,15 @@ if ($action == 'add_payment')
 
 			// Create a line of payments
 			$payment = new PaymentLoan($db);
-			$payment->chid = $chid;
+			$payment->chid				= $chid;
 			$payment->datep             = $datepaid;
 			$payment->label             = $loan->label;
-			$payment->amount_capital = $pay_amount_capital;
-			$payment->amount_insurance = $pay_amount_interest;
-			$payment->amount_interest = $pay_amount_insurance;
+			$payment->amount_capital	= $pay_amount_capital;
+			$payment->amount_insurance	= $pay_amount_insurance;
+			$payment->amount_interest	= $pay_amount_interest;
+			$payment->fk_bank           = GETPOST('accountid', 'int');
 			$payment->paymenttype       = GETPOST('paymenttype', 'int');
-			$payment->num_payment = GETPOST('num_payment');
+			$payment->num_payment		= GETPOST('num_payment');
 			$payment->note_private      = GETPOST('note_private', 'restricthtml');
 			$payment->note_public       = GETPOST('note_public', 'restricthtml');
 
@@ -175,7 +176,7 @@ if ($action == 'add_payment')
 
 			if (!$error)
 			{
-				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', GETPOST('accountid', 'int'), '', '');
+				$result = $payment->addPaymentToBank($user, $chid, 'payment_loan', '(LoanPayment)', $payment->fk_bank, '', '');
 				if (!$result > 0)
 				{
 					setEventMessages($payment->error, $payment->errors, 'errors');

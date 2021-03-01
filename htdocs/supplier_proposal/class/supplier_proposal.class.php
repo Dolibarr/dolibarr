@@ -416,10 +416,12 @@ class SupplierProposal extends CommonObject
 		$qty = price2num($qty);
 		$pu_ht = price2num($pu_ht);
 		$pu_ttc = price2num($pu_ttc);
-		$txtva = price2num($txtva);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
-			$pa_ht = price2num($pa_ht);
+		$pa_ht = price2num($pa_ht);
 		if ($price_base_type == 'HT')
 		{
 			$pu = $pu_ht;
@@ -479,12 +481,14 @@ class SupplierProposal extends CommonObject
 						if ($result < -1)
 						{
 							$this->error = $prod->error;
+			                $this->errors = $prod->errors;
 							$this->db->rollback();
 							dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
 							return -1;
 						}
 					} else {
 						$this->error = $prod->error;
+		                $this->errors = $prod->errors;
 						$this->db->rollback();
 						return -1;
 					}
@@ -620,12 +624,14 @@ class SupplierProposal extends CommonObject
 					$this->db->commit();
 					return $this->line->id;
 				} else {
-					$this->error = $this->db->error();
+					$this->error = $this->error();
+					$this->errors = $this->errors();
 					$this->db->rollback();
 					return -1;
 				}
 			} else {
 				$this->error = $this->line->error;
+                $this->errors = $this->line->errors;
 				$this->db->rollback();
 				return -2;
 			}
@@ -673,7 +679,9 @@ class SupplierProposal extends CommonObject
 		$remise_percent = price2num($remise_percent);
 		$qty = price2num($qty);
 		$pu = price2num($pu);
-		$txtva = price2num($txtva);
+		if (!preg_match('/\((.*)\)/', $txtva)) {
+			$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+		}
 		$txlocaltax1 = price2num($txlocaltax1);
 		$txlocaltax2 = price2num($txlocaltax2);
 		$pa_ht = price2num($pa_ht);
@@ -2179,16 +2187,16 @@ class SupplierProposal extends CommonObject
 		{
 			global $langs;
 			$langs->load("supplier_proposal");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans("SupplierProposalStatusDraft");
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans("SupplierProposalStatusValidated");
-			$this->labelStatus[self::STATUS_SIGNED] = $langs->trans("SupplierProposalStatusSigned");
-			$this->labelStatus[self::STATUS_NOTSIGNED] = $langs->trans("SupplierProposalStatusNotSigned");
-			$this->labelStatus[self::STATUS_CLOSE] = $langs->trans("SupplierProposalStatusClosed");
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans("SupplierProposalStatusDraftShort");
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans("Opened");
-			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->trans("SupplierProposalStatusSignedShort");
-			$this->labelStatusShort[self::STATUS_NOTSIGNED] = $langs->trans("SupplierProposalStatusNotSignedShort");
-			$this->labelStatusShort[self::STATUS_CLOSE] = $langs->trans("SupplierProposalStatusClosedShort");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("SupplierProposalStatusDraft");
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("SupplierProposalStatusValidated");
+			$this->labelStatus[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusSigned");
+			$this->labelStatus[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSigned");
+			$this->labelStatus[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosed");
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("SupplierProposalStatusDraftShort");
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("Opened");
+			$this->labelStatusShort[self::STATUS_SIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusSignedShort");
+			$this->labelStatusShort[self::STATUS_NOTSIGNED] = $langs->transnoentitiesnoconv("SupplierProposalStatusNotSignedShort");
+			$this->labelStatusShort[self::STATUS_CLOSE] = $langs->transnoentitiesnoconv("SupplierProposalStatusClosedShort");
 		}
 
 		$statusnew = '';

@@ -425,7 +425,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
-			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
 		}
 		elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event')
 		{
@@ -707,7 +707,7 @@ class Documents extends DolibarrApi
 
 		if (!empty($createdirifnotexists)) {
 			if (dol_mkdir($upload_dir) < 0) { // needed by products
-				throw new RestException(500, 'Error while trying to create directory.');
+				throw new RestException(500, 'Error while trying to create directory '.$upload_dir);
 			}
 		}
 

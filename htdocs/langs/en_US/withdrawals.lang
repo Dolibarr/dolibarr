@@ -44,6 +44,7 @@ MakeBankTransferOrder=Make a credit transfer request
 WithdrawRequestsDone=%s direct debit payment requests recorded
 ThirdPartyBankCode=Third-party bank code
 NoInvoiceCouldBeWithdrawed=No invoice debited successfully. Check that invoices are on companies with a valid IBAN and that IBAN has a UMR (Unique Mandate Reference) with mode <strong>%s</strong>.
+WithdrawalCantBeCreditedTwice=This withdrawal receipt is already marked as credited; this can't be done twice, as this would potentially create duplicate payments and bank entries.
 ClassCredited=Classify credited
 ClassCreditedConfirm=Are you sure you want to classify this withdrawal receipt as credited on your bank account?
 TransData=Transmission date

@@ -853,7 +853,9 @@ class FactureRec extends CommonInvoice
 			$qty = price2num($qty);
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			$txtva = price2num($txtva);
+			if (!preg_match('/\((.*)\)/', $txtva)) {
+				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
 			if (empty($txtva)) $txtva = 0;
@@ -1031,7 +1033,9 @@ class FactureRec extends CommonInvoice
 			$pu_ht          = price2num($pu_ht);
 			$pu_ttc         = price2num($pu_ttc);
 			$pu_ht_devise = price2num($pu_ht_devise);
-			$txtva = price2num($txtva);
+	        if (!preg_match('/\((.*)\)/', $txtva)) {
+	        	$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
+	        }
 			$txlocaltax1	= price2num($txlocaltax1);
 			$txlocaltax2	= price2num($txlocaltax2);
 			if (empty($txlocaltax1)) $txlocaltax1 = 0;
@@ -1057,6 +1061,7 @@ class FactureRec extends CommonInvoice
 
 			// Clean vat code
 			$vat_src_code = '';
+	        $reg = array();
 			if (preg_match('/\((.*)\)/', $txtva, $reg))
 			{
 				$vat_src_code = $reg[1];
@@ -2067,6 +2072,8 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", fk_contract_line=".($this->fk_contract_line ? $this->fk_contract_line : "null");
 		$sql .= " WHERE rowid = ".$this->id;
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2086,13 +2093,18 @@ class FactureLigneRec extends CommonInvoiceLine
 				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
 				if ($result < 0)
 				{
-					$this->db->rollback();
-					return -2;
+					$error++;
 				}
 				// End call triggers
 			}
-			$this->db->commit();
-			return 1;
+
+			if ($error) {
+				$this->db->rollback();
+				return -2;
+			} else {
+				$this->db->commit();
+				return 1;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();

@@ -212,8 +212,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Get Mask value
 		$mask = '';
-		if ($type == 0) $mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-		if ($type == 1) $mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		if ($type == 1) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
 		if (!$mask)
 		{
 			$this->error = 'NotConfigured';

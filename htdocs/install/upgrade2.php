@@ -486,6 +486,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+			'MAIN_MODULE_TICKET'=>'newboxdefonly',
 			'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
 			'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
 			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
@@ -4204,6 +4205,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/mailings/kiwi.modules.php',
 		'/core/modules/facture/pdf_crabe.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/export/export_excel.modules.php',
+		'/core/modules/export/export_excel2007new.modules.php',
 
 		'/api/class/api_generic.class.php',
 		'/categories/class/api_category.class.php',
@@ -4329,6 +4332,14 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modCron.class.php';
 			if ($res) {
 				$mod = new modCron($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		} elseif ($moduletoreload == 'MAIN_MODULE_EXTERNALSITE') {
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ExternalSite module");
+			$res = @include_once DOL_DOCUMENT_ROOT.'/core/modules/modExternalSite.class.php';
+			if ($res) {
+				$mod = new modExternalSite($db);
 				$mod->remove('noboxes');
 				$mod->init($reloadmode);
 			}

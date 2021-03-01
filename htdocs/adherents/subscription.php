@@ -450,6 +450,12 @@ if ($rowid > 0) {
 	print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 	print '</tr>';
 
+	// Gender
+	print '<tr><td>'.$langs->trans("Gender").'</td>';
+	print '<td>';
+	if ($object->gender) print $langs->trans("Gender".$object->gender);
+	print '</td></tr>';
+
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
@@ -460,6 +466,15 @@ if ($rowid > 0) {
 	// Password
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 		print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
+		if ($object->pass) {
+			print preg_replace('/./i', '*', $object->pass);
+		} else {
+			if ($user->admin) {
+				print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+			} else {
+				print $langs->trans("Hidden");
+			}
+		}
 		if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
 			$langs->load("errors");
 			$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
@@ -467,32 +482,6 @@ if ($rowid > 0) {
 		}
 		print '</td></tr>';
 	}
-
-	print '</table>';
-
-	print '</div>';
-	print '<div class="fichehalfright"><div class="ficheaddleft">';
-
-	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
-
-	// Birthday
-	print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
-
-	// Public
-	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
-		print '<tr><td>'.$langs->trans("Categories").'</td>';
-		print '<td colspan="2">';
-		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
-		print '</td></tr>';
-	}
-
-	// Other attributes
-	$cols = 2;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Date end subscription
 	print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
@@ -511,6 +500,32 @@ if ($rowid > 0) {
 		}
 	}
 	print '</td></tr>';
+
+	print '</table>';
+
+	print '</div>';
+	print '<div class="fichehalfright"><div class="ficheaddleft">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
+
+	// Birthday
+	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+	// Public
+	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+
+	// Categories
+	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		print '<tr><td>'.$langs->trans("Categories").'</td>';
+		print '<td colspan="2">';
+		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
+		print '</td></tr>';
+	}
+
+	// Other attributes
+	$cols = 2;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Third party Dolibarr
 	if (!empty($conf->societe->enabled)) {

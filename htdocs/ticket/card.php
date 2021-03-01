@@ -586,16 +586,16 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-			if ($result > 0) {
-				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-				$action = 'view';
-			} else {
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			if ($result < 0) { $error++; }
 		}
 
-		if ($error) $action = 'edit_extras';
+		if ($error) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'edit_extras';
+		} else {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			$action = 'view';
+		}
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $user->rights->ticket->write) {
@@ -636,6 +636,7 @@ if (empty($reshook)) {
 	// Set $action to correct value for the case we used presend action to add a message
 	if (GETPOSTISSET('actionbis') && $action == 'presend') $action = 'presend_addmessage';
 }
+
 
 /*
  * View
@@ -937,14 +938,14 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
-		print dol_print_date($object->datec, 'dayhour');
+		print dol_print_date($object->datec, 'dayhour', 'tzuser');
 		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
 		print '</td></tr>';
 
 		// Read date
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
-			print dol_print_date($object->date_read, 'dayhour');
+			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
 			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
 			print ' - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
 		}
@@ -953,7 +954,7 @@ elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action =
 		// Close date
 		print '<tr><td>'.$langs->trans("TicketCloseOn").'</td><td>';
 		if (!empty($object->date_close)) {
-			print dol_print_date($object->date_close, 'dayhour');
+			print dol_print_date($object->date_close, 'dayhour', 'tzuser');
 		}
 		print '</td></tr>';
 

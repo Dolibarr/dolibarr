@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Alte livrări pentru această comandă
 SendingsAndReceivingForSameOrder=Expedieri și documente pentru această comandă
 SendingsToValidate=Livrări de validat
 StatusSendingCanceled=Anulată
+StatusSendingCanceledShort=Anulata
 StatusSendingDraft=Schiţă
 StatusSendingValidated=Validată (produse  de livrat sau deja livrate)
 StatusSendingProcessed=Procesată
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Mai întâi trebuie să validezi comanda înain
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Model complet pentru dispoziţie de livrare  (logo. ..)
+DocumentModelStorm=Modele de documente mult mai complete pentru chitanțe de livrare și compatibilitate cu câmpurile suplimentare(sigla ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constanta EXPEDITION_ADDON_NUMBER nu este definită
 SumOfProductVolumes=Volumul total al produselor
 SumOfProductWeights=Greutatea totală a produselor

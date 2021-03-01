@@ -869,7 +869,7 @@ if (!$source)
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
 	if (empty($amount) || !is_numeric($amount))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	} else {
 		print '<b>'.price($amount).'</b>';
@@ -915,7 +915,7 @@ if ($source == 'order')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount = $order->total_ttc;
-		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
 		$amount = price2num($amount);
 	}
 
@@ -961,7 +961,7 @@ if ($source == 'order')
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
 	if (empty($amount) || !is_numeric($amount))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	} else {
 		print '<b>'.price($amount).'</b>';
@@ -1033,7 +1033,7 @@ if ($source == 'invoice')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount = price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed() + $invoice->getSumDepositsUsed()));
-		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'alpha');
 		$amount = price2num($amount);
 	}
 
@@ -1082,7 +1082,7 @@ if ($source == 'invoice')
 	} elseif (empty($object->paye)) {
 		if (empty($amount) || !is_numeric($amount))
 		{
-			print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+			print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 		} else {
 			print '<b>'.price($amount).'</b>';
@@ -1198,7 +1198,7 @@ if ($source == 'contractline')
 			}
 		}
 
-		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
 		$amount = price2num($amount);
 	}
 
@@ -1286,7 +1286,7 @@ if ($source == 'contractline')
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
 	if (empty($amount) || !is_numeric($amount))
 	{
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	} else {
 		print '<b>'.price($amount).'</b>';
@@ -1359,8 +1359,8 @@ if ($source == 'membersubscription')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount = $subscription->total_ttc;
-		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'int');
-		$amount = price2num($amount);
+		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
+		$amount = price2num($amount, 'MT');
 	}
 
 	if (GETPOST('fulltag', 'alpha')) {
@@ -1448,11 +1448,19 @@ if ($source == 'membersubscription')
 	{
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
+		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
+		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
+			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled>';
+			print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+		} else {
+			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
+		}
 	} else {
 		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
+			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+			$amount = $valtoshow;
+		}
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
@@ -1521,7 +1529,7 @@ if ($source == 'donation')
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
 		$amount = $subscription->total_ttc;
-		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
 		$amount = price2num($amount);
 	}
 
@@ -1587,11 +1595,14 @@ if ($source == 'donation')
 	{
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
+		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	} else {
 		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
+			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
+			$amount = $valtoshow;
+		}
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
@@ -1855,7 +1866,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			{
 				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0); // By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
 				$paymentintent = $stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
-				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already payed)
+				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already paid)
 				//var_dump($paymentintent);
 				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
 			}
@@ -2089,6 +2100,10 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
             	}
             	else
             	{
+            	  /* Disable button to pay and show hourglass cursor */
+    	      	  jQuery('#hourglasstopay').show();
+            	  jQuery('#buttontopay').hide();
+
                   stripe.handleCardPayment(
                     clientSecret, cardElement, {
                     	payment_method_data: {

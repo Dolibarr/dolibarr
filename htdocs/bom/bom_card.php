@@ -134,10 +134,10 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$idprod = (int) GETPOST('idprod', 'int');
-		$qty = GETPOST('qty', 'int');
-		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = GETPOST('efficiency', 'int');
+		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -155,8 +155,6 @@ if (empty($reshook))
 
 		if (!$error)
 		{
-			$lastposition = 0;
-
 			$bomline = new BOMLine($db);
 			$bomline->fk_bom = $id;
 			$bomline->fk_product = $idprod;
@@ -181,8 +179,10 @@ if (empty($reshook))
 				unset($_POST['qty_frozen']);
 				unset($_POST['disable_stock_change']);
 
-				$object->fetchLines();
-			}
+    		    $object->fetchLines();
+
+    		    $object->calculateCosts();
+    		}
 		}
 	}
 
@@ -193,10 +193,10 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$qty = price2num(GETPOST('qty', 'int'));
-		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = price2num(GETPOST('efficiency', 'int'));
+		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -221,7 +221,9 @@ if (empty($reshook))
 			unset($_POST['qty_frozen']);
 			unset($_POST['disable_stock_change']);
 
-			$object->fetchLines();
+		    $object->fetchLines();
+
+		    $object->calculateCosts();
 		}
 	}
 }

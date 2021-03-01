@@ -1296,7 +1296,7 @@ class Contrat extends CommonObject
 			$ref = dol_sanitizeFileName($this->ref);
 			if ($conf->contrat->dir_output)
 			{
-				$dir = $conf->contrat->dir_output."/".$ref;
+				$dir = $conf->contrat->multidir_output[$this->entity]."/".$ref;
 				if (file_exists($dir))
 				{
 					$res = @dol_delete_dir_recursive($dir);
@@ -1465,7 +1465,6 @@ class Contrat extends CommonObject
 				$vat_src_code = $reg[1];
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
-
 			$txtva = price2num($txtva);
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);

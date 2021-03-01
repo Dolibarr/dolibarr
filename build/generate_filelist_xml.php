@@ -105,8 +105,8 @@ if (empty($includecustom)) {
     }
 }
 
-print "Release                        : ".$release."\n";
 print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
+print "Release                        : ".$release."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {
@@ -153,6 +153,7 @@ $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom
 $regextoinclude='\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
 $regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
+
 $dir='';
 $needtoclose=0;
 foreach ($files as $filetmp) {
@@ -160,9 +161,10 @@ foreach ($files as $filetmp) {
     //$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
     $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
     if ($newdir!=$dir) {
-        if ($needtoclose)
+    	if ($needtoclose) {
             fputs($fp, '  </dir>'."\n");
-        fputs($fp, '  <dir name="'.$newdir.'" >'."\n");
+    	}
+        fputs($fp, '  <dir name="'.$newdir.'">'."\n");
         $dir = $newdir;
         $needtoclose=1;
     }

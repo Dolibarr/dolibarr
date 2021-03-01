@@ -26,7 +26,7 @@
 /**
  *       \file       htdocs/product/stock/productlot_document.php
  *       \ingroup    product
- *       \brief      Page des documents joints sur les lots produits
+ *       \brief      Page of attached documents for porudct lots
  */
 
 require '../../main.inc.php';
@@ -79,7 +79,7 @@ if ($id || $ref)
 	$object->fetch($id, $productid, $batch);
 	$object->ref = $object->batch; // For document management ( it use $object->ref)
 
-	if (!empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
+	if (!empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 }
 
 

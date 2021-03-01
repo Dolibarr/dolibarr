@@ -48,7 +48,9 @@ $object->fetch($loanid);
 $echeances = new LoanSchedule($db);
 $echeances->fetchAll($object->id);
 
-if ($object->paid > 0 && count($echeances->lines) == 0) $pay_without_schedule = 1;
+if ($object->paid > 0 && count($echeances->lines) == 0) {
+	$pay_without_schedule = 1;
+}
 
 /*
  * Actions
@@ -86,8 +88,9 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$echeances->lines[] = $new_echeance;
 		$i++;
 	}
-	var_dump($result);
-	if ($result > 0) $db->commit();
+	if ($result > 0) {
+		$db->commit();
+	}
 }
 
 if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
