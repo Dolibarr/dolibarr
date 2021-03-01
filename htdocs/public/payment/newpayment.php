@@ -2089,6 +2089,10 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
             	}
             	else
             	{
+            	  /* Disable button to pay and show hourglass cursor */
+    	      	  jQuery('#hourglasstopay').show();
+            	  jQuery('#buttontopay').hide();
+
                   stripe.handleCardPayment(
                     clientSecret, cardElement, {
                     	payment_method_data: {
