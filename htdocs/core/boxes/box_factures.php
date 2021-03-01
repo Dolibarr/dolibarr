@@ -93,7 +93,7 @@ class box_factures extends ModeleBoxes
 			$sql .= ", f.tva as total_tva";
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.datef as df";
-			$sql .= ", f.paye, f.fk_statut, f.datec, f.tms";
+			$sql .= ", f.paye, f.fk_statut as status, f.datec, f.tms";
 			$sql .= ", sum(pf.amount) as am";
 			$sql .= ", f.date_lim_reglement as datelimite";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
@@ -185,7 +185,7 @@ class box_factures extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->am),
 					);
 
 					$line++;
