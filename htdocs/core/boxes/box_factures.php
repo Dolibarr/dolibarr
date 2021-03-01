@@ -94,6 +94,7 @@ class box_factures extends ModeleBoxes
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.datef as df";
 			$sql .= ", f.paye, f.fk_statut, f.datec, f.tms";
+			$sql .= ", sum(pf.amount) as am";
 			$sql .= ", f.date_lim_reglement as datelimite";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
@@ -102,10 +103,13 @@ class box_factures extends ModeleBoxes
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= ")";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
+			$sql .= " GROUP BY s.nom, s.rowid, s.email, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
+			$sql .= " f.type, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
 			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql .= $this->db->plimit($max, 0);
@@ -181,7 +185,7 @@ class box_factures extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
 					);
 
 					$line++;
