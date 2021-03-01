@@ -24,6 +24,7 @@
 create table llx_actioncomm
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
+  ref               varchar(255),
   ref_ext			varchar(255),					-- reference into an external system (not used by dolibarr). Example: An id coming from google calendar has length between 5 and 1024 chars. An event id must follow rule: chars used in base32hex encoding (i.e. lowercase letters a-v and digits 0-9, see section 3.1.2 in RFC2938)
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   datep				datetime,						-- date start
@@ -72,9 +73,9 @@ create table llx_actioncomm
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
 
-  eventorg_num_vote integer,                        -- use for Event Organization module
-  eventorg_is_booth_paid  smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
-  status   smallint NOT NULL DEFAULT 0,              -- use for Event Organization module for now
+  num_vote          integer,                        -- use for Event Organization module
+  event_paid        smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
+  status            smallint NOT NULL DEFAULT 0,    -- use for Event Organization module for now
 
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
