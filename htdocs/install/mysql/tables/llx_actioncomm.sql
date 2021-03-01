@@ -74,7 +74,7 @@ create table llx_actioncomm
 
   eventorg_num_vote integer,                        -- use for Event Organization module
   eventorg_is_booth_paid  smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
-  statut   smallint NOT NULL DEFAULT 0,              -- use for Event Organization module for now
+  status   smallint NOT NULL DEFAULT 0,              -- use for Event Organization module for now
 
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)

@@ -67,7 +67,7 @@ class ConferenceOrBooth extends ActionComm
 	const STATUS_DRAFT = 0;
 	const STATUS_SUGGESTED = 1;
 	const STATUS_CONFIRMED = 2;
-	const STATUS_NOTSELECTED = 3;
+	const STATUS_NOT_QUALIFIED = 3;
 	const STATUS_DONE = 4;
 	const STATUS_CANCELED = 5;
 
