@@ -266,6 +266,7 @@ if (empty($reshook))
 						{
 							$error++;
 							setEventMessages($db->lasterror(), null, 'errors');
+							break;
 						}
 					}
 				}
@@ -282,6 +283,7 @@ if (empty($reshook))
 					{
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$error++;
+						break;
 					}
 				}
 
