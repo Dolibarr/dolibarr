@@ -76,9 +76,15 @@ class Canvas
 	private function _cleanaction($action)
 	{
 		$newaction = $action;
-		if ($newaction == 'add')    $newaction = 'create';
-		if ($newaction == 'update') $newaction = 'edit';
-		if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction = 'view';
+		if ($newaction == 'add') {
+			$newaction = 'create';
+		}
+		if ($newaction == 'update') {
+			$newaction = 'edit';
+		}
+		if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') {
+			$newaction = 'view';
+		}
 		return $newaction;
 	}
 
@@ -101,18 +107,18 @@ class Canvas
 		$this->card = $card;
 		$this->dirmodule = $module;
 		// Correct values if canvas is into an external module
-		if (preg_match('/^([^@]+)@([^@]+)$/i', $canvas, $regs))
-		{
+		if (preg_match('/^([^@]+)@([^@]+)$/i', $canvas, $regs)) {
 			$this->canvas = $regs[1];
 			$this->dirmodule = $regs[2];
 		}
 		// For compatibility
-		if ($this->dirmodule == 'thirdparty') { $this->dirmodule = 'societe'; }
+		if ($this->dirmodule == 'thirdparty') {
+			$this->dirmodule = 'societe';
+		}
 
 		// Control file
 		$controlclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
-		if (file_exists($controlclassfile))
-		{
+		if (file_exists($controlclassfile)) {
 			// Include actions class (controller)
 			$this->control_file = $controlclassfile;
 			require_once $controlclassfile;
@@ -124,8 +130,7 @@ class Canvas
 
 		// Template dir
 		$this->template_dir = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/tpl/');
-		if (!is_dir($this->template_dir))
-		{
+		if (!is_dir($this->template_dir)) {
 			$this->template_dir = '';
 		}
 
@@ -145,7 +150,9 @@ class Canvas
 	public function assign_values(&$action = 'view', $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		if (method_exists($this->control, 'assign_values')) $this->control->assign_values($action, $id, $ref);
+		if (method_exists($this->control, 'assign_values')) {
+			$this->control->assign_values($action, $id, $ref);
+		}
 	}
 
 	/**
@@ -156,10 +163,15 @@ class Canvas
 	 */
 	public function displayCanvasExists($action)
 	{
-		if (empty($this->template_dir)) return 0;
+		if (empty($this->template_dir)) {
+			return 0;
+		}
 
-		if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php')) return 1;
-		else return 0;
+		if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php')) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -207,8 +219,7 @@ class Canvas
 	 */
 	public function doActions(&$action = 'view', $id = 0)
 	{
-		if (method_exists($this->control, 'doActions'))
-		{
+		if (method_exists($this->control, 'doActions')) {
 			$ret = $this->control->doActions($action, $id);
 			return $ret;
 		}

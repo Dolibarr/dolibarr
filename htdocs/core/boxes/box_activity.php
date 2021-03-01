@@ -88,7 +88,9 @@ class box_activity extends ModeleBoxes
 		$now = dol_now();
 		$nbofperiod = 3;
 
-		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) $nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
+		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
+			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
+		}
 		$textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
 		$this->info_box_head = array(
 			'text' => $textHead,
@@ -201,12 +203,18 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
 				$sql .= ")";
 				$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 				$sql .= " AND c.fk_soc = s.rowid";
-				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-				if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				}
+				if ($user->socid) {
+					$sql .= " AND s.rowid = ".$user->socid;
+				}
 				$sql .= " AND c.date_commande >= '".$this->db->idate($tmpdate)."'";
 				$sql .= " GROUP BY c.fk_statut";
 				$sql .= " ORDER BY c.fk_statut DESC";
@@ -270,8 +278,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
-		{
+		if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 
@@ -281,15 +288,20 @@ class box_activity extends ModeleBoxes
 
 			$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 			$data = array();
-			if ($refresh)
-			{
+			if ($refresh) {
 				$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				}
 				$sql .= ")";
 				$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-				if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-				if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+				if (!$user->rights->societe->client->voir && !$user->socid) {
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				}
+				if ($user->socid) {
+					$sql .= " AND s.rowid = ".$user->socid;
+				}
 				$sql .= " AND f.fk_soc = s.rowid";
 				$sql .= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=1";
 				$sql .= " GROUP BY f.fk_statut";
@@ -343,7 +355,7 @@ class box_activity extends ModeleBoxes
 					);
 
 					// We add only for the current year
-	   				$totalnb += $data[$j]->nb;
+					$totalnb += $data[$j]->nb;
 
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',
@@ -352,11 +364,12 @@ class box_activity extends ModeleBoxes
 					$line++;
 					$j++;
 				}
-				if (count($data) == 0)
+				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoRecordedInvoices"),
 					);
+				}
 			}
 
 			// part 2

@@ -32,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', '', '');
 
 
@@ -46,7 +48,7 @@ $accountstatic = new Account($db);
 
 llxHeader('', $langs->trans("ChequesArea"));
 
-print load_fiche_titre($langs->trans("ChequesArea"), '', 'bank_account');
+print load_fiche_titre($langs->trans("ChequesArea"), '', $checkdepositstatic->picto);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -97,8 +99,7 @@ $sql .= " ORDER BY bc.date_bordereau DESC, rowid DESC";
 $sql .= $db->plimit($max);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -110,8 +111,7 @@ if ($resql)
 	print '<th class="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	while ($objp = $db->fetch_object($resql))
-	{
+	while ($objp = $db->fetch_object($resql)) {
 		$checkdepositstatic->id = $objp->rowid;
 		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 		$checkdepositstatic->statut = $objp->statut;

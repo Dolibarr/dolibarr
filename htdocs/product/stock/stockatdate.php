@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,9 @@ $fk_warehouse = GETPOST('fk_warehouse', 'int');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 if (!$sortfield) {
@@ -83,7 +85,9 @@ if (!$sortorder) {
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $dateIsValid = true;
 if ($mode == 'future') {
@@ -103,8 +107,7 @@ if ($mode == 'future') {
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$date = '';
 	$productid = 0;
 	$fk_warehouse = 0;
@@ -142,8 +145,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	//print $sql;
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -197,8 +199,7 @@ if ($date && $dateIsValid) {
 	$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
 	$resql = $db->query($sql);
 
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -270,7 +271,9 @@ if ($productid > 0) {
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
-if (!empty($canvas)) $sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+if (!empty($canvas)) {
+	$sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+}
 if ($fk_warehouse > 0) {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 	$sql .= ' p.tms, p.duration, p.tobuy, p.stock';
@@ -293,12 +296,10 @@ $sql .= $db->order($sortfield, $sortorder);
 
 if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	$nbtotalofrecords = '';
-	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-	{
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
+		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -308,8 +309,7 @@ if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date
 
 	//print $sql;
 	$resql = $db->query($sql);
-	if (empty($resql))
-	{
+	if (empty($resql)) {
 		dol_print_error($db);
 		exit;
 	}
@@ -341,7 +341,9 @@ print load_fiche_titre($langs->trans('StockAtDate'), '', 'stock');
 print dol_get_fiche_head($head, ($mode == 'future' ? 'stockatdatefuture' : 'stockatdatepast'), '', -1, '');
 
 $desc = $langs->trans("StockAtDatePastDesc");
-if ($mode == 'future') $desc = $langs->trans("StockAtDateFutureDesc");
+if ($mode == 'future') {
+	$desc = $langs->trans("StockAtDateFutureDesc");
+}
 print '<span class="opacitymedium">'.$desc.'</span><br>'."\n";
 print '<br>'."\n";
 
@@ -353,12 +355,12 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->selectDate(($date ? $date : -1), 'date');
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> ';
+print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'product').' ';
 print $langs->trans('Product').'</span> ';
 $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
 
-print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddinrightonly">&nbsp;</span> ';
+print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock').' ';
 print $langs->trans('Warehouse').'</span> ';
 print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1);
@@ -366,7 +368,9 @@ print '</div>';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-if (empty($reshook)) print $hookmanager->resPrint;
+if (empty($reshook)) {
+	print $hookmanager->resPrint;
+}
 
 print '<div class="inline-block valignmiddle">';
 print '<input class="button" type="submit" name="valid" value="'.$langs->trans('Refresh').'">';
@@ -375,14 +379,28 @@ print '</div>';
 //print '</form>';
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
 $param .= '&mode='.$mode;
-if ($fk_warehouse > 0) $param .= '&fk_warehouse='.$fk_warehouse;
-if ($productid > 0) $param .= '&productid='.$productid;
-if (GETPOST('dateday', 'int') > 0) $param .= '&dateday='.GETPOST('dateday', 'int');
-if (GETPOST('datemonth', 'int') > 0) $param .= '&datemonth='.GETPOST('datemonth', 'int');
-if (GETPOST('dateyear', 'int') > 0) $param .= '&dateyear='.GETPOST('dateyear', 'int');
+if ($fk_warehouse > 0) {
+	$param .= '&fk_warehouse='.$fk_warehouse;
+}
+if ($productid > 0) {
+	$param .= '&productid='.$productid;
+}
+if (GETPOST('dateday', 'int') > 0) {
+	$param .= '&dateday='.GETPOST('dateday', 'int');
+}
+if (GETPOST('datemonth', 'int') > 0) {
+	$param .= '&datemonth='.GETPOST('datemonth', 'int');
+}
+if (GETPOST('dateyear', 'int') > 0) {
+	$param .= '&dateyear='.GETPOST('dateyear', 'int');
+}
 
 // TODO Move this into the title line ?
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
@@ -391,7 +409,9 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="liste centpercent">';
 
 $stocklabel = $langs->trans('StockAtDate');
-if ($mode == 'future') $stocklabel = $langs->trans("VirtualStockAtDate");
+if ($mode == 'future') {
+	$stocklabel = $langs->trans("VirtualStockAtDate");
+}
 
 //print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -456,12 +476,10 @@ print $hookmanager->resPrint;
 print "</tr>\n";
 
 $i = 0;
-while ($i < ($limit ? min($num, $limit) : $num))
-{
+while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
 
-	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
-	{
+	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
@@ -483,8 +501,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}*/
 
 		$currentstock = '';
-		if ($fk_warehouse > 0)
-		{
+		if ($fk_warehouse > 0) {
 			//if ($productid > 0) {
 				$currentstock = $stock_prod_warehouse[$objp->rowid][$fk_warehouse];
 			//} else {
@@ -545,14 +562,18 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
-			else print '';
+			if (price2num($objp->estimatedvalue, 'MT')) {
+				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+			} else {
+				print '';
+			}
 			print '</td>';
 
 			// Selling value
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
-			else {
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print price(price2num($objp->sellvalue, 'MT'), 1);
+			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
 				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
 			}
@@ -588,7 +609,9 @@ print $hookmanager->resPrint;
 
 if (empty($date) || ! $dateIsValid) {
 	$colspan = 8;
-	if ($mode == 'future') $colspan++;
+	if ($mode == 'future') {
+		$colspan++;
+	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
 }
 

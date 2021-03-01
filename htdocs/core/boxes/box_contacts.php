@@ -81,8 +81,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
-		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
-		{
+		if ($user->rights->societe->lire && $user->rights->societe->contact->lire) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
@@ -94,10 +93,16 @@ class box_contacts extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND sp.fk_soc = ".$user->socid;
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			if ($user->socid) {
+				$sql .= " AND sp.fk_soc = ".$user->socid;
+			}
 			$sql .= " ORDER BY sp.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -109,8 +114,7 @@ class box_contacts extends ModeleBoxes
 				$societestatic = new Societe($this->db);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
@@ -169,12 +173,13 @@ class box_contacts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
 						'asis'=> 1
 					);
+				}
 
 				$this->db->free($result);
 			} else {

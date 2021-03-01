@@ -66,8 +66,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH)
-	{
+	if ($object->courant != Account::TYPE_CASH) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -76,16 +75,19 @@ function bank_prepare_head(Account $object)
 		$sql .= " WHERE b.fk_account = ".$object->id;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $nbReceipts = $obj->nb;
+			if ($obj) {
+				$nbReceipts = $obj->nb;
+			}
 			$db->free($resql);
 		}
 
 		$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 		$head[$h][1] = $langs->trans("AccountStatements");
-		if (($nbReceipts) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';
+		if (($nbReceipts) > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';
+		}
 		$head[$h][2] = 'statement';
 		$h++;
 	}
@@ -98,7 +100,9 @@ function bank_prepare_head(Account $object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/document.php?account=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -109,9 +113,9 @@ function bank_prepare_head(Account $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank');
 
 	/*$head[$h][0] = DOL_URL_ROOT . "/compta/bank/info.php?id=" . $object->id;
-    $head[$h][1] = $langs->trans("Info");
-    $head[$h][2] = 'info';
-    $h++;*/
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;*/
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
@@ -185,7 +189,9 @@ function account_statement_prepare_head($object, $num)
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/account_statement_document.php?account=".$object->id."&num=".$num;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -228,7 +234,9 @@ function various_payment_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -271,8 +279,11 @@ function checkIbanForAccount($account)
 	$iban = new IBAN($account->iban);
 	$check = $iban->Verify();
 
-	if ($check) return true;
-	else return false;
+	if ($check) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /**
@@ -288,10 +299,12 @@ function checkBanForAccount($account)
 	// For compatibility between
 	// account of type CompanyBankAccount class (we use number, cle_rib)
 	// account of type Account class (we use num_compte, cle)
-	if (empty($account->number))
+	if (empty($account->number)) {
 		$account->number = $account->num_compte;
-	if (empty($account->cle))
+	}
+	if (empty($account->cle)) {
 		$account->cle = $account->cle_rib;
+	}
 
 	dol_syslog("bank.lib::checkBanForAccount account->code_banque=".$account->code_banque." account->code_guichet=".$account->code_guichet." account->number=".$account->number." account->cle=".$account->cle." account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
 
@@ -330,11 +343,13 @@ function checkBanForAccount($account)
 		return false;
 	}
 	if ($country_code == 'AU') {  // Australian
-		if (strlen($account->code_banque) > 7)
+		if (strlen($account->code_banque) > 7) {
 			return false; // Sould be 6 but can be 123-456
-		elseif (strlen($account->code_banque) < 6)
+		} elseif (strlen($account->code_banque) < 6) {
 			return false; // Sould be 6
-		else return true;
+		} else {
+			return true;
+		}
 	}
 
 	// No particular rule
@@ -385,10 +400,12 @@ function checkES($IentOfi, $InumCta)
 
 	$key = 11 - $sum % 11;
 
-	if ($key == 10)
+	if ($key == 10) {
 		$key = 1;
-	if ($key == 11)
+	}
+	if ($key == 11) {
 		$key = 0;
+	}
 
 	$keycontrol = $key;
 
@@ -400,10 +417,12 @@ function checkES($IentOfi, $InumCta)
 
 	$key = 11 - $sum % 11;
 
-	if ($key == 10)
+	if ($key == 10) {
 		$key = 1;
-	if ($key == 11)
+	}
+	if ($key == 11) {
 		$key = 0;
+	}
 
 	$keycontrol .= $key;
 	return $keycontrol;

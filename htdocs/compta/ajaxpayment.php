@@ -20,11 +20,21 @@
  *       \brief      File to return Ajax response on payment breakdown process
  */
 
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no menu to show
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
 
 require '../main.inc.php';
 
@@ -46,18 +56,20 @@ $currentInvId = $_POST['imgClicked']; // from DOM elements : imgId (equals invoi
 $amountPayment = $amountPayment != '' ? (is_numeric(price2num($amountPayment)) ? price2num($amountPayment) : '') : ''; // keep void if not a valid entry
 
 // Clean checkamounts
-foreach ($amounts as $key => $value)
-{
+foreach ($amounts as $key => $value) {
 	$value = price2num($value);
 	$amounts[$key] = $value;
-	if (empty($value)) unset($amounts[$key]);
+	if (empty($value)) {
+		unset($amounts[$key]);
+	}
 }
 // Clean remains
-foreach ($remains as $key => $value)
-{
+foreach ($remains as $key => $value) {
 	$value = price2num($value);
 	$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
-	if (empty($value)) unset($remains[$key]);
+	if (empty($value)) {
+		unset($remains[$key]);
+	}
 }
 
 // Treatment
@@ -65,19 +77,16 @@ $result = ($amountPayment != '') ? ($amountPayment - array_sum($amounts)) : arra
 $toJsonArray = array();
 $totalRemaining = price2num(array_sum($remains));
 $toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');
-if ($currentInvId)																	// Here to breakdown
-{
+if ($currentInvId) {																	// Here to breakdown
 	// Get the current amount (from form) and the corresponding remainToPay (from invoice)
 	$currentAmount = $amounts['amount_'.$currentInvId];
 	$currentRemain = $remains['remain_'.$currentInvId];
 
 	// If amountPayment isn't filled, breakdown invoice amount, else breakdown from amountPayment
-	if ($amountPayment == '')
-	{
+	if ($amountPayment == '') {
 		// Check if current amount exists in amounts
 		$amountExists = array_key_exists('amount_'.$currentInvId, $amounts);
-		if ($amountExists)
-		{
+		if ($amountExists) {
 			$remainAmount = $currentRemain - $currentAmount; // To keep value between curRemain and curAmount
 			$result += $remainAmount; // result must be deduced by
 			$currentAmount += $remainAmount; // curAmount put to curRemain
@@ -90,8 +99,7 @@ if ($currentInvId)																	// Here to breakdown
 		$result += price2num($currentAmount);
 		$currentAmount = 0;
 
-		if ($result >= 0)			// then we need to calculate the amount to breakdown
-		{
+		if ($result >= 0) {			// then we need to calculate the amount to breakdown
 			$amountToBreakdown = ($result - $currentRemain >= 0 ?
 										$currentRemain : // Remain can be fully paid
 										$currentRemain + ($result - $currentRemain)); // Remain can only partially be paid

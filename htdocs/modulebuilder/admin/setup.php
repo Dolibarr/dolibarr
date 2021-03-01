@@ -26,8 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 global $conf, $langs, $user, $db;
 $langs->loadLangs(array("admin", "other", "modulebuilder"));
 
-if (!$user->admin || empty($conf->modulebuilder->enabled))
+if (!$user->admin || empty($conf->modulebuilder->enabled)) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -35,8 +36,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 /*
  * Actions
  */
-if ($action == "update")
-{
+if ($action == "update") {
 	$res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'restricthtml'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
@@ -58,8 +58,9 @@ $reg = array();
 if (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
 	$values = GETPOST($code);
-	if (is_array($values))
+	if (is_array($values)) {
 		$values = implode(',', $values);
+	}
 
 	if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
@@ -112,8 +113,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	// What is use case of this 2 options ?
 
 	print '<tr class="oddeven">';
