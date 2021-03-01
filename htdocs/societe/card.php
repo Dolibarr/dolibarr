@@ -283,7 +283,6 @@ if (empty($reshook))
 					{
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						$error++;
-						break;
 					}
 				}
 
