@@ -25,12 +25,24 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -51,16 +63,15 @@ if (empty($user->rights->takepos->run)) {
 
 if ($action == 'getProducts') {
 	$object = new Categorie($db);
-	if ($category == "supplements") $category = $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY;
+	if ($category == "supplements") {
+		$category = $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY;
+	}
 	$result = $object->fetch($category);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
 		// Removed properties we don't need
-		if (is_array($prods) && count($prods) > 0)
-		{
-			foreach ($prods as $prod)
-			{
+		if (is_array($prods) && count($prods) > 0) {
+			foreach ($prods as $prod) {
 				unset($prod->fields);
 				unset($prod->db);
 			}
@@ -95,8 +106,7 @@ if ($action == 'getProducts') {
 		//$result = $object->fetch($conf->global->TAKEPOS_ROOT_CATEGORY_ID);
 		$arrayofcateg = $object->get_full_arbo('product', $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 1);
 		if (is_array($arrayofcateg) && count($arrayofcateg) > 0) {
-			foreach ($arrayofcateg as $val)
-			{
+			foreach ($arrayofcateg as $val) {
 				$filteroncategids .= ($filteroncategids ? ', ' : '').$val['id'];
 			}
 		}
@@ -110,8 +120,7 @@ if ($action == 'getProducts') {
 	$sql .= ' AND tosell = 1';
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$rows = array();
 		while ($obj = $db->fetch_object($resql)) {
 			$rows[] = array(

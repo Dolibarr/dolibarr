@@ -23,7 +23,9 @@
  * \brief Script file to export bank receipts into Excel files
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -154,8 +156,9 @@ if (!empty($num) && $num != "all") {
 	$listofnum .= "'";
 	$arraynum = explode(',', $num);
 	foreach ($arraynum as $val) {
-		if ($listofnum != "'")
+		if ($listofnum != "'") {
 			$listofnum .= "','";
+		}
 		$listofnum .= $val;
 	}
 	$listofnum .= "'";
@@ -166,10 +169,12 @@ $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= ", ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE b.fk_account = ".$acct->id;
-if ($listofnum)
+if ($listofnum) {
 	$sql .= " AND b.num_releve IN (".$listofnum.")";
-if (!isset($num))
+}
+if (!isset($num)) {
 	$sql .= " OR b.num_releve is null";
+}
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 															 // print $sql;
@@ -242,9 +247,11 @@ if ($resql) {
 		// Libelle
 		$reg = array();
 		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
-		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1])
+		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {
 			$description = $langs->transnoentitiesnoconv($reg[1]);
-		else $description = $objp->label;
+		} else {
+			$description = $objp->label;
+		}
 
 		/*
 		 * Ajout les liens (societe, company...)
