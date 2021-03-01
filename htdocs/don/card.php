@@ -356,8 +356,7 @@ if ($action == 'create') {
 	// Company
 	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		// Thirdparty
-		if ($soc->id > 0)
-		{
+		if ($soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			print $soc->getNomUrl(1);
