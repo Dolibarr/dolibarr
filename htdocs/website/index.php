@@ -2144,25 +2144,8 @@ if ($action == 'importsiteconfirm') {
 	}
 }
 
-
-
-
-/*
-* View
-*/
-
-$form = new Form($db);
-$formadmin = new FormAdmin($db);
-$formwebsite = new FormWebsite($db);
-$formother = new FormOther($db);
 $domainname = '0.0.0.0:8080';
 $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
-
-// Confirm generation of website sitemaps
-if ($action == 'confirmgeneratesitemaps'){
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
-	$action = 'preview';
-}
 
 // Generate web site sitemaps
 if ($action == 'generatesitemaps') {
@@ -2231,6 +2214,21 @@ if ($action == 'generatesitemaps') {
 		$error++;
 		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
 	}
+	$action = 'preview';
+}
+
+/*
+* View
+*/
+
+$form = new Form($db);
+$formadmin = new FormAdmin($db);
+$formwebsite = new FormWebsite($db);
+$formother = new FormOther($db);
+
+// Confirm generation of website sitemaps
+if ($action == 'confirmgeneratesitemaps'){
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
 
