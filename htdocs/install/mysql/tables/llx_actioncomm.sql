@@ -72,9 +72,9 @@ create table llx_actioncomm
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
 
-  num_vote          integer,                        -- use for Event Organization module
-  is_booth_paid     smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
-  status            smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
+  eventorg_num_vote integer,                        -- use for Event Organization module
+  eventorg_is_booth_paid  smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
+  statut   smallint NOT NULL DEFAULT 0,              -- use for Event Organization module for now
 
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
