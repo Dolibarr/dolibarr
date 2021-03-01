@@ -930,7 +930,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowrap">';
 				print $commandestatic->getNomUrl(1);
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';
@@ -1085,7 +1085,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 				print '<td class="nowrap">';
 
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="110" class="nobordernopadding nowrap">';
+				print '<td class="nobordernopadding nowrap">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
 				print '<td width="20" class="nobordernopadding nowrap">';

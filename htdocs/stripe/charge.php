@@ -26,14 +26,18 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -41,7 +45,9 @@ $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -60,8 +66,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
-{
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -80,11 +85,12 @@ if (!$rowid) {
 	$option = array('limit' => $limit + 1);
 	$num = 0;
 
-	if (GETPOSTISSET('starting_after_'.$page)) $option['starting_after'] = GETPOST('starting_after_'.$page, 'alphanohtml');
+	if (GETPOSTISSET('starting_after_'.$page)) {
+		$option['starting_after'] = GETPOST('starting_after_'.$page, 'alphanohtml');
+	}
 
 	try {
-		if ($stripeacc)
-		{
+		if ($stripeacc) {
 			$list = \Stripe\Charge::all($option, array("stripe_account" => $stripeacc));
 		} else {
 			$list = \Stripe\Charge::all($option);
@@ -96,7 +102,9 @@ if (!$rowid) {
 
 		$param = '';
 		//if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$param .= '&limit='.urlencode($limit);
+		}
 		$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 		//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 
@@ -106,7 +114,9 @@ if (!$rowid) {
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -135,8 +145,7 @@ if (!$rowid) {
 
 	//print $list;
 	$i = 0;
-	foreach ($list->data as $charge)
-	{
+	foreach ($list->data as $charge) {
 		if ($i >= $limit) {
 			break;
 		}
@@ -179,17 +188,14 @@ if (!$rowid) {
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 		// Load origin object according to metadata
-		if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
-		{
+		if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0) {
 			$societestatic->fetch($tmparray['CUS']);
-		} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
-		{
+		} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0) {
 			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 		} else {
 			$societestatic->id = 0;
 		}
-		if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
-		{
+		if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0) {
 			$memberstatic->fetch($tmparray['MEM']);
 		} else {
 			$memberstatic->id = 0;
@@ -197,40 +203,41 @@ if (!$rowid) {
 
 		print '<tr class="oddeven">';
 
-		if (!empty($stripeacc)) $connect = $stripeacc.'/';
+		if (!empty($stripeacc)) {
+			$connect = $stripeacc.'/';
+		}
 
 		// Ref
 		$url = 'https://dashboard.stripe.com/'.$connect.'test/payments/'.$charge->id;
-		if ($servicestatus)
-		{
+		if ($servicestatus) {
 			$url = 'https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
 		}
 		print "<td>";
 		print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
-		if ($charge->payment_intent) print '<br><span class="opacitymedium">'.$charge->payment_intent.'</span>';
+		if ($charge->payment_intent) {
+			print '<br><span class="opacitymedium">'.$charge->payment_intent.'</span>';
+		}
 		print "</td>\n";
 
 		// Stripe customer
 		print "<td>";
-		if (!empty($conf->stripe->enabled) && !empty($stripeacc)) $connect = $stripeacc.'/';
+		if (!empty($conf->stripe->enabled) && !empty($stripeacc)) {
+			$connect = $stripeacc.'/';
+		}
 		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
-		if ($servicestatus)
-		{
+		if ($servicestatus) {
 			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$charge->customer;
 		}
-		if (!empty($charge->customer))
-		{
+		if (!empty($charge->customer)) {
 			print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').' '.$charge->customer.'</a>';
 		}
 		print "</td>\n";
 
 		// Link
 		print "<td>";
-		if ($societestatic->id > 0)
-		{
+		if ($societestatic->id > 0) {
 			print $societestatic->getNomUrl(1);
-		} elseif ($memberstatic->id > 0)
-		{
+		} elseif ($memberstatic->id > 0) {
 			print $memberstatic->getNomUrl(1);
 		}
 		print "</td>\n";
