@@ -43,7 +43,7 @@ $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optionscss', 'alphanohtml');
 
-$mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
+$mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -138,13 +138,12 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 	}
 
 	if (!$error) {
-		$db->begin();
 
 		if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
 			$object->type=$mode;
 			$object->user_id=0;
 			$object->page=$defaulturl;
-			$object->param=$defaulturl;
+			$object->param=$defaultkey;
 			$object->value=$defaultvalue;
 			$object->entity=$conf->entity;
 			$result=$object->create($user);
@@ -162,9 +161,11 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 		if (GETPOST('actionmodify'))
 		{
 			$object->id=$id;
-			$object->page=$defaulturl;
+			$object->type=$mode;
+			$object->page=$urlpage;
 			$object->param=$key;
-			$object->value=$defaultvalue;
+			$object->value=$value;
+			$object->entity=$conf->entity;
 			$result=$object->update($user);
 			if ($result<0) {
 				$action = '';
@@ -358,8 +359,9 @@ print '</tr>';
 $result=$object->fetchAll( $sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result<0) {
+
 	setEventMessages($object->error, $object->errors,'errors');
-} else {
+} elseif (count($result)>0) {
 	foreach($result as $key=>$defaultvalue)	{
 		print "\n";
 
@@ -367,13 +369,13 @@ if (!is_array($result) && $result<0) {
 
 		// Page
 		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid', 'int') != $defaultvalue->rowid) print $defaultvalue->page;
+		if ($action != 'edit' || GETPOST('rowid', 'int') != $defaultvalue->id) print $defaultvalue->page;
 		else print '<input type="text" name="urlpage" value="'.dol_escape_htmltag($defaultvalue->page).'">';
 		print '</td>'."\n";
 
 		// Field
 		print '<td>';
-		if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->rowid) print $defaultvalue->param;
+		if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) print $defaultvalue->param;
 		else print '<input type="text" name="key" value="'.dol_escape_htmltag($defaultvalue->param).'">';
 		print '</td>'."\n";
 
@@ -385,7 +387,7 @@ if (!is_array($result) && $result<0) {
     		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
     		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
     		*/
-			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->rowid) print dol_escape_htmltag($defaultvalue->value);
+			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) print dol_escape_htmltag($defaultvalue->value);
 			else print '<input type="text" name="value" value="'.dol_escape_htmltag($defaultvalue->value).'">';
 			print '</td>';
 		}
@@ -400,7 +402,7 @@ if (!is_array($result) && $result<0) {
 		} else {
 			print '<input type="hidden" name="page" value="'.$page.'">';
 			print '<input type="hidden" name="rowid" value="'.$id.'">';
-			print '<div name="'.(!empty($defaultvalue->id) ? $obj->rowid : 'none').'"></div>';
+			print '<div name="'.(!empty($defaultvalue->id) ? $defaultvalue->id : 'none').'"></div>';
 			print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
 			print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 		}

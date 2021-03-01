@@ -265,13 +265,12 @@ class DefaultValues extends CommonObject
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
-		else $sql .= ' WHERE 1 = 1';
+		$sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || ($key == 't.entity' && !is_array($value)) || $key == 't.user_id') {
+				if ($key == 't.rowid' || ($key == 't.entity' && !is_array($value)) || ($key == 't.user_id' && !is_array($value))) {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
@@ -296,10 +295,12 @@ class DefaultValues extends CommonObject
 		if (!empty($limit)) {
 			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
-
+print $sql;
 		$resql = $this->db->query($sql);
 		if ($resql) {
+
 			$num = $this->db->num_rows($resql);
+			var_dump($num);
 			$i = 0;
 			while ($i < ($limit ? min($limit, $num) : $num))
 			{

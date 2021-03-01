@@ -611,31 +611,32 @@ class User extends CommonObject
 	public function loadDefaultValues()
 	{
 		global $conf;
+		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
 
-		// Load user->default_values for user. TODO Save this in memcached ?
-		$sql = "SELECT rowid, entity, type, page, param, value";
-		$sql .= " FROM ".MAIN_DB_PREFIX."default_values";
-		$sql .= " WHERE entity IN (".($this->entity > 0 ? $this->entity.", " : "").$conf->entity.")"; // Entity of user (if defined) + current entity
-		$sql .= " AND user_id IN (0".($this->id > 0 ? ", ".$this->id : "").")"; // User 0 (all) + me (if defined)
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->page) && !empty($obj->type) && !empty($obj->param)) {
-					// $obj->page is relative URL with or without params
-					// $obj->type can be 'filters', 'sortorder', 'createform', ...
-					// $obj->param is key or param
-					$pagewithoutquerystring = $obj->page;
-					$pagequeries = '';
-					$reg = array();
-					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg)) {	// There is query param
-						$pagewithoutquerystring = $reg[1];
-						$pagequeries = $reg[2];
+			// Load user->default_values for user. TODO Save this in memcached ?
+			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
+
+			$defaultValues = new DefaultValues($this->db);
+			$result = $defaultValues->fetchAll('','',0,0,array('t.user_id'=>array(0,$this->id), 'entity'=>array($this->entity,$conf->entity)));
+
+			if (!is_array($result) && $result<0) {
+				setEventMessages($defaultValues->error,$defaultValues->errors,'errors');
+				dol_print_error($this->db);
+				return -1;
+			}  elseif(count($result)>0) {
+				foreach($result as $defval) {
+					if (!empty($defval->page) && !empty($defval->type) && !empty($defval->param)) {
+						$pagewithoutquerystring = $defval->page;
+						$pagequeries = '';
+						$reg = array();
+						if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg)) {    // There is query param
+							$pagewithoutquerystring = $reg[1];
+							$pagequeries = $reg[2];
+						}
+						$this->default_values[$pagewithoutquerystring][$defval->type][$pagequeries ? $pagequeries : '_noquery_'][$defval->param] = $defval->value;
 					}
-					$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries ? $pagequeries : '_noquery_'][$obj->param] = $obj->value;
-					//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
 				}
 			}
-			// Sort by key, so _noquery_ is last
 			if (!empty($this->default_values)) {
 				foreach ($this->default_values as $a => $b) {
 					foreach ($b as $c => $d) {
@@ -643,13 +644,8 @@ class User extends CommonObject
 					}
 				}
 			}
-			$this->db->free($resql);
-
-			return 1;
-		} else {
-			dol_print_error($this->db);
-			return -1;
 		}
+		return 1;
 	}
 
 	/**
