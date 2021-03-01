@@ -23,9 +23,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
-}
+if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require "../master.inc.php";
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -39,7 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 dol_syslog("Call ActionComm webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
+{
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -123,21 +122,18 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+{
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {
-			$type = 'xsd:dateTime';
-		} else {
-			$type = 'xsd:string';
-		}
+		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
+		else {$type = 'xsd:string'; }
 
 		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
-if (is_array($extrafield_array)) {
-	$actioncomm_fields = array_merge($actioncomm_fields, $extrafield_array);
-}
+if (is_array($extrafield_array)) $actioncomm_fields = array_merge($actioncomm_fields, $extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -259,9 +255,7 @@ function getActionComm($authentication, $id)
 
 	dol_syslog("Function: getActionComm login=".$authentication['login']." id=".$id);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
 	$objectresp = array();
@@ -269,18 +263,22 @@ function getActionComm($authentication, $id)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if ($error || (!$id)) {
+	if ($error || (!$id))
+	{
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$fuser->getrights();
 
-		if ($fuser->rights->agenda->allactions->read) {
+		if ($fuser->rights->agenda->allactions->read)
+		{
 			$actioncomm = new ActionComm($db);
 			$result = $actioncomm->fetch($id);
-			if ($result > 0) {
+			if ($result > 0)
+			{
 				$actioncomm_result_fields = array(
 						'id' => $actioncomm->id,
 						'ref'=> $actioncomm->ref,
@@ -317,8 +315,10 @@ function getActionComm($authentication, $id)
 				//Get extrafield values
 				$actioncomm->fetch_optionals();
 
-				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-					foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+				if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+				{
+					foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					{
 						$actioncomm_result_fields = array_merge($actioncomm_result_fields, array('options_'.$key => $actioncomm->array_options['options_'.$key]));
 					}
 				}
@@ -327,17 +327,20 @@ function getActionComm($authentication, $id)
 				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'actioncomm'=>$actioncomm_result_fields);
-			} else {
+			}
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		} else {
+		}
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -357,9 +360,7 @@ function getListActionCommType($authentication)
 
 	dol_syslog("Function: getListActionCommType login=".$authentication['login']);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
 	$objectresp = array();
@@ -367,15 +368,18 @@ function getListActionCommType($authentication)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if (!$error) {
+	if (!$error)
+	{
 		$fuser->getrights();
 
-		if ($fuser->rights->agenda->myactions->read) {
+		if ($fuser->rights->agenda->myactions->read)
+		{
 			$cactioncomm = new CActionComm($db);
 			$result = $cactioncomm->liste_array('', 'code');
-			if ($result > 0) {
+			if ($result > 0)
+			{
 				$resultarray = array();
-				foreach ($cactioncomm->liste_array as $code => $libeller) {
+				foreach ($cactioncomm->liste_array as $code=>$libeller) {
 					$resultarray[] = array('code'=>$code, 'libelle'=>$libeller);
 				}
 
@@ -392,7 +396,8 @@ function getListActionCommType($authentication)
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -415,9 +420,7 @@ function createActionComm($authentication, $actioncomm)
 
 	dol_syslog("Function: createActionComm login=".$authentication['login']);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
 	$objectresp = array();
@@ -425,7 +428,8 @@ function createActionComm($authentication, $actioncomm)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if (!$error) {
+	if (!$error)
+	{
 		$newobject = new ActionComm($db);
 
 		$newobject->datep = $actioncomm['datep'];
@@ -450,8 +454,10 @@ function createActionComm($authentication, $actioncomm)
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+		{
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $actioncomm[$key];
 			}
@@ -460,14 +466,17 @@ function createActionComm($authentication, $actioncomm)
 		$db->begin();
 
 		$result = $newobject->create($fuser);
-		if ($result <= 0) {
+		if ($result <= 0)
+		{
 			$error++;
 		}
 
-		if (!$error) {
+		if (!$error)
+		{
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id);
-		} else {
+		}
+		else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -475,7 +484,8 @@ function createActionComm($authentication, $actioncomm)
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -497,9 +507,7 @@ function updateActionComm($authentication, $actioncomm)
 
 	dol_syslog("Function: updateActionComm login=".$authentication['login']);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
 	$objectresp = array();
@@ -511,7 +519,8 @@ function updateActionComm($authentication, $actioncomm)
 		$error++; $errorcode = 'KO'; $errorlabel = "Actioncomm id is mandatory.";
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$objectfound = false;
 
 		$object = new ActionComm($db);
@@ -542,8 +551,10 @@ function updateActionComm($authentication, $actioncomm)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+			{
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
 					$key = 'options_'.$key;
 					$object->array_options[$key] = $actioncomm[$key];
 				}
@@ -557,13 +568,16 @@ function updateActionComm($authentication, $actioncomm)
 			}
 		}
 
-		if ((!$error) && ($objectfound)) {
+		if ((!$error) && ($objectfound))
+		{
 			$db->commit();
 			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'id'=>$object->id
 			);
-		} elseif ($objectfound) {
+		}
+		elseif ($objectfound)
+		{
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -575,7 +589,8 @@ function updateActionComm($authentication, $actioncomm)
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

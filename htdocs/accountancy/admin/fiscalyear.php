@@ -32,29 +32,21 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) {
-	$sortfield = "f.rowid"; // Set here default search field
-}
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
+if (!$sortfield) $sortfield = "f.rowid"; // Set here default search field
+if (!$sortorder) $sortorder = "ASC";
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta"));
 
 // Security check
-if ($user->socid > 0) {
+if ($user->socid > 0)
 	accessforbidden();
-}
-if (!$user->rights->accounting->fiscalyear->write) {              // If we can read accounting records, we should be able to see fiscal year.
+if (!$user->rights->accounting->fiscalyear->write)              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
-}
 
 $error = 0;
 
@@ -66,9 +58,8 @@ static $tmpstatut2label = array(
 $statut2label = array(
 		''
 );
-foreach ($tmpstatut2label as $key => $val) {
+foreach ($tmpstatut2label as $key => $val)
 	$statut2label[$key] = $langs->trans($val);
-}
 
 $errors = array();
 
@@ -101,10 +92,12 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
 		$page = 0;
 		$offset = 0;
 	}
@@ -113,7 +106,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
 	$num = $db->num_rows($result);
 
 	$i = 0;

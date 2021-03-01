@@ -30,9 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (!empty($conf->banque->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-}
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
@@ -41,18 +39,15 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'aZ09');
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSocialContribution($db);
-if ($id > 0) {
+if ($id > 0)
+{
 	$result = $object->fetch($id);
-	if (!$result) {
-		dol_print_error($db, 'Failed to get payment id '.$id);
-	}
+	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -61,11 +56,13 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer)
+{
 	$db->begin();
 
 	$result = $object->delete($user);
-	if ($result > 0) {
+	if ($result > 0)
+	{
 		$db->commit();
 		header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php");
 		exit;
@@ -104,7 +101,8 @@ print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribu
 /*
  * Deletion confirmation of payment
  */
-if ($action == 'delete') {
+if ($action == 'delete')
+{
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -140,8 +138,10 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (!empty($conf->banque->enabled)) {
-	if ($object->bank_account) {
+if (!empty($conf->banque->enabled))
+{
+	if ($object->bank_account)
+	{
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 
@@ -174,7 +174,8 @@ $sql .= ' AND pf.rowid = '.$object->id;
 
 dol_syslog("compta/payment_sc/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql) {
+if ($resql)
+{
 	$num = $db->num_rows($resql);
 
 	$i = 0;
@@ -189,8 +190,10 @@ if ($resql) {
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
-	if ($num > 0) {
-		while ($i < $num) {
+	if ($num > 0)
+	{
+		while ($i < $num)
+		{
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -213,7 +216,8 @@ if ($resql) {
 			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
-			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
+			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
+			{
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;
@@ -248,9 +252,12 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 }
 */
 
-if ($action == '') {
-	if ($user->rights->tax->charges->supprimer) {
-		if (!$disable_delete) {
+if ($action == '')
+{
+	if ($user->rights->tax->charges->supprimer)
+	{
+		if (!$disable_delete)
+		{
 			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';

@@ -58,7 +58,8 @@ $prodattr = new ProductAttribute($db);
 $prodattr_val = new ProductAttributeValue($db);
 
 $object = new Product($db);
-if ($id > 0 || $ref) {
+if ($id > 0 || $ref)
+{
 	$object->fetch($id, $ref);
 }
 
@@ -79,13 +80,16 @@ if (!$object->isProduct() && !$object->isService()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$object->id, 2));
 	exit();
 }
-if ($action == 'add') {
+if ($action == 'add')
+{
 	unset($selectedvariant);
 	unset($_SESSION['addvariant_'.$object->id]);
 }
-if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on select combination
+if ($action == 'create' && GETPOST('selectvariant', 'alpha'))	// We click on select combination
+{
 	$action = 'add';
-	if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1') {
+	if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1')
+	{
 		$selectedvariant[GETPOST('attribute').':'.GETPOST('value')] = GETPOST('attribute').':'.GETPOST('value');
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
 	}
@@ -97,7 +101,8 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 
 $productCombination2ValuePairs1 = array();
 
-if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha')) {	// We click on Create all defined combinations
+if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
+{
 	//$features = GETPOST('features', 'array');
 	$features = $_SESSION['addvariant_'.$object->id];
 
@@ -116,7 +121,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		// for conf PRODUIT_MULTIPRICES
 		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
-		} else {
+		}
+		else {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -150,9 +156,11 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		// sanit_feature is an array with 1 (and only 1) value per attribute.
 		// For example:  Color->blue, Size->Small, Option->2
 		//var_dump($sanit_features);
-		if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features)) {
+		if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
+		{
 			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
-			if ($result > 0) {
+			if ($result > 0)
+			{
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				unset($_SESSION['addvariant_'.$object->id]);
 
@@ -235,7 +243,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 		$prodcomb->variation_price = $level_price_impact[1];
 		$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
-	} else {
+	}
+	else {
 		$level_price_impact = array(1 => $price_impact);
 		$level_price_impact_percent = array(1 => $price_impact_percent);
 
@@ -321,13 +330,12 @@ if ($action === 'confirm_deletecombination') {
 
 $form = new Form($db);
 
-if (!empty($id) || !empty($ref)) {
+if (!empty($id) || !empty($ref))
+{
 	llxHeader("", "", $langs->trans("CardProduct".$object->type));
 
 	$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
-		$showbarcode = 0;
-	}
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode = 0;
 
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
@@ -349,25 +357,17 @@ if (!empty($id) || !empty($ref)) {
 	print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
 	$positiverates = '';
-	if (price2num($object->tva_tx)) {
-		$positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
-	}
-	if (price2num($object->localtax1_type)) {
-		$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
-	}
-	if (price2num($object->localtax2_type)) {
-		$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
-	}
-	if (empty($positiverates)) {
-		$positiverates = '0';
-	}
+	if (price2num($object->tva_tx))       $positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
+	if (price2num($object->localtax1_type)) $positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
+	if (price2num($object->localtax2_type)) $positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
+	if (empty($positiverates)) $positiverates = '0';
 	echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
 	/*
-	if ($object->default_vat_code)
-	{
-		print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
-	}
-	else print vatrate($object->tva_tx, true, $object->tva_npr, true);*/
+    if ($object->default_vat_code)
+    {
+        print vatrate($object->tva_tx, true) . ' ('.$object->default_vat_code.')';
+    }
+    else print vatrate($object->tva_tx, true, $object->tva_npr, true);*/
 	print '</td></tr>';
 
 	// Price
@@ -390,7 +390,8 @@ if (!empty($id) || !empty($ref)) {
 
 	// Weight
 	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	if ($object->weight != '') {
+	if ($object->weight != '')
+	{
 		print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
 	} else {
 		print '&nbsp;';
@@ -465,14 +466,14 @@ if (!empty($id) || !empty($ref)) {
 			foreach ($productCombination2ValuePairs1 as $pc2v) {
 				$prodattr_val->fetch($pc2v->fk_prod_attr_val);
 				?>
-				variants_selected.index.push(<?php echo $pc2v->fk_prod_attr ?>);
-				variants_selected.info[<?php echo $pc2v->fk_prod_attr ?>] = {
-					attribute: variants_available[<?php echo $pc2v->fk_prod_attr ?>],
-					value: {
-						id: <?php echo $pc2v->fk_prod_attr_val ?>,
-						label: '<?php echo $prodattr_val->value ?>'
-					}
-				};
+    			variants_selected.index.push(<?php echo $pc2v->fk_prod_attr ?>);
+    			variants_selected.info[<?php echo $pc2v->fk_prod_attr ?>] = {
+    				attribute: variants_available[<?php echo $pc2v->fk_prod_attr ?>],
+    				value: {
+    					id: <?php echo $pc2v->fk_prod_attr_val ?>,
+    					label: '<?php echo $prodattr_val->value ?>'
+    				}
+    			};
 				<?php
 			}
 			?>
@@ -603,7 +604,8 @@ if (!empty($id) || !empty($ref)) {
 			print '<table class="border" style="width: 100%">';
 
 			// When in edit mode
-			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1)) {
+			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1))
+			{
 				?>
 				<tr>
 					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
@@ -614,7 +616,8 @@ if (!empty($id) || !empty($ref)) {
 						$result1 = $prodattr->fetch($val->fk_prod_attr);
 						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
 						//print 'rr'.$result1.' '.$result2;
-						if ($result1 > 0 && $result2 > 0) {
+						if ($result1 > 0 && $result2 > 0)
+						{
 							print $prodattr->label.' - '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
 						}
@@ -648,7 +651,8 @@ if (!empty($id) || !empty($ref)) {
 			} else {
 				$prodcomb->fetchCombinationPriceLevels();
 
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+				{
 					print '<tr>';
 					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel', $i).'</label>';
 					if ($i === 1) {
@@ -699,9 +703,7 @@ if (!empty($id) || !empty($ref)) {
 		?>
 
 		<div style="text-align: center">
-		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) {
-			print ' disabled="disabled"';
-										   } ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans("Save") ?>" class="button button-save">
+		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans("Save") ?>" class="button button-save">
 		&nbsp;
 		<input type="submit" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>" class="button button-cancel">
 		</div>
@@ -730,7 +732,8 @@ if (!empty($id) || !empty($ref)) {
 
 		$comb2val = new ProductCombination2ValuePair($db);
 
-		if ($productCombinations) {
+		if ($productCombinations)
+		{
 			?>
 
 			<script type="text/javascript">
@@ -764,7 +767,8 @@ if (!empty($id) || !empty($ref)) {
 
 		print '<a href="combinations.php?id='.$object->id.'&action=add&token='.newToken().'" class="butAction">'.$langs->trans('NewProductCombination').'</a>'; // NewVariant
 
-		if ($productCombinations) {
+		if ($productCombinations)
+		{
 			print '<a href="combinations.php?id='.$object->id.'&action=copy&token='.newToken().'" class="butAction">'.$langs->trans('PropagateVariant').'</a>';
 		}
 
@@ -787,8 +791,8 @@ if (!empty($id) || !empty($ref)) {
 		// List of mass actions available
 		/*
 		$arrayofmassactions =  array(
-			'presend'=>$langs->trans("SendByMail"),
-			'builddoc'=>$langs->trans("PDFMerge"),
+		    'presend'=>$langs->trans("SendByMail"),
+		    'builddoc'=>$langs->trans("PDFMerge"),
 		);
 		if ($user->rights->product->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -796,7 +800,8 @@ if (!empty($id) || !empty($ref)) {
 		*/
 
 		$aaa = '';
-		if (count($productCombinations)) {
+		if (count($productCombinations))
+		{
 			$aaa = '<label for="massaction">'.$langs->trans('BulkActions').'</label>';
 			$aaa .= '<select id="bulk_action" name="massaction" class="flat">';
 			$aaa .= '	<option value="nothing">&nbsp;</option>';
@@ -821,13 +826,11 @@ if (!empty($id) || !empty($ref)) {
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Combination') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
-				<?php if ($object->isProduct()) {
-					print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>';
-				} ?>
+                <?php if ($object->isProduct()) print'<td class="liste_titre right">'.$langs->trans('WeightImpact').'</td>'; ?>
 				<td class="liste_titre center"><?php echo $langs->trans('OnSell') ?></td>
 				<td class="liste_titre center"><?php echo $langs->trans('OnBuy') ?></td>
 				<td class="liste_titre"></td>
-				<?php
+        		<?php
 				print '<td class="liste_titre center">';
 				$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 				print $searchpicto;
@@ -836,8 +839,10 @@ if (!empty($id) || !empty($ref)) {
 			</tr>
 		<?php
 
-		if (count($productCombinations)) {
-			foreach ($productCombinations as $currcomb) {
+		if (count($productCombinations))
+		{
+			foreach ($productCombinations as $currcomb)
+			{
 				$prodstatic->fetch($currcomb->fk_product_child);
 				print '<tr class="oddeven">';
 				print '<td>'.$prodstatic->getNomUrl(1).'</td>';
@@ -864,11 +869,10 @@ if (!empty($id) || !empty($ref)) {
 				print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken().'&valueid='.$currcomb->id.'">'.img_delete().'</a>';
 				print '</td>';
 				print '<td class="nowrap center">';
-				if ($productCombinations || $massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				{
 					$selected = 0;
-					if (in_array($prodstatic->id, $arrayofselected)) {
-						$selected = 1;
-					}
+					if (in_array($prodstatic->id, $arrayofselected)) $selected = 1;
 					print '<input id="cb'.$prodstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$prodstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';

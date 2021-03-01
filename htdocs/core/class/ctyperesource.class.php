@@ -172,13 +172,9 @@ class Ctyperesource
 
 
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if ($id) {
-			$sql .= " WHERE t.id = ".$id;
-		} elseif ($code) {
-			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-		} elseif ($label) {
-			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
-		}
+		if ($id)   $sql .= " WHERE t.id = ".$id;
+		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+		elseif ($label) $sql .= " WHERE t.label = '".$this->db->escape($label)."'";
 
 
 		$resql = $this->db->query($sql);

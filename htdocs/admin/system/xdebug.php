@@ -24,9 +24,8 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin)
+accessforbidden();
 
 
 /*
@@ -40,14 +39,16 @@ print load_fiche_titre("XDebug", '', 'title_setup');
 print "<br>\n";
 
 
-if (!function_exists('xdebug_is_enabled')) {
+if (!function_exists('xdebug_is_enabled'))
+{
 	print 'XDebug seems to be not installed. Function xdebug_is_enabled not found.';
 	llxFooter();
 	exit;
 }
 
 
-if (function_exists('socket_create')) {
+if (function_exists('socket_create'))
+{
 	$address = ini_get('xdebug.remote_host') ?ini_get('xdebug.remote_host') : '127.0.0.1';
 	$port = ini_get('xdebug.remote_port') ?ini_get('xdebug.remote_port') : 9000;
 
@@ -57,11 +58,8 @@ if (function_exists('socket_create')) {
 	print 'xdebug.remote_host = '.$address."<br>\n";
 	print 'xdebug.remote_port = '.$port."<br>\n";
 	print "* Profiler setup ";
-	if (function_exists('xdebug_get_profiler_filename')) {
-		print xdebug_get_profiler_filename() ? "(currently on into file ".xdebug_get_profiler_filename().")" : "(currently off)";
-	} else {
-		print "(currenlty not available)";
-	}
+	if (function_exists('xdebug_get_profiler_filename')) print xdebug_get_profiler_filename() ? "(currently on into file ".xdebug_get_profiler_filename().")" : "(currently off)";
+	else print "(currenlty not available)";
 	print ":<br>\n";
 	print 'xdebug.profiler_enable = '.ini_get('xdebug.profiler_enable')."<br>\n";
 	print 'xdebug.profiler_enable_trigger = '.ini_get('xdebug.profiler_enable_trigger')."<br>\n";
@@ -78,14 +76,13 @@ if (function_exists('socket_create')) {
 
 	print "<strong>Test debugger server (Eclipse for example):</strong><br>\n";
 	$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-	if (empty($socket)) {
-		die('Unable to prepare a socket');
-	}
+	if (empty($socket)) die('Unable to prepare a socket');
 	//socket_bind($sock, $address, $port) or die('Unable to bind on address='.$address.' port='.$port);
 	//socket_listen($sock);
 	//$client = socket_accept($sock);
 	$client = socket_connect($socket, $address, $port);
-	if ($client) {
+	if ($client)
+	{
 		echo "Connection established: ".$client." - address=".$address." port=".$port."<br>\n";
 		echo "There is a Remote debug server at this address.<br>\n";
 		echo "<br>\n";

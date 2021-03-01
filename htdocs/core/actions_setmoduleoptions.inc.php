@@ -27,60 +27,66 @@
 // $nomessageinupdate can be set to 1
 // $nomessageinsetmoduleoptions can be set to 1
 
-if ($action == 'update' && is_array($arrayofparameters)) {
+if ($action == 'update' && is_array($arrayofparameters))
+{
 	$db->begin();
 
-	foreach ($arrayofparameters as $key => $val) {
+	foreach ($arrayofparameters as $key => $val)
+	{
 		// Modify constant only if key was posted (avoid resetting key to the null value)
-		if (GETPOSTISSET($key)) {
+		if (GETPOSTISSET($key))
+		{
 			$result = dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
-			if ($result < 0) {
+			if ($result < 0)
+			{
 				$error++;
 				break;
 			}
 		}
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$db->commit();
-		if (empty($nomessageinupdate)) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		}
+		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		if (empty($nomessageinupdate)) {
-			setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
-		}
+		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
 	}
 }
 
 // Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
-if ($action == 'setModuleOptions') {
+if ($action == 'setModuleOptions')
+{
 	$db->begin();
 
 	// Process common param fields
-	if (is_array($_POST)) {
-		foreach ($_POST as $key => $val) {
+	if (is_array($_POST))
+	{
+		foreach ($_POST as $key => $val)
+		{
 			$reg = array();
-			if (preg_match('/^param(\d*)$/', $key, $reg)) {    // Works for POST['param'], POST['param1'], POST['param2'], ...
+			if (preg_match('/^param(\d*)$/', $key, $reg))    // Works for POST['param'], POST['param1'], POST['param2'], ...
+			{
 				$param = GETPOST("param".$reg[1], 'alpha');
 				$value = GETPOST("value".$reg[1], 'alpha');
-				if ($param) {
+				if ($param)
+				{
 					$res = dolibarr_set_const($db, $param, $value, 'chaine', 0, '', $conf->entity);
-					if (!($res > 0)) {
-						$error++;
-					}
+					if (!($res > 0)) $error++;
 				}
 			}
 		}
 	}
 
 	// Process upload fields
-	if (GETPOST('upload', 'alpha') && GETPOST('keyforuploaddir', 'aZ09')) {
+	if (GETPOST('upload', 'alpha') && GETPOST('keyforuploaddir', 'aZ09'))
+	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
 		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->$keyforuploaddir)));
-		foreach ($listofdir as $key => $tmpdir) {
+		foreach ($listofdir as $key=>$tmpdir)
+		{
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) {
@@ -90,27 +96,24 @@ if ($action == 'setModuleOptions') {
 				if (empty($nomessageinsetmoduleoptions)) {
 					setEventMessages($langs->trans("ErrorDirNotFound", $tmpdir), null, 'warnings');
 				}
-			} else {
+			}
+			else {
 				$upload_dir = $tmpdir;
 			}
 		}
-		if ($upload_dir) {
+		if ($upload_dir)
+		{
 			$result = dol_add_file_process($upload_dir, 1, 1, 'uploadfile', '');
-			if ($result <= 0) {
-				$error++;
-			}
+			if ($result <= 0) $error++;
 		}
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$db->commit();
-		if (empty($nomessageinsetmoduleoptions)) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		}
+		if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		if (empty($nomessageinsetmoduleoptions)) {
-			setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
-		}
+		if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
 	}
 }

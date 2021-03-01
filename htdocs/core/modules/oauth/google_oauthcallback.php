@@ -71,10 +71,9 @@ $credentials = new Credentials(
 );
 
 $requestedpermissionsarray = array();
-if (GETPOST('state')) {
-	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
-}
-if ($action != 'delete' && empty($requestedpermissionsarray)) {
+if (GETPOST('state')) $requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
+if ($action != 'delete' && empty($requestedpermissionsarray))
+{
 	print 'Error, parameter state is not defined';
 	exit;
 }
@@ -99,7 +98,8 @@ $langs->load("oauth");
  */
 
 
-if ($action == 'delete') {
+if ($action == 'delete')
+{
 	$storage->clearToken('Google');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -108,7 +108,8 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+if (!empty($_GET['code']))     // We are coming from oauth provider page
+{
 	dol_syslog("We are coming from the oauth provider page");
 	//llxHeader('',$langs->trans("OAuthSetup"));
 
@@ -144,7 +145,8 @@ if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	if (GETPOST('state')) {
+	if (GETPOST('state'))
+	{
 		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated

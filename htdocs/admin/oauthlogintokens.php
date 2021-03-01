@@ -32,9 +32,7 @@ use OAuth\Common\Storage\DoliStorage;
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
@@ -42,13 +40,9 @@ $value = GETPOST('value', 'alpha');
 $varname = GETPOST('varname', 'alpha');
 $driver = GETPOST('driver', 'alpha');
 
-if (!empty($driver)) {
-	$langs->load($driver);
-}
+if (!empty($driver)) $langs->load($driver);
 
-if (!$mode) {
-	$mode = 'setup';
-}
+if (!$mode) $mode = 'setup';
 
 
 /*
@@ -57,12 +51,13 @@ if (!$mode) {
 
 /*if (($mode == 'test' || $mode == 'setup') && empty($driver))
 {
-	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
-	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
-	exit;
+    setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
+    header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
+    exit;
 }*/
 
-if ($action == 'setconst' && $user->admin) {
+if ($action == 'setconst' && $user->admin)
+{
 	$error = 0;
 	$db->begin();
 
@@ -77,12 +72,11 @@ if ($action == 'setconst' && $user->admin) {
 		$constnote = dol_escape_htmltag($setupconst['note']);
 
 		$result = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
-		if (!$result > 0) {
-			$error++;
-		}
+		if (!$result > 0) $error++;
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null);
 	} else {
@@ -92,15 +86,15 @@ if ($action == 'setconst' && $user->admin) {
 	$action = '';
 }
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' && $user->admin)
+{
 	$db->begin();
 
 	$result = dolibarr_set_const($db, $varname, $value, 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
-		$error++;
-	}
+	if (!$result > 0) $error++;
 
-	if (!$error) {
+	if (!$error)
+	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null);
 	} else {
@@ -135,21 +129,20 @@ if (GETPOST('error')) {
 	setEventMessages(GETPOST('error'), null, 'errors');
 }
 
-if ($mode == 'setup' && $user->admin) {
+if ($mode == 'setup' && $user->admin)
+{
 	print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
-	foreach ($list as $key) {
+	foreach ($list as $key)
+	{
 		$supported = 0;
-		if (in_array($key[0], array_keys($supportedoauth2array))) {
-			$supported = 1;
-		}
-		if (!$supported) {
-			continue; // show only supported
-		}
+		if (in_array($key[0], array_keys($supportedoauth2array))) $supported = 1;
+		if (!$supported) continue; // show only supported
 
 
 		$OAUTH_SERVICENAME = 'Unknown';
-		if ($key[0] == 'OAUTH_GITHUB_NAME') {
+		if ($key[0] == 'OAUTH_GITHUB_NAME')
+		{
 			$OAUTH_SERVICENAME = 'GitHub';
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
@@ -157,7 +150,8 @@ if ($mode == 'setup' && $user->admin) {
 			$urltorenew = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/github_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://github.com/settings/applications/';
-		} elseif ($key[0] == 'OAUTH_GOOGLE_NAME') {
+		} elseif ($key[0] == 'OAUTH_GOOGLE_NAME')
+		{
 			$OAUTH_SERVICENAME = 'Google';
 			// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
 			// We pass this param list in to 'state' because we need it before and after the redirect.
@@ -169,12 +163,14 @@ if ($mode == 'setup' && $user->admin) {
 			$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state='.$shortscope.'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltocheckperms = 'https://security.google.com/settings/security/permissions';
-		} elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME') {
+		} elseif ($key[0] == 'OAUTH_STRIPE_TEST_NAME')
+		{
 			$OAUTH_SERVICENAME = 'StripeTest';
 			$urltorenew = $urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = '';
 			$urltocheckperms = '';
-		} elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME') {
+		} elseif ($key[0] == 'OAUTH_STRIPE_LIVE_NAME')
+		{
 			$OAUTH_SERVICENAME = 'StripeLive';
 			$urltorenew = $urlwithroot.'/core/modules/oauth/stripelive_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
 			$urltodelete = '';
@@ -195,7 +191,8 @@ if ($mode == 'setup' && $user->admin) {
 		$storage = new DoliStorage($db, $conf);
 		try {
 			$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-		} catch (Exception $e) {
+		} catch (Exception $e)
+		{
 			// Return an error if token not found
 		}
 
@@ -214,9 +211,11 @@ if ($mode == 'setup' && $user->admin) {
 				$refreshtoken = $tokenobj->getRefreshToken();
 
 				$endoflife = $tokenobj->getEndOfLife();
-				if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES) {
+				if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES)
+				{
 					$expiredat = $langs->trans("Never");
-				} elseif ($endoflife == $tokenobj::EOL_UNKNOWN) {
+				} elseif ($endoflife == $tokenobj::EOL_UNKNOWN)
+				{
 					$expiredat = $langs->trans("Unknown");
 				} else {
 					$expiredat = dol_print_date($endoflife, "dayhour");
@@ -256,24 +255,24 @@ if ($mode == 'setup' && $user->admin) {
 		print $langs->trans("IsTokenGenerated");
 		print '</td>';
 		print '<td>';
-		if (is_object($tokenobj)) {
-			print $langs->trans("HasAccessToken");
-		} else {
-			print $langs->trans("NoAccessToken");
-		}
+		if (is_object($tokenobj)) print $langs->trans("HasAccessToken");
+		else print $langs->trans("NoAccessToken");
 		print '</td>';
 		print '<td>';
 		// Links to delete/checks token
-		if (is_object($tokenobj)) {
+		if (is_object($tokenobj))
+		{
 			//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
 			print '<a class="button" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
 		}
 		// Request remote token
-		if ($urltorenew) {
+		if ($urltorenew)
+		{
 			print '<a class="button" href="'.$urltorenew.'">'.$langs->trans('RequestAccess').'</a><br>';
 		}
 		// Check remote access
-		if ($urltocheckperms) {
+		if ($urltocheckperms)
+		{
 			print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
 		}
 		print '</td>';
@@ -284,20 +283,22 @@ if ($mode == 'setup' && $user->admin) {
 		//var_dump($key);
 		print $langs->trans("Token").'</td>';
 		print '<td colspan="2">';
-		if (is_object($tokenobj)) {
+		if (is_object($tokenobj))
+		{
 			//var_dump($tokenobj);
 			print $tokenobj->getAccessToken().'<br>';
 			//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
 			//print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
 			//var_dump($tokenobj->getExtraParams());
 			/*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
-			print ''.join(',',$tokenobj->getExtraParams());
-			print '</textarea>';*/
+            print ''.join(',',$tokenobj->getExtraParams());
+            print '</textarea>';*/
 		}
 		print '</td>';
 		print '</tr>'."\n";
 
-		if (is_object($tokenobj)) {
+		if (is_object($tokenobj))
+		{
 			// Token refresh
 			print '<tr class="oddeven">';
 			print '<td'.($key['required'] ? ' class="required"' : '').'>';
@@ -331,7 +332,8 @@ if ($mode == 'setup' && $user->admin) {
 
 		print '</table>';
 
-		if (!empty($driver)) {
+		if (!empty($driver))
+		{
 			if ($submit_enabled) {
 				print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Modify")).'"></div>';
 			}
@@ -342,11 +344,13 @@ if ($mode == 'setup' && $user->admin) {
 	}
 }
 
-if ($mode == 'test' && $user->admin) {
+if ($mode == 'test' && $user->admin)
+{
 	print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
 	print '<table class="noborder centpercent">';
-	if (!empty($driver)) {
+	if (!empty($driver))
+	{
 		require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
 		$classname = 'printing_'.$driver;
 		$langs->load($driver);
@@ -366,7 +370,8 @@ if ($mode == 'test' && $user->admin) {
 	print '</table>';
 }
 
-if ($mode == 'userconf' && $user->admin) {
+if ($mode == 'userconf' && $user->admin)
+{
 	print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
 	print '<table class="noborder centpercent">';

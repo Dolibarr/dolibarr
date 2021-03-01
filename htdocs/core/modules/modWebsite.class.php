@@ -68,14 +68,14 @@ class modWebsite extends DolibarrModules
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 		$this->langfiles = array("website");
 
 		// Constants
-		$this->const = array();
+	   	$this->const = array();
 
 		// New pages on tabs
-		//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
+	   	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();
@@ -159,15 +159,18 @@ class modWebsite extends DolibarrModules
 
 		// Copy flags and octicons directory
 		$dirarray = array('common/flags'=>'flags', 'common/octicons/build/svg'=>'octicons');
-		foreach ($dirarray as $dirfrom => $dirtarget) {
+		foreach ($dirarray as $dirfrom => $dirtarget)
+		{
 			$src = DOL_DOCUMENT_ROOT.'/theme/'.$dirfrom;
 			$dest = DOL_DATA_ROOT.'/medias/image/'.$dirtarget;
 
-			if (is_dir($src)) {
+			if (is_dir($src))
+			{
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_mkdir($dest);
 				$result = dolCopyDir($src, $dest, 0, 0);
-				if ($result < 0) {
+				if ($result < 0)
+				{
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
 					return 0;

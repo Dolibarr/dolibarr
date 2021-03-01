@@ -37,7 +37,7 @@ class Products extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	public static $FIELDS = array(
+	static $FIELDS = array(
 		'ref',
 		'label'
 	);
@@ -217,7 +217,8 @@ class Products extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min) {
+			while ($i < $min)
+			{
 				$obj = $this->db->fetch_object($result);
 				$product_static = new Product($this->db);
 				if ($product_static->fetch($obj->rowid)) {
@@ -289,8 +290,7 @@ class Products extends DolibarrApi
 		$oldproduct = dol_clone($this->product, 0);
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
+			if ($field == 'id') { continue;
 			}
 			if ($field == 'stock_reel') {
 				throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
@@ -309,32 +309,24 @@ class Products extends DolibarrApi
 		if ($result > 0 && !empty($conf->global->PRODUCT_PRICE_UNIQ)) {
 			// We update price only if it was changed
 			$pricemodified = false;
-			if ($this->product->price_base_type != $oldproduct->price_base_type) {
-				$pricemodified = true;
+			if ($this->product->price_base_type != $oldproduct->price_base_type) { $pricemodified = true;
 			} else {
-				if ($this->product->tva_tx != $oldproduct->tva_tx) {
-					$pricemodified = true;
+				if ($this->product->tva_tx != $oldproduct->tva_tx) { $pricemodified = true;
 				}
-				if ($this->product->tva_npr != $oldproduct->tva_npr) {
-					$pricemodified = true;
+				if ($this->product->tva_npr != $oldproduct->tva_npr) { $pricemodified = true;
 				}
-				if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
-					$pricemodified = true;
+				if ($this->product->default_vat_code != $oldproduct->default_vat_code) { $pricemodified = true;
 				}
 
 				if ($this->product->price_base_type == 'TTC') {
-					if ($this->product->price_ttc != $oldproduct->price_ttc) {
-						$pricemodified = true;
+					if ($this->product->price_ttc != $oldproduct->price_ttc) { $pricemodified = true;
 					}
-					if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) {
-						$pricemodified = true;
+					if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) { $pricemodified = true;
 					}
 				} else {
-					if ($this->product->price != $oldproduct->price) {
-						$pricemodified = true;
+					if ($this->product->price != $oldproduct->price) { $pricemodified = true;
 					}
-					if ($this->product->price_min != $oldproduct->price_min) {
-						$pricemodified = true;
+					if ($this->product->price_min != $oldproduct->price_min) { $pricemodified = true;
 					}
 				}
 			}
@@ -594,9 +586,7 @@ class Products extends DolibarrApi
 			$prodcustprice = new Productcustomerprice($this->db);
 			$filter = array();
 			$filter['t.fk_product'] .= $id;
-			if ($thirdparty_id) {
-				$filter['t.fk_soc'] .= $thirdparty_id;
-			}
+			if ($thirdparty_id) $filter['t.fk_soc'] .= $thirdparty_id;
 			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 		}
 
@@ -815,7 +805,8 @@ class Products extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min) {
+			while ($i < $min)
+			{
 				$obj = $this->db->fetch_object($result);
 
 				$product_fourn = new ProductFournisseur($this->db);
@@ -1158,8 +1149,7 @@ class Products extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'rowid') {
-				continue;
+			if ($field == 'rowid') { continue;
 			}
 			$prodattr->$field = $value;
 		}
@@ -1457,8 +1447,7 @@ class Products extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'rowid') {
-				continue;
+			if ($field == 'rowid') { continue;
 			}
 			$objectval->$field = $value;
 		}
@@ -1617,7 +1606,8 @@ class Products extends DolibarrApi
 		$prodcomb = new ProductCombination($this->db);
 
 		$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference, $ref_ext);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			return $result;
 		} else {
 			throw new RestException(500, "Error creating new product variant");
@@ -1672,9 +1662,11 @@ class Products extends DolibarrApi
 		}
 
 		$prodcomb = new ProductCombination($this->db);
-		if (!$prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $features)) {
+		if (!$prodcomb->fetchByProductCombination2ValuePairs($this->product->id, $features))
+		{
 			$result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact);
-			if ($result > 0) {
+			if ($result > 0)
+			{
 				return $result;
 			} else {
 				throw new RestException(500, "Error creating new product variant");
@@ -1706,14 +1698,14 @@ class Products extends DolibarrApi
 		$prodcomb->fetch((int) $id);
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'rowid') {
-				continue;
+			if ($field == 'rowid') { continue;
 			}
 			$prodcomb->$field = $value;
 		}
 
 		$result = $prodcomb->update(DolibarrApiAccess::$user);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			return 1;
 		}
 		throw new RestException(500, "Error editing variant");
@@ -1739,7 +1731,8 @@ class Products extends DolibarrApi
 		$prodcomb = new ProductCombination($this->db);
 		$prodcomb->id = (int) $id;
 		$result = $prodcomb->delete(DolibarrApiAccess::$user);
-		if ($result <= 0) {
+		if ($result <= 0)
+		{
 			throw new RestException(500, "Error deleting variant");
 		}
 		return $result;

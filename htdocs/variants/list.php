@@ -56,7 +56,8 @@ $variants = $object->fetchAll();
 llxHeader('', $title);
 
 $newcardbutton = '';
-if ($user->rights->produit->creer) {
+if ($user->rights->produit->creer)
+{
 	$newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 

@@ -36,14 +36,13 @@ function import_prepare_head($param, $maxstep = 0)
 {
 	global $langs;
 
-	if (empty($maxstep)) {
-		$maxstep = 6;
-	}
+	if (empty($maxstep)) $maxstep = 6;
 
 	$h = 0;
 	$head = array();
 	$i = 1;
-	while ($i <= $maxstep) {
+	while ($i <= $maxstep)
+	{
 		if ($i < 6) {
 			$head[$h][0] = DOL_URL_ROOT.'/imports/import.php?step='.$i.$param;
 		} else {

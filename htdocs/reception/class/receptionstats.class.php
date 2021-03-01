@@ -70,15 +70,12 @@ class ReceptionStats extends Stats
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-		}
-		if ($this->socid) {
+		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		if ($this->socid)
+		{
 			$this->where .= " AND c.fk_soc = ".$this->socid;
 		}
-		if ($this->userid > 0) {
-			$this->where .= ' AND c.fk_user_author = '.$this->userid;
-		}
+		if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
 	}
 
 	/**
@@ -117,9 +114,7 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -138,9 +133,7 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		}
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');

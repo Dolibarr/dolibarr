@@ -37,26 +37,22 @@ $langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if ($user->socid > 0) {
+if ($user->socid > 0)
 	accessforbidden();
-}
-if (!$user->rights->accounting->bind->write) {
+if (!$user->rights->accounting->bind->write)
 	accessforbidden();
-}
 
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
-} else {
+if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
+else {
 	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) {
-		$year_start--; // If current month is lower that starting fiscal month, we start last year
-	}
+	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 }
 $year_end = $year_start + 1;
 $month_end = $month_start - 1;
-if ($month_end < 1) {
+if ($month_end < 1)
+{
 	$month_end = 12;
 	$year_end--;
 }
@@ -74,7 +70,8 @@ $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'acco
  * Actions
  */
 
-if ($action == 'clean' || $action == 'validatehistory') {
+if ($action == 'clean' || $action == 'validatehistory')
+{
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as fd";
@@ -123,9 +120,9 @@ if ($action == 'validatehistory') {
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type,";
 	$sql .= " p.accountancy_code_buy as code_buy, p.accountancy_code_buy_intra as code_buy_intra, p.accountancy_code_buy_export as code_buy_export, p.tva_tx as tva_tx_prod,";
-	$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export, aa4.rowid as aarowid_thirdparty,";
+	$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 	$sql .= " co.code as country_code, co.label as country_label,";
-	$sql .= " s.tva_intra, s.accountancy_code_buy as company_code_buy";
+	$sql .= " s.tva_intra";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
@@ -134,7 +131,6 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON p.accountancy_code_buy = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy_code_buy_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_buy_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON s.accountancy_code_buy = aa4.account_number        AND aa4.active = 1 AND aa4.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa4.entity = ".$conf->entity;
 	$sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 	$sql .= " AND l.product_type <= 2";
 
@@ -155,7 +151,7 @@ if ($action == 'validatehistory') {
 
 			$isSellerInEEC = isInEEC($objp);
 
-			// Level 2: Search suggested account for product/service (similar code exists in page list.php to make manual binding)
+			// Search suggested account for product/service
 			$suggestedaccountingaccountfor = '';
 			if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 				$objp->code_buy_p = $objp->code_buy;
@@ -173,20 +169,15 @@ if ($action == 'validatehistory') {
 				}
 			}
 
-			// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-			if (!empty($objp->company_code_buy)) {
-				$objp->code_buy_t = $objp->company_code_buy;
-				$objp->aarowid_suggest = $objp->aarowid_thirdparty;
-				$suggestedaccountingaccountfor = '';
-			}
-
-			if ($objp->aarowid_suggest > 0) {
+			if ($objp->aarowid_suggest > 0)
+			{
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sqlupdate .= " SET fk_code_ventilation = ".$objp->aarowid_suggest;
 				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
 
 				$resqlupdate = $db->query($sqlupdate);
-				if (!$resqlupdate) {
+				if (!$resqlupdate)
+				{
 					$error++;
 					setEventMessages($db->lasterror(), null, 'errors');
 					break;
@@ -197,7 +188,8 @@ if ($action == 'validatehistory') {
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$db->rollback();
 	} else {
 		$db->commit();
@@ -235,9 +227,7 @@ print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>
 print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) {
-		$j -= 12;
-	}
+	if ($j > 12) $j -= 12;
 	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -246,9 +236,7 @@ $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) {
-		$j -= 12;
-	}
+	if ($j > 12) $j -= 12;
 	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
@@ -274,18 +262,16 @@ if ($resql) {
 
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
-		if ($row[0] == 'tobind') {
+		if ($row[0] == 'tobind')
+		{
 			print $langs->trans("Unknown");
-		} else {
-			print length_accountg($row[0]);
-		}
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
-		if ($row[0] == 'tobind') {
+		if ($row[0] == 'tobind')
+		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		} else {
-			print $row[1];
-		}
+		} else print $row[1];
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -314,9 +300,7 @@ print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>
 print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) {
-		$j -= 12;
-	}
+	if ($j > 12) $j -= 12;
 	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -325,9 +309,7 @@ $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) {
-		$j -= 12;
-	}
+	if ($j > 12) $j -= 12;
 	$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= "  SUM(ffd.total_ht) as total";
@@ -353,18 +335,16 @@ if ($resql) {
 
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
-		if ($row[0] == 'tobind') {
+		if ($row[0] == 'tobind')
+		{
 			print $langs->trans("Unknown");
-		} else {
-			print length_accountg($row[0]);
-		}
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
-		if ($row[0] == 'tobind') {
+		if ($row[0] == 'tobind')
+		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		} else {
-			print $row[1];
-		}
+		} else print $row[1];
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -382,7 +362,8 @@ print '</div>';
 
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange. Why showing a report that should rely on result of this step ?
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report that should rely on result of this step ?
+{
 	print '<br>';
 	print '<br>';
 
@@ -394,9 +375,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 	print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("Total").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-		if ($j > 12) {
-			$j -= 12;
-		}
+		if ($j > 12) $j -= 12;
 		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -404,9 +383,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 	$sql = "SELECT '".$db->escape($langs->trans("CAHTF"))."' AS label,";
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-		if ($j > 12) {
-			$j -= 12;
-		}
+		if ($j > 12) $j -= 12;
 		$sql .= "  SUM(".$db->ifsql('MONTH(ff.datef)='.$j, 'ffd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(ffd.total_ht) as total";

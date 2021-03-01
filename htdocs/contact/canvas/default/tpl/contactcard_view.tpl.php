@@ -16,7 +16,8 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf)) {
+if (empty($conf) || !is_object($conf))
+{
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -29,12 +30,8 @@ echo $this->control->tpl['showhead'];
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
-if (!empty($this->control->tpl['action_create_user'])) {
-	echo $this->control->tpl['action_create_user'];
-}
-if (!empty($this->control->tpl['action_delete'])) {
-	echo $this->control->tpl['action_delete'];
-} ?>
+if (!empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
+if (!empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border allwidth">
 

@@ -27,9 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -48,10 +47,12 @@ $type = 'action';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+{
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
+	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -59,21 +60,25 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+{
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
 }
-if ($action == 'set') {
+if ($action == 'set')
+{
 	dolibarr_set_const($db, 'AGENDA_USE_EVENT_TYPE_DEFAULT', GETPOST('AGENDA_USE_EVENT_TYPE_DEFAULT'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'specimen') {  // For orders
+} elseif ($action == 'specimen')  // For orders
+{
 	$modele = GETPOST('module', 'alpha');
 
 	$commande = new CommandeFournisseur($db);
@@ -83,21 +88,25 @@ if ($action == 'set') {
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
+	foreach ($dirmodels as $reldir)
+	{
 		$file = dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file)) {
+		if (file_exists($file))
+		{
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($filefound)
+	{
 		require_once $file;
 
 		$module = new $classname($db, $commande);
 
-		if ($module->write_file($commande, $langs) > 0) {
+		if ($module->write_file($commande, $langs) > 0)
+		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -108,20 +117,27 @@ if ($action == 'set') {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-} elseif ($action == 'setmodel') {
-	// Activate a model
+}
+
+// Activate a model
+elseif ($action == 'setmodel')
+{
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del') {
+} elseif ($action == 'del')
+{
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0) {
-		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") {
-			dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
-		}
+	if ($ret > 0)
+	{
+		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
 	}
-} elseif ($action == 'setdoc') {
-	// Set default model
-	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+}
+
+// Set default model
+elseif ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+	{
 		// The constant that has been read in front of the new set
 		// is therefore passed through a variable to have a coherent display
 		$conf->global->ACTION_EVENT_ADDON_PDF = $value;
@@ -129,7 +145,8 @@ if ($action == 'set') {
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0) {
+	if ($ret > 0)
+	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
@@ -167,7 +184,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right nowraponall">'."\n";
+print '<td class="right">'."\n";
 
 if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	if (!isHTTPS()) {
@@ -215,7 +232,7 @@ if (!empty($conf->cron->enabled)) {
 }
 print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right nowraponall">'."\n";
+print '<td class="right">'."\n";
 
 if (empty($conf->cron->enabled)) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';

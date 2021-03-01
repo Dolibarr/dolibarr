@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'ecm'));
@@ -81,7 +80,7 @@ print "<br>\n";
 
 $head = ecm_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributes_ecm_files', '', -1, '');
+print dol_get_fiche_head($head, 'attributes_ecm_files', $langs->trans("ECM"), -1, 'ecm');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

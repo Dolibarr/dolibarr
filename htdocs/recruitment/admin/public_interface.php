@@ -33,9 +33,7 @@ $langs->loadLangs(array("admin", "recruitment"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 $error = 0;
 
@@ -45,11 +43,8 @@ $error = 0;
  */
 
 if ($action == 'setRECRUITMENT_ENABLE_PUBLIC_INTERFACE') {
-	if (GETPOST('value')) {
-		dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
-	} else {
-		dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
-	}
+	if (GETPOST('value')) dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
+	else dolibarr_set_const($db, 'RECRUITMENT_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'update') {
@@ -57,11 +52,9 @@ if ($action == 'update') {
 
 	$res = dolibarr_set_const($db, "RECRUITMENT_ENABLE_PUBLIC_INTERFACE", $public, 'chaine', 0, '', $conf->entity);
 
-	if (!($res > 0)) {
-		$error++;
-	}
+	if (!($res > 0)) $error++;
 
-	if (!$error) {
+ 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');

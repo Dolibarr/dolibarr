@@ -34,9 +34,7 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
@@ -53,7 +51,8 @@ $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("C
 
 llxHeader('', $title, 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
-if ($id > 0) {
+if ($id > 0)
+{
 	$result = $object->fetch($id, $user);
 
 	$object->info($id);

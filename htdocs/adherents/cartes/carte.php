@@ -63,24 +63,19 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 	$arrayofmembers = array();
 
 	// request taking into account member with up to date subscriptions
-	$sql = "SELECT d.rowid, d.ref, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
+	$sql = "SELECT d.rowid, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
 	$sql .= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
 	$sql .= " t.libelle as type,";
 	$sql .= " c.code as country_code, c.label as country";
 	// Add fields from extrafields
-	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
-		}
-	}
+	if (!empty($extrafields->attributes[$object->table_element]['label']))
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
-	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
-	}
+	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
 	$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
 	$sql .= " AND d.entity IN (".getEntity('adherent').")";
-	if (is_numeric($foruserid)) $sql .= " AND d.rowid=".(int) $foruserid;
+	if (is_numeric($foruserid)) $sql .= " AND d.rowid=".$foruserid;
 	if ($foruserlogin) $sql .= " AND d.login='".$db->escape($foruserlogin)."'";
 	$sql .= " ORDER BY d.rowid ASC";
 
@@ -95,7 +90,6 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			if ($objp->country == '-') $objp->country = '';
 
 			$adherentstatic->id = $objp->rowid;
-			$adherentstatic->ref = $objp->ref;
 			$adherentstatic->lastname = $objp->lastname;
 			$adherentstatic->firstname = $objp->firstname;
 
@@ -116,7 +110,6 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			// List of values to scan for a replacement
 			$substitutionarray = array(
 				'__ID__'=>$objp->rowid,
-				'__REF__'=>$objp->ref,
 				'__LOGIN__'=>$objp->login,
 				'__FIRSTNAME__'=>$objp->firstname,
 				'__LASTNAME__'=>$objp->lastname,
@@ -156,7 +149,6 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 							'textfooter'=>$textfooter,
 							'textright'=>$textright,
 							'id'=>$objp->rowid,
-							'ref'=>$objp->ref,
 							'photo'=>$objp->photo
 						);
 					}
@@ -167,7 +159,6 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 						'textfooter'=>$textfooter,
 						'textright'=>$textright,
 						'id'=>$objp->rowid,
-						'ref'=>$objp->ref,
 						'photo'=>$objp->photo
 					);
 				}
@@ -181,15 +172,12 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$textfooter = '';
 				$textright = '';
 
-				$arrayofmembers[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'id'=>$objp->rowid,
-					'ref'=>$objp->ref,
-					'photo'=>$objp->photo,
-				);
+				$arrayofmembers[] = array('textleft'=>$textleft,
+										'textheader'=>$textheader,
+										'textfooter'=>$textfooter,
+										'textright'=>$textright,
+										'id'=>$objp->rowid,
+										'photo'=>$objp->photo);
 			}
 
 			$i++;
@@ -236,7 +224,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("MembersCards"));
 
-print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', $adherentstatic->picto);
+print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', 'members');
 
 print '<span class="opacitymedium">'.$langs->trans("LinkToGeneratedPagesDesc").'</span><br>';
 print '<br>';

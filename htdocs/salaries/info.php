@@ -36,9 +36,7 @@ $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 
@@ -54,7 +52,7 @@ $object->info($id);
 
 $head = salaries_prepare_head($object);
 
-print dol_get_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'salary');
+print dol_get_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

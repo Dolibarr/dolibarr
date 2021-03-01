@@ -30,11 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
-if (GETPOST('action', 'aZ09') == 'donothing') {
+if (GETPOST('action', 'aZ09') == 'donothing')
+{
 	exit;
 }
 
@@ -67,9 +67,8 @@ print '<br>';
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
 $test = !function_exists('xdebug_is_enabled');
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
 }
@@ -126,9 +125,8 @@ print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 // Module log
 print '<strong>'.$langs->trans("Syslog").'</strong>: ';
 $test = empty($conf->syslog->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+else {
 	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
@@ -137,9 +135,8 @@ print '<br>';
 // Module debugbar
 print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
 $test = empty($conf->debugbar->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
+if ($test) print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+else {
 	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
@@ -175,13 +172,13 @@ $eventstolog = $securityevent->eventstolog;
 
 print '<strong>'.$langs->trans("LogEvents").'</strong>: ';
 // Loop on each event type
-foreach ($eventstolog as $key => $arr) {
-	if ($arr['id']) {
+foreach ($eventstolog as $key => $arr)
+{
+	if ($arr['id'])
+	{
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
 		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
-		if ($value) {
-			print $key.', ';
-		}
+		if ($value) print $key.', ';
 	}
 }
 

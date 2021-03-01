@@ -59,9 +59,7 @@ function tax_prepare_head(ChargeSociales $object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/sociales/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
-	}
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -95,12 +93,14 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	global $conf;
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
-	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
+	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q)))
+	{
 		dol_print_error('', 'Bad value of input parameter for tax_by_rate');
 	}
 
 	$list = array();
-	if ($direction == 'sell') {
+	if ($direction == 'sell')
+	{
 		$invoicetable = 'facture';
 		$invoicedettable = 'facturedet';
 		$fk_facture = 'fk_facture';
@@ -110,7 +110,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$paymenttable = 'paiement';
 		$paymentfacturetable = 'paiement_facture';
 		$invoicefieldref = 'ref';
-	} elseif ($direction == 'buy') {
+	} elseif ($direction == 'buy')
+	{
 		$invoicetable = 'facture_fourn';
 		$invoicedettable = 'facture_fourn_det';
 		$fk_facture = 'fk_facture_fourn';
@@ -137,7 +138,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	// Define sql request
 	$sql = '';
 	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')) {
+		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice'))
+	{
 		// Count on delivery date (use invoice date as delivery is unknown)
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -151,31 +153,24 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
 	} else {
 		// Count on payments date
@@ -194,64 +189,49 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
 		$sql .= " AND pf.".$fk_facture2." = f.rowid";
 		$sql .= " AND pa.rowid = pf.".$fk_payment;
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 	}
 
-	if (!$sql) {
-		return -1;
-	}
-	if ($sql == 'TODO') {
-		return -2;
-	}
-	if ($sql != 'TODO') {
+	if (!$sql) return -1;
+	if ($sql == 'TODO') return -2;
+	if ($sql != 'TODO')
+	{
 		dol_syslog("Tax.lib.php::tax_by_thirdparty", LOG_DEBUG);
 
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$company_id = -1;
 			$oldrowid = '';
-			while ($assoc = $db->fetch_array($resql)) {
-				if (!isset($list[$assoc['company_id']]['totalht'])) {
-					$list[$assoc['company_id']]['totalht'] = 0;
-				}
-				if (!isset($list[$assoc['company_id']]['vat'])) {
-					$list[$assoc['company_id']]['vat'] = 0;
-				}
-				if (!isset($list[$assoc['company_id']]['localtax1'])) {
-					$list[$assoc['company_id']]['localtax1'] = 0;
-				}
-				if (!isset($list[$assoc['company_id']]['localtax2'])) {
-					$list[$assoc['company_id']]['localtax2'] = 0;
-				}
+			while ($assoc = $db->fetch_array($resql))
+			{
+				if (!isset($list[$assoc['company_id']]['totalht']))  $list[$assoc['company_id']]['totalht'] = 0;
+				if (!isset($list[$assoc['company_id']]['vat']))      $list[$assoc['company_id']]['vat'] = 0;
+				if (!isset($list[$assoc['company_id']]['localtax1']))      $list[$assoc['company_id']]['localtax1'] = 0;
+				if (!isset($list[$assoc['company_id']]['localtax2']))      $list[$assoc['company_id']]['localtax2'] = 0;
 
-				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
+				if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+				{
 					$oldrowid = $assoc['rowid'];
 					$list[$assoc['company_id']]['totalht']  += $assoc['total_ht'];
 					$list[$assoc['company_id']]['vat']      += $assoc['total_vat'];
@@ -300,7 +280,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 	// Define sql request
 	$sql = '';
 	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
+	{
 		// Count on invoice date
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -314,31 +295,24 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
 	} else {
 		// Count on payments date
@@ -357,64 +331,52 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
 		$sql .= " AND pf.".$fk_facture2." = f.rowid";
 		$sql .= " AND pa.rowid = pf.".$fk_payment;
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 	}
 
-	if (!$sql) {
+	if (!$sql)
+	{
 		dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
 		return -1; // -1 = Not accountancy module enabled
 	}
-	if ($sql == 'TODO') {
-		return -2; // -2 = Feature not yet available
-	}
-	if ($sql != 'TODO') {
+	if ($sql == 'TODO') return -2; // -2 = Feature not yet available
+	if ($sql != 'TODO')
+	{
 		dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$company_id = -1;
 			$oldrowid = '';
-			while ($assoc = $db->fetch_array($resql)) {
-				if (!isset($list[$assoc['company_id']]['totalht'])) {
-					$list[$assoc['company_id']]['totalht'] = 0;
-				}
-				if (!isset($list[$assoc['company_id']]['vat'])) {
-					$list[$assoc['company_id']]['vat'] = 0;
-				}
-				if (!isset($list[$assoc['company_id']]['localtax1'])) {
-					$list[$assoc['company_id']]['localtax1'] = 0;
-				}
-				if (!isset($list[$assoc['company_id']]['localtax2'])) {
-					$list[$assoc['company_id']]['localtax2'] = 0;
-				}
+			while ($assoc = $db->fetch_array($resql))
+			{
+				if (!isset($list[$assoc['company_id']]['totalht']))  $list[$assoc['company_id']]['totalht'] = 0;
+				if (!isset($list[$assoc['company_id']]['vat']))      $list[$assoc['company_id']]['vat'] = 0;
+				if (!isset($list[$assoc['company_id']]['localtax1']))      $list[$assoc['company_id']]['localtax1'] = 0;
+				if (!isset($list[$assoc['company_id']]['localtax2']))      $list[$assoc['company_id']]['localtax2'] = 0;
 
-				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
+				if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+				{
 					$oldrowid = $assoc['rowid'];
 					$list[$assoc['company_id']]['totalht']  += $assoc['total_ht'];
 					$list[$assoc['company_id']]['vat']      += $assoc['total_vat'];
@@ -460,7 +422,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 	// CASE OF EXPENSE REPORT
 
-	if ($direction == 'buy') {		// buy only for expense reports
+	if ($direction == 'buy')		// buy only for expense reports
+	{
 		// Define sql request
 		$sql = '';
 
@@ -475,54 +438,45 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
 		$sql .= " WHERE e.entity = ".$conf->entity;
 		$sql .= " AND e.fk_statut in (6)";
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(p.datep,'%m') > ".(($q - 1) * 3)." AND date_format(p.datep,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(p.datep,'%m') > ".(($q - 1) * 3)." AND date_format(p.datep,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = -1";
 		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
 		$sql .= " ORDER BY e.rowid";
 
-		if (!$sql) {
+		if (!$sql)
+		{
 			dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
 			return -1; // -1 = Not accountancy module enabled
 		}
-		if ($sql == 'TODO') {
-			return -2; // -2 = Feature not yet available
-		}
-		if ($sql != 'TODO') {
+		if ($sql == 'TODO') return -2; // -2 = Feature not yet available
+		if ($sql != 'TODO')
+		{
 			dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
 			$resql = $db->query($sql);
-			if ($resql) {
+			if ($resql)
+			{
 				$company_id = -1;
 				$oldrowid = '';
-				while ($assoc = $db->fetch_array($resql)) {
-					if (!isset($list[$assoc['company_id']]['totalht'])) {
-						$list[$assoc['company_id']]['totalht'] = 0;
-					}
-					if (!isset($list[$assoc['company_id']]['vat'])) {
-						$list[$assoc['company_id']]['vat'] = 0;
-					}
-					if (!isset($list[$assoc['company_id']]['localtax1'])) {
-						$list[$assoc['company_id']]['localtax1'] = 0;
-					}
-					if (!isset($list[$assoc['company_id']]['localtax2'])) {
-						$list[$assoc['company_id']]['localtax2'] = 0;
-					}
+				while ($assoc = $db->fetch_array($resql))
+				{
+					if (!isset($list[$assoc['company_id']]['totalht']))  $list[$assoc['company_id']]['totalht'] = 0;
+					if (!isset($list[$assoc['company_id']]['vat']))      $list[$assoc['company_id']]['vat'] = 0;
+					if (!isset($list[$assoc['company_id']]['localtax1']))      $list[$assoc['company_id']]['localtax1'] = 0;
+					if (!isset($list[$assoc['company_id']]['localtax2']))      $list[$assoc['company_id']]['localtax2'] = 0;
 
-					if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
+					if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+					{
 						$oldrowid = $assoc['rowid'];
 						$list[$assoc['company_id']]['totalht'] += $assoc['total_ht'];
 						$list[$assoc['company_id']]['vat'] += $assoc['total_vat'];
@@ -591,13 +545,15 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	global $conf;
 
 	// If we use date_start and date_end, we must not use $y, $m, $q
-	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q))) {
+	if (($date_start || $date_end) && (!empty($y) || !empty($m) || !empty($q)))
+	{
 		dol_print_error('', 'Bad value of input parameter for tax_by_rate');
 	}
 
 	$list = array();
 
-	if ($direction == 'sell') {
+	if ($direction == 'sell')
+	{
 		$invoicetable = 'facture';
 		$invoicedettable = 'facturedet';
 		$fk_facture = 'fk_facture';
@@ -634,7 +590,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	// Define sql request
 	$sql = '';
 	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')) {
+		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice'))
+	{
 		// Count on delivery date (use invoice date as delivery is unknown)
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -648,31 +605,24 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
 	} else {
 		// Count on payments date
@@ -691,65 +641,50 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
 		$sql .= " AND pf.".$fk_facture2." = f.rowid";
 		$sql .= " AND pa.rowid = pf.".$fk_payment;
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 0"; // Limit to products
 		$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 	}
 
-	if (!$sql) {
-		return -1;
-	}
-	if ($sql == 'TODO') {
-		return -2;
-	}
-	if ($sql != 'TODO') {
+	if (!$sql) return -1;
+	if ($sql == 'TODO') return -2;
+	if ($sql != 'TODO')
+	{
 		dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
 
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$rate = -1;
 			$oldrowid = '';
-			while ($assoc = $db->fetch_array($resql)) {
+			while ($assoc = $db->fetch_array($resql))
+			{
 				// Code to avoid warnings when array entry not defined
-				if (!isset($list[$assoc['rate']]['totalht'])) {
-					$list[$assoc['rate']]['totalht'] = 0;
-				}
-				if (!isset($list[$assoc['rate']]['vat'])) {
-					$list[$assoc['rate']]['vat'] = 0;
-				}
-				if (!isset($list[$assoc['rate']]['localtax1'])) {
-					$list[$assoc['rate']]['localtax1'] = 0;
-				}
-				if (!isset($list[$assoc['rate']]['localtax2'])) {
-					$list[$assoc['rate']]['localtax2'] = 0;
-				}
+				if (!isset($list[$assoc['rate']]['totalht']))   $list[$assoc['rate']]['totalht'] = 0;
+				if (!isset($list[$assoc['rate']]['vat']))       $list[$assoc['rate']]['vat'] = 0;
+				if (!isset($list[$assoc['rate']]['localtax1'])) $list[$assoc['rate']]['localtax1'] = 0;
+				if (!isset($list[$assoc['rate']]['localtax2'])) $list[$assoc['rate']]['localtax2'] = 0;
 
-				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
+				if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+				{
 					$oldrowid = $assoc['rowid'];
 					$list[$assoc['rate']]['totalht']   += $assoc['total_ht'];
 					$list[$assoc['rate']]['vat']       += $assoc['total_vat'];
@@ -797,7 +732,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	// Define sql request
 	$sql = '';
 	if (($direction == 'sell' && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')
-		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+		|| ($direction == 'buy' && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
+	{
 		// Count on invoice date
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -811,31 +747,24 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Validated or paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture;
 	} else {
 		// Count on payments date
@@ -854,65 +783,53 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 		$sql .= " WHERE f.entity IN (".getEntity($invoicetable).")";
 		$sql .= " AND f.fk_statut in (1,2)"; // Paid (partially or completely)
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$sql .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$sql .= " AND f.type IN (0,1,2,3,5)";
-		}
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql .= " AND f.type IN (0,1,2,5)";
+		else $sql .= " AND f.type IN (0,1,2,3,5)";
 		$sql .= " AND f.rowid = d.".$fk_facture;
 		$sql .= " AND s.rowid = f.fk_soc";
 		$sql .= " AND pf.".$fk_facture2." = f.rowid";
 		$sql .= " AND pa.rowid = pf.".$fk_payment;
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = 1"; // Limit to services
 		$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 	}
 
-	if (!$sql) {
+	if (!$sql)
+	{
 		dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
 		return -1; // -1 = Not accountancy module enabled
 	}
-	if ($sql == 'TODO') {
-		return -2; // -2 = Feature not yet available
-	}
-	if ($sql != 'TODO') {
+	if ($sql == 'TODO') return -2; // -2 = Feature not yet available
+	if ($sql != 'TODO')
+	{
 		dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$rate = -1;
 			$oldrowid = '';
-			while ($assoc = $db->fetch_array($resql)) {
+			while ($assoc = $db->fetch_array($resql))
+			{
 				// Code to avoid warnings when array entry not defined
-				if (!isset($list[$assoc['rate']]['totalht'])) {
-					$list[$assoc['rate']]['totalht'] = 0;
-				}
-				if (!isset($list[$assoc['rate']]['vat'])) {
-					$list[$assoc['rate']]['vat'] = 0;
-				}
-				if (!isset($list[$assoc['rate']]['localtax1'])) {
-					$list[$assoc['rate']]['localtax1'] = 0;
-				}
-				if (!isset($list[$assoc['rate']]['localtax2'])) {
-					$list[$assoc['rate']]['localtax2'] = 0;
-				}
+				if (!isset($list[$assoc['rate']]['totalht']))   $list[$assoc['rate']]['totalht'] = 0;
+				if (!isset($list[$assoc['rate']]['vat']))       $list[$assoc['rate']]['vat'] = 0;
+				if (!isset($list[$assoc['rate']]['localtax1'])) $list[$assoc['rate']]['localtax1'] = 0;
+				if (!isset($list[$assoc['rate']]['localtax2'])) $list[$assoc['rate']]['localtax2'] = 0;
 
-				if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
+				if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+				{
 					$oldrowid = $assoc['rowid'];
 					$list[$assoc['rate']]['totalht']   += $assoc['total_ht'];
 					$list[$assoc['rate']]['vat']       += $assoc['total_vat'];
@@ -957,7 +874,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	// CASE OF EXPENSE REPORT
 
-	if ($direction == 'buy') {		// buy only for expense reports
+	if ($direction == 'buy')		// buy only for expense reports
+	{
 		// Define sql request
 		$sql = '';
 
@@ -972,55 +890,46 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
 		$sql .= " WHERE e.entity = ".$conf->entity;
 		$sql .= " AND e.fk_statut in (6)";
-		if ($y && $m) {
+		if ($y && $m)
+		{
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		} elseif ($y) {
+		} elseif ($y)
+		{
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
-		if ($q) {
-			$sql .= " AND (date_format(p.datep,'%m') > ".(($q - 1) * 3)." AND date_format(p.datep,'%m') <= ".($q * 3).")";
-		}
-		if ($date_start && $date_end) {
-			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-		}
+		if ($q) $sql .= " AND (date_format(p.datep,'%m') > ".(($q - 1) * 3)." AND date_format(p.datep,'%m') <= ".($q * 3).")";
+		if ($date_start && $date_end) $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 		$sql .= " AND (d.product_type = -1";
 		$sql .= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)"; // enhance detection of service
-		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) {
-			$sql .= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
-		}
+		if (!empty($conf->global->MAIN_NOT_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.total_tva <> 0)";
 		$sql .= " ORDER BY e.rowid";
 
-		if (!$sql) {
+		if (!$sql)
+		{
 			dol_syslog("Tax.lib.php::tax_by_rate no accountancy module enabled".$sql, LOG_ERR);
 			return -1; // -1 = Not accountancy module enabled
 		}
-		if ($sql == 'TODO') {
-			return -2; // -2 = Feature not yet available
-		}
-		if ($sql != 'TODO') {
+		if ($sql == 'TODO') return -2; // -2 = Feature not yet available
+		if ($sql != 'TODO')
+		{
 			dol_syslog("Tax.lib.php::tax_by_rate", LOG_DEBUG);
 			$resql = $db->query($sql);
-			if ($resql) {
+			if ($resql)
+			{
 				$rate = -1;
 				$oldrowid = '';
-				while ($assoc = $db->fetch_array($resql)) {
+				while ($assoc = $db->fetch_array($resql))
+				{
 					// Code to avoid warnings when array entry not defined
-					if (!isset($list[$assoc['rate']]['totalht'])) {
-						$list[$assoc['rate']]['totalht'] = 0;
-					}
-					if (!isset($list[$assoc['rate']]['vat'])) {
-						$list[$assoc['rate']]['vat'] = 0;
-					}
-					if (!isset($list[$assoc['rate']]['localtax1'])) {
-						$list[$assoc['rate']]['localtax1'] = 0;
-					}
-					if (!isset($list[$assoc['rate']]['localtax2'])) {
-						$list[$assoc['rate']]['localtax2'] = 0;
-					}
+					if (!isset($list[$assoc['rate']]['totalht']))   $list[$assoc['rate']]['totalht'] = 0;
+					if (!isset($list[$assoc['rate']]['vat']))       $list[$assoc['rate']]['vat'] = 0;
+					if (!isset($list[$assoc['rate']]['localtax1'])) $list[$assoc['rate']]['localtax1'] = 0;
+					if (!isset($list[$assoc['rate']]['localtax2'])) $list[$assoc['rate']]['localtax2'] = 0;
 
-					if ($assoc['rowid'] != $oldrowid) {       // Si rupture sur d.rowid
+					if ($assoc['rowid'] != $oldrowid)       // Si rupture sur d.rowid
+					{
 						$oldrowid = $assoc['rowid'];
 						$list[$assoc['rate']]['totalht']   += $assoc['total_ht'];
 						$list[$assoc['rate']]['vat'] += $assoc['total_vat'];

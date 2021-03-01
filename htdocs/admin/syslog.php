@@ -29,9 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 global $conf;
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other"));
@@ -42,9 +40,7 @@ $action = GETPOST('action', 'aZ09');
 $syslogModules = array();
 $activeModules = array();
 
-if (!empty($conf->global->SYSLOG_HANDLERS)) {
-	$activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
-}
+if (!empty($conf->global->SYSLOG_HANDLERS)) $activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
 
 $dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
 foreach ($dirsyslogs as $reldir) {
@@ -84,22 +80,25 @@ foreach ($dirsyslogs as $reldir) {
  */
 
 // Set modes
-if ($action == 'set') {
+if ($action == 'set')
+{
 	$db->begin();
 
 	$newActiveModules = array();
 	$selectedModules = (GETPOSTISSET('SYSLOG_HANDLERS') ? GETPOST('SYSLOG_HANDLERS') : array());
 
 	// Save options of handler
-	foreach ($syslogModules as $syslogHandler) {
-		if (in_array($syslogHandler, $syslogModules)) {
+	foreach ($syslogModules as $syslogHandler)
+	{
+		if (in_array($syslogHandler, $syslogModules))
+		{
 			$module = new $syslogHandler;
 
-			if (in_array($syslogHandler, $selectedModules)) {
-				$newActiveModules[] = $syslogHandler;
-			}
-			foreach ($module->configure() as $option) {
-				if (GETPOSTISSET($option['constant'])) {
+			if (in_array($syslogHandler, $selectedModules)) $newActiveModules[] = $syslogHandler;
+			foreach ($module->configure() as $option)
+			{
+				if (GETPOSTISSET($option['constant']))
+				{
 					dolibarr_del_const($db, $option['constant'], -1);
 					dolibarr_set_const($db, $option['constant'], trim(GETPOST($option['constant'])), 'chaine', 0, '', 0);
 				}
@@ -122,7 +121,8 @@ if ($action == 'set') {
 	}
 
 
-	if (!$error) {
+	if (!$error)
+	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -132,26 +132,25 @@ if ($action == 'set') {
 }
 
 // Set level
-if ($action == 'setlevel') {
+if ($action == 'setlevel')
+{
 	$level = GETPOST("level");
 	$res = dolibarr_set_const($db, "SYSLOG_LEVEL", $level, 'chaine', 0, '', 0);
 	dol_syslog("admin/syslog: level ".$level);
 
-	if (!($res > 0)) {
-		$error++;
-	}
+	if (!($res > 0)) $error++;
 
-	if (!$error) {
+	if (!$error)
+	{
 		$file_saves = GETPOST("file_saves");
 		$res = dolibarr_set_const($db, "SYSLOG_FILE_SAVES", $file_saves, 'chaine', 0, '', 0);
 		dol_syslog("admin/syslog: file saves  ".$file_saves);
 
-		if (!($res > 0)) {
-			$error++;
-		}
+		if (!($res > 0)) $error++;
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -174,14 +173,11 @@ print '<br>';
 $syslogfacility = $defaultsyslogfacility = dolibarr_get_const($db, "SYSLOG_FACILITY", 0);
 $syslogfile = $defaultsyslogfile = dolibarr_get_const($db, "SYSLOG_FILE", 0);
 
-if (!$defaultsyslogfacility) {
-	$defaultsyslogfacility = 'LOG_USER';
-}
-if (!$defaultsyslogfile) {
-	$defaultsyslogfile = 'dolibarr.log';
-}
+if (!$defaultsyslogfacility) $defaultsyslogfacility = 'LOG_USER';
+if (!$defaultsyslogfile) $defaultsyslogfile = 'dolibarr.log';
 
-if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) {
+if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity)
+{
 	print '<div class="error">'.$langs->trans("ContactSuperAdminForChange").'</div>';
 	$option = 'disabled';
 }
@@ -202,14 +198,13 @@ print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td class="right" colspan="2"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
-foreach ($syslogModules as $moduleName) {
+foreach ($syslogModules as $moduleName)
+{
 	$module = new $moduleName;
 
 	$moduleactive = (int) $module->isActive();
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
-	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) {
-		continue; // Some modules are hidden if not activable and not into debug mode (end user must not see them)
-	}
+	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) continue; // Some modules are hidden if not activable and not into debug mode (end user must not see them)
 
 
 	print '<tr class="oddeven">';
@@ -226,25 +221,22 @@ foreach ($syslogModules as $moduleName) {
 
 	print '<td class="nowrap">';
 	$setuparray = $module->configure();
-	if ($setuparray) {
-		foreach ($setuparray as $option) {
+	if ($setuparray)
+	{
+		foreach ($setuparray as $option)
+		{
 			$tmpoption = $option['constant'];
-			if (!empty($tmpoption)) {
-				if (GETPOSTISSET($tmpoption)) {
-					$value = GETPOST($tmpoption);
-				} elseif (!empty($conf->global->$tmpoption)) {
-					$value = $conf->global->$tmpoption;
-				}
-			} else {
-				$value = (isset($option['default']) ? $option['default'] : '');
-			}
+			if (!empty($tmpoption))
+			{
+				if (GETPOSTISSET($tmpoption)) $value = GETPOST($tmpoption);
+				elseif (!empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
+			} else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
-			if (!empty($option['example'])) {
-				print '<br>'.$langs->trans("Example").': '.$option['example'];
-			}
+			if (!empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];
 
-			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value)) {
+			if ($option['constant'] == 'SYSLOG_FILE' && preg_match('/^DOL_DATA_ROOT\/[^\/]*$/', $value))
+			{
 				$filelogparam = ' (<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file='.basename($value).'">';
 				$filelogparam .= $langs->trans('Download');
 				$filelogparam .= ' '.basename($value).'</a>)';
@@ -255,10 +247,12 @@ foreach ($syslogModules as $moduleName) {
 	print '</td>';
 
 	print '<td class="left">';
-	if ($module->getInfo()) {
+	if ($module->getInfo())
+	{
 		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
 	}
-	if ($module->getWarning()) {
+	if ($module->getWarning())
+	{
 		print $form->textwithpicto('', $module->getWarning(), 1, 'warning');
 	}
 	print '</td>';

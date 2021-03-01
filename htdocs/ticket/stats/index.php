@@ -30,16 +30,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-if (!$user->rights->ticket->read) {
-	accessforbidden();
-}
+if (!$user->rights->ticket->read) accessforbidden();
 
 $object_status = GETPOST('object_status', 'intcomma');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0) {
+if ($user->socid > 0)
+{
 	$action = '';
 	$socid = $user->socid;
 }
@@ -71,9 +70,7 @@ print load_fiche_titre($title, '', 'ticket');
 dol_mkdir($dir);
 
 $stats = new TicketStats($db, $socid, ($userid > 0 ? $userid : 0));
-if ($object_status != '' && $object_status >= -1) {
-	$stats->where .= ' AND fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
-}
+if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 
 // Build graphic number of object
@@ -83,7 +80,8 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (!$user->rights->societe->client->voir || $user->socid)
+{
 	$filenamenb = $dir.'/ticketsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -93,10 +91,12 @@ if (!$user->rights->societe->client->voir || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -119,7 +119,8 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (!$user->rights->societe->client->voir || $user->socid)
+{
 	$filenameamount = $dir.'/ticketsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsamountinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -129,10 +130,12 @@ if (!$user->rights->societe->client->voir || $user->socid) {
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px2->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -153,7 +156,8 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (!$user->rights->societe->client->voir || $user->socid)
+{
 	$filename_avg = $dir.'/ticketsaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=ticketstats&file=ticketsaverage-'.$user->id.'-'.$year.'.png';
 } else {
@@ -163,10 +167,12 @@ if (!$user->rights->societe->client->voir || $user->socid) {
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px3->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -194,9 +200,7 @@ foreach ($data as $val) {
 		$arrayyears[$val['year']] = $val['year'];
 	}
 }
-if (!count($arrayyears)) {
-	$arrayyears[$nowyear] = $nowyear;
-}
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 $h = 0;
 $head = array();
@@ -235,12 +239,8 @@ print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 
 print '</td></tr>';
 // Year
 print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-if (!in_array($year, $arrayyears)) {
-	$arrayyears[$year] = $year;
-}
-if (!in_array($nowyear, $arrayyears)) {
-	$arrayyears[$nowyear] = $nowyear;
-}
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
+if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -263,9 +263,11 @@ print '<td class="right">%</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data as $val) {
+foreach ($data as $val)
+{
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) { // If we have empty year
+	while (!empty($year) && $oldyear > $year + 1)
+	{ // If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
@@ -301,9 +303,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) {
-	print $mesg;
-} else {
+if ($mesg) { print $mesg; } else {
 	print $px1->show();
 	print "<br>\n";
 	//print $px2->show();

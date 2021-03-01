@@ -31,9 +31,7 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!$user->rights->commande->lire) {
-	accessforbidden();
-}
+if (!$user->rights->commande->lire)	accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'bills'));
@@ -44,13 +42,12 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'commande', $comid, '');
 
 $object = new Commande($db);
-if (!$object->fetch($id, $ref) > 0) {
+if (!$object->fetch($id, $ref) > 0)
+{
 	dol_print_error($db);
 	exit;
 }
@@ -81,10 +78,12 @@ $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_cl
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled))
+{
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->commande->creer) {
+	if ($user->rights->commande->creer)
+	{
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';

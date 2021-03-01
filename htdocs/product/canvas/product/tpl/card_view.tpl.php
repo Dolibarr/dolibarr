@@ -16,7 +16,8 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf)) {
+if (empty($conf) || !is_object($conf))
+{
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -36,9 +37,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_value
 $object->next_prev_filter = " fk_product_type = ".$object->type;
 
 $shownav = 1;
-if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
-	$shownav = 0;
-}
+if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 ?>

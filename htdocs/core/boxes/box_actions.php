@@ -92,22 +92,14 @@ class box_actions extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-			}
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
 			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
-			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
-			}
-			if (!$user->rights->agenda->allactions->read) {
-				$sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
-			}
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+			if ($user->socid)   $sql .= " AND s.rowid = ".$user->socid;
+			if (!$user->rights->agenda->allactions->read) $sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id.")";
 			$sql .= " ORDER BY a.datec DESC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -140,9 +132,8 @@ class box_actions extends ModeleBoxes
 					$societestatic->email = $objp->email;
 					$societestatic->entity = $objp->entity;
 
-					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning)) {
+					if ($objp->percentage >= 0 && $objp->percentage < 100 && $datelimite < ($now - $delay_warning))
 						$late = img_warning($langs->trans("Late"));
-					}
 
 					//($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label)
 					$label = empty($objp->label) ? $objp->type_label : $objp->label;
@@ -181,12 +172,11 @@ class box_actions extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
+				if ($num == 0)
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center opacitymedium"',
 						'text'=>$langs->trans("NoActionsToDo")
 					);
-				}
 
 				$this->db->free($result);
 			} else {
@@ -217,15 +207,19 @@ class box_actions extends ModeleBoxes
 		global $langs, $conf;
 		$out = parent::showBox($this->info_box_head, $this->info_box_contents, 1);
 
-		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE)) {
+		if (!empty($conf->global->SHOW_DIALOG_HOMEPAGE))
+		{
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
 			$nblines = count($contents);
-			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo")) {
+			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
+			{
 				$out .= '<div id="dialogboxaction" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
 				$out .= '<table width=100%>';
-				for ($line = 0, $n = $nblines; $line < $n; $line++) {
-					if (isset($contents[$line])) {
+				for ($line = 0, $n = $nblines; $line < $n; $line++)
+				{
+					if (isset($contents[$line]))
+					{
 						// on affiche que les évènement du jours ou passé
 						// qui ne sont pas à 100%
 						$actioncejour = true;
@@ -253,10 +247,12 @@ class box_actions extends ModeleBoxes
 				$out .= '</table>';
 			}
 			$out .= '</div>';
-			if ($actioncejour) {
+			if ($actioncejour)
+			{
 				$out .= '<script>';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: true });';
-				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1) {    // autoclose after this delay
+				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)    // autoclose after this delay
+				{
 					$out .= 'setTimeout(function(){';
 					$out .= '$("#dialogboxaction").dialog("close");';
 					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
@@ -269,11 +265,8 @@ class box_actions extends ModeleBoxes
 			}
 		}
 
-		if ($nooutput) {
-			return $out;
-		} else {
-			print $out;
-		}
+		if ($nooutput) return $out;
+		else print $out;
 
 		return '';
 	}

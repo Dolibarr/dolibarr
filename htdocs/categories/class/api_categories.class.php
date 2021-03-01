@@ -140,12 +140,15 @@ class Categories extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('category').')';
-		if (!empty($type)) {
+		if (!empty($type))
+		{
 			$sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
 		}
 		// Add sql filters
-		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+		if ($sqlfilters)
+		{
+			if (!DolibarrApi::_checkFilters($sqlfilters))
+			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -154,7 +157,8 @@ class Categories extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0) {
+			if ($page < 0)
+			{
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -163,11 +167,13 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->db->query($sql);
-		if ($result) {
+		if ($result)
+		{
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min) {
+			while ($i < $min)
+			{
 				$obj = $this->db->fetch_object($result);
 				$category_static = new Categorie($this->db);
 				if ($category_static->fetch($obj->rowid)) {
@@ -175,7 +181,8 @@ class Categories extends DolibarrApi
 				}
 				$i++;
 			}
-		} else {
+		}
+		else {
 			throw new RestException(503, 'Error when retrieve category list : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -231,9 +238,7 @@ class Categories extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
+			if ($field == 'id') continue;
 			$this->category->$field = $value;
 		}
 
@@ -716,9 +721,8 @@ class Categories extends DolibarrApi
 	{
 		$category = array();
 		foreach (Categories::$FIELDS as $field) {
-			if (!isset($data[$field])) {
+			if (!isset($data[$field]))
 				throw new RestException(400, "$field field missing");
-			}
 			$category[$field] = $data[$field];
 		}
 		return $category;
@@ -743,7 +747,8 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($type)) {
+		if (empty($type))
+		{
 			throw new RestException(500, 'The "type" parameter is required.');
 		}
 

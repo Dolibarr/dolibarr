@@ -99,17 +99,18 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+	 	global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
-		if (!$numExample) {
+		if (!$numExample)
+		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -131,7 +132,8 @@ class mod_mo_advanced extends ModeleNumRefMos
 		// We get cursor rule
 		$mask = $conf->global->MRP_MO_ADVANCED_MASK;
 
-		if (!$mask) {
+		if (!$mask)
+		{
 			$this->error = 'NotConfigured';
 			return 0;
 		}

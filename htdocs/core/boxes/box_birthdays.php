@@ -82,7 +82,8 @@ class box_birthdays extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
-		if ($user->rights->user->user->lire) {
+		if ($user->rights->user->user->lire)
+		{
 			$tmparray = dol_getdate(dol_now(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth, u.email, u.statut as status";
@@ -95,11 +96,13 @@ class box_birthdays extends ModeleBoxes
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result) {
+			if ($result)
+			{
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num) {
+				while ($line < $num)
+				{
 					$objp = $this->db->fetch_object($result);
 
 					$userstatic->id = $objp->rowid;
@@ -123,16 +126,14 @@ class box_birthdays extends ModeleBoxes
 					);
 
 					/*$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => $userstatic->LibStatut($objp->status, 3)
-					);*/
+                        'td' => 'class="right" width="18"',
+                        'text' => $userstatic->LibStatut($objp->status, 3)
+                    );*/
 
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
-				}
+				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
 
 				$this->db->free($result);
 			} else {

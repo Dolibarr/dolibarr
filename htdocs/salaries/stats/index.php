@@ -32,19 +32,13 @@ $langs->loadLangs(array("salaries", "companies"));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) {
-	$userid = 0;
-}
-$socid = GETPOST('socid', 'int'); if ($socid < 0) {
-	$socid = 0;
-}
+$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
+$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
 $id = GETPOST('id', 'int');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $nowyear = strftime("%Y", dol_now());
@@ -66,7 +60,7 @@ llxHeader();
 $title = $langs->trans("SalariesStatistics");
 $dir = $conf->salaries->dir_temp;
 
-print load_fiche_titre($title, '', 'salary');
+print load_fiche_titre($title, '', 'object_payment');
 
 dol_mkdir($dir);
 
@@ -86,10 +80,12 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=salariesstats&amp;file=sala
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -116,10 +112,12 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=salariesstats&amp;file=
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px2->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -145,10 +143,12 @@ $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=salariesstats&file=salari
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px3->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -173,9 +173,7 @@ $arrayyears = array();
 foreach ($data as $val) {
 	$arrayyears[$val['year']] = $val['year'];
 }
-if (!count($arrayyears)) {
-	$arrayyears[$nowyear] = $nowyear;
-}
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 
 $h = 0;
@@ -205,9 +203,7 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (!in_array($year, $arrayyears)) {
-	$arrayyears[$year] = $year;
-}
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -226,9 +222,11 @@ print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data as $val) {
+foreach ($data as $val)
+{
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {
+	while ($year && $oldyear > $year + 1)
+	{
 		// If we have empty year
 		$oldyear--;
 
@@ -258,9 +256,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td align="center">';
-if ($mesg) {
-	print $mesg;
-} else {
+if ($mesg) { print $mesg; } else {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();

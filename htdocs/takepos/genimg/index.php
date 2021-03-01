@@ -17,29 +17,15 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
+if (!defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', '1');
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1');
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', '1');
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	require '../../main.inc.php'; // Load $user and permissions
-}
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../../main.inc.php'; // Load $user and permissions
 
 $id = GETPOST('id', 'int');
 $w = GETPOST('w', 'int');
@@ -52,7 +38,8 @@ $query = GETPOST('query', 'alpha');
  * View
  */
 
-if ($query == "cat") {
+if ($query == "cat")
+{
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
@@ -63,8 +50,10 @@ if ($query == "cat") {
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 
-	foreach ($object->liste_photos($dir) as $key => $obj) {
-		if ($obj['photo_vignette']) {
+	foreach ($object->liste_photos($dir) as $key => $obj)
+	{
+		if ($obj['photo_vignette'])
+		{
 			$filename = $obj['photo_vignette'];
 		} else {
 			$filename = $obj['photo'];
@@ -74,7 +63,8 @@ if ($query == "cat") {
 		exit;
 	}
 	header('Location: ../../public/theme/common/nophoto.png');
-} elseif ($query == "pro") {
+} elseif ($query == "pro")
+{
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 	$objProd = new Product($db);

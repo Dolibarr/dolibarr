@@ -24,7 +24,6 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -54,13 +53,12 @@ $langs->loadLangs(array("companies", "members"));
  * View
  */
 
-$memberstatic = new Adherent($db);
 $form = new Form($db);
 
 $title = $langs->trans("SubscriptionsStatistics");
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', $memberstatic->picto);
+print load_fiche_titre($title, '', 'members');
 
 $dir = $conf->adherent->dir_temp;
 
@@ -135,7 +133,7 @@ if (!$mesg) {
 
 $head = member_stats_prepare_head($adh);
 
-print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
+print dol_get_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), -1, 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

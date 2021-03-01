@@ -31,9 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 $langs->load("opensurvey");
 
 // Security check
-if (!$user->rights->opensurvey->read) {
-	accessforbidden();
-}
+if (!$user->rights->opensurvey->read) accessforbidden();
 
 $hookmanager = new HookManager($db);
 
@@ -50,12 +48,11 @@ $sql = 'SELECT COUNT(*) as nb';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
 $sql .= ' WHERE entity IN ('.getEntity('survey').')';
 $resql = $db->query($sql);
-if ($resql) {
+if ($resql)
+{
 	$obj = $db->fetch_object($resql);
 	$nbsondages = $obj->nb;
-} else {
-	dol_print_error($db, '');
-}
+} else dol_print_error($db, '');
 
 
 $title = $langs->trans("OpenSurveyArea");

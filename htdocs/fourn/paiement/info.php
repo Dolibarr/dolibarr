@@ -33,28 +33,8 @@ $langs->loadLangs(array("bills", "suppliers", "companies"));
 $id = GETPOST('id', 'int');
 
 $object = new PaiementFourn($db);
-
-// Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-
-$result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-// Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
-// It should be enough because all payments are done on invoices of the same thirdparty.
-if ($socid && $socid != $object->thirdparty->id) {
-	accessforbidden();
-}
-
-
-/*
- * Actions
- */
-
-// None
+$object->fetch($id);
+$object->info($id);
 
 
 /*
@@ -63,13 +43,9 @@ if ($socid && $socid != $object->thirdparty->id) {
 
 llxHeader();
 
-$object->info($id);
-
 $head = payment_supplier_prepare_head($object);
 
 print dol_get_fiche_head($head, 'info', $langs->trans("SupplierPayment"), 0, 'payment');
-
-$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, -1, 'rowid', 'ref');
 

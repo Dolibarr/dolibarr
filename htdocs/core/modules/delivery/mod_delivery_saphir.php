@@ -102,14 +102,15 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+	 	global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample) {
+		if (!$numExample)
+		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -132,7 +133,8 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		// On defini critere recherche compteur
 		$mask = $conf->global->DELIVERY_SAPHIR_MASK;
 
-		if (!$mask) {
+		if (!$mask)
+		{
 			$this->error = 'NotConfigured';
 			return 0;
 		}

@@ -84,7 +84,8 @@ class box_mos extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatestModifiedMos", $max));
 
-		if ($user->rights->mrp->read) {
+		if ($user->rights->mrp->read)
+		{
 			$sql = "SELECT p.ref as product_ref";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_creation";
@@ -127,9 +128,7 @@ class box_mos extends ModeleBoxes
 					);
 
 					if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
-						if ($objp->fk_user_valid > 0) {
-							$userstatic->fetch($objp->fk_user_valid);
-						}
+						if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
 						$this->info_box_contents[$line][] = array(
 							'td' => 'class="right"',
 							'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
@@ -150,12 +149,10 @@ class box_mos extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
 					'td' => 'class="center"',
 					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
-					);
-				}
+				);
 
 				$this->db->free($result);
 			} else {

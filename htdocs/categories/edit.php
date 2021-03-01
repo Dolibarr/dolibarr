@@ -35,10 +35,10 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
+$type = GETPOST('type', 'aZ09');		// Can be int or string
 $action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
-$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = (int) GETPOST('socid', 'int');
 $label = (string) GETPOST('label', 'alphanohtml');
@@ -56,14 +56,8 @@ if ($id == "") {
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label);
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
-
-$type = $object->type;
-if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if ($id > 0) {
+	$result = $object->fetch($id);
 }
 
 $extrafields = new ExtraFields($db);
@@ -80,19 +74,14 @@ $error = 0;
  */
 
 if ($cancel) {
-	if ($backtopage) {
-		header("Location: ".$backtopage);
-		exit;
-	} else {
-		header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-		exit;
-	}
+	header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+	exit;
 }
 
 // Action mise a jour d'une categorie
 if ($action == 'update' && $user->rights->categorie->creer) {
 	$object->oldcopy = dol_clone($object);
-	$object->label = $label;
+	$object->label          = $label;
 	$object->description    = dol_htmlcleanlastbr($description);
 	$object->color          = $color;
 	$object->socid          = ($socid > 0 ? $socid : 0);
@@ -107,18 +96,11 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 	}
 	if (!$error && empty($object->error)) {
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
-		if ($ret < 0) {
-			$error++;
-		}
+		if ($ret < 0) $error++;
 
 		if (!$error && $object->update($user) > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
-				exit;
-			} else {
-				header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
-				exit;
-			}
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -149,7 +131,6 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
-print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print dol_get_fiche_head('');
 

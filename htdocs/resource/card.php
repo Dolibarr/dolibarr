@@ -44,11 +44,13 @@ $fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
 $country_id				= GETPOST('country_id', 'int');
 
 // Protection if external user
-if ($user->socid > 0) {
+if ($user->socid > 0)
+{
 	accessforbidden();
 }
 
-if (!$user->rights->resource->read) {
+if (!$user->rights->resource->read)
+{
 	accessforbidden();
 }
 
@@ -68,28 +70,33 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
 $parameters = array('resource_id'=>$id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
-	if ($cancel) {
-		if (!empty($backtopage)) {
+if (empty($reshook))
+{
+	if ($cancel)
+	{
+		if (!empty($backtopage))
+		{
 			header("Location: ".$backtopage);
 			exit;
 		}
-		if ($action == 'add') {
+		if ($action == 'add')
+		{
 			header("Location: ".DOL_URL_ROOT.'/resource/list.php');
 			exit;
 		}
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->rights->resource->write) {
-		if (!$cancel) {
+	if ($action == 'add' && $user->rights->resource->write)
+	{
+		if (!$cancel)
+		{
 			$error = '';
 
-			if (empty($ref)) {
+			if (empty($ref))
+			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 				$action = 'create';
 			} else {
@@ -100,12 +107,11 @@ if (empty($reshook)) {
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
-				if ($ret < 0) {
-					$error++;
-				}
+				if ($ret < 0) $error++;
 
 				$result = $object->create($user);
-				if ($result > 0) {
+				if ($result > 0)
+				{
 					// Creation OK
 					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
 					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -122,17 +128,21 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->rights->resource->write) {
+	if ($action == 'update' && !$cancel && $user->rights->resource->write)
+	{
 		$error = 0;
 
-		if (empty($ref)) {
+		if (empty($ref))
+		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 			$error++;
 		}
 
-		if (!$error) {
+		if (!$error)
+		{
 			$res = $object->fetch($id);
-			if ($res > 0) {
+			if ($res > 0)
+			{
 				$object->ref          			= $ref;
 				$object->description  			= $description;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
@@ -145,7 +155,8 @@ if (empty($reshook)) {
 				}
 
 				$result = $object->update($user);
-				if ($result > 0) {
+				if ($result > 0)
+				{
 					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
@@ -158,17 +169,21 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($error) {
+		if ($error)
+		{
 			$action = 'edit';
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes')
+	{
 		$res = $object->fetch($id);
-		if ($res > 0) {
+		if ($res > 0)
+		{
 			$result = $object->delete($id);
 
-			if ($result >= 0) {
+			if ($result >= 0)
+			{
 				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
 				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
@@ -192,8 +207,10 @@ llxHeader('', $title, '');
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ($action == 'create' || $object->fetch($id, $ref) > 0) {
-	if ($action == 'create') {
+if ($action == 'create' || $object->fetch($id, $ref) > 0)
+{
+	if ($action == 'create')
+	{
 		print load_fiche_titre($title, '', 'object_resource');
 		print dol_get_fiche_head('');
 	} else {
@@ -201,10 +218,9 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
 	}
 
-	if ($action == 'create' || $action == 'edit') {
-		if (!$user->rights->resource->write) {
-			accessforbidden('', 0, 1);
-		}
+	if ($action == 'create' || $action == 'edit')
+	{
+		if (!$user->rights->resource->write) accessforbidden('', 0, 1);
 
 		// Create/Edit object
 
@@ -235,16 +251,15 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
 		print $form->select_country($object->country_id, 'country_id');
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '</td></tr>';
 
 		// Other attributes
 		$parameters = array('objectsrc' => $objectsrc);
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook)) {
+		if (empty($reshook))
+		{
 			print $object->showOptionals($extrafields, 'edit');
 		}
 
@@ -264,7 +279,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		$formconfirm = '';
 
 		// Confirm deleting resource line
-		if ($action == 'delete') {
+		if ($action == 'delete')
+		{
 			$formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
 		}
 
@@ -304,6 +320,10 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td>';
 		print $object->description;
 		print '</td>';
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 		print '</tr>';
 
 		// Origin country code
@@ -312,11 +332,6 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td>';
 		print getCountry($object->country_id, 0, $db);
 		print '</td>';
-
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
 		print '</tr>';
 
 		print '</table>';
@@ -336,18 +351,23 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
-	if (empty($reshook)) {
-		if ($action != "create" && $action != "edit") {
+	if (empty($reshook))
+	{
+		if ($action != "create" && $action != "edit")
+		{
 			// Edit resource
-			if ($user->rights->resource->write) {
+			if ($user->rights->resource->write)
+			{
 				print '<div class="inline-block divButAction">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}
-		if ($action != "delete" && $action != "create" && $action != "edit") {
+		if ($action != "delete" && $action != "create" && $action != "edit")
+		{
 			// Delete resource
-			if ($user->rights->resource->delete) {
+			if ($user->rights->resource->delete)
+			{
 				print '<div class="inline-block divButAction">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
 				print '</div>';

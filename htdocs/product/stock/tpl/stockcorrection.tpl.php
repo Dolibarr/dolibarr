@@ -30,16 +30,12 @@ if (empty($conf) || !is_object($conf)) {
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
 $productref = '';
-if ($object->element == 'product') {
-	$productref = $object->ref;
-}
+if ($object->element == 'product') $productref = $object->ref;
 
 $langs->load("productbatch");
 
 
-if (empty($id)) {
-	$id = $object->id;
-}
+if (empty($id)) $id = $object->id;
 
 print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
@@ -73,9 +69,7 @@ if ($object->element == 'product') {
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
 	$ident = (GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
-	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
-		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
-	}
+	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	print img_picto('', 'stock').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
@@ -113,7 +107,8 @@ if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $object->element == 'product'
 if (!empty($conf->productbatch->enabled) &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
-) {
+)
+{
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
@@ -139,7 +134,8 @@ if (!empty($conf->productbatch->enabled) &&
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
 print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled))
+{
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');

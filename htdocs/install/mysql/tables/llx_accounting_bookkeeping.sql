@@ -35,13 +35,13 @@ CREATE TABLE llx_accounting_bookkeeping
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
   debit                 double(24,8) NOT NULL,		-- FEC:Debit
   credit                double(24,8) NOT NULL,		-- FEC:Credit
-  montant               double(24,8) NULL,	   	    -- FEC:Montant (Not necessary)
+  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
   multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  date_lim_reglement    datetime DEFAULT NULL,		-- FEC_suppl:DateLimitReglmt    | payment deadline
+  date_lim_reglement    datetime DEFAULT NULL,		-- 					| date limite de reglement
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date

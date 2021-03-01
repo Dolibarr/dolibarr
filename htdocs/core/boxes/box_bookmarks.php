@@ -84,7 +84,8 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}
 
-		if ($user->rights->bookmark->lire) {
+		if ($user->rights->bookmark->lire)
+		{
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql .= " WHERE fk_user = ".$user->id;
@@ -93,7 +94,8 @@ class box_bookmarks extends ModeleBoxes
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result) {
+			if ($result)
+			{
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
@@ -121,9 +123,7 @@ class box_bookmarks extends ModeleBoxes
 
 				if ($num == 0) {
 					$mytxt = $langs->trans("NoRecordedBookmarks");
-					if ($user->rights->bookmark->creer) {
-						$mytxt .= ' '.$langs->trans("ClickToAdd");
-					}
+					if ($user->rights->bookmark->creer) $mytxt .= ' '.$langs->trans("ClickToAdd");
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center" colspan="2"',
 						'tooltip' => $mytxt,

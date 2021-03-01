@@ -5,7 +5,6 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,16 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$form = new Form($db);
 $now = dol_now();
 $current_date = dol_getdate($now);
-if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) {
-	$conf->global->SOCIETE_FISCAL_MONTH_START = 1;
-}
+if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) $conf->global->SOCIETE_FISCAL_MONTH_START = 1;
 
 // Date range
 $year = GETPOST("year", "int");
-if (empty($year)) {
+if (empty($year))
+{
 	$year_current = $current_date['year'];
 	$year_start = $year_current;
 } else {
@@ -55,12 +52,12 @@ if (empty($year)) {
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Set default period if not defined
-if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
 	$q = GETPOST("q", "int");
-	if (empty($q)) {
-		if (GETPOST("month", "int")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
-		} else {
+	if (empty($q))
+	{
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
@@ -82,36 +79,22 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			}
 		}
 	} else {
-		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
-		}
-		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
-		}
-		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
-		}
-		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
-		}
+		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
+		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
+		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
+		if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
 	}
 }
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
-}
-if (empty($modetax)) {
-	$modetax = 0;
-}
+if (GETPOSTISSET("modetax")) $modetax = GETPOST("modetax", 'int');
+if (empty($modetax)) $modetax = 0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -125,7 +108,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 function pt($db, $sql, $date)
 {
-	global $conf, $bc, $langs, $form;
+	global $conf, $bc, $langs;
 
 	$result = $db->query($sql);
 	if ($result) {
@@ -137,7 +120,7 @@ function pt($db, $sql, $date)
 		print '<tr class="liste_titre">';
 		print '<td class="nowrap">'.$date.'</td>';
 		print '<td class="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
-		print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").$form->textwithpicto('', $langs->trans('PaidDuringThisPeriodDesc'), 1).'</td>';
+		print '<td class="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
 		print "</tr>\n";
 
 		$totalclaimed = 0;
@@ -153,7 +136,8 @@ function pt($db, $sql, $date)
 			$mode = $obj->mode;
 
 			//print $obj->dm.' '.$obj->mode.' '.$previousmonth.' '.$previousmode;
-			if ($obj->mode == 'claimed' && !empty($previousmode)) {
+			if ($obj->mode == 'claimed' && !empty($previousmode))
+			{
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$previousmonth."</td>\n";
 				print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
@@ -164,16 +148,19 @@ function pt($db, $sql, $date)
 				$amountpaid = 0;
 			}
 
-			if ($obj->mode == 'claimed') {
+			if ($obj->mode == 'claimed')
+			{
 				$amountclaimed = $obj->mm;
 				$totalclaimed = $totalclaimed + $amountclaimed;
 			}
-			if ($obj->mode == 'paid') {
+			if ($obj->mode == 'paid')
+			{
 				$amountpaid = $obj->mm;
 				$totalpaid = $totalpaid + $amountpaid;
 			}
 
-			if ($obj->mode == 'paid') {
+			if ($obj->mode == 'paid')
+			{
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$obj->dm."</td>\n";
 				print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
@@ -191,7 +178,8 @@ function pt($db, $sql, $date)
 			$i++;
 		}
 
-		if ($mode == 'claimed' && !empty($previousmode)) {
+		if ($mode == 'claimed' && !empty($previousmode))
+		{
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$previousmonth."</td>\n";
 			print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
@@ -221,6 +209,7 @@ function pt($db, $sql, $date)
  * View
  */
 
+$form = new Form($db);
 $company_static = new Societe($db);
 $tva = new Tva($db);
 
@@ -233,36 +222,20 @@ $description = $fsearch;
 // Show report header
 $name = $langs->trans("VATReportByMonth");
 $calcmode = '';
-if ($modetax == 0) {
-	$calcmode = $langs->trans('OptionVATDefault');
-}
-if ($modetax == 1) {
-	$calcmode = $langs->trans('OptionVATDebitOption');
-}
-if ($modetax == 2) {
-	$calcmode = $langs->trans('OptionPaymentForProductAndServices');
-}
+if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
+if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
+if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 
 $description .= $langs->trans("VATSummary").'<br>';
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
-	$description .= $langs->trans("RulesVATDueProducts");
-}
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
-	$description .= $langs->trans("RulesVATInProducts");
-}
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
-	$description .= '<br>'.$langs->trans("RulesVATDueServices");
-}
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
-	$description .= '<br>'.$langs->trans("RulesVATInServices");
-}
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description .= $langs->trans("RulesVATDueProducts");
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description .= $langs->trans("RulesVATInProducts");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description .= '<br>'.$langs->trans("RulesVATDueServices");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description .= '<br>'.$langs->trans("RulesVATInServices");
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
-	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
-}
+if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
@@ -304,14 +277,11 @@ $mend = $tmp['mon'];
 $total = 0; $subtotalcoll = 0; $subtotalpaye = 0; $subtotal = 0;
 $i = 0; $mcursor = 0;
 
-while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $mcursor is to avoid too large loop
+while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mcursor is to avoid too large loop
+{
 	//$m = $conf->global->SOCIETE_FISCAL_MONTH_START + ($mcursor % 12);
-	if ($m == 13) {
-		$y++;
-	}
-	if ($m > 12) {
-		$m -= 12;
-	}
+	if ($m == 13) $y++;
+	if ($m > 12) $m -= 12;
 	$mcursor++;
 
 	$x_coll = tax_by_rate('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
@@ -319,14 +289,15 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 
 	$x_both = array();
 	//now, from these two arrays, get another array with one rate per line
-	foreach (array_keys($x_coll) as $my_coll_rate) {
+	foreach (array_keys($x_coll) as $my_coll_rate)
+	{
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 		$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
 		$x_both[$my_coll_rate]['paye']['vat'] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
 		$x_both[$my_coll_rate]['coll']['detail'] = array();
-		foreach ($x_coll[$my_coll_rate]['facid'] as $id => $dummy) {
+		foreach ($x_coll[$my_coll_rate]['facid'] as $id=>$dummy) {
 			//$invoice_customer->id=$x_coll[$my_coll_rate]['facid'][$id];
 			//$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
 			//$invoice_customer->type=$x_coll[$my_coll_rate]['type'][$id];
@@ -365,9 +336,11 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 		$x_both[$my_paye_rate]['paye']['links'] = '';
 		$x_both[$my_paye_rate]['paye']['detail'] = array();
 
-		foreach ($x_paye[$my_paye_rate]['facid'] as $id => $dummy) {
+		foreach ($x_paye[$my_paye_rate]['facid'] as $id=>$dummy)
+		{
 			// ExpenseReport
-			if ($x_paye[$my_paye_rate]['ptype'][$id] == 'ExpenseReportPayment') {
+			if ($x_paye[$my_paye_rate]['ptype'][$id] == 'ExpenseReportPayment')
+			{
 				//$expensereport->id=$x_paye[$my_paye_rate]['facid'][$id];
 				//$expensereport->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 				//$expensereport->type=$x_paye[$my_paye_rate]['type'][$id];
@@ -430,12 +403,14 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-	if (!is_array($x_coll) && $coll_listbuy == -1) {
+	if (!is_array($x_coll) && $coll_listbuy == -1)
+	{
 		$langs->load("errors");
 		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 		break;
 	}
-	if (!is_array($x_paye) && $coll_listbuy == -2) {
+	if (!is_array($x_paye) && $coll_listbuy == -2)
+	{
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 		break;
 	}
@@ -445,14 +420,17 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/tva/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y").'</a></td>';
 
 	$x_coll_sum = 0;
-	foreach (array_keys($x_coll) as $rate) {
+	foreach (array_keys($x_coll) as $rate)
+	{
 		$subtot_coll_total_ht = 0;
 		$subtot_coll_vat = 0;
 
-		foreach ($x_both[$rate]['coll']['detail'] as $index => $fields) {
+		foreach ($x_both[$rate]['coll']['detail'] as $index => $fields)
+		{
 			// Payment
 			$ratiopaymentinvoice = 1;
-			if ($modetax != 1) {
+			if ($modetax != 1)
+			{
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -466,7 +444,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				}
 
 				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
+				{
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -485,14 +464,17 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	print '<td class="nowrap right">'.price(price2num($x_coll_sum, 'MT')).'</td>';
 
 	$x_paye_sum = 0;
-	foreach (array_keys($x_paye) as $rate) {
+	foreach (array_keys($x_paye) as $rate)
+	{
 		$subtot_paye_total_ht = 0;
 		$subtot_paye_vat = 0;
 
-		foreach ($x_both[$rate]['paye']['detail'] as $index => $fields) {
+		foreach ($x_both[$rate]['paye']['detail'] as $index => $fields)
+		{
 			// Payment
 			$ratiopaymentinvoice = 1;
-			if ($modetax != 1) {
+			if ($modetax != 1)
+			{
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -506,7 +488,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 				}
 
 				if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
+					|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
+				{
 					//print $langs->trans("NA");
 				} else {
 					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
@@ -536,7 +519,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	print "</tr>\n";
 
 	$i++; $m++;
-	if ($i > 2) {
+	if ($i > 2)
+	{
 		print '<tr class="liste_total">';
 		print '<td class="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m / 3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
 		print '<td class="nowrap right">'.price(price2num($subtotalcoll, 'MT')).'</td>';
@@ -559,32 +543,73 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * VAT Paid
+ * Paid
  */
 
 print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
 $sql = '';
 
-$sql .= "SELECT SUM(amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'claimed' as mode";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva";
-$sql .= " WHERE tva.entity = ".$conf->entity;
-$sql .= " AND (tva.datev >= '".$db->idate($date_start)."' AND tva.datev <= '".$db->idate($date_end)."')";
+$sql .= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed' as mode";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
+$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
 $sql .= " GROUP BY dm";
 
 $sql .= " UNION ";
 
-$sql .= "SELECT SUM(ptva.amount) as mm, date_format(tva.datev,'%Y-%m') as dm, 'paid' as mode";
-$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva";
-$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON (tva.rowid = ptva.fk_tva)";
-$sql .= " WHERE tva.entity = ".$conf->entity;
-$sql .= " AND (tva.datev >= '".$db->idate($date_start)."' AND tva.datev <= '".$db->idate($date_end)."')";
+$sql .= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as mode";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
+$sql .= " WHERE f.entity = ".$conf->entity;
+$sql .= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
 $sql .= " GROUP BY dm";
 
 $sql .= " ORDER BY dm ASC, mode ASC";
 //print $sql;
 
 pt($db, $sql, $langs->trans("Month"));
+
+
+if (!empty($conf->global->MAIN_FEATURES_LEVEL))
+{
+	print '<br>';
+
+	/*
+     * Recap
+     */
+
+	print load_fiche_titre($langs->trans("VATBalance"), '', ''); // need to add translation
+
+	$sql1 = "SELECT SUM(amount) as mm";
+	$sql1 .= " FROM ".MAIN_DB_PREFIX."tva as f";
+	$sql1 .= " WHERE f.entity = ".$conf->entity;
+	$sql1 .= " AND f.datev >= '".$db->idate($date_start)."'";
+	$sql1 .= " AND f.datev <= '".$db->idate($date_end)."'";
+
+	$result = $db->query($sql1);
+	if ($result) {
+		$obj = $db->fetch_object($result);
+		print '<table class="noborder centpercent">';
+
+		print "<tr>";
+		print '<td class="right">'.$langs->trans("VATDue").'</td>';
+		print '<td class="nowrap right">'.price(price2num($total, 'MT')).'</td>';
+		print "</tr>\n";
+
+		print "<tr>";
+		print '<td class="right">'.$langs->trans("VATPaid").'</td>';
+		print '<td class="nowrap right">'.price(price2num($obj->mm, 'MT'))."</td>\n";
+		print "</tr>\n";
+
+		$restopay = $total - $obj->mm;
+		print "<tr>";
+		print '<td class="right">'.$langs->trans("RemainToPay").'</td>';
+		print '<td class="nowrap right">'.price(price2num($restopay, 'MT')).'</td>';
+		print "</tr>\n";
+
+		print '</table>';
+	}
+}
 
 print '</div></div>';
 

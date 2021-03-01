@@ -47,7 +47,8 @@ function receiptprinteradmin_prepare_head($mode)
 	$head[$h][2] = 'template';
 	$h++;
 
-	if ($mode == 'test') {
+	if ($mode == 'test')
+	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/receiptprinter.php?mode=test";
 		$head[$h][1] = $langs->trans("TargetedPrinter");
 		$head[$h][2] = 'test';

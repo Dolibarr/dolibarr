@@ -111,16 +111,15 @@ class ExpenseReportIk extends CoreObject
 		$sql = 'SELECT rowid, label, entity, active';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat';
 		$sql .= ' WHERE entity IN ('.getEntity('c_exp_tax_cat').')';
-		if ($mode == 1) {
-			$sql .= ' AND active = 1';
-		} elseif ($mode == 2) {
-			$sql .= 'AND active = 0';
-		}
+		if ($mode == 1) $sql .= ' AND active = 1';
+		elseif ($mode == 2) $sql .= 'AND active = 0';
 
 		dol_syslog(get_called_class().'::getTaxCategories sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql) {
-			while ($obj = $db->fetch_object($resql)) {
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql))
+			{
 				$categories[$obj->rowid] = $obj;
 			}
 		} else {
@@ -143,11 +142,8 @@ class ExpenseReportIk extends CoreObject
 		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
 
 		// substract 1 because array start from 0
-		if (empty($ranges) || !isset($ranges[$default_range - 1])) {
-			return false;
-		} else {
-			return $ranges[$default_range - 1];
-		}
+		if (empty($ranges) || !isset($ranges[$default_range - 1])) return false;
+		else return $ranges[$default_range - 1];
 	}
 
 	/**
@@ -164,21 +160,20 @@ class ExpenseReportIk extends CoreObject
 		$ranges = array();
 
 		$sql = 'SELECT r.rowid FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
-		if ($active) {
-			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
-		}
+		if ($active) $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.$fk_c_exp_tax_cat;
-		if ($active) {
-			$sql .= ' AND r.active = 1 AND c.active = 1';
-		}
+		if ($active) $sql .= ' AND r.active = 1 AND c.active = 1';
 		$sql .= ' ORDER BY r.range_ik';
 
 		dol_syslog(get_called_class().'::getRangesByCategory sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $db->num_rows($resql);
-			if ($num > 0) {
-				while ($obj = $db->fetch_object($resql)) {
+			if ($num > 0)
+			{
+				while ($obj = $db->fetch_object($resql))
+				{
 					$object = new ExpenseReportIk($db);
 					$object->fetch($obj->rowid);
 
@@ -212,17 +207,15 @@ class ExpenseReportIk extends CoreObject
 
 		dol_syslog(get_called_class().'::getAllRanges sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql) {
-			while ($obj = $db->fetch_object($resql)) {
+		if ($resql)
+		{
+			while ($obj = $db->fetch_object($resql))
+			{
 				$ik = new ExpenseReportIk($db);
-				if ($obj->fk_expense_ik > 0) {
-					$ik->fetch($obj->fk_expense_ik);
-				}
+				if ($obj->fk_expense_ik > 0) $ik->fetch($obj->fk_expense_ik);
 				$obj->ik = $ik;
 
-				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) {
-					$ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
-				}
+				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) $ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
 				$ranges[$obj->fk_c_exp_tax_cat]['ranges'][] = $obj;
 			}
 		} else {
@@ -246,15 +239,14 @@ class ExpenseReportIk extends CoreObject
 		$sql .= ' SELECT COUNT(*) as counted';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' WHERE r.entity IN (0, '.$conf->entity.')';
-		if ($default_c_exp_tax_cat > 0) {
-			$sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
-		}
+		if ($default_c_exp_tax_cat > 0) $sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
 		$sql .= ' GROUP BY r.fk_c_exp_tax_cat';
 		$sql .= ') as counts';
 
 		dol_syslog(get_called_class().'::getMaxRangeNumber sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$obj = $db->fetch_object($resql);
 			return $obj->nbRange;
 		} else {

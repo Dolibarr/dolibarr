@@ -36,15 +36,18 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled))
+{
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if ($conf->contrat->enabled) {
+if ($conf->contrat->enabled)
+{
 	require_once DOL_DOCUMENT_ROOT."/core/class/html.formcontract.class.php";
 	require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 }
-if (!empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php")) {
+if (!empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
+{
 	require_once DOL_DOCUMENT_ROOT."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.'.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -72,9 +75,7 @@ $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -86,14 +87,11 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-if ($id > 0 || !empty($ref)) {
+if ($id > 0 || !empty($ref))
+{
 	$ret = $object->fetch($id, $ref);
-	if ($ret > 0) {
-		$ret = $object->fetch_thirdparty();
-	}
-	if ($ret < 0) {
-		dol_print_error('', $object->error);
-	}
+	if ($ret > 0) $ret = $object->fetch_thirdparty();
+	if ($ret < 0) dol_print_error('', $object->error);
 }
 
 $permissionnote = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
@@ -108,13 +106,14 @@ $error = 0;
 
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
-	if ($cancel) {
-		if (!empty($backtopage)) {
+if (empty($reshook))
+{
+	if ($cancel)
+	{
+		if (!empty($backtopage))
+		{
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -126,16 +125,20 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->ficheinter->creer) {
-		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	{
+		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers'))
+		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			if ($object->id > 0) {
+			if ($object->id > 0)
+			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
 
 				$result = $object->createFromClone($user, $socid);
-				if ($result > 0) {
+				if ($result > 0)
+				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
 				} else {
@@ -147,21 +150,21 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer) {
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->setValid($user);
 
-		if ($result >= 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result >= 0)
+		{
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-					$newlang = GETPOST('lang_id', 'aZ09');
-				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
-				}
-				if (!empty($newlang)) {
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang))
+				{
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -175,17 +178,15 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer) {
 		$result = $object->setDraft($user);
-		if ($result >= 0) {
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result >= 0)
+		{
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-					$newlang = GETPOST('lang_id', 'aZ09');
-				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
-				}
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -199,7 +200,6 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $user->rights->ficheinter->creer) {
-		$selectedLines = GETPOST('toselect', 'array');
 		$object->socid = $socid;
 		$object->duration = (int) GETPOST('duration', 'int');
 		$object->fk_project = (int) GETPOST('projectid', 'int');
@@ -211,13 +211,16 @@ if (empty($reshook)) {
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
 
-		if ($object->socid > 0) {
+		if ($object->socid > 0)
+		{
 			// If creation from another object of another module (Example: origin=propal, originid=1)
-			if (!empty($origin) && !empty($originid)) {
+			if (!empty($origin) && !empty($originid))
+			{
 				// Parse element/subelement (ex: project_task)
 				$regs = array();
 				$element = $subelement = GETPOST('origin', 'alphanohtml');
-				if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs)) {
+				if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
+				{
 					$element = $regs[1];
 					$subelement = $regs[2];
 				}
@@ -238,7 +241,8 @@ if (empty($reshook)) {
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects[$object->origin] = $object->origin_id;
-				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
+				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects']))
+				{
 					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 				}
 
@@ -256,7 +260,8 @@ if (empty($reshook)) {
 
 				$id = $object->create($user);
 
-				if ($id > 0) {
+				if ($id > 0)
+				{
 					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
 					$classname = ucfirst($subelement);
@@ -264,10 +269,12 @@ if (empty($reshook)) {
 
 					dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
 					$result = $srcobject->fetch($object->origin_id);
-					if ($result > 0) {
+					if ($result > 0)
+					{
 						$srcobject->fetch_thirdparty();
 						$lines = $srcobject->lines;
-						if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
+						if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
+						{
 							$srcobject->fetch_lines();
 							$lines = $srcobject->lines;
 						}
@@ -275,18 +282,16 @@ if (empty($reshook)) {
 						if (is_array($lines)) {
 							$num = count($lines);
 
-							for ($i = 0; $i < $num; $i++) {
-								if (!in_array($lines[$i]->id, $selectedLines)) {
-									continue; // Skip unselected lines
-								}
-
+							for ($i = 0; $i < $num; $i++)
+							{
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
 								if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
 									$duration = 3600; // Default to one hour
 
 									// Predefined products & services
-									if ($lines[$i]->fk_product > 0) {
+									if ($lines[$i]->fk_product > 0)
+									{
 										$prod = new Product($db);
 										$prod->id = $lines[$i]->fk_product;
 
@@ -297,12 +302,8 @@ if (empty($reshook)) {
 											$prod->fetch($lines[$i]->fk_product);
 											$outputlangs = $langs;
 											$newlang = '';
-											if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-												$newlang = GETPOST('lang_id', 'aZ09');
-											}
-											if (empty($newlang)) {
-												$newlang = $srcobject->thirdparty->default_lang;
-											}
+											if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+											if (empty($newlang)) $newlang = $srcobject->thirdparty->default_lang;
 											if (!empty($newlang)) {
 												$outputlangs = new Translate("", $conf);
 												$outputlangs->setDefaultLang($newlang);
@@ -363,11 +364,12 @@ if (empty($reshook)) {
 										$id,
 										$desc,
 										$date_intervention,
-										$duration,
-										$array_options
+						 				$duration,
+						 				$array_options
 									);
 
-									if ($result < 0) {
+									if ($result < 0)
+									{
 										$error++;
 										break;
 									}
@@ -390,14 +392,16 @@ if (empty($reshook)) {
 					$action = 'create';
 				}
 
-				if (!$error) {
+				if (!$error)
+				{
 					// Extrafields
 					$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 					$object->array_options = $array_options;
 
 					$result = $object->create($user);
-					if ($result > 0) {
+					if ($result > 0)
+					{
 						$id = $result; // Force raffraichissement sur fiche venant d'etre cree
 					} else {
 						$langs->load("errors");
@@ -422,19 +426,22 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'classin' && $user->rights->ficheinter->creer) {
-		// Set into a project
+	}
+
+	// Set into a project
+	elseif ($action == 'classin' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->setProject(GETPOST('projectid', 'int'));
-		if ($result < 0) {
-			dol_print_error($db, $object->error);
-		}
-	} elseif ($action == 'setcontract' && $user->rights->contrat->creer) {
-		// Set into a contract
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+
+	// Set into a contract
+	elseif ($action == 'setcontract' && $user->rights->contrat->creer)
+	{
 		$result = $object->set_contrat($user, GETPOST('contratid', 'int'));
-		if ($result < 0) {
-			dol_print_error($db, $object->error);
-		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->ficheinter->supprimer) {
+		if ($result < 0) dol_print_error($db, $object->error);
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->ficheinter->supprimer)
+	{
 		$result = $object->delete($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -442,26 +449,32 @@ if (empty($reshook)) {
 
 		header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter&restore_lastsearch_values=1');
 		exit;
-	} elseif ($action == 'setdescription' && $user->rights->ficheinter->creer) {
+	} elseif ($action == 'setdescription' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->set_description($user, GETPOST('description'));
-		if ($result < 0) {
-			dol_print_error($db, $object->error);
-		}
-	} elseif ($action == "addline" && $user->rights->ficheinter->creer) {
-		// Add line
-		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+
+	// Add line
+	elseif ($action == "addline" && $user->rights->ficheinter->creer)
+	{
+		if (!GETPOST('np_desc', 'restricthtml') && empty($conf->global->FICHINTER_EMPTY_LINE_DESC))
+ 		{
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description"));
 			$error++;
 		}
-		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int')) {
+		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && !GETPOST('durationhour', 'int') && !GETPOST('durationmin', 'int'))
+		{
 			$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Duration"));
 			$error++;
 		}
-		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0) {
+		if (empty($conf->global->FICHINTER_WITHOUT_DURATION) && GETPOST('durationhour', 'int') >= 24 && GETPOST('durationmin', 'int') > 0)
+		{
 			$mesg = $langs->trans("ErrorValueTooHigh");
 			$error++;
 		}
-		if (!$error) {
+		if (!$error)
+		{
 			$db->begin();
 
 			$desc = GETPOST('np_desc', 'restricthtml');
@@ -484,23 +497,19 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-				$newlang = GETPOST('lang_id', 'aZ09');
-			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-				$newlang = $object->thirdparty->default_lang;
-			}
-			if (!empty($newlang)) {
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
+			if (!empty($newlang))
+			{
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
 
-			if ($result >= 0) {
+			if ($result >= 0)
+			{
 				$db->commit();
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					fichinter_create($db, $object, $object->model_pdf, $outputlangs);
-				}
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 				exit;
 			} else {
@@ -508,8 +517,11 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 		}
-	} elseif ($action == 'classifybilled' && $user->rights->ficheinter->creer) {
-		// Classify Billed
+	}
+
+	// Classify Billed
+	elseif ($action == 'classifybilled' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->setStatut(2);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -517,42 +529,61 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'classifyunbilled' && $user->rights->ficheinter->creer) {
-		// Classify unbilled
+	}
+
+	// Classify unbilled
+	elseif ($action == 'classifyunbilled' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->setStatut(1);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'classifydone' && $user->rights->ficheinter->creer) {
-		// Classify Done
+	}
+
+	// Classify Done
+	elseif ($action == 'classifydone' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->setStatut(3);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_reopen' && $user->rights->ficheinter->creer) {
-		// Reopen
+	}
+
+	// Reopen
+	elseif ($action == 'confirm_reopen' && $user->rights->ficheinter->creer)
+	{
 		$result = $object->setStatut(Fichinter::STATUS_VALIDATED);
-		if ($result > 0) {
+		if ($result > 0)
+		{
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
-		} else {
+		}
+		else {
 			$mesg = $object->error;
 		}
-	} elseif ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save', 'alpha') == $langs->trans("Save")) {
-		// Mise a jour d'une ligne d'intervention
+	}
+
+	/*
+	 *  Mise a jour d'une ligne d'intervention
+	 */
+	elseif ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save', 'alpha') == $langs->trans("Save")) {
 		$objectline = new FichinterLigne($db);
-		if ($objectline->fetch($lineid) <= 0) {
+		if ($objectline->fetch($lineid) <= 0)
+		{
 			dol_print_error($db);
 			exit;
 		}
 
-		if ($object->fetch($objectline->fk_fichinter) <= 0) {
+		if ($object->fetch($objectline->fk_fichinter) <= 0)
+		{
 			dol_print_error($db);
 			exit;
 		}
@@ -572,7 +603,8 @@ if (empty($reshook)) {
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
-		if ($result < 0) {
+		if ($result < 0)
+		{
 			dol_print_error($db);
 			exit;
 		}
@@ -580,32 +612,34 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-			$newlang = GETPOST('lang_id', 'aZ09');
-		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-			$newlang = $object->thirdparty->default_lang;
-		}
-		if (!empty($newlang)) {
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
+		if (!empty($newlang))
+		{
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
-		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
-	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->ficheinter->creer) {
-		// Supprime une ligne d'intervention AVEC confirmation
+	}
+
+	/*
+	 *  Supprime une ligne d'intervention AVEC confirmation
+	*/
+	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	{
 		$objectline = new FichinterLigne($db);
-		if ($objectline->fetch($lineid) <= 0) {
+		if ($objectline->fetch($lineid) <= 0)
+		{
 			dol_print_error($db);
 			exit;
 		}
 		$result = $objectline->deleteline($user);
 
-		if ($object->fetch($objectline->fk_fichinter) <= 0) {
+		if ($object->fetch($objectline->fk_fichinter) <= 0)
+		{
 			dol_print_error($db);
 			exit;
 		}
@@ -613,61 +647,52 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-			$newlang = GETPOST('lang_id', 'aZ09');
-		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-			$newlang = $object->thirdparty->default_lang;
-		}
-		if (!empty($newlang)) {
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
+		if (!empty($newlang))
+		{
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
-		}
-	} elseif ($action == 'up' && $user->rights->ficheinter->creer) {
-		// Set position of lines
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
+	}
+
+	/*
+	 * Set position of lines
+	 */
+	elseif ($action == 'up' && $user->rights->ficheinter->creer)
+	{
 		$object->line_up($lineid);
 
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-			$newlang = GETPOST('lang_id', 'aZ09');
-		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-			$newlang = $object->thirdparty->default_lang;
-		}
-		if (!empty($newlang)) {
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
+		if (!empty($newlang))
+		{
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
-		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
-	} elseif ($action == 'down' && $user->rights->ficheinter->creer) {
+	} elseif ($action == 'down' && $user->rights->ficheinter->creer)
+	{
 		$object->line_down($lineid);
 
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-			$newlang = GETPOST('lang_id', 'aZ09');
-		}
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-			$newlang = $object->thirdparty->default_lang;
-		}
-		if (!empty($newlang)) {
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
+		if (!empty($newlang))
+		{
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			fichinter_create($db, $object, $object->model_pdf, $outputlangs);
-		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) fichinter_create($db, $object, $object->model_pdf, $outputlangs);
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
@@ -687,55 +712,66 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->rights->ficheinter->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras')
+	{
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
-		if ($ret < 0) {
-			$error++;
-		}
+		if ($ret < 0) $error++;
 
-		if (!$error) {
+		if (!$error)
+		{
 			// Actions on extra fields
 			$result = $object->insertExtraFields('INTERVENTION_MODIFY');
-			if ($result < 0) {
+			if ($result < 0)
+			{
 				$error++;
 			}
 		}
 
-		if ($error) {
-			$action = 'edit_extras';
-		}
+		if ($error) $action = 'edit_extras';
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheinter->creer) {
-		if ($action == 'addcontact') {
-			if ($result > 0 && $id > 0) {
+	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->ficheinter->creer)
+	{
+		if ($action == 'addcontact')
+		{
+			if ($result > 0 && $id > 0)
+			{
 				$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
 
-			if ($result >= 0) {
+			if ($result >= 0)
+			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			} else {
-				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				{
 					$langs->load("errors");
 					$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 				} else {
 					$mesg = $object->error;
 				}
 			}
-		} elseif ($action == 'swapstatut') {
-			// bascule du statut d'un contact
+		}
+
+		// bascule du statut d'un contact
+		elseif ($action == 'swapstatut')
+		{
 			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-		} elseif ($action == 'deletecontact') {
-			// Efface un contact
+		}
+
+		// Efface un contact
+		elseif ($action == 'deletecontact')
+		{
 			$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
-			if ($result >= 0) {
+			if ($result >= 0)
+			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			} else {
@@ -752,16 +788,13 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if ($conf->contrat->enabled) {
-	$formcontract = new FormContract($db);
-}
-if (!empty($conf->projet->enabled)) {
-	$formproject = new FormProjets($db);
-}
+if ($conf->contrat->enabled) $formcontract = new FormContract($db);
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 llxHeader('', $langs->trans("Intervention"));
 
-if ($action == 'create') {
+if ($action == 'create')
+{
 	// Create new intervention
 
 	$soc = new Societe($db);
@@ -774,20 +807,21 @@ if ($action == 'create') {
 		dol_htmloutput_mesg($mesg);
 	}
 
-	if ($socid) {
-		$res = $soc->fetch($socid);
-	}
+	if ($socid) $res = $soc->fetch($socid);
 
-	if (GETPOST('origin', 'alphanohtml') && GETPOST('originid', 'int')) {
+	if (GETPOST('origin', 'alphanohtml') && GETPOST('originid', 'int'))
+	{
 		// Parse element/subelement (ex: project_task)
 		$regs = array();
 		$element = $subelement = GETPOST('origin', 'alphanohtml');
-		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs)) {
+		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin', 'alphanohtml'), $regs))
+		{
 			$element = $regs[1];
 			$subelement = $regs[2];
 		}
 
-		if ($element == 'project') {
+		if ($element == 'project')
+		{
 			$projectid = GETPOST('originid', 'int');
 		} else {
 			// For compatibility
@@ -806,7 +840,8 @@ if ($action == 'create') {
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch(GETPOST('originid'));
-			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
+			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+			{
 				$objectsrc->fetch_lines();
 				$lines = $objectsrc->lines;
 			}
@@ -826,7 +861,8 @@ if ($action == 'create') {
 		$projectid = GETPOST('projectid', 'int');
 	}
 
-	if (!$conf->global->FICHEINTER_ADDON) {
+	if (!$conf->global->FICHEINTER_ADDON)
+	{
 		dol_print_error($db, $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
 		exit;
 	}
@@ -839,7 +875,8 @@ if ($action == 'create') {
 	//$modFicheinter = new $obj;
 	//$numpr = $modFicheinter->getNextValue($soc, $object);
 
-	if ($socid > 0) {
+	if ($socid > 0)
+	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 
@@ -864,31 +901,35 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (!empty($conf->projet->enabled))
+		{
 			$formproject = new FormProjets($db);
 
 			$langs->load("project");
 
 			print '<tr><td>'.$langs->trans("Project").'</td><td>';
 			/* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
-			if ($societe->fournisseur==1)
-				$numprojet=select_projects(-1,$_POST["projectid"],'projectid');
-			else
-				$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
-				*/
+            if ($societe->fournisseur==1)
+            	$numprojet=select_projects(-1,$_POST["projectid"],'projectid');
+            else
+            	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
+            	*/
 			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
-			if ($numprojet == 0) {
+			if ($numprojet == 0)
+			{
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 			}
 			print '</td></tr>';
 		}
 
 		// Contract
-		if ($conf->contrat->enabled) {
+		if ($conf->contrat->enabled)
+		{
 			$langs->load("contracts");
 			print '<tr><td>'.$langs->trans("Contract").'</td><td>';
 			$numcontrat = $formcontract->select_contract($soc->id, GETPOST('contratid', 'int'), 'contratid', 0, 1, 1);
-			if ($numcontrat == 0) {
+			if ($numcontrat == 0)
+			{
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$soc->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddContract").'"></span></a>';
 			}
 			print '</td></tr>';
@@ -906,17 +947,18 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
 
 		// Private note
-		if (empty($user->socid)) {
+		if (empty($user->socid))
+		{
 			print '<tr>';
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -926,46 +968,47 @@ if ($action == 'create') {
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook)) {
+		if (empty($reshook))
+		{
 			print $object->showOptionals($extrafields, 'edit');
 		}
 
 		// Show link to origin object
-		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
+		if (!empty($origin) && !empty($originid) && is_object($objectsrc))
+		{
 			$newclassname = $classname;
-			if ($newclassname == 'Propal') {
-				$newclassname = 'CommercialProposal';
-			}
+			if ($newclassname == 'Propal') $newclassname = 'CommercialProposal';
 			print '<tr><td>'.$langs->trans($newclassname).'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
 
 			// Amount
 			/* Hide amount because we only copy services so amount may differ than source
-			print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
-			print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
-			if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
-			{
-				print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1) . "</td></tr>";
-			}
+        	print '<tr><td>' . $langs->trans('AmountHT') . '</td><td>' . price($objectsrc->total_ht) . '</td></tr>';
+        	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($objectsrc->total_tva) . "</td></tr>";
+        	if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
+        	{
+        		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax1) . "</td></tr>";
+        	}
 
-			if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
-			{
-				print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2) . "</td></tr>";
-			}
+        	if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
+        	{
+        		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td>' . price($objectsrc->total_localtax2) . "</td></tr>";
+        	}
 
-			print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
+        	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td>' . price($objectsrc->total_ttc) . "</td></tr>";
 
-			if (!empty($conf->multicurrency->enabled))
-			{
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-				print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
-			}
-			*/
+        	if (!empty($conf->multicurrency->enabled))
+        	{
+        		print '<tr><td>' . $langs->trans('MulticurrencyAmountHT') . '</td><td>' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
+        		print '<tr><td>' . $langs->trans('MulticurrencyAmountVAT') . '</td><td>' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
+        		print '<tr><td>' . $langs->trans('MulticurrencyAmountTTC') . '</td><td>' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
+        	}
+        	*/
 		}
 
 		print '</table>';
 
-		if (is_object($objectsrc)) {
+		if (is_object($objectsrc))
+		{
 			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		} elseif ($origin == 'project' && !empty($projectid)) {
@@ -980,6 +1023,8 @@ if ($action == 'create') {
 		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
+		print '</form>';
+
 		// Show origin lines
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
 			$title = $langs->trans('Services');
@@ -991,15 +1036,14 @@ if ($action == 'create') {
 
 			print '</table>';
 		}
-
-		print '</form>';
 	} else {
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
 		print dol_get_fiche_head('');
 
-		if (is_object($objectsrc)) {
+		if (is_object($objectsrc))
+		{
 			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 		} elseif ($origin == 'project' && !empty($projectid)) {
@@ -1023,10 +1067,11 @@ if ($action == 'create') {
 
 		print '</form>';
 	}
-} elseif ($id > 0 || !empty($ref)) {
+} elseif ($id > 0 || !empty($ref))
+{
 	/*
 	 * Affichage en mode visu
-	  */
+ 	 */
 
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
@@ -1047,17 +1092,21 @@ if ($action == 'create') {
 	$formconfirm = '';
 
 	// Confirm deletion of intervention
-	if ($action == 'delete') {
+	if ($action == 'delete')
+	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirm validation
-	if ($action == 'validate') {
+	if ($action == 'validate')
+	{
 		// on verifie si l'objet est en numerotation provisoire
 		$ref = substr($object->ref, 1, 4);
-		if ($ref == 'PROV') {
+		if ($ref == 'PROV')
+		{
 			$numref = $object->getNextNumRef($soc);
-			if (empty($numref)) {
+			if (empty($numref))
+			{
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1070,17 +1119,20 @@ if ($action == 'create') {
 	}
 
 	// Confirm back to draft
-	if ($action == 'modify') {
+	if ($action == 'modify')
+	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify', '', 0, 1);
 	}
 
 	// Confirm back to open
-	if ($action == 'reopen') {
+	if ($action == 'reopen')
+	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Reopen'), $langs->trans('ConfirmReopenIntervention', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirm deletion of line
-	if ($action == 'ask_deleteline') {
+	if ($action == 'ask_deleteline')
+	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
@@ -1098,14 +1150,12 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if (!$formconfirm) {
+	if (!$formconfirm)
+	{
 		$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) {
-			$formconfirm .= $hookmanager->resPrint;
-		} elseif ($reshook > 0) {
-			$formconfirm = $hookmanager->resPrint;
-		}
+		if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
 	}
 
 	// Print form confirm
@@ -1123,10 +1173,12 @@ if ($action == 'create') {
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->projet->enabled))
+	{
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->ficheinter->creer) {
+		if ($user->rights->ficheinter->creer)
+		{
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
@@ -1164,7 +1216,8 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield" width="100%">';
 
-	if (!empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES)) {
+	if (!empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
+	{
 		// Date Start
 		print '<tr><td class="titlefield">'.$langs->trans("Dateo").'</td>';
 		print '<td>';
@@ -1196,7 +1249,8 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Contract
-	if ($conf->contrat->enabled) {
+	if ($conf->contrat->enabled)
+	{
 		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
@@ -1204,18 +1258,21 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Contract');
 		print '</td>';
-		if ($action != 'contrat') {
+		if ($action != 'contrat')
+		{
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
 			print img_edit($langs->trans('SetContract'), 1);
 			print '</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'contrat') {
+		if ($action == 'contrat')
+		{
 			$formcontract = new Formcontract($db);
 			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1, 1);
 		} else {
-			if ($object->fk_contrat) {
+			if ($object->fk_contrat)
+			{
 				$contratstatic = new Contrat($db);
 				$contratstatic->fetch($object->fk_contrat);
 				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
@@ -1241,7 +1298,8 @@ if ($action == 'create') {
 
 	print '<table class="border tableforfield centpercent">';
 
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
 		// Duration
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
 		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
@@ -1257,20 +1315,23 @@ if ($action == 'create') {
 	print '<div class="clearboth"></div><br>';
 
 
-	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
-	if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{
 		$blocname = 'notes';
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
 
 	// Line of interventions
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
+ 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+ 	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1292,11 +1353,13 @@ if ($action == 'create') {
 		$sql .= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
 
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $db->num_rows($resql);
 			$i = 0;
 
-			if ($num) {
+			if ($num)
+			{
 				print '<br>';
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
@@ -1338,7 +1401,8 @@ if ($action == 'create') {
 					print "</td>\n";
 
 					// Icon to edit and delete
-					if ($object->statut == 0 && $user->rights->ficheinter->creer) {
+					if ($object->statut == 0 && $user->rights->ficheinter->creer)
+					{
 						print '<td class="center">';
 						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
@@ -1347,13 +1411,16 @@ if ($action == 'create') {
 						print img_delete();
 						print '</a></td>';
 						print '<td class="center">';
-						if ($num > 1) {
-							if ($i > 0) {
+						if ($num > 1)
+						{
+							if ($i > 0)
+							{
 								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=up&amp;line_id='.$objp->rowid.'">';
 								print img_up();
 								print '</a>';
 							}
-							if ($i < $num - 1) {
+							if ($i < $num - 1)
+							{
 								print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=down&amp;line_id='.$objp->rowid.'">';
 								print img_down();
 								print '</a>';
@@ -1377,7 +1444,8 @@ if ($action == 'create') {
 				}
 
 				// Line in update mode
-				if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id', 'int') == $objp->rowid) {
+				if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id', 'int') == $objp->rowid)
+				{
 					print '<tr class="oddeven nohover">';
 
 					// No.
@@ -1407,9 +1475,8 @@ if ($action == 'create') {
 					print '<td class="right">';
 					if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
 						$selectmode = 'select';
-						if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) {
+						if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
 							$selectmode = 'text';
-						}
 						$form->select_duration('duration', $objp->duree, 0, $selectmode);
 					}
 					print '</td>';
@@ -1434,8 +1501,10 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-				if (!$num) {
+			if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
+			{
+				if (!$num)
+				{
 					print '<br>';
 					print '<table class="noborder centpercent">';
 					print '<tr class="liste_titre">';
@@ -1450,7 +1519,7 @@ if ($action == 'create') {
 					print $langs->trans('Description').'</td>';
 					print '<td class="center">'.$langs->trans('Date').'</td>';
 					print '<td class="right">'.(empty($conf->global->FICHINTER_WITHOUT_DURATION) ? $langs->trans('Duration') : '').'</td>';
-					print '<td colspan="3">&nbsp;</td>';
+	  				print '<td colspan="3">&nbsp;</td>';
 					print "</tr>\n";
 				}
 
@@ -1508,20 +1577,16 @@ if ($action == 'create') {
 
 				print $lineadd->showOptionals($extrafields, 'edit', array('colspan'=>5));
 
-				if (!$num) {
-					print '</table>';
-				}
+				if (!$num) print '</table>';
 			}
 
-			if ($num) {
-				print '</table>';
-			}
+			if ($num) print '</table>';
 		} else {
 			dol_print_error($db);
 		}
 
 		print '</form>'."\n";
-	}
+ 	}
 
 	print dol_get_fiche_end();
 
@@ -1537,8 +1602,10 @@ if ($action == 'create') {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 																								  // modified by hook
-	if (empty($reshook)) {
-		if ($user->socid == 0) {
+	if (empty($reshook))
+	{
+		if ($user->socid == 0)
+		{
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
 				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || !empty($conf->global->FICHINTER_DISABLE_DETAILS))) {
@@ -1549,33 +1616,31 @@ if ($action == 'create') {
 				}
 
 				// Modify
-				if ($object->statut == Fichinter::STATUS_VALIDATED && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->unvalidate))) {
+				if ($object->statut == Fichinter::STATUS_VALIDATED && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->unvalidate)))
+				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
-					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
-						print $langs->trans("Modify");
-					} else {
-						print $langs->trans("SetToDraft");
-					}
+					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
+					else print $langs->trans("SetToDraft");
 					print '</a></div>';
 				}
 
 				// Reopen
-				if ($object->statut >= Fichinter::STATUS_CLOSED) {
-					if ($user->rights->ficheinter->creer) {
+				if ($object->statut >= Fichinter::STATUS_CLOSED)
+				{
+					if ($user->rights->ficheinter->creer)
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans('Reopen').'</a></div>';
-					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Reopen').'</a></div>';
-					}
+					} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Reopen').'</a></div>';
 				}
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut > Fichinter::STATUS_DRAFT) {
-						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send) {
+					if ($object->statut > Fichinter::STATUS_DRAFT)
+					{
+						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
+						{
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
-						}
+						} else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
 					}
 				}
 
@@ -1587,30 +1652,30 @@ if ($action == 'create') {
 				}
 
 				// Proposal
-				if ($conf->service->enabled && !empty($conf->propal->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if ($conf->service->enabled && !empty($conf->propal->enabled) && $object->statut > Fichinter::STATUS_DRAFT)
+				{
 					$langs->load("propal");
-					if ($object->statut < Fichinter::STATUS_BILLED) {
-						if ($user->rights->propal->creer) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
-						}
+					if ($object->statut < Fichinter::STATUS_BILLED)
+					{
+						if ($user->rights->propal->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
 					}
 				}
 
 				// Invoicing
-				if (!empty($conf->facture->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (!empty($conf->facture->enabled) && $object->statut > Fichinter::STATUS_DRAFT)
+				{
 					$langs->load("bills");
-					if ($object->statut < Fichinter::STATUS_BILLED) {
-						if ($user->rights->facture->creer) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
-						}
+					if ($object->statut < Fichinter::STATUS_BILLED)
+					{
+						if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddBill").'</a></div>';
 					}
 
-					if (!empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
-						if ($object->statut != Fichinter::STATUS_BILLED) {
+					if (!empty($conf->global->FICHINTER_CLASSIFY_BILLED))    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+					{
+						if ($object->statut != Fichinter::STATUS_BILLED)
+						{
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("InterventionClassifyBilled").'</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifyunbilled">'.$langs->trans("InterventionClassifyUnBilled").'</a></div>';
@@ -1619,7 +1684,8 @@ if ($action == 'create') {
 				}
 
 				// Done
-				if (empty($conf->global->FICHINTER_CLASSIFY_BILLED) && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
+				if (empty($conf->global->FICHINTER_CLASSIFY_BILLED) && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED)
+				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifydone">'.$langs->trans("InterventionClassifyDone").'</a></div>';
 				}
 
@@ -1629,7 +1695,8 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				if (($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer) {
+				if (($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
+				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
@@ -1639,7 +1706,8 @@ if ($action == 'create') {
 
 	print '</div>';
 
-	if ($action != 'presend') {
+	if ($action != 'presend')
+	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
 		/*

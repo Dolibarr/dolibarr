@@ -212,27 +212,24 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Get Mask value
 		$mask = '';
-		if ($type == 0) {
-			$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-		}
-		if ($type == 1) {
-			$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
-		}
-		if (!$mask) {
+		if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+		if ($type == 1) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+		if (!$mask)
+		{
 			$this->error = 'NotConfigured';
 			return '';
 		}
 
 		$field = ''; $where = '';
-		if ($type == 0) {
+		if ($type == 0)
+		{
 			$field = 'code_client';
 			//$where = ' AND client in (1,2)';
-		} elseif ($type == 1) {
+		} elseif ($type == 1)
+		{
 			$field = 'code_fournisseur';
 			//$where = ' AND fournisseur = 1';
-		} else {
-			return -1;
-		}
+		} else return -1;
 
 		$now = dol_now();
 
@@ -254,14 +251,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		global $conf;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-		if (preg_match('/\{pre\}/i', $mask)) {
-			return 1;
-		}
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
 
 		$mask = $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
-		if (preg_match('/\{pre\}/i', $mask)) {
-			return 1;
-		}
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
 
 		return 0;
 	}
@@ -291,25 +284,25 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
+		{
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
+		{
 			$result = -2;
 		} else {
 			// Get Mask value
 			$mask = '';
-			if ($type == 0) {
-				$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
-			}
-			if ($type == 1) {
-				$mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
-			}
-			if (!$mask) {
+			if ($type == 0) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER;
+			if ($type == 1) $mask = empty($conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER) ? '' : $conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER;
+			if (!$mask)
+			{
 				$this->error = 'NotConfigured';
 				return -5;
 			}
 			$result = check_value($mask, $code);
-			if (is_string($result)) {
+			if (is_string($result))
+			{
 				$this->error = $result;
 				return -6;
 			}
@@ -334,18 +327,15 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) {
-			$sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
-		} else {
-			$sql .= " WHERE code_client = '".$db->escape($code)."'";
-		}
-		if ($soc->id > 0) {
-			$sql .= " AND rowid <> ".$soc->id;
-		}
+		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
+		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
 
 		$resql = $db->query($sql);
-		if ($resql) {
-			if ($db->num_rows($resql) == 0) {
+		if ($resql)
+		{
+			if ($db->num_rows($resql) == 0)
+			{
 				return 0;
 			} else {
 				return -1;

@@ -20,9 +20,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
-}
+if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -38,7 +36,8 @@ dol_syslog("Call User webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
+{
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -194,22 +193,19 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+{
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
+	{
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {
-			$type = 'xsd:dateTime';
-		} else {
-			$type = 'xsd:string';
-		}
+		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
+		else {$type = 'xsd:string'; }
 
 		$extrafield_array['contact_options_'.$key] = array('name'=>'contact_options_'.$key, 'type'=>$type);
 	}
 }
 
-if (is_array($extrafield_array)) {
-	$thirdpartywithuser_fields = array_merge($thirdpartywithuser_fields, $extrafield_array);
-}
+if (is_array($extrafield_array)) $thirdpartywithuser_fields = array_merge($thirdpartywithuser_fields, $extrafield_array);
 
 
 $server->wsdl->addComplexType(
@@ -316,9 +312,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 
 	dol_syslog("Function: getUser login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
 	$objectresp = array();
@@ -326,21 +320,25 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+	{
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$fuser->getrights();
 
 		if ($fuser->rights->user->user->lire
 			|| ($fuser->rights->user->self->creer && $id && $id == $fuser->id)
 			|| ($fuser->rights->user->self->creer && $ref && $ref == $fuser->login)
-			|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext == $fuser->ref_ext)) {
+			|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext == $fuser->ref_ext))
+		{
 			$user = new User($db);
 			$result = $user->fetch($id, $ref, $ref_ext);
-			if ($result > 0) {
+			if ($result > 0)
+			{
 				// Create
 				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -373,17 +371,20 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'canvas' => $user->canvas
 					)
 				);
-			} else {
+			}
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		} else {
+		}
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -402,9 +403,7 @@ function getListOfGroups($authentication)
 
 	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
 	$objectresp = array();
@@ -414,39 +413,47 @@ function getListOfGroups($authentication)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 
-	if (!$error) {
+	if (!$error)
+	{
 		$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity)))
+		{
 			$sql .= " WHERE g.entity IS NOT NULL";
-		} else {
+		}
+		else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 		}
 		$sql .= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$num = $db->num_rows($resql);
 
 			$i = 0;
-			while ($i < $num) {
+			while ($i < $num)
+			{
 				$obj = $db->fetch_object($resql);
 				$arraygroups[] = array('id'=>$obj->rowid, 'name'=>$obj->name, 'datec'=>$obj->datec, 'nb'=>$obj->nb);
 				$i++;
 			}
-		} else {
+		}
+		else {
 			$error++;
 			$errorcode = $db->lasterrno();
 			$errorlabel = $db->lasterror();
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array(
 		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
 		'groups'=>$arraygroups
 		);
-	} else {
+	}
+	else {
 		$objectresp = array(
 		'result'=>array('result_code' => 'OK', 'result_label' => ''),
 		'groups'=>$arraygroups
@@ -470,9 +477,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 	dol_syslog("Function: createUserFromThirdparty login=".$authentication['login']);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	$objectresp = array();
 	$errorcode = ''; $errorlabel = '';
@@ -480,19 +485,20 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->socid) {
-		$socid = $fuser->socid;
-	}
+	if ($fuser->socid) $socid = $fuser->socid;
 
-	if (!$error && !$thirdpartywithuser) {
+	if (!$error && !$thirdpartywithuser)
+	{
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter thirdparty must be provided.";
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->creer) {
+		if ($fuser->rights->societe->creer)
+		{
 			$thirdparty = new Societe($db);
 
 			// If a contact / company already exists with the email, return the corresponding socid
@@ -504,13 +510,16 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 			$sql .= $db->plimit(1);
 
 			$resql = $db->query($sql);
-			if ($resql) {
+			if ($resql)
+			{
 				// If a company or contact is found with the same email we return an error
 				$row = $db->fetch_object($resql);
-				if ($row) {
+				if ($row)
+				{
 					$error++;
 					$errorcode = 'ALREADY_EXIST'; $errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
-				} else {
+				}
+				else {
 					$db->begin();
 					/*
 					 * Company creation
@@ -532,9 +541,11 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
-					if ($resql) {
+					if ($resql)
+					{
 						$num = $db->num_rows($resql);
-						if ($num) {
+						if ($num)
+						{
 							$obj = $db->fetch_object($resql);
 							$thirdparty->country_id = $obj->rowid;
 						}
@@ -556,7 +567,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 					$socid_return = $thirdparty->create($fuser);
 
-					if ($socid_return > 0) {
+					if ($socid_return > 0)
+					{
 						$thirdparty->fetch($socid_return);
 
 						/*
@@ -585,8 +597,10 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						// fetch optionals attributes and labels
 						$extrafields = new ExtraFields($db);
 						$extrafields->fetch_name_optionals_label($elementtype, true);
-						if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-							foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
+						if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
+						{
+							foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label)
+							{
 								$key = 'contact_options_'.$key;
 								$key = substr($key, 8); // Remove 'contact_' prefix
 								$contact->array_options[$key] = $thirdpartywithuser[$key];
@@ -595,7 +609,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 
 						$contact_id = $contact->create($fuser);
 
-						if ($contact_id > 0) {
+						if ($contact_id > 0)
+						{
 							/*
 							 * User creation
 							*
@@ -603,17 +618,19 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 							$edituser = new User($db);
 
 							$id = $edituser->create_from_contact($contact, $thirdpartywithuser["login"]);
-							if ($id > 0) {
+							if ($id > 0)
+							{
 								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
 
-								if ($thirdpartywithuser['group_id'] > 0) {
+								if ($thirdpartywithuser['group_id'] > 0)
 									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
-								}
-							} else {
+							}
+							else {
 								$error++;
 								$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$edituser->error;
 							}
-						} else {
+						}
+						else {
 							$error++;
 							$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$contact->error;
 						}
@@ -639,7 +656,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 		}
 	}
 
-	if ($error) {
+	if ($error)
+	{
 		$db->rollback();
 		$objectresp = array(
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
@@ -664,9 +682,7 @@ function setUserPassword($authentication, $shortuser)
 
 	dol_syslog("Function: setUserPassword login=".$authentication['login']);
 
-	if ($authentication['entity']) {
-		$conf->entity = $authentication['entity'];
-	}
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	$objectresp = array();
 	$errorcode = ''; $errorlabel = '';
@@ -674,43 +690,50 @@ function setUserPassword($authentication, $shortuser)
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->socid) {
-		$socid = $fuser->socid;
-	}
+	if ($fuser->socid) $socid = $fuser->socid;
 
-	if (!$error && !$shortuser) {
+	if (!$error && !$shortuser)
+	{
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter shortuser must be provided.";
 	}
 
-	if (!$error) {
+	if (!$error)
+	{
 		$fuser->getrights();
 
-		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password) {
+		if ($fuser->rights->user->user->password || $fuser->rights->user->self->password)
+		{
 			$userstat = new User($db);
 			$res = $userstat->fetch('', $shortuser['login']);
-			if ($res) {
+			if ($res)
+			{
 				$res = $userstat->setPassword($userstat, $shortuser['password']);
-				if ($res) {
+				if ($res)
+				{
 					$objectresp = array(
 						'result'=>array('result_code' => 'OK', 'result_label' => ''),
 					);
-				} else {
+				}
+				else {
 					$error++;
 					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				}
-			} else {
+			}
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'User not found';
 			}
-		} else {
+		}
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 
-	if ($error) {
+	if ($error)
+	{
 		$objectresp = array(
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
 		);

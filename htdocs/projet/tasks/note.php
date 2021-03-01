@@ -41,26 +41,20 @@ $project_ref = GETPOST('project_ref', 'alpha');
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
+if (!$user->rights->projet->lire) accessforbidden();
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 $object = new Task($db);
 $projectstatic = new Project($db);
 
-if ($id > 0 || !empty($ref)) {
-	if ($object->fetch($id, $ref) > 0) {
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
-			$object->fetchComments();
-		}
+if ($id > 0 || !empty($ref))
+{
+	if ($object->fetch($id, $ref) > 0)
+	{
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$projectstatic->fetch($object->fk_project);
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
-			$projectstatic->fetchComments();
-		}
-		if (!empty($projectstatic->socid)) {
-			$projectstatic->fetch_thirdparty();
-		}
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
+		if (!empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
 	} else {
@@ -70,10 +64,13 @@ if ($id > 0 || !empty($ref)) {
 
 
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
-if (!empty($project_ref) && !empty($withproject)) {
-	if ($projectstatic->fetch(0, $project_ref) > 0) {
+if (!empty($project_ref) && !empty($withproject))
+{
+	if ($projectstatic->fetch(0, $project_ref) > 0)
+	{
 		$tasksarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
-		if (count($tasksarray) > 0) {
+		if (count($tasksarray) > 0)
+		{
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
 		} else {
@@ -103,10 +100,12 @@ $userstatic = new User($db);
 
 $now = dol_now();
 
-if ($object->id > 0) {
+if ($object->id > 0)
+{
 	$userWrite = $projectstatic->restrictedProjectArea($user, 'write');
 
-	if (!empty($withproject)) {
+	if (!empty($withproject))
+	{
 		// Tabs for project
 		$tab = 'tasks';
 		$head = project_prepare_head($projectstatic);
@@ -121,13 +120,15 @@ if ($object->id > 0) {
 		// Title
 		$morehtmlref .= $projectstatic->title;
 		// Thirdparty
-		if ($projectstatic->thirdparty->id > 0) {
+		if ($projectstatic->thirdparty->id > 0)
+		{
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (!$user->rights->projet->all->lire)
+		{
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -145,19 +146,22 @@ if ($object->id > 0) {
 		print $langs->trans("Usage");
 		print '</td>';
 		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
 			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
 			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
 			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -167,11 +171,8 @@ if ($object->id > 0) {
 
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public) {
-			print $langs->trans('SharedProject');
-		} else {
-			print $langs->trans('PrivateProject');
-		}
+		if ($projectstatic->public) print $langs->trans('SharedProject');
+		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
 		// Date start - end
@@ -181,16 +182,12 @@ if ($object->id > 0) {
 		$end = dol_print_date($projectstatic->date_end, 'day');
 		print ' - ';
 		print ($end ? $end : '?');
-		if ($projectstatic->hasDelay()) {
-			print img_warning("Late");
-		}
+		if ($projectstatic->hasDelay()) print img_warning("Late");
 		print '</td></tr>';
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) {
-			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
-		}
+		if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 		print '</td></tr>';
 
 		// Other attributes
@@ -238,17 +235,17 @@ if ($object->id > 0) {
 	$param = (GETPOST('withproject') ? '&withproject=1' : '');
 	$linkback = GETPOST('withproject') ? '<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>' : '';
 
-	if (!GETPOST('withproject') || empty($projectstatic->id)) {
+	if (!GETPOST('withproject') || empty($projectstatic->id))
+	{
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		$object->next_prev_filter = " fk_projet in (".$projectsListId.")";
-	} else {
-		$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
-	}
+	} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 	$morehtmlref = '';
 
 	// Project
-	if (empty($withproject)) {
+	if (empty($withproject))
+	{
 		$morehtmlref .= '<div class="refidno">';
 		$morehtmlref .= $langs->trans("Project").': ';
 		$morehtmlref .= $projectstatic->getNomUrl(1);

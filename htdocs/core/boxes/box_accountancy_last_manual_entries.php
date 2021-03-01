@@ -79,7 +79,8 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
-		if ($user->rights->accounting->mouvements->lire) {
+		if ($user->rights->accounting->mouvements->lire)
+		{
 			$sql = "SELECT DISTINCT b.piece_num";
 			$sql .= ", b.doc_date as date_movement";
 			$sql .= ", b.label_operation";
@@ -139,12 +140,10 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
 					'td' => 'class="center"',
 					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedManualEntries").'</span>'
-					);
-				}
+				);
 
 				$this->db->free($result);
 			} else {

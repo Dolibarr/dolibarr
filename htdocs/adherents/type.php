@@ -203,8 +203,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
+llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {

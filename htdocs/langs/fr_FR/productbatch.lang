@@ -1,10 +1,8 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
-ProductStatusOnBatch=Lot (requis)
-ProductStatusOnSerial=Numéro de série (doit être unique pour chaque équipement)
+ProductStatusOnBatch=Oui (Lot/Série requis)
 ProductStatusNotOnBatch=Non (Lot/Série non utilisé)
-ProductStatusOnBatchShort=Lot
-ProductStatusOnSerialShort=N°série
+ProductStatusOnBatchShort=Oui
 ProductStatusNotOnBatchShort=Non
 Batch=Lot/Série
 atleast1batchfield=Date limite utilisation optimale, de consommation ou numéro de lot/série

@@ -36,7 +36,7 @@ create table llx_socpeople
   fk_departement	integer,
   fk_pays			integer        DEFAULT 0,
   birthday			date,
-  poste				varchar(255),
+  poste				varchar(80),
   phone				varchar(30),
   phone_perso		varchar(30),
   phone_mobile		varchar(30),

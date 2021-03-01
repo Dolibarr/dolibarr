@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/taskstats.class.php';
 
 // Security check
-if (!$user->rights->projet->lire) {
+if (!$user->rights->projet->lire)
 	accessforbidden();
-}
 
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
@@ -39,7 +38,8 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0) {
+if ($user->socid > 0)
+{
 	$action = '';
 	$socid = $user->socid;
 }
@@ -73,15 +73,9 @@ dol_mkdir($dir);
 
 
 $stats_tasks = new TaskStats($db);
-if (!empty($userid) && $userid != -1) {
-	$stats_tasks->userid = $userid;
-}
-if (!empty($socid) && $socid != -1) {
-	$stats_tasks->socid = $socid;
-}
-if (!empty($year)) {
-	$stats_tasks->year = $year;
-}
+if (!empty($userid) && $userid != -1) $stats_tasks->userid = $userid;
+if (!empty($socid) && $socid != -1) $stats_tasks->socid = $socid;
+if (!empty($year)) $stats_tasks->year = $year;
 
 
 
@@ -95,10 +89,12 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=taskstats&amp;file=tasknbpr
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg) {
+if (!$mesg)
+{
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear) {
+	while ($i <= $endyear)
+	{
 		$legend[] = $i;
 		$i++;
 	}
@@ -120,16 +116,12 @@ if (!$mesg) {
 $stats_tasks->year = 0;
 $data_all_year = $stats_tasks->getAllByYear();
 
-if (!empty($year)) {
-	$stats_tasks->year = $year;
-}
+if (!empty($year)) $stats_tasks->year = $year;
 $arrayyears = array();
 foreach ($data_all_year as $val) {
 	$arrayyears[$val['year']] = $val['year'];
 }
-if (!count($arrayyears)) {
-	$arrayyears[$nowyear] = $nowyear;
-}
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 
 $h = 0;
@@ -162,12 +154,8 @@ print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (!in_array($year, $arrayyears)) {
-	$arrayyears[$year] = $year;
-}
-if (!in_array($nowyear, $arrayyears)) {
-	$arrayyears[$nowyear] = $nowyear;
-}
+if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
+if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -185,9 +173,11 @@ print '<td class="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data_all_year as $val) {
+foreach ($data_all_year as $val)
+{
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1) {	// If we have empty year
+	while ($year && $oldyear > $year + 1)
+	{	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
@@ -209,9 +199,7 @@ print '</div>';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) {
-	print $mesg;
-} else {
+if ($mesg) { print $mesg; } else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
 }

@@ -19,7 +19,8 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf)) {
+if (empty($conf) || !is_object($conf))
+{
 	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
 	exit;
 }
@@ -32,9 +33,7 @@ if (empty($conf) || !is_object($conf)) {
 <script type="text/javascript">
 
 <?php
-if (empty($module)) {
-	$module = 'ecm';
-}
+if (empty($module)) $module = 'ecm';
 $paramwithoutsection = preg_replace('/&?section=(\d+)/', '', $param);
 
 $openeddir = '/'; // The root directory shown

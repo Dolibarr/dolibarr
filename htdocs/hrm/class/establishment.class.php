@@ -180,9 +180,7 @@ class Establishment extends CommonObject
 		$this->zip = trim($this->zip);
 		$this->town = trim($this->town);
 
-		if (empty($this->ref)) {
-			$this->ref = '(PROV)';
-		}
+		if (empty($this->ref)) $this->ref = '(PROV)';
 
 		$this->db->begin();
 
@@ -250,7 +248,8 @@ class Establishment extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (empty($this->label)) {
+		if (empty($this->label))
+		{
 			$this->error = 'ErrorBadParameter';
 			return -1;
 		}
@@ -297,7 +296,8 @@ class Establishment extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result) {
+		if ($result)
+		{
 			$obj = $this->db->fetch_object($result);
 
 			$this->id = $obj->rowid;
@@ -334,7 +334,8 @@ class Establishment extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result) {
+		if ($result)
+		{
 			$this->db->commit();
 			return 1;
 		} else {
@@ -366,7 +367,8 @@ class Establishment extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
+		{
 			global $langs;
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_OPEN] = $langs->trans('Open');
@@ -376,12 +378,8 @@ class Establishment extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_OPEN) {
-			$statusType = 'status4';
-		}
-		if ($status == self::STATUS_CLOSED) {
-			$statusType = 'status6';
-		}
+		if ($status == self::STATUS_OPEN) $statusType = 'status4';
+		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -402,18 +400,22 @@ class Establishment extends CommonObject
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
-		if ($result) {
-			if ($this->db->num_rows($result)) {
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
 				$this->date_creation = $this->db->jdate($obj->datec);
-				if ($obj->fk_user_author) {
+				if ($obj->fk_user_author)
+				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_mod) {
+				if ($obj->fk_user_mod)
+				{
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_mod);
 					$this->user_modification = $muser;
@@ -447,15 +449,9 @@ class Establishment extends CommonObject
 		$label = '<u>'.$langs->trans("Establishment").'</u>';
 		$label .= '<br>'.$langs->trans("Label").': '.$this->label;
 
-		if ($withpicto) {
-			$result .= ($link.img_object($label, $picto).$linkend);
-		}
-		if ($withpicto && $withpicto != 2) {
-			$result .= ' ';
-		}
-		if ($withpicto != 2) {
-			$result .= $link.$this->label.$linkend;
-		}
+		if ($withpicto) $result .= ($link.img_object($label, $picto).$linkend);
+		if ($withpicto && $withpicto != 2) $result .= ' ';
+		if ($withpicto != 2) $result .= $link.$this->label.$linkend;
 		return $result;
 	}
 
@@ -469,14 +465,10 @@ class Establishment extends CommonObject
 		global $mysoc;
 
 		// We return country code of bank account
-		if (!empty($this->country_code)) {
-			return $this->country_code;
-		}
+		if (!empty($this->country_code)) return $this->country_code;
 
 		// We return country code of managed company
-		if (!empty($mysoc->country_code)) {
-			return $mysoc->country_code;
-		}
+		if (!empty($mysoc->country_code)) return $mysoc->country_code;
 
 		return '';
 	}

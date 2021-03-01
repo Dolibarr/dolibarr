@@ -50,11 +50,11 @@ abstract class ModelePDFMovement extends CommonDocGenerator
 		global $conf;
 
 		$type = 'movement';
-		$list = array();
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $list;
+		return $liste;
 	}
 }

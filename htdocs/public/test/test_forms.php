@@ -1,9 +1,7 @@
 <?php
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOSESSION')) {
-	define('NOSESSION', '1');
-}
+define('REQUIRE_JQUERY_MULTISELECT', 'select2');
 
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

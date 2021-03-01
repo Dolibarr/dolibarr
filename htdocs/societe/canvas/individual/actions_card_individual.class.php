@@ -61,15 +61,9 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		$out = '';
 
-		if ($action == 'view') {
-			$out .= $langs->trans("Individual");
-		}
-		if ($action == 'edit') {
-			$out .= $langs->trans("EditCompany");
-		}
-		if ($action == 'create') {
-			$out .= $langs->trans("NewCompany");
-		}
+		if ($action == 'view')      $out .= $langs->trans("Individual");
+		if ($action == 'edit')      $out .= $langs->trans("EditCompany");
+		if ($action == 'create')    $out .= $langs->trans("NewCompany");
 
 		return $out;
 	}
@@ -113,11 +107,13 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		$this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
-		if ($action == 'create' || $action == 'edit') {
+		if ($action == 'create' || $action == 'edit')
+		{
 			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civility_id'));
 		} else {
 			// Confirm delete third party
-			if ($action == 'delete' || $conf->use_javascript_ajax) {
+			if ($action == 'delete' || $conf->use_javascript_ajax)
+			{
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteAnIndividual"), $langs->trans("ConfirmDeleteIndividual"), "confirm_delete", '', 0, "1,action-delete");
 			}
 		}

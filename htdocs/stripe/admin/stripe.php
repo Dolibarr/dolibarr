@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
- * Copyright (C) 2018-2021  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,7 @@ $servicename = 'Stripe';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
@@ -48,79 +46,64 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' && $user->admin)
+{
 	$db->begin();
 
 	if (empty($conf->stripeconnect->enabled)) {
 		$result = dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY", GETPOST('STRIPE_TEST_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY", GETPOST('STRIPE_TEST_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_ID", GETPOST('STRIPE_TEST_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_KEY", GETPOST('STRIPE_TEST_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_PUBLISHABLE_KEY", GETPOST('STRIPE_LIVE_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY", GETPOST('STRIPE_LIVE_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_ID", GETPOST('STRIPE_LIVE_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_KEY", GETPOST('STRIPE_LIVE_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!$result > 0) {
+		if (!$result > 0)
 			$error++;
-		}
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "STRIPE_USER_ACCOUNT_FOR_ACTIONS", GETPOST('STRIPE_USER_ACCOUNT_FOR_ACTIONS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
-	if (!$result > 0) {
+	if (!$result > 0)
 		$error++;
-	}
 	// Stock decrement
 	//$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	//if (! $result > 0)
@@ -147,7 +130,8 @@ if ($action == 'setvalue' && $user->admin) {
 	}
 }
 
-if ($action == "setlive") {
+if ($action == "setlive")
+{
 	$liveenable = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "STRIPE_LIVE", $liveenable, 'yesno', 0, '', $conf->entity);
 	if ($res > 0) {
@@ -204,7 +188,8 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td><td></td></tr>';
 
-if (empty($conf->stripeconnect->enabled)) {
+if (empty($conf->stripeconnect->enabled))
+{
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_TEST_PUBLISHABLE_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_TEST_PUBLISHABLE_KEY.'">';
@@ -231,8 +216,10 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= ajax_autoselect("onlinetestwebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-		if (!empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STRIPE_TEST_SECRET_KEY) && !empty($conf->global->STRIPE_TEST_WEBHOOK_ID)) {
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		if (!empty($conf->global->STRIPE_TEST_WEBHOOK_KEY) && !empty($conf->global->STRIPE_TEST_SECRET_KEY) && !empty($conf->global->STRIPE_TEST_WEBHOOK_ID))
+		{
 			\Stripe\Stripe::setApiKey($conf->global->STRIPE_TEST_SECRET_KEY);
 			$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
 			$endpoint->enabled_events = $stripearrayofwebhookevents;
@@ -245,7 +232,8 @@ if (empty($conf->stripeconnect->enabled)) {
 			}
 			$endpoint->url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 			$endpoint->save();
-			if ($endpoint->status == 'enabled') {
+			if ($endpoint->status == 'enabled')
+			{
 				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 			} else {
@@ -269,7 +257,8 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '</td><td></td></tr>';
 }
 
-if (empty($conf->stripeconnect->enabled)) {
+if (empty($conf->stripeconnect->enabled))
+{
 	print '<tr class="oddeven"><td>';
 	print '<span class="fieldrequired">'.$langs->trans("STRIPE_LIVE_PUBLISHABLE_KEY").'</span></td><td>';
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_PUBLISHABLE_KEY" value="'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY.'">';
@@ -296,8 +285,10 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
 	print '<br>'.$out;
 	print '</td><td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-		if (!empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID)) {
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		if (!empty($conf->global->STRIPE_LIVE_WEBHOOK_KEY) && !empty($conf->global->STRIPE_LIVE_SECRET_KEY) && !empty($conf->global->STRIPE_LIVE_WEBHOOK_ID))
+		{
 			\Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
 			$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
 			$endpoint->enabled_events = $stripearrayofwebhookevents;
@@ -310,7 +301,8 @@ if (empty($conf->stripeconnect->enabled)) {
 			}
 			$endpoint->url = dol_buildpath('/public/stripe/ipn.php', 3);
 			$endpoint->save();
-			if ($endpoint->status == 'enabled') {
+			if ($endpoint->status == 'enabled')
+			{
 				print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 			} else {
@@ -359,7 +351,8 @@ print img_picto('', 'bank_account').' ';
 $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS, 'STRIPE_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 print '</td></tr>';
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// What is this for ?
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
 	$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
@@ -367,7 +360,8 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// What is this for ?
 }
 
 // Activate Payment Request API
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -380,7 +374,8 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 }
 
 // Activate SEPA DIRECT_DEBIT
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -392,22 +387,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 	print '</td></tr>';
 }
 
-// Activate Bancontact
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("STRIPE_BANCONTACT").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STRIPE_BANCONTACT');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_BANCONTACT", $arrval, $conf->global->STRIPE_BANCONTACT);
-	}
-	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForBECustomers").'</span>';
-	print '</td></tr>';
-}
-
 // Activate iDEAL
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_IDEAL").'</td><td>';
 	if ($conf->use_javascript_ajax) {
@@ -417,34 +399,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 		print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForNLCustomers").'</span>';
-	print '</td></tr>';
-}
-
-// Activate Giropay
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("STRIPE_GIROPAY").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STRIPE_GIROPAY');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_GIROPAY", $arrval, $conf->global->STRIPE_GIROPAY);
-	}
-	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForDECustomers").'</span>';
-	print '</td></tr>';
-}
-
-// Activate Sofort
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("STRIPE_SOFORT").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STRIPE_SOFORT');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_SOFORT", $arrval, $conf->global->STRIPE_SOFORT);
-	}
-	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForATBEDEITNLESCustomers").'</span>';
 	print '</td></tr>';
 }
 
@@ -539,9 +493,10 @@ $token = '';
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
-print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required, the off-session allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
+print info_admin($langs->trans("ExampleOfTestCreditCard", '4242424242424242 (no 3DSecure) or 4000000000003063 (3DSecure required) or 4000002760003184 (3DSecure2 required on all transaction) or 4000003800000446 (3DSecure2 required the off-seesion allowed)', '4000000000000101', '4000000000000069', '4000000000000341'));
 
-if (!empty($conf->use_javascript_ajax)) {
+if (!empty($conf->use_javascript_ajax))
+{
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 	            $("#apidoc").hide();

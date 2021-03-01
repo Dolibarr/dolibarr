@@ -90,22 +90,22 @@ class modCollab extends DolibarrModules
 		$r = 0;
 
 		/*$this->rights[$r][0] = 30001;
-		$this->rights[$r][1] = 'Read website content';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'read';
-		$r++;
+        $this->rights[$r][1] = 'Read website content';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'read';
+        $r++;
 
-		$this->rights[$r][0] = 30002;
-		$this->rights[$r][1] = 'Create/modify website content';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'write';
-		$r++;
+        $this->rights[$r][0] = 30002;
+        $this->rights[$r][1] = 'Create/modify website content';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'write';
+        $r++;
 
-		$this->rights[$r][0] = 30003;
-		$this->rights[$r][1] = 'Delete website content';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'delete';
-		$r++;*/
+        $this->rights[$r][0] = 30003;
+        $this->rights[$r][1] = 'Delete website content';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'delete';
+        $r++;*/
 
 		// Main menu entries
 		$r = 0;

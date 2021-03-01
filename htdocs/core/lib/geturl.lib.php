@@ -51,9 +51,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$ch = curl_init();
 
 	/*print $API_Endpoint."-".$API_version."-".$PAYPAL_API_USER."-".$PAYPAL_API_PASSWORD."-".$PAYPAL_API_SIGNATURE."<br>";
-	 print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
-	 print $nvpStr;
-	 exit;*/
+     print $USE_PROXY."-".$gv_ApiErrorURL."<br>";
+     print $nvpStr;
+     exit;*/
 	curl_setopt($ch, CURLOPT_VERBOSE, 1);
 	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
 
@@ -61,16 +61,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// We force value to false so we will manage redirection ourself later.
 	@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
-	if (is_array($addheaders) && count($addheaders)) {
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
-	}
+	if (is_array($addheaders) && count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
 	// By default use tls decied by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
-	if (!empty($conf->global->MAIN_CURL_SSLVERSION)) {
-		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
-	}
+	if (!empty($conf->global->MAIN_CURL_SSLVERSION)) curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
 	// Turning off the server and peer verification(TrustManager Concept).
@@ -81,12 +77,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$protocols = 0;
 	if (is_array($allowedschemes)) {
 		foreach ($allowedschemes as $allowedscheme) {
-			if ($allowedscheme == 'http') {
-				$protocols |= CURLPROTO_HTTP;
-			}
-			if ($allowedscheme == 'https') {
-				$protocols |= CURLPROTO_HTTPS;
-			}
+			if ($allowedscheme == 'http') $protocols |= CURLPROTO_HTTP;
+			if ($allowedscheme == 'https') $protocols |= CURLPROTO_HTTPS;
 		}
 		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
 		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
@@ -106,9 +98,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'PUT') {
 		$array_param = null;
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
-		if (!is_array($param)) {
-			parse_str($param, $array_param);
-		} else {
+		if (!is_array($param)) parse_str($param, $array_param);
+		else {
 			dol_syslog("parameter param must be a string", LOG_WARNING);
 			$array_param = $param;
 		}
@@ -130,9 +121,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		dol_syslog("getURLContent set proxy to ".$PROXY_HOST.":".$PROXY_PORT." - ".$PROXY_USER.":".$PROXY_PASS);
 		//curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); // Curl 7.10
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
-		if ($PROXY_USER) {
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER.":".$PROXY_PASS);
-		}
+		if ($PROXY_USER) curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER.":".$PROXY_PASS);
 	}
 
 	$newUrl = $url;
@@ -141,9 +130,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$response = '';
 
 	do {
-		if ($maxRedirection < 1) {
-			break;
-		}
+		if ($maxRedirection < 1) break;
 
 		curl_setopt($ch, CURLOPT_URL, $newUrl);
 
@@ -198,7 +185,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		} else {
 			$http_code = 0;
 		}
-	} while ($http_code);
+	}
+	while ($http_code);
 
 	$request = curl_getinfo($ch, CURLINFO_HEADER_OUT); // Reading of request must be done after sending request
 
@@ -275,9 +263,7 @@ function getRootURLFromURL($url)
 	$prefix = '';
 	$tmpurl = $url;
 	$reg = null;
-	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) {
-		$prefix = $reg[1];
-	}
+	if (preg_match('/^(https?:\/\/)/i', $tmpurl, $reg)) $prefix = $reg[1];
 	$tmpurl = preg_replace('/^https?:\/\//i', '', $tmpurl); // Remove http(s)://
 	$tmpurl = preg_replace('/\/.*$/i', '', $tmpurl); // Remove part after domain
 

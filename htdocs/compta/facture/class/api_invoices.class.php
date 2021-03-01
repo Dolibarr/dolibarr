@@ -172,52 +172,35 @@ class Invoices extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
-			$search_sale = DolibarrApiAccess::$user->id;
-		}
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('invoice').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
-		}
-		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
-		}
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
 
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
+		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 
 		// Filter by status
-		if ($status == 'draft') {
-			$sql .= " AND t.fk_statut IN (0)";
-		}
-		if ($status == 'unpaid') {
-			$sql .= " AND t.fk_statut IN (1)";
-		}
-		if ($status == 'paid') {
-			$sql .= " AND t.fk_statut IN (2)";
-		}
-		if ($status == 'cancelled') {
-			$sql .= " AND t.fk_statut IN (3)";
-		}
+		if ($status == 'draft')     $sql .= " AND t.fk_statut IN (0)";
+		if ($status == 'unpaid')    $sql .= " AND t.fk_statut IN (1)";
+		if ($status == 'paid')      $sql .= " AND t.fk_statut IN (2)";
+		if ($status == 'cancelled') $sql .= " AND t.fk_statut IN (3)";
 		// Insert sale filter
-		if ($search_sale > 0) {
+		if ($search_sale > 0)
+		{
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
 		// Add sql filters
-		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+		if ($sqlfilters)
+		{
+			if (!DolibarrApi::_checkFilters($sqlfilters))
+			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -225,8 +208,10 @@ class Invoices extends DolibarrApi
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit) {
-			if ($page < 0) {
+		if ($limit)
+		{
+			if ($page < 0)
+			{
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -235,14 +220,17 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->db->query($sql);
-		if ($result) {
+		if ($result)
+		{
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min) {
+			while ($i < $min)
+			{
 				$obj = $this->db->fetch_object($result);
 				$invoice_static = new Facture($this->db);
-				if ($invoice_static->fetch($obj->rowid)) {
+				if ($invoice_static->fetch($obj->rowid))
+				{
 					// Get payment details
 					$invoice_static->totalpaid = $invoice_static->getSommePaiement();
 					$invoice_static->totalcreditnotes = $invoice_static->getSumCreditNotesUsed();
@@ -286,13 +274,13 @@ class Invoices extends DolibarrApi
 			$this->invoice->date = dol_now();
 		}
 		/* We keep lines as an array
-		 if (isset($request_data["lines"])) {
-			$lines = array();
-			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
-			}
-			$this->invoice->lines = $lines;
-		}*/
+         if (isset($request_data["lines"])) {
+            $lines = array();
+            foreach ($request_data["lines"] as $line) {
+                array_push($lines, (object) $line);
+            }
+            $this->invoice->lines = $lines;
+        }*/
 
 		if ($this->invoice->create(DolibarrApiAccess::$user, 0, (empty($request_data["date_lim_reglement"]) ? 0 : $request_data["date_lim_reglement"])) < 0) {
 			throw new RestException(500, "Error creating invoice", array_merge(array($this->invoice->error), $this->invoice->errors));
@@ -597,22 +585,20 @@ class Invoices extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
+			if ($field == 'id') continue;
 			$this->invoice->$field = $value;
 		}
 
 		// update bank account
-		if (!empty($this->invoice->fk_account)) {
+		if (!empty($this->invoice->fk_account))
+		{
 			if ($this->invoice->setBankAccount($this->invoice->fk_account) == 0) {
 				throw new RestException(400, $this->invoice->error);
 			}
 		}
 
-		if ($this->invoice->update(DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user))
 			return $this->get($id);
-		}
 
 		return false;
 	}
@@ -638,7 +624,8 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->delete(DolibarrApiAccess::$user);
-		if ($result < 0) {
+		if ($result < 0)
+		{
 			throw new RestException(500);
 		}
 
@@ -923,7 +910,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->setPaid(DolibarrApiAccess::$user, $close_code, $close_note);
+		$result = $this->invoice->set_paid(DolibarrApiAccess::$user, $close_code, $close_note);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -973,7 +960,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->invoice->setUnpaid(DolibarrApiAccess::$user);
+		$result = $this->invoice->set_unpaid(DolibarrApiAccess::$user);
 		if ($result == 0) {
 			throw new RestException(304, 'Nothing done');
 		}
@@ -1075,13 +1062,10 @@ class Invoices extends DolibarrApi
 		$result = $discountcheck->fetch(0, $this->invoice->id);
 
 		$canconvert = 0;
-		if ($this->invoice->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
-		}
-		if (($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_STANDARD) && $this->invoice->paye == 0 && empty($discountcheck->id)) {
-			$canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
-		}
-		if ($canconvert) {
+		if ($this->invoice->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert = 1; // we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+		if (($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_STANDARD) && $this->invoice->paye == 0 && empty($discountcheck->id)) $canconvert = 1; // we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+		if ($canconvert)
+		{
 			$this->db->begin();
 
 			$amount_ht = $amount_tva = $amount_ttc = array();
@@ -1089,9 +1073,10 @@ class Invoices extends DolibarrApi
 
 			// Loop on each vat rate
 			$i = 0;
-			foreach ($this->invoice->lines as $line) {
-				if ($line->product_type < 9 && $line->total_ht != 0) { // Remove lines with product_type greater than or equal to 9
-					// no need to create discount if amount is null
+			foreach ($this->invoice->lines as $line)
+			{
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
+				{ 	// no need to create discount if amount is null
 					$amount_ht[$line->tva_tx] += $line->total_ht;
 					$amount_tva[$line->tva_tx] += $line->total_tva;
 					$amount_ttc[$line->tva_tx] += $line->total_ttc;
@@ -1119,7 +1104,8 @@ class Invoices extends DolibarrApi
 
 			$error = 0;
 
-			if ($this->invoice->type == Facture::TYPE_STANDARD || $this->invoice->type == Facture::TYPE_REPLACEMENT || $this->invoice->type == Facture::TYPE_SITUATION) {
+			if ($this->invoice->type == Facture::TYPE_STANDARD || $this->invoice->type == Facture::TYPE_REPLACEMENT || $this->invoice->type == Facture::TYPE_SITUATION)
+			{
 				// If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
 				// Total payments
@@ -1130,9 +1116,7 @@ class Invoices extends DolibarrApi
 				$sql .= ' AND pf.fk_paiement = p.rowid';
 				$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
 				$resql = $this->db->query($sql);
-				if (!$resql) {
-					dol_print_error($this->db);
-				}
+				if (!$resql) dol_print_error($this->db);
 
 				$res = $this->db->fetch_object($resql);
 				$total_payments = $res->total_payments;
@@ -1145,24 +1129,23 @@ class Invoices extends DolibarrApi
 				$sql .= " WHERE fk_facture = ".$this->invoice->id;
 				$resql = $this->db->query($sql);
 				if (!empty($resql)) {
-					while ($obj = $this->db->fetch_object($resql)) {
-						$total_creditnote_and_deposit += $obj->amount_ttc;
-					}
-				} else {
-					dol_print_error($this->db);
-				}
+					while ($obj = $this->db->fetch_object($resql)) $total_creditnote_and_deposit += $obj->amount_ttc;
+				} else dol_print_error($this->db);
 
 				$discount->amount_ht = $discount->amount_ttc = $total_payments + $total_creditnote_and_deposit - $this->invoice->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
 
 				$result = $discount->create(DolibarrApiAccess::$user);
-				if ($result < 0) {
+				if ($result < 0)
+				{
 					$error++;
 				}
 			}
-			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_DEPOSIT) {
-				foreach ($amount_ht as $tva_tx => $xxx) {
+			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_DEPOSIT)
+			{
+				foreach ($amount_ht as $tva_tx => $xxx)
+				{
 					$discount->amount_ht = abs($amount_ht[$tva_tx]);
 					$discount->amount_tva = abs($amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
@@ -1172,18 +1155,21 @@ class Invoices extends DolibarrApi
 					$discount->tva_tx = abs($tva_tx);
 
 					$result = $discount->create(DolibarrApiAccess::$user);
-					if ($result < 0) {
+					if ($result < 0)
+					{
 						$error++;
 						break;
 					}
 				}
 			}
 
-			if (empty($error)) {
+			if (empty($error))
+			{
 				if ($this->invoice->type != Facture::TYPE_DEPOSIT) {
 					// Classe facture
-					$result = $this->invoice->setPaid(DolibarrApiAccess::$user);
-					if ($result >= 0) {
+					$result = $this->invoice->set_paid(DolibarrApiAccess::$user);
+					if ($result >= 0)
+					{
 						$this->db->commit();
 					} else {
 						$this->db->rollback();
@@ -1431,7 +1417,8 @@ class Invoices extends DolibarrApi
 		$paymentobj->note_private = $comment;
 
 		$payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
-		if ($payment_id < 0) {
+		if ($payment_id < 0)
+		{
 			$this->db->rollback();
 			throw new RestException(400, 'Payment error : '.$paymentobj->error);
 		}
@@ -1442,11 +1429,10 @@ class Invoices extends DolibarrApi
 			if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
 				throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
 			}
-			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-			}
+			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			$result = $paymentobj->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
-			if ($result < 0) {
+			if ($result < 0)
+			{
 				$this->db->rollback();
 				throw new RestException(400, 'Add payment to bank error : '.$paymentobj->error);
 			}
@@ -1515,7 +1501,8 @@ class Invoices extends DolibarrApi
 		$multicurrency_amounts = array();
 
 		// Loop on each invoice to pay
-		foreach ($arrayofamounts as $id => $amountarray) {
+		foreach ($arrayofamounts as $id => $amountarray)
+		{
 			$result = $this->invoice->fetch($id);
 			if (!$result) {
 				$this->db->rollback();
@@ -1541,11 +1528,13 @@ class Invoices extends DolibarrApi
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
 			$remainstopay = $amount = price2num($total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
-			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
+			if (!$is_multicurrency && $amountarray["amount"] != 'remain')
+			{
 				$amount = price2num($amountarray["amount"], 'MT');
 			}
 
-			if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain') {
+			if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain')
+			{
 				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
@@ -1580,7 +1569,8 @@ class Invoices extends DolibarrApi
 		$paymentobj->note_private = $comment;
 		$paymentobj->ref_ext      = $ref_ext;
 		$payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
-		if ($payment_id < 0) {
+		if ($payment_id < 0)
+		{
 			$this->db->rollback();
 			throw new RestException(400, 'Payment error : '.$paymentobj->error);
 		}
@@ -1589,11 +1579,10 @@ class Invoices extends DolibarrApi
 			if ($paymentobj->paiementcode == 'CHQ' && empty($chqemetteur)) {
 				  throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paymentobj->paiementcode);
 			}
-			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-			}
+			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			$result = $paymentobj->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
-			if ($result < 0) {
+			if ($result < 0)
+			{
 				$this->db->rollback();
 				throw new RestException(400, 'Add payment to bank error : '.$paymentobj->error);
 			}

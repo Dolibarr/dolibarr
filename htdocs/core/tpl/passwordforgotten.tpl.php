@@ -17,12 +17,11 @@
  */
 
 
-if (!defined('NOBROWSERNOTIF')) {
-	define('NOBROWSERNOTIF', 1);
-}
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf)) {
+if (empty($conf) || !is_object($conf))
+{
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -33,26 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-if (GETPOST('dol_hide_topmenu')) {
-	$conf->dol_hide_topmenu = 1;
-}
-if (GETPOST('dol_hide_leftmenu')) {
-	$conf->dol_hide_leftmenu = 1;
-}
-if (GETPOST('dol_optimize_smallscreen')) {
-	$conf->dol_optimize_smallscreen = 1;
-}
-if (GETPOST('dol_no_mouse_hover')) {
-	$conf->dol_no_mouse_hover = 1;
-}
-if (GETPOST('dol_use_jmobile')) {
-	$conf->dol_use_jmobile = 1;
-}
+if (GETPOST('dol_hide_topmenu')) $conf->dol_hide_topmenu = 1;
+if (GETPOST('dol_hide_leftmenu')) $conf->dol_hide_leftmenu = 1;
+if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen = 1;
+if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover = 1;
+if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile = 1;
 
 // If we force to use jmobile, then we reenable javascript
-if (!empty($conf->dol_use_jmobile)) {
-	$conf->use_javascript_ajax = 1;
-}
+if (!empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax = 1;
 
 $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
@@ -64,9 +51,7 @@ print top_htmlhead('', $titleofpage);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
-if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
-	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
-}
+if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 $colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
@@ -79,9 +64,7 @@ $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize
 <script>
 $(document).ready(function () {
 	// Set focus on correct field
-	<?php if ($focus_element) {
-		?>$('#<?php echo $focus_element; ?>').focus(); <?php
-	} ?>		// Warning to use this only on visible element
+	<?php if ($focus_element) { ?>$('#<?php echo $focus_element; ?>').focus(); <?php } ?>		// Warning to use this only on visible element
 });
 </script>
 <?php } ?>
@@ -98,13 +81,9 @@ $(document).ready(function () {
 <!-- Title with version -->
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
-if (!empty($disablenofollow)) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
-}
+if ($disablenofollow) echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
 echo dol_escape_htmltag($title);
-if (!empty($disablenofollow)) {
-	echo '</a>';
-}
+if ($disablenofollow) echo '</a>';
 ?>
 </div>
 
@@ -134,14 +113,11 @@ if (!empty($disablenofollow)) {
 </div>
 
 <?php
-if (!empty($captcha)) {
+if ($captcha) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
-	if (preg_match('/\?/', $php_self)) {
-		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
-	} else {
-		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
-	}
+	if (preg_match('/\?/', $php_self)) $php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	// TODO: provide accessible captcha variants
 	?>
 	<!-- Captcha -->
@@ -150,7 +126,7 @@ if (!empty($captcha)) {
 
 	<span class="fa fa-unlock"></span>
 	<span class="nofa inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
@@ -163,7 +139,8 @@ if (!empty($captcha)) {
 
 if (!empty($morelogincontent)) {
 	if (is_array($morelogincontent)) {
-		foreach ($morelogincontent as $format => $option) {
+		foreach ($morelogincontent as $format => $option)
+		{
 			if ($format == 'table') {
 				echo '<!-- Option by hook -->';
 				echo $option;
@@ -192,18 +169,10 @@ if (!empty($morelogincontent)) {
 <div class="center" style="margin-top: 15px;">
 	<?php
 	$moreparam = '';
-	if (!empty($conf->dol_hide_topmenu)) {
-		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
-	}
-	if (!empty($conf->dol_hide_leftmenu)) {
-		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
-	}
-	if (!empty($conf->dol_no_mouse_hover)) {
-		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
-	}
-	if (!empty($conf->dol_use_jmobile)) {
-		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_use_jmobile='.$conf->dol_use_jmobile;
-	}
+	if (!empty($conf->dol_hide_topmenu))   $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+	if (!empty($conf->dol_hide_leftmenu))  $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+	if (!empty($conf->dol_no_mouse_hover)) $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+	if (!empty($conf->dol_use_jmobile))    $moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
 	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
 	?>
@@ -231,7 +200,7 @@ if (!empty($morelogincontent)) {
 
 <br>
 
-<?php if (!empty($message)) { ?>
+<?php if ($message) { ?>
 	<div class="center login_main_message">
 	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
 	</div>
@@ -241,12 +210,11 @@ if (!empty($morelogincontent)) {
 <!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
 
 <?php
-if (!empty($conf->global->MAIN_HTML_FOOTER)) {
-	print $conf->global->MAIN_HTML_FOOTER;
-}
+if (!empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {
-	foreach ($morelogincontent as $format => $option) {
+	foreach ($morelogincontent as $format => $option)
+	{
 		if ($format == 'js') {
 			echo "\n".'<!-- Javascript by hook -->';
 			echo $option."\n";
@@ -259,7 +227,8 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 
 // Google Analytics
 // TODO Add a hook here
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
+{
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
@@ -280,8 +249,10 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID)) 
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
-	if (empty($conf->dol_use_jmobile)) {
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+{
+	if (empty($conf->dol_use_jmobile))
+	{
 		?>
 	<div class="center"><br>
 		<script><!--

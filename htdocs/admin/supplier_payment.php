@@ -31,9 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
 
-if (!$user->admin) {
-	accessforbidden();
-}
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
@@ -48,37 +46,43 @@ $type = 'supplier_payment';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask') {
+if ($action == 'updateMask')
+{
 	$maskconstsupplierpayment = GETPOST('maskconstsupplierpayment', 'alpha');
 	$masksupplierpayment = GETPOST('masksupplierpayment', 'alpha');
-	if ($maskconstsupplierpayment) {
-		$res = dolibarr_set_const($db, $maskconstsupplierpayment, $masksupplierpayment, 'chaine', 0, '', $conf->entity);
-	}
+	if ($maskconstsupplierpayment) $res = dolibarr_set_const($db, $maskconstsupplierpayment, $masksupplierpayment, 'chaine', 0, '', $conf->entity);
 
-	if (!($res > 0)) {
-		$error++;
-	}
+	if (!($res > 0)) $error++;
 
-	if (!$error) {
+	if (!$error)
+	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'setmod') {
+} elseif ($action == 'setmod')
+{
 	dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'set') {
-	// Activate a model
+}
+
+// Activate a model
+elseif ($action == 'set')
+{
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del') {
+} elseif ($action == 'del')
+{
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0) {
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
-			dolibarr_del_const($db, 'SUPPLIER_PAYMENT_ADDON_PDF', $conf->entity);
-		}
+	if ($ret > 0)
+	{
+		if ($conf->global->FACTURE_ADDON_PDF == "$value") dolibarr_del_const($db, 'SUPPLIER_PAYMENT_ADDON_PDF', $conf->entity);
 	}
-} elseif ($action == 'setdoc') {
-	// Set default model
-	if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+}
+
+// Set default model
+elseif ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "SUPPLIER_PAYMENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
+	{
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->FACTURE_ADDON_PDF = $value;
@@ -86,10 +90,12 @@ if ($action == 'updateMask') {
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0) {
+	if ($ret > 0)
+	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen')
+{
 	$modele = GETPOST('module', 'alpha');
 
 	$paiementFourn = new PaiementFourn($db);
@@ -98,21 +104,25 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir) {
+	foreach ($dirmodels as $reldir)
+	{
 		$file = dol_buildpath($reldir."core/modules/supplier_payment/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file)) {
+		if (file_exists($file))
+		{
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($filefound)
+	{
 		require_once $file;
 
 		$module = new $classname($db);
 
-		if ($module->write_file($paiementFourn, $langs) > 0) {
+		if ($module->write_file($paiementFourn, $langs) > 0)
+		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_payment&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -123,16 +133,17 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-} elseif ($action == 'setparams') {
+} elseif ($action == 'setparams')
+{
 	   $res = dolibarr_set_const($db, "PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
+	   if (!($res > 0)) $error++;
 
-	if ($error) {
+	if ($error)
+	   {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-	if (!$error) {
+	if (!$error)
+	   {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 }
@@ -160,9 +171,7 @@ print dol_get_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), -
  *  Numbering module
  */
 
-if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
-	$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-}
+if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 
 print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
@@ -173,10 +182,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 $resql = $db->query($sql);
-if ($resql) {
+if ($resql)
+{
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
+	while ($i < $num_rows)
+	{
 		$array = $db->fetch_array($resql);
 		array_push($def, $array[0]);
 		$i++;
@@ -196,42 +207,44 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir) {
+foreach ($dirmodels as $reldir)
+{
 	$dir = dol_buildpath($reldir."core/modules/supplier_payment/");
-	if (is_dir($dir)) {
+	if (is_dir($dir))
+	{
 		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
+				{
 					$filebis = $file;
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
-					if (!is_file($dir.$filebis)) {
+					if (!is_file($dir.$filebis))
+					{
 						$filebis = $file."/".$file.".modules.php";
 						$classname = "mod_supplier_payment_".$file;
 					}
 					// Check if there is a filter on country
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
-						continue;
-					}
+					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
+					{
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
-							continue;
-						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
-							continue;
-						}
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						if ($module->isEnabled()) {
+						if ($module->isEnabled())
+						{
 							print '<tr class="oddeven"><td width="100">';
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_supplier_payment_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";
@@ -246,16 +259,14 @@ foreach ($dirmodels as $reldir) {
 							if (preg_match('/^Error/', $tmp)) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') {
-								print $langs->trans($tmp);
-							} else {
-								print $tmp;
-							}
+							} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+							else print $tmp;
 							print '</td>'."\n";
 
 							print '<td class="center">';
 							//print "> ".$conf->global->SUPPLIER_PAYMENT_ADDON." - ".$file;
-							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || $conf->global->SUPPLIER_PAYMENT_ADDON.'.php' == $file) {
+							if ($conf->global->SUPPLIER_PAYMENT_ADDON == $file || $conf->global->SUPPLIER_PAYMENT_ADDON.'.php' == $file)
+							{
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -272,9 +283,8 @@ foreach ($dirmodels as $reldir) {
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 									$htmltooltip .= $langs->trans("NextValue").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
 										$nextval = $langs->trans($nextval);
-									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -284,10 +294,9 @@ foreach ($dirmodels as $reldir) {
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->PAYMENT_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
-								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
-								}
+							if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
+							{
+								if (!empty($module->error)) dol_htmloutput_mesg($module->error, '', 'error', 1);
 							}
 
 							print '</td>';
@@ -323,17 +332,22 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir) {
+foreach ($dirmodels as $reldir)
+{
 	$realpath = $reldir."core/modules/supplier_payment/doc";
 	$dir = dol_buildpath($realpath);
 
-	if (is_dir($dir)) {
+	if (is_dir($dir))
+	{
 		$handle = opendir($dir);
 
 
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
+				{
 					$name = substr($file, 4, dol_strlen($file) - 16);
 					$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -347,16 +361,14 @@ foreach ($dirmodels as $reldir) {
 					print "<td>\n";
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, $specimenthirdparty);
-					if (method_exists($module, 'info')) {
-						print $module->info($langs);
-					} else {
-						print $module->description;
-					}
+					if (method_exists($module, 'info')) print $module->info($langs);
+					else print $module->description;
 
 					print "</td>\n";
 
 					// Active
-					if (in_array($name, $def)) {
+					if (in_array($name, $def))
+					{
 						print '<td class="center">'."\n";
 						//if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF != "$name")
 						//{
@@ -365,10 +377,10 @@ foreach ($dirmodels as $reldir) {
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						/*}
-						else
-						{
-							print img_picto($langs->trans("Enabled"),'switch_on');
-						}*/
+                        else
+                        {
+                            print img_picto($langs->trans("Enabled"),'switch_on');
+                        }*/
 						print "</td>";
 					} else {
 						print '<td class="center">'."\n";
@@ -378,7 +390,8 @@ foreach ($dirmodels as $reldir) {
 
 					// Default
 					print '<td class="center">';
-					if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF == "$name") {
+					if ($conf->global->SUPPLIER_PAYMENT_ADDON_PDF == "$name")
+					{
 						//print img_picto($langs->trans("Default"),'on');
 						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=SUPPLIER_PAYMENT"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

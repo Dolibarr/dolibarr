@@ -58,18 +58,12 @@ $sortfield 			= GETPOST("sortfield", 'alpha');
 $sortorder 			= GETPOST("sortorder", 'alpha');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 
-if (empty($page) || $page == -1) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) {
-	$sortfield = "cr.date_sync";
-}
-if (!$sortorder) {
-	$sortorder = "DESC";
-}
+if (!$sortfield) $sortfield = "cr.date_sync";
+if (!$sortorder) $sortorder = "DESC";
 
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
@@ -80,9 +74,7 @@ $form = new Form($db);
 
 $hookmanager->initHooks(array('EditorRatelist', 'globallist'));
 
-if (empty($action)) {
-	$action = 'list';
-}
+if (empty($action)) $action = 'list';
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -192,24 +184,20 @@ if ($action == "confirm_delete") {
 }
 
 
-if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
-}
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
-	$massaction = '';
-}
+if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-if (empty($reshook)) {
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook))
+{
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+	{
 		$sall = "";
 		$search_date_sync = "";
 		$search_rate = "";
@@ -336,18 +324,10 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
-if ($sall) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
-}
-if ($search_date_sync) {
-	$sql .= natural_search('cr.date_sync', $search_date_sync);
-}
-if ($search_rate) {
-	$sql .= natural_search('cr.rate', $search_rate);
-}
-if ($search_code) {
-	$sql .= natural_search('m.code', $search_code);
-}
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if ($search_date_sync) $sql .= natural_search('cr.date_sync', $search_date_sync);
+if ($search_rate) $sql .= natural_search('cr.rate', $search_rate);
+if ($search_code) $sql .= natural_search('m.code', $search_code);
 $sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
@@ -365,12 +345,14 @@ $sql .= $db->order($sortfield, $sortorder);
 
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
 	$result = $db->query($sql);
 
 	if ($result) {
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
 			$page = 0;
 			$offset = 0;
 		}
@@ -382,46 +364,29 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql) {
+if ($resql)
+{
 	$num = $db->num_rows($resql);
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage='.urlencode($contextpage);
-	}
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.urlencode($limit);
-	}
-	if ($sall) {
-		$param .= "&sall=".urlencode($sall);
-	}
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($sall) $param .= "&sall=".urlencode($sall);
 
-	if ($search_date_sync) {
-		$param = "&search_date_sync=".urlencode($search_date_sync);
-	}
-	if ($search_rate) {
-		$param = "&search_rate=".urlencode($search_rate);
-	}
-	if ($search_code != '') {
-		$param .= "&search_code=".urlencode($search_code);
-	}
+	if ($search_date_sync) $param = "&search_date_sync=".urlencode($search_date_sync);
+	if ($search_rate) $param = "&search_rate=".urlencode($search_rate);
+	if ($search_code != '') $param .= "&search_code=".urlencode($search_code);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	if ($user->admin) {
-		$arrayofmassactions['predelete'] = $langs->trans("Delete");
-	}
-	if (in_array($massaction, array('presend', 'predelete'))) {
-		$arrayofmassactions = array();
-	}
+	if ($user->admin) $arrayofmassactions['predelete'] = $langs->trans("Delete");
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
-	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -434,10 +399,9 @@ if ($resql) {
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-	if ($sall) {
-		foreach ($fieldstosearchall as $key => $val) {
-			$fieldstosearchall[$key] = $langs->trans($val);
-		}
+	if ($sall)
+	{
+		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
 		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
 	}
 
@@ -447,13 +411,11 @@ if ($resql) {
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) {
-		$moreforfilter .= $hookmanager->resPrint;
-	} else {
-		$moreforfilter = $hookmanager->resPrint;
-	}
+	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+	else $moreforfilter = $hookmanager->resPrint;
 
-	if ($moreforfilter) {
+	if ($moreforfilter)
+	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		print '</div>';
@@ -461,9 +423,7 @@ if ($resql) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
-	if ($massactionbutton) {
-		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
-	}
+	if ($massactionbutton) $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -472,19 +432,22 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// date
-	if (!empty($arrayfields['cr.date_sync']['checked'])) {
+	if (!empty($arrayfields['cr.date_sync']['checked']))
+	{
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" name="search_date_sync" size="8" value="'.dol_escape_htmltag($search_date_sync).'">';
 		print '</td>';
 	}
 	// code
-	if (!empty($arrayfields['m.code']['checked'])) {
+	if (!empty($arrayfields['m.code']['checked']))
+	{
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" name="search_code" size="12" value="'.dol_escape_htmltag($search_code).'">';
 		print '</td>';
 	}
 	// rate
-	if (!empty($arrayfields['cr.rate']['checked'])) {
+	if (!empty($arrayfields['cr.rate']['checked']))
+	{
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" name="search_rate" size="8" value="'.dol_escape_htmltag($search_rate).'">';
 		print '</td>';
@@ -503,15 +466,9 @@ if ($resql) {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	if (!empty($arrayfields['cr.date_sync']['checked'])) {
-		print_liste_field_titre($arrayfields['cr.date_sync']['label'], $_SERVER["PHP_SELF"], "cr.date_sync", "", $param, "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['m.code']['checked'])) {
-		print_liste_field_titre($arrayfields['m.code']['label'], $_SERVER["PHP_SELF"], "m.code", "", $param, "", $sortfield, $sortorder);
-	}
-	if (!empty($arrayfields['cr.rate']['checked'])) {
-		print_liste_field_titre($arrayfields['cr.rate']['label'], $_SERVER["PHP_SELF"], "cr.rate", "", $param, "", $sortfield, $sortorder);
-	}
+	if (!empty($arrayfields['cr.date_sync']['checked']))  print_liste_field_titre($arrayfields['cr.date_sync']['label'], $_SERVER["PHP_SELF"], "cr.date_sync", "", $param, "", $sortfield, $sortorder);
+	if (!empty($arrayfields['m.code']['checked']))  print_liste_field_titre($arrayfields['m.code']['label'], $_SERVER["PHP_SELF"], "m.code", "", $param, "", $sortfield, $sortorder);
+	if (!empty($arrayfields['cr.rate']['checked']))  print_liste_field_titre($arrayfields['cr.rate']['label'], $_SERVER["PHP_SELF"], "cr.rate", "", $param, "", $sortfield, $sortorder);
 
 	// Hook fields
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
@@ -523,40 +480,38 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
-	while ($i < min($num, $limit)) {
+	while ($i < min($num, $limit))
+	{
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
 
 		// date_sync
-		if (!empty($arrayfields['cr.date_sync']['checked'])) {
+		if (!empty($arrayfields['cr.date_sync']['checked']))
+		{
 			print '<td class="tdoverflowmax200">';
 			print $obj->date_sync;
 			print "</td>\n";
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// code
-		if (!empty($arrayfields['m.code']['checked'])) {
+		if (!empty($arrayfields['m.code']['checked']))
+		{
 			print '<td class="tdoverflowmax200">';
 			print $obj->code." ".$obj->name;
 			print "</td>\n";
 
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// rate
-		if (!empty($arrayfields['cr.rate']['checked'])) {
+		if (!empty($arrayfields['cr.rate']['checked']))
+		{
 			print '<td class="tdoverflowmax200">';
 			print $obj->rate;
 			print "</td>\n";
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Fields from hook
@@ -566,19 +521,16 @@ if ($resql) {
 
 		// Action
 		print '<td class="nowrap" align="center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		{
 			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
+			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
 			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
 			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 		$i++;
@@ -590,7 +542,8 @@ if ($resql) {
 	print "</div>";
 
 	print '</form>';
-} else {
+}
+else {
 	dol_print_error($db);
 }
 

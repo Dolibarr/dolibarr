@@ -457,24 +457,22 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		} else {
 			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}
-
-		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
-		print '<script type="text/javascript" language="javascript">
-		jQuery(document).ready(function() {
-			function init_trrunsql()
-			{
-				console.log("toggle .trforrunsql");
-				jQuery(".trforrunsql").toggle();
-			}
-			init_trrunsql();
-			jQuery(".trforrunsqlshowhide").click(function() {
+		//if (! empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript" language="javascript">
+			jQuery(document).ready(function() {
+				function init_trrunsql()
+				{
+					console.log("toggle .trforrunsql");
+					jQuery(".trforrunsql").toggle();
+				}
 				init_trrunsql();
+				jQuery(".trforrunsqlshowhide").click(function() {
+					init_trrunsql();
+				});
 			});
-		});
-		</script>';
-		print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+			</script>';
+			print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
-
 		print '</td></tr>'."\n";
 	}
 
@@ -1440,15 +1438,15 @@ function complete_elementList_with_modules(&$elementList)
 							$dirmod[$i] = $dir;
 							//print "x".$modName." ".$orders[$i]."\n<br>";
 
-							if (!empty($objMod->module_parts['contactelement'])) {
-								if (is_array($objMod->module_parts['contactelement'])) {
+                            if (!empty($objMod->module_parts['contactelement'])) {
+                            	if (is_array($objMod->module_parts['contactelement'])) {
 									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
 										$elementList[$elem] = $langs->trans($title);
 									}
 								} else {
 									$elementList[$objMod->name] = $langs->trans($objMod->name);
 								}
-							}
+                            }
 
 							$j++;
 							$i++;

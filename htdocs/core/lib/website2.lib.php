@@ -45,9 +45,8 @@ function dolSaveMasterFile($filemaster)
 	$mastercontent .= "}\n";
 	$mastercontent .= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
-	}
 
 		return $result;
 }
@@ -153,12 +152,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	dol_delete_file($filetpl);
 
 	$shortlangcode = '';
-	if ($objectpage->lang) {
-		$shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
-	}
-	if (empty($shortlangcode)) {
-		$shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
-	}
+	if ($objectpage->lang) $shortlangcode = substr($objectpage->lang, 0, 2); // en_US or en-US -> en
+	if (empty($shortlangcode)) $shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
 
 	$tplcontent = '';
 	$tplcontent .= "<?php // BEGIN PHP\n";
@@ -171,7 +166,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent .= "ob_start();\n";
 	$tplcontent .= "// END PHP ?>\n";
-	if (!empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5)) {
+	if (!empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5))
+	{
 		$tplcontent .= "<!DOCTYPE html>\n";
 	}
 	$tplcontent .= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"' : '').'>'."\n";
@@ -203,12 +199,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 			$tmppage->fetch($translationof);
 			if ($tmppage->id > 0) {
 				$tmpshortlangcode = '';
-				if ($tmppage->lang) {
-					$tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
-				}
-				if (empty($tmpshortlangcode)) {
-					$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
-				}
+				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+				if (empty($tmpshortlangcode)) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
 					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
@@ -217,14 +209,15 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 		// Add "has translation pages"
 		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$objectpage->id.($translationof ? ", ".$translationof : "").")";
 		$resql = $db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$num_rows = $db->num_rows($resql);
-			if ($num_rows > 0) {
-				while ($obj = $db->fetch_object($resql)) {
+			if ($num_rows > 0)
+			{
+				while ($obj = $db->fetch_object($resql))
+				{
 					$tmpshortlangcode = '';
-					if ($obj->lang) {
-						$tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
-					}
+					if ($obj->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $obj->lang); // en_US or en-US -> en
 					if ($tmpshortlangcode != $shortlangcode) {
 						$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $obj->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$obj->pageurl.'.php').'" />'."\n";
 					}
@@ -340,9 +333,8 @@ function dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filehtmlheader, $htmlheadercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($filehtmlheader, octdec($conf->global->MAIN_UMASK));
-	}
 
 	return $result;
 }
@@ -362,9 +354,8 @@ function dolSaveCssFile($filecss, $csscontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filecss, $csscontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($filecss, octdec($conf->global->MAIN_UMASK));
-	}
 
 	return $result;
 }
@@ -384,9 +375,8 @@ function dolSaveJsFile($filejs, $jscontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filejs, $jscontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($filejs, octdec($conf->global->MAIN_UMASK));
-	}
 
 	return $result;
 }
@@ -406,9 +396,8 @@ function dolSaveRobotFile($filerobot, $robotcontent)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filerobot, $robotcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($filerobot, octdec($conf->global->MAIN_UMASK));
-	}
 
 	return $result;
 }
@@ -428,9 +417,8 @@ function dolSaveHtaccessFile($filehtaccess, $htaccess)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($filehtaccess, $htaccess);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($filehtaccess, octdec($conf->global->MAIN_UMASK));
-	}
 
 	return $result;
 }
@@ -450,9 +438,8 @@ function dolSaveManifestJson($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
 
 	return $result;
 }
@@ -472,9 +459,8 @@ function dolSaveReadme($file, $content)
 
 	dol_mkdir($pathofwebsite);
 	$result = file_put_contents($file, $content);
-	if (!empty($conf->global->MAIN_UMASK)) {
+	if (!empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
 
 		return $result;
 }
@@ -491,8 +477,10 @@ function showWebsiteTemplates(Website $website)
 	global $conf, $langs, $db, $form;
 
 	$dirthemes = array('/doctemplates/websites');
-	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
-		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
+	if (!empty($conf->modules_parts['websitetemplates']))		// Using this feature slow down application
+	{
+		foreach ($conf->modules_parts['websitetemplates'] as $reldir)
+		{
 			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
 		}
 	}
@@ -521,33 +509,32 @@ function showWebsiteTemplates(Website $website)
 
 	if (count($dirthemes)) {
 		$i = 0;
-		foreach ($dirthemes as $dir) {
+		foreach ($dirthemes as $dir)
+		{
 			//print $dirroot.$dir;exit;
 			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
-			if (is_dir($dirtheme)) {
+			if (is_dir($dirtheme))
+			{
 				$handle = opendir($dirtheme);
-				if (is_resource($handle)) {
-					while (($subdir = readdir($handle)) !== false) {
+				if (is_resource($handle))
+				{
+					while (($subdir = readdir($handle)) !== false)
+					{
 						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir))
+						{
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
-							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
-								continue;
-							}
-							if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) {
-								continue;
-							}
+							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) continue;
+							if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/_exp$/i', $subdir)) continue;
 
 							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
 							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
 							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
-							if (!file_exists($file)) {
-								$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
-							}
+							if (!file_exists($file)) $url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 
 							$originalfile = basename($file);
 							$entity = $conf->entity;
@@ -557,11 +544,8 @@ function showWebsiteTemplates(Website $website)
 
 							$ret = '';
 							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
-							if (!empty($urladvanced)) {
-								$ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
-							} else {
-								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
-							}
+							if (!empty($urladvanced)) $ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
+							else $ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 							print $ret;
 							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
 							print '</a>';

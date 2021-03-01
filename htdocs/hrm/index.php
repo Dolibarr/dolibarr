@@ -33,12 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-if ($conf->deplacement->enabled) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
-if ($conf->expensereport->enabled) {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-}
+if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
@@ -51,13 +47,9 @@ $langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
 $socid = GETPOST("socid", "int");
 
 // Protection if external user
-if ($user->socid > 0) {
-	accessforbidden();
-}
+if ($user->socid > 0) accessforbidden();
 
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
-	$setupcompanynotcomplete = 1;
-}
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete = 1;
 
 $holiday = new Holiday($db);
 $holidaystatic = new Holiday($db);
@@ -71,7 +63,8 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
  */
 
 // Update sold
-if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
+if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete))
+{
 	$result = $holiday->updateBalance();
 }
 
@@ -88,7 +81,8 @@ llxHeader('', $langs->trans('HRMArea'));
 print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
 
-if (!empty($setupcompanynotcomplete)) {
+if (!empty($setupcompanynotcomplete))
+{
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
@@ -100,34 +94,36 @@ if (!empty($setupcompanynotcomplete)) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+	if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
+	{
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
 	}
-	if (!empty($conf->deplacement->enabled) && $user->rights->deplacement->lire) {
+	if (!empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
+	{
 		$langs->load("trips");
 		$listofsearchfields['search_deplacement'] = array('text'=>'ExpenseReport');
 	}
-	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire) {
+	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+	{
 		$langs->load("trips");
 		$listofsearchfields['search_expensereport'] = array('text'=>'ExpenseReport');
 	}
-	if (count($listofsearchfields)) {
+	if (count($listofsearchfields))
+	{
 		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';
 		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
+		foreach ($listofsearchfields as $key => $value)
+		{
+			if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 			print '<tr '.$bc[false].'>';
 			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-			}
+			if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 			print '</tr>';
 			$i++;
 		}
@@ -139,8 +135,10 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 }
 
 
-if (!empty($conf->holiday->enabled)) {
-	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+if (!empty($conf->holiday->enabled))
+{
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
 		$user_id = $user->id;
 
 		print '<div class="div-table-responsive-no-min">';
@@ -151,7 +149,8 @@ if (!empty($conf->holiday->enabled)) {
 
 		$out = '';
 		$typeleaves = $holiday->getTypes(1, 1);
-		foreach ($typeleaves as $key => $val) {
+		foreach ($typeleaves as $key => $val)
+		{
 			$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
 			$nb_holiday += $nb_type;
 			$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
@@ -162,7 +161,8 @@ if (!empty($conf->holiday->enabled)) {
 		print '</td>';
 		print '</tr>';
 		print '</table></div><br>';
-	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE)) {
+	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
 		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 	}
 }
@@ -173,22 +173,22 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Latest leave requests
-if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
+if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
+{
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
 	$sql .= " x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->holiday->readall)) {
-		$sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
-	}
+	if (empty($user->rights->holiday->readall)) $sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
-	if ($result) {
+	if ($result)
+	{
 		$var = false;
 		$num = $db->num_rows($result);
 
@@ -208,8 +208,10 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 		print '<th>'.$langs->trans("to").'</th>';
 		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/holiday/list.php?sortfield=cp.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
-		if ($num) {
-			while ($i < $num && $i < $max) {
+		if ($num)
+		{
+			while ($i < $num && $i < $max)
+			{
 				$obj = $db->fetch_object($result);
 
 				$holidaystatic->id = $obj->rowid;
@@ -246,30 +248,28 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 		print '</table>';
 		print '</div>';
 		print '<br>';
-	} else {
-		dol_print_error($db);
-	}
+	} else dol_print_error($db);
 }
 
 
 // Latest expense report
-if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire) {
+if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+{
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
-	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
-		$sql .= ' AND x.fk_user_author IN ('.join(',', $childids).')';
-	}
+	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) $sql .= ' AND x.fk_user_author IN ('.join(',', $childids).')';
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
-	if ($result) {
+	if ($result)
+	{
 		$num = $db->num_rows($result);
 
 		$i = 0;
@@ -281,12 +281,14 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
 		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
-		if ($num) {
+		if ($num)
+		{
 			$total_ttc = $totalam = $total = 0;
 
 			$expensereportstatic = new ExpenseReport($db);
 			$userstatic = new User($db);
-			while ($i < $num && $i < $max) {
+			while ($i < $num && $i < $max)
+			{
 				$obj = $db->fetch_object($result);
 
 				$expensereportstatic->id = $obj->rowid;
@@ -318,32 +320,26 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 		print '</table>';
 		print '</div>';
 		print '<br>';
-	} else {
-		dol_print_error($db);
-	}
+	} else dol_print_error($db);
 }
 
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read)
+{
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-	}
-	if ($socid) {
-		$sql .= " AND s.fk_soc = $socid";
-	}
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if ($socid)	$sql .= " AND s.fk_soc = $socid";
 	$sql .= " ORDER BY rc.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
-	if ($resql) {
+	if ($resql)
+	{
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -355,8 +351,10 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		print '</th>';
 		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
-		if ($num) {
-			while ($i < $num) {
+		if ($num)
+		{
+			while ($i < $num)
+			{
 				$objp = $db->fetch_object($resql);
 				$staticrecruitmentcandidature->id = $objp->rowid;
 				$staticrecruitmentcandidature->ref = $objp->ref;

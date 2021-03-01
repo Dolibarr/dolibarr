@@ -35,9 +35,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
 	$trclass = 'oddeven';
-	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
-		$trclass .= ' liste_sub_total';
-	}
+	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 	print '<tr class="'.$trclass.'">';
 	print '<td>'.$langs->trans("Donation").'</td>';
 	print '<td>'.$objectlink->getNomUrl(1).'</td>';
@@ -51,18 +49,19 @@ print '</td>';
 print '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
 print '</tr>';
 
-if (count($linkedObjectBlock) > 1) {
+if (count($linkedObjectBlock) > 1)
+{
 	?>
-	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
-		<td><?php echo $langs->trans("Total"); ?></td>
-		<td></td>
-		<td class="center"></td>
-		<td class="center"></td>
-		<td class="right"><?php echo price($total); ?></td>
-		<td class="right"></td>
-		<td class="right"></td>
-	</tr>
-	<?php
+    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
+        <td><?php echo $langs->trans("Total"); ?></td>
+        <td></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
+    </tr>
+    <?php
 }
 
 print "<!-- END PHP TEMPLATE -->\n";

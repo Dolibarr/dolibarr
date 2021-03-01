@@ -81,7 +81,8 @@ class box_services_contracts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
 
-		if ($user->rights->service->lire && $user->rights->contrat->lire) {
+		if ($user->rights->service->lire && $user->rights->contrat->lire)
+		{
 			$contractstatic = new Contrat($this->db);
 			$contractlinestatic = new ContratLigne($this->db);
 			$thirdpartytmp = new Societe($this->db);
@@ -95,25 +96,23 @@ class box_services_contracts extends ModeleBoxes
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			}
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			$sql .= ")";
 			$sql .= " WHERE c.entity = ".$conf->entity;
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
-			}
+			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
 			$sql .= $this->db->order("c.tms", "DESC");
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result) {
+			if ($result)
+			{
 				$num = $this->db->num_rows($result);
 				$now = dol_now();
 
 				$i = 0;
 
-				while ($i < $num) {
+				while ($i < $num)
+				{
 					$late = '';
 
 					$objp = $this->db->fetch_object($result);
@@ -146,12 +145,11 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
-						$late = img_warning($langs->trans("Late"));
-					}
+					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
 
 					// Label
-					if ($objp->product_id > 0) {
+					if ($objp->product_id > 0)
+					{
 						$productstatic->id = $objp->product_id;
 						$productstatic->type = $objp->product_type;
 						$productstatic->ref = $objp->product_ref;
@@ -161,7 +159,8 @@ class box_services_contracts extends ModeleBoxes
 						$productstatic->status_buy = $objp->tobuy;
 
 						$text = $productstatic->getNomUrl(1, '', 20);
-						if ($objp->product_label) {
+						if ($objp->product_label)
+						{
 							$text .= ' - ';
 							//$productstatic->ref=$objp->label;
 							//$text .= $productstatic->getNomUrl(0,'',16);
@@ -170,7 +169,8 @@ class box_services_contracts extends ModeleBoxes
 						$description = $objp->description;
 
 						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if (!empty($conf->global->PRODUIT_DESC_IN_FORM))
+						{
 							//$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 							$description = ''; // Already added into main visible desc
 						}
@@ -212,12 +212,10 @@ class box_services_contracts extends ModeleBoxes
 
 					$i++;
 				}
-				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array(
+				if ($num == 0) $this->info_box_contents[$i][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoContractedProducts")
-					);
-				}
+				);
 
 				$this->db->free($result);
 			} else {

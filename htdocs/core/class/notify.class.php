@@ -81,8 +81,7 @@ class Notify
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
 		'HOLIDAY_VALIDATE',
-		'HOLIDAY_APPROVE',
-		'ACTION_CREATE'
+		'HOLIDAY_APPROVE'
 	);
 
 
@@ -537,12 +536,6 @@ class Notify
 								$object_type = 'holiday';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
 								break;
-							case 'ACTION_CREATE':
-								$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'">'.$newref.'</a>';
-								$dir_output = $conf->agenda->dir_output;
-								$object_type = 'action';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
-								break;
 						}
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
@@ -755,12 +748,6 @@ class Notify
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-						break;
-					case 'ACTION_CREATE':
-						$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'">'.$newref.'</a>';
-						$dir_output = $conf->agenda->dir_output;
-						$object_type = 'action';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
 				}
 				$ref = dol_sanitizeFileName($newref);

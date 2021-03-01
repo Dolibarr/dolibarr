@@ -40,9 +40,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 // Get parameters
@@ -56,17 +54,11 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-if (!$sortfield) {
-	$sortfield = "name";
-}
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 $object = new Loan($db);
-if ($id > 0) {
-	$object->fetch($id);
-}
+if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->loan->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'loan';
@@ -76,7 +68,7 @@ $modulepart = 'loan';
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -89,7 +81,8 @@ $title = $langs->trans("Loan").' - '.$langs->trans("Documents");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-if ($object->id) {
+if ($object->id)
+{
 	$totalpaid = $object->getSumPayment();
 
 	$head = loan_prepare_head($object);
@@ -145,7 +138,8 @@ if ($object->id) {
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file) {
+	foreach ($filearray as $key => $file)
+	{
 		$totalsize += $file['size'];
 	}
 

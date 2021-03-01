@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -106,22 +106,13 @@ $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : 
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
-$datefrom = 0;
-$dateto = 0;
-$paymentdate = -1;
-
 
 /*
  * 	Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-
 // Create third party from a member
-if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
+if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
 	if ($result > 0) {
 		// Creation of thirdparty
 		$company = new Societe($db);
@@ -138,7 +129,7 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 	}
 }
 
-if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
+if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
 	$error = 0;
 	if (empty($user->rights->user->user->creer)) {    // If can edit only itself user, we can link to itself only
 		if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id) {
@@ -157,7 +148,7 @@ if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->cre
 	}
 }
 
-if (empty($reshook) && $action == 'setsocid') {
+if ($action == 'setsocid') {
 	$error = 0;
 	if (!$error) {
 		if (GETPOST('socid', 'int') != $object->fk_soc) {    // If link differs from currently in database
@@ -217,9 +208,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	$emetteur_nom = $_POST["chqemetteur"];
 	$emetteur_banque = $_POST["chqbank"];
 	$option = $_POST["paymentsave"];
-	if (empty($option)) {
-		$option = 'none';
-	}
+	if (empty($option)) $option = 'none';
 	$sendalsoemail = GETPOST("sendmail", 'alpha');
 
 	// Check parameters
@@ -258,19 +247,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 		} else {
 			if (!empty($conf->banque->enabled) && $_POST["paymentsave"] != 'none') {
 				if ($_POST["subscription"]) {
-					if (!$_POST["label"]) {
-						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
-					}
-					if ($_POST["paymentsave"] != 'invoiceonly' && !$_POST["operation"]) {
-						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
-					}
-					if ($_POST["paymentsave"] != 'invoiceonly' && !($_POST["accountid"] > 0)) {
-						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
-					}
+					if (!$_POST["label"])     $errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
+					if ($_POST["paymentsave"] != 'invoiceonly' && !$_POST["operation"]) $errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
+					if ($_POST["paymentsave"] != 'invoiceonly' && !($_POST["accountid"] > 0)) $errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 				} else {
-					if ($_POST["accountid"]) {
-						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
-					}
+					if ($_POST["accountid"])   $errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
 				}
 				if ($errmsg) {
 					$error++;
@@ -352,9 +333,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 					$arraydefaultmessage = null;
 					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
-					if (!empty($labeltouse)) {
-						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
-					}
+					if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 						$subject = $arraydefaultmessage->topic;
@@ -600,8 +579,8 @@ if ($rowid > 0) {
 
 
 	/*
-	 * Action buttons
-	 */
+     * Action buttons
+     */
 
 	// Button to create a new subscription if member no draft neither resiliated
 	if ($user->rights->adherent->cotisation->creer) {
@@ -616,8 +595,8 @@ if ($rowid > 0) {
 	}
 
 	/*
-	 * List of subscriptions
-	 */
+     * List of subscriptions
+     */
 	if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 		$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
 		$sql .= " c.rowid as crowid, c.subscription,";
@@ -737,8 +716,8 @@ if ($rowid > 0) {
 	}
 
 	/*
-	 * Add new subscription form
-	 */
+     * Add new subscription form
+     */
 	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->rights->adherent->cotisation->creer) {
 		print '<br>';
 
@@ -764,31 +743,31 @@ if ($rowid > 0) {
 			//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
 			print "\n".'<script type="text/javascript" language="javascript">';
 			print '$(document).ready(function () {
-						$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
-						$("#none, #invoiceonly").click(function() {
-							$(".bankswitchclass").hide();
-							$(".bankswitchclass2").hide();
-						});
-						$("#bankdirect, #bankviainvoice").click(function() {
-							$(".bankswitchclass").show();
-							$(".bankswitchclass2").show();
-						});
-						$("#selectoperation").change(function() {
-							var code = $(this).val();
-							if (code == "CHQ")
-							{
-								$(".fieldrequireddyn").addClass("fieldrequired");
-								if ($("#fieldchqemetteur").val() == "")
-								{
-									$("#fieldchqemetteur").val($("#memberlabel").val());
-								}
-							}
-							else
-							{
-								$(".fieldrequireddyn").removeClass("fieldrequired");
-							}
-						});
-						';
+                        $(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
+                        $("#none, #invoiceonly").click(function() {
+                            $(".bankswitchclass").hide();
+                            $(".bankswitchclass2").hide();
+                        });
+                        $("#bankdirect, #bankviainvoice").click(function() {
+                            $(".bankswitchclass").show();
+                            $(".bankswitchclass2").show();
+                        });
+                        $("#selectoperation").change(function() {
+                            var code = $(this).val();
+                            if (code == "CHQ")
+                            {
+                                $(".fieldrequireddyn").addClass("fieldrequired");
+                            	if ($("#fieldchqemetteur").val() == "")
+                            	{
+                                	$("#fieldchqemetteur").val($("#memberlabel").val());
+                            	}
+                            }
+                            else
+                            {
+                                $(".fieldrequireddyn").removeClass("fieldrequired");
+                            }
+                        });
+                        ';
 			if (GETPOST('paymentsave')) print '$("#'.GETPOST('paymentsave').'").prop("checked",true);';
 			print '});';
 			print '</script>'."\n";
@@ -847,6 +826,9 @@ if ($rowid > 0) {
 		print '<tbody>';
 
 		$today = dol_now();
+		$datefrom = 0;
+		$dateto = 0;
+		$paymentdate = -1;
 
 		// Date payment
 		if (GETPOST('paymentyear') && GETPOST('paymentmonth') && GETPOST('paymentday')) {
@@ -939,9 +921,8 @@ if ($rowid > 0) {
 					print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '> '.$langs->trans("MoreActionBankViaInvoice");
-					if ($object->fk_soc) {
-						print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
-					} else {
+					if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
+					else {
 						print ' (';
 						if (empty($object->fk_soc)) print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 						print $langs->trans("NoThirdPartyAssociatedToMember");
@@ -1020,9 +1001,7 @@ if ($rowid > 0) {
 			$arraydefaultmessage = null;
 			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 
-			if (!empty($labeltouse)) {
-				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
-			}
+			if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;

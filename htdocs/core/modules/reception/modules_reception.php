@@ -46,12 +46,12 @@ abstract class ModelePdfReception extends CommonDocGenerator
 		global $conf;
 
 		$type = 'reception';
-		$list = array();
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $list;
+		return $liste;
 	}
 }
 
@@ -129,15 +129,10 @@ abstract class ModelNumRefReception
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		}
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }

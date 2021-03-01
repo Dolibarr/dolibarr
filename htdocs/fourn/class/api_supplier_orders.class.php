@@ -32,7 +32,7 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	public static $FIELDS = array(
+	static $FIELDS = array(
 		'socid'
 	);
 
@@ -108,70 +108,41 @@ class SupplierOrders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
-			$search_sale = DolibarrApiAccess::$user->id;
-		}
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-		if (!empty($product_ids)) {
-			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseurdet as cd"; // We need this table joined to the select in order to filter by product
-		}
+  		if (!empty($product_ids)) $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseurdet as cd"; // We need this table joined to the select in order to filter by product
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
-		}
-		if (!empty($product_ids)) {
-			$sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
-		}
-		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
-		}
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+		if (!empty($product_ids)) $sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
+		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
+		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 
 		// Filter by status
-		if ($status == 'draft') {
-			$sql .= " AND t.fk_statut IN (0)";
-		}
-		if ($status == 'validated') {
-			$sql .= " AND t.fk_statut IN (1)";
-		}
-		if ($status == 'approved') {
-			$sql .= " AND t.fk_statut IN (2)";
-		}
-		if ($status == 'running') {
-			$sql .= " AND t.fk_statut IN (3)";
-		}
-		if ($status == 'received_start') {
-			$sql .= " AND t.fk_statut IN (4)";
-		}
-		if ($status == 'received_end') {
-			$sql .= " AND t.fk_statut IN (5)";
-		}
-		if ($status == 'cancelled') {
-			$sql .= " AND t.fk_statut IN (6,7)";
-		}
-		if ($status == 'refused') {
-			$sql .= " AND t.fk_statut IN (9)";
-		}
+		if ($status == 'draft')     $sql .= " AND t.fk_statut IN (0)";
+		if ($status == 'validated') $sql .= " AND t.fk_statut IN (1)";
+		if ($status == 'approved')  $sql .= " AND t.fk_statut IN (2)";
+		if ($status == 'running')   $sql .= " AND t.fk_statut IN (3)";
+		if ($status == 'received_start') $sql .= " AND t.fk_statut IN (4)";
+		if ($status == 'received_end')   $sql .= " AND t.fk_statut IN (5)";
+		if ($status == 'cancelled') $sql .= " AND t.fk_statut IN (6,7)";
+		if ($status == 'refused')   $sql .= " AND t.fk_statut IN (9)";
 		// Insert sale filter
-		if ($search_sale > 0) {
+		if ($search_sale > 0)
+		{
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
 		// Add sql filters
-		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+		if ($sqlfilters)
+		{
+			if (!DolibarrApi::_checkFilters($sqlfilters))
+			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -180,7 +151,8 @@ class SupplierOrders extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0) {
+			if ($page < 0)
+			{
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -189,11 +161,13 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		$result = $this->db->query($sql);
-		if ($result) {
+		if ($result)
+		{
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min) {
+			while ($i < $min)
+			{
 				$obj = $this->db->fetch_object($result);
 				$order_static = new CommandeFournisseur($this->db);
 				if ($order_static->fetch($obj->rowid)) {
@@ -233,13 +207,13 @@ class SupplierOrders extends DolibarrApi
 			$this->order->date = dol_now();
 		}
 		/* We keep lines as an array
-		 if (isset($request_data["lines"])) {
-			$lines = array();
-			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
-			}
-			$this->order->lines = $lines;
-		}*/
+         if (isset($request_data["lines"])) {
+            $lines = array();
+            foreach ($request_data["lines"] as $line) {
+                array_push($lines, (object) $line);
+            }
+            $this->order->lines = $lines;
+        }*/
 
 		if ($this->order->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating order", array_merge(array($this->order->error), $this->order->errors));
@@ -270,15 +244,12 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
+			if ($field == 'id') continue;
 			$this->order->$field = $value;
 		}
 
-		if ($this->order->update(DolibarrApiAccess::$user)) {
+		if ($this->order->update($id, DolibarrApiAccess::$user))
 			return $this->get($id);
-		}
 
 		return false;
 	}
@@ -397,9 +368,8 @@ class SupplierOrders extends DolibarrApi
 	{
 		$order = array();
 		foreach (SupplierOrders::$FIELDS as $field) {
-			if (!isset($data[$field])) {
+			if (!isset($data[$field]))
 				throw new RestException(400, "$field field missing");
-			}
 			$order[$field] = $data[$field];
 		}
 		return $order;

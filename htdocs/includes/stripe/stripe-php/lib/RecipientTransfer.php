@@ -3,7 +3,7 @@
 namespace Stripe;
 
 /**
- * Class RecipientTransfer.
+ * Class RecipientTransfer
  *
  * @property string $id
  * @property string $object
@@ -20,17 +20,19 @@ namespace Stripe;
  * @property string $failure_code
  * @property string $failure_message
  * @property bool $livemode
- * @property \Stripe\StripeObject $metadata
+ * @property StripeObject $metadata
  * @property string $method
  * @property string $recipient
- * @property \Stripe\Collection $reversals
+ * @property mixed $reversals
  * @property bool $reversed
  * @property string $source_type
  * @property string $statement_descriptor
  * @property string $status
  * @property string $type
+ *
+ * @package Stripe
  */
 class RecipientTransfer extends ApiResource
 {
-    const OBJECT_NAME = 'recipient_transfer';
+    const OBJECT_NAME = "recipient_transfer";
 }

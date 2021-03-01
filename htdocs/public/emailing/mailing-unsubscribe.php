@@ -27,21 +27,11 @@
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOBROWSERNOTIF')) {
-	define('NOBROWSERNOTIF', '1');
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
-}
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 /**
  * Header empty
@@ -79,13 +69,15 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
+if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
+{
 	print 'Bad security key value.';
 	exit;
 }
 
 
-if (!empty($tag) && ($unsuscrib == '1')) {
+if (!empty($tag) && ($unsuscrib == '1'))
+{
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
 
 	$sql = "SELECT mc.email, m.entity";
@@ -93,13 +85,12 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-	}
+	if (!$resql) dol_print_error($db);
 
 	$obj = $db->fetch_object($resql);
 
-	if (empty($obj->email)) {
+	if (empty($obj->email))
+	{
 		print 'Email not found. No need to unsubscribe.';
 		exit;
 	}
@@ -109,9 +100,7 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-	}
+	if (!$resql) dol_print_error($db);
 
 	/*
 	// Update status communication of thirdparty prospect (old usage)
@@ -120,7 +109,7 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 	$resql=$db->query($sql);
 	if (! $resql) dol_print_error($db);
 
-	// Update status communication of contact prospect (old usage)
+    // Update status communication of contact prospect (old usage)
 	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET no_email=1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag = '".$db->escape($tag)."' AND source_type='contact' AND source_id is not null)";
 
 	$resql=$db->query($sql);

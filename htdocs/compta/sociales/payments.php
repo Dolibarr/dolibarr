@@ -46,9 +46,7 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $year = GETPOST("year", 'int');
@@ -58,20 +56,15 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) {
-	$sortfield = "cs.date_ech";
-}
-if (!$sortorder) {
-	$sortorder = "DESC";
-}
+if (!$sortfield) $sortfield = "cs.date_ech";
+if (!$sortorder) $sortorder = "DESC";
 
-if (empty($conf->tax->enabled) || empty($user->rights->tax->charges->lire)) {
+if (empty($conf->tax->enabled) || empty($user->rights->tax->charges->lire))
+{
 	accessforbidden();
 }
 
@@ -81,7 +74,8 @@ if (empty($conf->tax->enabled) || empty($user->rights->tax->charges->lire)) {
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
+{
 	$search_sc_type = '';
 	//$toselect = '';
 	//$search_array_options = array();
@@ -105,30 +99,16 @@ llxHeader('', $title);
 
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
-}
-if ($sortfield) {
-	$param .= '&sortfield='.urlencode($sortfield);
-}
-if ($sortorder) {
-	$param .= '&sortorder='.urlencode($sortorder);
-}
-if ($year) {
-	$param .= '&year='.urlencode($year);
-}
-if ($search_sc_type) {
-	$param .= '&search_sc_type='.urlencode($search_sc_type);
-}
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+if ($sortfield) $param .= '&sortfield='.urlencode($sortfield);
+if ($sortorder) $param .= '&sortorder='.urlencode($sortorder);
+if ($year) $param .= '&year='.urlencode($year);
+if ($search_sc_type) $param .= '&search_sc_type='.urlencode($search_sc_type);
 $num = 0;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') {
-	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-}
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -177,9 +157,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
-	if ($limit) {
-		$sql .= $db->plimit($limit + 1, $offset);
-	}
+	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -207,9 +185,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-if (!empty($conf->banque->enabled)) {
-	print '<td class="liste_titre"></td>';
-}
+if (!empty($conf->banque->enabled)) print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre center">';
 $searchpicto = $form->showFilterButtons();
@@ -225,14 +201,13 @@ print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", 
 print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-if (!empty($conf->banque->enabled)) {
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-}
+if (!empty($conf->banque->enabled)) print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('');
 print "</tr>\n";
 
-if (!$resql) {
+if (!$resql)
+{
 	dol_print_error($db);
 	exit;
 }
@@ -247,9 +222,7 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 	// Date
 	$date = $obj->periode;
-	if (empty($date)) {
-		$date = $obj->date_ech;
-	}
+	if (empty($date)) $date = $obj->date_ech;
 	print '<td>'.dol_print_date($date, 'day').'</td>';
 	// Label
 	print '<td>';
@@ -270,14 +243,14 @@ while ($i < min($num, $limit)) {
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
 	// Type payment
 	print '<td>';
-	if ($obj->payment_code) {
-		print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-	}
+	if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 	print $obj->num_payment.'</td>';
 	// Account
-	if (!empty($conf->banque->enabled)) {
+	if (!empty($conf->banque->enabled))
+	{
 		print '<td>';
-		if ($obj->fk_bank > 0) {
+		if ($obj->fk_bank > 0)
+		{
 			//$accountstatic->fetch($obj->fk_bank);
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
@@ -286,16 +259,12 @@ while ($i < min($num, $limit)) {
 			$accountstatic->accountancy_journal = $obj->accountancy_journal;
 			$accountstatic->label = $obj->blabel;
 			print $accountstatic->getNomUrl(1);
-		} else {
-			print '&nbsp;';
-		}
+		} else print '&nbsp;';
 		print '</td>';
 	}
 	// Paid
 	print '<td class="right">';
-	if ($obj->totalpaye) {
-		print price($obj->totalpaye);
-	}
+	if ($obj->totalpaye) print price($obj->totalpaye);
 	print '</td>';
 
 	print '<td></td>';
@@ -314,9 +283,7 @@ print '<td class="liste_total right"></td>'; // A total here has no sense
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
-if (!empty($conf->banque->enabled)) {
-	print '<td></td>';
-}
+if (!empty($conf->banque->enabled)) print '<td></td>';
 print '<td class="liste_total right">'.price($totalpaye)."</td>";
 print '<td></td>';
 print "</tr>";

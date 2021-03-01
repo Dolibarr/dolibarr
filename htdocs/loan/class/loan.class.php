@@ -135,8 +135,10 @@ class Loan extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -186,52 +188,36 @@ class Loan extends CommonObject
 
 		// clean parameters
 		$newcapital = price2num($this->capital, 'MT');
-		if (empty($this->insurance_amount)) {
-			$this->insurance_amount = 0;
-		}
+		if (empty($this->insurance_amount)) $this->insurance_amount = 0;
 		$newinsuranceamount = price2num($this->insurance_amount, 'MT');
-		if (isset($this->note_private)) {
-			$this->note_private = trim($this->note_private);
-		}
-		if (isset($this->note_public)) {
-			$this->note_public = trim($this->note_public);
-		}
-		if (isset($this->account_capital)) {
-			$this->account_capital = trim($this->account_capital);
-		}
-		if (isset($this->account_insurance)) {
-			$this->account_insurance = trim($this->account_insurance);
-		}
-		if (isset($this->account_interest)) {
-			$this->account_interest = trim($this->account_interest);
-		}
-		if (isset($this->fk_bank)) {
-			$this->fk_bank = (int) $this->fk_bank;
-		}
-		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat = (int) $this->fk_user_creat;
-		}
-		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif = (int) $this->fk_user_modif;
-		}
-		if (isset($this->fk_project)) {
-			$this->fk_project = (int) $this->fk_project;
-		}
+		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
+		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
+		if (isset($this->account_capital)) $this->account_capital = trim($this->account_capital);
+		if (isset($this->account_insurance)) $this->account_insurance = trim($this->account_insurance);
+		if (isset($this->account_interest)) $this->account_interest = trim($this->account_interest);
+		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_project)) $this->fk_project = (int) $this->fk_project;
 
 		// Check parameters
-		if (!$newcapital > 0 || empty($this->datestart) || empty($this->dateend)) {
+		if (!$newcapital > 0 || empty($this->datestart) || empty($this->dateend))
+		{
 			$this->error = "ErrorBadParameter";
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_capital)) {
+		if (($conf->accounting->enabled) && empty($this->account_capital))
+		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyCapitalCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_insurance)) {
+		if (($conf->accounting->enabled) && empty($this->account_insurance))
+		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInsuranceCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_interest)) {
+		if (($conf->accounting->enabled) && empty($this->account_interest))
+		{
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInterestCode"));
 			return -2;
 		}
@@ -262,7 +248,8 @@ class Loan extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."loan");
 
 			//dol_syslog("Loans::create this->id=".$this->id);
@@ -294,39 +281,47 @@ class Loan extends CommonObject
 		$lines_url = $account->get_url('', $this->id, 'loan');
 
 		// Delete bank urls
-		foreach ($lines_url as $line_url) {
-			if (!$error) {
+		foreach ($lines_url as $line_url)
+		{
+			if (!$error)
+			{
 				$accountline = new AccountLine($this->db);
 				$accountline->fetch($line_url['fk_bank']);
 				$result = $accountline->delete_urls($user);
-				if ($result < 0) {
+				if ($result < 0)
+				{
 					$error++;
 				}
 			}
 		}
 
 		// Delete payments
-		if (!$error) {
+		if (!$error)
+		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan where fk_loan=".$this->id;
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) {
+			if (!$resql)
+			{
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
 		}
 
-		if (!$error) {
+		if (!$error)
+		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".$this->id;
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) {
+			if (!$resql)
+			{
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
 		}
 
-		if (!$error) {
+		if (!$error)
+		{
 			$this->db->commit();
 			return 1;
 		} else {
@@ -346,7 +341,8 @@ class Loan extends CommonObject
 	{
 		$this->db->begin();
 
-		if (!is_numeric($this->nbterm)) {
+		if (!is_numeric($this->nbterm))
+		{
 			$this->error = 'BadValueForParameterForNbTerm';
 			return -1;
 		}
@@ -368,7 +364,8 @@ class Loan extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$this->db->commit();
 			return 1;
 		} else {
@@ -382,26 +379,12 @@ class Loan extends CommonObject
 	/**
 	 *  Tag loan as paid completely
 	 *
-	 *	@deprecated
-	 *  @see setPaid()
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
 		// phpcs:enable
-		dol_syslog(get_class($this)."::set_paid is deprecated, use setPaid instead", LOG_NOTICE);
-		return $this->setPaid($user);
-	}
-
-	/**
-	 *  Tag loan as paid completely
-	 *
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function setPaid($user)
-	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -416,28 +399,14 @@ class Loan extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag loan as payment started
+	 *  Tag loan as payement started
 	 *
-	 *	@deprecated
-	 *  @see setStarted()
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
 	public function set_started($user)
 	{
 		// phpcs:enable
-		dol_syslog(get_class($this)."::set_started is deprecated, use setStarted instead", LOG_NOTICE);
-		return $this->setStarted($user);
-	}
-
-	/**
-	 *  Tag loan as payment started
-	 *
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function setStarted($user)
-	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -453,26 +422,13 @@ class Loan extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Tag loan as payement as unpaid
-	 *	@deprecated
-	 *  @see setUnpaid()
+	 *
 	 *  @param	User	$user	Object user making change
 	 *  @return	int				<0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
 		// phpcs:enable
-		dol_syslog(get_class($this)."::set_unpaid is deprecated, use setUnpaid instead", LOG_NOTICE);
-		return $this->setUnpaid($user);
-	}
-
-	/**
-	 *  Tag loan as payement as unpaid
-	 *
-	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
-	 */
-	public function setUnpaid($user)
-	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -515,29 +471,22 @@ class Loan extends CommonObject
 		$langs->loadLangs(array("customers", "bills"));
 
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
-		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
+		{
 			global $langs;
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
 			$this->labelStatus[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-			}
+			if ($status == 0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
 			$this->labelStatusShort[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-			}
+			if ($status == 0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 		}
 
 		$statusType = 'status1';
-		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) {
-			$statusType = 'status3';
-		}
-		if ($status == 1) {
-			$statusType = 'status6';
-		}
+		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) $statusType = 'status3';
+		if ($status == 1) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -570,40 +519,33 @@ class Loan extends CommonObject
 
 		$url = DOL_URL_ROOT.'/loan/card.php?id='.$this->id;
 
-		if ($option != 'nolink') {
+		if ($option != 'nolink')
+		{
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
 		}
 
 		$linkclose = '';
-		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (empty($notooltip))
+		{
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else {
-			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
-		}
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		}
-		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
-		}
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
 		$result .= $linkend;
 
 		return $result;
@@ -655,13 +597,12 @@ class Loan extends CommonObject
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$amount = 0;
 
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) {
-				$amount = $obj->amount ? $obj->amount : 0;
-			}
+			if ($obj) $amount = $obj->amount ? $obj->amount : 0;
 
 			$this->db->free($resql);
 			return $amount;
@@ -686,24 +627,26 @@ class Loan extends CommonObject
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
-		if ($result) {
-			if ($this->db->num_rows($result)) {
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
+				if ($obj->fk_user_author)
+				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_modif) {
+				if ($obj->fk_user_modif)
+				{
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
 				}
 				$this->date_creation = $this->db->jdate($obj->datec);
-				if (empty($obj->fk_user_modif)) {
-					$obj->tms = "";
-				}
+				if (empty($obj->fk_user_modif)) $obj->tms = "";
 				$this->date_modification = $this->db->jdate($obj->tms);
 
 				$this->db->free($result);

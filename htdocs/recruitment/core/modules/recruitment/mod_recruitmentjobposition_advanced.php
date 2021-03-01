@@ -113,7 +113,8 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		/*$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;*/
 
-		if (!$numExample) {
+		if (!$numExample)
+		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -134,7 +135,8 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		// We get cursor rule
 		$mask = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK;
 
-		if (!$mask) {
+		if (!$mask)
+		{
 			$this->error = 'NotConfigured';
 			return 0;
 		}

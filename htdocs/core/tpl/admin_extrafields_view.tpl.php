@@ -25,7 +25,8 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || !is_object($langs)) {
+if (empty($langs) || !is_object($langs))
+{
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -71,8 +72,10 @@ if ($conf->multicompany->enabled) {
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
-	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value) {
+if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type']))
+{
+	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value)
+	{
 		/*if (! dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1)) {
 			// TODO Uncomment this to exclude extrafields of modules not enabled. Add a link to "Show extrafields disabled"
 			// continue;
@@ -99,13 +102,12 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		if (!empty($conf->multicompany->enabled)) {
 			print '<td class="center">';
-			if (empty($extrafields->attributes[$elementtype]['entityid'][$key])) {
+			if (empty($extrafields->attributes[$elementtype]['entityid'][$key]))
+			{
 				print $langs->trans("All");
 			} else {
 				global $multicompanylabel_cache;
-				if (!is_array($multicompanylabel_cache)) {
-					$multicompanylabel_cache = array();
-				}
+				if (!is_array($multicompanylabel_cache)) $multicompanylabel_cache = array();
 				if (empty($multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]])) {
 					global $mc;
 					$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
@@ -121,9 +123,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 	}
 } else {
 	$colspan = 13;
-	if (!empty($conf->multicompany->enabled)) {
-		$colspan++;
-	}
+	if (!empty($conf->multicompany->enabled))  $colspan++;
 
 	print '<tr class="oddeven">';
 	print '<td class="opacitymedium" colspan="'.$colspan.'">';

@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
 
-if (!$user->admin) {
+if (!$user->admin)
 	accessforbidden();
-}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -43,10 +42,12 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+{
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
+	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -54,18 +55,18 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 } elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'updateform') {
+} elseif ($action == 'updateform')
+{
 	$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	if ($res1 && $res2) {
-		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	}
+	if ($res1 && $res2) setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 }
 
 
@@ -106,11 +107,14 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td class="right">';
-if (function_exists("imagecreatefrompng")) {
-	if (!empty($conf->use_javascript_ajax)) {
+if (function_exists("imagecreatefrompng"))
+{
+	if (!empty($conf->use_javascript_ajax))
+	{
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
 	} else {
-		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		{
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -126,10 +130,12 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td class="right">';
-if (!empty($conf->use_javascript_ajax)) {
+if (!empty($conf->use_javascript_ajax))
+{
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 } else {
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -152,9 +158,7 @@ print "</tr>\n";
 
 
 $sessiontimeout = ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
-	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
-}
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
 if (ini_get("session.gc_probability") == 0) {
@@ -169,9 +173,7 @@ print '</td>';
 print '</tr>';
 
 
-if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$conf->global->MAIN_APPLICATION_TITLE = "";
-}
+if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE = "";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
 print '</td>';

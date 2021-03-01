@@ -55,11 +55,6 @@ $permissionnote = $user->rights->adherent->cotisation->creer; // Used by the inc
 $permissiondellink = $user->rights->adherent->cotisation->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the include of actions_lineupdonw.inc.php
 
-$hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
-
-// Security check
-$result = restrictedArea($user, 'subscription', 0);		// TODO Check on object id
-
 
 /*
  * 	Actions
@@ -153,8 +148,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->adherent-
 
 $form = new Form($db);
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $langs->trans("SubscriptionCard"), $help_url);
+
+llxHeader('', $langs->trans("SubscriptionCard"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 dol_htmloutput_errors($errmsg);

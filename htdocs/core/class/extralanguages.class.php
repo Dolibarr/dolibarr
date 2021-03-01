@@ -83,19 +83,11 @@ class ExtraLanguages
 		// phpcs:enable
 		global $conf;
 
-		if (empty($elementtype)) {
-			return array();
-		}
+		if (empty($elementtype)) return array();
 
-		if ($elementtype == 'thirdparty') {
-			$elementtype = 'societe';
-		}
-		if ($elementtype == 'contact') {
-			$elementtype = 'socpeople';
-		}
-		if ($elementtype == 'order_supplier') {
-			$elementtype = 'commande_fournisseur';
-		}
+		if ($elementtype == 'thirdparty')     $elementtype = 'societe';
+		if ($elementtype == 'contact')        $elementtype = 'socpeople';
+		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
 
 
 		$array_name_label = array();
@@ -141,14 +133,16 @@ class ExtraLanguages
 	{
 		global $conf, $langs, $form;
 
-		if (!is_object($form)) {
+		if (!is_object($form))
+		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
 		$out = '';
 
-		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
+		if (!preg_match('/options_$/', $keyprefix))	// Because we work on extrafields, we add 'options_' to prefix if not already added
+		{
 			$keyprefix = $keyprefix.'options_';
 		}
 

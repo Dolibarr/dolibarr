@@ -101,14 +101,15 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+	 	global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+	 	$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample) {
+		if (!$numExample)
+		{
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -129,7 +130,8 @@ class mod_contract_magre extends ModelNumRefContracts
 
 		$mask = $conf->global->CONTRACT_MAGRE_MASK;
 
-		if (!$mask) {
+		if (!$mask)
+		{
 			$this->error = 'NotConfigured';
 			return 0;
 		}

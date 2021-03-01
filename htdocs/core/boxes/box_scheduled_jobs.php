@@ -42,9 +42,6 @@ class box_scheduled_jobs extends ModeleBoxes
 	 */
 	public $db;
 
-	/**
-	 * @var string params
-	 */
 	public $param;
 
 	public $info_box_head = array();
@@ -104,9 +101,7 @@ class box_scheduled_jobs extends ModeleBoxes
 
 					if (dol_eval($objp->test, 1, 1)) {
 						$nextrun = $this->db->jdate($objp->datenextrun);
-						if (empty($nextrun)) {
-							$nextrun = $this->db->jdate($objp->datestart);
-						}
+						if (empty($nextrun)) $nextrun = $this->db->jdate($objp->datestart);
 
 						if ($line == 0 || ($nextrun < $cronstatic->datenextrun && (empty($objp->nbrun) || empty($objp->maxrun) || $objp->nbrun < $objp->maxrun))) {
 							$cronstatic->id = $objp->rowid;

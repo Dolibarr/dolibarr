@@ -114,7 +114,8 @@ class Tickets extends DolibarrApi
 	{
 		try {
 			return $this->getCommon(0, '', $ref);
-		} catch (Exception $e) {
+		} catch (Exception $e)
+		{
 			   throw $e;
 		}
 	}

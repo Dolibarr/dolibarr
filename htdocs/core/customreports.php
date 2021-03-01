@@ -25,7 +25,8 @@
  *		\brief      Page to make custom reports
  */
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE'))
+{
 	require '../main.inc.php';
 
 	// Get parameters
@@ -36,25 +37,17 @@ if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 	$objecttype = GETPOST('objecttype', 'aZ09');
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
-	if (empty($objecttype)) {
-		$objecttype = 'thirdparty';
-	}
+	if (empty($objecttype)) $objecttype = 'thirdparty';
 
 	$search_filters = GETPOST('search_filters', 'array');
 	$search_measures = GETPOST('search_measures', 'array');
 
 	//$search_xaxis = GETPOST('search_xaxis', 'array');
-	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') {
-		$search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
-	} else {
-		$search_xaxis = array();
-	}
+	if (GETPOST('search_xaxis', 'alpha') && GETPOST('search_xaxis', 'alpha') != '-1') $search_xaxis = array(GETPOST('search_xaxis', 'alpha'));
+	else $search_xaxis = array();
 	//$search_groupby = GETPOST('search_groupby', 'array');
-	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') {
-		$search_groupby = array(GETPOST('search_groupby', 'alpha'));
-	} else {
-		$search_groupby = array();
-	}
+	if (GETPOST('search_groupby', 'alpha') && GETPOST('search_groupby', 'alpha') != '-1') $search_groupby = array(GETPOST('search_groupby', 'alpha'));
+	else $search_groupby = array();
 
 	$search_yaxis = GETPOST('search_yaxis', 'array');
 	$search_graph = GETPOST('search_graph', 'none');
@@ -64,9 +57,7 @@ if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
 	$sortfield = GETPOST('sortfield', 'aZ09comma');
 	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-	if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
-		$page = 0;
-	}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+	if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 	$offset = $limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
@@ -111,9 +102,8 @@ $arrayoftype = array(
 // Complete $arrayoftype by external modules
 $parameters = array('objecttype'=>$objecttype, 'tabfamily'=>$tabfamily);
 $reshook = $hookmanager->executeHooks('loadDataForCustomReports', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-} elseif (is_array($hookmanager->resArray)) {
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+elseif (is_array($hookmanager->resArray)) {
 	if (!empty($hookmanager->resArray['title'])) {		// Add entries for tabs
 		$title = $hookmanager->resArray['title'];
 	}
@@ -146,7 +136,8 @@ if ($objecttype) {
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) {	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
+{
 	//$socid = $user->socid;
 	accessforbidden();
 }
@@ -271,9 +262,7 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			$regs = array();
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
-				if (is_null($valuetranslated)) {
-					$valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
-				}
+				if (is_null($valuetranslated)) $valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 				$valuetranslated = $langs->trans($valuetranslated);
 			} elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
 				$classname = $regs[1];
@@ -348,9 +337,8 @@ foreach ($arrayoftype as $key => $val) {
 	}
 }
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
-if (empty($conf->use_javascript_ajax)) {
-	print '<input type="submit" class="button buttongen" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
-} else {
+if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button buttongen" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
+else {
 	print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
         	jQuery("#objecttype").change(function() {
@@ -412,15 +400,9 @@ if ($mode == 'grid') {
 	print '<div class="divadvancedsearchfield">';
 	foreach ($object->fields as $key => $val) {
 		if (empty($val['measure']) && (!isset($val['enabled']) || dol_eval($val['enabled'], 1))) {
-			if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) {
-				continue;
-			}
-			if (preg_match('/^fk_/', $key)) {
-				continue;
-			}
-			if (in_array($val['type'], array('html', 'text'))) {
-				continue;
-			}
+			if (in_array($key, array('id', 'rowid', 'entity', 'last_main_doc', 'extraparams'))) continue;
+			if (preg_match('/^fk_/', $key)) continue;
+			if (in_array($val['type'], array('html', 'text'))) continue;
 			if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
 				$arrayofyaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position']);
 				$arrayofyaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position']);
@@ -463,7 +445,8 @@ print '</form>';
 
 // Generate the SQL request
 $sql = '';
-if (!empty($search_measures) && !empty($search_xaxis)) {
+if (!empty($search_measures) && !empty($search_xaxis))
+{
 	$fieldid = 'rowid';
 
 	$sql = 'SELECT ';
@@ -477,9 +460,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
 			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as x_".$key.', ';
-		} else {
-			$sql .= $val.' as x_'.$key.', ';
-		}
+		} else $sql .= $val.' as x_'.$key.', ';
 	}
 	foreach ($search_groupby as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
@@ -491,14 +472,11 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
 			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as g_".$key.', ';
-		} else {
-			$sql .= $val.' as g_'.$key.', ';
-		}
+		} else $sql .= $val.' as g_'.$key.', ';
 	}
 	foreach ($search_measures as $key => $val) {
-		if ($val == 't.count') {
-			$sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
-		} elseif (preg_match('/\-sum$/', $val)) {
+		if ($val == 't.count') $sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
+		elseif (preg_match('/\-sum$/', $val)) {
 			$tmpval = preg_replace('/\-sum$/', '', $val);
 			$sql .= 'SUM('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
 		} elseif (preg_match('/\-average$/', $val)) {
@@ -529,7 +507,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	}
 	$sql .= ' WHERE 1 = 1';
 	if ($object->ismultientitymanaged == 1) {
-		$sql .= ' AND entity IN ('.getEntity($object->element).')';
+   		$sql .= ' AND entity IN ('.getEntity($object->element).')';
 	}
 	foreach ($search_filters as $key => $val) {
 		// TODO Add the where here
@@ -545,9 +523,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
 			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
-		}
+		} else $sql .= $val.', ';
 	}
 	foreach ($search_groupby as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
@@ -559,9 +535,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
 			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
-		}
+		} else $sql .= $val.', ';
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
 	$sql .= ' ORDER BY ';
@@ -575,9 +549,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
 			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
-		}
+		} else $sql .= $val.', ';
 	}
 	foreach ($search_groupby as $key => $val) {
 		if (preg_match('/\-year$/', $val)) {
@@ -589,9 +561,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 		} elseif (preg_match('/\-day$/', $val)) {
 			$tmpval = preg_replace('/\-day$/', '', $val);
 			$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-		} else {
-			$sql .= $val.', ';
-		}
+		} else $sql .= $val.', ';
 	}
 	$sql = preg_replace('/,\s*$/', '', $sql);
 }
@@ -637,7 +607,7 @@ if ($sql) {
 			$oldlabeltouse = $labeltouse;
 
 			/* Example of value for $arrayofvaluesforgroupby
-			 * array (size=1)
+    		 * array (size=1)
 			 *	  'g_0' =>
 			 *	    array (size=6)
 			 *	      0 => string '0' (length=1)
@@ -646,7 +616,7 @@ if ($sql) {
 			 *	      'done' => string 'done' (length=4)
 			 *	      'processing' => string 'processing' (length=10)
 			 *	      'undeployed' => string 'undeployed' (length=10)
-			 */
+    		 */
 			foreach ($search_measures as $key => $val) {
 				$gi = 0;
 				foreach ($search_groupby as $gkey) {
@@ -662,9 +632,7 @@ if ($sql) {
 						//var_dump('gvaluepossiblekey='.$gvaluepossiblekey.' gvaluepossiblelabel='.$gvaluepossiblelabel.' ykeysuffix='.$ykeysuffix.' gval='.$gval.' gvalwithoutsuffix='.$gvalwithoutprefix);
 						//var_dump('fieldforg='.$fieldforg.' obj->$fieldforg='.$obj->$fieldforg.' fieldfory='.$fieldfory.' obj->$fieldfory='.$obj->$fieldfory.' fieldforybis='.$fieldforybis);
 
-						if (!is_array($data[$xi])) {
-							$data[$xi] = array();
-						}
+						if (!is_array($data[$xi])) $data[$xi] = array();
 
 						if (!array_key_exists('label', $data[$xi])) {
 							$data[$xi] = array();
@@ -672,9 +640,7 @@ if ($sql) {
 						}
 
 						$objfieldforg = $obj->$fieldforg;
-						if (is_null($objfieldforg)) {
-							$objfieldforg = '__NULL__';
-						}
+						if (is_null($objfieldforg)) $objfieldforg = '__NULL__';
 
 						if ($gvaluepossiblekey == '0') {	// $gvaluepossiblekey can have type int or string. So we create a special if, used when value is '0'
 							//var_dump($objfieldforg.' == \'0\' -> '.($objfieldforg == '0'));
@@ -743,9 +709,10 @@ if ($mode == 'graph') {
 	// Show graph
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
-	if (!$mesg) {
+	if (!$mesg)
+	{
 		/*var_dump($legend);
-		var_dump($data);*/
+    	var_dump($data);*/
 		$px1->SetData($data);
 		unset($data);
 

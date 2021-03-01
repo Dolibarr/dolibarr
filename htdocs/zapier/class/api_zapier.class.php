@@ -37,7 +37,7 @@ class ZapierApi extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	public static $FIELDS = array(
+	static $FIELDS = array(
 		'url',
 	);
 
@@ -163,9 +163,7 @@ class ZapierApi extends DolibarrApi
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."hook_mytable as t";
 
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
+		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= " WHERE 1 = 1";
 
 		// Example of use $mode
@@ -272,33 +270,33 @@ class ZapierApi extends DolibarrApi
 	//  * @url	PUT /hooks/{id}
 	//  */
 	/*public function put($id, $request_data = null)
-	{
-		if (! DolibarrApiAccess::$user->rights->zapier->write) {
-			throw new RestException(401);
-		}
+    {
+        if (! DolibarrApiAccess::$user->rights->zapier->write) {
+            throw new RestException(401);
+        }
 
-		$result = $this->hook->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'Hook not found');
-		}
+        $result = $this->hook->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Hook not found');
+        }
 
-		if( ! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('hook', $this->hook->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		foreach($request_data as $field => $value) {
-			if ($field == 'id') {
-				continue;
-			}
-			$this->hook->$field = $value;
-		}
+        foreach($request_data as $field => $value) {
+            if ($field == 'id') {
+                continue;
+            }
+            $this->hook->$field = $value;
+        }
 
-		if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
-		} else {
-			throw new RestException(500, $this->hook->error);
-		}
-	}*/
+        if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
+            return $this->get($id);
+        } else {
+            throw new RestException(500, $this->hook->error);
+        }
+    }*/
 
 	/**
 	 * Delete hook

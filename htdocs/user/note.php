@@ -39,15 +39,11 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
-	accessforbidden();
-}
+if (($object->id != $user->id) && (!$user->rights->user->user->lire)) accessforbidden();
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -62,9 +58,7 @@ $hookmanager->initHooks(array('usercard', 'usernote', 'globalcard'));
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
 	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
@@ -89,7 +83,8 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($id) {
+if ($id)
+{
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
@@ -119,7 +114,8 @@ if ($id) {
 	// Note
 	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
 	print '<td class="'.($editenabled ? '' : 'sensiblehtmlcontent').'">';
-	if ($editenabled) {
+	if ($editenabled)
+	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 		// Editeur wysiwyg
@@ -136,7 +132,8 @@ if ($id) {
 
 	print dol_get_fiche_end();
 
-	if ($action == 'edit') {
+	if ($action == 'edit')
+	{
 		print '<div class="center">';
 		print '<input type="submit" class="button button-save" name="update" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -146,12 +143,13 @@ if ($id) {
 
 
 	/*
-	 * Actions
-	 */
+     * Actions
+     */
 
 	print '<div class="tabsAction">';
 
-	if ($user->rights->user->user->creer && $action != 'edit') {
+	if ($user->rights->user->user->creer && $action != 'edit')
+	{
 		print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
 	}
 

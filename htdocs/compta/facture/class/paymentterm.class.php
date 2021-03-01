@@ -88,30 +88,14 @@ class PaymentTerm // extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->code)) {
-			$this->code = trim($this->code);
-		}
-		if (isset($this->sortorder)) {
-			$this->sortorder = trim($this->sortorder);
-		}
-		if (isset($this->active)) {
-			$this->active = trim($this->active);
-		}
-		if (isset($this->libelle)) {
-			$this->libelle = trim($this->libelle);
-		}
-		if (isset($this->libelle_facture)) {
-			$this->libelle_facture = trim($this->libelle_facture);
-		}
-		if (isset($this->type_cdr)) {
-			$this->type_cdr = trim($this->type_cdr);
-		}
-		if (isset($this->nbjour)) {
-			$this->nbjour = trim($this->nbjour);
-		}
-		if (isset($this->decalage)) {
-			$this->decalage = trim($this->decalage);
-		}
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->sortorder)) $this->sortorder = trim($this->sortorder);
+		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
+		if (isset($this->libelle_facture)) $this->libelle_facture = trim($this->libelle_facture);
+		if (isset($this->type_cdr)) $this->type_cdr = trim($this->type_cdr);
+		if (isset($this->nbjour)) $this->nbjour = trim($this->nbjour);
+		if (isset($this->decalage)) $this->decalage = trim($this->decalage);
 
 
 		// Check parameters
@@ -142,19 +126,20 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
-		}
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error) {
+		if (!$error)
+		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
 		}
 
 		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
+		if ($error)
+		{
+			foreach ($this->errors as $errmsg)
+			{
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -195,8 +180,10 @@ class PaymentTerm // extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -214,7 +201,7 @@ class PaymentTerm // extends CommonObject
 
 			return 1;
 		} else {
-			$this->error = "Error ".$this->db->lasterror();
+	  		$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -239,12 +226,12 @@ class PaymentTerm // extends CommonObject
 
 		dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
 				$obj = $this->db->fetch_object($resql);
-				if ($obj) {
-					$ret = $obj->rowid;
-				}
+				if ($obj) $ret = $obj->rowid;
 			}
 			$this->db->free($resql);
 			return $ret;
@@ -270,30 +257,14 @@ class PaymentTerm // extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->code)) {
-			$this->code = trim($this->code);
-		}
-		if (isset($this->sortorder)) {
-			$this->sortorder = trim($this->sortorder);
-		}
-		if (isset($this->active)) {
-			$this->active = trim($this->active);
-		}
-		if (isset($this->libelle)) {
-			$this->libelle = trim($this->libelle);
-		}
-		if (isset($this->libelle_facture)) {
-			$this->libelle_facture = trim($this->libelle_facture);
-		}
-		if (isset($this->type_cdr)) {
-			$this->type_cdr = trim($this->type_cdr);
-		}
-		if (isset($this->nbjour)) {
-			$this->nbjour = trim($this->nbjour);
-		}
-		if (isset($this->decalage)) {
-			$this->decalage = trim($this->decalage);
-		}
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->sortorder)) $this->sortorder = trim($this->sortorder);
+		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
+		if (isset($this->libelle_facture)) $this->libelle_facture = trim($this->libelle_facture);
+		if (isset($this->type_cdr)) $this->type_cdr = trim($this->type_cdr);
+		if (isset($this->nbjour)) $this->nbjour = trim($this->nbjour);
+		if (isset($this->decalage)) $this->decalage = trim($this->decalage);
 
 
 
@@ -316,13 +287,13 @@ class PaymentTerm // extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
-		}
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
+		if ($error)
+		{
+			foreach ($this->errors as $errmsg)
+			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -354,13 +325,13 @@ class PaymentTerm // extends CommonObject
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
-		}
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
+		if ($error)
+		{
+			foreach ($this->errors as $errmsg)
+			{
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -402,7 +373,8 @@ class PaymentTerm // extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0) {
+		if ($result < 0)
+		{
 			$this->error = $object->error;
 			$error++;
 		}
@@ -410,7 +382,8 @@ class PaymentTerm // extends CommonObject
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error) {
+		if (!$error)
+		{
 			$this->db->commit();
 			return $object->id;
 		} else {

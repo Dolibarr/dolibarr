@@ -94,9 +94,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 		// Recupere emetteur
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
-		}
+		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 	}
 
 
@@ -127,19 +125,17 @@ class doc_generic_member_odt extends ModelePDFMember
 		$texttitle = $langs->trans("ListOfDirectories");
 		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->MEMBER_ADDON_PDF_ODT_PATH)));
 		$listoffiles = array();
-		foreach ($listofdir as $key => $tmpdir) {
+		foreach ($listofdir as $key=>$tmpdir)
+		{
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) {
 				unset($listofdir[$key]); continue;
 			}
-			if (!is_dir($tmpdir)) {
-				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			} else {
+			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
-				if (count($tmpfiles)) {
-					$listoffiles = array_merge($listoffiles, $tmpfiles);
-				}
+				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
@@ -157,7 +153,8 @@ class doc_generic_member_odt extends ModelePDFMember
 		$texte .= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) {
+		if (count($listofdir))
+		{
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
@@ -207,16 +204,15 @@ class doc_generic_member_odt extends ModelePDFMember
 		}
 
 		// Add odtgeneration hook
-		if (!is_object($hookmanager)) {
+		if (!is_object($hookmanager))
+		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
 		global $action;
 
-		if (!is_object($outputlangs)) {
-			$outputlangs = $langs;
-		}
+		if (!is_object($outputlangs)) $outputlangs = $langs;
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
@@ -239,9 +235,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 			$dir = $conf->adherent->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
-			if (!preg_match('/specimen/i', $objectref)) {
-				$dir .= "/".$objectref;
-			}
+			if (!preg_match('/specimen/i', $objectref)) $dir .= "/".$objectref;
 			$file = $dir."/".$objectref.".odt";
 
 			if (!file_exists($dir)) {
@@ -264,9 +258,7 @@ class doc_generic_member_odt extends ModelePDFMember
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
 					$format = $conf->global->MAIN_DOC_USE_TIMING;
-					if ($format == '1') {
-						$format = '%Y%m%d%H%M%S';
-					}
+					if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
 				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
@@ -313,7 +305,8 @@ class doc_generic_member_odt extends ModelePDFMember
 							'DELIMITER_RIGHT' => '}'
 						)
 					);
-				} catch (Exception $e) {
+				} catch (Exception $e)
+				{
 					$this->error = $e->getMessage();
 					dol_syslog($e->getMessage(), LOG_WARNING);
 					return -1;
@@ -326,9 +319,7 @@ class doc_generic_member_odt extends ModelePDFMember
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in object as contact_xxx tags
 				$array_thirdparty_contact = array();
-				if ($usecontact && is_object($contactobject)) {
-					$array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
-				}
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 
 				$tmparray = array_merge($array_member, $array_soc, $array_thirdparty, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
@@ -340,15 +331,12 @@ class doc_generic_member_odt extends ModelePDFMember
 					'substitutionarray'=>&$tmparray
 				);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				foreach ($tmparray as $key => $value) {
+				foreach ($tmparray as $key=>$value) {
 					try {
 						if (preg_match('/logo$/', $key)) {
 							// Image
-							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
-							} else {
-								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-							}
+							if (file_exists($value)) $odfHandler->setImage($key, $value);
+							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 						} else {
 							// Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
@@ -360,7 +348,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				// Replace labels translated
 				$tmparray = $outputlangs->get_translations_for_substitutions();
-				foreach ($tmparray as $key => $value) {
+				foreach ($tmparray as $key=>$value) {
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
 					} catch (OdfException $e) {
@@ -393,9 +381,8 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-				if (!empty($conf->global->MAIN_UMASK)) {
+				if (!empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
 
 				$odfHandler = null; // Destroy object
 

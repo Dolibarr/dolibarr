@@ -86,7 +86,8 @@ class box_factures_imp extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $max));
 
-		if ($user->rights->facture->lire) {
+		if ($user->rights->facture->lire)
+		{
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
@@ -97,24 +98,18 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= ", f.total as total_ht";
 			$sql .= ", f.tva as total_tva";
 			$sql .= ", f.total_ttc";
-			$sql .= ", f.paye, f.fk_statut as status, f.rowid as facid";
+			$sql .= ", f.paye, f.fk_statut, f.rowid as facid";
 			$sql .= ", sum(pf.amount) as am";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			}
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND fk_statut = 1";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			}
-			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
-			}
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
 			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql .= " f.ref, f.date_lim_reglement,";
 			$sql .= " f.type, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
@@ -123,14 +118,16 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result) {
+			if ($result)
+			{
 				$num = $this->db->num_rows($result);
 				$now = dol_now();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateDue')).': %s)';
 
-				while ($line < $num) {
+				while ($line < $num)
+				{
 					$objp = $this->db->fetch_object($result);
 					$datelimite = $this->db->jdate($objp->datelimite);
 					$facturestatic->id = $objp->facid;
@@ -139,10 +136,8 @@ class box_factures_imp extends ModeleBoxes
 					$facturestatic->total_ht = $objp->total_ht;
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
-					$facturestatic->statut = $objp->status;
-					$facturestatic->status = $objp->status;
+					$facturestatic->statut = $objp->fk_statut;
 					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
-					$facturestatic->alreadypaid = $objp->paye;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -191,18 +186,16 @@ class box_factures_imp extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->am),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3, $objp->am),
 					);
 
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoUnpaidCustomerBills")
-					);
-				}
+				);
 
 				$this->db->free($result);
 			} else {

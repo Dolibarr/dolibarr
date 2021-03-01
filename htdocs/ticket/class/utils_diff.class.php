@@ -78,7 +78,8 @@ class Diff
 		}
 
 		$end2 = ($compareCharacters ? strlen($sequence1) : count($sequence1));
-		for ($index = $end1 + 1; $index < $end2; $index++) {
+		for ($index = $end1 + 1; $index < $end2; $index++)
+		{
 			$diff[] = array($sequence1[$index], self::UNMODIFIED);
 		}
 
@@ -312,12 +313,12 @@ class Diff
 						self::DELETED
 					);
 					$rightCell = self::getCellContent(
-						$diff,
-						$indentation,
-						$separator,
-						$index,
-						self::INSERTED
-					);
+							$diff,
+							$indentation,
+							$separator,
+							$index,
+							self::INSERTED
+						);
 					break;
 
 				// display the inserted content on the right

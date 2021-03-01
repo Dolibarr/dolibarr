@@ -53,7 +53,8 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 	$output = "";
 
 	$num = count($lines);
-	for ($j = 0; $j < $num; $j++) {
+	for ($j = 0; $j < $num; $j++)
+	{
 		$line = $lines[$j];
 		$linlen = strlen($line);
 		$newline = "";
@@ -73,9 +74,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 			$newline .= $c;
 		} // end of for
 		$output .= $newline;
-		if ($j < count($lines) - 1) {
-			$output .= $linebreak;
-		}
+		if ($j < count($lines) - 1) $output .= $linebreak;
 	}
 	return trim($output);
 }
@@ -113,9 +112,7 @@ class vCard
 	{
 		// type may be PREF | WORK | HOME | VOICE | FAX | MSG | CELL | PAGER | BBS | CAR | MODEM | ISDN | VIDEO or any senseful combination, e.g. "PREF;WORK;VOICE"
 		$key = "TEL";
-		if ($type != "") {
-			$key .= ";".$type;
-		}
+		if ($type != "") $key .= ";".$type;
 		$key .= ";CHARSET=".$this->encoding;
 		$this->properties[$key] = encode($number);
 	}
@@ -159,9 +156,7 @@ class vCard
 	{
 		$this->properties["N;CHARSET=".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->filename = "$first%20$family.vcf";
-		if (empty($this->properties["FN"])) {
-			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
-		}
+		if (empty($this->properties["FN"])) $this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
 	}
 
 	/**
@@ -193,13 +188,12 @@ class vCard
 	{
 		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
-		if ($type != "") {
-			$key .= ";$type";
-		}
+		if ($type != "") $key .= ";$type";
 		$key .= ";CHARSET=".$this->encoding;
 		$this->properties[$key] = ";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
-		if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "") {
+		if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "")
+		{
 			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		}
 	}
@@ -220,27 +214,13 @@ class vCard
 	public function setLabel($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME;POSTAL")
 	{
 		$label = "";
-		if ($postoffice != "") {
-			$label .= "$postoffice\r\n";
-		}
-		if ($extended != "") {
-			$label .= "$extended\r\n";
-		}
-		if ($street != "") {
-			$label .= "$street\r\n";
-		}
-		if ($zip != "") {
-			$label .= "$zip ";
-		}
-		if ($city != "") {
-			$label .= "$city\r\n";
-		}
-		if ($region != "") {
-			$label .= "$region\r\n";
-		}
-		if ($country != "") {
-			$country .= "$country\r\n";
-		}
+		if ($postoffice != "") $label .= "$postoffice\r\n";
+		if ($extended != "") $label .= "$extended\r\n";
+		if ($street != "") $label .= "$street\r\n";
+		if ($zip != "") $label .= "$zip ";
+		if ($city != "") $label .= "$city\r\n";
+		if ($region != "") $label .= "$region\r\n";
+		if ($country != "") $country .= "$country\r\n";
 
 		$this->properties["LABEL;$type;CHARSET=".$this->encoding] = encode($label);
 	}
@@ -255,9 +235,7 @@ class vCard
 	public function setEmail($address, $type = "TYPE=INTERNET;PREF")
 	{
 		$key = "EMAIL";
-		if ($type != "") {
-			$key .= ";".$type;
-		}
+		if ($type != "") $key .= ";".$type;
 		$this->properties[$key] = $address;
 	}
 
@@ -331,9 +309,7 @@ class vCard
 	{
 		// $type may be WORK | HOME
 		$key = "URL";
-		if ($type != "") {
-			$key .= ";$type";
-		}
+		if ($type != "") $key .= ";$type";
 		$this->properties[$key] = $url;
 	}
 
@@ -347,7 +323,8 @@ class vCard
 		$text = "BEGIN:VCARD\r\n";
 		$text .= "VERSION:3.0\r\n";
 		//$text.= "VERSION:2.1\r\n";
-		foreach ($this->properties as $key => $value) {
+		foreach ($this->properties as $key => $value)
+		{
 			$text .= "$key:$value\r\n";
 		}
 		$text .= "REV:".date("Y-m-d")."T".date("H:i:s")."Z\r\n";
@@ -368,29 +345,29 @@ class vCard
 
 	/* Example from Microsoft Outlook 2019
 
-	BEGIN:VCARD
-	VERSION:2.1
+    BEGIN:VCARD
+    VERSION:2.1
 
-	N;LANGUAGE=de:surename;forename;secondname;Sir;jun.
-	FN:Sir surename secondname forename jun.
-	ORG:Companyname
-	TITLE:position
-	TEL;WORK;VOICE:work-phone-number
-	TEL;HOME;VOICE:private-phone-number
-	TEL;CELL;VOICE:mobile-phone-number
-	TEL;WORK;FAX:fax-phone-number
-	ADR;WORK;PREF:;;street and number;town;region;012345;Deutschland
-	LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE:street and number=0D=0A=
-	=0D=0A=
-	012345  town  region
-	X-MS-OL-DEFAULT-POSTAL-ADDRESS:2
-	URL;WORK:www.mywebpage.de
-	EMAIL;PREF;INTERNET:test1@test1.de
-	EMAIL;INTERNET:test2@test2.de
-	EMAIL;INTERNET:test3@test3.de
-	X-MS-IMADDRESS:test@jabber.org
-	REV:20200424T104242Z
+    N;LANGUAGE=de:surename;forename;secondname;Sir;jun.
+    FN:Sir surename secondname forename jun.
+    ORG:Companyname
+    TITLE:position
+    TEL;WORK;VOICE:work-phone-number
+    TEL;HOME;VOICE:private-phone-number
+    TEL;CELL;VOICE:mobile-phone-number
+    TEL;WORK;FAX:fax-phone-number
+    ADR;WORK;PREF:;;street and number;town;region;012345;Deutschland
+    LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE:street and number=0D=0A=
+    =0D=0A=
+    012345  town  region
+    X-MS-OL-DEFAULT-POSTAL-ADDRESS:2
+    URL;WORK:www.mywebpage.de
+    EMAIL;PREF;INTERNET:test1@test1.de
+    EMAIL;INTERNET:test2@test2.de
+    EMAIL;INTERNET:test3@test3.de
+    X-MS-IMADDRESS:test@jabber.org
+    REV:20200424T104242Z
 
-	END:VCARD
-	*/
+    END:VCARD
+    */
 }

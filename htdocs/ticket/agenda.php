@@ -46,21 +46,16 @@ $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-if (!$sortfield) {
-	$sortfield = "a.datep,a.id";
-}
-if (!$sortorder) {
-	$sortorder = "DESC";
-}
+if (!$sortfield) $sortfield = "a.datep,a.id";
+if (!$sortorder) $sortorder = "DESC";
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (GETPOST('actioncode', 'array')) {
+if (GETPOST('actioncode', 'array'))
+{
 	$actioncode = GETPOST('actioncode', 'array', 3);
-	if (!count($actioncode)) {
-		$actioncode = '0';
-	}
+	if (!count($actioncode)) $actioncode = '0';
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
@@ -88,7 +83,8 @@ if (!$user->rights->ticket->read) {
 	accessforbidden();
 }
 // restrict access for externals users
-if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
+if ($user->socid > 0 && ($object->fk_soc != $user->socid))
+{
 	accessforbidden();
 }
 // or for unauthorized internals users
@@ -104,17 +100,17 @@ if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object-
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
+if (empty($reshook))
+{
 	// Set view style
 	$_SESSION['ticket-view-type'] = "list";
 }
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
+{
 	$actioncode = '';
 	$search_agenda_label = '';
 }
@@ -130,9 +126,7 @@ $userstat = new User($db);
 $formticket = new FormTicket($db);
 
 $title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
-}
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 $help_url = 'FR:DocumentationModuleTicket';
 llxHeader('', $title, $help_url);
 
@@ -173,7 +167,8 @@ if (!empty($object->origin_email)) {
 }
 
 // Thirdparty
-if (!empty($conf->societe->enabled)) {
+if (!empty($conf->societe->enabled))
+{
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
 		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
@@ -187,10 +182,12 @@ if (!empty($conf->societe->enabled)) {
 }
 
 // Project
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled))
+{
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project');
-	if ($user->rights->ticket->write) {
+	if ($user->rights->ticket->write)
+	{
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref .= ' : ';
@@ -228,14 +225,11 @@ print dol_get_fiche_end();
 print '<br>';
 
 
-if (!empty($object->id)) {
+if (!empty($object->id))
+{
 	$param = '&id='.$object->id;
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage='.$contextpage;
-	}
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.$limit;
-	}
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 	$morehtmlright = '';
 

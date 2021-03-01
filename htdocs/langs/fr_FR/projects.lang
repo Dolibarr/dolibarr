@@ -268,5 +268,3 @@ OneLinePerTask=Une ligne par tâche
 OneLinePerPeriod=Une ligne par période
 RefTaskParent=Réf. Tâche parent
 ProfitIsCalculatedWith=Le bénéfice est calculé sur la base de
-PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=Classer le projet à clôturé lorsque toutes les tâches de ce projet sont à 100 %% de progression
-PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Non rétroactif : l’activation de cette option ne clôturera pas les projets dont les tâches sont déjà à 100 %%. Cette option ne classe que les projets ouverts.

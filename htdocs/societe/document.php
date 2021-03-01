@@ -40,7 +40,8 @@ $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'))
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid > 0) {
+if ($user->socid > 0)
+{
 	unset($action);
 	$socid = $user->socid;
 }
@@ -51,29 +52,20 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
-}
-if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
-}
+if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield = $conf->global->MAIN_DOC_SORT_FIELD; }
+if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder = $conf->global->MAIN_DOC_SORT_ORDER; }
 
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-if (!$sortfield) {
-	$sortfield = "position_name";
-}
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "position_name";
 
 $object = new Societe($db);
-if ($id > 0 || !empty($ref)) {
+if ($id > 0 || !empty($ref))
+{
 	$result = $object->fetch($id, $ref);
 
 	$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
@@ -89,7 +81,7 @@ $hookmanager->initHooks(array('thirdpartydocument', 'globalcard'));
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -99,19 +91,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Files");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->name.' - '.$langs->trans("Files");
-}
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name.' - '.$langs->trans("Files");
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if ($object->id) {
+if ($object->id)
+{
 	/*
 	 * Show tabs
 	 */
-	if (!empty($conf->notification->enabled)) {
-		$langs->load("mails");
-	}
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
 	$form = new Form($db);
@@ -122,7 +111,8 @@ if ($object->id) {
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file) {
+	foreach ($filearray as $key => $file)
+	{
 		$totalsize += $file['size'];
 	}
 
@@ -136,14 +126,16 @@ if ($object->id) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Prefix
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+	{
 		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
-	if ($object->client) {
+	if ($object->client)
+	{
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
+		print $object->code_client;
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -151,10 +143,11 @@ if ($object->id) {
 		print '</td></tr>';
 	}
 
-	if ($object->fournisseur) {
+	if ($object->fournisseur)
+	{
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
+		print $object->code_fournisseur;
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
 			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
