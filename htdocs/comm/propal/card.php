@@ -2113,6 +2113,24 @@ if ($action == 'create') {
 	print '</td>';
 	print '</tr>';
 
+	// Payment mode
+	print '<tr>';
+	print '<td class="valuefield">';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('PaymentMode');
+	print '</td>';
+	if ($action != 'editmode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td class="valuefieldcreate">';
+	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmode' && $usercancreate) {
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
+	} else {
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+	}
+	print '</td></tr>';
+
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
@@ -2199,24 +2217,6 @@ if ($action == 'create') {
 	}
 	print '</td>';
 	print '</tr>';
-
-	// Payment mode
-	print '<tr>';
-	print '<td class="valuefield">';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentMode');
-	print '</td>';
-	if ($action != 'editmode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
-	}
-	print '</tr></table>';
-	print '</td><td class="valuefieldcreate">';
-	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmode' && $usercancreate) {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
-	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
-	}
-	print '</td></tr>';
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {

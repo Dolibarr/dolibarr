@@ -95,6 +95,7 @@ $search_availability = GETPOST('search_availability', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
+$search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -189,6 +190,7 @@ $arrayfields = array(
 	'p.date_livraison'=>array('label'=>"DeliveryDate", 'checked'=>0),
 	'ava.rowid'=>array('label'=>"AvailabilityPeriod", 'checked'=>0),
 	'p.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'enabled'=>!empty($conf->expedition->enabled)),
+	'p.fk_input_reason'=>array('label'=>"Origin", 'checked'=>0, 'enabled'=>1),
 	'p.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0),
 	'p.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'p.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
@@ -277,6 +279,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_categ_cus = 0;
 	$search_fk_cond_reglement = '';
 	$search_fk_shipping_method = '';
+	$search_fk_input_reason = '';
 	$search_fk_mode_reglement = '';
 }
 if ($object_statut != '') {
@@ -414,7 +417,7 @@ $sql .= ' p.rowid, p.entity, p.note_private, p.total_ht, p.total_tva, p.total_tt
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
 $sql .= ' p.note_public, p.note_private,';
-$sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,';
+$sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
 $sql .= ' u.login';
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -546,6 +549,9 @@ if ($search_fk_cond_reglement > 0) {
 }
 if ($search_fk_shipping_method > 0) {
 	$sql .= " AND p.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+}
+if ($search_fk_input_reason > 0) {
+	$sql .= " AND p.fk_input_reason = ".$db->escape($search_fk_input_reason);
 }
 if ($search_fk_mode_reglement > 0) {
 	$sql .= " AND p.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
@@ -734,6 +740,9 @@ if ($resql) {
 	}
 	if ($search_fk_shipping_method > 0) {
 		$param .= '&search_fk_shipping_method='.$search_fk_shipping_method;
+	}
+	if ($search_fk_input_reason > 0) {
+		$param .= '&search_fk_input_reason='.$search_fk_input_reason;
 	}
 	if ($search_fk_mode_reglement > 0) {
 		$param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
@@ -983,6 +992,12 @@ if ($resql) {
 		$form->selectShippingMethod($search_fk_shipping_method, 'search_fk_shipping_method', '', 1, '', 1);
 		print '</td>';
 	}
+	// Source - Input reason
+	if (!empty($arrayfields['p.fk_input_reason']['checked'])) {
+		print '<td class="liste_titre">';
+		$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, 'maxwidth125', 1);
+		print '</td>';
+	}
 	// Payment term
 	if (!empty($arrayfields['p.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1168,6 +1183,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['p.fk_shipping_method']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "p.fk_shipping_method", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['p.fk_input_reason']['checked'])) {
+		print_liste_field_titre($arrayfields['p.fk_input_reason']['label'], $_SERVER["PHP_SELF"], "p.fk_input_reason", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.fk_cond_reglement']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "p.fk_cond_reglement", "", $param, '', $sortfield, $sortorder);
@@ -1473,10 +1491,21 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		//Shipping Method
+		// Shipping Method
 		if (!empty($arrayfields['p.fk_shipping_method']['checked'])) {
 			print '<td>';
 			$form->formSelectShippingMethod('', $obj->fk_shipping_method, 'none', 1);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Source - input reason
+		if (!empty($arrayfields['p.fk_input_reason']['checked'])) {
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($form->cache_demand_reason[$obj->fk_input_reason]['label']).'">';
+			if ($obj->fk_input_reason > 0) {
+				print $form->cache_demand_reason[$obj->fk_input_reason]['label'];
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
