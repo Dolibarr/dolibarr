@@ -30,7 +30,7 @@ class MembersTypes extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'label',
 	);
 
@@ -190,7 +190,9 @@ class MembersTypes extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate() and resiliate() methods of the class AdherentType.
 			$membertype->$field = $value;
@@ -250,8 +252,9 @@ class MembersTypes extends DolibarrApi
 	{
 		$membertype = array();
 		foreach (MembersTypes::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$membertype[$field] = $data[$field];
 		}
 		return $membertype;

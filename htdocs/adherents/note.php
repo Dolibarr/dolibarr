@@ -91,8 +91,8 @@ if ($id) {
 	// Morphy
 	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 	/*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
-    print $form->showphoto('memberphoto',$member);
-    print '</td>';*/
+	print $form->showphoto('memberphoto',$member);
+	print '</td>';*/
 	print '</tr>';
 
 	// Company

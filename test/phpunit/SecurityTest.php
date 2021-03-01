@@ -389,17 +389,17 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_POST['param8c'], $result, 'Test a string with non closing html tag with alphanohtml');
 
-    	$result=GETPOST("param8d", 'alphanohtml');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('abc123 is html to clean', $result, 'Test a string with non closing html tag with alphanohtml');
+		$result=GETPOST("param8d", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc123 is html to clean', $result, 'Test a string with non closing html tag with alphanohtml');
 
-    	$result=GETPOST("param8e", 'alphanohtml');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($_POST['param8e'], $result, 'Test a string with non closing html tag with alphanohtml');
+		$result=GETPOST("param8e", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($_POST['param8e'], $result, 'Test a string with non closing html tag with alphanohtml');
 
-    	$result=GETPOST("param9", 'alphanohtml');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($_POST["param9"], $result);
+		$result=GETPOST("param9", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($_POST["param9"], $result);
 
 		$result=GETPOST("param10", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
@@ -413,12 +413,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
 
-    	$result=GETPOST("param12", 'restricthtml');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
+		$result=GETPOST("param12", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
-    	return $result;
-    }
+		return $result;
+	}
 
 	/**
 	 * testCheckLoginPassEntity
