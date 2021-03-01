@@ -54,6 +54,8 @@ $mesg = ''; $error = 0; $errors = array();
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
@@ -296,9 +298,9 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact->creer)
+	if ($action == 'update' && empty($cancel) && $user->rights->societe->contact->creer)
 	{
-		if (empty($_POST["lastname"]))
+		if (!GETPOST("lastname", 'alpha'))
 		{
 			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
@@ -308,6 +310,7 @@ if (empty($reshook))
 		{
 			$contactid = GETPOST("contactid", 'int');
 			$object->fetch($contactid);
+			$object->fetchRoles($contactid);
 
 			// Photo save
 			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
@@ -396,7 +399,8 @@ if (empty($reshook))
 			$object->priv = (string) GETPOST("priv", 'int');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
-			$object->roles = GETPOST("roles", 'array');
+
+			$object->roles = GETPOST("roles", 'array');		// Note GETPOSTISSET("role") is null when combo is empty
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -638,7 +642,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					print '</td></tr>';
 				} else {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-					print $form->select_company($socid, 'socid', '', 'SelectThirdParty');
+					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty');
 					print '</td></tr>';
 				}
 			}
@@ -818,7 +822,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, null, 'parent', null, null, 1);
-				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
+				print img_picto('', 'category').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
 
@@ -827,7 +831,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<tr><td>'.$langs->trans("ContactByDefaultFor").'</td>';
 				print '<td colspan="3">';
 				$contactType = $object->listeTypeContacts('external', '', 1);
-				print $form->multiselectarray('roles', $contactType);
+				print $form->multiselectarray('roles', $contactType, array(), 0, 0, 'minwidth500');
 				print '</td></tr>';
 			}
 
@@ -965,7 +969,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			{
 				print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->select_company(GETPOST('socid', 'int') ?GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
+				print img_picto('', 'company').$form->select_company(GETPOST('socid', 'int') ?GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
 				print '</td>';
 				print '</tr>';
 			}
@@ -1087,39 +1091,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					}
 				}
 			}
-			// if (! empty($conf->socialnetworks->enabled))
-			// {
-			// 	// Jabber ID
-			// 	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
-			// 	{
-			// 		print '<tr><td><label for="jabberid">'.$form->editfieldkey('Jabber', 'jabberid', '', $object, 0).'</label></td>';
-			// 		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid", 'alpha'):$object->jabberid).'"></td></tr>';
-			// 	}
-			// 	// Skype
-			// 	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
-			// 	{
-			// 		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
-			// 		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'"></td></tr>';
-			// 	}
-			// 	// Twitter
-			// 	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
-			// 	{
-			// 		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
-			// 		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
-			// 	}
-			// 	// Facebook
-			//     if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-			//     {
-			//         print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
-			//         print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
-			//     }
-			//     // LinkedIn
-			//     if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
-			//     {
-			//         print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
-			//         print '<td><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
-			//     }
-			// }
 
 			// Visibility
 			print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
@@ -1155,7 +1126,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+				print img_picto('', 'category').$form->multiselectarray('contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				print "</td></tr>";
 			}
 

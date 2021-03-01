@@ -816,7 +816,7 @@ if (!empty($arrayfields['country.code_iso']['checked']))
 if (!empty($arrayfields['typent.code']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth75', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth75', 1);
 	print '</td>';
 }
 // Staff
@@ -1283,7 +1283,7 @@ while ($i < min($num, $limit))
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked']))
 	{
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax100">';
 		if ($companystatic->fk_parent > 0)
 		{
 			$companyparent->fetch($companystatic->fk_parent);
@@ -1341,6 +1341,14 @@ while ($i < min($num, $limit))
 
 	print '</tr>'."\n";
 	$i++;
+}
+
+// If no record found
+if ($num == 0)
+{
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 $db->free($resql);

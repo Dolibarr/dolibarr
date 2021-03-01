@@ -7,13 +7,14 @@ Permission23103 = 刪除預定工作
 Permission23104 = 執行預定工作
 # Admin
 CronSetup=預定工作管理設定
-URLToLaunchCronJobs=用於檢查和啟動合格cron作業的URL
-OrToLaunchASpecificJob=或是檢查並啟動特定工作
+URLToLaunchCronJobs=用於從瀏覽器檢查和啟動合格cron作業的網址
+OrToLaunchASpecificJob=或以瀏覽器檢查並啟動特定作業
 KeyForCronAccess=用於啟動cron作業URL的安全密鑰
 FileToLaunchCronJobs=命令列檢查並啟動合格的cron作業
 CronExplainHowToRunUnix=在Unix環境中，您應該使用以下crontab條目以每隔5分鐘執行命令行
 CronExplainHowToRunWin=在Microsoft（tm）Windows環境中，您可以使用“計劃任務”工具每5分鐘執行命令行
 CronMethodDoesNotExists=類別%s不包含任何方法%s
+CronMethodNotAllowed=類別%s中的方法%s在禁止方法的黑名單中
 CronJobDefDesc=Cron工作設定文件定義在模組描述符檔案中。啟動模組後，它們將被載入使用，因此您可以從管理員工具選單%s管理作業。
 CronJobProfiles=預定義cron工作配置文件清單
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=啟動次數
 CronMaxRun=最大啟動次數
 CronEach=每一個
 JobFinished=工作已啟動並完成
+Scheduled=已預定工作
 #Page card
 CronAdd= 新增工作
 CronEvery=執行每個工作
@@ -56,7 +58,7 @@ CronNote=註解
 CronFieldMandatory=欄位%s為必填
 CronErrEndDateStartDt=結束日期不能早於開始日期
 StatusAtInstall=模組安裝狀態
-CronStatusActiveBtn=啓用
+CronStatusActiveBtn=計畫表
 CronStatusInactiveBtn=停用
 CronTaskInactive=此工作已停用
 CronId=Id
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=本地資料庫備份
 MakeLocalDatabaseDump=建立本地資料庫備份。參數為：壓縮（“ gz”或“ bz”或“none”），備份類型（“ mysql”，“ pgsql”，“ auto”），1，"自動"或建立檔案名稱，要保留的備份檔案數
 WarningCronDelayed=請注意，出於性能目的，無論下一次執行已啟動工作的日期如何，您的工作執行最多可能會延遲%s小時。
 DATAPOLICYJob=資料清理器和匿名器
+JobXMustBeEnabled=必須啟用工作%s
+# Cron Boxes
+LastExecutedScheduledJob=最後執行的計劃工作
+NextScheduledJobExecute=下一個要預定要執行的工作
+NumberScheduledJobError=錯誤的預定工作數量

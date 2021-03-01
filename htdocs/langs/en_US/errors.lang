@@ -59,6 +59,7 @@ ErrorDirNotFound=Directory <b>%s</b> not found (Bad path, wrong permissions or a
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
 ErrorDirAlreadyExists=A directory with this name already exists.
 ErrorFileAlreadyExists=A file with this name already exists.
+ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exists.
 ErrorPartialFile=File not received completely by server.
 ErrorNoTmpDir=Temporary directy %s does not exists.
 ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
@@ -254,7 +255,8 @@ ErrorNotAvailableWithThisDistribution=Not available with this distribution
 ErrorPublicInterfaceNotEnabled=Public interface was not enabled
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
 ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
- 
+ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.

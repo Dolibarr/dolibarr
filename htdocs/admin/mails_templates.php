@@ -840,6 +840,7 @@ if ($resql)
 
 				print "</tr>\n";
 			} else {
+				// If template is for a module, check module is enabled.
 				if ($obj->module) {
 					$tempmodulekey = $obj->module;
 					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
@@ -847,6 +848,7 @@ if ($resql)
 						continue;
 					}
 				}
+
 				$keyforobj = 'type_template';
 				if (!in_array($obj->$keyforobj, array_keys($elementList)))
 				{

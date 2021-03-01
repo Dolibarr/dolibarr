@@ -222,6 +222,12 @@ abstract class CommonObject
 	public $statut;
 
 	/**
+	 * @var int The object's status
+	 * @see setStatut()
+	 */
+	public $status;
+
+	/**
 	 * @var string
 	 * @see getFullAddress()
 	 */
@@ -355,7 +361,7 @@ abstract class CommonObject
 	public $last_main_doc;
 
 	/**
-	 * @var int Bank account ID
+	 * @var int Bank account ID sometimes, ID of record into llx_bank sometimes
 	 * @deprecated
 	 * @see $fk_account
 	 */
@@ -479,6 +485,10 @@ abstract class CommonObject
 	 */
 	public $sendtoid;
 
+	/**
+	 * @var	float	Amount already paid (used to show correct status)
+	 */
+	public $alreadypaid;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -1054,7 +1064,6 @@ abstract class CommonObject
 				{
 					$this->error = $this->db->errno();
 					$this->db->rollback();
-					echo 'err rollback';
 					return -2;
 				} else {
 					$this->error = $this->db->error();
@@ -1394,6 +1403,8 @@ abstract class CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
+				$langs->loadLangs(array("propal", "orders", "bills", "suppliers", "contracts", "supplier_proposal"));
+
 				while ($obj = $this->db->fetch_object($resql)) {
 					$modulename = $obj->element;
 					if (strpos($obj->element, 'project') !== false) {
@@ -1409,11 +1420,15 @@ abstract class CommonObject
 					}
 					if ($conf->{$modulename}->enabled) {
 						$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
-						$transkey = "TypeContact_".$obj->element."_".$source."_".$obj->code;
+						$tmpelement = $obj->element;
+						$transkey = "TypeContact_".$tmpelement."_".$source."_".$obj->code;
 						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
-						if (empty($option))
+						if (empty($option)) {
 							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
-						else $tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						}
+						else {
+							$tab[$obj->rowid] = $libelle_element.' - '.$libelle_type;
+						}
 					}
 				}
 			}
@@ -2199,14 +2214,16 @@ abstract class CommonObject
 								$this->updateline(
 									$line->id, ($line->description ? $line->description : $line->desc), $line->subprice, $line->qty, $line->remise_percent,
 									$line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, false,
-									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							case 'invoice_supplier':
 								$this->updateline(
 									$line->id, ($line->description ? $line->description : $line->desc), $line->subprice, $line->tva_tx, $line->localtax1_tx,
 									$line->localtax2_tx, $line->qty, 0, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, false,
-									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							default:
@@ -5298,6 +5315,7 @@ abstract class CommonObject
 			   		$mandatorypb = false;
 			   		if ($attributeType == 'link' && $this->array_options[$key] == '-1') $mandatorypb = true;
 			   		if ($this->array_options[$key] === '') $mandatorypb = true;
+					if ($attributeType == 'sellist' && $this->array_options[$key] == '0') $mandatorypb = true;
 			   		if ($mandatorypb)
 			   		{
 			   			dol_syslog("Mandatory extra field ".$key." is empty");
@@ -5874,8 +5892,14 @@ abstract class CommonObject
 		} elseif (preg_match('/^(integer|link):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'link';
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
-			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+		} elseif (preg_match('/^(sellist):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^(sellist):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^(sellist):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
 		} elseif (preg_match('/varchar\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
@@ -5906,8 +5930,7 @@ abstract class CommonObject
 
 		$objectid = $this->id;
 
-		if ($computed)
-		{
+		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) return '<span class="opacitymedium">'.$langs->trans("AutomaticallyCalculated").'</span>';
 			else return '';
 		}
@@ -5916,26 +5939,20 @@ abstract class CommonObject
 		if (empty($morecss) && !empty($val['css'])) {
 			$morecss = $val['css'];
 		} elseif (empty($morecss)) {
-			if ($type == 'date')
-			{
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {	// link means an foreign key to another primary id
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type)) {
 				$morecss = 'maxwidth75';
 			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -6042,24 +6059,20 @@ abstract class CommonObject
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4]))
-				{
-					if (strpos($InfoFieldList[4], 'extra.') !== false)
-					{
+				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3]))
-				{
+				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 
 				$fields_label = explode('|', $InfoFieldList[1]);
-				if (is_array($fields_label))
-				{
+				if (is_array($fields_label)) {
 					$keyList .= ', ';
 					$keyList .= implode(', ', $fields_label);
 				}
@@ -6336,13 +6349,13 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
-					if ($this->fields[$key]['picto']) {
+					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				}
@@ -6454,12 +6467,17 @@ abstract class CommonObject
 		$param['options'] = array();
 
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
-		{
+		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 			$param['options'] = array($reg[1].':'.$reg[2]=>$reg[1].':'.$reg[2]);
 		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
+			$type = 'sellist';
+		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
 		}
 
@@ -6551,8 +6569,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3)
-			{
+			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -6845,6 +6862,7 @@ abstract class CommonObject
 							break;
 					}
 
+					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 					{
 						$extrafields_collapse_num = '';

@@ -1438,9 +1438,15 @@ function complete_elementList_with_modules(&$elementList)
 							$dirmod[$i] = $dir;
 							//print "x".$modName." ".$orders[$i]."\n<br>";
 
-							if (!empty($objMod->module_parts['contactelement'])) {
-								$elementList[$objMod->name] = $langs->trans($objMod->name);
-							}
+                            if (!empty($objMod->module_parts['contactelement'])) {
+                            	if (is_array($objMod->module_parts['contactelement'])) {
+									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
+										$elementList[$elem] = $langs->trans($title);
+									}
+								} else {
+									$elementList[$objMod->name] = $langs->trans($objMod->name);
+								}
+                            }
 
 							$j++;
 							$i++;
@@ -1864,17 +1870,17 @@ function email_admin_prepare_head()
 		}
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-	$head[$h][1] = $langs->trans("EMailTemplates");
-	$head[$h][2] = 'templates';
-	$h++;
-
 	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");
 		$head[$h][2] = 'senderprofiles';
 		$h++;
 	}
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
+	$head[$h][1] = $langs->trans("EMailTemplates");
+	$head[$h][2] = 'templates';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'email_admin', 'remove');
 

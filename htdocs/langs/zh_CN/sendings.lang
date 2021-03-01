@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=这个订单的其他运输
 SendingsAndReceivingForSameOrder=此订单的发货和收货
 SendingsToValidate=运输验证
 StatusSendingCanceled=取消
+StatusSendingCanceledShort=已取消
 StatusSendingDraft=草稿
 StatusSendingValidated=验证（产品出货或已经出货）
 StatusSendingProcessed=加工
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=您必须先验证订单才能发货。
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=更多的送货单(logo. ..完整的文档模板)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
 SumOfProductVolumes=产品总数
 SumOfProductWeights=产品总重

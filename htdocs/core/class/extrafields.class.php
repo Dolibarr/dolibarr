@@ -839,7 +839,7 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,printable,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
 		$sql .= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) $sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
@@ -991,32 +991,23 @@ class ExtraFields
 			else return '';
 		}
 
-		if (empty($morecss))
-		{
-			if ($type == 'date')
-			{
+		if (empty($morecss)) {
+			if ($type == 'date') {
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')
-			{
+			} elseif ($type == 'datetime' || $type == 'link') {
 				$morecss = 'minwidth200imp';
-			} elseif (in_array($type, array('int', 'integer', 'double', 'price')))
-			{
+			} elseif (in_array($type, array('int', 'integer', 'double', 'price'))) {
 				$morecss = 'maxwidth75';
-			} elseif ($type == 'password')
-			{
+			} elseif ($type == 'password') {
 				$morecss = 'maxwidth100';
-			} elseif ($type == 'url')
-			{
+			} elseif ($type == 'url') {
 				$morecss = 'minwidth400';
-			} elseif ($type == 'boolean')
-			{
+			} elseif ($type == 'boolean') {
 				$morecss = '';
 			} else {
-				if (round($size) < 12)
-				{
+				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
-				} elseif (round($size) <= 48)
-				{
+				} elseif (round($size) <= 48) {
 					$morecss = 'minwidth200';
 				} else {
 					$morecss = 'minwidth400';
@@ -1024,8 +1015,7 @@ class ExtraFields
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime')))
-		{
+		if (in_array($type, array('date', 'datetime'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 
@@ -2008,9 +1998,12 @@ class ExtraFields
 
 				if ($this->attributes[$object->table_element]['required'][$key])	// Value is required
 				{
-					// Check if empty without using GETPOST, value can be alpha, int, array, etc...
-					if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
-						|| (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+					// Check if functionally empty without using GETPOST (depending on the type of extrafield, a
+					// technically non-empty value may be treated as empty functionally).
+					// value can be alpha, int, array, etc...
+				    if ((!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] != 'select' && $_POST["options_".$key] != '0')
+				        || (!is_array($_POST["options_".$key]) && empty($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'select')
+				        || (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key])))
 					{
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];

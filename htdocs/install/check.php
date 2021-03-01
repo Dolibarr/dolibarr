@@ -77,7 +77,7 @@ if (!empty($useragent))
 
 // Check PHP version
 $arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 5, 0);
+$arrayphpminversionwarning = array(5, 6, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
@@ -105,7 +105,7 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))	// We must keep $_GE
 }
 
 
-// Check if sessions enabled
+// Check if session_id is enabled
 if (!function_exists("session_id"))
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
@@ -115,25 +115,25 @@ if (!function_exists("session_id"))
 }
 
 
-// Check if GD supported (we need GD for image conversion)
+// Check if GD is supported (we need GD for image conversion)
 if (!function_exists("imagecreate"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
 }
 
 
-// Check if Curl supported
+// Check if Curl is supported
 if (!function_exists("curl_init"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCurl")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
 }
 
 // Check if PHP calendar extension is available
@@ -141,18 +141,18 @@ if (!function_exists("easter_date"))
 {
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCalendar")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
 }
 
 
-// Check if UTF8 supported
+// Check if UTF8 is supported
 if (!function_exists("utf8_encode"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportUTF8")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
 }
 
 
@@ -165,7 +165,7 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 		print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
 		// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
 	}
 }
 
@@ -201,7 +201,7 @@ if ($memmaxorig != '')
 }
 
 
-// If config file present and filled
+// If that config file is present and filled
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {

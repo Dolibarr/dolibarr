@@ -157,7 +157,7 @@ if ($action == 'update' && $user->rights->asset->write)
 
 	if ($ret >= 0 && !count($object->errors))
 	{
-		setEventMessages($langs->trans("AssetsTypeModified"), null, 'mesgs');
+		setEventMessages($langs->trans("AssetTypeModified"), null, 'mesgs');
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}

@@ -356,7 +356,8 @@ function dol_stringtotime($string, $gm = 1)
 }
 
 
-/** Return previous day
+/**
+ *  Return previous day
  *
  *  @param      int			$day     	Day
  *  @param      int			$month   	Month
@@ -371,7 +372,8 @@ function dol_get_prev_day($day, $month, $year)
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
-/** Return next day
+/**
+ *  Return next day
  *
  *  @param      int			$day    	Day
  *  @param      int			$month  	Month
@@ -386,7 +388,8 @@ function dol_get_next_day($day, $month, $year)
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
-/**	Return previous month
+/**
+ *  Return previous month
  *
  *	@param		int			$month		Month
  *	@param		int			$year		Year
@@ -405,7 +408,8 @@ function dol_get_prev_month($month, $year)
 	return array('year' => $prev_year, 'month' => $prev_month);
 }
 
-/**	Return next month
+/**
+ *  Return next month
  *
  *	@param		int			$month		Month
  *	@param		int			$year		Year
@@ -424,7 +428,8 @@ function dol_get_next_month($month, $year)
 	return array('year' => $next_year, 'month' => $next_month);
 }
 
-/**	Return previous week
+/**
+ *  Return previous week
  *
  *  @param      int			$day     	Day
  *  @param      int			$week    	Week
@@ -442,7 +447,8 @@ function dol_get_prev_week($day, $week, $month, $year)
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
-/**	Return next week
+/**
+ *  Return next week
  *
  *  @param      int			$day     	Day
  *  @param      int			$week    	Week
@@ -461,13 +467,15 @@ function dol_get_next_week($day, $week, $month, $year)
 	return array('year' => $tmparray['year'], 'month' => $tmparray['mon'], 'day' => $tmparray['mday']);
 }
 
-/**	Return GMT time for first day of a month or year
+/**
+ *  Return GMT time for first day of a month or year
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
- *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
+ * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 										True or 1 or 'gmt' to compare with GMT date.
+ *                          			Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
+ *                          			Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
  *  @return		int						Date for first day, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
@@ -477,11 +485,14 @@ function dol_get_first_day($year, $month = 1, $gm = false)
 }
 
 
-/**	Return GMT time for last day of a month or year
+/**
+ * Return GMT time for last day of a month or year.
+ * Note: The timestamp contains last day and last hours (23:59:59)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
+ * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 										True or 1 or 'gmt' to compare with GMT date.
  *	@return		int						Date for first day, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
@@ -502,7 +513,8 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 	return $datelim;
 }
 
-/**	Return GMT time for last hour of a given GMT date (it removes hours, min and second part)
+/**
+ *  Return GMT time for last hour of a given GMT date (it removes hours, min and second part)
  *
  *	@param		int			$date		Date
  *  @return		int						Date for last hour of a given date
@@ -513,7 +525,8 @@ function dol_get_last_hour($date)
 	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
 }
 
-/**	Return GMT time for first hour of a given GMT date (it removes hours, min and second part)
+/**
+ *  Return GMT time for first hour of a given GMT date (it removes hours, min and second part)
  *
  *	@param		int			$date		Date
  *  @return		int						Date for last hour of a given date
@@ -529,7 +542,8 @@ function dol_get_first_hour($date)
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
+ * 	@param		mixed	$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 									True or 1 or 'gmt' to compare with GMT date.
  *	@return		array				year,month,week,first_day,first_month,first_year,prev_day,prev_month,prev_year
  */
 function dol_get_first_day_week($day, $month, $year, $gm = false)
@@ -606,7 +620,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
  */
 function getGMTEasterDatetime($year)
 {
-	$base = new DateTime("$year-03-21");
+	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
 	$days = easter_days($year);	// Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
@@ -614,11 +628,11 @@ function getGMTEasterDatetime($year)
 
 /**
  *	Return the number of non working days including saturday and sunday (or not) between 2 dates in timestamp.
- *  Dates must be UTC with hour, day, min to 0.
+ *  Dates must be UTC with hour, min, sec to 0.
  *	Called by function num_open_day()
  *
- *	@param	    int			$timestampStart     Timestamp de debut
- *	@param	    int			$timestampEnd       Timestamp de fin
+ *	@param	    int			$timestampStart     Timestamp start (UTC with hour, min, sec = 0)
+ *	@param	    int			$timestampEnd       Timestamp end (UTC with hour, min, sec = 0)
  *  @param      string		$country_code       Country code
  *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *  @param		int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
@@ -707,32 +721,20 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			{
 				// Calculation for the monday of easter date
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_lundi_paques = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 1,
-					gmdate("Y", $date_paques)
-				);
+				//print 'PPP'.$date_paques.' '.dol_print_date($date_paques, 'dayhour', 'gmt')." ";
+				$date_lundi_paques = $date_paques + (3600 * 24);
 				$jour_lundi_paques = gmdate("d", $date_lundi_paques);
 				$mois_lundi_paques = gmdate("m", $date_lundi_paques);
 				if ($jour_lundi_paques == $jour && $mois_lundi_paques == $mois) $ferie = true;
 				// Easter (monday)
+				//print 'annee='.$annee.' $jour='.$jour.' $mois='.$mois.' $jour_lundi_paques='.$jour_lundi_paques.' $mois_lundi_paques='.$mois_lundi_paques."\n";
 			}
 
 			if (in_array('ascension', $specialdayrule))
 			{
 				// Calcul du jour de l'ascension (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_ascension = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 39,
-					gmdate("Y", $date_paques)
-				);
+				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
 				$mois_ascension = gmdate("m", $date_ascension);
 				if ($jour_ascension == $jour && $mois_ascension == $mois) $ferie = true;
@@ -743,14 +745,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			{
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_pentecote = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 49,
-					gmdate("Y", $date_paques)
-				);
+				$date_pentecote = $date_paques + (3600 * 24 * 49);
 				$jour_pentecote = gmdate("d", $date_pentecote);
 				$mois_pentecote = gmdate("m", $date_pentecote);
 				if ($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie = true;
@@ -760,14 +755,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			{
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_pentecote = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 50,
-					gmdate("Y", $date_paques)
-					);
+				$date_pentecote = $date_paques + (3600 * 24 * 50);
 				$jour_pentecote = gmdate("d", $date_pentecote);
 				$mois_pentecote = gmdate("m", $date_pentecote);
 				if ($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie = true;
@@ -778,14 +766,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			{
 				// Viernes Santo
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_viernes = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) - 2,
-					gmdate("Y", $date_paques)
-				);
+				$date_viernes = $date_paques - (3600 * 24 * 2);
 				$jour_viernes = gmdate("d", $date_viernes);
 				$mois_viernes = gmdate("m", $date_viernes);
 				if ($jour_viernes == $jour && $mois_viernes == $mois) $ferie = true;
@@ -796,14 +777,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 			{
 				// Fronleichnam (60 days after easter sunday)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_fronleichnam = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 60,
-					gmdate("Y", $date_paques)
-					);
+				$date_fronleichnam = $date_paques + (3600 * 24 * 60);
 				$jour_fronleichnam = gmdate("d", $date_fronleichnam);
 				$mois_fronleichnam = gmdate("m", $date_fronleichnam);
 				if ($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) $ferie = true;

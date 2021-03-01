@@ -135,8 +135,10 @@ class box_factures extends ModeleBoxes
 					$facturestatic->total_ht = $objp->total_ht;
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
-					$facturestatic->statut = $objp->fk_statut;
+					$facturestatic->statut = $objp->status;
+					$facturestatic->status = $objp->status;
 					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
+					$facturestatic->alreadypaid = $objp->paye;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;

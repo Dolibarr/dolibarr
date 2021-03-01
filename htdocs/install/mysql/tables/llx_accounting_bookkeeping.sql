@@ -35,7 +35,7 @@ CREATE TABLE llx_accounting_bookkeeping
   label_operation       varchar(255),				-- FEC:EcritureLib	| label of the operation
   debit                 double(24,8) NOT NULL,		-- FEC:Debit
   credit                double(24,8) NOT NULL,		-- FEC:Credit
-  montant               double(24,8) NOT NULL,		-- FEC:Montant (Not necessary)
+  montant               double(24,8) NULL,	   	    -- FEC:Montant (Not necessary)
   sens                  varchar(1) DEFAULT NULL,	-- FEC:Sens (Not necessary)
   multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
@@ -51,6 +51,6 @@ CREATE TABLE llx_accounting_bookkeeping
   journal_label         varchar(255),				-- FEC:JournalLib
   date_validated        datetime,					-- FEC:ValidDate	| if empty: movement not validated / if not empty: movement validated (No deleting / No modification)
   date_export	      	datetime DEFAULT NULL,		--
-  import_key            varchar(14),
+  import_key            varchar(14),				-- ID of import when data was inserted by a mass import
   extraparams           varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;

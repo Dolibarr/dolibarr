@@ -131,14 +131,8 @@ $arrayfields = array(
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-	{
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -207,7 +201,7 @@ $socstatic = new Societe($db);
 $contracttmp = new Contrat($db);
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -262,7 +256,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
+$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
 $sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
 $sql .= " typent.code,";
 $sql .= " state.code_departement, state.nom";
@@ -620,14 +614,14 @@ while ($i < min($num, $limit))
 	$socstatic->logo = $obj->logo;
 	$socstatic->country_id = $obj->country_id;
 	$socstatic->country_code = '';
-	$socstatic->country_label = '';*/
+	$socstatic->country = '';*/
 	if ($obj->country_id > 0) {
 		if (!isset($cacheCountryIDCode[$obj->country_id]['code'])) {
 			$tmparray = getCountry($obj->country_id, 'all');
 			$cacheCountryIDCode[$obj->country_id] = array('code'=> empty($tmparray['code']) ? '' : $tmparray['code'], 'label' => empty($tmparray['label']) ? '' : $tmparray['label']);
 		}
 		$socstatic->country_code = $cacheCountryIDCode[$obj->country_id]['code'];
-		$socstatic->country_label = $cacheCountryIDCode[$obj->country_id]['label'];
+		$socstatic->country = $cacheCountryIDCode[$obj->country_id]['label'];
 	}
 
 
@@ -646,7 +640,7 @@ while ($i < min($num, $limit))
 		}
 
 		$filename = dol_sanitizeFileName($obj->ref);
-		$filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+		$filedir = $conf->contrat->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 		print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
 		print '</td>';
@@ -664,7 +658,7 @@ while ($i < min($num, $limit))
 	}
 	if (!empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		if ($obj->socid > 0) {
 			// TODO Use a cache for this string
 			print $socstatic->getNomUrl(1, '');
@@ -701,7 +695,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		print $socstatic->country_label;
+		print $socstatic->country;
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}

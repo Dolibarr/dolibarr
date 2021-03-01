@@ -89,6 +89,7 @@ $extralabelslines = $extrafields->fetch_name_optionals_label($object->table_elem
 $permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->contrat->creer; // Used by the include of actions_dellink.inc.php
 
+$error = 0;
 
 
 /*
@@ -373,8 +374,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 		}
-	} elseif ($action == 'classin' && $user->rights->contrat->creer)
-	{
+	} elseif ($action == 'classin' && $user->rights->contrat->creer) {
 		$object->setProject(GETPOST('projectid'));
 	}
 
@@ -383,9 +383,9 @@ if (empty($reshook))
 	{
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
-		$price_ht = price2num(GETPOST('price_ht'));
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$price_ht = price2num(GETPOST('price_ht'), 'MU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CU'));
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
@@ -395,7 +395,7 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef));
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
@@ -883,8 +883,8 @@ if (empty($reshook))
 				$action = 'editref';
 			} else {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				$old_filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($old_ref);
-				$new_filedir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
+				$old_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($old_ref);
+				$new_filedir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 				$files = dol_dir_list($old_filedir);
 				if (!empty($files))
@@ -929,7 +929,7 @@ if (empty($reshook))
 
 
 	// Actions to build doc
-	$upload_dir = $conf->contrat->dir_output;
+	$upload_dir = $conf->contrat->multidir_output[$object->entity];
 	$permissiontoadd = $user->rights->contrat->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -2131,13 +2131,13 @@ if ($action == 'create')
     		 * Documents generes
     		*/
 			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->contrat->dir_output."/".dol_sanitizeFileName($object->ref);
+			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->contrat->lire;
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
@@ -2162,7 +2162,7 @@ if ($action == 'create')
 		// Presend form
 		$modelmail = 'contract';
 		$defaulttopic = 'SendContractRef';
-		$diroutput = $conf->contrat->dir_output;
+		$diroutput = $conf->contrat->multidir_output[$object->entity];
 		$trackid = 'con'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

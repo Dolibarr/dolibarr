@@ -34,6 +34,7 @@ BoxTitleLatestModifiedBoms=Últimas BOMs modificadas %s
 BoxTitleLatestModifiedMos=Últimas órdenes de fabricación modificadas %s
 BoxGlobalActivity=Actividad global (facturas, propuestas, pedidos)
 BoxTitleGoodCustomers=%s Buenos clientes
+BoxScheduledJobs=Trabajos programados
 FailedToRefreshDataInfoNotUpToDate=Error al actualizar el flujo de RSS. Última fecha de actualización exitosa: %s
 LastRefreshDate=Fecha de actualización más reciente
 NoRecordedBookmarks=No se han definido marcadores.

@@ -538,9 +538,9 @@ print dol_get_fiche_head($head, 'replenish', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span>'."\n";
 if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
-	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."\n";
 }
-print '<br>';
+print '<br><br>';
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';

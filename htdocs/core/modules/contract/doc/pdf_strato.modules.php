@@ -195,7 +195,7 @@ class pdf_strato extends ModelePDFContract
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->contrat->dir_output."/".$objectref;
+				$dir = $conf->contrat->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -340,13 +340,12 @@ class pdf_strato extends ModelePDFContract
 							$datere = $langs->trans("Unknown");
 						}
 
-						$txtpredefinedservice = '';
-						$txtpredefinedservice = $objectligne->product_label;
-						if ($objectligne->product_label)
-						{
-							$txtpredefinedservice .= ' - ';
-							$txtpredefinedservice .= $objectligne->product_label;
-						}
+                        $txtpredefinedservice = $objectligne->product_ref;
+                        if ($objectligne->product_label)
+                        {
+                        	$txtpredefinedservice .= ' - ';
+                        	$txtpredefinedservice .= $objectligne->product_label;
+                        }
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';

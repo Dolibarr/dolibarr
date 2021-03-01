@@ -176,8 +176,11 @@ class FactureFournisseur extends CommonInvoice
 	public $note_private;
 	public $note_public;
 	public $propalid;
+
 	public $cond_reglement_id;
 	public $cond_reglement_code;
+	public $cond_reglement_label;
+	public $cond_reglement_doc;
 
 	/**
 	 * @var int ID
@@ -641,8 +644,8 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.model_pdf,";
 		$sql .= " t.import_key,";
 		$sql .= " t.extraparams,";
-		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
-		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle,";
+		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
+		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_label,";
 		$sql .= ' s.nom as socnom, s.rowid as socid,';
 		$sql .= ' t.fk_incoterms, t.location_incoterms,';
 		$sql .= " i.libelle as label_incoterms,";
@@ -697,12 +700,13 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project = $obj->fk_project;
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code = $obj->cond_reglement_code;
-				$this->cond_reglement = $obj->cond_reglement_libelle;
-				$this->cond_reglement_doc = $obj->cond_reglement_libelle;
+				$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
+				$this->cond_reglement_label = $obj->cond_reglement_label;
+				$this->cond_reglement_doc = $obj->cond_reglement_doc;
 				$this->fk_account = $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
-				$this->mode_reglement = $obj->mode_reglement_libelle;
+				$this->mode_reglement = $obj->mode_reglement_label;
 				$this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
 				$this->note = $obj->note_private; // deprecated
 				$this->note_private			= $obj->note_private;
@@ -1248,7 +1252,7 @@ class FactureFournisseur extends CommonInvoice
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Tag invoice as a payed invoice
+	 *  Tag invoice as a paid invoice
 	 *
 	 *	@param  User	$user       Object user
 	 *	@param  string	$close_code	Code indicates whether the class has paid in full while payment is incomplete. Not implementd yet.
@@ -1765,8 +1769,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->line->tva_tx = $txtva;
 			$this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
 			$this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
-			$this->line->localtax1_type = $localtaxes_type[0];
-			$this->line->localtax2_type = $localtaxes_type[2];
+			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
 			$this->line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht); // For credit note and if qty is negative, total is negative
 			$this->line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
@@ -1952,8 +1956,8 @@ class FactureFournisseur extends CommonInvoice
 		$line->tva_tx = $vatrate;
 		$line->localtax1_tx = $txlocaltax1;
 		$line->localtax2_tx = $txlocaltax2;
-		$line->localtax1_type = $localtaxes_type[0];
-		$line->localtax2_type = $localtaxes_type[2];
+		$line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
+		$line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 		$line->total_ht = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_ht) : $total_ht);
 		$line->total_tva = (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ?-abs($total_tva) : $total_tva);
 		$line->total_localtax1 = $total_localtax1;
@@ -2295,6 +2299,10 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_REPLACEMENT) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
 		elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
 		elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		if (isset($this->status)) {
+			$alreadypaid = -1;
+			$label .= ' '.$this->getLibStatut(5, $alreadypaid);
+		}
 		if (!empty($this->ref))
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->ref_supplier))

@@ -1514,6 +1514,7 @@ class Products extends DolibarrApi
 		foreach ($combinations as $key => $combination) {
 			$prodc2vp = new ProductCombination2ValuePair($this->db);
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
+			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 		}
 
 		return $combinations;
@@ -1547,6 +1548,7 @@ class Products extends DolibarrApi
 		foreach ($combinations as $key => $combination) {
 			$prodc2vp = new ProductCombination2ValuePair($this->db);
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
+			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 		}
 
 		return $combinations;
@@ -1754,7 +1756,7 @@ class Products extends DolibarrApi
 		unset($object->libelle);
 		unset($object->product_id_already_linked);
 		unset($object->reputations);
-
+		unset($object->db);
 		unset($object->name);
 		unset($object->firstname);
 		unset($object->lastname);

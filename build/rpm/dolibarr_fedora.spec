@@ -212,6 +212,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/recruitment
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/salaries

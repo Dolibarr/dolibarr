@@ -173,7 +173,7 @@ class DolibarrApi
 		unset($object->name_bis);
 		unset($object->newref);
 
-		if ($object->table_element != 'ticket') {
+		if (!isset($object->table_element) || $object->table_element != 'ticket') {
 			unset($object->comments);
 		}
 

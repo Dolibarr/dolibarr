@@ -113,7 +113,12 @@ class Translate
 			} else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
 		} else {						// If it's for a codetouse that is a short code xx
 			// Array to convert short lang code into long code.
-			$longforshort = array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'ja'=>'ja_JP', 'nb'=>'nb_NO', 'no'=>'nb_NO');
+			$longforshort = array(
+				'am'=>'am_ET', 'ar'=>'ar_SA', 'bn'=>'bn_DB', 'el'=>'el_GR', 'ca'=>'ca_ES', 'cs'=>'cs_CZ', 'en'=>'en_US', 'fa'=>'fa_IR',
+				'gl'=>'gl_ES', 'he'=>'he_IL', 'hi'=>'hi_IN', 'ja'=>'ja_JP',
+				'ka'=>'ka_GE', 'km'=>'km_KH', 'kn'=>'kn_IN', 'ko'=>'ko_KR', 'lo'=>'lo_LA', 'nb'=>'nb_NO', 'no'=>'nb_NO', 'ne'=>'ne_NP',
+				'sl'=>'sl_SI', 'sq'=>'sq_AL', 'sr'=>'sr_RS', 'sv'=>'sv_SE', 'uk'=>'uk_UA', 'vi'=>'vi_VN', 'zh'=>'zh_CN'
+			);
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang = $longforshort[strtolower($langpart[0])];
 			elseif (!empty($langpart[0])) $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
 			else $srclang = 'en_US';

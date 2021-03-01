@@ -253,9 +253,9 @@ class Form
 
 				if (empty($notabletag)) $ret .= '<td class="left">';
 				//else $ret.='<div class="clearboth"></div>';
-				$ret .= '<input type="submit" class="button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
+				$ret .= '<input type="submit" class="smallpaddingimp button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
 				if (preg_match('/ckeditor|textarea/', $typeofdata) && empty($notabletag)) $ret .= '<br>'."\n";
-				$ret .= '<input type="submit" class="button button-cancel'.(empty($notabletag) ? '' : ' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
+				$ret .= '<input type="submit" class="smallpaddingimp button button-cancel'.(empty($notabletag) ? '' : ' ').'" name="cancel" value="'.$langs->trans("Cancel").'">';
 				if (empty($notabletag)) $ret .= '</td>';
 
 				if (empty($notabletag)) $ret .= '</tr></table>'."\n";
@@ -1927,7 +1927,7 @@ class Form
 	 *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
 	 *
 	 *  @param		int			$selected				Preselected products
-	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
+	 *  @param		string		$htmlname				Name of HTML select field (must be unique in page).
 	 *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$price_level			Level of price to show
@@ -1949,7 +1949,7 @@ class Form
 	 *  @param		string		$nooutput				No print, return the output into a string
 	 *  @return		void|string
 	 */
-	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = array(), $nooutput = 0)
+	public function select_produits($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 0, $price_level = 0, $status = 1, $finished = 2, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $selected_combinations = null, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -1997,10 +1997,13 @@ class Form
 			}
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (!empty($conf->variants->enabled)) {
+			if (!empty($conf->variants->enabled) && is_array($selected_combinations)) {
+				// Code to automatically insert with javascript the select of attributes under the select of product
+				// when a parent of variant has been selected.
 				$out .= '
+				<!-- script to auto show attributes select tags if a variant was selected -->
 				<script>
-
+					// auto show attributes fields
 					selected = '.json_encode($selected_combinations).';
 					combvalues = {};
 
@@ -2019,6 +2022,8 @@ class Form
 								return;
 							}
 
+							console.log("A change has started. We get variants fields to inject html select");
+
 							jQuery.getJSON("'.DOL_URL_ROOT.'/variants/ajax/getCombinations.php", {
 								id: jQuery(this).val()
 							}, function (data) {
@@ -2035,8 +2040,7 @@ class Form
 									span.append(
 										jQuery(document.createElement(\'div\')).text(val.label).css({
 											\'font-weight\': \'bold\',
-											\'display\': \'table-cell\',
-											\'text-align\': \'right\'
+											\'display\': \'table-cell\'
 										})
 									);
 
@@ -2652,14 +2656,14 @@ class Form
 		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
 			if (!empty($user->rights->stock->lire)) {
-				$opt .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 				if ($objp->stock > 0) {
 					$outval .= ' - <span class="product_line_stock_ok">';
 				} elseif ($objp->stock <= 0) {
 					$outval .= ' - <span class="product_line_stock_too_low">';
 				}
-				$outval .= $langs->transnoentities("Stock").':'.$objp->stock;
+				$outval .= $langs->transnoentities("Stock").': '.price(price2num($objp->stock, 'MS'));
 				$outval .= '</span>';
 				if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 				{
@@ -2989,14 +2993,14 @@ class Form
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
-						$outvallabel .= ' - '.$langs->trans("Stock").':'.$objp->stock;
+						$outvallabel .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
 						if ($objp->stock > 0) {
 							$optlabel .= ' - <span class="product_line_stock_ok">';
 						} elseif ($objp->stock <= 0) {
 							$optlabel .= ' - <span class="product_line_stock_too_low">';
 						}
-						$optlabel .= $langs->transnoentities("Stock").':'.$objp->stock;
+						$optlabel .= $langs->transnoentities("Stock").':'.price(price2num($objp->stock, 'MS'));
 						$optlabel .= '</span>';
 						if (empty($novirtualstock) && !empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
 						{
@@ -3040,10 +3044,10 @@ class Form
 
 
 				// Add new entry
-				// "key" value of json key array is used by jQuery automatically as selected value
+				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $opt;
-				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'up'=>$objp->unitprice, 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
+				array_push($outarray, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'price_ht'=>price2num($objp->unitprice, 'MT'), 'up'=>price2num($objp->unitprice, 'MT'), 'discount'=>$outdiscount, 'type'=>$outtype, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit, 'disabled'=>(empty($objp->idprodfournprice) ?true:false)));
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -3939,12 +3943,15 @@ class Form
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
 	 *  @param	string	$morecss			More CSS
+	 *  @param	int		$nooutput			1=Return string, do not send to output
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
+	public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
+		$out = '';
 
 		$langs->load("admin");
 		$num = 0;
@@ -3964,10 +3971,10 @@ class Form
 			$i = 0;
 			if ($num)
 			{
-				print '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				$out .= '<select id="select'.$htmlname.'" class="flat selectbankaccount'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1))
 				{
-					print '<option value="-1">&nbsp;</option>';
+					$out .= '<option value="-1">&nbsp;</option>';
 				}
 
 				while ($i < $num)
@@ -3975,25 +3982,29 @@ class Form
 					$obj = $this->db->fetch_object($result);
 					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected)))
 					{
-						print '<option value="'.$obj->rowid.'" selected>';
+						$out .= '<option value="'.$obj->rowid.'" selected>';
 					} else {
-						print '<option value="'.$obj->rowid.'">';
+						$out .= '<option value="'.$obj->rowid.'">';
 					}
-					print trim($obj->label);
-					if ($showcurrency) print ' ('.$obj->currency_code.')';
-					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
-					print '</option>';
+					$out .= trim($obj->label);
+					if ($showcurrency) $out .= ' ('.$obj->currency_code.')';
+					if ($status == 2 && $obj->status == 1) $out .= ' ('.$langs->trans("Closed").')';
+					$out .= '</option>';
 					$i++;
 				}
-				print "</select>";
-				print ajax_combobox('select'.$htmlname);
+				$out .= "</select>";
+				$out .= ajax_combobox('select'.$htmlname);
 			} else {
-				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
-				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
+				if ($status == 0) $out .= '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				else $out .= '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		} else {
 			dol_print_error($this->db);
 		}
+
+		// Output or return
+		if (empty($nooutput)) print $out;
+		else return $out;
 
 		return $num;
 	}
@@ -4163,7 +4174,7 @@ class Form
 				$output .= '<option value="-1">&nbsp;</option>';
 				foreach ($cate_arbo as $key => $value)
 				{
-					if ($cate_arbo[$key]['id'] == $selected || ($selected == 'auto' && count($cate_arbo) == 1))
+					if ($cate_arbo[$key]['id'] == $selected || ($selected === 'auto' && count($cate_arbo) == 1))
 					{
 						$add = 'selected ';
 					} else {
@@ -4412,10 +4423,15 @@ class Form
                          	if (inputok.length>0) {
                          		$.each(inputok, function(i, inputname) {
                          			var more = "";
-                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         		    if ($("#" + inputname).attr("type") == "radio") { more = ":checked"; }
-                         			var inputvalue = $("#" + inputname + more).val();
+									var inputvalue;
+                         			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
+										inputvalue = $("input[name=\'" + inputname + "\']").val();
+									} else {
+                         		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+                         				inputvalue = $("#" + inputname + more).val();
+									}
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
+									console.log("check inputname="+inputname+" inputvalue="+inputvalue);
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
@@ -4874,7 +4890,7 @@ class Form
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setmulticurrencyrate">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CR')) : 1).'" /> ';
+			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CU')) : 1).'" /> ';
 			print '<select name="calculation_mode">';
 			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
 			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
@@ -5495,9 +5511,11 @@ class Form
 	 */
 	public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0)
 	{
-		$ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty);
-		$ret .= '<br/>';
-		$ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty);
+		global $langs;
+
+		$ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"), 'tzuserrel');
+		$ret .= '<br>';
+		$ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"), 'tzuserrel');
 		return $ret;
 	}
 
@@ -5524,12 +5542,17 @@ class Form
 	 *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 *  @param	string 		$placeholder    Placeholder
+	 *  @param	mixed		$gm				'auto' (for backward compatibility, avoid this), 'gmt' or 'tzserver' or 'tzuserrel'
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '')
+	public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '', $placeholder = '', $gm = 'auto')
 	{
 		global $conf, $langs;
+
+		if ($gm === 'auto') {
+			$gm = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
+		}
 
 		$retstring = '';
 
@@ -5546,7 +5569,11 @@ class Form
 		if ($set_time === '' && $emptydate == 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$set_time = dol_now('tzuser') - (getServerTimeZoneInt('now') * 3600); // set_time must be relative to PHP server timezone
+			if ($gm == 'tzuser' || $gm == 'tzuserrel') {
+				$set_time = dol_now($gm);
+			} else {
+				$set_time = dol_now('tzuser') - (getServerTimeZoneInt('now') * 3600); // set_time must be relative to PHP server timezone
+			}
 		}
 
 		// Analysis of the pre-selection date
@@ -5562,14 +5589,14 @@ class Form
 		} elseif (strval($set_time) != '' && $set_time != -1)
 		{
 			// set_time est un timestamps (0 possible)
-			$syear = dol_print_date($set_time, "%Y");
-			$smonth = dol_print_date($set_time, "%m");
-			$sday = dol_print_date($set_time, "%d");
+			$syear = dol_print_date($set_time, "%Y", $gm);
+			$smonth = dol_print_date($set_time, "%m", $gm);
+			$sday = dol_print_date($set_time, "%d", $gm);
 			if ($orig_set_time != '')
 			{
-				$shour = dol_print_date($set_time, "%H");
-				$smin = dol_print_date($set_time, "%M");
-				$ssec = dol_print_date($set_time, "%S");
+				$shour = dol_print_date($set_time, "%H", $gm);
+				$smin = dol_print_date($set_time, "%M", $gm);
+				$ssec = dol_print_date($set_time, "%S", $gm);
 			} else {
 				$shour = '';
 				$smin = '';
@@ -5587,6 +5614,9 @@ class Form
 		if ($h == 3) $shour = '';
 		if ($m == 3) $smin = '';
 
+		$nowgmt = dol_now('gmt');
+		//var_dump(dol_print_date($nowgmt, 'dayhourinputnoreduce', 'tzuserrel'));
+
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar = 'combo';
 		if (!empty($conf->use_javascript_ajax) && (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR != "none")) {
@@ -5603,19 +5633,19 @@ class Form
 				if (strval($set_time) != '' && $set_time != -1)
 				{
 					//$formated_date=dol_print_date($set_time,$conf->format_date_short);
-					$formated_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput")); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
+					$formated_date = dol_print_date($set_time, $langs->trans("FormatDateShortInput"), $gm); // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 				}
 
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy")
 				{
-					// Zone de saisie manuelle de la date
+					// Input area to enter date manually
 					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
 
-					// Icone calendrier
+					// Icon calendar
 					if (!$disabled)
 					{
 						$retstring .= '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
@@ -5795,8 +5825,7 @@ class Form
 		{
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
-			if ($addnowlink == 2) // local computer time
-			{
+			if ($addnowlink == 2) { // local computer time
 				// pad add leading 0 on numbers
 				$reset_scripts .= "Number.prototype.pad = function(size) {
                         var s = String(this);
@@ -5807,14 +5836,12 @@ class Form
 			}
 
 			// Generate the date part, depending on the use or not of the javascript calendar
-			if ($addnowlink == 1) // server time expressed in user time setup
-			{
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
-			} elseif ($addnowlink == 2)
-			{
+			if ($addnowlink == 1) { // server time expressed in user time setup
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($nowgmt, 'day', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date($nowgmt, '%d', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date($nowgmt, '%m', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date($nowgmt, '%Y', 'tzuserrel').'\');';
+			} elseif ($addnowlink == 2) {
 				/* Disabled because the output does not use the string format defined by FormatDateShort key to forge the value into #prefix.
             	 * This break application for foreign languages.
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(d.toLocaleDateString(\''.str_replace('_', '-', $langs->defaultlang).'\'));';
@@ -5822,10 +5849,10 @@ class Form
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(parseInt(d.getMonth().pad()) + 1);';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(d.getFullYear());';
                 */
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m', 'tzuser').'\');';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($nowgmt, 'day', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date($nowgmt, '%d', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date($nowgmt, '%m', 'tzuserrel').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date($nowgmt, '%Y', 'tzuserrel').'\');';
 			}
 			/*if ($usecalendar == "eldy")
             {
@@ -5845,7 +5872,7 @@ class Form
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'HH\'); ';
 				if ($addnowlink == 1)
 				{
-					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date($nowgmt, '%H', 'tzuserrel').'\');';
 					$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
 				} elseif ($addnowlink == 2)
 				{
@@ -5862,7 +5889,7 @@ class Form
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'min\'].value=formatDate(new Date(), \'mm\'); ';
 				if ($addnowlink == 1)
 				{
-					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date($nowgmt, '%M', 'tzuserrel').'\');';
 					$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
 				} elseif ($addnowlink == 2)
 				{
@@ -5887,22 +5914,22 @@ class Form
 			$reset_scripts = "";
 
 			// Generate the date part, depending on the use or not of the javascript calendar
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date($nowgmt, 'dayinputnoreduce', 'tzuserrel').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date($nowgmt, '%d', 'tzuserrel').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date($nowgmt, '%m', 'tzuserrel').'\');';
+			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date($nowgmt, '%Y', 'tzuserrel').'\');';
 			// Update the hour part
 			if ($h)
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date($nowgmt, '%H', 'tzuserrel').'\');';
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// Update the minute part
 			if ($m)
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M').'\');';
+				$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date($nowgmt, '%M', 'tzuserrel').'\');';
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
@@ -5914,12 +5941,12 @@ class Form
 			}
 		}
 
-		// Add a "Plus one hour" link
+		// Add a link to set data
 		if ($conf->use_javascript_ajax && $adddateof)
 		{
 			$tmparray = dol_getdate($adddateof);
 			if (empty($labeladddateof)) $labeladddateof = $langs->trans("DateInvoice");
-			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
+			$retstring .= ' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="console.log(\'Click on now link\'); jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'dayinputnoreduce').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
@@ -6405,8 +6432,7 @@ class Form
 					$value = $tmpvalue;
 					$disabled = ''; $style = '';
 				}
-				if (!empty($disablebademail))
-				{
+				if (!empty($disablebademail)) {
 					if (($disablebademail == 1 && !preg_match('/&lt;.+@.+&gt;/', $value))
 						|| ($disablebademail == 2 && preg_match('/---/', $value)))
 					{
@@ -6415,8 +6441,7 @@ class Form
 					}
 				}
 
-				if ($key_in_label)
-				{
+				if ($key_in_label) {
 					if (empty($nohtmlescape)) $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value));
 					else $selectOptionValue = $key.' - '.($maxlen ?dol_trunc($value, $maxlen) : $value);
 				} else {
@@ -6701,7 +6726,7 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.' -->
+			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.', addjscombo='.$addjscombo.' -->
 						<script>'."\n";
 			if ($addjscombo == 1)
 			{
@@ -6732,6 +6757,10 @@ class Form
 								formatSelection: formatSelection,
 							 	templateSelection: formatSelection		/* For 4.0 */
 							});
+
+							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+								 the size only if component is not hidden by default on load */
+							$(\'#'.$htmlname.' + .select2\').addClass(\''.$morecss.'\');
 						});'."\n";
 			} elseif ($addjscombo == 2 && !defined('DISABLE_MULTISELECT'))
 			{

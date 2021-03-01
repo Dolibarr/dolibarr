@@ -131,8 +131,8 @@ if (GETPOST('exportcsv', 'int'))
 	header('Content-Disposition: attachment;filename='.$completefilename);
 
 	// List of selected targets
-	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
-	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
+	$sql .= " mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	$sql .= $db->order($sortfield, $sortorder);
@@ -146,16 +146,16 @@ if (GETPOST('exportcsv', 'int'))
 		while ($obj = $db->fetch_object($resql))
 		{
 			print $obj->rowid.$sep;
-			print $obj->lastname.$sep;
-			print $obj->firstname.$sep;
+			print '"'.$obj->lastname.'"'.$sep;
+			print '"'.$obj->firstname.'"'.$sep;
 			print $obj->email.$sep;
 			print $obj->other.$sep;
-			print $obj->date_envoi.$sep;
 			print $obj->tms.$sep;
-			print $obj->source_url.$sep;
-			print $obj->source_id.$sep;
 			print $obj->source_type.$sep;
-			print $obj->error_text.$sep;
+			print $obj->source_id.$sep;
+			print $obj->date_envoi.$sep;
+			print $obj->status.$sep;
+			print '"'.$obj->error_text.'"'.$sep;
 			print "\n";
 		}
 
@@ -463,24 +463,51 @@ if ($object->fetch($id) >= 0)
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$object->id;
-	if ($search_lastname)  $sql .= natural_search("mc.lastname", $search_lastname);
-	if ($search_firstname) $sql .= natural_search("mc.firstname", $search_firstname);
-	if ($search_email)     $sql .= natural_search("mc.email", $search_email);
-	if ($search_other)     $sql .= natural_search("mc.other", $search_other);
-	if ($search_dest_status != '' && $search_dest_status >= -1) $sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+	$asearchcriteriahasbeenset = 0;
+	if ($search_lastname)  {
+		$sql .= natural_search("mc.lastname", $search_lastname);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_firstname) {
+		$sql .= natural_search("mc.firstname", $search_firstname);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_email)     {
+		$sql .= natural_search("mc.email", $search_email);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_other)     {
+		$sql .= natural_search("mc.other", $search_other);
+		$asearchcriteriahasbeenset++;
+	}
+	if ($search_dest_status != '' && $search_dest_status >= -1) {
+		$sql .= " AND mc.statut=".$db->escape($search_dest_status)." ";
+		$asearchcriteriahasbeenset++;
+	}
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
-		$result = $db->query($sql);
-		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		{
-			$page = 0;
-			$offset = 0;
-		}
+	    $result = $db->query($sql);
+	    $nbtotalofrecords = $db->num_rows($result);
+	    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	    	$page = 0;
+	    	$offset = 0;
+	    }
+
+	    // Fix/update nbemail on emailing record if it differs (may happen if user edit lines from database directly)
+	    if (empty($asearchcriteriahasbeenset)) {
+	    	if ($nbtotalofrecords != $object->nbemail) {
+	    		dol_syslog("We found a difference in nb of record in target table and the property ->nbemail, we fix ->nbemail");
+	    		//print "nbemail=".$object->nbemail." nbtotalofrecords=".$nbtotalofrecords;
+	    		$resultrefresh = $object->refreshNbOfTargets();
+	    		if ($resultrefresh < 0) {
+	    			dol_print_error($db, $object->error, $object->errors);
+	    		}
+	    	}
+	    }
 	}
 
 	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets

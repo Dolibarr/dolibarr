@@ -51,6 +51,8 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']))
 
 /**
  * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
+ * Warning: Such a protection can't be enough. It is not reliable as it will alwyas be possible to bypass this. Good protection can
+ * only be guaranted by escaping data during output.
  *
  * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
@@ -120,6 +122,19 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
+
+	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
+	$tmpval = preg_replace('/<[^<]+>/', '', $val);
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
+	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $tmpval); //
+	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $tmpval); //
+	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $tmpval);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $tmpval);
+
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
 	$inj += preg_match('/javascript\s*:/i', $val);
@@ -412,12 +427,12 @@ if (!defined('NOTOKENRENEWAL'))
 //$dolibarr_nocsrfcheck=1;
 // Check token
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
-	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
+	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 {
 	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
 		((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check')))
+		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check')))
 	{
 		if (!GETPOSTISSET('token')) {
 			if (GETPOST('uploadform', 'int')) {
@@ -428,8 +443,12 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 				die;
 			} else {
 				dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
-				print "Access to this page this way (POST method or page with CSRFCHECK_WITH_TOKEN on or having a sensible value for action parameter) is refused by CSRF protection in main.inc.php. Token not provided.\n";
-				print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file or MAIN_SECURITY_CSRF_WITH_TOKEN to 0 into setup).\n";
+				if (defined('CSRFCHECK_WITH_TOKEN')) {
+					print "Access to a page that needs a token (constant CSRFCHECK_WITH_TOKEN is defined) is refused by CSRF protection in main.inc.php. Token not provided.\n";
+				} else {
+					print "Access to this page this way (POST method or GET with a sensible value for 'action' parameter) is refused by CSRF protection in main.inc.php. Token not provided.\n";
+					print "If you access your server behind a proxy using url rewriting and the parameter is provided by caller, you might check that all HTTP header are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file or MAIN_SECURITY_CSRF_WITH_TOKEN to 0 into setup).\n";
+				}
 				die;
 			}
 		}
@@ -1125,20 +1144,20 @@ if (!function_exists("llxHeader"))
 	/**
 	 *	Show HTML header HTML + BODY + Top menu + left menu + DIV
 	 *
-	 * @param 	string 	$head				Optionnal head lines
-	 * @param 	string 	$title				HTML title
-	 * @param	string	$help_url			Url links to help page
-	 * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
-	 *                                  	For other external page: http://server/url
-	 * @param	string	$target				Target to use on links
-	 * @param 	int    	$disablejs			More content into html header
-	 * @param 	int    	$disablehead		More content into html header
-	 * @param 	array  	$arrayofjs			Array of complementary js files
-	 * @param 	array  	$arrayofcss			Array of complementary css files
-	 * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
-	 * @param   string  $morecssonbody      More CSS on body tag.
-	 * @param	string	$replacemainareaby	Replace call to main_area() by a print of this string
-	 * @param	int		$disablenofollow	Disable the "nofollow" on page
+	 * @param 	string 			$head				Optionnal head lines
+	 * @param 	string 			$title				HTML title
+	 * @param	string			$help_url			Url links to help page
+	 * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+	 *                                  			For other external page: http://server/url
+	 * @param	string			$target				Target to use on links
+	 * @param 	int    			$disablejs			More content into html header
+	 * @param 	int    			$disablehead		More content into html header
+	 * @param 	array|string  	$arrayofjs			Array of complementary js files
+	 * @param 	array|string  	$arrayofcss			Array of complementary css files
+	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+	 * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+	 * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+	 * @param	int				$disablenofollow	Disable the "nofollow" on page
 	 * @return	void
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
@@ -1498,7 +1517,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					// To use external ckeditor 4 js lib
 					$pathckeditor = constant('JS_CKEDITOR');
 				}
-				print '<script><!-- enable ckeditor by main.inc.php -->';
+				print '<script>';
+                print '/* enable ckeditor by main.inc.php */';
 				print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
 				print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext ? '?'.$ext : ''), 1).'\';'."\n"; // $themesubdir='' in standard usage
 				print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
@@ -1506,8 +1526,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '</script>'."\n";
 				print '<script src="'.$pathckeditor.$jsckeditor.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script>';
-				if (GETPOST('mode', 'aZ09') == 'Full_inline')
-				{
+				if (GETPOST('mode', 'aZ09') == 'Full_inline') {
 					print 'CKEDITOR.disableAutoInline = false;'."\n";
 				} else {
 					print 'CKEDITOR.disableAutoInline = true;'."\n";
@@ -1871,6 +1890,14 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
 	$langFlag = picto_from_langcode($langs->getDefaultLang());
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag ? $langFlag.' ' : '').$langs->getDefaultLang();
+
+	$tz = (int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
+	$dropdownBody .= '<br><b>'.$langs->trans("ClientTZ").':</b> '.($tz ? ($tz >= 0 ? '+' : '').$tz : '');
+	$dropdownBody .= ' ('.$_SESSION['dol_tz_string'].')';
+	//$dropdownBody .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': ';
+	//if ($_SESSION['dol_dst'] > 0) $dropdownBody .= yn(1);
+	//else $dropdownBody .= yn(0);
+
 	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' ('.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).')';
 	$dropdownBody .= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
@@ -2802,7 +2829,7 @@ if (!function_exists("llxFooter"))
 
 			if (!empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring] = $contextpage;
 			if (!empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring] = $page;
-			if (!empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
+			if (!empty($limit) && $limit != $conf->liste_limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring] = $limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 			unset($_SESSION['lastsearch_page_'.$relativepathstring]);

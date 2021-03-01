@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Recursos
-MenuResourceAdd=Nou recurs
+MenuResourceAdd=Recurs nou
 DeleteResource=Elimina recurs
 ConfirmDeleteResourceElement=Estàs segur de voler eliminar el recurs d'aquest element?
 NoResourceInDatabase=Sense recursos a la base de dades.
@@ -31,7 +31,7 @@ DictionaryResourceType=Tipus de recurs
 SelectResource=Seleccionar recurs
 
 IdResource=Id de recurs
-AssetNumber=Número de serie
+AssetNumber=Número de sèrie
 ResourceTypeCode=Codi de tipus de recurs
 ImportDataset_resource_1=Recursos
 

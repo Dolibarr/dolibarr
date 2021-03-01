@@ -53,3 +53,6 @@ SupplierProposalsToClose=Vendor proposals to close
 SupplierProposalsToProcess=Vendor proposals to process
 LastSupplierProposals=Latest %s price requests
 AllPriceRequests=All requests
+TypeContact_supplier_proposal_external_SHIPPING=Vendor contact for delivery
+TypeContact_supplier_proposal_external_BILLING=Vendor contact for billing
+TypeContact_supplier_proposal_external_SERVICE=Representative following-up proposal

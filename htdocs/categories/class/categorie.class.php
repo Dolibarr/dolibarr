@@ -1146,6 +1146,8 @@ class Categorie extends CommonObject
 		// First build full array $motherof
 		//$this->load_motherof();	// Disabled because already done by caller of build_path_from_id_categ
 
+		// $this->cats[$id_categ] is supposed to be already an array. We just want to complete it with property fullpath and fulllabel
+
 		// Define fullpath and fulllabel
 		$this->cats[$id_categ]['fullpath'] = '_'.$id_categ;
 		$this->cats[$id_categ]['fulllabel'] = $this->cats[$id_categ]['label'];
