@@ -1289,7 +1289,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '<table class="nobordernopadding"><tr><td>';
 		$tmpcode = $object->code_client;
 		if (empty($tmpcode) && !empty($modCodeClient->code_auto)) $tmpcode = $modCodeClient->getNextValue($object, 0);
-		print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+		print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 		print '</td><td>';
 		$s = $modCodeClient->getToolTip($langs, $object, 0);
 		print $form->textwithpicto('', $s, 1);
@@ -1321,7 +1321,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print '<table class="nobordernopadding"><tr><td>';
 				$tmpcode = $object->code_fournisseur;
 				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-				print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+				print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 				print '</td><td>';
 				$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
 				print $form->textwithpicto('', $s, 1);
@@ -1942,10 +1942,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				$tmpcode = $object->code_client;
 				if (empty($tmpcode) && !empty($object->oldcopy->code_client)) $tmpcode = $object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) $tmpcode = $modCodeClient->getNextValue($object, 0);
-				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 			} elseif ($object->codeclient_modifiable())
 			{
-				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
+				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="24">';
 			} else {
 				print $object->code_client;
 				print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
@@ -1980,10 +1980,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					$tmpcode = $object->code_fournisseur;
 					if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
-					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 				} elseif ($object->codefournisseur_modifiable())
 				{
-					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="15">';
+					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="24">';
 				} else {
 					print $object->code_fournisseur;
 					print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';

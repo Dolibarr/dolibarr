@@ -1490,10 +1490,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
-			if ($object->pass) print preg_replace('/./i', '*', $object->pass);
-			else {
-				if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-				else print $langs->trans("Hidden");
+			if ($object->pass) {
+				print preg_replace('/./i', '*', $object->pass);
+			} else {
+				if ($user->admin) {
+					print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+				} else {
+					print $langs->trans("Hidden");
+				}
 			}
 			if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
 				$langs->load("errors");
@@ -1522,6 +1526,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 		print '</td></tr>';
+
+		print '</table>';
+
+		print '</div>';
+
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield tableforfield" width="100%">';
+
+		// Birth Date
+		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+		// Public
+		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+
+		// Categories
+		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+			print '<tr><td>'.$langs->trans("Categories").'</td>';
+			print '<td colspan="2">';
+			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
+			print '</td></tr>';
+		}
+
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Third party Dolibarr
 		if (!empty($conf->societe->enabled)) {
@@ -1571,29 +1601,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		print '</table>';
-
-		print '</div>';
-
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
-		print '<div class="underbanner clearboth"></div>';
-
-		print '<table class="border tableforfield tableforfield" width="100%">';
-
-		// Birth Date
-		print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
-
-		// Public
-		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
-			print '<tr><td>'.$langs->trans("Categories").'</td>';
-			print '<td colspan="2">';
-			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
-			print '</td></tr>';
-		}
-
 		//VCard
 		print '<tr><td>';
 		print $langs->trans("VCard").'</td><td colspan="3">';
@@ -1602,9 +1609,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print $langs->trans("Download");
 		print '</a>';
 		print '</td></tr>';
-
-		// Other attributes
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print "</table>\n";
 
