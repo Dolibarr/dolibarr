@@ -93,7 +93,7 @@ class box_factures extends ModeleBoxes
 			$sql .= ", f.tva as total_tva";
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.datef as df";
-			$sql .= ", f.paye, f.fk_statut, f.datec, f.tms";
+			$sql .= ", f.paye, f.fk_statut as status, f.datec, f.tms";
 			$sql .= ", f.date_lim_reglement as datelimite";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
@@ -131,8 +131,10 @@ class box_factures extends ModeleBoxes
 					$facturestatic->total_ht = $objp->total_ht;
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
-					$facturestatic->statut = $objp->fk_statut;
+					$facturestatic->statut = $objp->status;
+					$facturestatic->status = $objp->status;
 					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
+					$facturestatic->alreadypaid = $objp->paye;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -181,7 +183,7 @@ class box_factures extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->fk_statut, 3),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->paye),
 					);
 
 					$line++;

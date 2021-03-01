@@ -329,9 +329,8 @@ class FormMail extends Form
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails'));
 
-		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
-		{
+		// Clear temp files. Must be done before call of triggers, at beginning (mode = init), or when we select a new template
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			$this->clear_attached_files();
 		}
 
@@ -1201,6 +1200,8 @@ class FormMail extends Form
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
+		global $conf;
+
 		$ret = new ModelMail();
 
 		if ($id == -2 && empty($label)) {
@@ -1214,7 +1215,7 @@ class FormMail extends Form
 		$languagetosearchmain = $tmparray[0].'_'.strtoupper($tmparray[0]);
 		if ($languagetosearchmain == $languagetosearch) $languagetosearchmain = '';
 
-		$sql = "SELECT rowid, label, topic, joinfiles, content, content_lines, lang";
+		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang";
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1226,72 +1227,92 @@ class FormMail extends Form
 		if ($id == -1) $sql .= " AND position=0";
 		if ($languagetosearch) $sql .= $db->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		else $sql .= $db->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
-		$sql .= $db->plimit(1);
+		//$sql .= $db->plimit(1);
 		//print $sql;
 
 		$resql = $db->query($sql);
-		if ($resql)
+		if (!$resql)
 		{
-			// Get first found
+			dol_print_error($db);
+			return -1;
+		}
+
+		// Get first found
+		while (1) {
 			$obj = $db->fetch_object($resql);
 
 			if ($obj) {
+				// If template is for a module, check module is enabled; if not, take next template
+				if ($obj->module) {
+					$tempmodulekey = $obj->module;
+					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+						continue;
+					}
+				}
+
+				// If a record was found
 				$ret->id = $obj->rowid;
+				$ret->module = $obj->module;
 				$ret->label = $obj->label;
 				$ret->lang = $obj->lang;
 				$ret->topic = $obj->topic;
 				$ret->content = $obj->content;
 				$ret->content_lines = $obj->content_lines;
 				$ret->joinfiles = $obj->joinfiles;
-			} elseif ($id == -2) {
-				// Not found with the provided label
-				return -1;
-			} else {	// If there is no template at all
-				$defaultmessage = '';
 
-				if ($type_template == 'body') {
-					// Special case to use this->withbody as content
-					$defaultmessage = $this->withbody;
-				} elseif ($type_template == 'facture_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
-				} elseif ($type_template == 'facture_relance') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
-				} elseif ($type_template == 'propal_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
-				} elseif ($type_template == 'supplier_proposal_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
-				} elseif ($type_template == 'order_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
-				} elseif ($type_template == 'order_supplier_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
-				} elseif ($type_template == 'invoice_supplier_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
-				} elseif ($type_template == 'shipping_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
-				} elseif ($type_template == 'fichinter_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
-				} elseif ($type_template == 'actioncomm_send') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
-				} elseif ($type_template == 'thirdparty') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
-				} elseif (!empty($type_template)) {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
+				break;
+			} else {
+				// If no record found
+				if ($id == -2) {
+					// Not found with the provided label
+					return -1;
+				} else {
+					// If there is no template at all
+					$defaultmessage = '';
+
+					if ($type_template == 'body') {
+						// Special case to use this->withbody as content
+						$defaultmessage = $this->withbody;
+					} elseif ($type_template == 'facture_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
+					} elseif ($type_template == 'facture_relance') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
+					} elseif ($type_template == 'propal_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
+					} elseif ($type_template == 'supplier_proposal_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
+					} elseif ($type_template == 'order_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
+					} elseif ($type_template == 'order_supplier_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
+					} elseif ($type_template == 'invoice_supplier_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
+					} elseif ($type_template == 'shipping_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+					} elseif ($type_template == 'fichinter_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
+					} elseif ($type_template == 'actioncomm_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
+					} elseif ($type_template == 'thirdparty') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
+					} elseif (!empty($type_template)) {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
+					}
+
+					$ret->label = 'default';
+					$ret->lang = $outputlangs->defaultlang;
+					$ret->topic = '';
+					$ret->joinfiles = 1;
+					$ret->content = $defaultmessage;
+					$ret->content_lines = '';
+
+					break;
 				}
-
-				$ret->label = 'default';
-				$ret->lang = $outputlangs->defaultlang;
-				$ret->topic = '';
-				$ret->joinfiles = 1;
-				$ret->content = $defaultmessage;
-				$ret->content_lines = '';
 			}
-
-			$db->free($resql);
-			return $ret;
-		} else {
-			dol_print_error($db);
-			return -1;
 		}
+
+		$db->free($resql);
+		return $ret;
 	}
 
 	/**
@@ -1338,7 +1359,9 @@ class FormMail extends Form
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
-		$sql = "SELECT rowid, label, topic, content, content_lines, lang, fk_user, private, position";
+		global $conf;
+
+		$sql = "SELECT rowid, module, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql .= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1355,6 +1378,14 @@ class FormMail extends Form
 			$this->lines_model = array();
 			while ($obj = $this->db->fetch_object($resql))
 			{
+				// If template is for a module, check module is enabled.
+				if ($obj->module) {
+					$tempmodulekey = $obj->module;
+					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+						continue;
+					}
+				}
+
 				$line = new ModelMail();
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;

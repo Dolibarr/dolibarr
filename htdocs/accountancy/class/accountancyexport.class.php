@@ -359,7 +359,7 @@ class AccountancyExport
 			print length_accountg($line->numero_compte).$separator;
 			print length_accounta($line->subledger_account).$separator;
 			print $line->sens.$separator;
-			print price2fec(abs($line->montant)).$separator;
+			print price2fec(abs($line->debit - $line->credit)).$separator;
 			print dol_string_unaccent($line->label_operation).$separator;
 			print dol_string_unaccent($line->doc_ref);
 			print $end_line;
@@ -387,11 +387,11 @@ class AccountancyExport
 			print $line->label_operation.$separator;
 			print $date.$separator;
 			if ($line->sens == 'D') {
-				print price($line->montant).$separator;
+				print price($line->debit).$separator;
 				print ''.$separator;
 			} elseif ($line->sens == 'C') {
 				print ''.$separator;
-				print price($line->montant).$separator;
+				print price($line->credit).$separator;
 			}
 			print $line->doc_ref.$separator;
 			print $line->label_operation.$separator;
@@ -492,7 +492,7 @@ class AccountancyExport
 			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 12), 12);
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
-			$Tab['montant'] = str_pad(abs($data->montant), 13, ' ', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(abs($data->debit - $data->credit), 13, ' ', STR_PAD_LEFT);
 			$Tab['type_montant'] = str_pad($data->sens, 1);
 			$Tab['vide'] = str_repeat(' ', 18);
 			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);
@@ -539,6 +539,7 @@ class AccountancyExport
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 20), 20);
 
 			// Credit invoice - invert sens
+			/*
             if ($data->montant < 0) {
                 if ($data->sens == 'C') {
                     $Tab['sens'] = 'D';
@@ -549,10 +550,12 @@ class AccountancyExport
             } else {
                 $Tab['sens'] = $data->sens; // C or D
                 $Tab['signe_montant'] = '+';
-            }
+            }*/
+			$Tab['sens'] = $data->sens; // C or D
+			$Tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$Tab['montant'] = str_pad(abs($data->montant * 100), 12, '0', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(abs(($data->debit - $abs->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
@@ -637,13 +640,13 @@ class AccountancyExport
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
 
 			if ($data->sens == 'D') {
-				$Tab['montant_debit']  = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$Tab['montant_debit']  = str_pad(number_format($data->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			} else {
 				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
-				$Tab['montant_crebit'] = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$Tab['montant_crebit'] = str_pad(number_format($data->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			}
 
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30), 30);
@@ -704,7 +707,7 @@ class AccountancyExport
 			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
 			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"'.$separator;
 			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
-			print price2num(abs($line->montant)).$separator;
+			print price2num(abs($line->debit - $line->credit)).$separator;
 			print $line->sens.$separator;
 			print $date.$separator;
 			//print 'EUR';
@@ -744,7 +747,7 @@ class AccountancyExport
 			print self::toAnsi($line->doc_ref).$separator;
 			print price($line->debit).$separator;
 			print price($line->credit).$separator;
-			print price($line->montant).$separator;
+			print price(abs($line->debit - $line->credit)).$separator;
 			print $line->sens.$separator;
 			print $line->lettering_code.$separator;
 			print $line->code_journal;
@@ -807,7 +810,7 @@ class AccountancyExport
 			$tab[] = length_accounta($line->subledger_account);
 			$tab[] = price2num($line->debit);
 			$tab[] = price2num($line->credit);
-			$tab[] = price2num($line->montant);
+			$tab[] = price2num($line->debit - $line->credit);
 			$tab[] = $line->code_journal;
 
 			print implode($separator, $tab).$this->end_line;
@@ -849,7 +852,7 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
-                unset($array[$line]);
+                //unset($array[$line]);
             } else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
@@ -950,7 +953,7 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
-				unset($array[$line]);
+				//unset($array[$line]);
 			} else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
@@ -1105,12 +1108,7 @@ class AccountancyExport
 			// Code
 			print '""'.$this->separator;
 			// Netto
-			if ($line->montant >= 0)
-			{
-				print $line->montant.$this->separator;
-			} else {
-				print ($line->montant * -1).$this->separator;
-			}
+			print abs($line->debit - $line->credit).$this->separator;
 			// Steuer
 			print "0.00".$this->separator;
 			// FW-Betrag
@@ -1190,13 +1188,13 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if ($line->montant < 0) {
+				if (($line->debit - $line->credit) > 0) {
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
 				}
 			} elseif ($line->doc_type == 'customer_invoice') {
-				if ($line->montant < 0) {
+				if (($line->debit - $line->credit) < 0) {
 					$nature_piece = 'AC';
 				} else {
 					$nature_piece = 'FC';
@@ -1220,7 +1218,7 @@ class AccountancyExport
 
 			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->montant), 0, '', 1, 2, 2).$separator;
+			print price(abs($line->debit - $line->credit), 0, '', 1, 2, 2).$separator;
 			// CODC
 			print $line->sens.$separator;
 			// CPTG
@@ -1452,13 +1450,13 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if ($line->montant < 0) {
+				if (($line->debit - $line->credit) > 0) {
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
 				}
 			} elseif ($line->doc_type == 'customer_invoice') {
-				if ($line->montant < 0) {
+				if (($line->debit - $line->credit) < 0) {
 					$nature_piece = 'AC';
 				} else {
 					$nature_piece = 'FC';
@@ -1482,7 +1480,7 @@ class AccountancyExport
 
 			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->montant), 0, '', 1, 2).$separator;
+			print price(abs($line->debit - $line->credit), 0, '', 1, 2).$separator;
 			// CODC
 			print $line->sens.$separator;
 			// CPTG
@@ -1602,7 +1600,7 @@ class AccountancyExport
 			print self::trunc($line->label_compte, 60).$separator; //Account label
 			print self::trunc($line->doc_ref, 20).$separator; //Piece
 			print self::trunc($line->label_operation, 60).$separator; //Operation label
-			print price(abs($line->montant)).$separator; //Amount
+			print price(abs($line->debit - $line->credit)).$separator; //Amount
 			print $line->sens.$separator; //Direction
 			print $separator; //Analytic
 			print $separator; //Analytic
@@ -1631,7 +1629,7 @@ class AccountancyExport
 		$supplier_invoices_infos = array();
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
-				unset($array[$line]);
+				//unset($array[$line]);
 			} else {
 				$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 
@@ -1699,8 +1697,8 @@ class AccountancyExport
 				print dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . $this->separator;
 				//Devise
 				print 'EUR' . $this->separator;
-				//Montant
-				print price2num(abs($line->montant)) . $this->separator;
+				//Amount
+				print price2num(abs($line->debit - $line->credit)) . $this->separator;
 				//Sens
 				print $line->sens . $this->separator;
 				//Code lettrage
@@ -1726,14 +1724,14 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
-				unset($array[$line]);
+				//unset($array[$line]);
 			} else {
 				$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 				print $line->id . $this->separator;
 				print $date . $this->separator;
 				print substr($line->code_journal, 0, 4) . $this->separator;
-				if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {
+				if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {	// TODO No hard code value
 					print length_accountg($line->subledger_account) . $this->separator;
 				} else {
 					print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
@@ -1742,7 +1740,7 @@ class AccountancyExport
 				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
 				print '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"' . $this->separator;
 				print '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"' . $this->separator;
-				print price2num($line->montant) . $this->separator;
+				print price2num(abs($line->debit - $line->credit)) . $this->separator;
 				print $line->sens . $this->separator;
 				print $date . $this->separator;
 				print $this->separator;
