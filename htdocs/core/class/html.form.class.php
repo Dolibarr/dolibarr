@@ -7206,7 +7206,12 @@ class Form
 						print '</td>';
 						print '<td class="center">'.$objp->ref.'</td>';
 						print '<td>'.$objp->ref_client.'</td>';
-						print '<td class="right">'.price($objp->total_ht).'</td>';
+						print '<td class="right">';
+						if ($possiblelink[label] == 'LinkToContract') {
+							$form = new Form($db);
+							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
+						}
+						print price($objp->total_ht).'</td>';
 						print '<td>'.$objp->name.'</td>';
 						print '</tr>';
 						$i++;

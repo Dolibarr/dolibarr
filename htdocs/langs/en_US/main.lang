@@ -1115,3 +1115,4 @@ EventReminder=Event Reminder
 UpdateForAllLines=Update for all lines
 OnHold=On hold
 Civility=Civility
+InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into account.
