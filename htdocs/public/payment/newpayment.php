@@ -914,13 +914,9 @@ if ($source == 'order') {
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $order->total_ttc;
-<<<<<<< HEAD
-		if (GETPOST("amount", 'int')) {
-			$amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) {
+			$amount = GETPOST("amount", 'alpha');
 		}
-=======
-		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		$amount = price2num($amount);
 	}
 
@@ -969,14 +965,8 @@ if ($source == 'order') {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
-<<<<<<< HEAD
 	if (empty($amount) || !is_numeric($amount)) {
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
-=======
-	if (empty($amount) || !is_numeric($amount))
-	{
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	} else {
 		print '<b>'.price($amount).'</b>';
@@ -1048,13 +1038,9 @@ if ($source == 'invoice') {
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed() + $invoice->getSumDepositsUsed()));
-<<<<<<< HEAD
-		if (GETPOST("amount", 'int')) {
-			$amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) {
+			$amount = GETPOST("amount", 'alpha');
 		}
-=======
-		if (GETPOST("amount", 'int')) $amount = GETPOST("amount", 'alpha');
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		$amount = price2num($amount);
 	}
 
@@ -1106,14 +1092,8 @@ if ($source == 'invoice') {
 	if ($object->type == $object::TYPE_CREDIT_NOTE) {
 		print '<b>'.$langs->trans("CreditNote").'</b>';
 	} elseif (empty($object->paye)) {
-<<<<<<< HEAD
 		if (empty($amount) || !is_numeric($amount)) {
-			print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
-=======
-		if (empty($amount) || !is_numeric($amount))
-		{
 			print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 		} else {
 			print '<b>'.price($amount).'</b>';
@@ -1224,13 +1204,9 @@ if ($source == 'contractline') {
 			}
 		}
 
-<<<<<<< HEAD
-		if (GETPOST("amount", 'int')) {
-			$amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) {
+			$amount = GETPOST("amount", 'alpha');
 		}
-=======
-		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		$amount = price2num($amount);
 	}
 
@@ -1320,14 +1296,8 @@ if ($source == 'contractline') {
 		print ' ('.$langs->trans("ToComplete").')';
 	}
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
-<<<<<<< HEAD
 	if (empty($amount) || !is_numeric($amount)) {
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
-=======
-	if (empty($amount) || !is_numeric($amount))
-	{
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.price2num(GETPOST("newamount", "alpha"), 'MT').'">';
 	} else {
 		print '<b>'.price($amount).'</b>';
@@ -1400,15 +1370,10 @@ if ($source == 'membersubscription') {
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $subscription->total_ttc;
-<<<<<<< HEAD
-		if (GETPOST("amount", 'int')) {
-			$amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) {
+			$amount = GETPOST("amount", 'alpha');
 		}
-		$amount = price2num($amount);
-=======
-		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
 		$amount = price2num($amount, 'MT');
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	}
 
 	if (GETPOST('fulltag', 'alpha')) {
@@ -1505,14 +1470,9 @@ if ($source == 'membersubscription') {
 	}
 	if (empty($amount) || !is_numeric($amount)) {
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-<<<<<<< HEAD
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
 			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		}
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
-		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
-=======
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
 		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
 			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled>';
@@ -1520,15 +1480,11 @@ if ($source == 'membersubscription') {
 		} else {
 			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 		}
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 	} else {
 		$valtoshow = $amount;
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
 			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-<<<<<<< HEAD
-=======
 			$amount = $valtoshow;
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		}
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
@@ -1598,13 +1554,9 @@ if ($source == 'donation') {
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $subscription->total_ttc;
-<<<<<<< HEAD
-		if (GETPOST("amount", 'int')) {
-			$amount = GETPOST("amount", 'int');
+		if (GETPOST("amount", 'alpha')) {
+			$amount = GETPOST("amount", 'alpha');
 		}
-=======
-		if (GETPOST("amount", 'alpha')) $amount = GETPOST("amount", 'alpha');
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		$amount = price2num($amount);
 	}
 
@@ -1678,24 +1630,16 @@ if ($source == 'donation') {
 	}
 	if (empty($amount) || !is_numeric($amount)) {
 		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-<<<<<<< HEAD
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
 			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		}
-		print '<input type="hidden" name="amount" value="'.GETPOST("amount", 'int').'">';
-=======
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
 		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
 	} else {
 		$valtoshow = $amount;
 		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
 			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-<<<<<<< HEAD
-=======
 			$amount = $valtoshow;
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 		}
 		print '<b>'.price($valtoshow).'</b>';
 		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
@@ -2181,7 +2125,6 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				console.log("We click on buttontopay");
 				event.preventDefault();
 
-<<<<<<< HEAD
 				if (cardholderName.value == '')
 				{
 					console.log("Field Card holder is empty");
@@ -2190,6 +2133,10 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				}
 				else
 				{
+				  /* Disable button to pay and show hourglass cursor */
+    	      	  jQuery('#hourglasstopay').show();
+            	  jQuery('#buttontopay').hide();
+
 				  stripe.handleCardPayment(
 					clientSecret, cardElement, {
 						payment_method_data: {
@@ -2240,59 +2187,6 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				  });
 				}
 			});
-=======
-            	if (cardholderName.value == '')
-            	{
-    				console.log("Field Card holder is empty");
-    				var displayError = document.getElementById('card-errors');
-    				displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
-            	}
-            	else
-            	{
-            	  /* Disable button to pay and show hourglass cursor */
-    	      	  jQuery('#hourglasstopay').show();
-            	  jQuery('#buttontopay').hide();
-
-                  stripe.handleCardPayment(
-                    clientSecret, cardElement, {
-                    	payment_method_data: {
-        			        billing_details: {
-        			        	name: cardholderName.value
-        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) { ?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
-        			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
-        			        	    <?php if ($object->thirdparty->country_code) { ?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php } ?>
-        			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
-        			        	    }
-        			        	<?php } ?>
-        			        }
-              			},
-              			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
-                    }
-                  ).then(function(result) {
-                  	  console.log(result);
-        	          if (result.error) {
-        	    	      console.log("Error on result of handleCardPayment");
-                	      jQuery('#buttontopay').show();
-                	      jQuery('#hourglasstopay').hide();
-        		          // Inform the user if there was an error
-        		          var errorElement = document.getElementById('card-errors');
-        		          errorElement.textContent = result.error.message;
-        		      } else {
-        		      	  // The payment has succeeded. Display a success message.
-        	    	      console.log("No error on result of handleCardPayment, so we submit the form");
-            			  // Submit the form
-            		      jQuery('#buttontopay').hide();
-            		      jQuery('#hourglasstopay').show();
-            		      // Send form (action=charge that will do nothing)
-            		      jQuery('#payment-form').submit();
-        		      }
-                  });
-                }
-            });
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
 
 				<?php
 			} else // Old method (not SCA ready)
