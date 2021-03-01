@@ -83,15 +83,15 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 
 	$defaultValues = new DefaultValues($db);
-	$result = $defaultValues->fetchAll('','',0,0,array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
+	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
 	if (!is_array($result) && $result<0) {
-		setEventMessages($defaultValues->error,$defaultValues->errors,'errors');
-	}  elseif(count($result)>0) {
-		foreach($result as $defval) {
+		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+	}  elseif (count($result)>0) {
+		foreach ($result as $defval) {
 			$defaultValues->id=$defval->id;
 			$resultDel = $defaultValues->delete($user);
 			if ($resultDel<0) {
-				setEventMessages($defaultValues->error,$defaultValues->errors,'errors');
+				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 			}
 		}
 	}
@@ -103,9 +103,8 @@ if ($action == 'set') {
 	$defaultValues->value=GETPOST('AGENDA_EVENT_DEFAULT_STATUS');
 	$resultCreat=$defaultValues->create($user);
 	if ($resultCreat<0) {
-		setEventMessages($defaultValues->error,$defaultValues->errors,'errors');
+		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 	}
-
 } elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
@@ -358,10 +357,10 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
 $defval='na';
 $defaultValues = new DefaultValues($db);
-$result = $defaultValues->fetchAll('','',0,0,array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
+$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
 if (!is_array($result) && $result<0) {
-	setEventMessages($defaultValues->error,$defaultValues->errors,'errors');
-} elseif(count($result)>0) {
+	setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+} elseif (count($result)>0) {
 	$defval=reset($result)->value;
 }
 $formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');

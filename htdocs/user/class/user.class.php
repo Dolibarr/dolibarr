@@ -612,19 +612,18 @@ class User extends CommonObject
 	{
 		global $conf;
 		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
-
 			// Load user->default_values for user. TODO Save this in memcached ?
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 			$defaultValues = new DefaultValues($this->db);
-			$result = $defaultValues->fetchAll('','',0,0,array('t.user_id'=>array(0,$this->id), 'entity'=>array($this->entity,$conf->entity)));
+			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0,$this->id), 'entity'=>array($this->entity,$conf->entity)));
 
 			if (!is_array($result) && $result<0) {
-				setEventMessages($defaultValues->error,$defaultValues->errors,'errors');
+				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 				dol_print_error($this->db);
 				return -1;
-			}  elseif(count($result)>0) {
-				foreach($result as $defval) {
+			}  elseif (count($result)>0) {
+				foreach ($result as $defval) {
 					if (!empty($defval->page) && !empty($defval->type) && !empty($defval->param)) {
 						$pagewithoutquerystring = $defval->page;
 						$pagequeries = '';

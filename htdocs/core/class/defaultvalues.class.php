@@ -148,23 +148,17 @@ class DefaultValues extends CommonObject
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
 
 		// Translate some data of arrayofkeyval
-		if (is_object($langs))
-		{
-			foreach ($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach ($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
@@ -274,12 +268,12 @@ class DefaultValues extends CommonObject
 					$sqlwhere[] = $key.'='.$value;
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type'){
+				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type') {
 					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
 				}  elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (is_array($value)) {
-					$sqlwhere[] = $key.' IN ('.implode(',',$value).')';
+					$sqlwhere[] = $key.' IN ('.implode(',', $value).')';
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -300,8 +294,7 @@ class DefaultValues extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < ($limit ? min($limit, $num) : $num))
-			{
+			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
