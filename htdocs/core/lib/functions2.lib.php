@@ -1141,12 +1141,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 				if ($date < $nextnewyeardate && $yearoffsettype == '+') {
 					$yearoffset = 1;
 				}
-			} // If after or equal of current new year date
-			elseif ($date >= $newyeardate && $yearoffsettype == '-') {
+			} elseif ($date >= $newyeardate && $yearoffsettype == '-') {
+				// If after or equal of current new year date
 				$yearoffset = -1;
 			}
-		} // For backward compatibility
-		elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) {
+		} elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) {
+			// For backward compatibility
 			$yearoffset = -1;
 		}	// If current month lower that month of return to zero, year is previous year
 
@@ -2121,8 +2121,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'mrp/class';
 		$module = 'mrp';
 		$myobject = 'mo';
-	}
-	elseif ($objecttype == 'productlot') {
+	} elseif ($objecttype == 'productlot') {
 		$classpath = 'product/stock/class';
 		$module = 'stock';
 		$myobject = 'productlot';
