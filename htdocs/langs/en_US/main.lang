@@ -1125,3 +1125,4 @@ ConfirmAffectTag=Bulk Tag Affect
 ConfirmAffectTagQuestion=Are you sure you want to affect tags to the %s selected record(s)?
 CategTypeNotFound=No tag type found for type of records
 CopiedToClipboard=Copied to clipboard
+InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
