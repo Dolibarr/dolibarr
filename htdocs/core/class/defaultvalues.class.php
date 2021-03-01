@@ -295,12 +295,10 @@ class DefaultValues extends CommonObject
 		if (!empty($limit)) {
 			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
-print $sql;
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			$num = $this->db->num_rows($resql);
-			var_dump($num);
 			$i = 0;
 			while ($i < ($limit ? min($limit, $num) : $num))
 			{
