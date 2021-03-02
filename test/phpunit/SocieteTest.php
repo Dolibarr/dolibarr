@@ -91,6 +91,10 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 			print "\n".__METHOD__." constant MAIN_DISABLEPROFIDRULES must be empty (if a module set it, disable module).\n"; die();
 		}
 
+		if ($langs->defaultlang != 'en_US') {
+			print "\n".__METHOD__." default language of company must be set to autodetect.\n"; die();
+		}
+
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
@@ -346,6 +350,8 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->getNomUrl(1);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertNotEquals($result, '');
+
+		$localobject->country_code = 'FR';
 
 		$result=$localobject->isInEEC();
 		print __METHOD__." id=".$localobject->id." country_code=".$localobject->country_code." result=".$result."\n";
