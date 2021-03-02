@@ -149,7 +149,7 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			$result=$object->create($user);
 			if ($result<0) {
 				$action = '';
-				setEventMessages($object->error,$object->errors,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				$action = "";
@@ -158,8 +158,7 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 				$defaultvalue = '';
 			}
 		}
-		if (GETPOST('actionmodify'))
-		{
+		if (GETPOST('actionmodify')) {
 			$object->id=$id;
 			$object->type=$mode;
 			$object->page=$urlpage;
@@ -169,7 +168,7 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			$result=$object->update($user);
 			if ($result<0) {
 				$action = '';
-				setEventMessages($object->error,$object->errors,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				$action = "";
@@ -182,13 +181,12 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 }
 
 // Delete line from delete picto
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$object->id=$id;
 	$result=$object->delete($user);
 	if ($result<0) {
 		$action = '';
-		setEventMessages($object->error,$object->errors,'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -356,13 +354,12 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print "</td>\n";
 print '</tr>';
 
-$result=$object->fetchAll( $sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
+$result=$object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode,'t.entity'=>array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result<0) {
-
-	setEventMessages($object->error, $object->errors,'errors');
+	setEventMessages($object->error, $object->errors, 'errors');
 } elseif (count($result)>0) {
-	foreach($result as $key=>$defaultvalue)	{
+	foreach ($result as $key=>$defaultvalue) {
 		print "\n";
 
 		print '<tr class="oddeven">';
@@ -383,10 +380,10 @@ if (!is_array($result) && $result<0) {
 		if ($mode != 'focus' && $mode != 'mandatory') {
 			print '<td>';
 			/*print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
-    		print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
-    		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
-    		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
-    		*/
+			print '<input type="hidden" name="const['.$i.'][lang]" value="'.$obj->lang.'">';
+			print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->transkey.'">';
+			print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.dol_escape_htmltag($obj->transvalue).'">';
+			*/
 			if ($action != 'edit' || GETPOST('rowid') != $defaultvalue->id) print dol_escape_htmltag($defaultvalue->value);
 			else print '<input type="text" name="value" value="'.dol_escape_htmltag($defaultvalue->value).'">';
 			print '</td>';
