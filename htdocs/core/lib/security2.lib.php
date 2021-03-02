@@ -179,7 +179,8 @@ if (!function_exists('dol_loginfunction')) {
 			foreach ($dirtpls as $reldir) {
 				$tmp = dol_buildpath($reldir.'login.tpl.php');
 				if (file_exists($tmp)) {
-					$template_dir = preg_replace('/login\.tpl\.php$/', '', $tmp); break;
+					$template_dir = preg_replace('/login\.tpl\.php$/', '', $tmp);
+					break;
 				}
 			}
 		} else {
@@ -322,14 +323,20 @@ function makesalt($type = CRYPT_SALT_LENGTH)
 	dol_syslog("makesalt type=".$type);
 	switch ($type) {
 		case 12:	// 8 + 4
-			$saltlen = 8; $saltprefix = '$1$'; $saltsuffix = '$';
+			$saltlen = 8;
+			$saltprefix = '$1$';
+			$saltsuffix = '$';
 			break;
 		case 8:		// 8 (Pour compatibilite, ne devrait pas etre utilise)
-			$saltlen = 8; $saltprefix = '$1$'; $saltsuffix = '$';
+			$saltlen = 8;
+			$saltprefix = '$1$';
+			$saltsuffix = '$';
 			break;
 		case 2:		// 2
 		default: 	// by default, fall back on Standard DES (should work everywhere)
-			$saltlen = 2; $saltprefix = ''; $saltsuffix = '';
+			$saltlen = 2;
+			$saltprefix = '';
+			$saltsuffix = '';
 			break;
 	}
 	$salt = '';

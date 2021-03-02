@@ -130,7 +130,9 @@ class modWebsite extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'MyWebsitePages'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'globe';
-		$keyforclass = 'WebsitePage'; $keyforclassfile = '/website/class/websitepage.class.php'; $keyforelement = 'Website';
+		$keyforclass = 'WebsitePage';
+		$keyforclassfile = '/website/class/websitepage.class.php';
+		$keyforelement = 'Website';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';

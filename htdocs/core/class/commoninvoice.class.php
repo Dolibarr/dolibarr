@@ -632,9 +632,8 @@ abstract class CommonInvoice extends CommonObject
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
-		}
-		// 1 : application of the "end of the month" rule
-		elseif ($cdr_type == 1) {
+		} elseif ($cdr_type == 1) {
+			// 1 : application of the "end of the month" rule
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$mois = date('m', $datelim);
@@ -650,9 +649,8 @@ abstract class CommonInvoice extends CommonObject
 			$datelim -= (3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
-		}
-		// 2 : application of the rule, the N of the current or next month
-		elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
+		} elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
+			// 2 : application of the rule, the N of the current or next month
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 

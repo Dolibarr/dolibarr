@@ -720,17 +720,17 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 /*
  * Last actions
  */
-if ($user->rights->agenda->myactions->read) {
+/*if ($user->rights->agenda->myactions->read) {
 	show_array_last_actions_done($max);
-}
+}*/
 
 
 /*
  * Actions to do
  */
-if ($user->rights->agenda->myactions->read) {
+/*if ($user->rights->agenda->myactions->read) {
 	show_array_actions_to_do($max);
-}
+}*/
 
 
 /*

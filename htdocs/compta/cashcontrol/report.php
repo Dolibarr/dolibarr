@@ -233,10 +233,9 @@ if ($resql) {
 		} else {
 			if ($conf->global->$var1 == $bankaccount->id) {
 				$cash += $objp->amount;
-			}
-			//elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
-			//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
-			else {
+				// } elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
+				//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
+			} else {
 				$other += $objp->amount;
 			}
 		}

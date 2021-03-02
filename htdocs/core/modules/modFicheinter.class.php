@@ -165,7 +165,9 @@ class modFicheinter extends DolibarrModules
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 'f.rowid'=>"InterId", 'f.ref'=>"InterRef", 'f.datec'=>"InterDateCreation",
 			'f.duree'=>"InterDuration", 'f.fk_statut'=>'InterStatus', 'f.description'=>"InterNote");
-		$keyforselect = 'fichinter'; $keyforelement = 'intervention'; $keyforaliasextra = 'extra';
+		$keyforselect = 'fichinter';
+		$keyforelement = 'intervention';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] += array(
 			'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel',
@@ -195,7 +197,9 @@ class modFicheinter extends DolibarrModules
 			'fd.duree'=>'inter_line', 'fd.description'=>'inter_line'
 		);
 		$this->export_dependencies_array[$r] = array('inter_line'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		$keyforselect = 'fichinterdet'; $keyforelement = 'inter_line'; $keyforaliasextra = 'extradet';
+		$keyforselect = 'fichinterdet';
+		$keyforelement = 'inter_line';
+		$keyforaliasextra = 'extradet';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

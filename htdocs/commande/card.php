@@ -490,7 +490,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'classifyunbilled' && $usercancreate) {
-		$ret = $object->classifyUnBilled();
+		$ret = $object->classifyUnBilled($user);
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -540,7 +540,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0) {
@@ -1580,7 +1580,8 @@ if ($action == 'create' && $usercancreate) {
 					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
+					$("input[name=action]").val("create");
+					$("form[name=crea_commande]").submit();
 				});
 			});
 			</script>';

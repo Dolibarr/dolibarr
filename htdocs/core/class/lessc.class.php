@@ -8,7 +8,7 @@
  * Copyright 2013, Leaf Corcoran <leafot@gmail.com>
  * Licensed under MIT or GPLv3, see LICENSE
  */
-
+// phpcs:disable
 /**
  * The LESS compiler and parser.
  *
@@ -3385,7 +3385,7 @@ class lessc_parser
 		return false;
 	}
 
-		// a # color
+	// a # color
 	protected function color(&$out)
 	{
 		if ($this->match('(#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3}))', $m)) {
@@ -3400,11 +3400,11 @@ class lessc_parser
 		return false;
 	}
 
-		// consume an argument definition list surrounded by ()
-		// each argument is a variable name with optional value
-		// or at the end a ... or a variable named followed by ...
-		// arguments are separated by , unless a ; is in the list, then ; is the
-		// delimiter.
+	// consume an argument definition list surrounded by ()
+	// each argument is a variable name with optional value
+	// or at the end a ... or a variable named followed by ...
+	// arguments are separated by , unless a ; is in the list, then ; is the
+	// delimiter.
 	protected function argumentDef(&$args, &$isVararg)
 	{
 		$s = $this->seek();
@@ -3726,7 +3726,7 @@ class lessc_parser
 		return false;
 	}
 
-		// consume a less variable
+	// consume a less variable
 	protected function variable(&$name)
 	{
 		$s = $this->seek();
@@ -3746,10 +3746,10 @@ class lessc_parser
 			return false;
 	}
 
-		/**
-		 * Consume an assignment operator
-		 * Can optionally take a name that will be set to the current property name
-		 */
+	/**
+	 * Consume an assignment operator
+	 * Can optionally take a name that will be set to the current property name
+	 */
 	protected function assign($name = null)
 	{
 		if ($name) {
@@ -3758,7 +3758,7 @@ class lessc_parser
 		return $this->literal(':') || $this->literal('=');
 	}
 
-		// consume a keyword
+	// consume a keyword
 	protected function keyword(&$word)
 	{
 		if ($this->match('([\w_\-\*!"][\w\-_"]*)', $m)) {
@@ -3768,7 +3768,7 @@ class lessc_parser
 		return false;
 	}
 
-		// consume an end of statement delimiter
+	// consume an end of statement delimiter
 	protected function end()
 	{
 		if ($this->literal(';', false)) {
@@ -3807,8 +3807,8 @@ class lessc_parser
 		return true;
 	}
 
-		// a bunch of guards that are and'd together
-		// TODO rename to guardGroup
+	// a bunch of guards that are and'd together
+	// TODO rename to guardGroup
 	protected function guardGroup(&$guardGroup)
 	{
 		$s = $this->seek();
@@ -3846,7 +3846,7 @@ class lessc_parser
 		return false;
 	}
 
-		/* raw parsing functions */
+	/* raw parsing functions */
 
 	protected function literal($what, $eatWhitespace = null)
 	{

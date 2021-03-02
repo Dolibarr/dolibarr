@@ -392,7 +392,8 @@ class pdf_soleil extends ModelePDFFicheinter
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore) {
-							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+							$pdf->setPage($pageposafter);
+							$curY = $tab_top_newpage;
 						}
 
 						$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font

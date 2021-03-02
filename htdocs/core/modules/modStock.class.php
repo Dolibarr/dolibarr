@@ -205,7 +205,9 @@ class modStock extends DolibarrModules
 		);
 		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
 		$this->export_aggregate_array[$r] = array();
-		$keyforselect = 'warehouse'; $keyforelement = 'warehouse'; $keyforaliasextra = 'extra';
+		$keyforselect = 'warehouse';
+		$keyforelement = 'warehouse';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -243,7 +245,9 @@ class modStock extends DolibarrModules
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('stock'=>array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ps.reel'=>'Stock'));
 
@@ -288,7 +292,9 @@ class modStock extends DolibarrModules
 			);	// We define here only fields that use another icon that the one defined into export_icon
 			$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 			$this->export_dependencies_array[$r] = array('stockbatch'=>array('pb.rowid'), 'batch'=>array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
-			$keyforselect = 'product_lot'; $keyforelement = 'batch'; $keyforaliasextra = 'extra';
+			$keyforselect = 'product_lot';
+			$keyforelement = 'batch';
+			$keyforaliasextra = 'extra';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';

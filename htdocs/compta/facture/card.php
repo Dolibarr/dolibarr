@@ -233,8 +233,8 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
-	} // Delete line
-	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
+	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
+		// Delete line
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -386,7 +386,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setinvoicedate' && $usercancreate) {
 		$object->fetch($id);
 		$old_date_lim_reglement = $object->date_lim_reglement;
-		$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+		$date = dol_mktime(12, 0, 0, GETPOST('invoicedatemonth', 'int'), GETPOST('invoicedateday', 'int'), GETPOST('invoicedateyear', 'int'));
 		if (empty($date)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
@@ -563,8 +563,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client'));
-	} // Classify to validated
-	elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
+	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
+		// Classify to validated
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$object->fetch($id);
@@ -2770,15 +2770,15 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} // bascule du statut d'un contact
-		elseif ($action == 'swapstatut') {
+		} elseif ($action == 'swapstatut') {
+			// bascule du statut d'un contact
 			if ($object->fetch($id)) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		} // Efface un contact
-		elseif ($action == 'deletecontact') {
+		} elseif ($action == 'deletecontact') {
+			// Efface un contact
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
 

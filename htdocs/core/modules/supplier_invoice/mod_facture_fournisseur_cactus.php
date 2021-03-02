@@ -99,7 +99,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		$langs->load("bills");
 
 		// Check invoice num
-		$siyymm = ''; $max = '';
+		$siyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefixinvoice) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -110,7 +111,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$siyymm = substr($row[0], 0, 6); $max = $row[0];
+				$siyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($siyymm && !preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $siyymm)) {
@@ -132,7 +134,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$siyymm = substr($row[0], 0, 6); $max = $row[0];
+				$siyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($siyymm && !preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $siyymm)) {
@@ -153,7 +156,8 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$siyymm = substr($row[0], 0, 6); $max = $row[0];
+				$siyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($siyymm && !preg_match('/'.$this->prefixdeposit.'[0-9][0-9][0-9][0-9]/i', $siyymm)) {

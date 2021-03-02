@@ -89,7 +89,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		$langs->load("bills");
 
-		$fayymm = ''; $max = '';
+		$fayymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -101,7 +102,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$fayymm = substr($row[0], 0, 6); $max = $row[0];
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {

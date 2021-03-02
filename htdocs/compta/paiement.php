@@ -559,12 +559,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$alreadypayedlabel = $langs->trans('Received');
 				$multicurrencyalreadypayedlabel = $langs->trans('MulticurrencyReceived');
 				if ($facture->type == 2) {
-					$alreadypayedlabel = $langs->trans("PaidBack"); $multicurrencyalreadypayedlabel = $langs->trans("MulticurrencyPaidBack");
+					$alreadypayedlabel = $langs->trans("PaidBack");
+					$multicurrencyalreadypayedlabel = $langs->trans("MulticurrencyPaidBack");
 				}
 				$remaindertopay = $langs->trans('RemainderToTake');
 				$multicurrencyremaindertopay = $langs->trans('MulticurrencyRemainderToTake');
 				if ($facture->type == 2) {
-					$remaindertopay = $langs->trans("RemainderToPayBack"); $multicurrencyremaindertopay = $langs->trans("MulticurrencyRemainderToPayBack");
+					$remaindertopay = $langs->trans("RemainderToPayBack");
+					$multicurrencyremaindertopay = $langs->trans("MulticurrencyRemainderToPayBack");
 				}
 
 				$i = 0;

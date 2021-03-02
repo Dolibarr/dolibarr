@@ -182,7 +182,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -1188,8 +1189,8 @@ if ($resql) {
 					// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
 					if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc') {
 						$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
-					} // If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
-					else {
+					} else {
+						// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
 						$balance = $objforbalance->previoustotal;
 					}
 				}
