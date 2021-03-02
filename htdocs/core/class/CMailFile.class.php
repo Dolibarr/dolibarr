@@ -578,7 +578,8 @@ class CMailFile
 			$hookmanager = new HookManager($db);
 			$hookmanager->initHooks(array('mail'));
 
-			$parameters = array(); $action = '';
+			$parameters = array();
+			$action = '';
 			$reshook = $hookmanager->executeHooks('sendMail', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
 				$this->error = "Error in hook maildao sendMail ".$reshook;
@@ -815,7 +816,8 @@ class CMailFile
 				$this->smtps->setHost($server);
 				$this->smtps->setPort($port); // 25, 465...;
 
-				$loginid = ''; $loginpass = '';
+				$loginid = '';
+				$loginpass = '';
 				if (!empty($conf->global->$keyforsmtpid)) {
 					$loginid = $conf->global->$keyforsmtpid;
 					$this->smtps->setID($loginid);
@@ -946,7 +948,8 @@ class CMailFile
 				return 'Bad value for sendmode';
 			}
 
-			$parameters = array(); $action = '';
+			$parameters = array();
+			$action = '';
 			$reshook = $hookmanager->executeHooks('sendMailAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
 				$this->error = "Error in hook maildao sendMailAfter ".$reshook;

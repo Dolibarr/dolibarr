@@ -62,7 +62,8 @@ function commande_prepare_head(Commande $object)
 
 	if (($conf->expedition_bon->enabled && $user->rights->expedition->lire)
 	|| ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)) {
-		$nbShipments = $object->getNbOfShipments(); $nbReceiption = 0;
+		$nbShipments = $object->getNbOfShipments();
+		$nbReceiption = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
 		$text = '';
 		if ($conf->expedition_bon->enabled) {

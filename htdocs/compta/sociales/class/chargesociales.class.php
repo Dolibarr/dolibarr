@@ -356,7 +356,8 @@ class ChargeSociales extends CommonObject
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {

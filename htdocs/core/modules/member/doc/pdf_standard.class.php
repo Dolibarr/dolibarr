@@ -123,7 +123,8 @@ class pdf_standard extends CommonStickerGenerator
 			$pdf->image($backgroundimage, $_PosX, $_PosY, $this->_Width, $this->_Height);
 		}
 
-		$xleft = 2; $ytop = 2;
+		$xleft = 2;
+		$ytop = 2;
 
 		// Top
 		if ($header != '') {
@@ -140,16 +141,20 @@ class pdf_standard extends CommonStickerGenerator
 		$ytop += (empty($header) ? 0 : (1 + $this->_Line_Height));
 
 		// Define widthtouse and heighttouse
-		$maxwidthtouse = round(($this->_Width - 2 * $xleft) * $imgscalewidth); $maxheighttouse = round(($this->_Height - 2 * $ytop) * $imgscaleheight);
+		$maxwidthtouse = round(($this->_Width - 2 * $xleft) * $imgscalewidth);
+		$maxheighttouse = round(($this->_Height - 2 * $ytop) * $imgscaleheight);
 		$defaultratio = ($maxwidthtouse / $maxheighttouse);
-		$widthtouse = $maxwidthtouse; $heighttouse = 0; // old value for image
+		$widthtouse = $maxwidthtouse;
+		$heighttouse = 0; // old value for image
 		$tmp = dol_getImageSize($photo, false);
 		if ($tmp['height']) {
 			$imgratio = $tmp['width'] / $tmp['height'];
 			if ($imgratio >= $defaultratio) {
-				$widthtouse = $maxwidthtouse; $heighttouse = round($widthtouse / $imgratio);
+				$widthtouse = $maxwidthtouse;
+				$heighttouse = round($widthtouse / $imgratio);
 			} else {
-				$heightouse = $maxheighttouse; $widthtouse = round($heightouse * $imgratio);
+				$heightouse = $maxheighttouse;
+				$widthtouse = round($heightouse * $imgratio);
 			}
 		}
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
@@ -312,7 +317,8 @@ class pdf_standard extends CommonStickerGenerator
 
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit;
+			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			exit;
 		}
 		$this->type = 'pdf';
 		// standard format or custom

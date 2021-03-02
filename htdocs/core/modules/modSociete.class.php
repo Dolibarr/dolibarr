@@ -288,7 +288,9 @@ class modSociete extends DolibarrModules
 				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
 			}
 		}
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] += array('u.login'=>'SaleRepresentativeLogin', 'u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
 
@@ -386,9 +388,13 @@ class modSociete extends DolibarrModules
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}
-		$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
+		$keyforselect = 'socpeople';
+		$keyforelement = 'contact';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extrasoc';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'socpeople as c';

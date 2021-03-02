@@ -615,7 +615,9 @@ if ($sql) {
 		dol_print_error($db);
 	}
 
-	$ifetch = 0; $xi = 0; $oldlabeltouse = '';
+	$ifetch = 0;
+	$xi = 0;
+	$oldlabeltouse = '';
 	while ($obj = $db->fetch_object($resql)) {
 		$ifetch++;
 		if ($useagroupby) {
@@ -681,9 +683,8 @@ if ($sql) {
 							if ($objfieldforg == '0') {
 								// The record we fetch is for this group
 								$data[$xi][$fieldforybis] = $obj->$fieldfory;
-							}
-							// The record we fetch is not for this group
-							elseif (!isset($data[$xi][$fieldforybis])) {
+							} elseif (!isset($data[$xi][$fieldforybis])) {
+								// The record we fetch is not for this group
 								$data[$xi][$fieldforybis] = '0';
 							}
 						} else {
@@ -691,9 +692,8 @@ if ($sql) {
 							if ((string) $objfieldforg === (string) $gvaluepossiblekey) {
 								// The record we fetch is for this group
 								$data[$xi][$fieldforybis] = $obj->$fieldfory;
-							}
-							// The record we fetch is not for this group
-							elseif (!isset($data[$xi][$fieldforybis])) {
+							} elseif (!isset($data[$xi][$fieldforybis])) {
+								// The record we fetch is not for this group
 								$data[$xi][$fieldforybis] = '0';
 							}
 						}

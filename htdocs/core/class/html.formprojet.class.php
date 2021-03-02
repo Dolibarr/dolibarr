@@ -393,7 +393,8 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow = ''; $titletoshow = '';
+						$labeltoshow = '';
+						$titletoshow = '';
 
 						$disabled = 0;
 						if ($obj->fk_statut == Project::STATUS_DRAFT) {

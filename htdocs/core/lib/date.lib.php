@@ -84,7 +84,10 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 {
 	if (method_exists('DateTimeZone', 'getOffset')) {
 		// Method 1 (include daylight)
-		$gmtnow = dol_now('gmt'); $yearref = dol_print_date($gmtnow, '%Y'); $monthref = dol_print_date($gmtnow, '%m'); $dayref = dol_print_date($gmtnow, '%d');
+		$gmtnow = dol_now('gmt');
+		$yearref = dol_print_date($gmtnow, '%Y');
+		$monthref = dol_print_date($gmtnow, '%m');
+		$dayref = dol_print_date($gmtnow, '%d');
 		if ($refgmtdate == 'now') {
 			$newrefgmtdate = $yearref.'-'.$monthref.'-'.$dayref;
 		} elseif ($refgmtdate == 'summer') {
@@ -134,10 +137,12 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	$deltastring = 'P';
 
 	if ($duration_value > 0) {
-		$deltastring .= abs($duration_value); $sub = false;
+		$deltastring .= abs($duration_value);
+		$sub = false;
 	}
 	if ($duration_value < 0) {
-		$deltastring .= abs($duration_value); $sub = true;
+		$deltastring .= abs($duration_value);
+		$sub = true;
 	}
 	if ($duration_unit == 'd') {
 		$deltastring .= "D";

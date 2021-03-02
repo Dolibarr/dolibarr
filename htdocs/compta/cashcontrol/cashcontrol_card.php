@@ -413,9 +413,11 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}
-		$selectedposnumber = 0; $showempty = 1;
+		$selectedposnumber = 0;
+		$showempty = 1;
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == '1') {
-			$selectedposnumber = 1; $showempty = 0;
+			$selectedposnumber = 1;
+			$showempty = 0;
 		}
 		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';

@@ -266,11 +266,17 @@ class modFacture extends DolibarrModules
 		);
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		$keyforselect = 'facture'; $keyforelement = 'invoice'; $keyforaliasextra = 'extra';
+		$keyforselect = 'facture';
+		$keyforelement = 'invoice';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'facturedet'; $keyforelement = 'invoice_line'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'facturedet';
+		$keyforelement = 'invoice_line';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra3';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra3';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -350,7 +356,9 @@ class modFacture extends DolibarrModules
 		);
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
 		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them, or just to have field we need
-		$keyforselect = 'facture'; $keyforelement = 'invoice'; $keyforaliasextra = 'extra';
+		$keyforselect = 'facture';
+		$keyforelement = 'invoice';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';

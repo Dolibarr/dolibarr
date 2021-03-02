@@ -762,7 +762,8 @@ abstract class CommonObject
 				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
-			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
+			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			$outdone++;
 			$outdone++;
 
 			// List of extra languages
@@ -1181,7 +1182,8 @@ abstract class CommonObject
 			if (!$notrigger) {
 				$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
 				if ($result < 0) {
-					$this->db->rollback(); return -1;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 
@@ -3154,9 +3156,8 @@ abstract class CommonObject
 					return $this->getRangOfLine($fk_parent_line);
 				}
 			}
-		}
-		// If not, search the last rang of element
-		else {
+		} else {
+			// If not, search the last rang of element
 			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
@@ -3745,42 +3746,60 @@ abstract class CommonObject
 					if ($objecttype == 'facture') {
 						$classpath = 'compta/facture/class';
 					} elseif ($objecttype == 'facturerec') {
-						$classpath = 'compta/facture/class'; $module = 'facture';
+						$classpath = 'compta/facture/class';
+						$module = 'facture';
 					} elseif ($objecttype == 'propal') {
 						$classpath = 'comm/propal/class';
 					} elseif ($objecttype == 'supplier_proposal') {
 						$classpath = 'supplier_proposal/class';
 					} elseif ($objecttype == 'shipping') {
-						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
+						$classpath = 'expedition/class';
+						$subelement = 'expedition';
+						$module = 'expedition_bon';
 					} elseif ($objecttype == 'delivery') {
-						$classpath = 'delivery/class'; $subelement = 'delivery'; $module = 'delivery_note';
+						$classpath = 'delivery/class';
+						$subelement = 'delivery';
+						$module = 'delivery_note';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
-						$classpath = 'fourn/class'; $module = 'fournisseur';
+						$classpath = 'fourn/class';
+						$module = 'fournisseur';
 					} elseif ($objecttype == 'fichinter') {
-						$classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
+						$classpath = 'fichinter/class';
+						$subelement = 'fichinter';
+						$module = 'ficheinter';
 					} elseif ($objecttype == 'subscription') {
-						$classpath = 'adherents/class'; $module = 'adherent';
+						$classpath = 'adherents/class';
+						$module = 'adherent';
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
 
 					// Set classfile
-					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+					$classfile = strtolower($subelement);
+					$classname = ucfirst($subelement);
 
 					if ($objecttype == 'order') {
-						$classfile = 'commande'; $classname = 'Commande';
+						$classfile = 'commande';
+						$classname = 'Commande';
 					} elseif ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
+						$classfile = 'fournisseur.facture';
+						$classname = 'FactureFournisseur';
 					} elseif ($objecttype == 'order_supplier') {
-						$classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
+						$classfile = 'fournisseur.commande';
+						$classname = 'CommandeFournisseur';
 					} elseif ($objecttype == 'supplier_proposal') {
-						$classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+						$classfile = 'supplier_proposal';
+						$classname = 'SupplierProposal';
 					} elseif ($objecttype == 'facturerec') {
-						$classfile = 'facture-rec'; $classname = 'FactureRec';
+						$classfile = 'facture-rec';
+						$classname = 'FactureRec';
 					} elseif ($objecttype == 'subscription') {
-						$classfile = 'subscription'; $classname = 'Subscription';
+						$classfile = 'subscription';
+						$classname = 'Subscription';
 					} elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
+						$classpath = 'projet/class';
+						$classfile = 'project';
+						$classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -4618,7 +4637,8 @@ abstract class CommonObject
 
 		$element = $this->element;
 
-		$text = ''; $description = '';
+		$text = '';
+		$description = '';
 
 		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id) {
@@ -4985,7 +5005,8 @@ abstract class CommonObject
 			if (!$notrigger) {
 				$result = $this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
 				if ($result < 0) {
-					$this->db->rollback(); return -1;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 			$this->db->commit();
@@ -5106,7 +5127,8 @@ abstract class CommonObject
 							$tmpdir = trim($tmpdir);
 							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 							if (!$tmpdir) {
-								unset($listofdir[$key]); continue;
+								unset($listofdir[$key]);
+								continue;
 							}
 							if (is_dir($tmpdir)) {
 								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
