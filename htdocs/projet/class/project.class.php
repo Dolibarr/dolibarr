@@ -708,7 +708,6 @@ class Project extends CommonObject
 			/* Return array even if empty*/
 			return $elements;
 		} else {
-			//$this->error = $this->db->error;
 			dol_print_error($this->db);
 		}
 	}
