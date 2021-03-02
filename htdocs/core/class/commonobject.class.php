@@ -6988,7 +6988,7 @@ abstract class CommonObject
 				$out .= "\n";
 				// Add code to manage list depending on others
 				if (!empty($conf->use_javascript_ajax)) {
-					$out .= getJSListDependancies();
+					$out .= $this->getJSListDependancies();
 				}
 
 				$out .= '<!-- /showOptionals --> '."\n";
