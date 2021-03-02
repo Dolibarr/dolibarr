@@ -462,13 +462,13 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$qty = $supplierorderdispatch->qty;
 		$entrepot = $supplierorderdispatch->fk_entrepot;
 		$product = $supplierorderdispatch->fk_product;
-		$price = GETPOST('price');
+		$price = price2num(GETPOST('price'), '', 2);
 		$comment = $supplierorderdispatch->comment;
 		$eatby = $supplierorderdispatch->fk_product;
 		$sellby = $supplierorderdispatch->sellby;
 		$batch = $supplierorderdispatch->batch;
 
-		$supplierorderdispatch->qty = GETPOST('qty', 'int');
+		$supplierorderdispatch->qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 		$supplierorderdispatch->fk_entrepot = GETPOST('fk_entrepot');
 		$result = $supplierorderdispatch->update($user);
 	}
