@@ -2133,11 +2133,11 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				}
 				else
 				{
-				  /* Disable button to pay and show hourglass cursor */
-				  jQuery('#hourglasstopay').show();
-				  jQuery('#buttontopay').hide();
+					/* Disable button to pay and show hourglass cursor */
+					jQuery('#hourglasstopay').show();
+					jQuery('#buttontopay').hide();
 
-				  stripe.handleCardPayment(
+					stripe.handleCardPayment(
 					clientSecret, cardElement, {
 						payment_method_data: {
 							billing_details: {
@@ -2159,32 +2159,32 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 									}
 								<?php } ?>
 							}
-						  },
-						  save_payment_method: <?php if ($stripecu) {
-								print 'true';
-											   } else {
-												   print 'false';
-											   } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
+							},
+							save_payment_method:<?php if ($stripecu) {
+													print 'true';
+												} else {
+													print 'false';
+												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 					}
-				  ).then(function(result) {
+					).then(function(result) {
 						console.log(result);
-					  if (result.error) {
-						  console.log("Error on result of handleCardPayment");
-						  jQuery('#buttontopay').show();
-						  jQuery('#hourglasstopay').hide();
-						  // Inform the user if there was an error
-						  var errorElement = document.getElementById('card-errors');
-						  errorElement.textContent = result.error.message;
-					  } else {
+						if (result.error) {
+							console.log("Error on result of handleCardPayment");
+							jQuery('#buttontopay').show();
+							jQuery('#hourglasstopay').hide();
+							// Inform the user if there was an error
+							var errorElement = document.getElementById('card-errors');
+							errorElement.textContent = result.error.message;
+						} else {
 							// The payment has succeeded. Display a success message.
-						  console.log("No error on result of handleCardPayment, so we submit the form");
-						  // Submit the form
-						  jQuery('#buttontopay').hide();
-						  jQuery('#hourglasstopay').show();
-						  // Send form (action=charge that will do nothing)
-						  jQuery('#payment-form').submit();
-					  }
-				  });
+							console.log("No error on result of handleCardPayment, so we submit the form");
+							// Submit the form
+							jQuery('#buttontopay').hide();
+							jQuery('#hourglasstopay').show();
+							// Send form (action=charge that will do nothing)
+							jQuery('#payment-form').submit();
+						}
+					});
 				}
 			});
 

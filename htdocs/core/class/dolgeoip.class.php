@@ -129,7 +129,7 @@ class DolGeoIP
 					}
 				} else {
 					if (!function_exists('geoip_country_code_by_addr')) {
-						return strtolower(geoip_country_code_by_name($this->gi, $ip));
+						return strtolower(geoip_country_code_by_name($ip));
 					}
 					return strtolower(geoip_country_code_by_addr($this->gi, $ip));
 				}
