@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -2143,17 +2144,93 @@ if ($action == 'importsiteconfirm') {
 	}
 }
 
+$domainname = '0.0.0.0:8080';
+$tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 
+// Generate web site sitemaps
+if ($action == 'generatesitemaps') {
+	$domtree = new DOMDocument('1.0', 'UTF-8');
+	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
+	$domtree->formatOutput = true;
+	$xmlname = 'sitemap.'.$websitekey.'.xml';
 
+	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, DATE(wp.tms) as tms, w.virtualhost";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
+	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
+	$sql .= " AND wp.fk_website = w.rowid";
+	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num_rows = $db->num_rows($resql);
+		if ($num_rows > 0) {
+			$i = 0;
+			while ($i < $num_rows) {
+				$objp = $db->fetch_object($resql);
+				$url = $domtree->createElement('url');
+				$pageurl = $objp->pageurl;
+				if ($objp->lang) {
+					$pageurl = $objp->lang.'/'.$pageurl;
+				}
+				if ($objp->virtualhost) {
+					$domainname = $objp->virtualhost;
+				}
+				$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
+				$lastmod = $domtree->createElement('lastmod', $objp->tms);
+
+				$url->appendChild($loc);
+				$url->appendChild($lastmod);
+				$root->appendChild($url);
+				$i++;
+			}
+			$domtree->appendChild($root);
+			if ($domtree->save($tempdir.$xmlname))
+			{
+				setEventMessages($langs->trans("SitemapGenerated"), null, 'mesgs');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	}else {
+		dol_print_error($db);
+	}
+	$robotcontent = @file_get_contents($filerobot);
+	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
+	if ($result)
+	{
+		$robotcontent = $result;
+	}
+	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
+	$result = strpos($robotcontent, 'Sitemap: ');
+	if ($result)
+	{
+		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
+		$robotcontent = $result ? $result : $robotcontent;
+	}else {
+		$robotcontent .= $robotsitemap."\n";
+	}
+	$result = dolSaveRobotFile($filerobot, $robotcontent);
+	if (!$result)
+	{
+		$error++;
+		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
+	}
+	$action = 'preview';
+}
 
 /*
- * View
- */
+* View
+*/
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
 $formother = new FormOther($db);
+
+// Confirm generation of website sitemaps
+if ($action == 'confirmgeneratesitemaps'){
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
+	$action = 'preview';
+}
 
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
 
@@ -2362,6 +2439,11 @@ if (!GETPOST('hide_websitemenu')) {
 
 			// Regenerate all pages
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
+
+			print ' &nbsp; ';
+
+			// Generate site map
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"><span></a>';
 
 			print ' &nbsp; ';
 
@@ -3684,6 +3766,12 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</div>';
 
 	print '<br>';
+}
+
+
+// Print formconfirm
+if ($action == 'preview') {
+	print $formconfirm;
 }
 
 if ($action == 'editfile' || $action == 'file_manager') {
