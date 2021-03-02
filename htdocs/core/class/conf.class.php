@@ -80,6 +80,9 @@ class Conf
 		'syslog' => array(),
 	);
 
+	// An array to store cache results ->cache['nameofcache']=...
+	public $cache = array();
+
 	public $logbuffer = array();
 
 	/**
