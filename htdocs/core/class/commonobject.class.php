@@ -7004,7 +7004,8 @@ abstract class CommonObject
 	 * @param 	string 	$type	Type for prefix
 	 * @return 	string			Javacript code to manage dependency
 	 */
-	public function getJSListDependancies($type='_extra') {
+	public function getJSListDependancies($type = '_extra')
+	{
 		$out .= '
 					<script>
 					jQuery(document).ready(function() {
