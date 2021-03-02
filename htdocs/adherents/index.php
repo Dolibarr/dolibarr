@@ -143,10 +143,7 @@ if ($result) {
 	$db->free();
 }
 
-
-print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
+$searchbox = '';
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
 	// Search contact/address
 	if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
@@ -154,27 +151,27 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 	}
 
 	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
+		$searchbox .='<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+		$searchbox .='<input type="hidden" name="token" value="'.newToken().'">';
+		$searchbox .='<div class="div-table-responsive-no-min">';
+		$searchbox .='<table class="noborder nohover centpercent">';
 		$i = 0;
 		foreach ($listofsearchfields as $key => $value) {
 			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+				$searchbox .='<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 			}
-			print '<tr class="oddeven">';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+			$searchbox .='<tr class="oddeven">';
+			$searchbox .='<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+				$searchbox .='<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 			}
-			print '</tr>';
+			$searchbox .='</tr>';
 			$i++;
 		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
+		$searchbox .='</table>';
+		$searchbox .='</div>';
+		$searchbox .='</form>';
+		$searchbox .='<br>';
 	}
 }
 
@@ -182,12 +179,12 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 /*
  * Statistics
  */
-
+$boxgraph = '';
 if ($conf->use_javascript_ajax) {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-	print '<tr><td class="center" colspan="2">';
+	$boxgraph .='<div class="div-table-responsive-no-min">';
+	$boxgraph .='<table class="noborder nohover centpercent">';
+	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+	$boxgraph .='<tr><td class="center" colspan="2">';
 
 	$SommeA = 0;
 	$SommeB = 0;
@@ -225,21 +222,16 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph->SetType(array('pie'));
 	$dolgraph->setHeight('200');
 	$dolgraph->draw('idgraphstatus');
-	print $dolgraph->show($total ? 0 : 1);
+	$boxgraph .=$dolgraph->show($total ? 0 : 1);
 
-	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	print $SommeA + $SommeB + $SommeC + $SommeD;
-	print '</td></tr>';
-	print '</table>';
-	print '</div>';
+	$boxgraph .= '</td></tr>';
+	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+	$boxgraph .= $SommeA + $SommeB + $SommeC + $SommeD;
+	$boxgraph .= '</td></tr>';
+	$boxgraph .= '</table>';
+	$boxgraph .= '</div>';
+	$boxgraph .= '<br>';
 }
-
-print '<br>';
-
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-print '</div></div></div>';
 
 // boxes
 print '<div class="clearboth"></div>';
@@ -248,6 +240,8 @@ print '<div class="fichecenter fichecenterbis">';
 $boxlist = '<div class="twocolumns">';
 
 $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $searchbox;
+$boxlist .= $boxgraph;
 $boxlist .= $resultboxes['boxlista'];
 $boxlist .= '</div>'."\n";
 
