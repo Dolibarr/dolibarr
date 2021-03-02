@@ -78,7 +78,8 @@ class DateLibTzFranceTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass() {
+	public static function setUpBeforeClass()
+	{
 		global $conf,$user,$langs,$db;
 
 		if (getServerTimeZoneString() != 'Europe/Paris' && getServerTimeZoneString() != 'Europe/Berlin') {
@@ -95,7 +96,8 @@ class DateLibTzFranceTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass()
+	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
 

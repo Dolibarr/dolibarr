@@ -2160,11 +2160,11 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 								<?php } ?>
 							}
 							},
-						  	save_payment_method: <?php if ($stripecu) {
+							save_payment_method: <?php if ($stripecu) {
 								print 'true';
-											   } else {
-												   print 'false';
-											   } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
+							} else {
+							   print 'false';
+							} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 					}
 				  	).then(function(result) {
 						console.log(result);
@@ -2175,7 +2175,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							// Inform the user if there was an error
 							var errorElement = document.getElementById('card-errors');
 							errorElement.textContent = result.error.message;
-					  	} else {
+						} else {
 							// The payment has succeeded. Display a success message.
 							console.log("No error on result of handleCardPayment, so we submit the form");
 							// Submit the form
@@ -2183,7 +2183,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							jQuery('#hourglasstopay').show();
 							// Send form (action=charge that will do nothing)
 							jQuery('#payment-form').submit();
-					  	}
+						}
 					});
 				}
 			});
