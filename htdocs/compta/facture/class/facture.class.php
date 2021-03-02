@@ -1217,8 +1217,9 @@ class Facture extends CommonInvoice
 					$object->lines[$i]->date_end = $newLast;
 				}
 			}
-
-			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+			if ($object->lines[$i]) {
+				$object->lines[$i]->ref_ext = '';
+			}// Do not clone ref_ext
 		}
 
 		// Create clone
