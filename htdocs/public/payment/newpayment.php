@@ -2160,11 +2160,11 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 								<?php } ?>
 							}
 							},
-							save_payment_method: <?php if ($stripecu) {
+							save_payment_method:<?php if ($stripecu) {
 													print 'true';
 												} else {
-												   print 'false';
-							} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
+													print 'false';
+												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 					}
 					).then(function(result) {
 						console.log(result);
@@ -2189,8 +2189,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			});
 
 				<?php
-			} else // Old method (not SCA ready)
-			{
+			} else {
+				// Old method (not SCA ready)
 				?>
 			// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
