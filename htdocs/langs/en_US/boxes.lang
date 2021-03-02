@@ -22,6 +22,7 @@ BoxLastModifiedMembers=Latest modified members
 BoxFicheInter=Latest interventions
 BoxCurrentAccounts=Open accounts balance
 BoxTitleMemberNextBirthdays=Birthdays of this month (members)
+BoxTitleMembersByType=Members by type
 BoxTitleLastRssInfos=Latest %s news from %s
 BoxTitleLastProducts=Products/Services: last %s modified
 BoxTitleProductsAlertStock=Products: stock alert
