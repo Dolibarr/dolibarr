@@ -131,6 +131,9 @@ foreach ($list as $key)
 
 print '</tr>';
 
+$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
+echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
+
 print "</table>\n";
 
 //dol_fiche_end();
@@ -139,8 +142,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
-$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
-echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
 
 
 // End of page
