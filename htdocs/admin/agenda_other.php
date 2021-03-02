@@ -86,7 +86,7 @@ if ($action == 'set') {
 	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page'=>'comm/action/card.php', 't.param'=>'complete','t.user_id'=>'0', 't.type'=>'createform', 't.entity'=>$conf->entity));
 	if (!is_array($result) && $result<0) {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
-	}  elseif (count($result)>0) {
+	} elseif (count($result)>0) {
 		foreach ($result as $defval) {
 			$defaultValues->id=$defval->id;
 			$resultDel = $defaultValues->delete($user);

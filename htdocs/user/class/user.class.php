@@ -622,7 +622,7 @@ class User extends CommonObject
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 				dol_print_error($this->db);
 				return -1;
-			}  elseif (count($result) > 0) {
+			} elseif (count($result) > 0) {
 				foreach ($result as $defval) {
 					if (!empty($defval->page) && !empty($defval->type) && !empty($defval->param)) {
 						$pagewithoutquerystring = $defval->page;

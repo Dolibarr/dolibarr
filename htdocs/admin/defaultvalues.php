@@ -138,7 +138,6 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 	}
 
 	if (!$error) {
-
 		if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
 			$object->type=$mode;
 			$object->user_id=0;

@@ -270,7 +270,7 @@ class DefaultValues extends CommonObject
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type') {
 					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
-				}  elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (is_array($value)) {
 					$sqlwhere[] = $key.' IN ('.implode(',', $value).')';
