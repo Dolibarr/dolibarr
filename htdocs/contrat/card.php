@@ -213,7 +213,7 @@ if (empty($reshook))
 			$object->note_private = GETPOST('note_private', 'alpha');
 			$object->note_public				= GETPOST('note_public', 'alpha');
 			$object->fk_project					= GETPOST('projectid', 'int');
-			$object->remise_percent = GETPOST('remise_percent', 'alpha');
+			$object->remise_percent = price2num(GETPOST('remise_percent'), 2);
 			$object->ref = GETPOST('ref', 'alpha');
 			$object->ref_customer				= GETPOST('ref_customer', 'alpha');
 			$object->ref_supplier				= GETPOST('ref_supplier', 'alpha');
@@ -385,7 +385,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CR'));
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CU'));
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free')
 		{
 			$idprod = 0;
@@ -395,8 +395,8 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef), 'alpha');
-		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), 2) : 0);
 
 		if ($qty == '')
 		{
@@ -499,6 +499,12 @@ if (empty($reshook))
 				}
 
 			   	$desc = $prod->description;
+
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc='';
+				}
+
 			   	if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
 				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
@@ -667,10 +673,10 @@ if (empty($reshook))
 
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = GETPOST('elprice');
-			$objectline->subprice = GETPOST('elprice');
-			$objectline->qty = GETPOST('elqty');
-			$objectline->remise_percent = GETPOST('elremise_percent');
+			$objectline->price_ht = price2num(GETPOST('elprice'), 'MU');
+			$objectline->subprice = price2num(GETPOST('elprice'), 'MU');
+			$objectline->qty = price2num(GETPOST('elqty'), 'MS');
+			$objectline->remise_percent = price2num(GETPOST('elremise_percent'), 2);
 			$objectline->tva_tx = ($txtva ? $txtva : 0); // Field may be disabled, so we use vat rate 0
 			$objectline->vat_src_code = $vat_src_code;
 			$objectline->localtax1_tx = is_numeric($localtax1_tx) ? $localtax1_tx : 0;

@@ -87,7 +87,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		{
 			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
 		} else {
-			$value = $object->array_options["options_".$tmpkeyextra];
+		    $value = (!empty($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
 			//var_dump($tmpkeyextra.' - '.$value);
 		}
 
@@ -112,7 +112,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
-			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num;
+			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.(!empty($object->id)?'_'.$object->id:'');
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
 			}*/
@@ -165,7 +165,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
-			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.($cols ? ' colspan="'.$cols.'"' : '').'>';
+			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$tmpkeyextra.' wordbreak"'.(!empty($cols) ? ' colspan="'.$cols.'"' : '').'>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date', 'datetime')))

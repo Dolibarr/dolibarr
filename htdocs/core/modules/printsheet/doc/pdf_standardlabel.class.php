@@ -321,24 +321,6 @@ class pdf_standardlabel extends CommonStickerGenerator
 		if (!empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-		// Output to http stream
-		clearstatcache();
-
-		$attachment = true;
-		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
-		$type = dol_mimetype($filename);
-
-		//if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)		 header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-		else header('Content-Disposition: inline; filename="'.$filename.'"');
-
-		// Ajout directives pour resoudre bug IE
-		header('Cache-Control: Public, must-revalidate');
-		header('Pragma: public');
-
-		readfile($file);
-
 		$this->result = array('fullpath'=>$file);
 
 		return 1;

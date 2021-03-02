@@ -16,8 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificați comanda de vânzări s
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificați propunerea furnizorului sursă asociată ca fiind facturată atunci când factura furnizorului este validată (și dacă valoarea facturii este aceeași cu valoarea totală a propunerii asociate)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificați comanda de vânzări sursă asociată ca fiind facturată atunci când factura furnizorului este validată (și dacă valoarea facturii este aceeași cu valoarea totală a comenzii asociate)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Clasificați recepțiile la "facturate" atunci când este validată o comandă de achiziţie asociată
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Închideți toate intervențiile legate de tichet  atunci când tichetul este închis
 AutomaticCreation=Creare automată
 AutomaticClassification=Clasificare automată
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE= Clasificați livrarea asociată ca închisă atunci când factura clientului este validată

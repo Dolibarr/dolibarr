@@ -532,7 +532,7 @@ if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_montant_ht != '') $sql .= natural_search('f.total_ht', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search('f.total_tva', $search_montant_vat, 1);
 if ($search_montant_localtax1 != '') $sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
@@ -583,7 +583,9 @@ if (!$search_all)
 	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.datef, f.date_lim_reglement, f.fk_mode_reglement, f.fk_cond_reglement,";
 	$sql .= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut, f.libelle, f.datec, f.tms,";
 	$sql .= " f.localtax1, f.localtax2,";
+	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
 	$sql .= " f.note_public, f.note_private,";
+	$sql .= " f.fk_user_author,";
 	$sql .= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
@@ -675,6 +677,7 @@ if ($resql)
 	if ($option)                $param .= "&option=".urlencode($option);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	if ($search_categ_sup > 0) $param .= '&search_categ_sup='.urlencode($search_categ_sup);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -917,7 +920,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Condition of payment
@@ -1298,7 +1301,7 @@ if ($resql)
 			if (!empty($arrayfields['typent.code']['checked']))
 			{
 				print '<td class="center">';
-				if (count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
+				if (empty($typenArray)) $typenArray = $formcompany->typent_array(1);
 				print $typenArray[$obj->typent_code];
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;

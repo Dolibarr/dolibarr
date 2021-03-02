@@ -54,6 +54,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	public $description;
 
 	/**
+     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -127,6 +132,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->db = $db;
 		$this->name = "aurore";
 		$this->description = $langs->trans('DocModelAuroreDescription');
+		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';

@@ -119,8 +119,7 @@ if (($line->info_bits & 2) == 2) {
 } else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
-	if ($line->fk_product > 0)
-	{
+	if ($line->fk_product > 0) {
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -158,9 +157,19 @@ if (($line->info_bits & 2) == 2) {
 	{
 		print (!empty($line->description) && $line->description != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->description) : '';
 	}
+	//Line extrafield
+	if (!empty($extrafields))
+	{
+		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+		if (!empty($temps)) {
+			print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+			print $temps;
+			print '</div>';
+		}
+	}
 }
 
-if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
+if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES))
 {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
@@ -360,11 +369,5 @@ if ($action == 'selectlines') { ?>
 <?php }
 
 print "</tr>\n";
-
-//Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1);
-}
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

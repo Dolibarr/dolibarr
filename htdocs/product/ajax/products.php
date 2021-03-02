@@ -72,7 +72,9 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 	{
 		$outref = $object->ref;
 		$outlabel = $object->label;
+		$outlabel_trans ='';
 		$outdesc = $object->description;
+		$outdesc_trans ='';
 		$outtype = $object->type;
 		$outqty = 1;
 		$outdiscount = 0;
@@ -80,10 +82,28 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		$found = false;
 
 		$price_level = 1;
-		if ($socid > 0 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
+		if ($socid > 0 ) {
 			$thirdpartytemp = new Societe($db);
 			$thirdpartytemp->fetch($socid);
-			$price_level = $thirdpartytemp->price_level;
+
+			//Load translation description and label
+			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				$newlang = $thirdpartytemp->default_lang;
+
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
+					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
+				} else {
+					$outdesc_trans = $object->description;
+					$outlabel_trans = $object->label;
+				}
+			}
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				$price_level = $thirdpartytemp->price_level;
+			}
 		}
 
 		// Price by qty
@@ -159,7 +179,20 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 			$outtva_tx = $object->tva_tx;
 		}
 
-		$outjson = array('ref' => $outref, 'label' => $outlabel, 'desc' => $outdesc, 'type' => $outtype, 'price_ht' => $outprice_ht, 'price_ttc' => $outprice_ttc, 'pricebasetype' => $outpricebasetype, 'tva_tx' => $outtva_tx, 'qty' => $outqty, 'discount' => $outdiscount);
+		$outjson = array(
+			'ref' => $outref,
+			'label' => $outlabel,
+			'label_trans' => $outlabel_trans,
+			'desc' => $outdesc,
+			'desc_trans' => $outdesc_trans,
+			'type' => $outtype,
+			'price_ht' => $outprice_ht,
+			'price_ttc' => $outprice_ttc,
+			'pricebasetype' => $outpricebasetype,
+			'tva_tx' => $outtva_tx,
+			'qty' => $outqty,
+			'discount' => $outdiscount,
+			'array_options'=>$object->array_options);
 	}
 
 	echo json_encode($outjson);

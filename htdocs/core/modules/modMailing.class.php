@@ -66,7 +66,7 @@ class modMailing extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("mails");
 
 		// Config pages
@@ -74,6 +74,14 @@ class modMailing extends DolibarrModules
 
 		// Constants
 		$this->const = array();
+		$r = 0;
+
+		$this->const[$r][0] = "MAILING_CONTACT_DEFAULT_BULK_STATUS";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = 'Default black list mailing';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();

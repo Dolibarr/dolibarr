@@ -342,12 +342,14 @@ if (!empty($socid)) {
 }
 $newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'salary', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 //$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 $selectedfields = '';
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+$moreforfilter = '';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -453,9 +455,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
-	// Show here line of result
-	print '<tr class="oddeven">';
-
 	$userstatic->id = $obj->uid;
 	$userstatic->lastname = $obj->lastname;
 	$userstatic->firstname = $obj->firstname;
@@ -467,6 +466,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$salstatic->id = $obj->rowid;
 	$salstatic->ref = $obj->rowid;
+
+	// Show here line of result
+	print '<tr class="oddeven">';
 
 	// Ref
 	print "<td>".$salstatic->getNomUrl(1)."</td>\n";

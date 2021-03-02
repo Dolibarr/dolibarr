@@ -37,8 +37,7 @@ class InfoBox
 	{
 		global $conf;
 
-		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
-		{
+		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2) {
 			return array(
 				0 => 'Home',
 				27 => 'AccountancyHome'
@@ -95,19 +94,22 @@ class InfoBox
 		$boxes = array();
 
 		$confuserzone = 'MAIN_BOXES_'.$zone;
-		if ($mode == 'activated')	// activated
-		{
+		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql .= " WHERE b.box_id = d.rowid";
 			$sql .= " AND b.entity IN (0,".$conf->entity.")";
-			if ($zone >= 0) $sql .= " AND b.position = ".$zone;
-			if (is_object($user)) $sql .= " AND b.fk_user IN (0,".$user->id.")";
-			else $sql .= " AND b.fk_user = 0";
+			if ($zone >= 0) {
+				$sql .= " AND b.position = ".$zone;
+			}
+			if (is_object($user)) {
+				$sql .= " AND b.fk_user IN (0,".$user->id.")";
+			} else {
+				$sql .= " AND b.fk_user = 0";
+			}
 			$sql .= " ORDER BY b.box_order";
-		} else // available
-		{
+		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql .= " WHERE d.entity IN (0,".$conf->entity.")";
@@ -115,19 +117,15 @@ class InfoBox
 
 		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : '')."", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$j = 0;
-			while ($j < $num)
-			{
+			while ($j < $num) {
 				$obj = $db->fetch_object($resql);
 
-				if (!in_array($obj->box_id, $excludelist))
-				{
+				if (!in_array($obj->box_id, $excludelist)) {
 					$regs = array();
-					if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
-					{
+					if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs)) {
 						$boxname = preg_replace('/\.php$/i', '', $regs[1]);
 						$module = $regs[2];
 						$relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
@@ -142,15 +140,14 @@ class InfoBox
 					// the "enabled" condition for modules forbidden for external users and the depends condition can be done.
 					// Goal is to avoid making a "new" done for each boxes returned by select.
 					dol_include_once($relsourcefile);
-					if (class_exists($boxname))
-					{
+					if (class_exists($boxname)) {
 						$box = new $boxname($db, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
 						//$box=new stdClass();
 
 						// box properties
 						$box->rowid = (empty($obj->rowid) ? '' : $obj->rowid);
 						$box->id = (empty($obj->box_id) ? '' : $obj->box_id);
-						$box->position = ($obj->position == '' ? '' : $obj->position); // '0' must stay '0'
+						$box->position = ((isset($obj->position) && $obj->position == '') ? '' : (isset($obj->position) ? $obj->position : '')); // '0' must stay '0'
 						$box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
 						$box->fk_user = (empty($obj->fk_user) ? 0 : $obj->fk_user);
 						$box->sourcefile = $relsourcefile;
@@ -158,8 +155,7 @@ class InfoBox
 
 						if ($mode == 'activated' && !is_object($user))	// List of activated box was not yet personalized into database
 						{
-							if (is_numeric($box->box_order))
-							{
+							if (is_numeric($box->box_order)) {
 								if ($box->box_order % 2 == 1) $box->box_order = 'A'.$box->box_order;
 								elseif ($box->box_order % 2 == 0) $box->box_order = 'B'.$box->box_order;
 							}
@@ -171,14 +167,11 @@ class InfoBox
 						// Filter on box->enabled (used for example by box_comptes)
 						// Filter also on box->depends. Example: array("product|service") or array("contrat", "service")
 						$enabled = $box->enabled;
-						if (isset($box->depends) && count($box->depends) > 0)
-						{
-							foreach ($box->depends as $moduleelem)
-							{
+						if (isset($box->depends) && count($box->depends) > 0) {
+							foreach ($box->depends as $moduleelem) {
 								$arrayelem = explode('|', $moduleelem);
 								$tmpenabled = 0; // $tmpenabled is used for the '|' test (OR)
-								foreach ($arrayelem as $module)
-								{
+								foreach ($arrayelem as $module) {
 									$tmpmodule = preg_replace('/@[^@]+/', '', $module);
 									if (!empty($conf->$tmpmodule->enabled)) $tmpenabled = 1;
 									//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
@@ -240,8 +233,7 @@ class InfoBox
 		$tab = array();
 		$confuserzone = 'MAIN_BOXES_'.$zone;
 		$tab[$confuserzone] = 1;
-		if (dol_set_user_param($db, $conf, $user, $tab) < 0)
-		{
+		if (dol_set_user_param($db, $conf, $user, $tab) < 0) {
 			$error = $db->lasterror();
 			$db->rollback();
 			return -3;
@@ -287,8 +279,7 @@ class InfoBox
 
 						dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 						$result = $db->query($sql);
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$error++;
 							break;
 						}

@@ -697,6 +697,12 @@ class Conf
 
 		if (!empty($this->global->MAIN_TZUSERINPUTKEY)) $this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 
+		if (!empty($this->global->PRODUIT_AUTOFILL_DESC)) {
+			$this->global->MAIN_NO_CONCAT_DESCRIPTION = 1;
+		} else {
+			unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
+		}
+
 		// For backward compatibility
 		if (isset($this->product))   $this->produit = $this->product;
 		if (isset($this->facture))   $this->invoice = $this->facture;

@@ -133,3 +133,4 @@ KeysToUseForUpdates=Ключ (колона), който да се използв
 NbInsert=Брой вмъкнати редове: %s
 NbUpdate=Брой актуализирани редове: %s
 MultipleRecordFoundWithTheseFilters=Намерени са няколко записа с тези филтри: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

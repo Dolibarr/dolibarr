@@ -72,7 +72,7 @@ class modStripe extends DolibarrModules
 		$this->hidden = false; // A condition to hide module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(5, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("stripe");
 
@@ -112,6 +112,7 @@ class modStripe extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=bank',
 			'type'=>'left',
 			'titre'=>'StripeAccount',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'bank',
 			'leftmenu'=>'stripe',
 			'url' => '',

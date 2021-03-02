@@ -67,7 +67,7 @@ if (empty($reshook))
 	if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->loan->write)
 	{
 		$object->fetch($id);
-		$result = $object->set_paid($user);
+		$result = $object->setPaid($user);
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');

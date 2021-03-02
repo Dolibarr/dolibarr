@@ -45,7 +45,9 @@ require_once '../lib/mymodule.lib.php';
 $langs->loadLangs(array("errors", "admin", "mymodule@mymodule"));
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');

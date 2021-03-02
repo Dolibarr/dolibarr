@@ -51,7 +51,7 @@ if ($action == 'updateMask')
 	$maskpayment = GETPOST('maskpayment', 'alpha');
 	if ($maskconstpayment) $res = dolibarr_set_const($db, $maskconstpayment, $maskpayment, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -70,10 +70,10 @@ if ($action == 'setparams')
 {
 	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS", $freetext, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	$res = dolibarr_set_const($db, "PAYMENTS_REPORT_GROUP_BY_MOD", GETPOST('PAYMENTS_REPORT_GROUP_BY_MOD', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if ($error)
 	{
@@ -157,9 +157,7 @@ foreach ($dirmodels as $reldir)
 						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						if ($module->isEnabled())
-						{
-							$var = !$var;
+						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td width="100">';
 							echo preg_replace('/\-.*$/', '', preg_replace('/mod_payment_/', '', preg_replace('/\.php$/', '', $file)));
 							print "</td><td>\n";

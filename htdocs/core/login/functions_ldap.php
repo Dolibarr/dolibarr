@@ -148,8 +148,11 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		{
 			if ($result == 2)	// Connection is ok for user/pass into LDAP
 			{
-				dol_syslog("functions_ldap::check_user_password_ldap Authentification ok");
 				$login = $usertotest;
+				if (!empty($conf->global->LDAP_FIELD_LOGIN)) {
+					$login = $ldap->login;
+				}
+				dol_syslog("functions_ldap::check_user_password_ldap $login authentication ok");
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 

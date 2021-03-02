@@ -68,7 +68,7 @@ class modUser extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("main", "users", "companies", "members", "salaries", "hrm");
 		$this->always_enabled = true; // Can't be disabled
 
@@ -78,7 +78,8 @@ class modUser extends DolibarrModules
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_lastlogin.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_birthdays.php', 'enabledbydefaulton'=>'Home')
+			1=>array('file'=>'box_birthdays.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_dolibarr_state_board.php', 'enabledbydefaulton'=>'Home')
 		);
 
 		// Permissions

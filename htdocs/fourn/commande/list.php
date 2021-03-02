@@ -142,30 +142,30 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"] = "NotePrivate";
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'cf.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplierShort"), 'checked'=>1, 'enabled'=>1),
-	'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
-	'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
-	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-	'cf.date_commande'=>array('label'=>$langs->trans("OrderDateShort"), 'checked'=>1),
-	'cf.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
-	'cf.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'cf.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
-	'cf.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+	'cf.ref'=>array('label'=>"Ref", 'checked'=>1),
+	'cf.ref_supplier'=>array('label'=>"RefOrderSupplierShort", 'checked'=>1, 'enabled'=>1),
+	'p.project_ref'=>array('label'=>"ProjectRef", 'checked'=>0, 'enabled'=>1),
+	'u.login'=>array('label'=>"AuthorRequest", 'checked'=>1),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	's.town'=>array('label'=>"Town", 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'checked'=>1),
+	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
+	'cf.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1),
+	'cf.date_livraison'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
+	'cf.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
+	'cf.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0),
+	'cf.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
 	'cf.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'cf.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'cf.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'cf.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
 	'cf.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'cf.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'cf.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-	'cf.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>1)
+	'cf.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'cf.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'cf.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'cf.billed'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>1)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -244,7 +244,7 @@ if (empty($reshook))
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	// TODO Move this into mass action include
+	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills')
 	{
 		$orders = GETPOST('toselect', 'array');
@@ -255,6 +255,8 @@ if (empty($reshook))
 		$TFactThird = array();
 
 		$nb_bills_created = 0;
+		$lastid = 0;
+		$lastref = '';
 
 		$db->begin();
 
@@ -263,8 +265,9 @@ if (empty($reshook))
 			if ($cmd->fetch($id_order) <= 0) continue;
 
 			$objecttmp = new FactureFournisseur($db);
-			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
-			else {
+			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
+			} else {
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -285,7 +288,11 @@ if (empty($reshook))
 
 				$res = $objecttmp->create($user);
 
-				if ($res > 0) $nb_bills_created++;
+				if ($res > 0) {
+					$nb_bills_created++;
+					$lastref = $objecttmp->ref;
+					$lastid = $objecttmp->id;
+				}
 			}
 
 			if ($objecttmp->id > 0)
@@ -442,7 +449,14 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+
+			if ($nb_bills_created == 1) {
+				$texttoshow = $langs->trans('BillXCreated', '{s1}');
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				setEventMessages($texttoshow, null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+			}
 
 			// Make a redirect to avoid to bill twice if we make a refresh or back
 			$param = '';
@@ -459,7 +473,7 @@ if (empty($reshook))
 			if ($search_deliveryyear)    		$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			if ($search_ref)      		$param .= '&search_ref='.urlencode($search_ref);
 			if ($search_company)  		$param .= '&search_company='.urlencode($search_company);
-			if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
+			//if ($search_ref_customer)	$param .= '&search_ref_customer='.urlencode($search_ref_customer);
 			if ($search_user > 0) 		$param .= '&search_user='.urlencode($search_user);
 			if ($search_sale > 0) 		$param .= '&search_sale='.urlencode($search_sale);
 			if ($search_total_ht != '') $param .= '&search_total_ht='.urlencode($search_total_ht);
@@ -521,11 +535,11 @@ $help_url = '';
 // llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
+if ($sall || $search_product_category > 0 || $search_user > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
+$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,";
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva as multicurrency_total_vat, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
@@ -581,7 +595,7 @@ if ($search_town)  $sql .= natural_search('s.town', $search_town);
 if ($search_zip)   $sql .= natural_search("s.zip", $search_zip);
 if ($search_state) $sql .= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
+if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) $sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$db->escape($search_sale);
 if ($search_user > 0) $sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='supplier_order' AND tc.source='internal' AND ec.element_id = cf.rowid AND ec.fk_socpeople = ".$db->escape($search_user);
@@ -666,6 +680,8 @@ if ($resql)
 	if ($search_billed != '')   $param .= "&search_billed=".urlencode($search_billed);
 	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
 	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
+	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0)   $param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -861,7 +877,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Date order
@@ -874,7 +890,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Date delivery
-	if (!empty($arrayfields['cf.date_delivery']['checked']))
+	if (!empty($arrayfields['cf.date_livraison']['checked']))
 	{
 		print '<td class="liste_titre nowraponall center">';
 		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
@@ -993,7 +1009,7 @@ if ($resql)
 	if (!empty($arrayfields['typent.code']['checked']))       print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['cf.fk_author']['checked']))      print_liste_field_titre($arrayfields['cf.fk_author']['label'], $_SERVER["PHP_SELF"], "cf.fk_author", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['cf.date_commande']['checked']))  print_liste_field_titre($arrayfields['cf.date_commande']['label'], $_SERVER["PHP_SELF"], "cf.date_commande", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($arrayfields['cf.date_delivery']['checked']))  print_liste_field_titre($arrayfields['cf.date_delivery']['label'], $_SERVER["PHP_SELF"], 'cf.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
+	if (!empty($arrayfields['cf.date_livraison']['checked'])) print_liste_field_titre($arrayfields['cf.date_livraison']['label'], $_SERVER["PHP_SELF"], 'cf.date_livraison', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['cf.total_ht']['checked']))       print_liste_field_titre($arrayfields['cf.total_ht']['label'], $_SERVER["PHP_SELF"], "cf.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['cf.total_vat']['checked']))      print_liste_field_titre($arrayfields['cf.total_vat']['label'], $_SERVER["PHP_SELF"], "cf.tva", "", $param, '', $sortfield, $sortorder, 'right ');
 	if (!empty($arrayfields['cf.total_ttc']['checked']))      print_liste_field_titre($arrayfields['cf.total_ttc']['label'], $_SERVER["PHP_SELF"], "cf.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1043,7 +1059,7 @@ if ($resql)
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
 		$objectstatic->date_commande = $db->jdate($obj->date_commande);
-		$objectstatic->date_delivery = $db->jdate($obj->date_delivery);
+		$objectstatic->delivery_date = $db->jdate($obj->date_livraison);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
@@ -1153,19 +1169,23 @@ if ($resql)
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
-			if ($objectstatic->hasDelay() && !empty($objectstatic->date_delivery)) {
-				print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+			if ($objectstatic->statut != $objectstatic::STATUS_ORDERSENT && $objectstatic->statut != $objectstatic::STATUS_RECEIVED_PARTIALLY) {
+				if ($objectstatic->hasDelay()) {
+					print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+				}
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 		// Plannned date of delivery
-		if (!empty($arrayfields['cf.date_delivery']['checked']))
+		if (!empty($arrayfields['cf.date_livraison']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'day');
-			if ($objectstatic->hasDelay() && !empty($objectstatic->date_delivery)) {
-				print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+			print dol_print_date($db->jdate($obj->date_livraison), 'day');
+			if ($objectstatic->statut == $objectstatic::STATUS_ORDERSENT || $objectstatic->statut == $objectstatic::STATUS_RECEIVED_PARTIALLY) {
+				if ($objectstatic->hasDelay()) {
+					print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
+				}
 			}
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;

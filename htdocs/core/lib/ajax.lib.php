@@ -135,7 +135,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 										}
 										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
 												 update: update, textarea: textarea,
-												 pbq: item.pbq, type: item.type, qty: item.qty, discount: item.discount, pricebasetype: item.pricebasetype, price_ht: item.price_ht, price_ttc: item.price_ttc }
+												 pbq: item.pbq,
+												 type: item.type, qty: item.qty, discount: item.discount,
+												 pricebasetype: item.pricebasetype, price_ht: item.price_ht,
+												 price_ttc: item.price_ttc,
+												 up: item.up, description : item.description,
+												 ref_customer: item.ref_customer }
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -144,17 +149,40 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
-    						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
+    						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							//console.log(ui.item);
-							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
-							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
-							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
-							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
-							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
+							console.log("Propagate before some properties");
 
-    						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+							//console.log(ui.item);
+							//For supplier price
+							$("#'.$htmlname.'").attr("data-up", ui.item.up);
+							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
+							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-description", ui.item.description);
+							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
+
+							//For customer price
+		';
+	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+		$script .= '
+							$("#' . $htmlname . '").attr("data-pbq", ui.item.pbq);
+							$("#' . $htmlname . '").attr("data-pbqup", ui.item.price_ht);
+							$("#' . $htmlname . '").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#' . $htmlname . '").attr("data-pbqqty", ui.item.qty);
+							$("#' . $htmlname . '").attr("data-pbqpercent", ui.item.discount);
+		';
+	} else {
+		$script .= '
+							$("#' . $htmlname . '").attr("data-up", ui.item.price_ht);
+							$("#' . $htmlname . '").attr("data-base", ui.item.pricebasetype);
+							$("#' . $htmlname . '").attr("data-qty", ui.item.qty);
+							$("#' . $htmlname . '").attr("data-discount", ui.item.discount);
+		';
+	}
+	$script .= '
+							$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+
     						// Disable an element
     						if (options.option_disabled) {
     							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
@@ -170,6 +198,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
+
     						if (options.disabled) {
     							console.log("Make action disabled on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
@@ -182,6 +211,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     								$("#" + value).show().trigger("show");
     							});
     						}
+
     						// Update an input
     						if (ui.item.update) {
     							console.log("Make action update on each ui.item.update")
@@ -202,7 +232,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 									}
     							});
     						}
-    						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+    						console.log("ajax_autocompleter new value selected, we trigger change also on original component so on field #search_'.$htmlname.'");
 
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
@@ -227,7 +257,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
  *  This use the jQuery "autocomplete" function.
  *
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$fields				Other fields to autocomplete
+ *	@param	array	$fields				Array of key of fields to autocomplete
  *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
@@ -408,14 +438,17 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					minimumInputLength: '.$minLengthToAutocomplete.',
 					language: select2arrayoflanguage,
     				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
 					    //console.log(data.html);
+					    if (data.id == -1) return \'&nbsp;\';
 						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
-					    return data.text;
+						return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */
+						if (selection.id == -1) return \'<span class="placeholder">\'+selection.text+\'</span>\';
 						return selection.text;
 					},
 					escapeMarkup: function(markup) {

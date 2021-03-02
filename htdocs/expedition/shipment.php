@@ -813,8 +813,8 @@ if ($id > 0 || !empty($ref))
 								}
 								print '<tr class="oddeven"><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/card.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
 								print '<td class="center"> '.$value['nb_total'].'</td>';
-								print '<td>&nbsp</td>';
-								print '<td>&nbsp</td>';
+								print '<td>&nbsp;</td>';
+								print '<td>&nbsp;</td>';
 								print '<td class="center">'.$value['stock'].' '.$img.'</td></tr>'."\n";
 							}
 						}

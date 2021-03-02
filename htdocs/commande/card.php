@@ -12,7 +12,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,11 +112,6 @@ $usercancreatepurchaseorder = $user->rights->fournisseur->commande->creer;
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-
-if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
-	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $object->warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
-	if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $object->warehouse_id = $user->fk_warehouse;
-}
 
 $error = 0;
 
@@ -506,7 +501,7 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremise' && $usercancreate) {
-		$result = $object->set_remise($user, GETPOST('remise'));
+		$result = $object->setDiscount($user, GETPOST('remise'));
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -612,10 +607,10 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise($user, GETPOST('remise_percent'));
+		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), 2));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, GETPOST('remise_absolue'));
-	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha')) {
+		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue'), 'MU'));
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha')) {
 		// Define vat_rate
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
@@ -633,7 +628,7 @@ if (empty($reshook))
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CR');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
@@ -644,8 +639,12 @@ if (empty($reshook))
 			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'));
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha')) : 0);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -846,6 +845,11 @@ if (empty($reshook))
 					$desc = $prod->description;
 				}
 
+				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+				if ($product_desc==$desc && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+					$product_desc='';
+				}
+
 				if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
 				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
@@ -1032,7 +1036,7 @@ if (empty($reshook))
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent'), 2) / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
@@ -1060,7 +1064,7 @@ if (empty($reshook))
 					}
 				}
 			}
-			$result = $object->updateline(GETPOST('lineid'), $description, $pu_ht, GETPOST('qty'), GETPOST('remise_percent'), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'), $pu_ht_devise);
+			$result = $object->updateline(GETPOST('lineid', 'int'), $description, $pu_ht, price2num(GETPOST('qty'), 'MS'), price2num(GETPOST('remise_percent'), 2), $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $info_bits, $date_start, $date_end, $type, GETPOST('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOST('units'), $pu_ht_devise);
 
 			if ($result >= 0) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -1533,6 +1537,14 @@ if ($action == 'create' && $usercancreate)
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
 
+	//Warehouse default if null
+	if ($soc->fk_warehouse > 0) $warehouse_id = $soc->fk_warehouse;
+	if (!empty($conf->stock->enabled) && empty($warehouse_id) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
+	{
+		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $warehouse_id = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+		if (empty($object->warehouse_id) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $warehouse_id = $user->fk_warehouse;
+	}
+
 	print '<form name="crea_commande" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -1591,7 +1603,8 @@ if ($action == 'create' && $usercancreate)
 	if ($socid > 0) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
-		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
+		print img_picto('', 'contact');
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -1627,31 +1640,34 @@ if ($action == 'create' && $usercancreate)
 
 	// Mode de reglement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+	print img_picto('', 'bank').'&ensp;';
 	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
-	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && !empty($conf->banque->enabled))
-	{
+	if (!empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && !empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+		print img_picto('', 'bank_account');
 		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 		print '</td></tr>';
 	}
 
 	// Delivery delay
 	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
+	print img_picto('', 'clock').'&ensp;';
 	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1);
 	print '</td></tr>';
 
 	// Shipping Method
 	if (!empty($conf->expedition->enabled)) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
+		print img_picto('', 'object_dollyrevert').'&ensp;';
 		print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
 		print '</td></tr>';
 	}
 
 	// Warehouse
-	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		print '<tr><td>'.$langs->trans('Warehouse').'</td><td>';
@@ -1717,9 +1733,11 @@ if ($action == 'create' && $usercancreate)
 	// Template to use by default
 	print '<tr><td>'.$langs->trans('DefaultModel').'</td>';
 	print '<td>';
+	print img_picto('', 'pdf').'&ensp;';
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
-	print $form->selectarray('model', $liste, $conf->global->COMMANDE_ADDON_PDF);
+	$preselected = $conf->global->COMMANDE_ADDON_PDF;
+	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print "</td></tr>";
 
 	// Multicurrency
@@ -2161,7 +2179,7 @@ if ($action == 'create' && $usercancreate)
 		}
 
 		// Warehouse
-		if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			$langs->load('stocks');
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);

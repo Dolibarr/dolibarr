@@ -6,7 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      ptibogxiv            <support@ptibogxiv.net>
+ * Copyright (C) 2018 -2021Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ if ($cancel)
 	$action = '';
 }
 
-$parameters = array('id'=>$socid, 'objcanvas'=>$objcanvas);
+$parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -937,7 +937,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			try {
 				$customerstripe = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-				if ($customerstripe->id) {
+				if (!empty($customerstripe->id)) {
 					// When using the Charge API architecture
 					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 					{
@@ -957,12 +957,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 						try {
 							if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-								$paymentmethodobjs = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
+								$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"));
+								$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"));
 							} else {
-								$paymentmethodobjs = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
+								$paymentmethodobjsA = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "card"), array("stripe_account" => $stripeacc));
+								$paymentmethodobjsB = \Stripe\PaymentMethod::all(array("customer" => $customerstripe->id, "type" => "sepa_debit"), array("stripe_account" => $stripeacc));
 							}
 
-							$listofsources = $paymentmethodobjs->data;
+							if ($paymentmethodobjsA->data != null && $paymentmethodobjsB->data != null) { $listofsources = array_merge((array) $paymentmethodobjsA->data, (array) $paymentmethodobjsB->data);
+							} elseif ($paymentmethodobjsB->data != null) { $listofsources = $paymentmethodobjsB->data; }
+							else { $listofsources = $paymentmethodobjsA->data; }
 						} catch (Exception $e)
 						{
 							$error++;
@@ -1114,22 +1118,21 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						$i++;
 					}
 				}
-			} else dol_print_error($db);
+			} else {
+				dol_print_error($db);
+			}
 		}
 
 		// Show remote sources (not already shown as local source)
-		if (is_array($listofsources) && count($listofsources))
-		{
-			foreach ($listofsources as $src)
-			{
+		if (is_array($listofsources) && count($listofsources)) {
+			foreach ($listofsources as $src) {
 				if (!empty($arrayofstripecard[$src->id])) continue; // Already in previous list
 
 				$nbremote++;
 
 				print '<tr class="oddeven">';
 				// Local ID
-				if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
-				{
+				if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) {
 					print '<td>';
 					print '</td>';
 				}
@@ -1142,8 +1145,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				if (!empty($stripeacc)) $connect = $stripeacc.'/';
 				//$url='https://dashboard.stripe.com/'.$connect.'test/sources/'.$src->id;
 				$url = 'https://dashboard.stripe.com/'.$connect.'test/search?query='.$src->id;
-				if ($servicestatus)
-				{
+				if ($servicestatus) {
 					//$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
 					$url = 'https://dashboard.stripe.com/'.$connect.'search?query='.$src->id;
 				}
@@ -1151,73 +1153,58 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '</td>';
 				// Img of credit card
 				print '<td>';
-				if ($src->object == 'card')
-				{
+				if ($src->object == 'card') {
 					print img_credit_card($src->brand);
-				} elseif ($src->object == 'source' && $src->type == 'card')
-				{
+				} elseif ($src->object == 'source' && $src->type == 'card') {
 					print img_credit_card($src->card->brand);
-				} elseif ($src->object == 'source' && $src->type == 'sepa_debit')
-				{
+				} elseif ($src->object == 'source' && $src->type == 'sepa_debit') {
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
-				} elseif ($src->object == 'payment_method' && $src->type == 'card')
-				{
+				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
 					print img_credit_card($src->card->brand);
-				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
-				{
+				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
 				print'</td>';
 				// Information
 				print '<td valign="middle">';
-				if ($src->object == 'card')
-				{
+				if ($src->object == 'card') {
 					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
 					print '</td><td>';
-					if ($src->country)
-					{
+					if ($src->country) {
 						$img = picto_from_langcode($src->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->country, 1);
 					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				} elseif ($src->object == 'source' && $src->type == 'card')
-				{
+				} elseif ($src->object == 'source' && $src->type == 'card') {
 					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
-				 	if ($src->card->country)
-					{
+				 	if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->card->country, 1);
 					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				} elseif ($src->object == 'source' && $src->type == 'sepa_debit')
-				{
-					print 'SEPA debit';
+				} elseif ($src->object == 'source' && $src->type == 'sepa_debit') {
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
 					print '</td><td>';
-					if ($src->sepa_debit->country)
-					{
+					if ($src->sepa_debit->country) {
 							$img = picto_from_langcode($src->sepa_debit->country);
 							print $img ? $img.' ' : '';
 							print getCountry($src->sepa_debit->country, 1);
 					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				} elseif ($src->object == 'payment_method' && $src->type == 'card')
-				{
+				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
 					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
-					if ($src->card->country)
-					{
+					if ($src->card->country) {
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->card->country, 1);
 					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
-				{
-					print 'SEPA debit';
+				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit') {
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->sepa_debit->last4;
 					print '</td><td>';
-					if ($src->sepa_debit->country)
-					{
+					if ($src->sepa_debit->country) {
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->sepa_debit->country, 1);
@@ -1229,8 +1216,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// Default
 				print '<td class="center" width="50">';
 				if ((empty($customerstripe->invoice_settings) && $customerstripe->default_source != $src->id) ||
-					(!empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id))
-				{
+					(!empty($customerstripe->invoice_settings) && $customerstripe->invoice_settings->default_payment_method != $src->id)) {
 					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault&token='.newToken().'">';
 					print img_picto($langs->trans("Default"), 'off');
 					print '</a>';
@@ -1252,8 +1238,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print $hookmanager->resPrint;
 				// Action column
 				print '<td class="right nowraponall">';
-				if ($user->rights->societe->creer)
-				{
+				if ($user->rights->societe->creer) {
 					print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=deletecard&token='.newToken().'">';
 					print img_picto($langs->trans("Delete"), 'delete');
 					print '</a>';
@@ -1264,10 +1249,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			}
 		}
 
-		if ($nbremote == 0 && $nblocal == 0)
-		{
-			$colspan = 8;
-			if (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD)) $colspan++;
+		if ($nbremote == 0 && $nblocal == 0) {
+			$colspan = (!empty($conf->global->STRIPE_ALLOW_LOCAL_CARD) ? 10 : 9);
 			print '<tr><td class="opacitymedium" colspan="'.$colspan.'">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table>";

@@ -214,8 +214,7 @@ if ($nolinesbefore) {
 			if (empty($senderissupplier))
 			{
 				$statustoshow = 1;
-				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS))
-				{
+				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 					// hide products in closed warehouse, but show products for internal transfer
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 				} else {
@@ -319,6 +318,14 @@ if ($nolinesbefore) {
 			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
 			echo '</div>';
 		}
+		if (is_object($objectline)) {
+			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');;
+			if (!empty($temps)) {
+				print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
+				print $temps;
+				print '</div>';
+			}
+		}
 		echo '</td>';
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 		{
@@ -412,10 +419,6 @@ if ($nolinesbefore) {
 </tr>
 
 <?php
-if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', 1);
-}
-
 if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
@@ -516,13 +519,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	<?php
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
 		$("input[name='np_marginRate']:first").blur(function(e) {
-		return checkFreeLine(e, "np_marginRate");
+			return checkFreeLine(e, "np_marginRate");
 		});
 		<?php
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES)) { ?>
 		$("input[name='np_markRate']:first").blur(function(e) {
-		return checkFreeLine(e, "np_markRate");
+			return checkFreeLine(e, "np_markRate");
 		});
 		<?php
 	}
@@ -537,21 +540,21 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 
 	var rate = $("input[name='"+npRate+"']:first");
 	if (rate.val() == '')
-	return true;
+		return true;
 
 	if (! $.isNumeric(rate.val().replace(',','.')))
 	{
-	alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
-	e.stopPropagation();
-	setTimeout(function () { rate.focus() }, 50);
-	return false;
+		alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
 	}
 	if (npRate == "np_markRate" && rate.val() >= 100)
 	{
-	alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
-	e.stopPropagation();
-	setTimeout(function () { rate.focus() }, 50);
-	return false;
+		alert('<?php echo dol_escape_js($langs->trans("markRateShouldBeLesserThan100")); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
 	}
 
 	var price = 0;
@@ -604,39 +607,39 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 	});
 
 	$("#prod_entry_mode_free").on( "click", function() {
-	setforfree();
+		setforfree();
 	});
 	$("#select_type").change(function()
 	{
-	setforfree();
+		setforfree();
 	if (jQuery('#select_type').val() >= 0)
 	{
 	/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
-	jQuery('#dp_desc').focus();
-	/* focus if CKEDITOR */
-	if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-	{
-	var editor = CKEDITOR.instances['dp_desc'];
-	if (editor) { editor.focus(); }
-	}
+		jQuery('#dp_desc').focus();
+		/* focus if CKEDITOR */
+		if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+		{
+			var editor = CKEDITOR.instances['dp_desc'];
+			if (editor) { editor.focus(); }
+		}
 	}
 	console.log("Hide/show date according to product type");
 	if (jQuery('#select_type').val() == '0')
 	{
-	jQuery('#trlinefordates').hide();
-	jQuery('.divlinefordates').hide();
+		jQuery('#trlinefordates').hide();
+		jQuery('.divlinefordates').hide();
 	}
 	else
 	{
-	jQuery('#trlinefordates').show();
-	jQuery('.divlinefordates').show();
+		jQuery('#trlinefordates').show();
+		jQuery('.divlinefordates').show();
 	}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
-	console.log("click prod_entry_mode_predef");
-	setforpredef();
-	jQuery('#trlinefordates').show();
+		console.log("click prod_entry_mode_predef");
+		setforpredef();
+		jQuery('#trlinefordates').show();
 	});
 
 	<?php
@@ -661,7 +664,6 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			?>
 			var pbq = parseInt($('option:selected', this).attr('data-pbq'));	/* If product was selected with a HTML select */
 			if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq'); } 		/* If product was selected with a HTML input with autocomplete */
-			//console.log(pbq);
 
 			if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
 			{
@@ -677,6 +679,39 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 					function(data) {
 						console.log("Load unit price end, we got value "+data.price_ht);
 						jQuery("#price_ht").val(data.price_ht);
+						<?php
+						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
+						var proddesc = data.desc_trans;
+								<?php
+							} else { ?>
+						var proddesc = data.desc;
+								<?php
+							} ?>
+						console.log("Load desciption into text area : "+proddesc);
+							<?php
+							if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+						if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+						{
+							var editor = CKEDITOR.instances['dp_desc'];
+							if (editor) {
+								editor.setData(proddesc);
+							}
+						}
+								<?php
+							} else { ?>
+						jQuery('#dp_desc').text(proddesc);
+								<?php
+							} ?>
+							<?php
+						} ?>
+						<?php
+						if (!empty($conf->global->PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES)) { ?>
+							jQuery.each(data.array_options, function( key, value ) {
+								jQuery('div[class$="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
+							});
+							<?php
+						} ?>
 					},
 					'json'
 				);
@@ -791,7 +826,10 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		}
 		?>
 
-		/* To process customer price per quantity (CUSTOMER_PRICE_PER_QTY works only if combo product is not an ajax after x key pressed) */
+		<?php
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		{?>
+		/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
 		var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
 		if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
 		var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
@@ -803,7 +841,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
 		if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
 
-		if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
+		if ((jQuery('#idprod').val() > 0) && ! isNaN(pbq) && pbq > 0)
 		{
 			var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
 
@@ -818,11 +856,75 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			{
 				jQuery("#remise_percent").val(pbqpercent);
 			}
+		} else { jQuery("#pbq").val(''); }
+			<?php
 		}
-		else
+		?>
+		//Deal with supplier
+		if (jQuery('#idprodfournprice').val() >0)
 		{
-			jQuery("#pbq").val('');
+			var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
+			if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with autocomplete
+
+			var qty = parseFloat($('option:selected', this).attr('data-qty'));
+			if (isNaN(qty)) { qty = parseFloat(jQuery('#idprodfournprice').attr('data-qty'));}
+
+			var discount = parseFloat($('option:selected', this).attr('data-discount'));
+			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
+
+			console.log("We find supplier price :"+up+" qty: "+qty+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
+
+			jQuery("#price_ht").val(up);
+			if (jQuery("#qty").val() < qty)
+			{
+				jQuery("#qty").val(qty);
+			}
+			if (jQuery("#remise_percent").val() < discount)
+			{
+				jQuery("#remise_percent").val(discount);
+			}
+
+			<?php
+			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+				?>
+			var description = $('option:selected', this).attr('data-description');
+			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
+
+			console.log("Load desciption into text area : "+description);
+				<?php
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+				if (editor) {
+					editor.setData(description);
+				}
+			}
+					<?php
+				} else { ?>
+			jQuery('#dp_desc').text(description);
+					<?php
+				}
+			}?>
+		} else if (jQuery('#idprodfournprice').length > 0) {
+			<?php
+			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
+			{
+				var editor = CKEDITOR.instances['dp_desc'];
+				if (editor) {
+					editor.setData('');
+				}
+			}
+					<?php
+				} else { ?>
+			jQuery('#dp_desc').text('');
+					<?php
+				}
+			}?>
 		}
+
 
 		/* To set focus */
 		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)

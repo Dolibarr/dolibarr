@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'aZ09');
@@ -475,7 +476,7 @@ function Floors() {
 
 function FreeZone() {
 	console.log("Open box to enter a free product");
-	$.colorbox({href:"freezone.php?action=freezone&place="+place, onClosed: function () { Refresh(); },width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
+	$.colorbox({href:"freezone.php?action=freezone&place="+place, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("FreeZone"); ?>"});
 }
 
 function TakeposOrderNotes() {
@@ -776,11 +777,10 @@ $( document ).ready(function() {
 	{
 		print "ModalBox('ModalTerminal');";
 	}
-	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
-	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
-		$sql .= "date(date_creation) = CURDATE() ";
-		$sql .= "";
+	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING) {
+	    $sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
+	    $sql .= " entity = ".$conf->entity." AND ";
+	    $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1026,8 +1026,9 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	);
 }
 
-$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE ";
-$sql .= "date(date_creation) = CURDATE() ";
+$sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
+$sql .= " entity = ".$conf->entity." AND ";
+$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 $resql = $db->query($sql);
 if ($resql)
 {

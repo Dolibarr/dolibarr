@@ -156,10 +156,12 @@ class HookManager
 			$method,
 			array(
 				'addCalendarChoice',
+				'addCalendarView',
 				'addMoreActionsButtons',
 				'addMoreMassActions',
 				'addSearchEntry',
 				'addStatisticLine',
+				'addSectionECMAuto',
 				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',

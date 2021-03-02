@@ -55,6 +55,11 @@ class pdf_soleil extends ModelePDFFicheinter
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -124,6 +129,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->db = $db;
 		$this->name = 'soleil';
 		$this->description = $langs->trans("DocumentModelStandardPDF");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';

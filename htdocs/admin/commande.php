@@ -61,7 +61,7 @@ if ($action == 'updateMask')
 
 	if ($maskconstorder) $res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -146,7 +146,7 @@ elseif ($action == 'setdoc') {
 	$draft = GETPOST("COMMANDE_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -160,7 +160,7 @@ elseif ($action == 'setdoc') {
 
 	$res = dolibarr_set_const($db, "ORDER_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
  	if (!$error)
 	{
@@ -172,7 +172,7 @@ elseif ($action == 'setdoc') {
 	// Activate Set Shippable Icon In List
 	$setshippableiconinlist = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SHIPPABLE_ORDER_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -186,7 +186,7 @@ elseif ($action == 'setdoc') {
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -201,7 +201,7 @@ elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER')
 {
 	$res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -216,7 +216,7 @@ elseif ($action == 'set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')
 {
 	$res = dolibarr_set_const($db, "WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) $error++;
 
 	if (!$error)
 	{
@@ -668,7 +668,7 @@ Whet is definition of "shippable" according to all different STOCK_CALCULATE_...
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
-print '<td>&nbsp</td>';
+print '<td>&nbsp;</td>';
 print '<td class="center">';
 if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
     print '<a href="'.$_SERVER['PHP_SELF'].'?action=setshippableiconinlist&amp;token='.newToken().'&amp;value=0">';
@@ -687,7 +687,7 @@ if ($conf->banque->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp</td><td class="center">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
@@ -717,7 +717,7 @@ if ($conf->stock->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp</td><td class="center">';
+    print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');

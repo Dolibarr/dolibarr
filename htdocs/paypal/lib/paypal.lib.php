@@ -105,7 +105,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$landingPage = 'Billing';
 	}
 
-	dol_syslog("expresscheckout redirect with callSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
+	dol_syslog("print_paypal_redirect expresscheckout redirect with callSetExpressCheckout $paymentAmount, $currencyCodeType, $paymentType, $returnURL, $cancelURL, $tag, $solutionType, $landingPage, $shipToName, $shipToStreet, $shipToCity, $shipToState, $shipToCountryCode, $shipToZip, $shipToStreet2, $phoneNum");
 	$resArray = callSetExpressCheckout(
 		$paymentAmount,
 		$currencyCodeType,
@@ -127,6 +127,8 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 		$desc
 	);
 
+	dol_syslog("print_paypal_redirect resArray=".var_export($resArray, true), LOG_DEBUG);
+
 	$ack = strtoupper($resArray["ACK"]);
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING")
 	{
@@ -134,6 +136,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
 
 		// Redirect to paypal.com here
 		$payPalURL = $API_Url.$token;
+		dol_syslog("Redirect to ".$payPalURL, LOG_INFO);
 		header("Location: ".$payPalURL);
 		exit;
 	} else {
@@ -282,7 +285,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
 	$_SESSION["currencyCodeType"] = $currencyCodeType;
 	$_SESSION["PaymentType"] = $paymentType; // 'Mark', 'Sole'
-	$_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR']; // Payer ip
+	$_SESSION['ipaddress'] = getUserRemoteIP();	// Payer ip
 
 	//'---------------------------------------------------------------------------------------------------------------
 	//' Make the API call to PayPal
@@ -433,7 +436,7 @@ function DirectPayment($paymentType, $paymentAmount, $creditCardType, $creditCar
     $nvpstr = $nvpstr . "&CITY=" . urlencode($city);
     $nvpstr = $nvpstr . "&STATE=" . urlencode($state);
     $nvpstr = $nvpstr . "&COUNTRYCODE=" . urlencode($countryCode);
-    $nvpstr = $nvpstr . "&IPADDRESS=" . $_SERVER['REMOTE_ADDR'];
+    $nvpstr = $nvpstr . "&IPADDRESS=" . getUserRemotIP();
     $nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
 
     $resArray=hash_call("DoDirectPayment", $nvpstr);

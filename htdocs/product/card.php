@@ -16,7 +16,7 @@
  * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
  * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
  * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2020  		Pierre Ardoin     	 <mapiolca@me.com>
  *
@@ -413,7 +413,10 @@ if (empty($reshook))
 
 				$object->ref                    = $ref;
 				$object->label                  = GETPOST('label', $label_security_check);
-				$object->description            = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
+
+				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
+				$object->description            = $desc;
+
 				$object->url = GETPOST('url');
 				if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB))
 				{
@@ -426,8 +429,8 @@ if (empty($reshook))
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
-				// removed from update view so GETPOST always empty
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
+				// removed from update view so GETPOST always empty
 				/*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
@@ -740,7 +743,7 @@ if (empty($reshook))
 			if (GETPOST('propalid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+				if (($result = $propal->defineBuyPrice($pu_ht, price2num(GETPOST('remise_percent'), 2), $object->id)) < 0)
 				{
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
@@ -751,12 +754,12 @@ if (empty($reshook))
 				$result = $propal->addline(
 					$desc,
 					$pu_ht,
-					GETPOST('qty'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					GETPOST('remise_percent'),
+					price2num(GETPOST('remise_percent'), 2),
 					$price_base_type,
 					$pu_ttc,
 					0,
@@ -781,7 +784,7 @@ if (empty($reshook))
 			} elseif (GETPOST('commandeid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+				if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent', 2), $object->id)) < 0)
 				{
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
@@ -792,12 +795,12 @@ if (empty($reshook))
 				$result = $commande->addline(
 					$desc,
 					$pu_ht,
-					GETPOST('qty'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx, // localtax1
 					$localtax2_tx, // localtax2
 					$object->id,
-					GETPOST('remise_percent'),
+					price2num(GETPOST('remise_percent'), 2),
 					'',
 					'',
 					$price_base_type,
@@ -822,7 +825,7 @@ if (empty($reshook))
 			} elseif (GETPOST('factureid') > 0) {
 				// Define cost price for margin calculation
 				$buyprice = 0;
-				if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+				if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent', 2), $object->id)) < 0)
 				{
 					dol_syslog($langs->trans('FailedToGetCostPrice'));
 					setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
@@ -833,12 +836,12 @@ if (empty($reshook))
 				$result = $facture->addline(
 					$desc,
 					$pu_ht,
-					GETPOST('qty'),
+					price2nm(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
 					$object->id,
-					GETPOST('remise_percent'),
+					price2num(GETPOST('remise_percent'), 2),
 					'',
 					'',
 					'',
@@ -1049,7 +1052,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
 			print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
 			$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
+			if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 			print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 			print '</td></tr>';
 		}
@@ -1308,12 +1311,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			// Accountancy_code_buy
 			print '<tr><td>'.$langs->trans("ProductAccountancyBuyCode").'</td>';
 			print '<td>';
-			if ($type == 0)
-			{
-				$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
-			} else {
-				$accountancy_code_buy = GETPOST('accountancy_code_buy', 'alpha');
-			}
+            if ($type == 0) {
+                $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT);
+            } else {
+                $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT);
+            }
 			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
 			print '</td></tr>';
 
@@ -1510,7 +1512,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 				print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
+				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 				print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 				print '</td></tr>';
 			}
@@ -1835,11 +1837,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 					$formbarcode = new FormBarCode($db);
 				}
+
+				$fk_barcode_type='';
 				if ($action == 'editbarcodetype')
 				{
 					print $formbarcode->formBarcodeType($_SERVER['PHP_SELF'].'?id='.$object->id, $object->barcode_type, 'fk_barcode_type');
+					$fk_barcode_type = $object->barcode_type;
 				} else {
 					$object->fetch_barcode();
+					$fk_barcode_type = $object->barcode_type;
 					print $object->barcode_type_label ? $object->barcode_type_label : ($object->barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 				}
 				print '</td></tr>'."\n";
@@ -1855,7 +1861,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				if ($action == 'editbarcode')
 				{
 					$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
-					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $type);
+					if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) $tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 
 					print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';

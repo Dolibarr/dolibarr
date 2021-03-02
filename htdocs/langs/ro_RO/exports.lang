@@ -133,3 +133,4 @@ KeysToUseForUpdates=Tastă (coloană) de utilizat pentru <b>actualizarea </b>dat
 NbInsert=Numărul liniilor inserate: %s
 NbUpdate=Numărul liniilor actualizate: %s
 MultipleRecordFoundWithTheseFilters=Au fost găsite mai multe înregistrări cu ajutorul acestor filtre: %s
+StocksWithBatch=Stocuri și locație (depozit) a produselor cu număr de lot/serie
