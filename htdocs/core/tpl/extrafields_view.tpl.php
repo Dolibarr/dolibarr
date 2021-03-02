@@ -46,7 +46,6 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-
 //var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
