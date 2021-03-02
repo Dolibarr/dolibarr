@@ -7001,8 +7001,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 * @param string $type
-	 * @return string
+	 * @param 	string 	$type	Type for prefix
+	 * @return 	string			Javacript code to manage dependency
 	 */
 	public function getJSListDependancies($type='_extra') {
 		$out .= '
