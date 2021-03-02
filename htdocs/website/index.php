@@ -2211,8 +2211,7 @@ if ($action == 'generatesitemaps') {
 		$robotcontent .= $robotsitemap."\n";
 	}
 	$result = dolSaveRobotFile($filerobot, $robotcontent);
-	if (!$result)
-	{
+	if (!$result) {
 		$error++;
 		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
 	}
