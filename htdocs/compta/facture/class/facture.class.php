@@ -1192,6 +1192,7 @@ class Facture extends CommonInvoice
 			if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
 			{
 				unset($object->lines[$i]);
+				continue;
 			}
 
 			// Bloc to update dates of service (month by month only if previously filled and similare to start and end of month)
@@ -1218,7 +1219,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+			$object->lines[$i]->ref_ext = '';	// Do not clone ref_ext
 		}
 
 		// Create clone
