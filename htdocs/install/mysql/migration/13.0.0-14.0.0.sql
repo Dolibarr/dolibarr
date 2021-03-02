@@ -188,8 +188,9 @@ ALTER TABLE llx_projet ADD COLUMN accept_booth_suggestions integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN price_registration double(24,8);
 ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 
-ALTER TABLE llx_actioncomm ADD COLUMN eventorg_num_vote integer;
-ALTER TABLE llx_actioncomm ADD COLUMN eventorg_is_booth_paid smallint NOT NULL DEFAULT 0;
+ALTER TABLE llx_actioncomm ADD COLUMN ref varchar(30);
+ALTER TABLE llx_actioncomm ADD COLUMN num_vote integer;
+ALTER TABLE llx_actioncomm ADD COLUMN event_paid smallint NOT NULL DEFAULT 0;
 ALTER TABLE llx_actioncomm ADD COLUMN status smallint NOT NULL DEFAULT 0;
 
 # TODO manage ref into cationcomm class
@@ -198,10 +199,10 @@ ALTER TABLE llx_actioncomm ADD COLUMN ref varchar(255);
 ALTER TABLE llx_c_actioncomm MODIFY code varchar(50) NOT NULL;
 ALTER TABLE llx_c_actioncomm MODIFY module varchar(50) DEFAULT NULL;
 
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 60,'AC_EO_ONLINECONF','module','Online/Virtual conference','conference@eventorganization', 1, 60);
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 61,'AC_EO_INDOORCONF','module','Indoor conference','conference@eventorganization', 1, 61);
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 62,'AC_EO_ONLINEBOOTH','module','Online/Virtual booth','booth@eventorganization', 1, 62);
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 63,'AC_EO_INDOORBOOTH','module','Indoor booth','booth@eventorganization', 1, 63);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 60,'AC_EO_ONLINECONF','module','Online/Virtual conference','conference@eventorganization', 1, 60);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 61,'AC_EO_INDOORCONF','module','Indoor conference','conference@eventorganization', 1, 61);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 62,'AC_EO_ONLINEBOOTH','module','Online/Virtual booth','booth@eventorganization', 1, 62);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 63,'AC_EO_INDOORBOOTH','module','Indoor booth','booth@eventorganization', 1, 63);
 -- Code enhanced - Standardize field name
 ALTER TABLE llx_commande CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_supplier_proposal CHANGE COLUMN tva total_tva double(24,8) default 0;

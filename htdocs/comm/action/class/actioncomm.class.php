@@ -350,6 +350,21 @@ class ActionComm extends CommonObject
 	public $errors_to;
 
 	/**
+	 * @var int number of vote for an event
+	 */
+	public $num_vote;
+
+	/**
+	 * @var int if event is paid
+	 */
+	public $event_paid;
+
+	/**
+	 * @var int status use but Event organisation module
+	 */
+	public $status;
+
+	/**
 	 * Typical value for a event that is in a todo state
 	 */
 	const EVENT_TODO = 0;
@@ -509,7 +524,10 @@ class ActionComm extends CommonObject
 		$sql .= "email_tocc,";
 		$sql .= "email_tobcc,";
 		$sql .= "email_subject,";
-		$sql .= "errors_to";
+		$sql .= "errors_to,";
+		$sql .= "num_vote,";
+		$sql .= "event_paid,";
+		$sql .= "status";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."', ";
 		$sql .= (strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : "null").", ";
@@ -539,14 +557,23 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->email_tocc) ? "'".$this->db->escape($this->email_tocc)."'" : "null").", ";
 		$sql .= (!empty($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").", ";
 		$sql .= (!empty($this->email_subject) ? "'".$this->db->escape($this->email_subject)."'" : "null").", ";
-		$sql .= (!empty($this->errors_to) ? "'".$this->db->escape($this->errors_to)."'" : "null");
+		$sql .= (!empty($this->errors_to) ? "'".$this->db->escape($this->errors_to)."'" : "null").", ";
+		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
+		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
+		$sql .= (!empty($this->status) ? (int) $this->status : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->ref = $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
-
+			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->ref."' WHERE id=".$this->id ;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				dol_syslog('Error to process ref: '.$this->db->lasterror(), LOG_ERR);
+				$this->errors[] = $this->db->lasterror();
+			}
 			// Now insert assigned users
 			if (!$error) {
 				//dol_syslog(var_export($this->userassigned, true));
@@ -697,7 +724,7 @@ class ActionComm extends CommonObject
 		global $langs;
 
 		$sql = "SELECT a.id,";
-		$sql .= " a.id as ref,";
+		$sql .= " a.ref as ref,";
 		$sql .= " a.entity,";
 		$sql .= " a.ref_ext,";
 		$sql .= " a.datep,";
@@ -717,13 +744,14 @@ class ActionComm extends CommonObject
 		$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname";
+		$sql .= " num_vote, event_paid, status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
 		$sql .= " WHERE ";
 		if ($ref) {
-			$sql .= " a.id = ".((int) $ref); // No field ref, we use id
+			$sql .= " a.ref = '".$this->db->escape($ref)."'";
 		} elseif ($ref_ext) {
 			$sql .= " a.ref_ext = '".$this->db->escape($ref_ext)."'";
 		} elseif ($email_msgid) {
@@ -797,6 +825,10 @@ class ActionComm extends CommonObject
 				$this->fk_element = $obj->elementid;
 				$this->elementid = $obj->elementid;
 				$this->elementtype = $obj->elementtype;
+
+				$this->num_vote = $obj->num_vote;
+				$this->event_paid = $obj->event_paid;
+				$this->status = $obj->status;
 
 				$this->fetchResources();
 			}
@@ -1079,6 +1111,15 @@ class ActionComm extends CommonObject
 		}
 		if (!empty($this->elementtype)) {
 			$sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
+		}
+		if (!empty($this->num_vote)) {
+			$sql .= ", num_vote=".($this->num_vote ? (int) $this->num_vote : null);
+		}
+		if (!empty($this->event_paid)) {
+			$sql .= ", event_paid=".($this->event_paid ? (int) $this->event_paid : 0);
+		}
+		if (!empty($this->status)) {
+			$sql .= ", status=".($this->status ? (int) $this->status : 0);
 		}
 		$sql .= " WHERE id=".$this->id;
 
@@ -1760,6 +1801,7 @@ class ActionComm extends CommonObject
 			$sql .= " u.firstname, u.lastname, u.email,";
 			$sql .= " s.nom as socname,";
 			$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label";
+			$sql .= " num_vote, event_paid, status";
 			$sql .= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author"; // Link to get author of event for export
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
@@ -1889,6 +1931,9 @@ class ActionComm extends CommonObject
 					$event['url'] = $url;
 					$event['created'] = $this->db->jdate($obj->datec) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					$event['modified'] = $this->db->jdate($obj->datem) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$event['num_vote'] = $this->num_vote;
+					$event['event_paid'] = $this->event_paid;
+					$event['status'] = $this->status;
 
 					// TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
 					$this->id = $obj->id;
@@ -2079,6 +2124,7 @@ class ActionComm extends CommonObject
 		$this->datef = $now;
 		$this->fulldayevent = 0;
 		$this->percentage = 0;
+		$this->status = 0;
 		$this->location = 'Location';
 		$this->transparency = 1; // 1 means opaque
 		$this->priority = 1;
