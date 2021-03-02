@@ -3729,15 +3729,17 @@ class Form
 	 *  @param  string	$htmlname        Nom de la zone select
 	 *  @param  string	$exclude         To exclude a code value (Example: SRC_PROP)
 	 *	@param	int		$addempty		 Add an empty entry
+	 *  @param  string	$morecss		 Add more css to the HTML select component
+	 *  @param	int		$notooltip		 Do not show the tooltip for admin
 	 *	@return	void
 	 */
-	public function selectInputReason($selected = '', $htmlname = 'demandreasonid', $exclude = '', $addempty = 0)
+	public function selectInputReason($selected = '', $htmlname = 'demandreasonid', $exclude = '', $addempty = 0, $morecss = '', $notooltip = 0)
 	{
 		global $langs, $user;
 
 		$this->loadCacheInputReason();
 
-		print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_'.$htmlname.'" name="'.$htmlname.'">';
 		if ($addempty) {
 			print '<option value="0"'.(empty($selected) ? ' selected' : '').'>&nbsp;</option>';
 		}
@@ -3756,7 +3758,7 @@ class Form
 			print '</option>';
 		}
 		print '</select>';
-		if ($user->admin) {
+		if ($user->admin && empty($notooltip)) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
 		print ajax_combobox('select_'.$htmlname);

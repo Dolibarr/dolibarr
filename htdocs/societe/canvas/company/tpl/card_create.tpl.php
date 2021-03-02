@@ -86,14 +86,14 @@ if (empty($conf) || !is_object($conf)) {
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('Supplier'); ?></span></td>
 	<td><?php echo $this->control->tpl['yn_supplier']; ?></td>
-    <td><?php echo $langs->trans('SupplierCode'); ?></td>
-    <td>
-    	<table class="nobordernopadding">
-    		<tr>
-    			<td><input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24"></td>
-    			<td><?php echo $this->control->tpl['help_suppliercode']; ?></td>
-    		</tr>
-    	</table>
+	<td><?php echo $langs->trans('SupplierCode'); ?></td>
+	<td>
+		<table class="nobordernopadding">
+			<tr>
+				<td><input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24"></td>
+				<td><?php echo $this->control->tpl['help_suppliercode']; ?></td>
+			</tr>
+		</table>
 	</td>
 </tr>
 
