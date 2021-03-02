@@ -3770,12 +3770,11 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 
 // Print formconfirm
-if ($action == 'preview'){
+if ($action == 'preview') {
 	print $formconfirm;
 }
 
-if ($action == 'editfile' || $action == 'file_manager')
-{
+if ($action == 'editfile' || $action == 'file_manager') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
