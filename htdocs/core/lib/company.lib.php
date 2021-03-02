@@ -710,51 +710,35 @@ function getFormeJuridiqueLabel($code)
  */
 function getCountriesInEEC()
 {
-	global $conf;
-
 	// List of all country codes that are in europe for european vat rules
 	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
-	$country_code_in_EEC = array(
-		'AT', // Austria
-		'BE', // Belgium
-		'BG', // Bulgaria
-		'CY', // Cyprus
-		'CZ', // Czech republic
-		'DE', // Germany
-		'DK', // Danemark
-		'EE', // Estonia
-		'ES', // Spain
-		'FI', // Finland
-		'FR', // France
-		'GB', // United Kingdom
-		'GR', // Greece
-		'HR', // Croatia
-		'NL', // Holland
-		'HU', // Hungary
-		'IE', // Ireland
-		'IM', // Isle of Man - Included in UK
-		'IT', // Italy
-		'LT', // Lithuania
-		'LU', // Luxembourg
-		'LV', // Latvia
-		'MC', // Monaco - Included in France
-		'MT', // Malta
-		//'NO',	// Norway
-		'PL', // Poland
-		'PT', // Portugal
-		'RO', // Romania
-		'SE', // Sweden
-		'SK', // Slovakia
-		'SI', // Slovenia
-		'UK', // United Kingdom
-		//'CH',	// Switzerland - No. Swizerland in not in EEC
-	);
+	global $conf, $db;
+	$country_code_in_EEC = array();
 
 	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
 		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
 		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
-	}
+	} elseif (!empty($conf->cache['country_code_in_EEC'])) {
+		// Use of cache to reduce number of database requests
+		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
+	} else {
+		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
+		$sql .= " WHERE cc.eec = 1";
 
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$objp = $db->fetch_object($resql);
+				$country_code_in_EEC[] = $objp->code;
+				$i++;
+			}
+		} else {
+			dol_print_error($db);
+		}
+		$conf->cache['country_code_in_EEC'] = $country_code_in_EEC;
+	}
 	return $country_code_in_EEC;
 }
 
