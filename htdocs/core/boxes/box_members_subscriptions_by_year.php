@@ -24,7 +24,7 @@
  *	\brief      Module to show box of members
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
 
 
 /**
@@ -83,8 +83,8 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent_type.class.php';
 		$memberstatic = new Adherent($this->db);
 		$statictype = new AdherentType($this->db);
 
@@ -93,20 +93,130 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 		if ($user->rights->adherent->lire) {
 			$num = 0;
 			$line = 0;
-			if (1) {
+			// List of subscription by year
+			$Total = array();
+			$Number = array();
+			$tot = 0;
+			$numb = 0;
+
+			$sql = "SELECT c.subscription, c.dateadh as dateh";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "adherent as d, " . MAIN_DB_PREFIX . "subscription as c";
+			$sql .= " WHERE d.entity IN (" . getEntity('adherent') . ")";
+			$sql .= " AND d.rowid = c.fk_adherent";
+
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				$num = $this->db->num_rows($result);
+				$i = 0;
+				while ($i < $num) {
+					$objp = $this->db->fetch_object($result);
+					$year = dol_print_date($this->db->jdate($objp->dateh), "%Y");
+					$Total[$year] = (isset($Total[$year]) ? $Total[$year] : 0) + $objp->subscription;
+					$Number[$year] = (isset($Number[$year]) ? $Number[$year] : 0) + 1;
+					$tot += $objp->subscription;
+					$numb += 1;
+					$i++;
+				}
+
+
+				$line = 0;
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="liste_titre"',
+					'text' => $langs->trans("Year"),
+				);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right"',
+					'text' => $langs->trans("Subscriptions"),
+				);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right"',
+					'text' => $langs->trans("AmountTotal"),
+				);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right"',
+					'text' => $langs->trans("AmountAverage"),
+				);
+
+				$line++;
+
+				krsort($Total);
+				$i = 0;
+				foreach ($Total as $key => $value) {
+					if ($i >= 8) {
+						// print '<tr class="oddeven">';
+						// print "<td>...</td>";
+						// print "<td class=\"right\"></td>";
+						// print "<td class=\"right\"></td>";
+						// print "<td class=\"right\"></td>";
+						// print "</tr>\n";
+						$this->info_box_contents[$line][] = array(
+							'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+							'text' => '...',
+						);
+						$this->info_box_contents[$line][] = array(
+							'td' => 'class="right"',
+							'text' => '',
+						);
+						$this->info_box_contents[$line][] = array(
+							'td' => 'class="right"',
+							'text' => '',
+						);
+						$this->info_box_contents[$line][] = array(
+							'td' => 'class="right"',
+							'text' => '',
+						);
+						$line++;
+						break;
+					}
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => '<a href="./subscription/list.php?date_select='.$key.'">'.$key.'</a>',
+						'asis' => 1,
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => $Number[$key],
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => price($value),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => price(price2num($value / $Number[$key], 'MT')),
+					);
+					$line++;
+				}
+
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedMembers"),
+						'text' => $langs->trans("NoRecordedMembers"),
+					);
+				} else {
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => $langs->trans("Total"),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => $numb,
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => price($tot),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')),
 					);
 				}
-
-				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
-					'text' => ($this->db->error().' sql='.$sql),
+					'maxlength' => 500,
+					'text' => ($this->db->error() . ' sql=' . $sql),
 				);
 			}
 		} else {
