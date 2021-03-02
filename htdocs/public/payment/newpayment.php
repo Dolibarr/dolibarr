@@ -2161,12 +2161,12 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							}
 							},
 							save_payment_method: <?php if ($stripecu) {
-								print 'true';
-							} else {
-							   print 'false';
+													print 'true';
+												} else {
+												   print 'false';
 							} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 					}
-				  	).then(function(result) {
+					).then(function(result) {
 						console.log(result);
 						if (result.error) {
 							console.log("Error on result of handleCardPayment");
