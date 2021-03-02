@@ -1313,7 +1313,7 @@ if (empty($reshook))
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} // Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	} // bank account
 	elseif ($action == 'setbankaccount' && $usercancreate) {
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));

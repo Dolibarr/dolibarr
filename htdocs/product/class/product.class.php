@@ -4374,6 +4374,10 @@ class Product extends CommonObject
 	{
 		global $alreadyfound;
 
+		if (empty($id)) {
+			return array();
+		}
+
 		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
 		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
@@ -4387,7 +4391,8 @@ class Product extends CommonObject
 		if ($level == 1) { $alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
 		}
 		// Protection against infinite loop
-		if ($level > 30) { return array();
+		if ($level > 30) {
+			return array();
 		}
 
 		$res = $this->db->query($sql);
