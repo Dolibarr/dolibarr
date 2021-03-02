@@ -710,24 +710,30 @@ function getFormeJuridiqueLabel($code)
  */
 function getCountriesInEEC()
 {
+	// List of all country codes that are in europe for european vat rules
+	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
-	$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
-	$sql .= " WHERE cc.eec = 1";
-	$sql .= " AND cc.active = 1";
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num) {
-			$objp = $db->fetch_object($resql);
-			$country_code_in_EEC[] = $objp->code;
-			$i++;
-		}
+	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
+		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
+		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
 	} else {
-		dol_print_error($db);
+		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
+		$sql .= " WHERE cc.eec = 1";
+	
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$objp = $db->fetch_object($resql);
+				$country_code_in_EEC[] = $objp->code;
+				$i++;
+			}
+		} else {
+			dol_print_error($db);
+		}
 	}
 	return $country_code_in_EEC;
 }
