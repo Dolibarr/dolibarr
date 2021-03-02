@@ -384,7 +384,8 @@ if ($action == 'create')
 						var socid = $(this).val();
 				        var fac_rec = $(\'#fac_rec\').val();
 						// reload page
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
 					});
 				});
 				</script>';
