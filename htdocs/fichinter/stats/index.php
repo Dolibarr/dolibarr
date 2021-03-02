@@ -30,13 +30,14 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = 'customer';
-if (!$user->rights->ficheinter->lire) accessforbidden();
+if (!$user->rights->ficheinter->lire) {
+	accessforbidden();
+}
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -70,15 +71,16 @@ print load_fiche_titre($title, '', 'intervention');
 dol_mkdir($dir);
 
 $stats = new FichinterStats($db, $socid, $mode, ($userid > 0 ? $userid : 0));
-if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
+if ($object_status != '' && $object_status > -1) {
+	$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
+}
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->socid)
-{
+if (!$user->rights->societe->client->voir || $user->socid) {
 	$filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -88,12 +90,10 @@ if (!$user->rights->societe->client->voir || $user->socid)
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -115,8 +115,7 @@ if (!$mesg)
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->socid)
-{
+if (!$user->rights->societe->client->voir || $user->socid) {
 	$filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -126,12 +125,10 @@ if (!$user->rights->societe->client->voir || $user->socid)
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px2->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -152,8 +149,7 @@ if (!$mesg)
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid)
-{
+if (!$user->rights->societe->client->voir || $user->socid) {
 	$filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
 } else {
@@ -163,12 +159,10 @@ if (!$user->rights->societe->client->voir || $user->socid)
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px3->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -196,7 +190,9 @@ foreach ($data as $val) {
 		$arrayyears[$val['year']] = $val['year'];
 	}
 }
-if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!count($arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 
 $h = 0;
 $head = array();
@@ -236,13 +232,19 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 	$tmp = $objectstatic->LibStatut(0); // To load $this->statuts_short
 	$liststatus = $objectstatic->statuts_short;
-	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
+	unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
+}
 	print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
-	if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!in_array($year, $arrayyears)) {
+	$arrayyears[$year] = $year;
+}
+if (!in_array($nowyear, $arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
@@ -265,11 +267,9 @@ print '<td class="right">%</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1)
-	{
+	while (!empty($year) && $oldyear > $year + 1) {
 		// If we have empty year
 		$oldyear--;
 
@@ -307,12 +307,14 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; } else {
+if ($mesg) {
+	print $mesg;
+} else {
 	print $px1->show();
 	/*print "<br>\n";
-    print $px2->show();
-    print "<br>\n";
-    print $px3->show();*/
+	print $px2->show();
+	print "<br>\n";
+	print $px3->show();*/
 }
 print '</td></tr></table>';
 

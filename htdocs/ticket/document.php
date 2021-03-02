@@ -52,12 +52,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "position_name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "position_name";
+}
 
 $object = new Ticket($db);
 $result = $object->fetch($id, $ref, $track_id);
@@ -73,7 +79,7 @@ if ($result < 0) {
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 
@@ -86,8 +92,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("TicketDocumentsLinked").' - '.$langs->trans("Files"), $help_url);
 
-if ($object->id)
-{
+if ($object->id) {
 	/*
 	 * Show tabs
 	 */
@@ -126,12 +131,11 @@ if ($object->id)
 	}
 
 	// Thirdparty
-	if (!empty($conf->societe->enabled))
-	{
+	if (!empty($conf->societe->enabled)) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 		/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-    		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
-    	}*/
+			$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+		}*/
 		$morehtmlref .= ' : ';
 		if ($action == 'editcustomer') {
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
@@ -141,12 +145,10 @@ if ($object->id)
 	}
 
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->ticket->write)
-		{
+		if ($user->rights->ticket->write) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 				$morehtmlref .= ' : ';
@@ -190,11 +192,11 @@ if ($object->id)
 
 	//$object->ref = $object->track_id;	// For compatibility we use track ID for directory
 	$modulepart = 'ticket';
-  	$permission = $user->rights->ticket->write;
-  	$permtoedit = $user->rights->ticket->write;
-  	$param = '&id='.$object->id;
+	$permission = $user->rights->ticket->write;
+	$permtoedit = $user->rights->ticket->write;
+	$param = '&id='.$object->id;
 
-  	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

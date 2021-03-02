@@ -292,7 +292,8 @@ class modAccounting extends DolibarrModules
 			'b.subledger_label'=>'SubledgerAccountLabel',
 			'b.label_operation'=>'LabelOperation',
 			'b.debit'=>"Debit",
-			'b.credit'=>"Credit"
+			'b.credit'=>"Credit",
+			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
@@ -309,7 +310,8 @@ class modAccounting extends DolibarrModules
 			'b.subledger_label'=>'',
 			'b.label_operation'=>"Sale of ABC",
 			'b.debit'=>"0",
-			'b.credit'=>"100"
+			'b.credit'=>"100",
+			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 
 		// Chart of accounts

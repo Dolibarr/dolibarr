@@ -35,8 +35,7 @@ $langs->load("companies");
 llxHeader();
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -45,12 +44,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "p.name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "p.name";
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
 
@@ -59,14 +64,20 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, st.libelle as stcomm, p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", sc.fk_soc, sc.fk_user ";
+}
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.fournisseur = 1";
 $sql .= " AND s.rowid = p.fk_soc";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
 
 if (dol_strlen($stcomm)) {
 	$sql .= " AND s.fk_stcomm=$stcomm";
@@ -90,8 +101,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 
 	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -107,8 +117,7 @@ if ($result)
 	print "</tr>\n";
 
 	$i = 0;
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';

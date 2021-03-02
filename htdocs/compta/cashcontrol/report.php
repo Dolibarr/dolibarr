@@ -29,8 +29,12 @@
  *	\brief      List of bank transactions
  */
 
-if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1'); // Disable browser notification
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1'); // Disable browser notification
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
@@ -111,7 +115,7 @@ $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id =
 $sql .= " AND f.module_source = '".$db->escape($posmodule)."'";
 $sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 $sql .= " AND f.paye = 1";
-$sql .= " AND p.entity IN (".getEntity('facture').")";
+$sql .= " AND p.entity = ".$conf->entity;	// Never share entities for features related to accountancy
 /*if ($key == 'cash')       $sql.=" AND cp.code = 'LIQ'";
 elseif ($key == 'cheque') $sql.=" AND cp.code = 'CHQ'";
 elseif ($key == 'card')   $sql.=" AND cp.code = 'CB'";
@@ -120,10 +124,15 @@ else
 	dol_print_error('Value for key = '.$key.' not supported');
 	exit;
 }*/
-if ($syear && !$smonth)              $sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
-elseif ($syear && $smonth && !$sday) $sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
-elseif ($syear && $smonth && $sday)   $sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
-else dol_print_error('', 'Year not defined');
+if ($syear && !$smonth) {
+	$sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, 1))."' AND '".$db->idate(dol_get_last_day($syear, 12))."'";
+} elseif ($syear && $smonth && !$sday) {
+	$sql .= " AND datef BETWEEN '".$db->idate(dol_get_first_day($syear, $smonth))."' AND '".$db->idate(dol_get_last_day($syear, $smonth))."'";
+} elseif ($syear && $smonth && $sday) {
+	$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
+} else {
+	dol_print_error('', 'Year not defined');
+}
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -132,8 +141,11 @@ if ($resql) {
 
 	print "<!-- title of cash fence -->\n";
 	print "<center><h2>";
-	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) print $langs->trans("CashControl")." ".$cashcontrol->id;
-	else print $langs->trans("CashControl")." - ".$langs->trans("Draft");
+	if ($cashcontrol->status != $cashcontrol::STATUS_DRAFT) {
+		print $langs->trans("CashControl")." ".$cashcontrol->id;
+	} else {
+		print $langs->trans("CashControl")." - ".$langs->trans("Draft");
+	}
 	print "<br>".$langs->trans("DateCreationShort").": ".dol_print_date($cashcontrol->date_creation, 'dayhour');
 	print "</h2></center>";
 
@@ -194,13 +206,17 @@ if ($resql) {
 		print '<td class="nowrap left">';
 		print $invoicetmp->getNomUrl(1);
 		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Date ope
 		print '<td class="nowrap left">';
 		print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
 		print "</td>\n";
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Bank account
 		print '<td class="nowrap right">';
@@ -215,20 +231,30 @@ if ($resql) {
 		} elseif ($objp->code == 'CB') {
 			$bank += $objp->amount;
 		} else {
-			if ($conf->global->$var1 == $bankaccount->id) $cash += $objp->amount;
+			if ($conf->global->$var1 == $bankaccount->id) {
+				$cash += $objp->amount;
+			}
 			//elseif ($conf->global->$var2 == $bankaccount->id) $bank+=$objp->amount;
 			//elseif ($conf->global->$var3 == $bankaccount->id) $cheque+=$objp->amount;
-			else $other += $objp->amount;
+			else {
+				$other += $objp->amount;
+			}
 		}
 		print "</td>\n";
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Type
 		print '<td class="right">';
-	   	print $objp->code;
-	   	if (empty($amountpertype[$objp->code])) $amountpertype[$objp->code] = 0;
+		print $objp->code;
+		if (empty($amountpertype[$objp->code])) {
+			$amountpertype[$objp->code] = 0;
+		}
 		print "</td>\n";
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
 		// Debit
 		print '<td class="right">';
@@ -238,8 +264,12 @@ if ($resql) {
 			$amountpertype[$objp->code] += $objp->amount;
 		}
 		print "</td>\n";
-		if (!$i) $totalarray['nbfield']++;
-		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totaldebfield';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'totaldebfield';
+		}
 
 		// Credit
 		print '<td class="right">';
@@ -249,8 +279,12 @@ if ($resql) {
 			$amountpertype[$objp->code] -= $objp->amount;
 		}
 		print "</td>\n";
-		if (!$i) $totalarray['nbfield']++;
-		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalcredfield';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalcredfield';
+		}
 
 		print "</tr>";
 
@@ -297,7 +331,7 @@ if ($resql) {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence ";
 	$sql .= "SET";
 	$sql .= " cash='".$db->escape($cash)."'";
-    $sql .= ", card='".$db->escape($bank)."'";
+	$sql .= ", card='".$db->escape($bank)."'";
 	$sql .= " where rowid=".$id;
 	$db->query($sql);
 	*/

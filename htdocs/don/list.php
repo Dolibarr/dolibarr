@@ -27,7 +27,9 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "donations"));
@@ -38,12 +40,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "d.datedon";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "d.datedon";
+}
 
 $search_status = (GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-4";
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -53,10 +61,11 @@ $search_name = GETPOST('search_name', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-if (!$user->rights->don->lire) accessforbidden();
+if (!$user->rights->don->lire) {
+	accessforbidden();
+}
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_all = "";
 	$search_ref = "";
 	$search_company = "";
@@ -84,7 +93,9 @@ $fieldstosearchall = array(
 
 $donationstatic = new Don($db);
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
+if (!empty($conf->projet->enabled)) {
+	$projectstatic = new Project($db);
+}
 
 llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
@@ -94,37 +105,32 @@ $sql .= " d.amount, d.fk_statut as status,";
 $sql .= " p.rowid as pid, p.ref, p.title, p.public";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
-if ($search_status != '' && $search_status != '-4')
-{
+if ($search_status != '' && $search_status != '-4') {
 	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
-if (trim($search_ref) != '')
-{
+if (trim($search_ref) != '') {
 	$sql .= natural_search('d.ref', $search_ref);
 }
-if (trim($search_all) != '')
-{
+if (trim($search_all) != '') {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-if (trim($search_company) != '')
-{
+if (trim($search_company) != '') {
 	$sql .= natural_search('d.societe', $search_company);
 }
-if (trim($search_name) != '')
-{
+if (trim($search_name) != '') {
 	$sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql .= natural_search('d.amount', $search_amount, 1);
+if ($search_amount) {
+	$sql .= natural_search('d.amount', $search_amount, 1);
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -133,29 +139,45 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
-	if ($search_status && $search_status != -1) $param .= '&search_status='.urlencode($search_status);
-	if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
-	if ($search_company) $param .= '&search_company='.urlencode($search_company);
-	if ($search_name) $param .= '&search_name='.urlencode($search_name);
-	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
+	if ($search_status && $search_status != -1) {
+		$param .= '&search_status='.urlencode($search_status);
+	}
+	if ($search_ref) {
+		$param .= '&search_ref='.urlencode($search_ref);
+	}
+	if ($search_company) {
+		$param .= '&search_company='.urlencode($search_company);
+	}
+	if ($search_name) {
+		$param .= '&search_name='.urlencode($search_name);
+	}
+	if ($search_amount) {
+		$param .= '&search_amount='.urlencode($search_amount);
+	}
 
 	$newcardbutton = '';
-	if ($user->rights->don->creer)
-	{
+	if ($user->rights->don->creer) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -165,9 +187,10 @@ if ($resql)
 
 	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-	if ($search_all)
-	{
-		foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+	if ($search_all) {
+		foreach ($fieldstosearchall as $key => $val) {
+			$fieldstosearchall[$key] = $langs->trans($val);
+		}
 		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 	}
 
@@ -194,8 +217,7 @@ if ($resql)
 	print '<td class="liste_titre left">';
 	print '&nbsp;';
 	print '</td>';
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		print '<td class="liste_titre right">';
 		print '&nbsp;';
 		print '</td>';
@@ -225,8 +247,7 @@ if ($resql)
 	}
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
@@ -235,8 +256,7 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
@@ -258,18 +278,18 @@ if ($resql)
 		}
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			print "<td>";
-			if ($objp->pid)
-			{
+			if ($objp->pid) {
 				$projectstatic->id = $objp->pid;
 				$projectstatic->ref = $objp->ref;
 				$projectstatic->id = $objp->pid;
 				$projectstatic->public = $objp->public;
 				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
-			} else print '&nbsp;';
+			} else {
+				print '&nbsp;';
+			}
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';

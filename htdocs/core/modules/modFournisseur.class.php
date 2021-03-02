@@ -206,8 +206,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'supprimer';
 
-		if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
-		{
+		if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
 			$r++;
 			$this->rights[$r][0] = 1190;
 			$this->rights[$r][1] = 'Approve supplier order (second level)'; // $langs->trans("Permission1190");
@@ -299,8 +298,7 @@ class modFournisseur extends DolibarrModules
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (!empty($conf->multicurrency->enabled))
-		{
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -332,15 +330,12 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields object
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$typeFilter = "Text";
-				switch ($obj->type)
-				{
+				switch ($obj->type) {
 					case 'int':
 					case 'double':
 					case 'price':
@@ -360,7 +355,9 @@ class modFournisseur extends DolibarrModules
 							$var = array_keys($tmpparam['options']);
 							$tmp = array_shift($var);
 						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter = "List:".$tmp;
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
+							$typeFilter = "List:".$tmp;
+						}
 						break;
 				}
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
@@ -372,15 +369,12 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields line
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extraline.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$typeFilter = "Text";
-				switch ($obj->type)
-				{
+				switch ($obj->type) {
 					case 'int':
 					case 'double':
 					case 'price':
@@ -396,8 +390,12 @@ class modFournisseur extends DolibarrModules
 					case 'sellist':
 						$tmp = '';
 						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp = array_shift(array_keys($tmpparam['options']));
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter = "List:".$tmp;
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmp = array_shift(array_keys($tmpparam['options']));
+						}
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
+							$typeFilter = "List:".$tmp;
+						}
 						break;
 				}
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
@@ -408,7 +406,9 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields line
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -418,7 +418,9 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		}
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -434,8 +436,7 @@ class modFournisseur extends DolibarrModules
 			'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote", 'p.rowid'=>'PaymentId', 'pf.amount'=>'AmountPayment',
 			'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber', 'p.fk_bank'=>'IdTransaction', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (!empty($conf->multicurrency->enabled))
-		{
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -465,15 +466,12 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields object
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$typeFilter = "Text";
-				switch ($obj->type)
-				{
+				switch ($obj->type) {
 					case 'int':
 					case 'double':
 					case 'price':
@@ -489,8 +487,12 @@ class modFournisseur extends DolibarrModules
 					case 'sellist':
 						$tmp = '';
 						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp = array_shift(array_keys($tmpparam['options']));
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter = "List:".$tmp;
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmp = array_shift(array_keys($tmpparam['options']));
+						}
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
+							$typeFilter = "List:".$tmp;
+						}
 						break;
 				}
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
@@ -501,7 +503,9 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields object
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -510,7 +514,9 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn as p ON pf.fk_paiementfourn = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		}
 
 		// Order
 		$r++;
@@ -522,29 +528,27 @@ class modFournisseur extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"OrderId", 'f.ref'=>"Ref", 'f.ref_supplier'=>"RefSupplier", 'f.date_creation'=>"DateCreation", 'f.date_commande'=>"OrderDate", 'f.date_livraison'=>"DateDeliveryPlanned",
-			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
 			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
-		if (!empty($conf->multicurrency->enabled))
-		{
+		if (!empty($conf->multicurrency->enabled)) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
 			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
-		{
+		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
 			unset($this->export_fields_array['f.date_approve2']);
 			unset($this->export_fields_array['ua2.login']);
 		}
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'Text', 's.address'=>'Text', 's.cp'=>'Text', 's.ville'=>'Text', 'c.code'=>'Text', 's.tel'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text",
-			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric",
+			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric",
 			'f.fk_statut'=>'Status', 'f.date_approve'=>'Date', 'f.date_approve2'=>'Date', 'f.note_public'=>"Text", 'f.note_private'=>"Text", 'fd.description'=>"Text",
 			'fd.tva_tx'=>"Numeric", 'fd.qty'=>"Numeric", 'fd.remise_percent'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_tva'=>"Numeric",
 			'fd.product_type'=>'Numeric', 'fd.ref'=>'Text', 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
@@ -560,15 +564,12 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields object
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$typeFilter = "Text";
-				switch ($obj->type)
-				{
+				switch ($obj->type) {
 					case 'int':
 					case 'double':
 					case 'price':
@@ -585,8 +586,12 @@ class modFournisseur extends DolibarrModules
 						$tmp = '';
 						$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
 						$tmpkey = array_keys($tmpparam['options']);
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp = array_shift($tmpkey);
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter = "List:".$tmp;
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmp = array_shift($tmpkey);
+						}
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
+							$typeFilter = "List:".$tmp;
+						}
 						break;
 				}
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
@@ -598,15 +603,12 @@ class modFournisseur extends DolibarrModules
 		// Add extra fields line
 		$sql = "SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extraline.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$typeFilter = "Text";
-				switch ($obj->type)
-				{
+				switch ($obj->type) {
 					case 'int':
 					case 'double':
 					case 'price':
@@ -627,7 +629,9 @@ class modFournisseur extends DolibarrModules
 							$tmpparam_param_key = array_keys($tmpparam['options']);
 							$tmp = array_shift($tmpparam_param_key);
 						}
-						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter = "List:".$tmp;
+						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) {
+							$typeFilter = "List:".$tmp;
+						}
 						break;
 				}
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
@@ -638,7 +642,9 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields line
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -650,7 +656,9 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_order').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		}
 
 		//Import Supplier Invoice
 		//--------
@@ -852,7 +860,7 @@ class modFournisseur extends DolibarrModules
 			'c.fk_statut'         => 'Status*',
 			'c.billed'            => 'Billed(0/1)',
 			'c.remise_percent'    => 'GlobalDiscount',
-			'c.tva'               => 'TotalTVA',
+			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
 			'c.note_private'      => 'NotePrivate',
@@ -1001,13 +1009,11 @@ class modFournisseur extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_orders';
 		$dest = $dirodt.'/template_supplier_order.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

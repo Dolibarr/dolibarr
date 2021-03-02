@@ -43,7 +43,9 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
-	if (!count($actioncode)) $actioncode = '0';
+	if (!count($actioncode)) {
+		$actioncode = '0';
+	}
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
@@ -58,12 +60,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = 'a.datep,a.id';
-if (!$sortorder) $sortorder = 'DESC';
+if (!$sortfield) {
+	$sortfield = 'a.datep,a.id';
+}
+if (!$sortorder) {
+	$sortorder = 'DESC';
+}
 
 // Initialize technical objects
 $object = new MyObject($db);
@@ -76,7 +84,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity]."/".$object->id;
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->mymodule->multidir_output[$object->entity]."/".$object->id;
+}
 
 
 
@@ -86,7 +96,9 @@ if ($id > 0 || !empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$obj
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	// Cancel
@@ -118,7 +130,9 @@ if ($object->id > 0) {
 	$help_url = '';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 	$head = myobjectPrepareHead($object);
 
 
@@ -143,31 +157,31 @@ if ($object->id > 0) {
 	 if ($user->rights->mymodule->creer)
 	 {
 	 if ($action != 'classify')
-	 	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	 	$morehtmlref.=' : ';
-	 	if ($action == 'classify') {
-	 	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	 	$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	 	$morehtmlref.='<input type="hidden" name="action" value="classin">';
-	 	$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-	 	$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	 	$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	 	$morehtmlref.='</form>';
-	 	} else {
-	 	$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	 	}
-	 	} else {
-	 	if (! empty($object->fk_project)) {
-	 	$proj = new Project($db);
-	 	$proj->fetch($object->fk_project);
-	 	$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-	 	$morehtmlref.=$proj->ref;
-	 	$morehtmlref.='</a>';
-	 	} else {
-	 	$morehtmlref.='';
-	 	}
-	 	}
-	 	}*/
+		 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		 $morehtmlref.=' : ';
+		 if ($action == 'classify') {
+		 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+		 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		 $morehtmlref.='<input type="hidden" name="action" value="classin">';
+		 $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
+		 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+		 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		 $morehtmlref.='</form>';
+		 } else {
+		 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		 }
+		 } else {
+		 if (! empty($object->fk_project)) {
+		 $proj = new Project($db);
+		 $proj->fetch($object->fk_project);
+		 $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		 $morehtmlref.=$proj->ref;
+		 $morehtmlref.='</a>';
+		 } else {
+		 $morehtmlref.='';
+		 }
+		 }
+		 }*/
 	$morehtmlref .= '</div>';
 
 
@@ -194,7 +208,9 @@ if ($object->id > 0) {
 	$permok = $user->rights->agenda->myactions->create;
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-		if (get_class($objthirdparty) == 'Societe') $out .= '&amp;socid='.$objthirdparty->id;
+		if (get_class($objthirdparty) == 'Societe') {
+			$out .= '&amp;socid='.$objthirdparty->id;
+		}
 		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
@@ -216,8 +232,12 @@ if ($object->id > 0) {
 
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$param = '&socid='.$socid;
-		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+			$param .= '&contextpage='.$contextpage;
+		}
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$param .= '&limit='.$limit;
+		}
 
 
 		print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');

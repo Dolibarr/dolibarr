@@ -39,7 +39,9 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', '', '', '');
 
 // Get parameters
@@ -47,12 +49,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 
 $object = new PaymentVarious($db);
@@ -66,7 +74,7 @@ $modulepart = 'banque';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -79,20 +87,17 @@ $title = $langs->trans("VariousPayment").' - '.$langs->trans("Documents");
 $help_url = '';
 llxHeader("", $title, $help_url);
 
-if ($object->id)
-{
+if ($object->id) {
 	$head = various_payment_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' : ';
-		if ($user->rights->banque->modifier && 0)
-		{
+		if ($user->rights->banque->modifier && 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
@@ -128,8 +133,7 @@ if ($object->id)
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 

@@ -20,9 +20,9 @@
  */
 
 /**
- *       \file       htdocs/commande/class/commandestats.class.php
- *       \ingroup    commandes
- *       \brief      File of class to manage order statistics
+ *  \file       htdocs/commande/class/commandestats.class.php
+ *  \ingroup    commandes
+ *  \brief      File of class to manage order statistics
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -70,16 +70,14 @@ class CommandeStats extends Stats
 		$this->cachefilesuffix = $mode;
 		$this->join = '';
 
-		if ($mode == 'customer')
-		{
+		if ($mode == 'customer') {
 			$object = new Commande($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			//$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
-		} elseif ($mode == 'supplier')
-		{
+		} elseif ($mode == 'supplier') {
 			$object = new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
@@ -90,21 +88,22 @@ class CommandeStats extends Stats
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('commande').')';
 
-		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-		if ($this->socid)
-		{
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		}
+		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".$this->socid;
 		}
-		if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
+		if ($this->userid > 0) {
+			$this->where .= ' AND c.fk_user_author = '.$this->userid;
+		}
 
-		if ($typentid)
-		{
+		if ($typentid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = c.fk_soc';
 			$this->where .= ' AND s.fk_typent = '.$typentid;
 		}
 
-		if ($categid)
-		{
+		if ($categid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cats ON cats.fk_soc = c.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
 			$this->where .= ' AND cat.rowid = '.$categid;
@@ -124,7 +123,9 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -147,7 +148,9 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -169,7 +172,9 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -192,7 +197,9 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
@@ -213,7 +220,9 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
@@ -235,7 +244,9 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " AND c.rowid = tl.fk_commande AND tl.fk_product = product.rowid";

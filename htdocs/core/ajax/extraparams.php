@@ -20,11 +20,21 @@
  *	\brief      File to make Ajax action on setting extra parameters of elements
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 include '../../main.inc.php';
 
@@ -41,8 +51,7 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type))
-{
+if (!empty($id) && !empty($element) && !empty($htmlelement) && !empty($type)) {
 	$value = GETPOST('value', 'alpha');
 	$params = array();
 

@@ -91,7 +91,9 @@ class Stripe extends CommonObject
 		global $conf;
 
 		$key = '';
-		if ($entity < 0) $entity = $conf->entity;
+		if ($entity < 0) {
+			$entity = $conf->entity;
+		}
 
 		$sql = "SELECT tokenstring";
 		$sql .= " FROM ".MAIN_DB_PREFIX."oauth_token";
@@ -155,8 +157,7 @@ class Stripe extends CommonObject
 	{
 		global $conf, $user;
 
-		if (empty($object->id))
-		{
+		if (empty($object->id)) {
 			dol_syslog("customerStripe is called with the parameter object that is not loaded");
 			return null;
 		}
@@ -193,8 +194,7 @@ class Stripe extends CommonObject
 						//$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
 						$customer = \Stripe\Customer::retrieve(array('id'=>"$tiers", 'expand[]'=>'sources'), array("stripe_account" => $key));
 					}
-				} catch (Exception $e)
-				{
+				} catch (Exception $e) {
 					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
@@ -234,13 +234,10 @@ class Stripe extends CommonObject
 					}
 
 					// Create the VAT record in Stripe
-					if (!empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
-					{
-						if (!empty($vatcleaned))
-						{
+					if (!empty($conf->global->STRIPE_SAVE_TAX_IDS)) {	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+						if (!empty($vatcleaned)) {
 							$isineec = isInEEC($object);
-							if ($object->country_code && $isineec)
-							{
+							if ($object->country_code && $isineec) {
 								//$taxids = $customer->allTaxIds($customer->id);
 								$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
 							}
@@ -251,12 +248,10 @@ class Stripe extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
 					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
-					if (!$resql)
-					{
+					if (!$resql) {
 						$this->error = $this->db->lasterror();
 					}
-				} catch (Exception $e)
-				{
+				} catch (Exception $e) {
 					$this->error = $e->getMessage();
 				}
 			}
@@ -288,8 +283,7 @@ class Stripe extends CommonObject
 			} else {
 				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
 			}
-		} catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			$this->error = $e->getMessage();
 		}
 
@@ -329,12 +323,18 @@ class Stripe extends CommonObject
 
 		$error = 0;
 
-		if (empty($status)) $service = 'StripeTest';
-		else $service = 'StripeLive';
+		if (empty($status)) {
+			$service = 'StripeTest';
+		} else {
+			$service = 'StripeLive';
+		}
 
 		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (!in_array($currency_code, $arrayzerounitcurrency)) $stripeamount = $amount * 100;
-		else $stripeamount = $amount;
+		if (!in_array($currency_code, $arrayzerounitcurrency)) {
+			$stripeamount = $amount * 100;
+		} else {
+			$stripeamount = $amount;
+		}
 
 		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
 		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
@@ -350,8 +350,7 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND))
-		{
+		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND)) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
@@ -369,8 +368,7 @@ class Stripe extends CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
-				if ($num)
-				{
+				if ($num) {
 					$obj = $this->db->fetch_object($resql);
 					$intent = $obj->ext_payment_id;
 
@@ -386,8 +384,7 @@ class Stripe extends CommonObject
 						} else {
 							$paymentintent = \Stripe\PaymentIntent::retrieve($intent, array("stripe_account" => $key));
 						}
-					}
-					catch (Exception $e) {
+					} catch (Exception $e) {
 						$error++;
 						$this->error = $e->getMessage();
 					}
@@ -395,25 +392,35 @@ class Stripe extends CommonObject
 			}
 		}
 
-		if (empty($paymentintent))
-		{
+		if (empty($paymentintent)) {
 			// Try to create intent. See https://stripe.com/docs/api/payment_intents/create
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
-			if (is_object($object))
-			{
+			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
-				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
+				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+					$metadata['dol_thirdparty_id'] = $object->thirdparty->id;
+				}
 			}
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			if (!empty($conf->global->STRIPE_BANCONTACT)) $paymentmethodtypes[] = "bancontact";
-			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal";
-			if (!empty($conf->global->STRIPE_GIROPAY)) $paymentmethodtypes[] = "giropay";
-			if (!empty($conf->global->STRIPE_SOFORT)) $paymentmethodtypes[] = "sofort";
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			}
+			if (!empty($conf->global->STRIPE_BANCONTACT)) {
+				$paymentmethodtypes[] = "bancontact";
+			}
+			if (!empty($conf->global->STRIPE_IDEAL)) {
+				$paymentmethodtypes[] = "ideal";
+			}
+			if (!empty($conf->global->STRIPE_GIROPAY)) {
+				$paymentmethodtypes[] = "giropay";
+			}
+			if (!empty($conf->global->STRIPE_SOFORT)) {
+				$paymentmethodtypes[] = "sofort";
+			}
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -427,32 +434,32 @@ class Stripe extends CommonObject
 				"setup_future_usage" => "on_session",
 				"metadata" => $metadata
 			);
-			if (!is_null($customer)) $dataforintent["customer"] = $customer;
+			if (!is_null($customer)) {
+				$dataforintent["customer"] = $customer;
+			}
 			// payment_method =
 			// payment_method_types = array('card')
 			//var_dump($dataforintent);
-			if ($off_session)
-			{
+			if ($off_session) {
 				unset($dataforintent['setup_future_usage']);
 				// We can't use both "setup_future_usage" = "off_session" and "off_session" = true.
 				// Because $off_session parameter is dedicated to create paymentintent off_line (and not future payment), we need to use "off_session" = true.
 				//$dataforintent["setup_future_usage"] = "off_session";
 				$dataforintent["off_session"] = true;
 			}
-			if (!empty($conf->global->STRIPE_GIROPAY)) unset($dataforintent['setup_future_usage']);
+			if (!empty($conf->global->STRIPE_GIROPAY)) {
+				unset($dataforintent['setup_future_usage']);
+			}
 
-			if (!is_null($payment_method))
-			{
+			if (!is_null($payment_method)) {
 				$dataforintent["payment_method"] = $payment_method;
 				$description .= ' - '.$payment_method;
 			}
 
-			if ($conf->entity != $conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
-			{
+			if ($conf->entity != $conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0) {
 				$dataforintent["application_fee_amount"] = $stripefee;
 			}
-			if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
-			{
+			if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email) {
 				$dataforintent["receipt_email"] = $object->thirdparty->email;
 			}
 
@@ -475,8 +482,7 @@ class Stripe extends CommonObject
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
 				// Store the payment intent
-				if (is_object($object))
-				{
+				if (is_object($object)) {
 					$paymentintentalreadyexists = 0;
 					// Check that payment intent $paymentintent->id is not already recorded.
 					$sql = "SELECT pi.rowid";
@@ -489,22 +495,23 @@ class Stripe extends CommonObject
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
-						if ($num)
-						{
+						if ($num) {
 							$obj = $this->db->fetch_object($resql);
-							if ($obj) $paymentintentalreadyexists++;
+							if ($obj) {
+								$paymentintentalreadyexists++;
+							}
 						}
-					} else dol_print_error($this->db);
+					} else {
+						dol_print_error($this->db);
+					}
 
 					// If not, we create it.
-					if (!$paymentintentalreadyexists)
-					{
+					if (!$paymentintentalreadyexists) {
 						$now = dol_now();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
 						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($paymentintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', ".$conf->entity.", '".$this->db->escape($service)."', ".$amount.")";
 						$resql = $this->db->query($sql);
-						if (!$resql)
-						{
+						if (!$resql) {
 							$error++;
 							$this->error = $this->db->lasterror();
 							dol_syslog(get_class($this)."::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
@@ -513,20 +520,18 @@ class Stripe extends CommonObject
 				} else {
 					$_SESSION["stripe_payment_intent"] = $paymentintent;
 				}
-			} catch (Stripe\Error\Card $e)
-			{
+			} catch (Stripe\Error\Card $e) {
 				$error++;
 				$this->error = $e->getMessage();
 				$this->code = $e->getStripeCode();
 				$this->declinecode = $e->getDeclineCode();
-			} catch (Exception $e)
-			{
+			} catch (Exception $e) {
 				/*var_dump($dataforintent);
-    		    var_dump($description);
-    		    var_dump($key);
-    		    var_dump($paymentintent);
-    		    var_dump($e->getMessage());
-    		    var_dump($e);*/
+				var_dump($description);
+				var_dump($key);
+				var_dump($paymentintent);
+				var_dump($e->getMessage());
+				var_dump($e);*/
 				$error++;
 				$this->error = $e->getMessage();
 				$this->code = '';
@@ -570,29 +575,40 @@ class Stripe extends CommonObject
 
 		$error = 0;
 
-		if (empty($status)) $service = 'StripeTest';
-		else $service = 'StripeLive';
+		if (empty($status)) {
+			$service = 'StripeTest';
+		} else {
+			$service = 'StripeLive';
+		}
 
 		$setupintent = null;
 
-		if (empty($setupintent))
-		{
+		if (empty($setupintent)) {
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress);
-			if (is_object($object))
-			{
+			if (is_object($object)) {
 				$metadata['dol_type'] = $object->element;
 				$metadata['dol_id'] = $object->id;
-				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
+				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+					$metadata['dol_thirdparty_id'] = $object->thirdparty->id;
+				}
 			}
 
 			// list of payment method types
 			$paymentmethodtypes = array("card");
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) $paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-			if (!empty($conf->global->STRIPE_BANCONTACT)) $paymentmethodtypes[] = "bancontact";
-			if (!empty($conf->global->STRIPE_IDEAL)) $paymentmethodtypes[] = "ideal";
+			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
+			}
+			if (!empty($conf->global->STRIPE_BANCONTACT)) {
+				$paymentmethodtypes[] = "bancontact";
+			}
+			if (!empty($conf->global->STRIPE_IDEAL)) {
+				$paymentmethodtypes[] = "ideal";
+			}
 			// Giropay not possible for setup intent
-			if (!empty($conf->global->STRIPE_SOFORT)) $paymentmethodtypes[] = "sofort";
+			if (!empty($conf->global->STRIPE_SOFORT)) {
+				$paymentmethodtypes[] = "sofort";
+			}
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // Do not confirm immediatly during creation of intent
@@ -600,14 +616,17 @@ class Stripe extends CommonObject
 				"usage" => "off_session",
 				"metadata" => $metadata
 			);
-			if (!is_null($customer)) $dataforintent["customer"] = $customer;
-			if (!is_null($description)) $dataforintent["description"] = $description;
+			if (!is_null($customer)) {
+				$dataforintent["customer"] = $customer;
+			}
+			if (!is_null($description)) {
+				$dataforintent["description"] = $description;
+			}
 			// payment_method =
 			// payment_method_types = array('card')
 			//var_dump($dataforintent);
 
-			if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email)
-			{
+			if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email) {
 				$dataforintent["receipt_email"] = $object->thirdparty->email;
 			}
 
@@ -670,8 +689,7 @@ class Stripe extends CommonObject
 				{
 					$_SESSION["stripe_setup_intent"] = $setupintent;
 				}*/
-			} catch (Exception $e)
-			{
+			} catch (Exception $e) {
 				/*var_dump($dataforintent);
 				 var_dump($description);
 				 var_dump($key);
@@ -682,8 +700,7 @@ class Stripe extends CommonObject
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			dol_syslog("getSetupIntent ".(is_object($setupintent) ? $setupintent->id : ''), LOG_INFO, -1);
 			return $setupintent;
 		} else {
@@ -718,24 +735,20 @@ class Stripe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num)
-			{
+			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
 				dol_syslog(get_class($this)."::cardStripe cardref=".$cardref);
-				if ($cardref)
-				{
+				if ($cardref) {
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
-							{
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources)) {
 								$card = $cu->sources->retrieve($cardref);
 							} else {
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						} else {
-							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources))
-							{
+							if (!preg_match('/^pm_/', $cardref) && !empty($cu->sources)) {
 								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
 								$card = $cu->sources->retrieve($cardref);
 							} else {
@@ -743,13 +756,11 @@ class Stripe extends CommonObject
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						}
-					} catch (Exception $e)
-					{
+					} catch (Exception $e) {
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
-				} elseif ($createifnotlinkedtostripe)
-				{
+				} elseif ($createifnotlinkedtostripe) {
 					$exp_date_month = $obj->exp_date_month;
 					$exp_date_year = $obj->exp_date_year;
 					$number = $obj->number;
@@ -767,20 +778,19 @@ class Stripe extends CommonObject
 					//var_dump($a);var_dump($stripeacc);exit;
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-							{
+							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
 								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard);
-								if (!$card)
-								{
+								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
 								}
 							} else {
 								$connect = '';
-								if (!empty($stripeacc)) $connect = $stripeacc.'/';
+								if (!empty($stripeacc)) {
+									$connect = $stripeacc.'/';
+								}
 								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
-								if ($status)
-								{
+								if ($status) {
 									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
 								}
 								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
@@ -789,20 +799,19 @@ class Stripe extends CommonObject
 								$this->error = $langs->trans('CreationOfPaymentModeMustBeDoneFromStripeInterface', $urtoswitchonstripe);
 							}
 						} else {
-							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-							{
+							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
 								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
-								if (!$card)
-								{
+								if (!$card) {
 									$this->error = 'Creation of card on Stripe has failed';
 								}
 							} else {
 								$connect = '';
-								if (!empty($stripeacc)) $connect = $stripeacc.'/';
+								if (!empty($stripeacc)) {
+									$connect = $stripeacc.'/';
+								}
 								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
-								if ($status)
-								{
+								if ($status) {
 									$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$cu->id;
 								}
 								$urtoswitchonstripe = ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
@@ -812,8 +821,7 @@ class Stripe extends CommonObject
 							}
 						}
 
-						if ($card)
-						{
+						if ($card) {
 							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib";
 							$sql .= " SET stripe_card_ref = '".$this->db->escape($card->id)."', card_type = '".$this->db->escape($card->brand)."',";
 							$sql .= " country_code = '".$this->db->escape($card->country)."',";
@@ -821,13 +829,11 @@ class Stripe extends CommonObject
 							$sql .= " WHERE rowid = ".$object->id;
 							$sql .= " AND type = 'card'";
 							$resql = $this->db->query($sql);
-							if (!$resql)
-							{
+							if (!$resql) {
 								$this->error = $this->db->lasterror();
 							}
 						}
-					} catch (Exception $e)
-					{
+					} catch (Exception $e) {
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
@@ -862,8 +868,11 @@ class Stripe extends CommonObject
 
 		$error = 0;
 
-		if (empty($status)) $service = 'StripeTest';
-		else $service = 'StripeLive';
+		if (empty($status)) {
+			$service = 'StripeTest';
+		} else {
+			$service = 'StripeLive';
+		}
 
 		$sql = "SELECT sa.key_account as key_account, sa.fk_soc, sa.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
@@ -885,11 +894,16 @@ class Stripe extends CommonObject
 		}
 
 		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (!in_array($currency, $arrayzerounitcurrency)) $stripeamount = $amount * 100;
-		else $stripeamount = $amount;
+		if (!in_array($currency, $arrayzerounitcurrency)) {
+			$stripeamount = $amount * 100;
+		} else {
+			$stripeamount = $amount;
+		}
 
 		$societe = new Societe($this->db);
-		if ($key > 0) $societe->fetch($key);
+		if ($key > 0) {
+			$societe->fetch($key);
+		}
 
 		$description = "";
 		$ref = "";
@@ -922,10 +936,8 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
-			if (empty($conf->stripeconnect->enabled))	// With a common Stripe account
-			{
-				if (preg_match('/pm_/i', $source))
-				{
+			if (empty($conf->stripeconnect->enabled)) {	// With a common Stripe account
+				if (preg_match('/pm_/i', $source)) {
 					$stripecard = $source;
 					$amountstripe = $stripeamount;
 					$FULLTAG = 'PFBO'; // Payment From Back Office
@@ -942,8 +954,7 @@ class Stripe extends CommonObject
 					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
 
 					$charge = new stdClass();
-					if ($paymentintent->status == 'succeeded')
-					{
+					if ($paymentintent->status == 'succeeded') {
 						$charge->status = 'ok';
 					} else {
 						$charge->status = 'failed';
@@ -954,8 +965,7 @@ class Stripe extends CommonObject
 						$stripefailuremessage = $stripe->error;
 						$stripefailuredeclinecode = $stripe->declinecode;
 					}
-				} elseif (preg_match('/acct_/i', $source))
-				{
+				} elseif (preg_match('/acct_/i', $source)) {
 					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
@@ -977,8 +987,7 @@ class Stripe extends CommonObject
 						"customer" => "$customer"
 					);
 
-					if ($societe->email && $usethirdpartyemailforreceiptemail)
-					{
+					if ($societe->email && $usethirdpartyemailforreceiptemail) {
 						$paymentarray["receipt_email"] = $societe->email;
 					}
 
@@ -993,8 +1002,11 @@ class Stripe extends CommonObject
 					$fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
 				}
 
-				if (!in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
-				else $stripefee = round($fee);
+				if (!in_array($currency, $arrayzerounitcurrency)) {
+					$stripefee = round($fee * 100);
+				} else {
+					$stripefee = round($fee);
+				}
 
 				$paymentarray = array(
 					"amount" => "$stripeamount",
@@ -1006,17 +1018,14 @@ class Stripe extends CommonObject
 					"source" => "$source",
 					"customer" => "$customer"
 				);
-				if ($conf->entity != $conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
-				{
+				if ($conf->entity != $conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0) {
 					$paymentarray["application_fee_amount"] = $stripefee;
 				}
-				if ($societe->email && $usethirdpartyemailforreceiptemail)
-				{
+				if ($societe->email && $usethirdpartyemailforreceiptemail) {
 					$paymentarray["receipt_email"] = $societe->email;
 				}
 
-				if (preg_match('/pm_/i', $source))
-				{
+				if (preg_match('/pm_/i', $source)) {
 					$stripecard = $source;
 					$amountstripe = $stripeamount;
 					$FULLTAG = 'PFBO'; // Payment From Back Office
@@ -1033,8 +1042,7 @@ class Stripe extends CommonObject
 					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
 
 					$charge = new stdClass();
-					if ($paymentintent->status == 'succeeded')
-					{
+					if ($paymentintent->status == 'succeeded') {
 						$charge->status = 'ok';
 						$charge->id = $paymentintent->id;
 					} else {
@@ -1047,13 +1055,13 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
-			if (isset($charge->id)) {}
+			if (isset($charge->id)) {
+			}
 
 			$return->statut = 'success';
 			$return->id = $charge->id;
 
-			if (preg_match('/pm_/i', $source))
-			{
+			if (preg_match('/pm_/i', $source)) {
 				$return->message = 'Payment retrieved by card status = '.$charge->status;
 			} else {
 				if ($charge->source->type == 'card') {

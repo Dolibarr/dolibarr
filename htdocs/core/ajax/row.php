@@ -27,12 +27,24 @@
  *                   element_id (Example: 1)
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disable token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disable token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
@@ -48,8 +60,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 // Registering the location of boxes
 if (GETPOST('roworder', 'alpha') && GETPOST('table_element_line', 'alpha', 2)
-	&& GETPOST('fk_element', 'alpha', 2) && GETPOST('element_id', 'int', 2))
-{
+	&& GETPOST('fk_element', 'alpha', 2) && GETPOST('element_id', 'int', 2)) {
 	$roworder = GETPOST('roworder', 'alpha', 2);
 	$table_element_line = GETPOST('table_element_line', 'alpha', 2);
 	$fk_element = GETPOST('fk_element', 'alpha', 2);
@@ -59,9 +70,10 @@ if (GETPOST('roworder', 'alpha') && GETPOST('table_element_line', 'alpha', 2)
 
 	$rowordertab = explode(',', $roworder);
 	$newrowordertab = array();
-	foreach ($rowordertab as $value)
-	{
-		if (!empty($value)) $newrowordertab[] = $value;
+	foreach ($rowordertab as $value) {
+		if (!empty($value)) {
+			$newrowordertab[] = $value;
+		}
 	}
 
 	$row = new GenericObject($db);
@@ -73,8 +85,7 @@ if (GETPOST('roworder', 'alpha') && GETPOST('table_element_line', 'alpha', 2)
 
 	// Reorder line to have position of children lines sharing same counter than parent lines
 	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
-	if (in_array($fk_element, array('fk_facture', 'fk_propal', 'fk_commande')))
-	{
+	if (in_array($fk_element, array('fk_facture', 'fk_propal', 'fk_commande'))) {
 		$result = $row->line_order(true);
 	}
 }
