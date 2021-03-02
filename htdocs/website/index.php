@@ -2192,22 +2192,20 @@ if ($action == 'generatesitemaps') {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}else {
+	} else {
 		dol_print_error($db);
 	}
 	$robotcontent = @file_get_contents($filerobot);
 	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
-	if ($result)
-	{
+	if ($result) {
 		$robotcontent = $result;
 	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
-	if ($result)
-	{
+	if ($result) {
 		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
 		$robotcontent = $result ? $result : $robotcontent;
-	}else {
+	} else {
 		$robotcontent .= $robotsitemap."\n";
 	}
 	$result = dolSaveRobotFile($filerobot, $robotcontent);
@@ -2228,7 +2226,7 @@ $formwebsite = new FormWebsite($db);
 $formother = new FormOther($db);
 
 // Confirm generation of website sitemaps
-if ($action == 'confirmgeneratesitemaps'){
+if ($action == 'confirmgeneratesitemaps') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
