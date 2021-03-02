@@ -718,6 +718,9 @@ function getCountriesInEEC()
 	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
 		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
 		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
+	} elseif (!empty($conf->cache['country_code_in_EEC'])) {
+		// Use of cache to reduce number of database requests
+		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
 	} else {
 		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
 		$sql .= " WHERE cc.eec = 1";
@@ -734,6 +737,7 @@ function getCountriesInEEC()
 		} else {
 			dol_print_error($db);
 		}
+		$conf->cache['country_code_in_EEC'] = $country_code_in_EEC;
 	}
 	return $country_code_in_EEC;
 }
