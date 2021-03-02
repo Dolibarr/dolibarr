@@ -5305,8 +5305,8 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="text" class="maxwidth100" name="'.$htmlname.'" value="'.(!empty($rate) ? price(price2num($rate, 'CU')) : 1).'" /> ';
 			print '<select name="calculation_mode">';
-			print '<option value="1">'.$currency.' > '.$conf->currency.'</option>';
-			print '<option value="2">'.$conf->currency.' > '.$currency.'</option>';
+			print '<option value="1">Change '.$langs->trans("PriceUHT").' of lines</option>';
+			print '<option value="2">Change '.$langs->trans("PriceUHTCurrency").' of lines</option>';
 			print '</select> ';
 			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';

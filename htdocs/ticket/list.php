@@ -392,7 +392,9 @@ if ($search_all) {
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
-//if ($search_fk_project) $sql .= natural_search('fk_project', $search_fk_project, 2);
+if ($search_fk_project > 0) {
+	$sql .= natural_search('fk_project', $search_fk_project, 2);
+}
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
 }
@@ -755,7 +757,7 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth150'));
+			print $form->select_dolusers($search[$key], 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth125'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();
@@ -772,7 +774,7 @@ foreach ($object->fields as $key => $val) {
 			if ($search[$key]) {
 				$selectedarray = array_values($search[$key]);
 			}
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth150', 1, 0, '', '', '');
+			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth100 maxwidth150', 1, 0, '', '', '');
 			print '</td>';
 		} elseif ($key == "fk_soc") {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
