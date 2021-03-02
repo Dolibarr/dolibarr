@@ -772,7 +772,7 @@ function isInEEC($object)
 
 	$country_code_in_EEC = getCountriesInEEC();
 
-	//print "dd".$this->country_code;
+	//print "dd".$object->country_code;
 	return in_array($object->country_code, $country_code_in_EEC);
 }
 

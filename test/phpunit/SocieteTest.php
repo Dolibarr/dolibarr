@@ -355,7 +355,20 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 
 		$result=$localobject->isInEEC();
 		print __METHOD__." id=".$localobject->id." country_code=".$localobject->country_code." result=".$result."\n";
-		$this->assertTrue(true, $result);
+		$this->assertTrue($result);
+
+		$localobject->country_code = 'US';
+
+		$result=$localobject->isInEEC();
+		print __METHOD__." id=".$localobject->id." country_code=".$localobject->country_code." result=".$result."\n";
+		$this->assertFalse($result);
+
+		/*$localobject->country_code = 'GB';
+
+		$result=$localobject->isInEEC();
+		print __METHOD__." id=".$localobject->id." country_code=".$localobject->country_code." result=".$result."\n";
+		$this->assertTrue($result);
+		*/
 
 		$localobject->info($localobject->id);
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
