@@ -255,7 +255,7 @@ class CActionComm
 							if ($typecalendar == 'module') {
 								//TODO check if possible to push it between system and systemauto
 								if (preg_match('/@/', $obj->module)) {
-									$module = explode('@',$obj->module)[1];
+									$module = explode('@', $obj->module)[1];
 								} else {
 									$module = $obj->module;
 								}
