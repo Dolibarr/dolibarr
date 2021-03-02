@@ -34,7 +34,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'lastname',
 	);
 
@@ -71,8 +71,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function get($id, $includecount = 0, $includeroles = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
-		{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
 		if ($id == 0) {
@@ -81,23 +80,19 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->fetch($id);
 		}
 
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'Contact not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includecount)
-		{
+		if ($includecount) {
 			$this->contact->load_ref_elements();
 		}
 
-		if ($includeroles)
-		{
+		if ($includeroles) {
 			$this->contact->fetchRoles();
 		}
 
@@ -119,8 +114,7 @@ class Contacts extends DolibarrApi
 	 */
 	public function getByEmail($email, $includecount = 0, $includeroles = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
-		{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
 		if (empty($email)) {
@@ -129,23 +123,19 @@ class Contacts extends DolibarrApi
 			$result = $this->contact->fetch('', '', '', $email);
 		}
 
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'Contact not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includecount)
-		{
+		if ($includecount) {
 			$this->contact->load_ref_elements();
 		}
 
-		if ($includeroles)
-		{
+		if ($includeroles) {
 			$this->contact->fetchRoles();
 		}
 
@@ -176,8 +166,7 @@ class Contacts extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->societe->contact->lire)
-		{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
 
@@ -186,8 +175,9 @@ class Contacts extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids)
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
 			$search_sale = DolibarrApiAccess::$user->id;
+		}
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
@@ -201,15 +191,18 @@ class Contacts extends DolibarrApi
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('socpeople').')';
-		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$socids.")";
+		}
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0)
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			$sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($search_sale > 0)
+		}
+		if ($search_sale > 0) {
 			$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
 		// Insert sale filter
-		if ($search_sale > 0)
-		{
+		if ($search_sale > 0) {
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
 
@@ -220,10 +213,8 @@ class Contacts extends DolibarrApi
 		}
 
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -232,10 +223,8 @@ class Contacts extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
-		if ($limit)
-		{
-			if ($page < 0)
-			{
+		if ($limit) {
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -243,24 +232,19 @@ class Contacts extends DolibarrApi
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$contact_static = new Contact($this->db);
-				if ($contact_static->fetch($obj->rowid))
-				{
+				if ($contact_static->fetch($obj->rowid)) {
 					$contact_static->fetchRoles();
-					if ($includecount)
-					{
+					if ($includecount) {
 						$contact_static->load_ref_elements();
 					}
-					if ($includeroles)
-					{
+					if ($includeroles) {
 						$contact_static->fetchRoles();
 					}
 
@@ -272,8 +256,7 @@ class Contacts extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieve contacts : '.$sql);
 		}
-		if (!count($obj_ret))
-		{
+		if (!count($obj_ret)) {
 			throw new RestException(404, 'Contacts not found');
 		}
 		return $obj_ret;
@@ -287,15 +270,13 @@ class Contacts extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
-		{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
 			throw new RestException(401, 'No permission to create/update contacts');
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
-		foreach ($request_data as $field => $value)
-		{
+		foreach ($request_data as $field => $value) {
 			$this->contact->$field = $value;
 		}
 		if ($this->contact->create(DolibarrApiAccess::$user) < 0) {
@@ -313,30 +294,29 @@ class Contacts extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
-		{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->creer) {
 			throw new RestException(401, 'No permission to create/update contacts');
 		}
 
 		$result = $this->contact->fetch($id);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'Contact not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		foreach ($request_data as $field => $value)
-		{
-			if ($field == 'id') continue;
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
 			$this->contact->$field = $value;
 		}
 
-		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
+		if ($this->contact->update($id, DolibarrApiAccess::$user, 1, '', '', 'update')) {
 			return $this->get($id);
+		}
 
 		return false;
 	}
@@ -349,18 +329,15 @@ class Contacts extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer)
-		{
+		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer) {
 			throw new RestException(401, 'No permission to delete contacts');
 		}
 		$result = $this->contact->fetch($id);
-		if (!$result)
-		{
+		if (!$result) {
 			throw new RestException(404, 'Contact not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe'))
-		{
+		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id, 'socpeople&societe')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
@@ -382,10 +359,12 @@ class Contacts extends DolibarrApi
 		//throw new RestException(401);
 		//}
 
-		if (!isset($request_data["login"]))
+		if (!isset($request_data["login"])) {
 			throw new RestException(400, "login field missing");
-		if (!isset($request_data["password"]))
+		}
+		if (!isset($request_data["password"])) {
 			throw new RestException(400, "password field missing");
+		}
 
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');

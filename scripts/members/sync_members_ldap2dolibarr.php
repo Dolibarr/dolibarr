@@ -24,7 +24,9 @@
  * \brief Script de mise a jour des adherents dans Dolibarr depuis LDAP
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -98,12 +100,15 @@ if (!isset($argv[2]) || !is_numeric($argv[2])) {
 
 $typeid = $argv[2];
 foreach ($argv as $key => $val) {
-	if ($val == 'commitiferror')
+	if ($val == 'commitiferror') {
 		$forcecommit = 1;
-	if (preg_match('/--server=([^\s]+)$/', $val, $reg))
+	}
+	if (preg_match('/--server=([^\s]+)$/', $val, $reg)) {
 		$conf->global->LDAP_SERVER_HOST = $reg[1];
-	if (preg_match('/-y$/', $val, $reg))
+	}
+	if (preg_match('/-y$/', $val, $reg)) {
 		$confirmed = 1;
+	}
 }
 
 print "Mails sending disabled (useless in batch mode)\n";
@@ -115,9 +120,11 @@ print "port=".$conf->global->LDAP_SERVER_PORT."\n";
 print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
-if (!empty($conf->global->LDAP_MEMBER_FILTER))
+if (!empty($conf->global->LDAP_MEMBER_FILTER)) {
 	print 'Filter=('.$conf->global->LDAP_MEMBER_FILTER.')'."\n"; // Note: filter is defined into function getRecords
-else print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
+} else {
+	print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
+}
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -257,8 +264,9 @@ if ($result >= 0) {
 				if ($datefirst && $datelast && $datelast <= $datefirst) {
 					// On ne va inserer que la premiere
 					$datelast = 0;
-					if (!$pricefirst && $pricelast)
+					if (!$pricefirst && $pricelast) {
 						$pricefirst = $pricelast;
+					}
 				}
 			}
 
@@ -278,9 +286,11 @@ if ($result >= 0) {
 		}
 
 		if (!$error || $forcecommit) {
-			if (!$error)
+			if (!$error) {
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			} else {
+				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			}
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

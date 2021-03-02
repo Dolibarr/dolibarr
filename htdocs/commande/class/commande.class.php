@@ -2962,11 +2962,12 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as not invoiced
 	 *
-	 * @return     int     <0 if ko, >0 if ok
+	 * @param	User    $user       Object user making the change
+	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+	 * @return  int     			<0 if ko, >0 if ok
 	 */
-	public function classifyUnBilled()
+	public function classifyUnBilled(User $user, $notrigger = 0)
 	{
-		global $conf, $user, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -2981,12 +2982,14 @@ class Commande extends CommonOrder
 				$this->billed = 1;
 			}
 
-			// Call trigger
-			$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$notrigger && empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 
 			if (!$error) {
 				$this->billed = 0;

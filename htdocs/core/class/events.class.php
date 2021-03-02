@@ -147,7 +147,8 @@ class Events // extends CommonObject
 
 		// Check parameters
 		if (empty($this->description)) {
-			$this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1;
+			$this->error = 'ErrorBadValueForParameterCreateEventDesc';
+			return -1;
 		}
 
 		// Insert request

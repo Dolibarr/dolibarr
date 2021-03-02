@@ -360,7 +360,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 			// Add page break if we do not have space to add current line
 			if ($lineinpage >= ($this->line_per_page - 1)) {
-				$lineinpage = 0; $yp = 0;
+				$lineinpage = 0;
+				$yp = 0;
 
 				// New page
 				$pdf->AddPage();

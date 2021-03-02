@@ -50,23 +50,28 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
 		if (GETPOST("month", "int")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
+			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false);
+			$date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 		}
 	} else {
 		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+			$date_start = dol_get_first_day($year_start, 1, false);
+			$date_end = dol_get_last_day($year_start, 3, false);
 		}
 		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+			$date_start = dol_get_first_day($year_start, 4, false);
+			$date_end = dol_get_last_day($year_start, 6, false);
 		}
 		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+			$date_start = dol_get_first_day($year_start, 7, false);
+			$date_end = dol_get_last_day($year_start, 9, false);
 		}
 		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+			$date_start = dol_get_first_day($year_start, 10, false);
+			$date_end = dol_get_last_day($year_start, 12, false);
 		}
 	}
 }
@@ -286,8 +291,12 @@ $tmp = dol_getdate($date_end);
 $yend = $tmp['year'];
 $mend = $tmp['mon'];
 
-$total = 0; $subtotalcoll = 0; $subtotalpaye = 0; $subtotal = 0;
-$i = 0; $mcursor = 0;
+$total = 0;
+$subtotalcoll = 0;
+$subtotalpaye = 0;
+$subtotal = 0;
+$i = 0;
+$mcursor = 0;
 while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $mcursor is to avoid too large loop
 	//$m = $conf->global->SOCIETE_FISCAL_MONTH_START + ($mcursor % 12);
 	if ($m == 13) {
@@ -537,7 +546,8 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 	print "<td>&nbsp;</td>\n";
 	print "</tr>\n";
 
-	$i++; $m++;
+	$i++;
+	$m++;
 	if ($i > 2) {
 		print '<tr class="liste_total">';
 		print '<td class="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.round($m / 3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
@@ -546,7 +556,9 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {	// $
 		print '<td class="nowrap right">'.price(price2num($subtotal, 'MT')).'</td>';
 		print '<td>&nbsp;</td></tr>';
 		$i = 0;
-		$subtotalcoll = 0; $subtotalpaye = 0; $subtotal = 0;
+		$subtotalcoll = 0;
+		$subtotalpaye = 0;
+		$subtotal = 0;
 	}
 }
 print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td class="nowrap right">'.price(price2num($total, 'MT')).'</td>';

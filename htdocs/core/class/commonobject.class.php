@@ -493,6 +493,10 @@ abstract class CommonObject
 	 */
 	public $sendtoid;
 
+	/**
+	 * @var	float	Amount already paid (used to show correct status)
+	 */
+	public $alreadypaid;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -758,7 +762,8 @@ abstract class CommonObject
 				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
-			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
+			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			$outdone++;
 			$outdone++;
 
 			// List of extra languages
@@ -1177,7 +1182,8 @@ abstract class CommonObject
 			if (!$notrigger) {
 				$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
 				if ($result < 0) {
-					$this->db->rollback(); return -1;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 
@@ -2447,7 +2453,8 @@ abstract class CommonObject
 									$line->date_end,
 									$line->array_options,
 									$line->fk_unit,
-									$line->multicurrency_subprice
+									$line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							case 'invoice_supplier':
@@ -2469,7 +2476,8 @@ abstract class CommonObject
 									$line->date_end,
 									$line->array_options,
 									$line->fk_unit,
-									$line->multicurrency_subprice
+									$line->multicurrency_subprice,
+									$line->ref_supplier
 								);
 								break;
 							default:
@@ -3148,9 +3156,8 @@ abstract class CommonObject
 					return $this->getRangOfLine($fk_parent_line);
 				}
 			}
-		}
-		// If not, search the last rang of element
-		else {
+		} else {
+			// If not, search the last rang of element
 			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
@@ -3739,42 +3746,60 @@ abstract class CommonObject
 					if ($objecttype == 'facture') {
 						$classpath = 'compta/facture/class';
 					} elseif ($objecttype == 'facturerec') {
-						$classpath = 'compta/facture/class'; $module = 'facture';
+						$classpath = 'compta/facture/class';
+						$module = 'facture';
 					} elseif ($objecttype == 'propal') {
 						$classpath = 'comm/propal/class';
 					} elseif ($objecttype == 'supplier_proposal') {
 						$classpath = 'supplier_proposal/class';
 					} elseif ($objecttype == 'shipping') {
-						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
+						$classpath = 'expedition/class';
+						$subelement = 'expedition';
+						$module = 'expedition_bon';
 					} elseif ($objecttype == 'delivery') {
-						$classpath = 'delivery/class'; $subelement = 'delivery'; $module = 'delivery_note';
+						$classpath = 'delivery/class';
+						$subelement = 'delivery';
+						$module = 'delivery_note';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
-						$classpath = 'fourn/class'; $module = 'fournisseur';
+						$classpath = 'fourn/class';
+						$module = 'fournisseur';
 					} elseif ($objecttype == 'fichinter') {
-						$classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
+						$classpath = 'fichinter/class';
+						$subelement = 'fichinter';
+						$module = 'ficheinter';
 					} elseif ($objecttype == 'subscription') {
-						$classpath = 'adherents/class'; $module = 'adherent';
+						$classpath = 'adherents/class';
+						$module = 'adherent';
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
 
 					// Set classfile
-					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+					$classfile = strtolower($subelement);
+					$classname = ucfirst($subelement);
 
 					if ($objecttype == 'order') {
-						$classfile = 'commande'; $classname = 'Commande';
+						$classfile = 'commande';
+						$classname = 'Commande';
 					} elseif ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
+						$classfile = 'fournisseur.facture';
+						$classname = 'FactureFournisseur';
 					} elseif ($objecttype == 'order_supplier') {
-						$classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
+						$classfile = 'fournisseur.commande';
+						$classname = 'CommandeFournisseur';
 					} elseif ($objecttype == 'supplier_proposal') {
-						$classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+						$classfile = 'supplier_proposal';
+						$classname = 'SupplierProposal';
 					} elseif ($objecttype == 'facturerec') {
-						$classfile = 'facture-rec'; $classname = 'FactureRec';
+						$classfile = 'facture-rec';
+						$classname = 'FactureRec';
 					} elseif ($objecttype == 'subscription') {
-						$classfile = 'subscription'; $classname = 'Subscription';
+						$classfile = 'subscription';
+						$classname = 'Subscription';
 					} elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
+						$classpath = 'projet/class';
+						$classfile = 'project';
+						$classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -4612,7 +4637,8 @@ abstract class CommonObject
 
 		$element = $this->element;
 
-		$text = ''; $description = '';
+		$text = '';
+		$description = '';
 
 		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id) {
@@ -4979,7 +5005,8 @@ abstract class CommonObject
 			if (!$notrigger) {
 				$result = $this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
 				if ($result < 0) {
-					$this->db->rollback(); return -1;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 			$this->db->commit();
@@ -5100,7 +5127,8 @@ abstract class CommonObject
 							$tmpdir = trim($tmpdir);
 							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 							if (!$tmpdir) {
-								unset($listofdir[$key]); continue;
+								unset($listofdir[$key]);
+								continue;
 							}
 							if (is_dir($tmpdir)) {
 								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
@@ -6337,6 +6365,7 @@ abstract class CommonObject
 
 		$out = '';
 		$type = '';
+		$isDependList=0;
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
@@ -6374,6 +6403,7 @@ abstract class CommonObject
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
+
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
@@ -6523,7 +6553,6 @@ abstract class CommonObject
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
@@ -6627,6 +6656,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
+								$isDependList=1;
 							}
 
 							$out .= '<option value="'.$obj->rowid.'"';
@@ -6781,6 +6811,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
+								$isDependList=1;
 							}
 
 							$data[$obj->rowid] = $labeltoshow;
@@ -6868,6 +6899,10 @@ abstract class CommonObject
 		}
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
+		}
+
+		if ($isDependList==1) {
+			$out .= $this->getJSListDependancies('_common');
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -7395,10 +7430,10 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							$out .= '<td class="wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
 						//$out .= "titlefield";
@@ -7466,10 +7501,28 @@ abstract class CommonObject
 				$out .= "\n";
 				// Add code to manage list depending on others
 				if (!empty($conf->use_javascript_ajax)) {
-					$out .= '
+					$out .= $this->getJSListDependancies();
+				}
+
+				$out .= '<!-- /showOptionals --> '."\n";
+			}
+		}
+
+		$out .= $hookmanager->resPrint;
+
+		return $out;
+	}
+
+	/**
+	 * @param 	string 	$type	Type for prefix
+	 * @return 	string			Javacript code to manage dependency
+	 */
+	public function getJSListDependancies($type = '_extra')
+	{
+		$out .= '
 					<script>
 					jQuery(document).ready(function() {
-						function showOptions(child_list, parent_list, orig_select)
+						function showOptions'.$type.'(child_list, parent_list, orig_select)
 						{
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
@@ -7493,7 +7546,7 @@ abstract class CommonObject
 								$("select[name=\""+child_list+"\"]").append(options);
 							}
 						}
-						function setListDependencies() {
+						function setListDependencies'.$type.'() {
 							jQuery("select option[parent]").parent().each(function() {
 								var orig_select = {};
 								var child_list = $(this).attr("name");
@@ -7518,7 +7571,7 @@ abstract class CommonObject
 
 								//When we change parent list
 								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select[child_list]);
+									showOptions'.$type.'(child_list, parent_list, orig_select[child_list]);
 									//Select the value 0 on child list after a change on the parent list
 									$("#"+child_list).val(0).trigger("change");
 									//Hide child lists if the parent value is set to 0
@@ -7528,20 +7581,12 @@ abstract class CommonObject
 								});
 							});
 						}
-						setListDependencies();
+
+						setListDependencies'.$type.'();
 					});
 					</script>'."\n";
-				}
-
-				$out .= '<!-- /showOptionals --> '."\n";
-			}
-		}
-
-		$out .= $hookmanager->resPrint;
-
 		return $out;
 	}
-
 
 	/**
 	 * Returns the rights used for this class

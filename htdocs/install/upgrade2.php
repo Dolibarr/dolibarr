@@ -117,7 +117,8 @@ pHeader('', 'step5', GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'upg
 
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
-	print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
+	print '<h3><img class="valigntextbottom inline-block" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
+	print '<span class="inline-block">'.$langs->trans('DataMigration').'</span></h3>';
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
@@ -455,6 +456,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		$listofmodule = array(
 			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
 			'MAIN_MODULE_AGENDA'=>'newboxdefonly',
+			'MAIN_MODULE_BANQUE'=>'menuonly',
 			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
 			'MAIN_MODULE_CRON'=>'newboxdefonly',
 			'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
@@ -472,11 +474,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
 			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
 			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+			'MAIN_MODULE_RECRUITMENT'=>'menuonly',
 			'MAIN_MODULE_RESOURCE'=>'noboxes',
 			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
+			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
 			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+			'MAIN_MODULE_STRIPE'=>'menuonly',
 			'MAIN_MODULE_TICKET'=>'newboxdefonly',
 			'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
 			'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
@@ -521,7 +525,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print "<!-- (".$reshook.") -->";
 				print '</td></tr>';
 			} else {
-				print '<tr><td colspan="4">';
+				print '<tr class="trforrunsql"><td colspan="4">';
 				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: <span class="ok">OK</span>';
 				print "<!-- (".$reshook.") -->";
 				print '</td></tr>';
@@ -529,7 +533,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		} else {
 			//if (! empty($conf->modules))
 			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
-				print '<tr><td colspan="4">';
+				print '<tr class="trforrunsql"><td colspan="4">';
 				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("None");
 				print '</td></tr>';
 			}
@@ -539,6 +543,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '</table>';
 
 
+	// Set constant to ask to remake a new ping to inform about upgrade (if first ping was done and OK)
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."const SET VALUE = 'torefresh' WHERE name = 'MAIN_FIRST_PING_OK_ID'";
 	$db->query($sql, 1);
 
@@ -563,7 +568,39 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	// Actions for all versions (no database change but rename some directories)
 	migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
 
-	print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
+	$silent = 0;
+	if (!$silent) {
+		print '<table width="100%">';
+		print '<tr><td style="width: 30%">'.$langs->trans("MigrationFinished").'</td>';
+		print '<td class="right">';
+		if ($error == 0) {
+			//print '<span class="ok">'.$langs->trans("OK").'</span> - ';		// $error = 0 does not mean there is no error (error are not always trapped)
+		} else {
+			print '<span class="error">'.$langs->trans("Error").'</span> - ';
+		}
+
+		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			function init_trrunsql()
+			{
+				console.log("toggle .trforrunsql");
+				jQuery(".trforrunsql").toggle();
+			}
+			init_trrunsql();
+			jQuery(".trforrunsqlshowhide").click(function() {
+				init_trrunsql();
+			});
+		});
+		</script>';
+		print '<a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		//}
+
+		print '</td></tr>'."\n";
+		print '</table>';
+	}
+
+	//print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
 } else {
 	print '<div class="error">'.$langs->trans('ErrorWrongParameters').'</div>';
 	$error++;
@@ -4132,7 +4169,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod = new modBlockedLog($db);
 				// For this module we only reload menus.
 				$mod->delete_menus();
-				$mod->insert_menus($reloadmode);
+				$mod->insert_menus();
 			}
 		} elseif ($moduletoreload == 'MAIN_MODULE_CRON') {
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
@@ -4296,7 +4333,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					$mod = new $classname($db);
 
 					//$mod->remove('noboxes');
-					$mod->delete_menus();	// We must delete to be sure it is insert with new values
+					$mod->delete_menus();	// We must delete to be sure it is inserted with new values
 					$mod->init($reloadmode);
 				} else {
 					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
@@ -4320,7 +4357,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		}
 
 		if (!empty($mod) && is_object($mod)) {
-			print '<tr><td colspan="4">';
+			print '<tr class="trforrunsql"><td colspan="4">';
 			print '<b>'.$langs->trans('Upgrade').'</b>: ';
 			print $langs->trans('MigrationReloadModule').' '.$mod->getName(); // We keep getName outside of trans because getName is already encoded/translated
 			print "<!-- (".$reloadmode.") -->";
@@ -4355,7 +4392,7 @@ function migrate_reload_menu($db, $langs, $conf)
 	}
 
 	foreach ($listofmenuhandler as $key => $val) {
-		print '<tr><td colspan="4">';
+		print '<tr class="trforrunsql"><td colspan="4">';
 
 		//print "x".$key;
 		print '<br>';

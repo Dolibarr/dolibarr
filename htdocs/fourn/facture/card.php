@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->product->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -361,7 +362,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')), GETPOST('calculation_mode', 'int'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));

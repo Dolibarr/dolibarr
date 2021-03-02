@@ -1250,7 +1250,7 @@ class FactureFournisseur extends CommonInvoice
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				$ref = dol_sanitizeFileName($this->ref);
-				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoive_supplier').$ref;
+				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file)) {
 					if (!dol_delete_file($file, 0, 0, 0, $this)) { // For triggers
@@ -2398,6 +2398,10 @@ class FactureFournisseur extends CommonInvoice
 			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
 		} elseif ($this->type == self::TYPE_DEPOSIT) {
 			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		}
+		if (isset($this->status)) {
+			$alreadypaid = -1;
+			$label .= ' '.$this->getLibStatut(5, $alreadypaid);
 		}
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;

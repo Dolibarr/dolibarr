@@ -200,31 +200,39 @@ function getBrowserInfo($user_agent)
 	// Name
 	$reg = array();
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'firefox'; $version = $reg[2];
+		$name = 'firefox';
+		$version = $reg[2];
 	} elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'edge'; $version = $reg[2];
+		$name = 'edge';
+		$version = $reg[2];
 	} elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) {
-		$name = 'chrome'; $version = $reg[2];
-	} // we can have 'chrome (Mozilla...) chrome x.y' in one string
-	elseif (preg_match('/chrome/i', $user_agent, $reg)) {
+		$name = 'chrome';
+		$version = $reg[2];
+	} elseif (preg_match('/chrome/i', $user_agent, $reg)) {
+		// we can have 'chrome (Mozilla...) chrome x.y' in one string
 		$name = 'chrome';
 	} elseif (preg_match('/iceweasel/i', $user_agent)) {
 		$name = 'iceweasel';
 	} elseif (preg_match('/epiphany/i', $user_agent)) {
 		$name = 'epiphany';
 	} elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'safari'; $version = $reg[2];
-	} // Safari is often present in string for mobile but its not.
-	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'opera'; $version = $reg[2];
+		$name = 'safari';
+		$version = $reg[2];
+	} elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
+		// Safari is often present in string for mobile but its not.
+		$name = 'opera';
+		$version = $reg[2];
 	} elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
-		$name = 'ie'; $version = end($reg);
-	} // MS products at end
-	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
-		$name = 'ie'; $version = end($reg);
-	} // MS products at end
-	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
-		$name = 'lynxlinks'; $version = $reg[4];
+		$name = 'ie';
+		$version = end($reg);
+	} elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
+		// MS products at end
+		$name = 'ie';
+		$version = end($reg);
+	} elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
+		// MS products at end
+		$name = 'lynxlinks';
+		$version = $reg[4];
 	}
 
 	if ($tablet) {
@@ -253,9 +261,11 @@ function getBrowserInfo($user_agent)
 function dol_shutdown()
 {
 	global $conf, $user, $langs, $db;
-	$disconnectdone = false; $depth = 0;
+	$disconnectdone = false;
+	$depth = 0;
 	if (is_object($db) && !empty($db->connected)) {
-		$depth = $db->transaction_opened; $disconnectdone = $db->close();
+		$depth = $db->transaction_opened;
+		$disconnectdone = $db->close();
 	}
 	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth) ? ' (Warn: db disconnection forced, transaction depth was '.$depth.')' : ''), (($disconnectdone && $depth) ?LOG_WARNING:LOG_INFO));
 }
@@ -311,7 +321,7 @@ function GETPOSTISSET($paramname)
 
 /**
  *  Return value of a param into GET or POST supervariable.
- *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
@@ -393,8 +403,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
-		} // Else, retrieve default values if we are not doing a sort
-		elseif (!isset($_GET['sortfield'])) {	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+		} elseif (!isset($_GET['sortfield'])) {
+			// Else, retrieve default values if we are not doing a sort
+			// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 			if (!empty($_GET['action']) && $_GET['action'] == 'create' && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
 				// Search default value from $object->field
 				global $object;
@@ -435,12 +446,15 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						}
 					}
-				} // Management of default search_filters and sort order
-				elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
-					if (!empty($user->default_values)) {		// $user->default_values defined from menu 'Setup - Default values'
+				} elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+					// Management of default search_filters and sort order
+					if (!empty($user->default_values)) {
+						// $user->default_values defined from menu 'Setup - Default values'
 						//var_dump($user->default_values[$relativepathstring]);
-						if ($paramname == 'sortfield' || $paramname == 'sortorder') {			// Sorted on which fields ? ASC or DESC ?
-							if (isset($user->default_values[$relativepathstring]['sortorder'])) {	// Even if paramname is sortfield, data are stored into ['sortorder...']
+						if ($paramname == 'sortfield' || $paramname == 'sortorder') {
+							// Sorted on which fields ? ASC or DESC ?
+							if (isset($user->default_values[$relativepathstring]['sortorder'])) {
+								// Even if paramname is sortfield, data are stored into ['sortorder...']
 								foreach ($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval) {
 									$qualified = 0;
 									if ($defkey != '_noquery_') {
@@ -524,9 +538,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
-		$maxloop = 20; $loopnb = 0; // Protection against infinite loop
+		$maxloop = 20;
+		$loopnb = 0; // Protection against infinite loop
 		while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop)) {    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
-			$loopnb++; $newout = '';
+			$loopnb++;
+			$newout = '';
 
 			if ($reg[1] == 'DAY') {
 				$tmp = dol_getdate(dol_now(), true);
@@ -837,13 +853,14 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 			}
 		}
-		if ($returnemptyifnotfound) {								// Not found into alternate dir
+		if ($returnemptyifnotfound) {
+			// Not found into alternate dir
 			if ($returnemptyifnotfound == 1 || !file_exists($res)) {
 				return '';
 			}
 		}
-	} else // For an url path
-	{
+	} else {
+		// For an url path
 		// We try to get local path of file on filesystem from url
 		// Note that trying to know if a file on disk exist by forging path on disk from url
 		// works only for some web server and some setup. This is bugged when
@@ -1095,16 +1112,19 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 	$substitjs = array("&#039;"=>"\\'", "\r"=>'\\r');
 	//$substitjs['</']='<\/';	// We removed this. Should be useless.
 	if (empty($noescapebackslashn)) {
-		$substitjs["\n"] = '\\n'; $substitjs['\\'] = '\\\\';
+		$substitjs["\n"] = '\\n';
+		$substitjs['\\'] = '\\\\';
 	}
 	if (empty($mode)) {
-		$substitjs["'"] = "\\'"; $substitjs['"'] = "\\'";
+		$substitjs["'"] = "\\'";
+		$substitjs['"'] = "\\'";
 	} elseif ($mode == 1) {
 		$substitjs["'"] = "\\'";
 	} elseif ($mode == 2) {
 		$substitjs['"'] = '\\"';
 	} elseif ($mode == 3) {
-		$substitjs["'"] = "\\'"; $substitjs['"'] = "\\\"";
+		$substitjs["'"] = "\\'";
+		$substitjs['"'] = "\\\"";
 	}
 	return strtr($stringtoescape, $substitjs);
 }
@@ -1310,16 +1330,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) {
 				$data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
 			}
-		} // This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-		elseif (!empty($_SERVER['SERVER_ADDR'])) {
+		} elseif (!empty($_SERVER['SERVER_ADDR'])) {
+			// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
 			$data['ip'] = $_SERVER['SERVER_ADDR'];
-		}
-		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-		elseif (!empty($_SERVER['COMPUTERNAME'])) {
+		} elseif (!empty($_SERVER['COMPUTERNAME'])) {
+			// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
 			$data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME']) ? '' : '@'.$_SERVER['USERNAME']);
-		}
-		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-		elseif (!empty($_SERVER['LOGNAME'])) {
+		} elseif (!empty($_SERVER['LOGNAME'])) {
+			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 			$data['ip'] = '???@'.$_SERVER['LOGNAME'];
 		}
 		// Loop on each log handler and send output
@@ -1694,7 +1712,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($object->element == 'product') {
-		$width = 80; $cssclass = 'photoref';
+		$width = 80;
+		$cssclass = 'photoref';
 		$showimage = $object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos = (isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO) ? $conf->global->PRODUCT_MAX_VISIBLE_PHOTO : 5);
 		if ($conf->browser->layout == 'phone') {
@@ -1712,7 +1731,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} elseif ($object->element == 'ticket') {
-		$width = 80; $cssclass = 'photoref';
+		$width = 80;
+		$cssclass = 'photoref';
 		$showimage = $object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos = (isset($conf->global->TICKET_MAX_VISIBLE_PHOTO) ? $conf->global->TICKET_MAX_VISIBLE_PHOTO : 2);
 		if ($conf->browser->layout == 'phone') {
@@ -1812,7 +1832,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 					$cssclass = 'photorefcenter';
 					$nophoto = img_picto('No photo', 'title_agenda');
 				} else {
-					$width = 14; $cssclass = 'photorefcenter';
+					$width = 14;
+					$cssclass = 'photorefcenter';
 					$picto = $object->picto;
 					if ($object->element == 'project' && !$object->public) {
 						$picto = 'project'; // instead of projectpub
@@ -2000,7 +2021,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : $object->address);
 	}
 	// Zip/Town/State
-	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {  	// US: title firstname name \n address lines \n town, state, zip \n country
+	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
+		// US: title firstname name \n address lines \n town, state, zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($ret ? $sep : '').$town;
 		if (!empty($object->state))	{
@@ -2009,7 +2031,8 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		if ($object->zip) {
 			$ret .= ($ret ? ", " : '').$object->zip;
 		}
-	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) { // UK: title firstname name \n address lines \n town state \n zip \n country
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) {
+		// UK: title firstname name \n address lines \n town state \n zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($ret ? $sep : '').$town;
 		if (!empty($object->state)) {
@@ -2018,14 +2041,16 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		if ($object->zip) {
 			$ret .= ($ret ? $sep : '').$object->zip;
 		}
-	} elseif (isset($object->country_code) && in_array($object->country_code, array('ES', 'TR'))) { // ES: title firstname name \n address lines \n zip town \n state \n country
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('ES', 'TR'))) {
+		// ES: title firstname name \n address lines \n zip town \n state \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
 			$ret .= "\n".$object->state;
 		}
-	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) { // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) {
+		// IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
@@ -2129,7 +2154,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) {
-		$format = $formatwithoutreduce; $reduceformat = 1;
+		$format = $formatwithoutreduce;
+		$reduceformat = 1;
 	}  // so format 'dayreduceformat' is processed like day
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
@@ -2152,9 +2178,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = ($outputlangs->trans("FormatDateHourText") != "FormatDateHourText" ? $outputlangs->trans("FormatDateHourText") : $conf->format_date_hour_text);
 	} elseif ($format == 'dayhourtextshort') {
 		$format = ($outputlangs->trans("FormatDateHourTextShort") != "FormatDateHourTextShort" ? $outputlangs->trans("FormatDateHourTextShort") : $conf->format_date_hour_text_short);
-	}
-	// Format not sensitive to language
-	elseif ($format == 'dayhourlog') {
+	} elseif ($format == 'dayhourlog') {
+		// Format not sensitive to language
 		$format = '%Y%m%d%H%M%S';
 	} elseif ($format == 'dayhourldap') {
 		$format = '%Y%m%d%H%M%SZ';
@@ -2440,13 +2465,13 @@ function dol_now($mode = 'auto')
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-	} /*elseif ($mode == 'tzref')				// Time for now with parent company timezone is added
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		$ret=dol_now('gmt')+($tzsecond*3600);
-	}*/
-	elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {				// Time for now with user timezone added
+		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
+		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+		//	$ret=dol_now('gmt')+($tzsecond*3600);
+		//}
+	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
+		// Time for now with user timezone added
 		//print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
@@ -2570,7 +2595,8 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		}
 
 		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
-			$type = 'AC_EMAIL'; $link = '';
+			$type = 'AC_EMAIL';
+			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
 				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
@@ -2938,7 +2964,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 
 		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
-			$type = 'AC_TEL'; $link = '';
+			$type = 'AC_TEL';
+			$link = '';
 			if ($addlink == 'AC_FAX') {
 				$type = 'AC_FAX';
 			}
@@ -3414,14 +3441,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
-				'cash-register', 'category', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
+				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
+				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot',
+				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
-				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_barcode', 'object_bill', 'object_billa', 'object_billd', 'object_bom',
+				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_asset', 'object_barcode', 'object_bill', 'object_billr', 'object_billa', 'object_billd', 'object_bom',
 				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert',
 				'object_folder', 'object_folder-open','object_generic',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
@@ -3436,35 +3464,37 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
 				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement',
 				'off', 'on', 'order',
-				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
-				'setup', 'share-alt', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
+				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
-				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice', 'user-cog',
-				'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
+				'user-cog',
 				'eventorganization', 'object_eventorganization'
 			))) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 			$fakey = $pictowithouttext;
-			$facolor = ''; $fasize = '';
+			$facolor = '';
+			$fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('clock', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
+			if (in_array($pictowithouttext, array('clock', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
-			if (in_array($pictowithouttext, array('black-tie', 'github', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
+			if (in_array($pictowithouttext, array('black-tie', 'github', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
 				$fa = 'fab';
 			}
 
 			$arrayconvpictotofa = array(
-				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book',
-				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
+				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'search-dollar', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book', 'asset'=>'money-check-alt',
+				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
-				'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
 				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
@@ -3480,13 +3510,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
-				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
 				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
-				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
-				'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
+				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
+				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
 				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
@@ -3524,7 +3554,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('holiday'))) {
+			if (in_array($pictowithouttext, array('holiday', 'project'))) {
 				$morecss = 'em088';
 			}
 			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
@@ -3543,9 +3573,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			// Add CSS
 			$arrayconvpictotomorcess = array(
-				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account',
+				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
-				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billd'=>'infobox-commande',
+				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'conversation'=>'infobox-contrat',
 				'donation'=>'infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'infobox-action',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
@@ -3555,7 +3585,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
 				'holiday'=>'infobox-holiday', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
-				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
+				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
@@ -3577,7 +3607,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
+				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
 				'website'=>'#304'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -5009,7 +5039,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	$nbdecimal = $rounding;
 
 	// Output separators by default (french)
-	$dec = ','; $thousand = ' ';
+	$dec = ',';
+	$thousand = ' ';
 
 	// If $outlangs not forced, we use use language
 	if (!is_object($outlangs)) {
@@ -5111,7 +5142,8 @@ function price2num($amount, $rounding = '', $option = 0)
 	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
-	$dec = ','; $thousand = ' ';
+	$dec = ',';
+	$thousand = ' ';
 	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
 		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
 	}
@@ -5902,7 +5934,8 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 function yn($yesno, $case = 1, $color = 0)
 {
 	global $langs;
-	$result = 'unknown'; $classname = '';
+	$result = 'unknown';
+	$classname = '';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') { 	// A mettre avant test sur no a cause du == 0
 		$result = $langs->trans('yes');
 		if ($case == 1 || $case == 3) {
@@ -6252,8 +6285,8 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		$text = strtr($text, $repTable);
 		if ($charset == 'UTF-8') {
 			$pattern = '/(<br[^>]*>)/Uu';
-		} // /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
-		else {
+		} else {
+			// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
 			$pattern = '/(<br[^>]*>)/U'; // /U is to have UNGREEDY regex to limit to one html tag.
 		}
 		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -6419,9 +6452,11 @@ function dol_string_is_good_iso($s, $clean = 0)
 		$ordchar = ord($s[$scursor]);
 		//print $scursor.'-'.$ordchar.'<br>';
 		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) {
-			$ok = 0; break;
+			$ok = 0;
+			break;
 		} elseif ($ordchar > 126 && $ordchar < 160) {
-			$ok = 0; break;
+			$ok = 0;
+			break;
 		} elseif ($clean) {
 			$out .= $s[$scursor];
 		}
@@ -6471,8 +6506,8 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 	$text = strtr($text, $repTable);
 	if ($charset == 'UTF-8') {
 		$pattern = '/(<br[^>]*>)/Uu';
-	} // /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
-	else {
+	} else {
+		// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
 		$pattern = '/(<br[^>]*>)/U'; // /U is to have UNGREEDY regex to limit to one html tag.
 	}
 	$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -7411,7 +7446,8 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 {
 	global $conf, $langs;
 
-	$ret = 0; $return = '';
+	$ret = 0;
+	$return = '';
 	$out = '';
 	$divstart = $divend = '';
 
@@ -7505,10 +7541,12 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 	if (is_array($mesgarray)) {
 		foreach ($mesgarray as $val) {
 			if ($val && preg_match('/class="error"/i', $val)) {
-				$iserror++; break;
+				$iserror++;
+				break;
 			}
 			if ($val && preg_match('/class="warning"/i', $val)) {
-				$iswarning++; break;
+				$iswarning++;
+				break;
 			}
 		}
 	} elseif ($mesgstring && preg_match('/class="error"/i', $mesgstring)) {
@@ -8513,7 +8551,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	$j = 0;
 	foreach ($crits as $crit) {
 		$crit = trim($crit);
-		$i = 0; $i2 = 0;
+		$i = 0;
+		$i2 = 0;
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
@@ -8593,7 +8632,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 						$tmpcrit = trim($tmpcrit);
 						$tmpcrit2 = $tmpcrit;
-						$tmpbefore = '%'; $tmpafter = '%';
+						$tmpbefore = '%';
+						$tmpafter = '%';
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
 							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
@@ -8808,209 +8848,357 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 
 	// Plain text files
 	if (preg_match('/\.txt$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.rtx$/i', $tmpfile)) {
-		$mime = 'text/richtext'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/richtext';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.csv$/i', $tmpfile)) {
-		$mime = 'text/csv'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/csv';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.tsv$/i', $tmpfile)) {
-		$mime = 'text/tab-separated-values'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/tab-separated-values';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.(cf|conf|log)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.ini$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'ini'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'ini';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.md$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'md'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'md';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.css$/i', $tmpfile)) {
-		$mime = 'text/css'; $imgmime = 'css.png'; $srclang = 'css'; $famime = 'file-text-o';
+		$mime = 'text/css';
+		$imgmime = 'css.png';
+		$srclang = 'css';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.lang$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'lang'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'lang';
+		$famime = 'file-text-o';
 	}
 	// Certificate files
 	if (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	// XML based (HTML/XML/XAML)
 	if (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) {
-		$mime = 'text/html'; $imgmime = 'html.png'; $srclang = 'html'; $famime = 'file-text-o';
+		$mime = 'text/html';
+		$imgmime = 'html.png';
+		$srclang = 'html';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
-		$mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xml'; $famime = 'file-text-o';
+		$mime = 'text/xml';
+		$imgmime = 'other.png';
+		$srclang = 'xml';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.xaml$/i', $tmpfile)) {
-		$mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xaml'; $famime = 'file-text-o';
+		$mime = 'text/xml';
+		$imgmime = 'other.png';
+		$srclang = 'xaml';
+		$famime = 'file-text-o';
 	}
 	// Languages
 	if (preg_match('/\.bas$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'bas'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'bas';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(c)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'c'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'c';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(cpp)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cpp'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'cpp';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.cs$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'cs';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(h)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'h'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'h';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(java|jsp)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'java'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'java';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'php.png';
+		$srclang = 'php';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.phtml$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'php.png';
+		$srclang = 'php';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(pl|pm)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'pl.png'; $srclang = 'perl'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'pl.png';
+		$srclang = 'perl';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.sql$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'sql'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'sql';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.js$/i', $tmpfile)) {
-		$mime = 'text/x-javascript'; $imgmime = 'jscript.png'; $srclang = 'js'; $famime = 'file-code-o';
+		$mime = 'text/x-javascript';
+		$imgmime = 'jscript.png';
+		$srclang = 'js';
+		$famime = 'file-code-o';
 	}
 	// Open office
 	if (preg_match('/\.odp$/i', $tmpfile)) {
-		$mime = 'application/vnd.oasis.opendocument.presentation'; $imgmime = 'ooffice.png'; $famime = 'file-powerpoint-o';
+		$mime = 'application/vnd.oasis.opendocument.presentation';
+		$imgmime = 'ooffice.png';
+		$famime = 'file-powerpoint-o';
 	}
 	if (preg_match('/\.ods$/i', $tmpfile)) {
-		$mime = 'application/vnd.oasis.opendocument.spreadsheet'; $imgmime = 'ooffice.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.oasis.opendocument.spreadsheet';
+		$imgmime = 'ooffice.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.odt$/i', $tmpfile)) {
-		$mime = 'application/vnd.oasis.opendocument.text'; $imgmime = 'ooffice.png'; $famime = 'file-word-o';
+		$mime = 'application/vnd.oasis.opendocument.text';
+		$imgmime = 'ooffice.png';
+		$famime = 'file-word-o';
 	}
 	// MS Office
 	if (preg_match('/\.mdb$/i', $tmpfile)) {
-		$mime = 'application/msaccess'; $imgmime = 'mdb.png'; $famime = 'file-o';
+		$mime = 'application/msaccess';
+		$imgmime = 'mdb.png';
+		$famime = 'file-o';
 	}
 	if (preg_match('/\.doc(x|m)?$/i', $tmpfile)) {
-		$mime = 'application/msword'; $imgmime = 'doc.png'; $famime = 'file-word-o';
+		$mime = 'application/msword';
+		$imgmime = 'doc.png';
+		$famime = 'file-word-o';
 	}
 	if (preg_match('/\.dot(x|m)?$/i', $tmpfile)) {
-		$mime = 'application/msword'; $imgmime = 'doc.png'; $famime = 'file-word-o';
+		$mime = 'application/msword';
+		$imgmime = 'doc.png';
+		$famime = 'file-word-o';
 	}
 	if (preg_match('/\.xlt(x)?$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-excel'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.ms-excel';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.xla(m)?$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-excel'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.ms-excel';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.xls$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-excel'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.ms-excel';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.xls(b|m|x)$/i', $tmpfile)) {
-		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.pps(m|x)?$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-powerpoint'; $imgmime = 'ppt.png'; $famime = 'file-powerpoint-o';
+		$mime = 'application/vnd.ms-powerpoint';
+		$imgmime = 'ppt.png';
+		$famime = 'file-powerpoint-o';
 	}
 	if (preg_match('/\.ppt(m|x)?$/i', $tmpfile)) {
-		$mime = 'application/x-mspowerpoint'; $imgmime = 'ppt.png'; $famime = 'file-powerpoint-o';
+		$mime = 'application/x-mspowerpoint';
+		$imgmime = 'ppt.png';
+		$famime = 'file-powerpoint-o';
 	}
 	// Other
 	if (preg_match('/\.pdf$/i', $tmpfile)) {
-		$mime = 'application/pdf'; $imgmime = 'pdf.png'; $famime = 'file-pdf-o';
+		$mime = 'application/pdf';
+		$imgmime = 'pdf.png';
+		$famime = 'file-pdf-o';
 	}
 	// Scripts
 	if (preg_match('/\.bat$/i', $tmpfile)) {
-		$mime = 'text/x-bat'; $imgmime = 'script.png'; $srclang = 'dos'; $famime = 'file-code-o';
+		$mime = 'text/x-bat';
+		$imgmime = 'script.png';
+		$srclang = 'dos';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.sh$/i', $tmpfile)) {
-		$mime = 'text/x-sh'; $imgmime = 'script.png'; $srclang = 'bash'; $famime = 'file-code-o';
+		$mime = 'text/x-sh';
+		$imgmime = 'script.png';
+		$srclang = 'bash';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.ksh$/i', $tmpfile)) {
-		$mime = 'text/x-ksh'; $imgmime = 'script.png'; $srclang = 'bash'; $famime = 'file-code-o';
+		$mime = 'text/x-ksh';
+		$imgmime = 'script.png';
+		$srclang = 'bash';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.bash$/i', $tmpfile)) {
-		$mime = 'text/x-bash'; $imgmime = 'script.png'; $srclang = 'bash'; $famime = 'file-code-o';
+		$mime = 'text/x-bash';
+		$imgmime = 'script.png';
+		$srclang = 'bash';
+		$famime = 'file-code-o';
 	}
 	// Images
 	if (preg_match('/\.ico$/i', $tmpfile)) {
-		$mime = 'image/x-icon'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/x-icon';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.(jpg|jpeg)$/i', $tmpfile)) {
-		$mime = 'image/jpeg'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/jpeg';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.png$/i', $tmpfile)) {
-		$mime = 'image/png'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/png';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.gif$/i', $tmpfile)) {
-		$mime = 'image/gif'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/gif';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.bmp$/i', $tmpfile)) {
-		$mime = 'image/bmp'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/bmp';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.(tif|tiff)$/i', $tmpfile)) {
-		$mime = 'image/tiff'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/tiff';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.svg$/i', $tmpfile)) {
-		$mime = 'image/svg+xml'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/svg+xml';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.webp$/i', $tmpfile)) {
-		$mime = 'image/webp'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/webp';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	// Calendar
 	if (preg_match('/\.vcs$/i', $tmpfile)) {
-		$mime = 'text/calendar'; $imgmime = 'other.png'; $famime = 'file-text-o';
+		$mime = 'text/calendar';
+		$imgmime = 'other.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.ics$/i', $tmpfile)) {
-		$mime = 'text/calendar'; $imgmime = 'other.png'; $famime = 'file-text-o';
+		$mime = 'text/calendar';
+		$imgmime = 'other.png';
+		$famime = 'file-text-o';
 	}
 	// Other
 	if (preg_match('/\.torrent$/i', $tmpfile)) {
-		$mime = 'application/x-bittorrent'; $imgmime = 'other.png'; $famime = 'file-o';
+		$mime = 'application/x-bittorrent';
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	}
 	// Audio
 	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {
-		$mime = 'audio'; $imgmime = 'audio.png'; $famime = 'file-audio-o';
+		$mime = 'audio';
+		$imgmime = 'audio.png';
+		$famime = 'file-audio-o';
 	}
 	// Video
 	if (preg_match('/\.ogv$/i', $tmpfile)) {
-		$mime = 'video/ogg'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/ogg';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.webm$/i', $tmpfile)) {
-		$mime = 'video/webm'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/webm';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.avi$/i', $tmpfile)) {
-		$mime = 'video/x-msvideo'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/x-msvideo';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.divx$/i', $tmpfile)) {
-		$mime = 'video/divx'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/divx';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.xvid$/i', $tmpfile)) {
-		$mime = 'video/xvid'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/xvid';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.(wmv|mpg|mpeg)$/i', $tmpfile)) {
-		$mime = 'video'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	// Archive
 	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i', $tmpfile)) {
-		$mime = 'archive'; $imgmime = 'archive.png'; $famime = 'file-archive-o';
+		$mime = 'archive';
+		$imgmime = 'archive.png';
+		$famime = 'file-archive-o';
 	}    // application/xxx where zzz is zip, ...
 	// Exe
 	if (preg_match('/\.(exe|com)$/i', $tmpfile)) {
-		$mime = 'application/octet-stream'; $imgmime = 'other.png'; $famime = 'file-o';
+		$mime = 'application/octet-stream';
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	}
 	// Lib
 	if (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {
-		$mime = 'library'; $imgmime = 'library.png'; $famime = 'file-o';
+		$mime = 'library';
+		$imgmime = 'library.png';
+		$famime = 'file-o';
 	}
 	// Err
 	if (preg_match('/\.err$/i', $tmpfile)) {
-		$mime = 'error'; $imgmime = 'error.png'; $famime = 'file-text-o';
+		$mime = 'error';
+		$imgmime = 'error.png';
+		$famime = 'file-text-o';
 	}
 
 	// Return string
@@ -9127,7 +9315,8 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 		$found = 0;
 		foreach ($tmploops as $tmploop) {
 			if (in_array($tmploop, $listofmodulesforexternal)) {
-				$found++; break;
+				$found++;
+				break;
 			}
 		}
 		if (!$found) {
@@ -9249,8 +9438,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
 	} elseif ($displayMode == 1) {
 		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
-	} // Use status with images (for backward compatibility)
-	elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
+	} elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
+		// Use status with images (for backward compatibility)
 		$return = '';
 		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
@@ -9297,8 +9486,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else { // $displayMode >= 6
 			$return = $htmlLabel.' '.$htmlImg;
 		}
-	} // Use new badge
-	elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
+	} elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
+		// Use new badge
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
@@ -9855,17 +10044,15 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 	// Solution 0
 	if ($method == 0) {
 		readfile($fullpath_original_file_osencoded);
-	}
-	// Solution 1
-	elseif ($method == 1) {
+	} elseif ($method == 1) {
+		// Solution 1
 		$handle = fopen($fullpath_original_file_osencoded, "rb");
 		while (!feof($handle)) {
 			print fread($handle, 8192);
 		}
 		fclose($handle);
-	}
-	// Solution 2
-	elseif ($method == 2) {
+	} elseif ($method == 2) {
+		// Solution 2
 		$handle1 = fopen($fullpath_original_file_osencoded, "rb");
 		$handle2 = fopen("php://output", "wb");
 		stream_copy_to_stream($handle1, $handle2);

@@ -305,7 +305,9 @@ class modAdherent extends DolibarrModules
 			'c.rowid'=>'subscription', 'c.dateadh'=>'subscription', 'c.datef'=>'subscription', 'c.subscription'=>'subscription'
 		);
 		// Add extra fields
-		$keyforselect = 'adherent'; $keyforelement = 'member'; $keyforaliasextra = 'extra';
+		$keyforselect = 'adherent';
+		$keyforelement = 'member';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add axtra fields
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

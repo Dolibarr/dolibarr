@@ -58,9 +58,8 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
 				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
 				$this->export_entities_array[$r][$fieldname] = $keyforelement;
-			}
-			// If this is a computed field
-			else {
+			} else {
+				// If this is a computed field
 				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
 				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter.'Compute';
 				$this->export_special_array[$r][$fieldname] = $obj->fieldcomputed;

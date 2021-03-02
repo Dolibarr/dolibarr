@@ -180,8 +180,12 @@ class ConferenceOrBooth extends ActionComm
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 
 		// Example to show how to set values of fields definition dynamically
 		/*if ($user->rights->eventorganization->conferenceorbooth->read) {
@@ -190,23 +194,17 @@ class ConferenceOrBooth extends ActionComm
 		}*/
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
 
 		// Translate some data of arrayofkeyval
-		if (is_object($langs))
-		{
-			foreach ($this->fields as $key => $val)
-			{
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval']))
-				{
-					foreach ($val['arrayofkeyval'] as $key2 => $val2)
-					{
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}
 				}
@@ -257,7 +255,9 @@ class ConferenceOrBooth extends ActionComm
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
+		if ($result > 0 && !empty($object->table_element_line)) {
+			$object->fetchLines();
+		}
 
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
@@ -269,19 +269,22 @@ class ConferenceOrBooth extends ActionComm
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'label')) $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		if (property_exists($object, 'status')) { $object->status = self::STATUS_DRAFT; }
-		if (property_exists($object, 'datec')) { $object->date_creation = dol_now(); }
+		if (property_exists($object, 'label')) {
+			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		}
+		if (property_exists($object, 'status')) {
+			$object->status = self::STATUS_DRAFT;
+		}
+		if (property_exists($object, 'datec')) {
+			$object->date_creation = dol_now();
+		}
 		// ...
 		// Clear extrafields that are unique
-		if (is_array($object->array_options) && count($object->array_options) > 0)
-		{
+		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
-			foreach ($object->array_options as $key => $option)
-			{
+			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey]))
-				{
+				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
 					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
@@ -297,22 +300,20 @@ class ConferenceOrBooth extends ActionComm
 			$this->errors = $object->errors;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0)
-			{
+			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// copy external contacts if same company
 			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid)
 			{
 				if ($this->copy_linked_contact($object, 'external') < 0)
 					$error++;
+				}
 			}
 		}
 
@@ -337,8 +338,10 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref, '', 'id');
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		$result = $this->fetchCommon($id, $ref);
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
 		return $result;
 	}
 
@@ -380,8 +383,11 @@ class ConferenceOrBooth extends ActionComm
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
-		else $sql .= ' WHERE 1 = 1';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -414,8 +420,7 @@ class ConferenceOrBooth extends ActionComm
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < ($limit ? min($limit, $num) : $num))
-			{
+			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
@@ -475,8 +480,7 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		if ($this->status < 0)
-		{
+		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
@@ -501,9 +505,8 @@ class ConferenceOrBooth extends ActionComm
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_CONFIRMED)
-		{
-			dol_syslog(get_class($this)."::validate action abandonned: already confirmed", LOG_WARNING);
+		if ($this->status == self::STATUS_VALIDATED) {
+			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -541,14 +544,53 @@ class ConferenceOrBooth extends ActionComm
 			// End call triggers
 		}
 
-		// Set new ref and current status
 		if (!$error)
 		{
-			$this->status = self::STATUS_CONFIRMED;
+			$this->oldref = $this->ref;
+
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref))
+			{
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'conferenceorbooth/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'conferenceorbooth/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($num);
+				$dirsource = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$oldref;
+				$dirdest = $conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref;
+				if (!$error && file_exists($dirsource))
+				{
+					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
+
+					if (@rename($dirsource, $dirdest))
+					{
+						dol_syslog("Rename ok");
+						// Rename docs starting with $oldref with $newref
+						$listoffiles = dol_dir_list($conf->eventorganization->dir_output.'/conferenceorbooth/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						foreach ($listoffiles as $fileentry)
+						{
+							$dirsource = $fileentry['name'];
+							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+							$dirsource = $fileentry['path'].'/'.$dirsource;
+							$dirdest = $fileentry['path'].'/'.$dirdest;
+							@rename($dirsource, $dirdest);
+						}
+					}
+				}
+			}
 		}
 
-		if (!$error)
-		{
+		// Set new ref and current status
+		if (!$error) {
+			$this->ref = $num;
+			$this->status = self::STATUS_VALIDATED;
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -568,8 +610,7 @@ class ConferenceOrBooth extends ActionComm
 	public function setDraft($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status <= self::STATUS_DRAFT)
-		{
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -593,8 +634,7 @@ class ConferenceOrBooth extends ActionComm
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CONFIRMED)
-		{
+		if ($this->status != self::STATUS_CONFIRMED) {
 			return 0;
 		}
 
@@ -618,8 +658,7 @@ class ConferenceOrBooth extends ActionComm
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
-		{
+		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -647,7 +686,9 @@ class ConferenceOrBooth extends ActionComm
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -660,25 +701,28 @@ class ConferenceOrBooth extends ActionComm
 
 		$url = dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowConferenceOrBooth");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -687,7 +731,9 @@ class ConferenceOrBooth extends ActionComm
 		$result .= $linkstart;
 
 		if (empty($this->showphoto_on_popup)) {
-			if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			}
 		} else {
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -713,7 +759,9 @@ class ConferenceOrBooth extends ActionComm
 			}
 		}
 
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -722,8 +770,11 @@ class ConferenceOrBooth extends ActionComm
 		$hookmanager->initHooks(array('conferenceorboothdao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -750,8 +801,7 @@ class ConferenceOrBooth extends ActionComm
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("eventorganization@eventorganization");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
@@ -770,7 +820,9 @@ class ConferenceOrBooth extends ActionComm
 
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status6';
+		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -788,14 +840,11 @@ class ConferenceOrBooth extends ActionComm
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.id = '.$id;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
@@ -834,14 +883,68 @@ class ConferenceOrBooth extends ActionComm
 		$objectline = new ConferenceOrBoothLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.$this->id));
 
-		if (is_numeric($result))
-		{
+		if (is_numeric($result)) {
 			$this->error = $this->error;
 			$this->errors = $this->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
 			return $this->lines;
+		}
+	}
+
+	/**
+	 *  Returns the reference to the following non used object depending on the active numbering module.
+	 *
+	 *  @return string      		Object free reference
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("eventorganization@eventorganization");
+
+		if (empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON)) {
+			$conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON = 'mod_conferenceorbooth_standard';
+		}
+
+		if (!empty($conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON)) {
+			$mybool = false;
+
+			$file = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON.".php";
+			$classname = $conf->global->EVENTORGANIZATION_CONFERENCEORBOOTH_ADDON;
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir) {
+				$dir = dol_buildpath($reldir."core/modules/eventorganization/");
+
+				// Load file with numbering class (if found)
+				$mybool |= @include_once $dir.$file;
+			}
+
+			if ($mybool === false) {
+				dol_print_error('', "Failed to include file ".$file);
+				return '';
+			}
+
+			if (class_exists($classname)) {
+				$obj = new $classname();
+				$numref = $obj->getNextValue($this);
+
+				if ($numref != '' && $numref != '-1') {
+					return $numref;
+				} else {
+					$this->error = $obj->error;
+					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+					return "";
+				}
+			} else {
+				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
+				return "";
+			}
+		} else {
+			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
+			return "";
 		}
 	}
 

@@ -295,7 +295,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #b06080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
-	<?php echo $prefix; ?>color: #55955d !important;
+	<?php echo $prefix; ?>color: #65953d !important;
 }
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
@@ -325,11 +325,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .infobox-action{
 	color: #b06080 !important;
 }
+/* Color for customer object */
 .infobox-propal:not(.pictotitle),
 .infobox-facture:not(.pictotitle),
 .infobox-commande:not(.pictotitle) {
-	color: #65955d !important;
+	color: #65953d !important;
 }
+/* Color for vendor object */
 .infobox-supplier_proposal:not(.pictotitle),
 .infobox-invoice_supplier:not(.pictotitle),
 .infobox-order_supplier:not(.pictotitle){

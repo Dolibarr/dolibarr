@@ -913,16 +913,20 @@ IMG;
 		{
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
-			if (headers_sent($filename, $linenum)) {
-				throw new OdfException("headers already sent ($filename at $linenum)");
+
+			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
+				if (headers_sent($filename, $linenum)) {
+					throw new OdfException("headers already sent ($filename at $linenum)");
+				}
+
+				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					$name=preg_replace('/\.od(x|t)/i', '', $name);
+					header('Content-type: application/pdf');
+					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					readfile($name.".pdf");
+				}
 			}
 
-			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$name=preg_replace('/\.od(x|t)/i', '', $name);
-				header('Content-type: application/pdf');
-				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-				readfile($name.".pdf");
-			}
 			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
 			{
 				unlink($name);
@@ -931,7 +935,7 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
 
-			if ($retval==126) {
+			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
 			}
 			else {
