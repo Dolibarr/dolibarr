@@ -194,6 +194,7 @@ class Utils
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
+		global $dolibarr_main_db_character_set;
 
 		$langs->load("admin");
 
@@ -314,7 +315,12 @@ class Utils
 			} else {
 				$param .= " -d"; // No row information (no data)
 			}
-			$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+			if ($dolibarr_main_db_character_set == 'utf8mb4') {
+				// We save output into utf8mb4 charset
+				$param .= " --default-character-set=utf8mb4";
+			} else {
+				$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+			}
 			$paramcrypted = $param;
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass)) {
