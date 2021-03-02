@@ -2154,7 +2154,7 @@ if ($action == 'generatesitemaps') {
 	$domtree->formatOutput = true;
 	$xmlname = 'sitemap.'.$websitekey.'.xml';
 
-	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, DATE(wp.tms) as tms, w.virtualhost";
+	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, wp.tms as tms, w.virtualhost";
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
@@ -2175,7 +2175,7 @@ if ($action == 'generatesitemaps') {
 					$domainname = $objp->virtualhost;
 				}
 				$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
-				$lastmod = $domtree->createElement('lastmod', $objp->tms);
+				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
@@ -2183,8 +2183,10 @@ if ($action == 'generatesitemaps') {
 				$i++;
 			}
 			$domtree->appendChild($root);
-			if ($domtree->save($tempdir.$xmlname))
-			{
+			if ($domtree->save($tempdir.$xmlname)) {
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
+				}
 				setEventMessages($langs->trans("SitemapGenerated"), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
