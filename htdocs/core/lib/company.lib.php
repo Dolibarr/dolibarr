@@ -721,7 +721,7 @@ function getCountriesInEEC()
 	} else {
 		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
 		$sql .= " WHERE cc.eec = 1";
-	
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
