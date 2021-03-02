@@ -1580,7 +1580,8 @@ if ($action == 'create' && $usercancreate) {
 					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
+					$("input[name=action]").val("create");
+					$("form[name=crea_commande]").submit();
 				});
 			});
 			</script>';
