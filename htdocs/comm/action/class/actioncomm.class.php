@@ -592,7 +592,7 @@ class ActionComm extends CommonObject
 							dol_syslog('Error to process userassigned: '.$this->db->lasterror(), LOG_ERR);
 							$this->errors[] = $this->db->lasterror();
 						}
-						//var_dump($sql);exit;
+						var_dump($sql);exit;
 					}
 				}
 			}
