@@ -915,8 +915,9 @@ class Facture extends CommonInvoice
 					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
 					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
-					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price) ?null:$_facrec->lines[$i]->fk_product_fournisseur_price;
+					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price) ? null : $_facrec->lines[$i]->fk_product_fournisseur_price;
 					$buyprice = empty($_facrec->lines[$i]->buyprice) ? 0 : $_facrec->lines[$i]->buyprice;
+
 					// If buyprice not defined from template invoice, we try to guess the best value
 					if (!$buyprice && $_facrec->lines[$i]->fk_product > 0)
 					{
@@ -984,6 +985,7 @@ class Facture extends CommonInvoice
 			if (!$error)
 			{
 				$result = $this->update_price(1);
+
 				if ($result > 0)
 				{
 					$action = 'create';
