@@ -600,7 +600,7 @@ if ($id) {
 		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
-	
+
 	// Employee
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user);
