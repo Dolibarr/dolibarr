@@ -131,18 +131,27 @@ foreach ($list as $key)
 
 print '</tr>';
 
-$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
-echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
-
 print "</table>\n";
 
 //dol_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
-print '</form>';
+print '</form><br />';
 
+echo '<div>';
+echo '<table class="noborder centpercent">';
+echo '<thead>';
+echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '</thead>';
+echo '<tbody>';
 
+$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
+echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
+
+echo '</tbody>';
+echo '</table>';
+echo '</div>';
 
 // End of page
 llxFooter();
