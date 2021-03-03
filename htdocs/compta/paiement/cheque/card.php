@@ -383,8 +383,9 @@ if ($action == 'new')
 	print '</form>';
 	print '<br>';
 
-	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as transactionid, ";
-	$sql .= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque,";
+	$sql = "SELECT ba.rowid as bid, ba.label,";
+	$sql .= " b.rowid as transactionid, b.label as transactionlabel, b.datec as datec, b.dateo as date, ";
+	$sql .= " b.amount, b.emetteur, b.num_chq, b.banque,";
 	$sql .= " p.rowid as paymentid, p.ref as paymentref";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
@@ -410,6 +411,8 @@ if ($action == 'new')
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
 			$lines[$obj->bid][$i]["id"] = $obj->transactionid;
+			$lines[$obj->bid][$i]["ref"] = $obj->transactionid;
+			$lines[$obj->bid][$i]["label"] = $obj->transactionlabel;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
 			$lines[$obj->bid][$i]["paymentref"] = $obj->paymentref;
 			$i++;
@@ -493,9 +496,9 @@ if ($action == 'new')
 				print '</td>';
 				// Link to bank transaction
 				print '<td class="center">';
-				$accountlinestatic->rowid = $value["id"];
-				if ($accountlinestatic->rowid)
-				{
+				$accountlinestatic->id = $value["id"];
+				$accountlinestatic->ref = $value["ref"];
+				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
@@ -615,7 +618,7 @@ if ($action == 'new')
 
 
 	// List of bank checks
-	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
+	$sql = "SELECT b.rowid, b.rowid as ref, b.label, b.amount, b.num_chq, b.emetteur,";
 	$sql .= " b.dateo as date, b.datec as datec, b.banque,";
 	$sql .= " p.rowid as pid, p.ref as pref, ba.rowid as bid, p.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -672,8 +675,9 @@ if ($action == 'new')
 				print '</td>';
 				// Link to bank transaction
 				print '<td class="center">';
-				$accountlinestatic->rowid = $objp->rowid;
-				if ($accountlinestatic->rowid) {
+				$accountlinestatic->id = $objp->rowid;
+				$accountlinestatic->ref = $objp->ref;
+				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
