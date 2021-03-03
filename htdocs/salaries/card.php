@@ -614,10 +614,24 @@ if ($id)
 
 	$morehtmlref = '<div class="refidno">';
 
+	// Label
+	if ($action != 'editlabel') {
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+		$morehtmlref .= $object->label;
+	} else {
+		$morehtmlref .= '<br>'.$langs->trans('Label').' :&nbsp;';
+		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
+		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '</form>';
+	}
+	
 	// Employee
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user);
-	$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+	$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
 
 	// Project
 	if (!empty($conf->projet->enabled))
@@ -651,22 +665,6 @@ if ($id)
 			}
 		}
 	}
-
-	// Label
-	if ($action != 'editlabel') {
-		$morehtmlref .= '<br>' . $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
-		$morehtmlref .= $object->label;
-	} else {
-		$morehtmlref .= '<br>'.$langs->trans('Label').' :&nbsp;';
-		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
-		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
-		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-		$morehtmlref .= '</form>';
-	}
-
-
 
 	$morehtmlref .= '</div>';
 
