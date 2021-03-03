@@ -388,7 +388,7 @@ if ($object->id > 0) {
 
 	// TVA Intra
 	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
-	print $object->tva_intra;
+	print showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra));
 	print '</td></tr>';
 
 	// default terms of the settlement

@@ -424,7 +424,8 @@ abstract class Stats
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			$i = 0; $j = 0;
+			$i = 0;
+			$j = 0;
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$j = $row[0] * 1;
@@ -539,7 +540,8 @@ abstract class Stats
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			$i = 0; $j = 0;
+			$i = 0;
+			$j = 0;
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				$j = $row[0] * 1;
@@ -594,7 +596,8 @@ abstract class Stats
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			$i = 0; $other = 0;
+			$i = 0;
+			$other = 0;
 			while ($i < $num) {
 				$row = $this->db->fetch_row($resql);
 				if ($i < $limit || $num == $limit) {

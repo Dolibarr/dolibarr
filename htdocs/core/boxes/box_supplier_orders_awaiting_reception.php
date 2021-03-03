@@ -89,7 +89,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 			$sql .= ", c.total_ht";
 			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
-			$sql .= ", c.fk_statut";
+			$sql .= ", c.fk_statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
 			if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -122,11 +122,10 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 					$delivery_date = $this->db->jdate($objp->delivery_date);
 					$datem = $this->db->jdate($objp->tms);
 
-					$supplierorderstatic->delivery_date = $delivery_date;
-					$supplierorderstatic->statut = $objp->fk_statut;
-
 					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
+					$supplierorderstatic->delivery_date = $delivery_date;
+					$supplierorderstatic->statut = $objp->status;
 
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;

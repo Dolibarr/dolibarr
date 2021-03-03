@@ -335,9 +335,8 @@ class Paiement extends CommonObject
 								dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
 							} elseif ($remaintopay) {
 								dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
-							}
-							//else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-							else {
+								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
+							} else {
 								// If invoice is a down payment, we also convert down payment to discount
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();

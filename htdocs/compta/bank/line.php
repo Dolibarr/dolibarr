@@ -272,7 +272,8 @@ $sql .= " WHERE rowid=".$rowid;
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result) {
-	$i = 0; $total = 0;
+	$i = 0;
+	$total = 0;
 	if ($db->num_rows($result)) {
 		$objp = $db->fetch_object($result);
 

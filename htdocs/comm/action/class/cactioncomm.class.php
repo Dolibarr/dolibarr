@@ -210,7 +210,7 @@ class CActionComm
 						if ($obj->module == 'shipping' && empty($conf->expedition->enabled) && empty($user->expedition->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'eventorganization' && empty($conf->eventorganization->enabled) && empty($user->eventorganization->read)) {
+						if (preg_match('/@eventorganization/', $obj->module) && empty($conf->eventorganization->enabled) && empty($user->eventorganization->read)) {
 							$qualified = 0;
 						}
 						if (!preg_match('/^system/', $obj->type) && isset($conf->{$obj->module}) && empty($conf->{$obj->module}->enabled)) {
@@ -252,23 +252,20 @@ class CActionComm
 								$repid[-98] = $langs->trans("ActionAC_AUTO");
 								$repcode['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
 							}
-							if (preg_match('/^system@/', $typecalendar)) {
-								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($repcode['AC_ALL_'.strtoupper($obj->module)])) {	// If first time for this module
-									$idforallfornewmodule--;
-								}
-								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_".strtoupper($obj->module));
-								$repcode['AC_ALL_'.strtoupper($obj->module)] = '-- '.$langs->trans("Module").' '.ucfirst($obj->module);
-							}
 							if ($typecalendar == 'module') {
+								//TODO check if possible to push it between system and systemauto
+								if (preg_match('/@/', $obj->module)) {
+									$module = explode('@', $obj->module)[1];
+								} else {
+									$module = $obj->module;
+								}
 								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($repcode['AC_ALL_'.strtoupper($obj->module)])) {	// If first time for this module
+								if (!isset($repcode['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
-								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($obj->module));
-								$repcode['AC_ALL_'.strtoupper($obj->module)] = '-- '.$langs->trans("Module").' '.ucfirst($obj->module);
+								$repid[$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
+								$repcode['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
-
 						}
 						$repid[$obj->id] = $label;
 						$repcode[$obj->code] = $label;

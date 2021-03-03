@@ -257,7 +257,7 @@ print "</tr>\n";
 
 krsort($Total);
 $i = 0;
-foreach ($Total as $key=>$value) {
+foreach ($Total as $key => $value) {
 	if ($i >= 8) {
 		print '<tr class="oddeven">';
 		print "<td>...</td>";

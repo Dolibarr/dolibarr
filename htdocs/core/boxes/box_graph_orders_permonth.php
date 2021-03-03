@@ -122,13 +122,14 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) {
-				$shownb = 1; $showtot = 1;
+				$shownb = 1;
+				$showtot = 1;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 1 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
 
 			$mode = 'customer';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
@@ -193,7 +194,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 				if (!$mesg) {
 					$px2->SetData($data2);
 					unset($data2);
-					$i = $startyear; $legend = array();
+					$i = $startyear;
+					$legend = array();
 					while ($i <= $endyear) {
 						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);

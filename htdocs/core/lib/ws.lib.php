@@ -41,27 +41,32 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 
 	if (!$error && ($authentication['dolibarrkey'] != $conf->global->WEBSERVICES_KEY)) {
 		$error++;
-		$errorcode = 'BAD_VALUE_FOR_SECURITY_KEY'; $errorlabel = 'Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
+		$errorcode = 'BAD_VALUE_FOR_SECURITY_KEY';
+		$errorlabel = 'Value provided into dolibarrkey entry field does not match security key defined in Webservice module setup';
 	}
 
 	if (!$error && !empty($authentication['entity']) && !is_numeric($authentication['entity'])) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "The entity parameter must be empty (or filled with numeric id of instance if multicompany module is used).";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "The entity parameter must be empty (or filled with numeric id of instance if multicompany module is used).";
 	}
 
 	if (!$error) {
 		$result = $fuser->fetch('', $authentication['login'], '', 0);
 		if ($result < 0) {
 			$error++;
-			$errorcode = 'ERROR_FETCH_USER'; $errorlabel = 'A technical error occurred during fetch of user';
+			$errorcode = 'ERROR_FETCH_USER';
+			$errorlabel = 'A technical error occurred during fetch of user';
 		} elseif ($result == 0) {
 			$error++;
-			$errorcode = 'BAD_CREDENTIALS'; $errorlabel = 'Bad value for login or password';
+			$errorcode = 'BAD_CREDENTIALS';
+			$errorlabel = 'Bad value for login or password';
 		}
 
 		if (!$error && $fuser->statut == 0) {
 			$error++;
-			$errorcode = 'ERROR_USER_DISABLED'; $errorlabel = 'This user has been locked or disabled';
+			$errorcode = 'ERROR_USER_DISABLED';
+			$errorlabel = 'This user has been locked or disabled';
 		}
 
 		// Validation of login
@@ -83,7 +88,8 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 			$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode, 'ws');
 			if (empty($login)) {
 				$error++;
-				$errorcode = 'BAD_CREDENTIALS'; $errorlabel = 'Bad value for login or password';
+				$errorcode = 'BAD_CREDENTIALS';
+				$errorlabel = 'Bad value for login or password';
 			}
 		}
 	}

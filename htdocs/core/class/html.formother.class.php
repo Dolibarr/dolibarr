@@ -1211,7 +1211,8 @@ class FormOther
 		}
 
 		// Define boxlista and boxlistb
-		$boxlista = ''; $boxlistb = '';
+		$boxlista = '';
+		$boxlistb = '';
 		$nbboxactivated = count($boxidactivatedforuser);
 
 		if ($nbboxactivated) {
@@ -1357,7 +1358,8 @@ class FormOther
 	{
 		global $langs;
 
-		$automatic = "automatic"; $manual = "manual";
+		$automatic = "automatic";
+		$manual = "manual";
 		if ($option) {
 			$automatic = "1";
 			$manual = "0";

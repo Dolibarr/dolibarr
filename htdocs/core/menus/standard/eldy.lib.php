@@ -516,12 +516,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
-		}
-		/*elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
-		}*/
-		else {
+			/*} elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+			{
+				$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
+			}*/
+		} else {
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
 			$logoContainerAdditionalClass = '';
 		}
@@ -1185,7 +1184,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				//$newmenu->add("/accountancy/index.php?leftmenu=accountancy", $langs->trans("MenuAccountancy"), 0, $permtoshowmenu, '', $mainmenu, 'accountancy');
 
 				// Configuration
-				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_admin", $langs->trans("Setup"), 0, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin', 1);
+				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_admin", $langs->trans("Setup"), 0, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin', 1, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_admin/', $leftmenu)) {
 					$newmenu->add("/accountancy/admin/index.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("General"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_general', 10);
 
@@ -1220,7 +1219,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 
 				// Transfer in accounting
-				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_transfer", $langs->trans("TransferInAccounting"), 0, $user->rights->accounting->bind->write, '', $mainmenu, 'transfer', 1);
+				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_transfer", $langs->trans("TransferInAccounting"), 0, $user->rights->accounting->bind->write, '', $mainmenu, 'transfer', 1, '', '', '', img_picto('', 'long-arrow-alt-right', 'class="paddingright pictofixedwidth"'));
 
 				// Binding
 				// $newmenu->add("", $langs->trans("Binding"), 0, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch');
@@ -1318,7 +1317,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				}
 
 				// Accounting
-				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_accountancy", $langs->trans("MenuAccountancy"), 0, $user->rights->accounting->mouvements->lire, '', $mainmenu, 'accountancy', 1);
+				$newmenu->add("/accountancy/index.php?leftmenu=accountancy_accountancy", $langs->trans("MenuAccountancy"), 0, $user->rights->accounting->mouvements->lire, '', $mainmenu, 'accountancy', 1, '', '', '', img_picto('', 'accountancy', 'class="paddingright pictofixedwidth"'));
 
 				// Balance
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->rights->accounting->mouvements->lire);
@@ -1447,7 +1446,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Assets
 			if (!empty($conf->asset->enabled)) {
-				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $mainmenu, 'asset');
+				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $mainmenu, 'asset', 100, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 				$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create", $langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
 				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy", $langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
 				$newmenu->add("/asset/type.php?leftmenu=asset_type", $langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $mainmenu, 'asset_type');
@@ -1468,7 +1467,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Bank-Cash account
 			if (!empty($conf->banque->enabled)) {
-				$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->rights->banque->lire, '', $mainmenu, 'bank');
+				$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->rights->banque->lire, '', $mainmenu, 'bank', 0, '', '', '', img_picto('', 'bank_account', 'class="paddingright pictofixedwidth"'));
 
 				$newmenu->add("/compta/bank/card.php?action=create", $langs->trans("MenuNewFinancialAccount"), 1, $user->rights->banque->configurer);
 				$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank", $langs->trans("List"), 1, $user->rights->banque->lire, '', $mainmenu, 'bank');
@@ -1486,7 +1485,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Direct debit order
 			if (!empty($conf->prelevement->enabled)) {
-				$newmenu->add("/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank", $langs->trans("PaymentByDirectDebit"), 0, $user->rights->prelevement->bons->lire, '', $mainmenu, 'withdraw');
+				$newmenu->add("/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank", $langs->trans("PaymentByDirectDebit"), 0, $user->rights->prelevement->bons->lire, '', $mainmenu, 'withdraw', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "withdraw") {
 					$newmenu->add("/compta/prelevement/create.php?mainmenu=bank", $langs->trans("NewStandingOrder"), 1, $user->rights->prelevement->bons->creer);
@@ -1500,7 +1499,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Bank transfer order
 			if (!empty($conf->paymentbybanktransfer->enabled)) {
-				$newmenu->add("/compta/paymentbybanktransfer/index.php?leftmenu=banktransfer&amp;mainmenu=bank", $langs->trans("PaymentByBankTransfer"), 0, $user->rights->paymentbybanktransfer->read, '', $mainmenu, 'banktransfer');
+				$newmenu->add("/compta/paymentbybanktransfer/index.php?leftmenu=banktransfer&amp;mainmenu=bank", $langs->trans("PaymentByBankTransfer"), 0, $user->rights->paymentbybanktransfer->read, '', $mainmenu, 'banktransfer', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "banktransfer") {
 					$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank", $langs->trans("NewPaymentByBankTransfer"), 1, $user->rights->paymentbybanktransfer->create);
@@ -1514,7 +1513,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 			// Management of checks
 			if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT) && !empty($conf->banque->enabled) && (!empty($conf->facture->enabled) || !empty($conf->global->MAIN_MENU_CHEQUE_DEPOSIT_ON))) {
-				$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->rights->banque->cheque, '', $mainmenu, 'checks');
+				$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->rights->banque->cheque, '', $mainmenu, 'checks', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
 				if (preg_match('/checks/', $leftmenu)) {
 					$newmenu->add("/compta/paiement/cheque/card.php?leftmenu=checks_bis&amp;action=new&amp;mainmenu=bank", $langs->trans("NewChequeDeposit"), 1, $user->rights->banque->cheque);
 					$newmenu->add("/compta/paiement/cheque/list.php?leftmenu=checks_bis&amp;mainmenu=bank", $langs->trans("List"), 1, $user->rights->banque->cheque);
@@ -1524,7 +1523,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Cash Control
 			if (!empty($conf->takepos->enabled) || !empty($conf->cashdesk->enabled)) {
 				$permtomakecashfence = ($user->rights->cashdesk->run || $user->rights->takepos->run);
-				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("POS"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol');
+				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("POS"), 0, $permtomakecashfence, '', $mainmenu, 'cashcontrol', 0, '', '', '', img_picto('', 'pos', 'class="pictofixedwidth"'));
 				$newmenu->add("/compta/cashcontrol/cashcontrol_card.php?action=create", $langs->trans("NewCashFence"), 1, $permtomakecashfence);
 				$newmenu->add("/compta/cashcontrol/cashcontrol_list.php?action=list", $langs->trans("List"), 1, $permtomakecashfence);
 			}
@@ -1724,12 +1723,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 					// Project affected to user
-					$newmenu->add("/projet/activity/index.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("Activities"), 0, $user->rights->projet->lire, '', 'project', 'tasks', 0, '', '', '', img_picto('', 'task', 'class="pictofixedwidth"'));
+					$newmenu->add("/projet/activity/index.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("Activities"), 0, $user->rights->projet->lire, '', 'project', 'tasks', 0, '', '', '', img_picto('', 'projecttask', 'class="pictofixedwidth"'));
 					$newmenu->add("/projet/tasks.php?leftmenu=tasks&action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
 					$newmenu->add("/projet/tasks/list.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $user->rights->projet->lire);
 					$newmenu->add("/projet/tasks/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->rights->projet->lire);
 
-					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire, '', 'project', 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="pictofixedwidth"'));
 				}
 			}
 		}
@@ -1770,7 +1769,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Trips and expenses (old module)
 			if (!empty($conf->deplacement->enabled)) {
 				$langs->load("trips");
-				$newmenu->add("/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->deplacement->lire, '', $mainmenu, 'tripsandexpenses');
+				$newmenu->add("/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->deplacement->lire, '', $mainmenu, 'tripsandexpenses', 0, '', '', '', img_picto('', 'trip', 'class="pictofixedwidth"'));
 				$newmenu->add("/compta/deplacement/card.php?action=create&amp;leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->rights->deplacement->creer);
 				$newmenu->add("/compta/deplacement/list.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->deplacement->lire);
 				$newmenu->add("/compta/deplacement/stats/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->deplacement->lire);
@@ -1779,7 +1778,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Expense report
 			if (!empty($conf->expensereport->enabled)) {
 				$langs->load("trips");
-				$newmenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->expensereport->lire, '', $mainmenu, 'expensereport');
+				$newmenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->expensereport->lire, '', $mainmenu, 'expensereport', 0, '', '', '', img_picto('', 'trip', 'class="pictofixedwidth"'));
 				$newmenu->add("/expensereport/card.php?action=create&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->rights->expensereport->creer);
 				$newmenu->add("/expensereport/list.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->expensereport->lire);
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "expensereport") {
@@ -1799,7 +1798,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 					$search_project_user = GETPOST('search_project_user', 'int');
 
-					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=tasks".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("NewTimeSpent"), 0, $user->rights->projet->lire, '', $mainmenu, 'timespent', 0, '', '', '', img_picto('', 'timespent', 'class="pictofixedwidth"'));
 				}
 			}
 		}
@@ -1931,7 +1930,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	// Show menu
 	$invert = empty($conf->global->MAIN_MENU_INVERT) ? "" : "invert";
 	if (empty($noout)) {
-		$altok = 0; $blockvmenuopened = false; $lastlevel0 = '';
+		$altok = 0;
+		$blockvmenuopened = false;
+		$lastlevel0 = '';
 		$num = count($menu_array);
 		for ($i = 0; $i < $num; $i++) {     // Loop on each menu entry
 			$showmenu = true;
@@ -2055,7 +2056,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					print '<div class="menu_end"></div>'."\n";
 				}
 				if ($blockvmenuopened) {
-					print '</div>'."\n"; $blockvmenuopened = false;
+					print '</div>'."\n";
+					$blockvmenuopened = false;
 				}
 			}
 		}

@@ -542,17 +542,17 @@ class AccountancyExport
 
 			// Credit invoice - invert sens
 			/*
-            if ($data->montant < 0) {
-                if ($data->sens == 'C') {
-                    $Tab['sens'] = 'D';
-                } else {
-                    $Tab['sens'] = 'C';
-                }
-                $Tab['signe_montant'] = '-';
-            } else {
-                $Tab['sens'] = $data->sens; // C or D
-                $Tab['signe_montant'] = '+';
-            }*/
+			if ($data->montant < 0) {
+				if ($data->sens == 'C') {
+					$Tab['sens'] = 'D';
+				} else {
+					$Tab['sens'] = 'C';
+				}
+				$Tab['signe_montant'] = '-';
+			} else {
+				$Tab['sens'] = $data->sens; // C or D
+				$Tab['signe_montant'] = '+';
+			}*/
 			$Tab['sens'] = $data->sens; // C or D
 			$Tab['signe_montant'] = '+';
 
@@ -856,8 +856,8 @@ class AccountancyExport
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
-                //unset($array[$line]);
-            } else {
+				//unset($array[$line]);
+			} else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');

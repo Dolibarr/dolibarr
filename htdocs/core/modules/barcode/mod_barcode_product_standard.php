@@ -199,7 +199,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			return '';
 		}
 
-		$field = 'barcode'; $where = '';
+		$field = 'barcode';
+		$where = '';
 
 		$now = dol_now();
 

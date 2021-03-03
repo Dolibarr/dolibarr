@@ -193,9 +193,13 @@ class modContrat extends DolibarrModules
 		'p.rowid'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text');
 
 
-		$keyforselect = 'contrat'; $keyforelement = 'contract'; $keyforaliasextra = 'coextra';
+		$keyforselect = 'contrat';
+		$keyforelement = 'contract';
+		$keyforaliasextra = 'coextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'contratdet'; $keyforelement = 'contract_line'; $keyforaliasextra = 'codextra';
+		$keyforselect = 'contratdet';
+		$keyforelement = 'contract_line';
+		$keyforaliasextra = 'codextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

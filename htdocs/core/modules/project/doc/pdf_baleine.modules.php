@@ -421,7 +421,8 @@ class pdf_baleine extends ModelePDFProjects
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
 						//var_dump($pageposbefore.'-'.$pageposafter.'-'.$showpricebeforepagebreak);
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage + $heightoftitleline + 1;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage + $heightoftitleline + 1;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font

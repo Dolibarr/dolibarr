@@ -390,6 +390,9 @@ if ($nboftargetok) {
 		$olddir=getcwd();
 		chdir("$SOURCE");
 		
+		print "Clean $SOURCE/htdocs\n";
+		$ret=`rm -f  $SOURCE/htdocs/includes/autoload.php`;
+		
 		$ret=`git ls-files . --exclude-standard --others`;
 		if ($ret)
 		{
@@ -613,7 +616,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/parsedown/LICENSE.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/php-iban/docs`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/tests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/tests`;
@@ -623,7 +625,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/vendor`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/webmozart`;

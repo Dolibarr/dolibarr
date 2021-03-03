@@ -22,8 +22,6 @@
  */
 
 
-
-
 /**
  * 	Regenerate files .class.php
  *
@@ -54,7 +52,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 	}
 
 	// Check parameters
-	if (count($addfieldentry) > 0) {
+	if (is_array($addfieldentry) && count($addfieldentry) > 0) {
 		if (empty($addfieldentry['name'])) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Name")), null, 'errors');
 			return -2;

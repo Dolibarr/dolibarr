@@ -576,7 +576,9 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 
-	$numopen = 0; $pending = 0; $numclosed = 0;
+	$numopen = 0;
+	$pending = 0;
+	$numclosed = 0;
 
 
 	// How many Direct debit opened requests ?

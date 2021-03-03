@@ -439,12 +439,14 @@ class pdf_squille extends ModelePdfReception
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
@@ -599,7 +601,8 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetFont('', 'B', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = $this->posxweightvol - 50; $col2x = $this->posxweightvol;
+		$col1x = $this->posxweightvol - 50;
+		$col2x = $this->posxweightvol;
 		/*if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$col2x-=20;

@@ -102,9 +102,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
 		}
-	}
-	// Save also alias into all language subdirectories if it is a main language
-	elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+		// Save also alias into all language subdirectories if it is a main language
 		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);

@@ -17,9 +17,15 @@ if (isset($totalarray['pos'])) {
 		} else {
 			if ($i == 1) {
 				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>';
+					if (is_object($form)) {
+						print $form->textwithpicto($langs->trans("Total"), $langs->transnoentitiesnoconv("Totalforthispage"));
+					} else {
+						print $langs->trans("Totalforthispage");
+					}
+					print '</td>';
 				}
 			} else {
 				print '<td></td>';
