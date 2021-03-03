@@ -567,7 +567,7 @@ class ActionComm extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->ref = $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm", "id");
-			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->ref."' WHERE id=".$this->id ;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ref='".$this->db->escape($this->ref)."' WHERE id=".$this->id;
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$error++;
