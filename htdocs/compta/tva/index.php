@@ -343,8 +343,7 @@ if ($refresh === true) {
 	$i = 0;
 	$mcursor = 0;
 
-	while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)    // $mcursor is to avoid too large loop
-	{
+	while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000) {    // $mcursor is to avoid too large loop
 		//$m = $conf->global->SOCIETE_FISCAL_MONTH_START + ($mcursor % 12);
 		if ($m == 13) $y++;
 		if ($m > 12) $m -= 12;
