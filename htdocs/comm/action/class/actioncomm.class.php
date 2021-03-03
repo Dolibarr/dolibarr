@@ -743,7 +743,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
-		$sql .= " u.firstname, u.lastname as lastname";
+		$sql .= " u.firstname, u.lastname as lastname,";
 		$sql .= " num_vote, event_paid, status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
