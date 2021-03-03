@@ -108,7 +108,15 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		if (! function_exists('mb_substr')) {
-			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die();
+			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(1);
+		}
+
+		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n"; die(1);
+		}
+
+		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n"; die(1);
 		}
 
 		print __METHOD__."\n";
@@ -1294,7 +1302,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(1000.123456, price2num('1 000.123456'));
 
 		// Round down
-		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'));
+		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'), 'Error in round down with MT');
 		$this->assertEquals(1000.12345, price2num('1 000.123452', 'MU'), "Test MU");
 
 		// Round up

@@ -2119,7 +2119,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	global $conf, $langs;
 
 	if ($tzoutput === 'auto') {
-		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
+		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
 
 	// Clean parameters
@@ -5159,12 +5159,12 @@ function price2num($amount, $rounding = '', $option = 0)
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
-		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+		//print "\n".'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
 			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
-		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
+		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come from input data, so 1.123 is 1123
 			$amount = str_replace($thousand, '', $amount);
 		}
 
@@ -5188,6 +5188,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
 	}
+	//print ' XX'.$amount.' '.$rounding;
 
 	// Now, make a rounding if required
 	if ($rounding) {
@@ -5205,13 +5206,13 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
-		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
+		//print " RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) {
 			$amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		} else {
 			return 'ErrorBadParameterProvidedToFunction';
 		}
-		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
+		//print ' SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
@@ -5811,9 +5812,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
-				//print 'VATRULE 6';
-				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					//print 'VATRULE 6';
+					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+				}
 			}
 			//print 'VATRULE 3';
 			return 0;

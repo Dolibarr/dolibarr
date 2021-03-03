@@ -7519,7 +7519,7 @@ abstract class CommonObject
 	 */
 	public function getJSListDependancies($type = '_extra')
 	{
-		$out .= '
+		$out = '
 					<script>
 					jQuery(document).ready(function() {
 						function showOptions'.$type.'(child_list, parent_list, orig_select)
