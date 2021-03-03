@@ -198,8 +198,6 @@ class DefaultValues extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
-
 
 		// Reset some properties
 		unset($object->id);
