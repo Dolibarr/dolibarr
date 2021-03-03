@@ -524,8 +524,8 @@ class FactureRec extends CommonInvoice
 			$sql .= ' AND f.rowid='.((int) $rowid);
 		} elseif ($ref) {
 			$sql .= " AND f.titre='".$this->db->escape($ref)."'";
-		// This field are not used for template invoice
-		//} elseif ($ref_ext) { $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'"; }
+			// This field are not used for template invoice
+			//} elseif ($ref_ext) { $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'"; }
 		} else {
 			$sql .= ' AND f.rowid = 0';
 		}
