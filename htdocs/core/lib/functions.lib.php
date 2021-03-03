@@ -1985,7 +1985,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	global $conf, $langs;
 
 	if ($tzoutput === 'auto') {
-		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
+		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
 
 	// Clean parameters
@@ -4871,7 +4871,7 @@ function price2num($amount, $rounding = '', $option = 0)
 			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
-		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
+		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come from input data, so 1.123 is 1123
 			$amount = str_replace($thousand, '', $amount);
 		}
 

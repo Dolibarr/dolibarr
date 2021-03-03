@@ -576,14 +576,12 @@ if (empty($reshook))
 	 */
 	elseif ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save', 'alpha') == $langs->trans("Save")) {
 		$objectline = new FichinterLigne($db);
-		if ($objectline->fetch($lineid) <= 0)
-		{
+		if ($objectline->fetch($lineid) <= 0) {
 			dol_print_error($db);
 			exit;
 		}
 
-		if ($object->fetch($objectline->fk_fichinter) <= 0)
-		{
+		if ($object->fetch($objectline->fk_fichinter) <= 0) {
 			dol_print_error($db);
 			exit;
 		}
@@ -603,8 +601,7 @@ if (empty($reshook))
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			dol_print_error($db);
 			exit;
 		}
@@ -614,8 +611,7 @@ if (empty($reshook))
 		$newlang = '';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
-		if (!empty($newlang))
-		{
+		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}

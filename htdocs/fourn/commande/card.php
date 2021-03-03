@@ -190,7 +190,7 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	}
 
 	// bank account
@@ -363,17 +363,17 @@ if (empty($reshook))
 		if ($prod_entry_mode == 'free')
 		{
 			$idprod = 0;
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = '';
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = GETPOST('remise_percent'.$predef);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -689,7 +689,7 @@ if (empty($reshook))
 		if (GETPOST('price_ht') != '')
 		{
 			$price_base_type = 'HT';
-			$ht = price2num(GETPOST('price_ht'));
+			$ht = price2num(GETPOST('price_ht'), '', 2);
 		} else {
 			$vatratecleaned = $vat_rate;
 			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
@@ -698,12 +698,12 @@ if (empty($reshook))
 				$vatratecode = $reg[2];
 			}
 
-			$ttc = price2num(GETPOST('price_ttc'));
+			$ttc = price2num(GETPOST('price_ttc'), '', 2);
 			$ht = $ttc / (1 + ($vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);

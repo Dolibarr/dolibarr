@@ -366,7 +366,7 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')), GETPOST('calculation_mode', 'int'));
 	}
 
 	// bank account
@@ -1079,12 +1079,11 @@ if (empty($reshook))
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
-		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '')
-		{
-			$up = price2num(GETPOST('price_ht'));
+		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '') {
+			$up = price2num(GETPOST('price_ht'), '', 2);
 			$price_base_type = 'HT';
 		} else {
-			$up = price2num(GETPOST('price_ttc'));
+			$up = price2num(GETPOST('price_ttc'), '', 2);
 			$price_base_type = 'TTC';
 		}
 
@@ -1183,17 +1182,17 @@ if (empty($reshook))
 		if ($prod_entry_mode == 'free')
 		{
 			$idprod = 0;
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = '';
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = GETPOST('remise_percent'.$predef);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);

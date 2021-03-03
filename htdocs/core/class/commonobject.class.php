@@ -5878,6 +5878,7 @@ abstract class CommonObject
 
 		$out = '';
 		$type = '';
+		$isDependList=0;
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
@@ -5915,6 +5916,7 @@ abstract class CommonObject
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
+
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
@@ -6058,7 +6060,6 @@ abstract class CommonObject
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
@@ -6172,6 +6173,7 @@ abstract class CommonObject
 							if (!empty($InfoFieldList[3]) && $parentField)
 							{
 								$parent = $parentName.':'.$obj->{$parentField};
+								$isDependList=1;
 							}
 
 							$out .= '<option value="'.$obj->rowid.'"';
@@ -6328,6 +6330,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
+								$isDependList=1;
 							}
 
 							$data[$obj->rowid] = $labeltoshow;
@@ -6413,6 +6416,10 @@ abstract class CommonObject
 		}
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
+		}
+
+		if ($isDependList==1) {
+			$out .= $this->getJSListDependancies('_common');
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -6981,10 +6988,28 @@ abstract class CommonObject
 				$out .= "\n";
 				// Add code to manage list depending on others
 				if (!empty($conf->use_javascript_ajax)) {
-					$out .= '
+					$out .= $this->getJSListDependancies();
+				}
+
+				$out .= '<!-- /showOptionals --> '."\n";
+			}
+		}
+
+		$out .= $hookmanager->resPrint;
+
+		return $out;
+	}
+
+	/**
+	 * @param 	string 	$type	Type for prefix
+	 * @return 	string			Javacript code to manage dependency
+	 */
+	public function getJSListDependancies($type = '_extra')
+	{
+		$out .= '
 					<script>
 					jQuery(document).ready(function() {
-						function showOptions(child_list, parent_list, orig_select)
+						function showOptions'.$type.'(child_list, parent_list, orig_select)
 						{
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
@@ -6998,7 +7023,7 @@ abstract class CommonObject
 								$("select[name=\""+child_list+"\"]").append(options);
 							}
 						}
-						function setListDependencies() {
+						function setListDependencies'.$type.'() {
 							jQuery("select option[parent]").parent().each(function() {
 								var orig_select = {};
 								var child_list = $(this).attr("name");
@@ -7007,25 +7032,16 @@ abstract class CommonObject
 								var infos = parent.split(":");
 								var parent_list = infos[0];
 								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select[child_list]);
+									showOptions'.$type.'(child_list, parent_list, orig_select[child_list]);
 								});
 							});
 						}
 
-						setListDependencies();
+						setListDependencies'.$type.'();
 					});
 					</script>'."\n";
-				}
-
-				$out .= '<!-- /showOptionals --> '."\n";
-			}
-		}
-
-		$out .= $hookmanager->resPrint;
-
 		return $out;
 	}
-
 
 	/**
 	 * Returns the rights used for this class

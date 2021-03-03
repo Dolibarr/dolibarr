@@ -377,7 +377,7 @@ if (empty($reshook))
 	} elseif ($action == 'setinvoicedate' && $usercancreate) {
 		$object->fetch($id);
 		$old_date_lim_reglement = $object->date_lim_reglement;
-		$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+		$date = dol_mktime(12, 0, 0, GETPOST('invoicedatemonth', 'int'), GETPOST('invoicedateday', 'int'), GETPOST('invoicedateyear', 'int'));
 		if (empty($date))
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -1895,8 +1895,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'restricthtml') : '');
-		$price_ht = price2num(GETPOST('price_ht'));
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'));
+		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
 		if ($prod_entry_mode == 'free')
 		{
@@ -2216,10 +2216,10 @@ if (empty($reshook))
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml') ? GETPOST('product_desc', 'restricthtml') : GETPOST('desc', 'restricthtml'));
-		$pu_ht = GETPOST('price_ht');
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		$qty = GETPOST('qty');
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 
 		// Define info_bits
 		$info_bits = 0;
