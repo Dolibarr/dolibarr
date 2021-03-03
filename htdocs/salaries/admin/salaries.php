@@ -69,6 +69,13 @@ if ($action == 'update')
     }
 }
 
+// Set boolean (on/off) constants
+elseif (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
+		dol_print_error($db);
+	}
+}
+
 /*
  * View
  */
@@ -124,6 +131,9 @@ foreach ($list as $key)
 
 print '</tr>';
 
+$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
+echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
+
 print "</table>\n";
 
 //dol_fiche_end();
@@ -131,6 +141,8 @@ print "</table>\n";
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 print '</form>';
+
+
 
 // End of page
 llxFooter();

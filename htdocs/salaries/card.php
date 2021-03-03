@@ -48,7 +48,11 @@ $cancel = GETPOST('cancel', 'aZ09');
 $accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 $confirm = GETPOST('confirm');
-$auto_create_paiement = GETPOST("auto_create_paiement", "int");
+if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
+	$auto_create_paiement = GETPOST("auto_create_paiement", "int");
+} else {
+	$auto_create_paiement = empty($conf->global->CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT);
+}
 
 $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
 $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
@@ -413,15 +417,10 @@ if ($action == 'create')
 	if (!empty($conf->use_javascript_ajax))
 	{
 		print "\n".'<script type="text/javascript" language="javascript">';
-		print '$(document).ready(function () {
-                $("#radiopayment").click(function() {
-                    $("#label").val($(this).data("label"));
-                });
-                $("#radiorefund").click(function() {
-                    $("#label").val($(this).data("label"));
-                });
-				$("#auto_create_paiement").click(function() {
-					if($(this).is(":checked")) {
+		print /** @lang JavaScript */'
+			$(document).ready(function () {
+				let onAutoCreatePaiementChange = function () {
+					if($("#auto_create_paiement").is(":checked")) {
 						$("#label_fk_account").find("span").addClass("fieldrequired");
 						$("#label_type_payment").find("span").addClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").show();
@@ -430,21 +429,19 @@ if ($action == 'create')
 						$("#label_type_payment").find("span").removeClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").hide();
 					}
-				});';
-
-		if ($_REQUEST['action'] === 'add') { // form has been send but there is at least one error
-			if (empty($auto_create_paiement)) {
-				print '$("#label_fk_account").find("span").removeClass("fieldrequired");
-					   $("#label_type_payment").find("span").removeClass("fieldrequired");
-					   $(".hide_if_no_auto_create_payment").hide();';
-			} else {
-				print '$("#label_fk_account").find("span").addClass("fieldrequired");
-					   $("#label_type_payment").find("span").addClass("fieldrequired");
-					   $(".hide_if_no_auto_create_payment").show();';
-			}
-		}
-
-		print '});';
+				};
+				$("#radiopayment").click(function() {
+					$("#label").val($(this).data("label"));
+				});
+				$("#radiorefund").click(function() {
+					$("#label").val($(this).data("label"));
+				});
+				$("#auto_create_paiement").click(function () {
+					onAutoCreatePaiementChange();
+				});
+				onAutoCreatePaiementChange();
+			});
+			';
 		print '</script>'."\n";
 	}
 
@@ -510,7 +507,7 @@ if ($action == 'create')
 
 	// Auto create payment
 	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
-	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" '.($_REQUEST['action'] === 'add' ? (empty($auto_create_paiement) ? '' : 'checked="checked"') : 'checked="checked"').' value="1"></td></tr>'."\n";
+	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
 
 	// Date payment
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
