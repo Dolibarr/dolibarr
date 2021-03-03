@@ -122,7 +122,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) {
-				$shownb = 1; $showtot = 1;
+				$shownb = 1;
+				$showtot = 1;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) {
@@ -193,7 +194,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 				if (!$mesg) {
 					$px2->SetData($data2);
 					unset($data2);
-					$i = $startyear; $legend = array();
+					$i = $startyear;
+					$legend = array();
 					while ($i <= $endyear) {
 						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);

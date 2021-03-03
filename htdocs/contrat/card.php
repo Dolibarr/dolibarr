@@ -367,8 +367,8 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht', 'CU'));
+		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free') {
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
@@ -651,9 +651,8 @@ if (empty($reshook)) {
 			}
 
 			// ajout prix d'achat
-			$fk_fournprice = $_POST['fournprice'];
-			if (!empty($_POST['buying_price'])) {
-				$pa_ht = $_POST['buying_price'];
+			if (GETPOST('buying_price')) {
+				$pa_ht = price2num(GETPOST('buying_price'), '', 2);
 			} else {
 				$pa_ht = null;
 			}

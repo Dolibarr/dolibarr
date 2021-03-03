@@ -88,7 +88,8 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	{
 		global $conf, $langs, $db;
 
-		$payyymm = ''; $max = '';
+		$payyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -100,7 +101,8 @@ class mod_payment_cicada extends ModeleNumRefPayments
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$payyymm = substr($row[0], 0, 6); $max = $row[0];
+				$payyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($payyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $payyymm)) {

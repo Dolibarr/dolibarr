@@ -71,13 +71,13 @@ if ($refresh === false) {
 	$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 	$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 	// Quarter
-	if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-	{
+	if (empty($date_start) || empty($date_end)){ // We define date_start and date_end
 		$q=GETPOST("q", "int");
-		if (empty($q))
-		{
-			if (GETPOST("month", "int")) { $date_start=dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end=dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-			else {
+		if (empty($q)) {
+			if (GETPOST("month", "int")) {
+				$date_start=dol_get_first_day($year_start, GETPOST("month", "int"), false);
+				$date_end=dol_get_last_day($year_start, GETPOST("month", "int"), false);
+			} else {
 				$date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
 				if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) {
 					$date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
@@ -87,8 +87,7 @@ if ($refresh === false) {
 					$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 				}
 			}
-		}
-		else {
+		} else {
 			if ($q == 1) {
 				$date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false);
 			}
@@ -184,7 +183,8 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $year_start; $prevquarter = $q;
+$prevyear = $year_start;
+$prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {

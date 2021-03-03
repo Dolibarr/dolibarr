@@ -72,8 +72,7 @@ if ($refresh === false) {
 		}
 		$date_start = dol_get_first_day($year, $month_start);
 		$date_end = dol_get_last_day($year, $month_end);
-	}
-	elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) {
+	} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) {
 		// annual
 		$date_start = dol_get_first_day($year_current, 1);
 		$date_end = dol_get_last_day($year_current, 12);
@@ -101,8 +100,7 @@ if ($refresh === false) {
 	}
 	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
 	$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
-	if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-	{
+	if (empty($date_start) || empty($date_end)) {// We define date_start and date_end
 		$q = GETPOST("q", "int");
 		if (empty($q)) {
 			if (GETPOST("month", "int")) {

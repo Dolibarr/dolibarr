@@ -795,13 +795,17 @@ print '</table>';
 
 // Graphs
 if ($mode == 'standard') {
-	$prevyear = $year; $nextyear = $year;
-	$prevmonth = $month - 1; $nextmonth = $month + 1;
+	$prevyear = $year;
+	$nextyear = $year;
+	$prevmonth = $month - 1;
+	$nextmonth = $month + 1;
 	if ($prevmonth < 1) {
-		$prevmonth = 12; $prevyear--;
+		$prevmonth = 12;
+		$prevyear--;
 	}
 	if ($nextmonth > 12) {
-		$nextmonth = 1; $nextyear++;
+		$nextmonth = 1;
+		$nextyear++;
 	}
 
 	// For month
@@ -818,7 +822,8 @@ if ($mode == 'standard') {
 	print '</div>';
 
 	// For year
-	$prevyear = $year - 1; $nextyear = $year + 1;
+	$prevyear = $year - 1;
+	$nextyear = $year + 1;
 	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 
 	print '<div class="right clearboth margintoponly">'.$link.'</div>';

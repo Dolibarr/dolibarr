@@ -4427,6 +4427,10 @@ class Product extends CommonObject
 	{
 		global $alreadyfound;
 
+		if (empty($id)) {
+			return array();
+		}
+
 		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
 		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";

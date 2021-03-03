@@ -227,7 +227,8 @@ class FormActions
 			print '<!-- formactions->showactions -->'."\n";
 			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
 
-			$page = 0; $param = '';
+			$page = 0;
+			$param = '';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';

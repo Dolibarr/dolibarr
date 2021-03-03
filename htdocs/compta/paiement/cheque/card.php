@@ -235,8 +235,8 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
 		exit;
 	}
-} // Remove file in doc form
-elseif ($action == 'remove_file' && $user->rights->banque->cheque) {
+} elseif ($action == 'remove_file' && $user->rights->banque->cheque) {
+	// Remove file in doc form
 	if ($object->fetch($id) > 0) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
