@@ -1,6 +1,8 @@
 #!/bin/sh
 # To install this precommit file: put this file in your local repo in .git/hooks directory and make it executable
 # you need to adapt the path to your phpcs install
+# if phpcs check fail, then it run phpcbf to fix automaticaly the syntax, and git commit is canceled
+# if you have a multiprocessor computer, you can add to the option --parallel=xx
 # when running git commit, it first execute this file checking only modified files, so it is faster than running on all files
 # To run the fix manually: cd ~/git/dolibarr; phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true fileordir
 
