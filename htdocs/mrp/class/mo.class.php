@@ -168,7 +168,7 @@ class Mo extends CommonObject
 	/**
 	 * @var string    Name of subtable line
 	 */
-	public $table_element_line = 'mo_production';
+	public $table_element_line = 'mrp_production';
 
 	/**
 	 * @var string    Field with ID of parent key if this field has a parent

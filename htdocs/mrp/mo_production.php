@@ -48,7 +48,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
 
 $collapse = GETPOST('collapse', 'aZ09comma');
 
@@ -724,6 +724,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			print '</td>';
 		}
+		if ($permissiontodelete) {
+			print '<td/>';
+		}
 		print '</tr>';
 
 		if ($action == 'addconsumeline') {
@@ -848,6 +851,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					if ($conf->productbatch->enabled) {
 						print '<td></td>'; // Lot
+					}
+					if ($permissiontodelete) {
+						$href = $_SERVER["PHP_SELF"];
+						$href .= '?id='.$object->id;
+						$href .= '&action=deleteline';
+						$href .= '&lineid='.$line->id;
+						print '<td class="center">';
+						print '<a href="'.$href.'">';
+						print img_picto('', "delete");
+						print '</a>';
+						print '</td>';
 					}
 					print '</tr>';
 
