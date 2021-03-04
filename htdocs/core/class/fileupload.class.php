@@ -70,7 +70,8 @@ class FileUpload
 			$element = $pathname = 'projet';
 			$dir_output = $conf->$element->dir_output;
 		} elseif ($element == 'project_task') {
-			$pathname = 'projet'; $filename = 'task';
+			$pathname = 'projet';
+			$filename = 'task';
 			$dir_output = $conf->projet->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
@@ -80,20 +81,24 @@ class FileUpload
 			$element = 'ficheinter';
 			$dir_output = $conf->$element->dir_output;
 		} elseif ($element == 'order_supplier') {
-			$pathname = 'fourn'; $filename = 'fournisseur.commande';
+			$pathname = 'fourn';
+			$filename = 'fournisseur.commande';
 			$dir_output = $conf->fournisseur->commande->dir_output;
 		} elseif ($element == 'invoice_supplier') {
-			$pathname = 'fourn'; $filename = 'fournisseur.facture';
+			$pathname = 'fourn';
+			$filename = 'fournisseur.facture';
 			$dir_output = $conf->fournisseur->facture->dir_output;
 		} elseif ($element == 'product') {
 			$dir_output = $conf->product->multidir_output[$conf->entity];
 		} elseif ($element == 'productbatch') {
 			$dir_output = $conf->productbatch->multidir_output[$conf->entity];
 		} elseif ($element == 'action') {
-			$pathname = 'comm/action'; $filename = 'actioncomm';
+			$pathname = 'comm/action';
+			$filename = 'actioncomm';
 			$dir_output = $conf->agenda->dir_output;
 		} elseif ($element == 'chargesociales') {
-			$pathname = 'compta/sociales'; $filename = 'chargesociales';
+			$pathname = 'compta/sociales';
+			$filename = 'chargesociales';
 			$dir_output = $conf->tax->dir_output;
 		} else {
 			$dir_output = $conf->$element->dir_output;

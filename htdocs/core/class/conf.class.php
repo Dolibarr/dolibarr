@@ -80,6 +80,9 @@ class Conf
 		'syslog' => array(),
 	);
 
+	// An array to store cache results ->cache['nameofcache']=...
+	public $cache = array();
+
 	public $logbuffer = array();
 
 	/**
@@ -196,13 +199,13 @@ class Conf
 								$this->modules_parts[$partname] = array();
 							}
 							$this->modules_parts[$partname][$params[0]][] = $value; // $value may be a string or an array
-						}
-						// If this is constant for all generic part activated by a module. It initializes
-						// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
-						// modules_parts['models'], modules_parts['theme']
-						// modules_parts['sms'],
-						// modules_parts['css'], ...
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg)) {
+						} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i', $key, $reg)) {
+							// If this is constant for all generic part activated by a module. It initializes
+							// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
+							// modules_parts['models'], modules_parts['theme']
+							// modules_parts['sms'],
+							// modules_parts['css'], ...
+
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) {
@@ -221,9 +224,8 @@ class Conf
 								$value = '/'.$modulename.'/core/modules/'.$partname.'/'; // ex: partname = societe
 							}
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value)); // $value may be a string or an array
-						}
-						// If this is a module constant (must be at end)
-						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {
+						} elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i', $key, $reg)) {
+							// If this is a module constant (must be at end)
 							$modulename = strtolower($reg[1]);
 							if ($modulename == 'propale') {
 								$modulename = 'propal';

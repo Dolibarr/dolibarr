@@ -81,7 +81,8 @@ class Translate
 			foreach ($conf->file->dol_document_root as $dir) {
 				$newdir = $dir.$conf->global->MAIN_FORCELANGDIR; // For example $conf->global->MAIN_FORCELANGDIR is '/mymodule' meaning we search files into '/mymodule/langs/xx_XX'
 				if (!in_array($newdir, $this->dir)) {
-					$more['module_'.$i] = $newdir; $i++; // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
+					$more['module_'.$i] = $newdir;
+					$i++; // We add the forced dir into the array $more. Just after, we add entries into $more to list of lang dir $this->dir.
 				}
 			}
 			$this->dir = array_merge($more, $this->dir); // Forced dir ($more) are before standard dirs ($this->dir)
@@ -267,9 +268,8 @@ class Translate
 				// Using a memcached server
 				if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
 					$usecachekey = $newdomain.'_'.$langofdir.'_'.md5($file_lang); // Should not contains special chars
-				}
-				// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-				elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 					$usecachekey = $newdomain;
 				}
 
@@ -458,9 +458,8 @@ class Translate
 		// Using a memcached server
 		if (!empty($conf->memcached->enabled) && !empty($conf->global->MEMCACHED_SERVER)) {
 			$usecachekey = $newdomain.'_'.$langofdir; // Should not contains special chars
-		}
-		// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-		elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$usecachekey = $newdomain;
 		}
 

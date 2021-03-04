@@ -74,19 +74,24 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 				$year_end++;
 			}
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	} else {
 		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+			$date_start = dol_get_first_day($year_start, 1, false);
+			$date_end = dol_get_last_day($year_start, 3, false);
 		}
 		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+			$date_start = dol_get_first_day($year_start, 4, false);
+			$date_end = dol_get_last_day($year_start, 6, false);
 		}
 		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+			$date_start = dol_get_first_day($year_start, 7, false);
+			$date_end = dol_get_last_day($year_start, 9, false);
 		}
 		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+			$date_start = dol_get_first_day($year_start, 10, false);
+			$date_end = dol_get_last_day($year_start, 12, false);
 		}
 	}
 }
@@ -175,17 +180,21 @@ if ($modetax == 2) {
 $calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $year_start; $prevquarter = $q;
+$prevyear = $year_start;
+$prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-	$prevquarter = 4; $prevyear--;
+	$prevquarter = 4;
+	$prevyear--;
 }
-$nextyear = $year_start; $nextquarter = $q;
+$nextyear = $year_start;
+$nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-	$nextquarter = 1; $nextyear++;
+	$nextquarter = 1;
+	$nextyear++;
 }
 $description .= $fsearch;
 $builddate = dol_now();

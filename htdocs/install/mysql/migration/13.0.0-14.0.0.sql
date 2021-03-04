@@ -43,6 +43,9 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 -- VMYSQL4.3 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN montant double(24,8) NULL;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_bookkeeping ALTER COLUMN montant DROP NOT NULL;
 
+UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
+
+
 -- For v14
 
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
@@ -185,7 +188,21 @@ ALTER TABLE llx_projet ADD COLUMN accept_booth_suggestions integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN price_registration double(24,8);
 ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 
+ALTER TABLE llx_actioncomm ADD COLUMN num_vote integer DEFAULT NULL AFTER reply_to;
+ALTER TABLE llx_actioncomm ADD COLUMN event_paid smallint NOT NULL DEFAULT 0 AFTER num_vote;
+ALTER TABLE llx_actioncomm ADD COLUMN status smallint NOT NULL DEFAULT 0 AFTER event_paid;
+ALTER TABLE llx_actioncomm ADD COLUMN ref varchar(30) AFTER id;
+UPDATE llx_actioncomm SET ref = id WHERE ref = '' OR ref IS NULL;
+ALTER TABLE llx_actioncomm MODIFY COLUMN ref varchar(30) NOT NULL;
+ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_ref (ref, entity);
 
+ALTER TABLE llx_c_actioncomm MODIFY code varchar(50) NOT NULL;
+ALTER TABLE llx_c_actioncomm MODIFY module varchar(50) DEFAULT NULL;
+
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 60,'AC_EO_ONLINECONF','module','Online/Virtual conference','conference@eventorganization', 1, 60);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 61,'AC_EO_INDOORCONF','module','Indoor conference','conference@eventorganization', 1, 61);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 62,'AC_EO_ONLINEBOOTH','module','Online/Virtual booth','booth@eventorganization', 1, 62);
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) VALUES ( 63,'AC_EO_INDOORBOOTH','module','Indoor booth','booth@eventorganization', 1, 63);
 -- Code enhanced - Standardize field name
 ALTER TABLE llx_commande CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_supplier_proposal CHANGE COLUMN tva total_tva double(24,8) default 0;
@@ -194,3 +211,37 @@ ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
+-- Change for salary intent table
+create table llx_salary
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
+  label           varchar(255),
+  tms             timestamp,
+  datec           datetime,                   -- Create date
+  fk_user         integer NOT NULL,
+  datep           date,                       -- payment date
+  datev           date,                       -- value date (this field should not be here, only into bank tables)
+  salary          double(24,8),               -- salary of user when payment was done
+  amount          double(24,8) NOT NULL DEFAULT 0,
+  fk_projet       integer DEFAULT NULL,
+  datesp          date,                       -- date start period
+  dateep          date,                       -- date end period
+  entity          integer DEFAULT 1 NOT NULL, -- multi company id
+  note            text,
+  fk_bank         integer,
+  paye            smallint default 1 NOT NULL,
+  fk_typepayment  integer NOT NULL,			  -- default payment mode for payment
+  fk_account      integer,					  -- default bank account for payment
+  fk_user_author  integer,                    -- user creating
+  fk_user_modif   integer                     -- user making last change
+)ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
+
+INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
+UPDATE llx_payment_salary as ps SET ps.fk_salary = ps.rowid WHERE ps.fk_salary IS NULL;
+UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
+
+ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;

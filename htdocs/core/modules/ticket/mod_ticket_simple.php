@@ -151,8 +151,8 @@ class mod_ticket_simple extends ModeleNumRefTicket
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1;
-		} // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else {
+		} else {
+			// If counter > 9999, we do not format on 4 chars, we take number as it is
 			$num = sprintf("%04s", $max + 1);
 		}
 

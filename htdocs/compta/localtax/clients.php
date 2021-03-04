@@ -51,7 +51,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q");
 	if (empty($q)) {
 		if (GETPOST("month")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month"), false); $date_end = dol_get_last_day($year_start, GETPOST("month"), false);
+			$date_start = dol_get_first_day($year_start, GETPOST("month"), false);
+			$date_end = dol_get_last_day($year_start, GETPOST("month"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) {
@@ -64,16 +65,20 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		}
 	} else {
 		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+			$date_start = dol_get_first_day($year_start, 1, false);
+			$date_end = dol_get_last_day($year_start, 3, false);
 		}
 		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+			$date_start = dol_get_first_day($year_start, 4, false);
+			$date_end = dol_get_last_day($year_start, 6, false);
 		}
 		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+			$date_start = dol_get_first_day($year_start, 7, false);
+			$date_end = dol_get_last_day($year_start, 9, false);
 		}
 		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+			$date_start = dol_get_first_day($year_start, 10, false);
+			$date_end = dol_get_last_day($year_start, 12, false);
 		}
 	}
 }
@@ -206,7 +211,8 @@ if ($calc == 0 || $calc == 2) {
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 	if (is_array($coll_list)) {
-		$total = 0; $totalamount = 0;
+		$total = 0;
+		$totalamount = 0;
 		$i = 1;
 		foreach ($coll_list as $coll) {
 			if (($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local == 1 ? $coll->localtax1 : $coll->localtax2) != 0) {
@@ -270,7 +276,8 @@ if ($calc == 0 || $calc == 1) {
 
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if (is_array($coll_list)) {
-		$total = 0; $totalamount = 0;
+		$total = 0;
+		$totalamount = 0;
 		$i = 1;
 		foreach ($coll_list as $coll) {
 			if (($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local == 1 ? $coll->localtax1 : $coll->localtax2) != 0) {

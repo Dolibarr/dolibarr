@@ -122,7 +122,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) {
-				$shownb = 1; $showtot = 1;
+				$shownb = 1;
+				$showtot = 1;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) {
@@ -149,7 +150,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$px1->SetType($datatype1);
 					$px1->SetData($data1);
 					unset($data1);
-					$i = $startyear; $legend = array();
+					$i = $startyear;
+					$legend = array();
 					while ($i <= $endyear) {
 						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
@@ -195,7 +197,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$px2->SetType($datatype2);
 					$px2->SetData($data2);
 					unset($data2);
-					$i = $startyear; $legend = array();
+					$i = $startyear;
+					$legend = array();
 					while ($i <= $endyear) {
 						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);

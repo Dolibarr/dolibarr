@@ -94,7 +94,8 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 		$langs->load("bills");
 
 		// Check invoice num
-		$fayymm = ''; $max = '';
+		$fayymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
@@ -106,7 +107,8 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$fayymm = substr($row[0], 0, 6); $max = $row[0];
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($fayymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {

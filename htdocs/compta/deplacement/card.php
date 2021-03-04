@@ -134,8 +134,8 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 		header("Location: index.php");
 		exit;
 	}
-} // Update record
-elseif ($action == 'update' && $user->rights->deplacement->creer) {
+} elseif ($action == 'update' && $user->rights->deplacement->creer) {
+	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
@@ -159,15 +159,15 @@ elseif ($action == 'update' && $user->rights->deplacement->creer) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 		exit;
 	}
-} // Set into a project
-elseif ($action == 'classin' && $user->rights->deplacement->creer) {
+} elseif ($action == 'classin' && $user->rights->deplacement->creer) {
+	// Set into a project
 	$object->fetch($id);
 	$result = $object->setProject(GETPOST('projectid', 'int'));
 	if ($result < 0) {
 		dol_print_error($db, $object->error);
 	}
-} // Set fields
-elseif ($action == 'setdated' && $user->rights->deplacement->creer) {
+} elseif ($action == 'setdated' && $user->rights->deplacement->creer) {
+	// Set fields
 	$dated = dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));
 	$object->fetch($id);
 	$result = $object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');

@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -357,11 +358,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		) {
 		$salary = new PaymentSalary($db);
 
-		$sql = "SELECT ps.rowid, ps.datesp, ps.dateep, ps.amount";
+		$sql = "SELECT ps.rowid, s.datesp, s.dateep, ps.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-		$sql .= " WHERE ps.fk_user = ".$object->id;
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
+		$sql .= " WHERE s.fk_user = ".$object->id;
 		$sql .= " AND ps.entity = ".$conf->entity;
-		$sql .= " ORDER BY ps.datesp DESC";
+		$sql .= " ORDER BY ps.rowid DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -370,7 +372,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->id.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -380,9 +382,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
-				$salary->id = $objp->rowid;
-				$salary->ref = $objp->rowid;
-				print $salary->getNomUrl(1);
+				$payment_salary->id = $objp->rowid;
+				$payment_salary->ref = $objp->rowid;
+				print $payment_salary->getNomUrl(1);
 				print '</td>';
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";

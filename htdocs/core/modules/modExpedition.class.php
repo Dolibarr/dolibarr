@@ -280,14 +280,22 @@ class modExpedition extends DolibarrModules
 		}
 		$this->export_dependencies_array[$r] = array('shipment_line'=>'ed.rowid', 'product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) {
-			$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra3';
+			$keyforselect = 'socpeople';
+			$keyforelement = 'contact';
+			$keyforaliasextra = 'extra3';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		}
-		$keyforselect = 'expedition'; $keyforelement = 'shipment'; $keyforaliasextra = 'extra';
+		$keyforselect = 'expedition';
+		$keyforelement = 'shipment';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'expeditiondet'; $keyforelement = 'shipment_line'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'expeditiondet';
+		$keyforelement = 'shipment_line';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extraprod';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extraprod';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

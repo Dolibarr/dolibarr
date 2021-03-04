@@ -151,7 +151,8 @@ class CSMSFile
 				}
 			} elseif (!empty($conf->global->MAIN_SMS_SENDMODE)) {    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 				$tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
-				$classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
+				$classfile = $tmp[0];
+				$module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
 				dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
 				try {
 					$classname = ucfirst($classfile);

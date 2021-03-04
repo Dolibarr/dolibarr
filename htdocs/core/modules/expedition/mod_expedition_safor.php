@@ -86,7 +86,8 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -98,7 +99,8 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$coyymm = substr($row[0], 0, 6); $max = $row[0];
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {

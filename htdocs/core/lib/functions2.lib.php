@@ -1090,9 +1090,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Define posy, posm and reg
 		if ($maskraz > 1) {	// if reset is not first month, we need month and year into mask
 			if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2; $posm = 3;
+				$posy = 2;
+				$posm = 3;
 			} elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 3; $posm = 2;
+				$posy = 3;
+				$posm = 2;
 			} else {
 				return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
 			}
@@ -1103,11 +1105,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} else // if reset is for a specific month in year, we need year
 		{
 			if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 3; $posm = 2;
+				$posy = 3;
+				$posm = 2;
 			} elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2; $posm = 3;
+				$posy = 2;
+				$posm = 3;
 			} elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2; $posm = 0;
+				$posy = 2;
+				$posm = 0;
 			} else {
 				return 'ErrorCantUseRazIfNoYearInMask';
 			}
@@ -1892,7 +1897,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					$tmpdir = trim($tmpdir);
 					$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 					if (!$tmpdir) {
-						unset($listofdir[$key]); continue;
+						unset($listofdir[$key]);
+						continue;
 					}
 					if (is_dir($tmpdir)) {
 						// all type of template is allowed
@@ -2128,7 +2134,8 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	}
 
 	// Generic case for $classfile and $classname
-	$classfile = strtolower($myobject); $classname = ucfirst($myobject);
+	$classfile = strtolower($myobject);
+	$classname = ucfirst($myobject);
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath;
 
 	if ($objecttype == 'invoice_supplier') {
@@ -2227,7 +2234,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			// Check depth
 			//print 'Analyse record id='.$id.' with parent '.$pid.'<br>';
 
-			$cursor = $id; $arrayidparsed = array(); // We start from child $id
+			$cursor = $id;
+			$arrayidparsed = array(); // We start from child $id
 			while ($cursor > 0) {
 				$arrayidparsed[$cursor] = 1;
 				if ($arrayidparsed[$listofparentid[$cursor]]) {	// We detect a loop. A record with a parent that was already into child
@@ -2627,7 +2635,8 @@ if (!function_exists('dolEscapeXML')) {
 function autoOrManual($automaticmanual, $case = 1, $color = 0)
 {
 	global $langs;
-	$result = 'unknown'; $classname = '';
+	$result = 'unknown';
+	$classname = '';
 	if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') { 	// A mettre avant test sur no a cause du == 0
 		$result = $langs->trans('automatic');
 		if ($case == 1 || $case == 3) {

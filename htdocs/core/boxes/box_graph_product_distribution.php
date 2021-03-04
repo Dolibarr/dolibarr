@@ -101,7 +101,9 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showordernb = (!empty($tmparray['showordernb']) ? $tmparray['showordernb'] : '');
 		}
 		if (empty($showinvoicenb) && empty($showpropalnb) && empty($showordernb)) {
-			$showpropalnb = 1; $showinvoicenb = 1; $showordernb = 1;
+			$showpropalnb = 1;
+			$showinvoicenb = 1;
+			$showordernb = 1;
 		}
 		if (empty($conf->facture->enabled) || empty($user->rights->facture->lire)) {
 			$showinvoicenb = 0;
@@ -154,7 +156,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				$langs->load("propal");
 				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
-				$showpointvalue = 1; $nocolor = 0;
+				$showpointvalue = 1;
+				$nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid > 0 ? $userid : 0));
 				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
 				if (empty($data2)) {
@@ -169,7 +172,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
 				if (!$mesg) {
-					$i = 0; $legend = array();
+					$i = 0;
+					$legend = array();
 
 					foreach ($data2 as $key => $val) {
 						$data2[$key][0] = dol_trunc($data2[$key][0], 32);
@@ -210,7 +214,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				$langs->load("orders");
 				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
-				$showpointvalue = 1; $nocolor = 0;
+				$showpointvalue = 1;
+				$nocolor = 0;
 				$mode = 'customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
 				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
@@ -226,7 +231,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				$px3 = new DolGraph();
 				$mesg = $px3->isGraphKo();
 				if (!$mesg) {
-					$i = 0; $legend = array();
+					$i = 0;
+					$legend = array();
 
 					foreach ($data3 as $key => $val) {
 						$data3[$key][0] = dol_trunc($data3[$key][0], 32);
@@ -268,7 +274,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				$langs->load("bills");
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
-				$showpointvalue = 1; $nocolor = 0;
+				$showpointvalue = 1;
+				$nocolor = 0;
 				$mode = 'customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
 				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
@@ -284,7 +291,8 @@ class box_graph_product_distribution extends ModeleBoxes
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
 				if (!$mesg) {
-					$i = 0; $legend = array();
+					$i = 0;
+					$legend = array();
 
 					foreach ($data1 as $key => $val) {
 						$data1[$key][0] = dol_trunc($data1[$key][0], 32);

@@ -356,8 +356,7 @@ if ($action == 'create') {
 	// Company
 	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		// Thirdparty
-		if ($soc->id > 0)
-		{
+		if ($soc->id > 0) {
 			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
 			print '<td>';
 			print $soc->getNomUrl(1);
@@ -388,7 +387,8 @@ if ($action == 'create') {
 						var socid = $(this).val();
 				        var fac_rec = $(\'#fac_rec\').val();
 						// reload page
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
 					});
 				});
 				</script>';
