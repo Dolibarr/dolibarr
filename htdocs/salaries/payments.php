@@ -77,12 +77,10 @@ $search_account = GETPOST('search_account', 'int');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
-if (!GETPOST('search_type_id', 'int'))
-{
+if (!GETPOST('search_type_id', 'int')) {
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
-	foreach ($filterarray as $val)
-	{
+	foreach ($filterarray as $val) {
 		$part = explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') $search_type_id = $part[1];
 	}
@@ -100,15 +98,13 @@ $result = restrictedArea($user, 'salaries', '', '', '');
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
-foreach ($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach ($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
 
@@ -128,14 +124,12 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_ref = "";
 		$search_user = "";
 		$search_label = "";
@@ -146,8 +140,7 @@ if (empty($reshook))
 		$search_type_id = "";
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
-	{
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
@@ -158,8 +151,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Validate records
-	if (!$error && $massaction == 'buildsepa' && $permissiontoadd)
-	{
+	if (!$error && $massaction == 'buildsepa' && $permissiontoadd) {
 		$objecttmp = new $objectclass($db);
 
 		// TODO
@@ -213,26 +205,22 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 }
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
-{
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
-	if (!$resql)
-	{
+	if (!$resql) {
 		dol_print_error($db);
 		exit;
 	}
@@ -323,8 +311,7 @@ print '<td class="liste_titre left">';
 $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
 print '</td>';
 // Account
-if (!empty($conf->banque->enabled))
-{
+if (!empty($conf->banque->enabled)) {
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
@@ -371,10 +358,8 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
-	{
+if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) $needToFetchEachLine++; // There is at least one compute field that use $object
 	}
 }
@@ -384,8 +369,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 $i = 0;
 $total = 0;
 $totalarray = array();
-while ($i < ($limit ? min($num, $limit) : $num))
-{
+while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) break; // Should not happen
 
@@ -432,18 +416,15 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (!$i) $totalarray['nbfield']++;
 
 	// Account
-	if (!empty($conf->banque->enabled))
-	{
+	if (!empty($conf->banque->enabled)) {
 		print '<td>';
-		if ($obj->fk_bank > 0)
-		{
+		if ($obj->fk_bank > 0) {
 			//$accountstatic->fetch($obj->fk_bank);
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
 			$accountstatic->number = $obj->bnumber;
 
-			if (!empty($conf->accounting->enabled))
-			{
+			if (!empty($conf->accounting->enabled)) {
 				$accountstatic->account_number = $obj->account_number;
 
 				$accountingjournal = new AccountingJournal($db);
@@ -472,8 +453,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	print $hookmanager->resPrint;
 	// Action column
 	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-	{
+	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
 		if (in_array($object->id, $arrayofselected)) $selected = 1;
 		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -491,8 +471,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 
 // If no record found
-if ($num == 0)
-{
+if ($num == 0) {
 	$colspan = 1;
 	foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';

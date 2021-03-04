@@ -84,7 +84,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT YEAR(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		$sql .= " GROUP BY dm DESC";
-        //$sql .= " WHERE ".$this->where;
+		//$sql .= " WHERE ".$this->where;
 
 		return $this->_getNbByYear($sql);
 	}
@@ -102,7 +102,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT MONTH(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE YEAR(datep) = ".$year;
-        //$sql .= " AND ".$this->where;
+		//$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
