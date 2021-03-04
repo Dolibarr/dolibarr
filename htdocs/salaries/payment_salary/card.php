@@ -61,9 +61,9 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->salaries-
 
 	$result = $object->delete($user);
 	if ($result > 0) {
-        $db->commit();
-        header("Location: ".DOL_URL_ROOT."/salaries/payments.php");
-        exit;
+		$db->commit();
+		header("Location: ".DOL_URL_ROOT."/salaries/payments.php");
+		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
@@ -90,7 +90,8 @@ $head[$h][1] = $langs->trans("SalaryPayment");
 $hselected = $h;
 $h++;
 
-/*$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
+/*
+$head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/info.php?id='.$id;
 $head[$h][1] = $langs->trans("Info");
 $h++;
 */

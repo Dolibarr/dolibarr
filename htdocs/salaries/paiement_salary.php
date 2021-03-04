@@ -60,18 +60,18 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 	if (!(GETPOST("paiementtype", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
-        $action = 'create';
+		$action = 'create';
 	}
 	if ($datepaye == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
-        $action = 'create';
+		$action = 'create';
 	}
-    if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
-        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
-        $error++;
-        $action = 'create';
-    }
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+		$error++;
+		$action = 'create';
+	}
 
 	if (!$error) {
 		$paymentid = 0;
@@ -84,52 +84,52 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			}
 		}
 
-        if (count($amounts) <= 0) {
-            $error++;
-            setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-            $action = 'create';
-        }
+		if (count($amounts) <= 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
+			$action = 'create';
+		}
 
-        if (!$error) {
-    		$db->begin();
+		if (!$error) {
+			$db->begin();
 
-    		// Create a line of payments
-    		$paiement = new PaymentSalary($db);
-    		$paiement->chid         = $chid;
-    		$paiement->datepaye     = $datepaye;
-    		$paiement->amounts      = $amounts; // Tableau de montant
-    		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
-    		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-    		$paiement->note         = GETPOST("note", 'none');
-    		$paiement->note_private = GETPOST("note", 'none');
+			// Create a line of payments
+			$paiement = new PaymentSalary($db);
+			$paiement->chid         = $chid;
+			$paiement->datepaye     = $datepaye;
+			$paiement->amounts      = $amounts; // Tableau de montant
+			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
+			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+			$paiement->note         = GETPOST("note", 'none');
+			$paiement->note_private = GETPOST("note", 'none');
 
-    		if (!$error) {
-    		    $paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));
-                if ($paymentid < 0) {
-                	$error++;
-                	setEventMessages($paiement->error, null, 'errors');
-                	$action = 'create';
-                }
-    		}
+			if (!$error) {
+				$paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));
+				if ($paymentid < 0) {
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
 
-            if (!$error) {
-                $result = $paiement->addPaymentToBank($user, 'payment_salary', '(SalaryPayment)', GETPOST('accountid', 'int'), '', '');
-                if (!($result > 0)) {
-                	$error++;
-                	setEventMessages($paiement->error, null, 'errors');
-                	$action = 'create';
-                }
-            }
+			if (!$error) {
+				$result = $paiement->addPaymentToBank($user, 'payment_salary', '(SalaryPayment)', GETPOST('accountid', 'int'), '', '');
+				if (!($result > 0)) {
+					$error++;
+					setEventMessages($paiement->error, null, 'errors');
+					$action = 'create';
+				}
+			}
 
-    	    if (!$error) {
-                $db->commit();
-                $loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
-                header('Location: '.$loc);
-                exit;
-            } else {
-                $db->rollback();
-            }
-        }
+			if (!$error) {
+				$db->commit();
+				$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
+				header('Location: '.$loc);
+				exit;
+			} else {
+				$db->rollback();
+			}
+		}
 	}
 }
 
@@ -147,8 +147,8 @@ $form = new Form($db);
 if ($action == 'create') {
 	$salary = new Salary($db);
 	$salary->fetch($chid);
-    $salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
-    $salary->paiementtype = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
+	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
+	$salary->paiementtype = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
 
 	$total = $salary->amount;
 	if (!empty($conf->use_javascript_ajax)) {
@@ -231,7 +231,7 @@ if ($action == 'create') {
 	dol_fiche_end();
 
 	/*
- 	 * Autres charges impayees
+	 * Autres charges impayees
 	 */
 	$num = 1;
 	$i = 0;

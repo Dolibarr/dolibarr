@@ -453,10 +453,10 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-    print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
-	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) {
 	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
@@ -643,7 +643,6 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
-
 
 
 // End of page

@@ -195,7 +195,6 @@ if ($action == 'add' && empty($cancel)) {
 	}
 
 	if (!$error) {
-
 		$ret = $object->create($user);
 		if ($ret < 0) $error++;
 		if (!empty($auto_create_paiement) && !$error) {
@@ -257,18 +256,15 @@ if ($action == 'confirm_delete') {
 		$db->begin();
 
 		$ret = $object->delete($user);
-		if ($ret > 0)
-		{
+		if ($ret > 0) {
 			$db->commit();
 			header("Location: ".DOL_URL_ROOT.'/salaries/list.php');
 			exit;
-		}
-		else {
+		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('DisabledBecausePayments'), null, 'errors');
 	}
 }
@@ -280,8 +276,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) 
 	if (empty($amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'edit';
-	}
-	elseif (!is_numeric($amount)) {
+	} elseif (!is_numeric($amount)) {
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
 	} else {
@@ -307,15 +302,13 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 
 	$object->fetch($id);
 
-	if ($object->id > 0)
-	{
+	if ($object->id > 0) {
 		$object->paye = 0;
 		$object->id = $object->ref = null;
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
-		}
-		else {
+		} else {
 			$object->label = $langs->trans("CopyOf").' '.$object->label;
 		}
 
@@ -325,25 +318,20 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 		if ($newdatestart) $object->datesp = $newdatestart;
 		if ($newdateend) $object->dateep = $newdateend;
 
-		//if ($object->check()) {
 		$id = $object->create($user);
-		if ($id > 0)
-		{
+		if ($id > 0) {
 			$db->commit();
 			$db->close();
 
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
-		}
-		else {
+		} else {
 			$id = $originalId;
 			$db->rollback();
 
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		//}
-	}
-	else {
+	} else {
 		$db->rollback();
 		dol_print_error($db, $object->error);
 	}
@@ -712,8 +700,9 @@ if ($id) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if ($action != 'editbankaccount' && $user->rights->salaries->write)
+		if ($action != 'editbankaccount' && $user->rights->salaries->write) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+		}
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
@@ -892,8 +881,7 @@ if ($id) {
 
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
-		}
-		else {
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}

@@ -190,6 +190,8 @@ class ConferenceOrBooth extends ActionComm
 
 	/**
 	 * Set Percentage from status
+	 *
+	 * @return void
 	 */
 	public function setPercentageFromStatus()
 	{
