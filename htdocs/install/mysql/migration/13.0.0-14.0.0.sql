@@ -191,7 +191,7 @@ ALTER TABLE llx_projet ADD COLUMN price_booth double(24,8);
 ALTER TABLE llx_actioncomm ADD COLUMN num_vote integer DEFAULT NULL AFTER reply_to;
 ALTER TABLE llx_actioncomm ADD COLUMN event_paid smallint NOT NULL DEFAULT 0 AFTER num_vote;
 ALTER TABLE llx_actioncomm ADD COLUMN status smallint NOT NULL DEFAULT 0 AFTER event_paid;
-ALTER TABLE llx_actioncomm ADD COLUMN ref varchar(255) AFTER id;
+ALTER TABLE llx_actioncomm ADD COLUMN ref varchar(30) AFTER id;
 UPDATE llx_actioncomm SET ref = id WHERE ref = '' OR ref IS NULL;
 ALTER TABLE llx_actioncomm MODIFY COLUMN ref varchar(30) NOT NULL;
 ALTER TABLE llx_actioncomm ADD UNIQUE INDEX uk_actioncomm_ref (ref, entity);
