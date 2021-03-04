@@ -144,12 +144,13 @@ if ($action == 'add' && empty($cancel)) {
 	if (empty($datev)) $datev = $datep;
 
 	$type_payment = GETPOST("paymenttype", 'alpha');
+	$amount = price2num(GETPOST("amount", 'alpha'), 'MT', 2);
 
 	$object->accountid = GETPOST("accountid", 'int') > 0 ? GETPOST("accountid", "int") : 0;
 	$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", "int") : 0;
 	$object->datev = $datev;
 	$object->datep = $datep;
-	$object->amount = $amount = price2num(GETPOST("amount", 'alpha'));
+	$object->amount = $amount;
 	$object->label = GETPOST("label", 'alphanohtml');
 	$object->datesp = $datesp;
 	$object->dateep = $dateep;
@@ -272,7 +273,7 @@ if ($action == 'confirm_delete') {
 
 
 if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) {
-	$amount = price2num(GETPOST('amount'));
+	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
 	if (empty($amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
@@ -384,7 +385,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'salary');
+	print load_fiche_titre($langs->trans("NewSalary"), '', 'salary');
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n".'<script type="text/javascript" language="javascript">';
@@ -424,13 +425,13 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
-	print $form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print img_picto('', 'user', 'class="paddingrighonly"').$form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
 	print $form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label") ?GETPOST("label") : $langs->trans("SalaryPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label") ?GETPOST("label") : $langs->trans("Salary")).'">';
 	print '</td></tr>';
 
 	// Date start period
@@ -460,10 +461,23 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	// Comments
+	print '<tr class="hide_if_no_auto_create_payment">';
+	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
+	print '</tr>';
+
+	print '<tr><td colspan="2"><hr></td></tr>';
+
+	// Auto create payment
+	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
+	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
+
 	// Bank
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td id="label_fk_account">';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
+		print img_picto('', 'bank_account', 'class="paddingrighonly"');
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
@@ -473,10 +487,6 @@ if ($action == 'create') {
 	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
-
-	// Auto create payment
-	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
-	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_paiement) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";	// Date payment
 
 	// Date payment
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
@@ -498,12 +508,6 @@ if ($action == 'create') {
 		print '</label></td>';
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
-
-	// Comments
-	print '<tr class="hide_if_no_auto_create_payment">';
-	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
-	print '</tr>';
 
 	// Bouton Save payment
 	print '<tr class="hide_if_no_auto_create_payment"><td>';

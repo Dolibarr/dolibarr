@@ -5,6 +5,7 @@ SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage paymen
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=By default, leave empty the option "Automatically create a total payment" when creating a Salary
 Salary=Salary
 Salaries=Salaries
+NewSalary=New salary
 NewSalaryPayment=New salary card
 AddSalaryPayment=Add salary payment
 SalaryPayment=Salary payment
