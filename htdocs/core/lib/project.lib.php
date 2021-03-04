@@ -806,6 +806,28 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
+				// Contacts of tasks for backward compatibility,
+				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+					print '<td>';
+					foreach (array('internal', 'external') as $source) {
+						$tab = $lines[$i]->liste_contact(-1, $source);
+						$num = count($tab);
+						if (!empty($num)) {
+							foreach ($tab as $contacttask) {
+								//var_dump($contacttask);
+								if ($source == 'internal') {
+									$c = new User($db);
+								} else {
+									$c = new Contact($db);
+								}
+								$c->fetch($contacttask['id']);
+								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
+							}
+						}
+					}
+					print '</td>';
+				}
+
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 					print '<td class="right">';
@@ -972,6 +994,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print convertSecondToTime($total_projectlinesa_billed, 'allhourmin');
 				print '</td>';
 			}
+		}
+		// Contacts of task for backward compatibility,
+		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+			print '<td></td>';
 		}
 		// Contacts of task
 		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
