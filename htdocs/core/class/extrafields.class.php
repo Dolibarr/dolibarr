@@ -1015,17 +1015,26 @@ class ExtraFields
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime'))) {
+		if (in_array($type, array('date'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-
-			$showtime = in_array($type, array('datetime')) ? 1 : 0;
+			$showtime = 0;
 
 			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+		} elseif (in_array($type, array('datetime'))) {
+			$tmp = explode(',', $size);
+			$newsize = $tmp[0];
+			$showtime = 1;
+
+			// Do not show current date when field not required (see selectDate() method)
+			if (!$required && $value == '') $value = '-1';
+
+			// TODO Must also support $moreparam
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
 		} elseif (in_array($type, array('int', 'integer')))
 		{
 			$tmp = explode(',', $size);
@@ -1562,11 +1571,11 @@ class ExtraFields
 		if ($type == 'date')
 		{
 			$showsize = 10;
-			$value = dol_print_date($value, 'day');
+			$value = dol_print_date($value, 'day');	// For date without hour, date is always GMT for storage and output
 		} elseif ($type == 'datetime')
 		{
 			$showsize = 19;
-			$value = dol_print_date($value, 'dayhour');
+			$value = dol_print_date($value, 'dayhour', 'tzuserrel');
 		} elseif ($type == 'int')
 		{
 			$showsize = 10;
@@ -2014,12 +2023,10 @@ class ExtraFields
 
 				if (in_array($key_type, array('date'))) {
 					// Clean parameters
-					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-					$value_key = dol_mktime(0, 0, 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+					$value_key = dol_mktime(12, 0, 0, GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'));
 				} elseif (in_array($key_type, array('datetime'))) {
 					// Clean parameters
-					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
-					$value_key = dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
+					$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'tzuserrel');
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -2086,13 +2093,15 @@ class ExtraFields
 					$key_type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
 				}
 
-				if (in_array($key_type, array('date', 'datetime')))
-				{
+				if (in_array($key_type, array('date'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
 					// Clean parameters
-					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
-				} elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
-				{
+					$value_key = dol_mktime(12, 0, 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
+				} elseif (in_array($key_type, array('datetime'))) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
+					// Clean parameters
+					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."sec", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'), 'tzuserrel');
+				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox

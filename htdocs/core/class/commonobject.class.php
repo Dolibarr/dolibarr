@@ -5962,17 +5962,26 @@ abstract class CommonObject
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime'))) {
+		if (in_array($type, array('date'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-
-			$showtime = in_array($type, array('datetime')) ? 1 : 0;
+			$showtime = 0;
 
 			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+		} elseif (in_array($type, array('datetime'))) {
+			$tmp = explode(',', $size);
+			$newsize = $tmp[0];
+			$showtime = 1;
+
+			// Do not show current date when field not required (see selectDate() method)
+			if (!$required && $value == '') $value = '-1';
+
+			// TODO Must also support $moreparam
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
 		} elseif (in_array($type, array('duration'))) {
 			$out = $form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
 		} elseif (in_array($type, array('int', 'integer'))) {
@@ -6911,14 +6920,23 @@ abstract class CommonObject
 						if ($action == 'selectlines') { $colspan++; }
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime')))
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date')))
 						{
 							$datenotinstring = $this->array_options['options_'.$key];
 							if (!is_numeric($this->array_options['options_'.$key]))	// For backward compatibility
 							{
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(12, 0, 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+						}
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime')))
+						{
+							$datenotinstring = $this->array_options['options_'.$key];
+							if (!is_numeric($this->array_options['options_'.$key]))	// For backward compatibility
+							{
+								$datenotinstring = $this->db->jdate($datenotinstring);
+							}
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."sec", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3), 'tzuserrel') : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
