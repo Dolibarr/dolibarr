@@ -207,7 +207,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
-		    //$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
+			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 		}
 		// Social contributions
 		if (GETPOST('selectsocialcontributions')) {
