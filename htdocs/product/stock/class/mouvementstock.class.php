@@ -1229,29 +1229,29 @@ class MouvementStock extends CommonObject
 
 		$cpt = 0;
 
-        $sql = "SELECT sum(pb.qty) as cpt";
-        $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
-        $sql .= " WHERE ps.fk_product = " . $fk_product;
-        $sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
+		$sql = "SELECT sum(pb.qty) as cpt";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE ps.fk_product = " . $fk_product;
+		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
 
-        $result = $this->db->query($sql);
-        if ($result) {
-            if ($this->db->num_rows($result)) {
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 
-                $obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($result);
 
-                $cpt = $obj->cpt;
+				$cpt = $obj->cpt;
 
-            }
+			}
 
-            $this->db->free($result);
-        }
-        else {
-            dol_print_error($this->db);
-            return -1;
-        }
+			$this->db->free($result);
+		}
+		else {
+			dol_print_error($this->db);
+			return -1;
+		}
 
-        return $cpt;
+		return $cpt;
 	}
 }
