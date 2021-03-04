@@ -815,7 +815,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<td class="liste_titre"></td>';
 	}
 	*/
-	
+
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '</td>';
