@@ -806,7 +806,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				// Contacts of tasks for backward compatibility,
+				// Contacts of tasks. Disabled, because available by default just after
+				/*
 				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 					print '<td>';
 					foreach (array('internal', 'external') as $source) {
@@ -826,11 +827,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 						}
 					}
 					print '</td>';
-				}
+				}*/
 
 				// Contacts of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
-					print '<td class="right">';
+					print '<td>';
 					foreach (array('internal', 'external') as $source) {
 						$tab = $lines[$i]->liste_contact(-1, $source);
 						$num = count($tab);
