@@ -1219,7 +1219,9 @@ class MouvementStock extends CommonObject
 	/**
 	 * Retrieve number of equipments for a product batch
 	 *
-	 * @return int             <0 if KO, number of equipments if OK
+	 * @param int $fk_product Product id
+	 * @param varchar $batch  batch number
+	 * @return int            <0 if KO, number of equipments if OK
 	 */
 	private function getBatchCount($fk_product, $batch)
 	{
@@ -1231,7 +1233,7 @@ class MouvementStock extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
         $sql .= " WHERE ps.fk_product = " . $fk_product;
-        $sql .= " AND pb.batch = '" . $batch . "'";
+        $sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
 
         $result = $this->db->query($sql);
         if ($result) {
@@ -1241,12 +1243,11 @@ class MouvementStock extends CommonObject
 
                 $cpt = $obj->cpt;
 
-             }
+            }
 
             $this->db->free($result);
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
