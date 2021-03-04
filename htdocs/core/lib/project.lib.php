@@ -807,8 +807,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 
 				// Contacts of task
-				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-					print '<td>';
+				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+					print '<td class="right">';
 					foreach (array('internal', 'external') as $source) {
 						$tab = $lines[$i]->liste_contact(-1, $source);
 						$num = count($tab);
@@ -821,7 +821,15 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 									$c = new Contact($db);
 								}
 								$c->fetch($contacttask['id']);
-								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
+								if(!empty($c->photo)){
+									print $c->getNomUrl(-2).'&nbsp;';
+								}else {
+									if (get_class($c) == 'User') {
+										print $c->getNomUrl(2,'',0,0,24,1);//.'&nbsp;';
+									}else {
+										print $c->getNomUrl(2);//.'&nbsp;';
+									}
+								}
 							}
 						}
 					}
@@ -966,7 +974,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			}
 		}
 		// Contacts of task
-		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
 		print '<td class=""></td>';

@@ -1469,9 +1469,14 @@ class Contact extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			if ($withpicto == -2) {
+				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($moreparam ? ' '.$moreparam : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+			}else {
+				$picto = $this->picto;
+				$result .= img_object(($notooltip ? '' : $label), ($picto ? $picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			}
 		}
-		if ($withpicto != 2) {
+		if ($withpicto != 2 && $withpicto != -2) {
 			$result .= ($maxlen ?dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs));
 		}
 		$result .= $linkend;
