@@ -843,12 +843,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 									$c = new Contact($db);
 								}
 								$c->fetch($contacttask['id']);
-								if(!empty($c->photo)){
+								if (!empty($c->photo)) {
 									print $c->getNomUrl(-2).'&nbsp;';
-								}else {
+								} else {
 									if (get_class($c) == 'User') {
-										print $c->getNomUrl(2,'',0,0,24,1);//.'&nbsp;';
-									}else {
+										print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+									} else {
 										print $c->getNomUrl(2);//.'&nbsp;';
 									}
 								}
