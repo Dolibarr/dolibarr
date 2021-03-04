@@ -37,25 +37,35 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('compta', 'bills', 'salaries'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
-if (!$year && $mode != 'sconly') { $year = date("Y", time()); }
+if (!$year && $mode != 'sconly') {
+	$year = date("Y", time());
+}
 $search_user = GETPOST("search_user", 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "pc.datep";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "pc.datep";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 
 /*
@@ -76,15 +86,27 @@ if (!empty($search_user)) {
 }
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($mode == 'sconly') $param = '&mode=sconly';
-if ($sortfield) $param .= '&sortfield='.$sortfield;
-if ($sortorder) $param .= '&sortorder='.$sortorder;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.$contextpage;
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.$limit;
+}
+if ($mode == 'sconly') {
+	$param = '&mode=sconly';
+}
+if ($sortfield) {
+	$param .= '&sortfield='.$sortfield;
+}
+if ($sortorder) {
+	$param .= '&sortorder='.$sortorder;
+}
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -94,7 +116,9 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
 
-if ($year) $param .= '&year='.$year;
+if ($year) {
+	$param .= '&year='.$year;
+}
 
 // Localtax
 if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
@@ -122,7 +146,9 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read)) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid = s.fk_user)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ps.fk_typepayment = pct.id";
 		$sql .= " WHERE s.entity IN (".getEntity('user').")";
-		if (!empty($search_user)) $sql .= " AND u.rowid = ".$search_user;
+		if (!empty($search_user)) {
+			$sql .= " AND u.rowid = ".$search_user;
+		}
 		/* if ($year > 0)
 		{
 			$sql .= " AND (s.datesp between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
@@ -130,7 +156,9 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read)) {
 		}*/
 		if (preg_match('/^s\./', $sortfield)
 			|| preg_match('/^pct\./', $sortfield)
-			|| preg_match('/^ps\./', $sortfield)) $sql .= $db->order($sortfield, $sortorder);
+			|| preg_match('/^ps\./', $sortfield)) {
+			$sql .= $db->order($sortfield, $sortorder);
+		}
 
 		$result = $db->query($sql);
 		if ($result) {
@@ -166,7 +194,9 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read)) {
 
 				// Type payment
 				print '<td>';
-				if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				if ($obj->payment_code) {
+					print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				}
 				print $obj->num_payment.'</td>';
 
 				print '<td>';

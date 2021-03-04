@@ -172,7 +172,9 @@ class Salary extends CommonObject
 		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('salary_MODIFY', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
@@ -279,7 +281,9 @@ class Salary extends CommonObject
 
 		// Call trigger
 		$result = $this->call_trigger('salary_DELETE', $user);
-		if ($result < 0) return -1;
+		if ($result < 0) {
+			return -1;
+		}
 		// End call triggers
 
 		// Delete extrafields
@@ -394,7 +398,9 @@ class Salary extends CommonObject
 		$sql .= ", fk_typepayment";
 		$sql .= ", fk_account";
 		$sql .= ", num_payment";
-		if ($this->note) $sql .= ", note";
+		if ($this->note) {
+			$sql .= ", note";
+		}
 		$sql .= ", label";
 		$sql .= ", datesp";
 		$sql .= ", dateep";
@@ -413,7 +419,9 @@ class Salary extends CommonObject
 		$sql .= ", ".($this->type_payment > 0 ? $this->type_payment : 0);
 		$sql .= ", ".($this->accountid > 0 ? $this->accountid : "null");
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
-		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
+		if ($this->note) {
+			$sql .= ", '".$this->db->escape($this->note)."'";
+		}
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
 		$sql .= ", '".$this->db->idate($this->dateep)."'";
@@ -441,9 +449,13 @@ class Salary extends CommonObject
 
 				// Call trigger
 				$result = $this->call_trigger('salary_CREATE', $user);
-				if ($result < 0) $error++;
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
-			} else $error++;
+			} else {
+				$error++;
+			}
 
 			if (!$error) {
 				$this->db->commit();
@@ -497,7 +509,9 @@ class Salary extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -510,8 +524,12 @@ class Salary extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
@@ -529,15 +547,21 @@ class Salary extends CommonObject
 			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 			 */
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -545,8 +569,11 @@ class Salary extends CommonObject
 		$hookmanager->initHooks(array('salarypayment'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -572,7 +599,9 @@ class Salary extends CommonObject
 			$amount = 0;
 
 			$obj = $this->db->fetch_object($resql);
-			if ($obj) $amount = $obj->amount ? $obj->amount : 0;
+			if ($obj) {
+				$amount = $obj->amount ? $obj->amount : 0;
+			}
 
 			$this->db->free($resql);
 			return $amount;
@@ -627,8 +656,11 @@ class Salary extends CommonObject
 		$sql .= " paye = 1";
 		$sql .= " WHERE rowid = ".$this->id;
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+		if ($return) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -645,8 +677,11 @@ class Salary extends CommonObject
 		$sql .= " paye = 0";
 		$sql .= " WHERE rowid = ".$this->id;
 		$return = $this->db->query($sql);
-		if ($return) return 1;
-		else return -1;
+		if ($return) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 
@@ -688,15 +723,23 @@ class Salary extends CommonObject
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			}
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			}
 		}
 
 		$statusType = 'status1';
-		if ($status == 0 && $alreadypaid <> 0) $statusType = 'status3';
-		if ($status == 1) $statusType = 'status6';
+		if ($status == 0 && $alreadypaid <> 0) {
+			$statusType = 'status3';
+		}
+		if ($status == 1) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

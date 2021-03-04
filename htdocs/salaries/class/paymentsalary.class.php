@@ -132,15 +132,33 @@ class PaymentSalary extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement); // deprecated
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
@@ -151,7 +169,9 @@ class PaymentSalary extends CommonObject
 		$totalamount = price2num($totalamount);
 
 		// Check parameters
-		if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		if ($totalamount == 0) {
+			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		}
 
 
 		$this->db->begin();
@@ -188,7 +208,9 @@ class PaymentSalary extends CommonObject
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->set_paid($user);
-							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else {
+								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							}
 						}
 					}
 				}
@@ -198,7 +220,9 @@ class PaymentSalary extends CommonObject
 		}
 
 		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
-		if ($result < 0) $error++;
+		if ($result < 0) {
+			$error++;
+		}
 
 		if ($totalamount != 0 && !$error) {
 			$this->amount = $totalamount;
@@ -293,15 +317,33 @@ class PaymentSalary extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_salary)) $this->fk_salary = (int) $this->fk_salary;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement); // deprecated
-		if (isset($this->num_payment)) $this->num_payment = trim($this->num_payment);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_salary)) {
+			$this->fk_salary = (int) $this->fk_salary;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepayment)) {
+			$this->fk_typepayment = (int) $this->fk_typepayment;
+		}
+		if (isset($this->num_paiement)) {
+			$this->num_paiement = trim($this->num_paiement); // deprecated
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note)) {
+			$this->note = trim($this->note);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = (int) $this->fk_user_author;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -325,7 +367,10 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
 		if ($error) {
@@ -374,7 +419,10 @@ class PaymentSalary extends CommonObject
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
@@ -520,7 +568,9 @@ class PaymentSalary extends CommonObject
 
 				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
 				$url = '';
-				if ($mode == 'payment_salary') $url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
+				if ($mode == 'payment_salary') {
+					$url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
+				}
 				if ($url) {
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
 					if ($result <= 0) {
@@ -536,7 +586,9 @@ class PaymentSalary extends CommonObject
 						$salary = new Salary($this->db);
 						$salary->fetch($key);
 						$result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
-						if ($result <= 0) dol_print_error($this->db);
+						if ($result <= 0) {
+							dol_print_error($this->db);
+						}
 					}
 				}
 			} else {
@@ -652,7 +704,9 @@ class PaymentSalary extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) $this->ref = $this->lib;
+		if (empty($this->ref)) {
+			$this->ref = $this->lib;
+		}
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SalaryPayment").'</u>';
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -661,7 +715,9 @@ class PaymentSalary extends CommonObject
 			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
-				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
+				if ($reg[1] == 'paiement') {
+					$reg[1] = 'Payment';
+				}
 				$labeltoshow = $langs->trans($reg[1]);
 			}
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
@@ -674,9 +730,15 @@ class PaymentSalary extends CommonObject
 			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend = '</a>';
 
-			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result .= ' ';
-			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+			if ($withpicto) {
+				$result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+			}
+			if ($withpicto && $withpicto != 2) {
+				$result .= ' ';
+			}
+			if ($withpicto != 2) {
+				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+			}
 		}
 
 		return $result;

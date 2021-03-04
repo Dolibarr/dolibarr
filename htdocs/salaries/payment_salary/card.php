@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
@@ -40,14 +42,18 @@ $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSalary($db);
 if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 
 

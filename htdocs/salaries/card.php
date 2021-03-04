@@ -124,8 +124,9 @@ if ($action == 'reopen' && $user->rights->salaries->write) {
 if ($action == 'setmode' && $user->rights->salaries->write) {
 	$object->fetch($id);
 	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	if ($result < 0)
+	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // bank account
@@ -140,7 +141,9 @@ if ($action == 'setbankaccount' && $user->rights->salaries->write) {
 if ($action == 'add' && empty($cancel)) {
 	$error = 0;
 
-	if (empty($datev)) $datev = $datep;
+	if (empty($datev)) {
+		$datev = $datep;
+	}
 
 	$type_payment = GETPOST("paymenttype", 'alpha');
 
@@ -196,7 +199,9 @@ if ($action == 'add' && empty($cancel)) {
 
 	if (!$error) {
 		$ret = $object->create($user);
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 		if (!empty($auto_create_paiement) && !$error) {
 			$db->begin();
 			// Create a line of payments
@@ -293,7 +298,9 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) 
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') { $action = ''; }
+if ($action == 'confirm_clone' && $confirm != 'yes') {
+	$action = '';
+}
 
 if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries->write)) {
 	$db->begin();
@@ -315,8 +322,12 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 		$newdatestart = dol_mktime(0, 0, 0, GETPOST('clone_date_startmonth', 'int'), GETPOST('clone_date_startday', 'int'), GETPOST('clone_date_startyear', 'int'));
 		$newdateend = dol_mktime(0, 0, 0, GETPOST('clone_date_endmonth', 'int'), GETPOST('clone_date_endday', 'int'), GETPOST('clone_date_endyear', 'int'));
 
-		if ($newdatestart) $object->datesp = $newdatestart;
-		if ($newdateend) $object->dateep = $newdateend;
+		if ($newdatestart) {
+			$object->datesp = $newdatestart;
+		}
+		if ($newdateend) {
+			$object->dateep = $newdateend;
+		}
 
 		$id = $object->create($user);
 		if ($id > 0) {
@@ -345,7 +356,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 llxHeader("", $langs->trans("Salary"));
 
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
 if ($id) {
 	$object = new Salary($db);
@@ -376,7 +389,8 @@ if ($action == 'create') {
 	$dateep = dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
 	if (empty($datesp) || empty($dateep)) { // We define date_start and date_end
-		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
+		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false);
+		$dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
 	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -681,8 +695,9 @@ if ($id) {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode')
+	if ($action != 'editmode') {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	}
 	print '</tr></table>';
 	print '</td><td>';
 
@@ -750,7 +765,8 @@ if ($id) {
 		$totalpaye = 0;
 
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0;
+		$i = 0;
+		$total = 0;
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder paymenttable">';
@@ -790,8 +806,9 @@ if ($id) {
 					}
 
 					print '<td class="right">';
-					if ($bankaccountstatic->id)
+					if ($bankaccountstatic->id) {
 						print $bankaccountstatic->getNomUrl(1, 'transactions');
+					}
 					print '</td>';
 				}
 				print '<td class="right">'.price($objp->amount)."</td>\n";

@@ -590,7 +590,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$totalarray['val']['totalttcfield'] += $obj->amount;
 
 	print '<td class="nowrap right">'.$salstatic->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
