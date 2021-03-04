@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -503,7 +504,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arraytypes['use_default'] == "1" && !$empty) {
+				} elseif ($arraytypes['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -598,7 +599,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arraycategories['use_default'] == "1" && !$empty) {
+				} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -699,7 +700,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arrayseverities['use_default'] == "1" && !$empty) {
+				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
