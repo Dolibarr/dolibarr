@@ -45,8 +45,7 @@ if ($user->socid) $socid = $user->socid;
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSalary($db);
-if ($id > 0)
-{
+if ($id > 0) {
 	$result = $object->fetch($id);
 	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
@@ -57,22 +56,20 @@ if ($id > 0)
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->salaries->delete)
-{
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->salaries->delete) {
 	$db->begin();
 
 	$result = $object->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
         $db->commit();
         header("Location: ".DOL_URL_ROOT."/salaries/payments.php");
         exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
 }
+
 
 /*
  * View
@@ -85,6 +82,8 @@ $salary = new Salary($db);
 $form = new Form($db);
 
 $h = 0;
+
+$head = array();
 
 $head[$h][0] = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$id;
 $head[$h][1] = $langs->trans("SalaryPayment");
@@ -102,8 +101,7 @@ dol_fiche_head($head, $hselected, $langs->trans("SalaryPayment"), -1, 'payment')
 /*
  * Deletion confirmation of payment
  */
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeleteSalary"), $langs->trans("ConfirmDeleteSalaryPayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -152,10 +150,8 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (!empty($conf->banque->enabled))
-{
-    if ($object->bank_account)
-    {
+if (!empty($conf->banque->enabled)) {
+    if ($object->bank_account) {
     	$bankline = new AccountLine($db);
     	$bankline->fetch($object->bank_line);
 
@@ -188,13 +184,15 @@ $sql .= ' AND ps.rowid = '.$object->id;
 
 dol_syslog("payment_salary/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder centpercent">';
+	print '<br>';
+
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Salary').'</td>';
     print '<td>'.$langs->trans('Type').'</td>';
@@ -204,10 +202,8 @@ if ($resql)
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
-	if ($num > 0)
-	{
-		while ($i < $num)
-		{
+	if ($num > 0) {
+		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -230,8 +226,8 @@ if ($resql)
 			// Amount payed
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
-			if ($objp->paye == 1)	// If at least one invoice is paid, disable delete
-			{
+			if ($objp->paye == 1) {
+				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount;
@@ -239,43 +235,27 @@ if ($resql)
 		}
 	}
 
-
 	print "</table>\n";
+	print "</div>";
+
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
 
 
 /*
- * Boutons Actions
+ * Button actions
  */
+
 print '<div class="tabsAction">';
 
-/*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->rights->facture->paiement)
-		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
-}
-*/
-
-if ($action == '')
-{
-	if ($user->rights->salaries->delete)
-	{
-		if (!$disable_delete)
-		{
+if ($action == '') {
+	if ($user->rights->salaries->delete) {
+		if (!$disable_delete) {
 			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else {
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentSalaryPaid")).'">'.$langs->trans('Delete').'</a>';
 		}
 	}

@@ -158,8 +158,7 @@ class PaymentSalary extends CommonObject
 
 		$this->db->begin();
 
-		if ($totalamount != 0)
-		{
+		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (fk_salary, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
@@ -169,21 +168,17 @@ class PaymentSalary extends CommonObject
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
 				// Insere tableau des montants / factures
-				foreach ($this->amounts as $key => $amount)
-				{
+				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0)
-					{
+					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 
 						// If we want to closed payed invoices
-						if ($closepaidcontrib)
-						{
+						if ($closepaidcontrib) {
 							$contrib = new Salary($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -193,8 +188,7 @@ class PaymentSalary extends CommonObject
 							$deposits = 0;
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
-							if ($remaintopay == 0)
-							{
+							if ($remaintopay == 0) {
 								$result = $contrib->set_paid($user);
 							}
 							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
@@ -210,14 +204,12 @@ class PaymentSalary extends CommonObject
 		$result = $this->call_trigger('PAYMENTSALARY_CREATE', $user);
 		if ($result < 0) $error++;
 
-		if ($totalamount != 0 && !$error)
-		{
+		if ($totalamount != 0 && !$error) {
 		    $this->amount = $totalamount;
             $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -255,10 +247,8 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
@@ -286,8 +276,7 @@ class PaymentSalary extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -318,14 +307,11 @@ class PaymentSalary extends CommonObject
 		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
-
 		$sql .= " fk_salary=".(isset($this->fk_salary) ? $this->fk_salary : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
@@ -337,8 +323,6 @@ class PaymentSalary extends CommonObject
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
-
-
 		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -348,17 +332,14 @@ class PaymentSalary extends CommonObject
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -381,8 +362,7 @@ class PaymentSalary extends CommonObject
 
 		$this->db->begin();
 
-	    if ($this->bank_line > 0)
-        {
+	    if ($this->bank_line > 0) {
         	$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
 			$result = $accline->delete();
@@ -392,8 +372,7 @@ class PaymentSalary extends CommonObject
 			}
         }
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
 			$sql .= " WHERE rowid=".$this->id;
 
@@ -403,17 +382,14 @@ class PaymentSalary extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -449,8 +425,7 @@ class PaymentSalary extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$error++;
 		}
@@ -458,12 +433,10 @@ class PaymentSalary extends CommonObject
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -517,8 +490,7 @@ class PaymentSalary extends CommonObject
 
         $error = 0;
 
-        if (!empty($conf->banque->enabled))
-        {
+        if (!empty($conf->banque->enabled)) {
             include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
@@ -543,11 +515,9 @@ class PaymentSalary extends CommonObject
 
             // Mise a jour fk_bank dans llx_paiement.
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
-            if ($bank_line_id > 0)
-            {
+            if ($bank_line_id > 0) {
                 $result = $this->update_fk_bank($bank_line_id);
-                if ($result <= 0)
-                {
+                if ($result <= 0) {
                     $error++;
                     dol_print_error($this->db);
                 }
@@ -555,11 +525,9 @@ class PaymentSalary extends CommonObject
                 // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
                 $url = '';
                 if ($mode == 'payment_salary') $url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
-                if ($url)
-                {
+                if ($url) {
                     $result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
-                    if ($result <= 0)
-                    {
+                    if ($result <= 0) {
                         $error++;
                         dol_print_error($this->db);
                     }
@@ -567,28 +535,23 @@ class PaymentSalary extends CommonObject
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
                 $linkaddedforthirdparty = array();
-                foreach ($this->amounts as $key => $value)
-                {
-                    if ($mode == 'payment_salary')
-                    {
+                foreach ($this->amounts as $key => $value) {
+                    if ($mode == 'payment_salary') {
                         $salary = new Salary($this->db);
                         $salary->fetch($key);
                         $result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
-            }
-            else {
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
         }
 
-        if (!$error)
-        {
+        if (!$error) {
             return 1;
-        }
-        else {
+        } else {
             return -1;
         }
     }
@@ -608,11 +571,9 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -702,15 +663,16 @@ class PaymentSalary extends CommonObject
 		if (!empty($this->label)) {
 			$labeltoshow = $this->label;
 			$reg = array();
-			if (preg_match('/^\((.*)\)$/i', $this->label, $reg))
-			{
+			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				if ($reg[1] == 'paiement') $reg[1] = 'Payment';
 				$labeltoshow = $langs->trans($reg[1]);
 			}
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
 		}
-		if ($this->datep) $label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
+		if ($this->datep) {
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
+		}
 
 		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
