@@ -1420,6 +1420,7 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'member') {
 				} elseif ($links[$key]['type'] == 'sc') {
 				} elseif ($links[$key]['type'] == 'vat') {
+				} elseif ($links[$key]['type'] == 'salary') {
 				} else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) {

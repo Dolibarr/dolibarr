@@ -197,3 +197,37 @@ ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
+create table llx_salary
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
+  tms             timestamp,
+  datec           datetime,                   -- Create date
+  fk_user         integer NOT NULL,
+  datep           date,                       -- payment date
+  datev           date,                       -- value date (this field should not be here, only into bank tables)
+  salary          double(24,8),               -- salary of user when payment was done
+  amount          double(24,8) NOT NULL DEFAULT 0,
+  fk_projet       integer DEFAULT NULL,
+  fk_typepayment  integer NOT NULL,
+  num_payment     varchar(50),                -- num cheque or other
+  label           varchar(255),
+  datesp          date,                       -- date start period
+  dateep          date,                       -- date end period
+  entity          integer DEFAULT 1 NOT NULL, -- multi company id
+  note            text,
+  fk_bank         integer,
+  paye            smallint default 1 NOT NULL,
+  fk_account      integer,
+  fk_user_author  integer,                    -- user creating
+  fk_user_modif   integer                     -- user making last change
+)ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary CHANGE fk_user fk_user integer NULL;
+ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
+
+REPLACE INTO llx_salary (rowid, fk_user, amount, fk_projet, fk_account, fk_typepayment, num_payment, label, datesp, dateep, entity, note, fk_bank) SELECT ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, b.fk_account, ps.fk_typepayment, ps.num_payment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank FROM llx_payment_salary ps LEFT JOIN llx_salary s ON (s.rowid = ps.fk_salary) LEFT JOIN llx_bank b ON (b.rowid = ps.fk_bank) WHERE s.rowid IS NULL;
+
+UPDATE llx_payment_salary ps INNER JOIN llx_salary s ON (s.rowid = ps.rowid) SET ps.fk_salary = s.rowid WHERE ps.fk_salary IS NULL;
+
+ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
