@@ -24,6 +24,7 @@
 create table llx_actioncomm
 (
   id				integer AUTO_INCREMENT PRIMARY KEY,
+  ref               varchar(30) NOT NULL,
   ref_ext			varchar(255),					-- reference into an external system (not used by dolibarr). Example: An id coming from google calendar has length between 5 and 1024 chars. An event id must follow rule: chars used in base32hex encoding (i.e. lowercase letters a-v and digits 0-9, see section 3.1.2 in RFC2938)
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   datep				datetime,						-- date start
@@ -31,7 +32,7 @@ create table llx_actioncomm
 
   fk_action			integer,						-- type of action (optional link with id in llx_c_actioncomm or null)
   code				varchar(50) NULL,				-- code of action for automatic action ('AC_OTH_AUTO' for automatic actions, 'AC_EMAILIN_AUTO' for email input, 'AC_xxx' for manual action...) 
-  
+
   datec				datetime,						-- date creation
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
   fk_user_author	integer,						-- user id of user that has created record
@@ -71,7 +72,11 @@ create table llx_actioncomm
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'
   recurdateend      datetime,						-- no more recurring event after this date
-     
+
+  num_vote          integer DEFAULT NULL,          -- use for Event Organization module
+  event_paid        smallint NOT NULL DEFAULT 0,    -- use for Event Organization module
+  status            smallint NOT NULL DEFAULT 0,    -- use for Event Organization module for now, but could be use after for event global status
+
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
 
