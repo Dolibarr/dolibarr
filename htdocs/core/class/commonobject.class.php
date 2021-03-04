@@ -6531,13 +6531,13 @@ abstract class CommonObject
 		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value = $this->getLibStatut(3);
 		elseif ($type == 'date') {
 			if (!empty($value)) {
-				$value = dol_print_date($value, 'day');
+				$value = dol_print_date($value, 'day');	// We suppose dates without time are always gmt (storage of course + output)
 			} else {
 				$value = '';
 			}
 		} elseif ($type == 'datetime' || $type == 'timestamp') {
 			if (!empty($value)) {
-				$value = dol_print_date($value, 'dayhour');
+				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
 			} else {
 				$value = '';
 			}
@@ -7587,11 +7587,13 @@ abstract class CommonObject
 	 */
 	public function setVarsFromFetchObj(&$obj)
 	{
+		global $db;
+
 		foreach ($this->fields as $field => $info)
 		{
 			if ($this->isDate($info)) {
-				if (empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = 0;
-				else $this->{$field} = strtotime($obj->{$field});
+				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') $this->{$field} = '';
+				else $this->{$field} = $db->jdate($obj->{$field});
 			} elseif ($this->isArray($info))
 			{
 				if (!empty($obj->{$field})) {

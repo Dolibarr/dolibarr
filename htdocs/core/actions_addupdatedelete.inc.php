@@ -160,7 +160,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 		} elseif ($object->fields[$key]['type'] == 'date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
-			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
 			if (GETPOST($key.'hour', 'int') != '' || GETPOST($key.'min', 'int') != '') {
 				$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
