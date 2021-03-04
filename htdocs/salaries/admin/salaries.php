@@ -68,8 +68,9 @@ if ($action == 'update') {
 	}
 }
 
-// Set boolean (on/off) constants
-elseif (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+$reg = array();
+if (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+	// Set boolean (on/off) constants
 	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
 		dol_print_error($db);
 	}
