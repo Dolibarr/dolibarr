@@ -192,7 +192,7 @@ class MouvementStock extends CommonObject
 			}
                 }
                 // end hook at beginning
-		
+
 		// Clean parameters
 		$price = price2num($price, 'MU'); // Clean value for the casse we receive a float zero value, to have it a real zero value.
 		if (empty($price)) $price = 0;
@@ -568,6 +568,13 @@ class MouvementStock extends CommonObject
 			// Update detail stock for batch product
 			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch)
 			{
+				// check unicity for serial numbered equipments ( different for lots managed products)
+				if ( $product->status_batch == 2 && $qty > 0 && $this->getBatchCount($fk_product, $batch) > 0 )
+				{
+					$error++;
+					$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
+				}
+
 				if ($id_product_batch > 0)
 				{
 					$result = $this->createBatch($id_product_batch, $qty);
@@ -1207,5 +1214,43 @@ class MouvementStock extends CommonObject
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
+	/**
+	 * Retrieve number of equipments for a product batch
+	 *
+	 * @return int             <0 if KO, number of equipments if OK
+	 */
+	private function getBatchCount($fk_product, $batch)
+	{
+		global $conf;
+
+		$cpt = 0;
+
+        $sql = "SELECT sum(pb.qty) as cpt";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+        $sql .= " WHERE ps.fk_product = " . $fk_product;
+        $sql .= " AND pb.batch = '" . $batch . "'";
+
+        $result = $this->db->query($sql);
+        if ($result) {
+            if ($this->db->num_rows($result)) {
+
+                $obj = $this->db->fetch_object($result);
+
+                $cpt = $obj->cpt;
+
+             }
+
+            $this->db->free($result);
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+
+        return $cpt;
 	}
 }
