@@ -450,7 +450,7 @@ if ($action == 'create') {
 	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
-        // Project
+		// Project
 	if (!empty($conf->projet->enabled)) {
 		$formproject = new FormProjets($db);
 
@@ -642,7 +642,6 @@ if ($id) {
 		print '<tr><td>'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
-
 	} else {
 		print "<tr>";
 		print '<td>' . $langs->trans("DateStartPeriod") . '</td><td>';
@@ -800,8 +799,7 @@ if ($id) {
 				$totalpaye += $objp->amount;
 				$i++;
 			}
-		}
-		else {
+		} else {
 			print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '<td></td><td></td><td></td><td></td>';
 			print '</tr>';
@@ -820,8 +818,7 @@ if ($id) {
 		print '</div>';
 
 		$db->free($resql);
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 

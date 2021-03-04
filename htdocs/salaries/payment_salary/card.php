@@ -66,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->salaries-
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
-        $db->rollback();
+		$db->rollback();
 	}
 }
 
@@ -152,17 +152,17 @@ print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->no
 
 // Bank account
 if (!empty($conf->banque->enabled)) {
-    if ($object->bank_account) {
-    	$bankline = new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
+	if ($object->bank_account) {
+		$bankline = new AccountLine($db);
+		$bankline->fetch($object->bank_line);
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
 		print $bankline->getNomUrl(1, 0, 'showall');
-    	print '</td>';
-    	print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
@@ -196,7 +196,7 @@ if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Salary').'</td>';
-    print '<td>'.$langs->trans('Type').'</td>';
+	print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
@@ -214,10 +214,10 @@ if ($resql) {
 			print $salary->getNomUrl(1);
 			print "</td>\n";
 			// Type
-            print '<td>';
-            print $salary->type_label;
-            /*print $salary->type;*/
-            print "</td>\n";
+			print '<td>';
+			print $salary->type_label;
+			/*print $salary->type;*/
+			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay

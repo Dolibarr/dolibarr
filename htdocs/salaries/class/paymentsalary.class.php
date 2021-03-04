@@ -49,8 +49,8 @@ class PaymentSalary extends CommonObject
 	public $picto = 'payment';
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_salary;
 
 	public $datec = '';
@@ -63,12 +63,12 @@ class PaymentSalary extends CommonObject
 	 */
 	public $total;
 
-    public $amount; // Total amount of payment
-    public $amounts = array(); // Array of amounts
+	public $amount; // Total amount of payment
+	public $amounts = array(); // Array of amounts
 
-    /**
-     * @var int ID
-     */
+	/**
+	 * @var int ID
+	 */
 	public $fk_typepayment;
 
 	/**
@@ -83,18 +83,18 @@ class PaymentSalary extends CommonObject
 	public $num_payment;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_bank;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -109,8 +109,8 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 *  Create payment of salary into database.
-     *  Use this->amounts to have list of lines for the payment
-     *
+	 *  Use this->amounts to have list of lines for the payment
+	 *
 	 *  @param      User	$user   				User making payment
 	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
@@ -121,13 +121,12 @@ class PaymentSalary extends CommonObject
 
 		$error = 0;
 
-        $now = dol_now();
+		$now = dol_now();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
 		// Validate parametres
-		if (!$this->datepaye)
-		{
+		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSalary';
 			return -1;
 		}
@@ -143,17 +142,16 @@ class PaymentSalary extends CommonObject
 		if (isset($this->fk_user_author)) $this->fk_user_author = (int) $this->fk_user_author;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
 
-        $totalamount = 0;
-        foreach ($this->amounts as $key => $value)  // How payment is dispatch
-        {
-            $newvalue = price2num($value, 'MT');
-            $this->amounts[$key] = $newvalue;
-            $totalamount += $newvalue;
-        }
-        $totalamount = price2num($totalamount);
+		$totalamount = 0;
+		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
+			$newvalue = price2num($value, 'MT');
+			$this->amounts[$key] = $newvalue;
+			$totalamount += $newvalue;
+		}
+		$totalamount = price2num($totalamount);
 
-        // Check parameters
-        if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		// Check parameters
+		if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
 
 
 		$this->db->begin();
@@ -190,13 +188,11 @@ class PaymentSalary extends CommonObject
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0) {
 								$result = $contrib->set_paid($user);
-							}
-							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				$error++;
 			}
 		}
@@ -205,9 +201,9 @@ class PaymentSalary extends CommonObject
 		if ($result < 0) $error++;
 
 		if ($totalamount != 0 && !$error) {
-		    $this->amount = $totalamount;
-            $this->total = $totalamount; // deprecated
-		    $this->db->commit();
+			$this->amount = $totalamount;
+			$this->total = $totalamount; // deprecated
+			$this->db->commit();
 			return $this->id;
 		} else {
 			$this->error = $this->db->error();
@@ -362,15 +358,15 @@ class PaymentSalary extends CommonObject
 
 		$this->db->begin();
 
-	    if ($this->bank_line > 0) {
-        	$accline = new AccountLine($this->db);
+		if ($this->bank_line > 0) {
+			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
 			$result = $accline->delete();
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;
 			}
-        }
+		}
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
@@ -444,11 +440,11 @@ class PaymentSalary extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	public function initAsSpecimen()
 	{
@@ -469,92 +465,92 @@ class PaymentSalary extends CommonObject
 	}
 
 
-    /**
-     *      Add record into bank for payment with links between this bank record and invoices of payment.
-     *      All payment properties must have been set first like after a call to create().
-     *
-     *      @param	User	$user               Object of user making payment
-     *      @param  string	$mode               'payment_sc'
-     *      @param  string	$label              Label to use in bank record
-     *      @param  int		$accountid          Id of bank account to do link with
-     *      @param  string	$emetteur_nom       Name of transmitter
-     *      @param  string	$emetteur_banque    Name of bank
-     *      @return int                 		<0 if KO, >0 if OK
-     */
-    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
-    {
-        global $conf;
+	/**
+	 *      Add record into bank for payment with links between this bank record and invoices of payment.
+	 *      All payment properties must have been set first like after a call to create().
+	 *
+	 *      @param	User	$user               Object of user making payment
+	 *      @param  string	$mode               'payment_sc'
+	 *      @param  string	$label              Label to use in bank record
+	 *      @param  int		$accountid          Id of bank account to do link with
+	 *      @param  string	$emetteur_nom       Name of transmitter
+	 *      @param  string	$emetteur_banque    Name of bank
+	 *      @return int                 		<0 if KO, >0 if OK
+	 */
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+	{
+		global $conf;
 
 		// Clean data
-        $this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
+		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
 
-        $error = 0;
+		$error = 0;
 
-        if (!empty($conf->banque->enabled)) {
-            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		if (!empty($conf->banque->enabled)) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-            $acc = new Account($this->db);
-            $acc->fetch($accountid);
+			$acc = new Account($this->db);
+			$acc->fetch($accountid);
 
-            $total = $this->amount;
+			$total = $this->amount;
 
-            // Insert payment into llx_bank
-            $bank_line_id = $acc->addline(
-                $this->datepaye,
-                $this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
-                $label,
-                -$total,
-                $this->num_payment,
-                '',
-                $user,
-                $emetteur_nom,
-                $emetteur_banque,
+			// Insert payment into llx_bank
+			$bank_line_id = $acc->addline(
+				$this->datepaye,
+				$this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
+				$label,
+				-$total,
+				$this->num_payment,
+				'',
+				$user,
+				$emetteur_nom,
+				$emetteur_banque,
 				'',
 				$this->datev
-            );
+			);
 
-            // Mise a jour fk_bank dans llx_paiement.
-            // On connait ainsi le paiement qui a genere l'ecriture bancaire
-            if ($bank_line_id > 0) {
-                $result = $this->update_fk_bank($bank_line_id);
-                if ($result <= 0) {
-                    $error++;
-                    dol_print_error($this->db);
-                }
+			// Mise a jour fk_bank dans llx_paiement.
+			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			if ($bank_line_id > 0) {
+				$result = $this->update_fk_bank($bank_line_id);
+				if ($result <= 0) {
+					$error++;
+					dol_print_error($this->db);
+				}
 
-                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
-                $url = '';
-                if ($mode == 'payment_salary') $url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
-                if ($url) {
-                    $result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
-                    if ($result <= 0) {
-                        $error++;
-                        dol_print_error($this->db);
-                    }
-                }
+				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+				$url = '';
+				if ($mode == 'payment_salary') $url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
+				if ($url) {
+					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+					if ($result <= 0) {
+						$error++;
+						dol_print_error($this->db);
+					}
+				}
 
-                // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                $linkaddedforthirdparty = array();
-                foreach ($this->amounts as $key => $value) {
-                    if ($mode == 'payment_salary') {
-                        $salary = new Salary($this->db);
-                        $salary->fetch($key);
-                        $result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
-                        if ($result <= 0) dol_print_error($this->db);
-                    }
-                }
-            } else {
-                $this->error = $acc->error;
-                $error++;
-            }
-        }
+				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+				$linkaddedforthirdparty = array();
+				foreach ($this->amounts as $key => $value) {
+					if ($mode == 'payment_salary') {
+						$salary = new Salary($this->db);
+						$salary->fetch($key);
+						$result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
+						if ($result <= 0) dol_print_error($this->db);
+					}
+				}
+			} else {
+				$this->error = $acc->error;
+				$error++;
+			}
+		}
 
-        if (!$error) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
+		if (!$error) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
