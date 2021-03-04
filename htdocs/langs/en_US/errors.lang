@@ -288,3 +288,4 @@ WarningFailedToAddFileIntoDatabaseIndex=Warning, failed to add file entry into E
 WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
 WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
 WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
+WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
