@@ -71,7 +71,8 @@ $title = $langs->trans("SalariesPayments");
 if (!empty($search_user)) {
 	$u = new user($db);
 	$u->fetch($search_user);
-	$title = $langs->trans("SalariesPaymentsOf", $u->getNomUrl());
+	$title = $langs->trans("SalariesPaymentsOf", '{s1}');
+	$title = $title = str_replace('{s1}', $u->getNomUrl(), $title);
 }
 
 $param = '';

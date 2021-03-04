@@ -134,7 +134,7 @@ print "</table>\n";
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
-print '</form><br />';
+print '</form><br>';
 
 echo '<div>';
 echo '<table class="noborder centpercent">';
