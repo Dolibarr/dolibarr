@@ -725,7 +725,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 		}
 		if ($permissiontodelete) {
-			print '<td/>';
+			print '<td></td>';
 		}
 		print '</tr>';
 
