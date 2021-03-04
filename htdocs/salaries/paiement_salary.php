@@ -145,7 +145,7 @@ $form = new Form($db);
 
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
-	$salary = new Salary($db);
+	$salary = new Salary($db);		// Salary to pay
 	$salary->fetch($chid);
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
 	$salary->paiementtype = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;

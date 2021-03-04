@@ -209,7 +209,7 @@ $help_url = '';
 $title = $langs->trans('Salaries');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
-$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp as datesp, s.dateep as dateep, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
+$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, ps.fk_typepayment as paymenttype, ";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql .= " pst.code as payment_code,";
 $sql .= " SUM(ps.amount) as alreadypayed";
@@ -257,7 +257,10 @@ if ($filtre) {
 if ($search_type_id) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;
 }
-$sql .= " GROUP BY u.rowid, ba.rowid, s.rowid, s.amount, s.dateep, s.datesp, s.label, s.paye, pst.code";
+$sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary, u.fk_soc, u.statut,";
+$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, ps.fk_typepayment, s.fk_bank,";
+$sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label,";
+$sql .= " pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -395,24 +398,20 @@ print '<td class="liste_titre"><input type="text" class="flat width150" name="se
 // Date start
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
-print $langs->trans('From').' ';
-print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1);
+print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to').' ';
-print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1);
+print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 
 // Date End
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
-print $langs->trans('From').' ';
-print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1);
+print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 print '</div>';
 print '<div class="nowrap">';
-print $langs->trans('to').' ';
-print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1);
+print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
 print '</td>';
 
@@ -420,12 +419,14 @@ print '</td>';
 print '<td class="liste_titre left">';
 $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
 print '</td>';
-// Account
+
+// Bank account
 if (!empty($conf->banque->enabled)) {
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
 }
+
 // Amount
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
@@ -457,9 +458,9 @@ print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $par
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) {
-	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('Status', $_SERVER["PHP_SELF"], "s.paye", '', $param, 'class="right"', $sortfield, $sortorder);

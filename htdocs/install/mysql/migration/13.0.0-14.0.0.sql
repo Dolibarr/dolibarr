@@ -216,6 +216,7 @@ create table llx_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
+  label           varchar(255),
   tms             timestamp,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
@@ -224,16 +225,14 @@ create table llx_salary
   salary          double(24,8),               -- salary of user when payment was done
   amount          double(24,8) NOT NULL DEFAULT 0,
   fk_projet       integer DEFAULT NULL,
-  fk_typepayment  integer NOT NULL,
-  num_payment     varchar(50),                -- num cheque or other
-  label           varchar(255),
   datesp          date,                       -- date start period
   dateep          date,                       -- date end period
   entity          integer DEFAULT 1 NOT NULL, -- multi company id
   note            text,
   fk_bank         integer,
   paye            smallint default 1 NOT NULL,
-  fk_account      integer,
+  fk_typepayment  integer NOT NULL,			  -- default payment mode for payment
+  fk_account      integer,					  -- default bank account for payment
   fk_user_author  integer,                    -- user creating
   fk_user_modif   integer                     -- user making last change
 )ENGINE=innodb;
@@ -241,7 +240,7 @@ create table llx_salary
 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
-INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, num_payment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.num_payment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
+INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
 UPDATE llx_payment_salary as ps SET ps.fk_salary = ps.rowid WHERE ps.fk_salary IS NULL;
 UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
 
