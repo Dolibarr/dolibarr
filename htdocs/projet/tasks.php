@@ -809,11 +809,13 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 			print '</td>';
 		}
 	}
-	// Contacts of task for backward compatibility,
+	// Contacts of task, disabled because available by default jsut after
+	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print '<td class="liste_titre"></td>';
 	}
-
+	*/
+	
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '</td>';
@@ -869,10 +871,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
-	// Contacts of task for backward compatibility,
+	// Contacts of task, disabled because available by default jsut after
+	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
 	}
+	*/
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '');
 	}
