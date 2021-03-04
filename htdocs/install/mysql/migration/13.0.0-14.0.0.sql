@@ -211,6 +211,7 @@ ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
+-- Change for salary intent table
 create table llx_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -237,11 +238,11 @@ create table llx_salary
   fk_user_modif   integer                     -- user making last change
 )ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary CHANGE fk_user fk_user integer NULL;
+ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
-REPLACE INTO llx_salary (rowid, fk_user, amount, fk_projet, fk_account, fk_typepayment, num_payment, label, datesp, dateep, entity, note, fk_bank) SELECT ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, b.fk_account, ps.fk_typepayment, ps.num_payment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank FROM llx_payment_salary ps LEFT JOIN llx_salary s ON (s.rowid = ps.fk_salary) LEFT JOIN llx_bank b ON (b.rowid = ps.fk_bank) WHERE s.rowid IS NULL;
-
-UPDATE llx_payment_salary ps INNER JOIN llx_salary s ON (s.rowid = ps.rowid) SET ps.fk_salary = s.rowid WHERE ps.fk_salary IS NULL;
+INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, num_payment, label, datesp, dateep, entity, note, fk_bank) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.num_payment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
+UPDATE llx_payment_salary as ps SET ps.fk_salary = ps.rowid WHERE ps.fk_salary IS NULL;
+UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
 
 ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
