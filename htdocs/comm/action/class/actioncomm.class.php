@@ -496,7 +496,8 @@ class ActionComm extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
-		$sql .= "(datec,";
+		$sql .= "(ref,";
+		$sql .= "datec,";
 		$sql .= "datep,";
 		$sql .= "datep2,";
 		$sql .= "durationp,"; // deprecated
@@ -529,6 +530,7 @@ class ActionComm extends CommonObject
 		$sql .= "event_paid,";
 		$sql .= "status";
 		$sql .= ") VALUES (";
+		$sql .= "'(PROV)', ";
 		$sql .= "'".$this->db->idate($now)."', ";
 		$sql .= (strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : "null").", ";
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
