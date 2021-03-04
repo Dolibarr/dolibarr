@@ -1238,16 +1238,12 @@ class MouvementStock extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
-
 				$obj = $this->db->fetch_object($result);
-
 				$cpt = $obj->cpt;
-
 			}
 
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
