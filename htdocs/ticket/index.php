@@ -279,6 +279,207 @@ print '</div>';
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
+/*
+ * Chart of Ticket by Severity
+ */
+
+$listofopplabel = array();
+$listofoppcode = array();
+$colorseriesstat = array();
+
+$sql = "SELECT cts.rowid, cts.label, cts.code";
+$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
+$sql .= " WHERE cts.active = 1";
+$sql .= $db->order('cts.rowid', 'ASC');
+$resql = $db->query($sql);
+
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$listofoppcode[$objp->rowid] = $objp->code;
+		$listofopplabel[$objp->rowid] = $objp->label;
+		switch ($objp->code) {
+			case 'LOW':
+				$colorseriesstat[$objp->rowid] = $badgeStatus4;
+				break;
+			case 'NORMAL':
+				$colorseriesstat[$objp->rowid] = $badgeStatus2;
+				break;
+			case 'HIGH':
+				$colorseriesstat[$objp->rowid] = $badgeStatus1;
+				break;
+			case 'BLOCKING':
+				$colorseriesstat[$objp->rowid] = $badgeStatus8;
+				break;
+			default:
+				break;
+		}
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+$dataseries = array();
+$data = array();
+$sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE t.fk_statut <> 8";
+$sql .= " GROUP BY t.severity_code";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$data[$objp->severity_code] = $objp->nb;
+		$i++;
+	}
+	foreach ($listofoppcode as $rowid => $code) {
+		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+	}
+} else {
+	dol_print_error($db);
+}
+$transChartTicketSeverity = $langs->trans('ChartTicketSeverity');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketSeverity . '</th></tr>';
+print '<td class="center">';
+if (!empty($dataseries) && count($dataseries) > 0) {
+	$px1 = new DolGraph();
+	$mesg = $px1->isGraphKo();
+	$totalnb = 0;
+	if (!$mesg) {
+		$px1->SetDataColor(array_values($colorseriesstat));
+		$data = array();
+		$legend = array();
+		foreach ($dataseries as $value) {
+			$data[] = array($value['label'], $value['data']);
+			$totalnb += $value['data'];
+		}
+		$px1->SetData($data);
+		$px1->setShowLegend(2);
+		$px1->SetType(array('pie'));
+		$px1->SetLegend($legend);
+		$px1->SetMaxValue($px1->GetCeilMaxValue());
+		$px1->SetHeight($HEIGHT);
+		$px1->SetShading(3);
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetCssPrefix("cssboxes");
+		$px1->mode = 'depth';
+
+		$px1->draw('idgraphticketseverity');
+		print $px1->show($totalnb ? 0 : 1);
+	}
+}
+
+print '</td>';
+print "</table>";
+print '</div>';
+
+/*
+ * Graph of nb daily Tickets the last X days
+ */
+
+$param_day = 'DOLUSERCOOKIE_ticket_last_days';
+if ($_POST[$param_day]) {
+	if ($_POST[$param_day] >= 15) {
+		$days = 14;
+	} else {
+		$days = $_POST[$param_day];
+	}
+} else {
+	$days = 7;
+}
+$today = date_time_set(date_create(), 0, 0);
+$intervaltosub = new DateInterval('P' . dol_escape_htmltag($days - 1) . 'D');
+$intervaltoadd = new DateInterval('P1D');
+$minimumdatec = date_sub($today, $intervaltosub);
+$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+
+$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL " . $days . " DAY)";
+$sql .= " GROUP BY CAST(t.datec AS DATE)";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$dataseries = array();
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		while ($minimumdatecformated < $objp->datec) {
+			$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+			$minimumdatec = date_add($minimumdatec, $intervaltoadd);
+			$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+		}
+		$dataseries[] = array('label' => dol_print_date($objp->datec, 'day'), 'data' => $objp->nb);
+		$minimumdatec = date_add($minimumdatec, $intervaltoadd);
+		$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+$stringtoshow = '<script type="text/javascript" language="javascript">
+    jQuery(document).ready(function() {
+        jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
+            jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();
+        });
+    });
+    </script>';
+$stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_last_days">'; // hideobject is to start hidden
+$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+$stringtoshow .= '<input type="hidden" name="token" value="' . newToken() . '">';
+$stringtoshow .= '<input type="hidden" name="action" value="refresh">';
+$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_last_days:days">';
+$stringtoshow .= ' <input class="flat" size="4" type="text" name="' . $param_day . '" value="' . $days . '">' . $langs->trans("Days");
+$stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src="' . img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1) . '">';
+$stringtoshow .= '</form>';
+$stringtoshow .= '</div>';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th>' . $langs->trans('ChartTicketLastXDays', $days) . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_last_days" class="linkobject"') . '</th></tr>';
+
+print '<td class="center">';
+
+print $stringtoshow;
+
+$px1 = new DolGraph();
+$mesg = $px1->isGraphKo();
+$totalnb = 0;
+if (!$mesg) {
+	//$px1->SetDataColor(array_values($colorseriesstat));
+	$data = array();
+	foreach ($dataseries as $value) {
+		$data[] = array($value['label'], $value['data']);
+		$totalnb += $value['data'];
+	}
+	$px1->SetData($data);
+	$px1->setShowLegend(2);
+	$px1->SetType(array('bar'));
+	$px1->SetLegend(array($langs->trans('NumberOfTicketByDay')));
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetHeight($HEIGHT);
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->SetCssPrefix("cssboxes");
+	$px1->mode = 'depth';
+
+	$px1->draw('idgraphticketlastxdays');
+	print $px1->show($totalnb ? 0 : 1);
+}
+
+
+print '</td>';
+print "</table>";
+print '</div>';
+
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -397,6 +598,185 @@ if ($result) {
 } else {
 	dol_print_error($db);
 }
+
+/*
+ * Chart of Ticket Type
+ */
+
+$listofopplabel = array();
+$listofoppcode = array();
+$colorseriesstat = array();
+
+$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
+$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
+$sql .= " WHERE ctt.active = 1";
+$sql .= $db->order('ctt.rowid', 'ASC');
+$resql = $db->query($sql);
+
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$listofoppcode[$objp->rowid] = $objp->code;
+		$listofopplabel[$objp->rowid] = $objp->label;
+		switch ($objp->code) {
+			case 'COM':
+				$colorseriesstat[$objp->rowid] = $badgeStatus1;
+				break;
+			case 'HELP':
+				$colorseriesstat[$objp->rowid] = $badgeStatus2;
+				break;
+			case 'ISSUE':
+				$colorseriesstat[$objp->rowid] = $badgeStatus3;
+				break;
+			case 'REQUEST':
+				$colorseriesstat[$objp->rowid] = $badgeStatus4;
+				break;
+			case 'OTHER':
+				$colorseriesstat[$objp->rowid] = $badgeStatus5;
+				break;
+			default:
+				break;
+		}
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+$dataseries = array();
+$data = array();
+$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE t.fk_statut <> 8";
+$sql .= " GROUP BY t.type_code";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($resql);
+		$data[$objp->type_code] = $objp->nb;
+		$i++;
+	}
+	foreach ($listofoppcode as $rowid => $code) {
+		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+	}
+} else {
+	dol_print_error($db);
+}
+$transChartTicketType = $langs->trans('ChartTicketType');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
+print '<td class="">';
+if (!empty($dataseries) && count($dataseries) > 0) {
+	$px1 = new DolGraph();
+	$mesg = $px1->isGraphKo();
+	$totalnb = 0;
+	if (!$mesg) {
+		$px1->SetDataColor(array_values($colorseriesstat));
+		$data = array();
+		$legend = array();
+		foreach ($dataseries as $value) {
+			$data[] = array($value['label'], $value['data']);
+			$totalnb += $value['data'];
+		}
+		$px1->SetData($data);
+		$px1->setShowLegend(2);
+		$px1->SetType(array('pie'));
+		$px1->SetLegend($legend);
+		$px1->SetMaxValue($px1->GetCeilMaxValue());
+		$px1->SetHeight($HEIGHT);
+		$px1->SetShading(3);
+		$px1->SetHorizTickIncrement(1);
+		$px1->SetCssPrefix("cssboxes");
+		$px1->mode = 'depth';
+
+		$px1->draw('idgraphtickettype');
+		print $px1->show($totalnb ? 0 : 1);
+	}
+}
+
+print '</td>';
+print "</table>";
+print '</div>';
+
+
+$dataseries = array();
+$data = array();
+$totalnb = 0;
+$sql = "SELECT COUNT(t.datec) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE CAST(t.datec AS DATE) = CURRENT_DATE";
+$sql .= " AND t.fk_statut <> 8";
+$sql .= " GROUP BY CAST(t.datec AS DATE)";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	if ($num > 0) {
+		$objp = $db->fetch_object($resql);
+		$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
+		$totalnb += $objp->nb;
+	} else {
+		$data[] = array($langs->trans('TicketCreatedToday'), 0);
+	}
+} else {
+	dol_print_error($db);
+}
+$sql = "SELECT COUNT(t.date_close) as nb";
+$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+$sql .= " WHERE CAST(t.date_close AS DATE) = CURRENT_DATE";
+$sql .= " AND t.fk_statut = 8";
+$sql .= " GROUP BY CAST(t.date_close AS DATE)";
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	if ($num > 0) {
+		$objp = $db->fetch_object($resql);
+		$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+		$totalnb += $objp->nb;
+	} else {
+		$data[] = array($langs->trans('TicketClosedToday'), 0);
+	}
+} else {
+	dol_print_error($db);
+}
+$colorseries = array();
+$colorseries[] = $badgeStatus8;
+$colorseries[] = $badgeStatus2;
+$transChartTicketType = $langs->trans('ChartNewTicketVSClose');
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
+print '<td class="center">';
+
+
+$px1 = new DolGraph();
+$mesg = $px1->isGraphKo();
+if (!$mesg) {
+	$px1->SetDataColor(array_values($colorseries));
+	$px1->SetData($data);
+	$px1->setShowLegend(2);
+	$px1->SetType(array('pie'));
+	$px1->SetLegend($legend);
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetHeight($HEIGHT);
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->SetCssPrefix("cssboxes");
+	$px1->mode = 'depth';
+
+	$px1->draw('idgraphticketnewvsclosetoday');
+	print $px1->show($totalnb ? 0 : 1);
+}
+
+
+print '</td>';
+print "</table>";
+print '</div>';
+
 
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
