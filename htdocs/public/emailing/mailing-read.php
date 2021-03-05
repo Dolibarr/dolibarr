@@ -32,6 +32,7 @@ if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
 if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined("NOSESSION"))      define("NOSESSION", '1');
 
 /**
  * Header empty
@@ -92,8 +93,8 @@ if (!empty($tag))
 		print 'Email target not valid. Operation canceled.';
 		exit;
 	}
-	if ($obj->statut == 2) {
-		print 'Email target already set to read. Operation canceled.';
+	if ($obj->statut == 2 || $obj->statut == 3) {
+		print 'Email target already set to read or unsubscribe. Operation canceled.';
 		exit;
 	}
 	// TODO Test that mtid and email match also with the one found from $tag
@@ -107,8 +108,9 @@ if (!empty($tag))
 
 	//Update status of target
 	$statut = '2';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE id = ".$obj->rowid;
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE rowid = ".((int) $obj->rowid);
 	$resql = $db->query($sql);
+	if (!$resql) dol_print_error($db);
 
 	//Update status communication of thirdparty prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'thirdparty' && $obj->entity) {

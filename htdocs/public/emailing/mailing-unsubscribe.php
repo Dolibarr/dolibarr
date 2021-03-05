@@ -32,6 +32,7 @@ if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined("NOSESSION"))      define("NOSESSION", '1');
 
 /**
  * Header empty
@@ -134,7 +135,7 @@ if (!empty($tag) && ($unsuscrib == '1'))
 	*/
 
 	// Update status communication of email (new usage)
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
 
 	$resql = $db->query($sql);
 	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
