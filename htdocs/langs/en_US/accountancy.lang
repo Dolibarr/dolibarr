@@ -131,7 +131,7 @@ InvoiceLinesDone=Bound lines of invoices
 ExpenseReportLines=Lines of expense reports to bind
 ExpenseReportLinesDone=Bound lines of expense reports
 IntoAccount=Bind line with the accounting account
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Bind
