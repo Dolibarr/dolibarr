@@ -58,6 +58,8 @@ global $user, $conf, $langs;
 
 $langs->loadLangs(array("main", "mails"));
 
+$mtid = GETPOST('mtid');
+$email = GETPOST('email');
 $tag = GETPOST('tag');
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
@@ -80,7 +82,7 @@ if (!empty($tag) && ($unsuscrib == '1'))
 {
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
 
-	$sql = "SELECT mc.email, m.entity";
+	$sql = "SELECT mc.rowid, mc.email, mc.statut, m.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
@@ -89,11 +91,26 @@ if (!empty($tag) && ($unsuscrib == '1'))
 
 	$obj = $db->fetch_object($resql);
 
-	if (empty($obj->email))
-	{
-		print 'Email not found. No need to unsubscribe.';
+	if (empty($obj)) {
+		print 'Email target not valid. Operation canceled.';
 		exit;
 	}
+	if (empty($obj->email)) {
+		print 'Email target not valid. Operation canceled.';
+		exit;
+	}
+	if ($obj->statut == 3) {
+		print 'Email target already set to unsubscribe. Operation canceled.';
+		exit;
+	}
+	// TODO Test that mtid and email match also with the one found from $tag
+	/*
+	if ($obj->email != $email)
+	{
+		print 'Email does not match tagnot found. No need to unsubscribe.';
+		exit;
+	}
+	*/
 
 	// Update status of mail in recipient mailing list table
 	$statut = '3';

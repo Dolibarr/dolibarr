@@ -158,6 +158,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public function addTargetsToDatabase($mailing_id, $cibles)
 	{
 		global $conf;
+		global $dolibarr_main_instance_unique_id;
 
 		$this->db->begin();
 
@@ -182,7 +183,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
 				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
-	   			$sql .= "'".$this->db->escape(dol_hash($targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
+				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.';'.$targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY), 'md5')."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result = $this->db->query($sql);
