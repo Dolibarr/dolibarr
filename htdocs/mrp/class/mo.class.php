@@ -641,7 +641,7 @@ class Mo extends CommonObject
 				if ($bom->bomtype == 1) {
 					$role = 'toproduce';
 					$moline->role = 'toconsume';
-				}else {
+				} else {
 					$role = 'toconsume';
 					$moline->role = 'toproduce';
 				}
