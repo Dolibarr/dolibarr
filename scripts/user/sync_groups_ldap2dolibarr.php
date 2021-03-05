@@ -98,9 +98,9 @@ print "login=".$conf->global->LDAP_ADMIN_DN."\n";
 print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_GROUP_DN."\n";
 if (!empty($conf->global->LDAP_GROUP_FILTER)) {
-    print 'Filter=('.$conf->global->LDAP_GROUP_FILTER.')'."\n"; // Note: filter is defined into function getRecords
+	print 'Filter=('.$conf->global->LDAP_GROUP_FILTER.')'."\n"; // Note: filter is defined into function getRecords
 } else {
-    print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
+	print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
 }
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
