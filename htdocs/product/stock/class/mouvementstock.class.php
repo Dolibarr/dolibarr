@@ -575,14 +575,17 @@ class MouvementStock extends CommonObject
 					$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
 				}
 
-				if ($id_product_batch > 0)
+				if ( ! $error )
 				{
-					$result = $this->createBatch($id_product_batch, $qty);
-				} else {
-					$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
-					$result = $this->createBatch($param_batch, $qty);
+					if ($id_product_batch > 0)
+					{
+						$result = $this->createBatch($id_product_batch, $qty);
+					} else {
+						$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+						$result = $this->createBatch($param_batch, $qty);
+					}
+					if ($result < 0) $error++;
 				}
-				if ($result < 0) $error++;
 			}
 
 			// Update PMP and denormalized value of stock qty at product level
@@ -1231,7 +1234,7 @@ class MouvementStock extends CommonObject
 
 		$sql = "SELECT sum(pb.qty) as cpt";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE ps.fk_product = " . $fk_product;
 		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
 
