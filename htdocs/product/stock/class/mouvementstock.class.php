@@ -569,10 +569,18 @@ class MouvementStock extends CommonObject
 			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch)
 			{
 				// check unicity for serial numbered equipments ( different for lots managed products)
-				if ( $product->status_batch == 2 && $qty > 0 && $this->getBatchCount($fk_product, $batch) > 0 )
+				if ( $product->status_batch == 2 && $qty > 0 )
 				{
-					$error++;
-					$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
+					if ( $this->getBatchCount($fk_product, $batch) > 0 )
+					{
+						$error++;
+						$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
+					}
+					elseif { $qty > 1 }
+					{
+						$error++;
+						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+					}
 				}
 
 				if ( ! $error )
