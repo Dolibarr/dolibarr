@@ -278,10 +278,6 @@ if (function_exists("ldap_connect")) {
 	}
 
 	if ($action == 'testsearchgroup') {
-	    // Creation objet
-	    $object = new UserGroup($db);
-	    $object->initAsSpecimen();
-
 	    // TODO Mutualize code following with other ldap_xxxx.php pages
 
 	    // Test synchro
@@ -301,13 +297,13 @@ if (function_exists("ldap_connect")) {
 	        $required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
 	        // Get from LDAP database an array of results
-	        $ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 'group');
-	        //$ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_USERS, '', 'group');
+	        $ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 'group');
+	        //$ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, '', 'group');
 
 	        if (is_array($ldapgroups)) {
 	            $liste = array();
 	            foreach ($ldapgroups as $key => $ldapgroup) {
-	                // Define the label string for this user
+	                // Define the label string for this group
 	                $label = '';
 	                foreach ($required_fields as $value) {
 	                    if ($value) {
@@ -321,7 +317,7 @@ if (function_exists("ldap_connect")) {
 	        }
 
 	        print "<br>\n";
-	        print "LDAP search for user:<br>\n";
+	        print "LDAP search for group:<br>\n";
 	        print "search: *<br>\n";
 	        print "userDN: ".$conf->global->LDAP_GROUP_DN."<br>\n";
 	        print "useridentifier: ".$conf->global->LDAP_KEY_GROUPS."<br>\n";
