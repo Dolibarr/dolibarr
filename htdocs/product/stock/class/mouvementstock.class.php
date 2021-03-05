@@ -576,7 +576,7 @@ class MouvementStock extends CommonObject
 						$error++;
 						$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
 					}
-					elseif { $qty > 1 }
+					elseif ( $qty > 1 )
 					{
 						$error++;
 						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
