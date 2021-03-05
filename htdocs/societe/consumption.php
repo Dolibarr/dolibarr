@@ -422,6 +422,7 @@ if ($sql_select)
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
 		$documentstatic->paye = $objp->paid;
+		$documentstatic->alreadypaid = $objp->paid;
 
 		if (is_object($documentstaticline)) $documentstaticline->statut = $objp->status;
 
@@ -436,6 +437,8 @@ if ($sql_select)
 		if ($type_element == 'contract')
 		{
 			print $documentstaticline->getLibStatut(2);
+		} elseif ($type_element == 'invoice') {
+			print $documentstatic->getLibStatut(5, $objp->paid);
 		}
 		else
 		{
