@@ -711,7 +711,7 @@ class Ticket extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key." = '".$this->db->scape($value)."'";
+					$sql .= ' AND '.$key." = '".$this->db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code') || ($key == 't.fk_soc')) {
 					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
