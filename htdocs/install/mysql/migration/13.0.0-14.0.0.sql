@@ -48,6 +48,10 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN tag varchar(64) NULL;
+ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
+
+
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) AFTER rowid;
