@@ -449,7 +449,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 
 				// Replace tags of object + external modules
-				$tmparray = $this->get_substitutionarray_shipment($object, $outputlangs);
+				$tmparray = array_merge($tmparray, $this->get_substitutionarray_shipment($object, $outputlangs));
 
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
