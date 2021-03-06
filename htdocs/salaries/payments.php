@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2019	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2021           Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
@@ -68,6 +70,7 @@ if (!$sortfield) $sortfield = "s.datep,s.rowid";
 if (!$sortorder) $sortorder = "DESC,DESC";
 
 $search_ref = GETPOST('search_ref', 'int');
+$search_ref_salary = GETPOST('search_ref_salary', 'int');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
@@ -131,6 +134,7 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_ref = "";
+		$search_ref_salary = "";
 		$search_user = "";
 		$search_label = "";
 		$search_date_start = '';
@@ -163,7 +167,8 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$salstatic = new PaymentSalary($db);
+$salstatic = new Salary($db);
+$paymentsalstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 $accountstatic = new Account($db);
 
@@ -174,22 +179,24 @@ $help_url = '';
 $title = $langs->trans('SalariesPayments');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
-$sql .= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
+$sql .= " s.rowid, s.fk_user, s.amount, s.salary, sal.rowid as id_salary, sal.label, s.datep as datep, b.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql .= " pst.code as payment_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as sal ON (sal.rowid = s.fk_salary)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
 $sql .= " ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE u.rowid = s.fk_user";
+$sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
 if (empty($user->rights->salaries->readall)) $sql .= " AND s.fk_user IN (".join(',', $childids).")";
 
 // Search criteria
 if ($search_ref)			$sql .= " AND s.rowid=".((int) $search_ref);
+if ($search_ref_salary)			$sql .= " AND sal.rowid=".((int) $search_ref_salary);
 if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
-if ($search_label)			$sql .= natural_search(array('s.label'), $search_label);
+if ($search_label)			$sql .= natural_search(array('sal.label'), $search_label);
 if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
 if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
@@ -241,6 +248,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($l
 if ($search_type_id) $param .= '&search_type_id='.urlencode($search_type_id);
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
+if ($search_ref_salary) $param .= '&search_ref_salary='.urlencode($search_ref_salary);
 if ($search_user > 0) $param .= '&search_user='.urlencode($search_user);
 if ($search_label) $param .= '&search_label='.urlencode($search_label);
 if ($search_account) $param .= '&search_account='.urlencode($search_account);
@@ -292,6 +300,10 @@ print '</td>';
 print '<td class="liste_titre">';
 print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
 print '</td>';
+// Salary
+print '<td class="liste_titre center">';
+print '<input class="flat" type="text" size="3" name="search_ref_salary" value="'.$db->escape($search_ref_salary).'">';
+print '</td>';
 // Label
 print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
 // Date payment
@@ -339,10 +351,11 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("Salary", $_SERVER["PHP_SELF"], "sal.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "s.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "b.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 // Extra fields
@@ -388,15 +401,21 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->socid = $obj->fk_soc;
 	$userstatic->statut = $obj->status;
 
-	$salstatic->id = $obj->rowid;
-	$salstatic->ref = $obj->rowid;
+	$salstatic->id = $obj->id_salary;
+	$salstatic->ref = $obj->id_salary;
+
+	$paymentsalstatic->id = $obj->rowid;
+	$paymentsalstatic->ref = $obj->rowid;
 
 	// Ref
-	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
+	print "<td>".$paymentsalstatic->getNomUrl(1)."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
 	// Employee
 	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	if (!$i) $totalarray['nbfield']++;
+
+	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
 	// Label payment
