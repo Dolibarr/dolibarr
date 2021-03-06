@@ -126,14 +126,14 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-    /**
-     * testFactureRecCreate
-     *
-     * @return int
-     */
-    public function testFactureRecCreate()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testFactureRecCreate
+	 *
+	 * @return int
+	 */
+	public function testFactureRecCreate()
+	{
+		global $conf,$user,$langs,$db;
 
 		$conf=$this->savconf;
 		$user=$this->savuser;
@@ -147,61 +147,61 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 
 		$localobject=new FactureRec($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result = $localobject->create($user, $localobjectinv->id);
+		$localobject->initAsSpecimen();
+		$result = $localobject->create($user, $localobjectinv->id);
 
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice');
 
-    	return $result;
-    }
+		return $result;
+	}
 
-    /**
-     * testFactureRecFetch
-     *
-     * @param  int 	$id  	Id of created recuriing invoice
-     * @return int
-     *
+	/**
+	 * testFactureRecFetch
+	 *
+	 * @param  int 	$id  	Id of created recuriing invoice
+	 * @return int
+	 *
 	 * @depends testFactureRecCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureRecFetch($id)
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureRecFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    	$localobject=new FactureRec($this->savdb);
-    	$result = $localobject->fetch($id);
+		$localobject=new FactureRec($this->savdb);
+		$result = $localobject->fetch($id);
 
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
-    	return $result;
-    }
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		return $result;
+	}
 
 
 
-    /**
-     * Edit an object to test updates
-     *
-     * @param 	FactureRec	$localobject		Object Facture rec
-     * @return	void
-     */
-    public function changeProperties(&$localobject)
-    {
-        $localobject->note_private='New note';
-        //$localobject->note='New note after update';
-    }
+	/**
+	 * Edit an object to test updates
+	 *
+	 * @param 	FactureRec	$localobject		Object Facture rec
+	 * @return	void
+	 */
+	public function changeProperties(&$localobject)
+	{
+		$localobject->note_private='New note';
+		//$localobject->note='New note after update';
+	}
 
-    /**
-     * Compare all public properties values of 2 objects
-     *
-     * @param 	Object		$oA						Object operand 1
-     * @param 	Object		$oB						Object operand 2
-     * @param	boolean		$ignoretype				False will not report diff if type of value differs
-     * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
+	/**
+	 * Compare all public properties values of 2 objects
+	 *
+	 * @param 	Object		$oA						Object operand 1
+	 * @param 	Object		$oB						Object operand 2
+	 * @param	boolean		$ignoretype				False will not report diff if type of value differs
+	 * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
 	 * @return	array								Array with differences
 	 */
 	public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
