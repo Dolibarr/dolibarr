@@ -165,9 +165,10 @@ class Products extends DolibarrApi
 	 * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+     * @param  bool   $ids_only   Get a list of product ids
 	 * @return array                Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false)
 	{
 		global $db, $conf;
 
@@ -219,10 +220,14 @@ class Products extends DolibarrApi
 			$i = 0;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
-				$product_static = new Product($this->db);
-				if ($product_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($product_static);
-				}
+				if (!$ids_only) {
+                    $product_static = new Product($this->db);
+                    if ($product_static->fetch($obj->rowid)) {
+                        $obj_ret[] = $this->_cleanObjectDatas($product_static);
+                    }
+                } else {
+                    $obj_ret[] = $obj;
+                }
 				$i++;
 			}
 		} else {
