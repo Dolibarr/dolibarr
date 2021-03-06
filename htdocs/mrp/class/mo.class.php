@@ -632,8 +632,20 @@ class Mo extends CommonObject
 			$moline->fk_mo = $this->id;
 			$moline->qty = $this->qty;
 			$moline->fk_product = $this->fk_product;
-			$moline->role = 'toproduce';
 			$moline->position = 1;
+
+			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
+				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+				$bom = new Bom($this->db);
+				$bom->fetch($this->fk_bom);
+				if ($bom->bomtype == 1) {
+					$role = 'toproduce';
+					$moline->role = 'toconsume';
+				} else {
+					$role = 'toconsume';
+					$moline->role = 'toproduce';
+				}
+			}
 
 			$resultline = $moline->create($user, false); // Never use triggers here
 			if ($resultline <= 0) {
@@ -644,9 +656,6 @@ class Mo extends CommonObject
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
-				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
-				$bom->fetch($this->fk_bom);
 				if ($bom->id > 0) {
 					// Lines to consume
 					if (!$error) {
@@ -667,7 +676,7 @@ class Mo extends CommonObject
 								break;
 							} else {
 								$moline->fk_product = $line->fk_product;
-								$moline->role = 'toconsume';
+								$moline->role = $role;
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;
