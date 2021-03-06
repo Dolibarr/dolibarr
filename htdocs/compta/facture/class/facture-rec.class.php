@@ -524,7 +524,6 @@ class FactureRec extends CommonInvoice
 				$this->titre                  = $obj->title; // deprecated
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
-				$this->ref_client             = $obj->ref_client;
 				$this->suspended              = $obj->suspended;
 				$this->type                   = $obj->type;
 				$this->datep                  = $obj->dp;
