@@ -528,7 +528,7 @@ class FactureRec extends CommonInvoice
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
 				$this->suspended              = $obj->suspended;
-				$this->date                   = $obj->df;
+				//$this->date = $obj->df;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
 				$this->remise                 = $obj->remise;
