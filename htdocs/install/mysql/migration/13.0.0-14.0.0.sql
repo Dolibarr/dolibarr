@@ -215,6 +215,13 @@ ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
+
+--VMYSQL4.3 ALTER TABLE llx_c_civility CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+--VPGSQL8.2 CREATE SEQUENCE llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
+--VPGSQL8.2 ALTER TABLE llx_c_civility ALTER COLUMN rowid SET DEFAULT nextval('llx_c_civility_rowid_seq');
+--VPGSQL8.2 SELECT setval('llx_c_civility_rowid_seq', MAX(rowid)) FROM llx_c_civility;
+
+
 -- Change for salary intent table
 create table llx_salary
 (
@@ -239,7 +246,7 @@ create table llx_salary
   fk_account      integer,					  -- default bank account for payment
   fk_user_author  integer,                    -- user creating
   fk_user_modif   integer                     -- user making last change
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
