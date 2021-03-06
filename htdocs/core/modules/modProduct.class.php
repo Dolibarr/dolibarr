@@ -587,7 +587,7 @@ class modProduct extends DolibarrModules
 			));
 
 			$this->import_regex_array[$r] = array_merge($this->import_regex_array[$r], array(
-				'p.tobatch' => '^[0|1]$'
+				'p.tobatch' => '^[0|1|2]$'
 			));
 
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
@@ -679,7 +679,7 @@ class modProduct extends DolibarrModules
 		//clauses copied from import_fields_array
 		if (!empty($conf->stock->enabled)) {
 			$import_sample = array_merge($import_sample, array(
-				'p.tobatch'=>"0 (don't use) / 1 (use batch/serial number)",
+				'p.tobatch'=>"0 (don't use) / 1 (use batch) / 2 (use serial number)",
 				'p.seuil_stock_alerte' => '',
 				'p.pmp' => '0',
 				'p.desiredstock' => ''
