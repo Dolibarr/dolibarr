@@ -1192,6 +1192,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		print dol_get_fiche_head('');
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
 
 		// VAT
@@ -1279,6 +1280,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 		print '</table>';
+		print '</div>';
 
 		print dol_get_fiche_end();
 
@@ -1326,6 +1328,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 			print $langs->trans('UseMultipriceRules').' <input type="checkbox" id="usePriceRules" name="usePriceRules" '.($object->price_autogen ? 'checked' : '').'><br><br>';
 		}
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
 		print '<thead><tr class="liste_titre">';
 
@@ -1399,6 +1402,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print '</tbody>';
 
 		print '</table>';
+		print '</div>';
 
 		//print dol_get_fiche_end();
 
@@ -1496,7 +1500,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 
 				print '<tr class="oddeven">';
 				// Date
-				print "<td>".dol_print_date($db->jdate($objp->dp), "dayhour")."</td>";
+				print "<td>".dol_print_date($db->jdate($objp->dp), "dayhour", 'tzuserrel')."</td>";
 
 				// Price level
 				if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
@@ -1855,6 +1859,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="liste centpercent">';
 
 			print '<tr class="liste_titre">';
@@ -1906,7 +1911,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
-				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
+				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				print '<td class="right">';
 
@@ -1943,6 +1948,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '</tr>';
 			}
 			print "</table>";
+			print '</div>';
 		} else {
 			print $langs->trans('None');
 		}
@@ -1970,6 +1976,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="liste centpercent">';
 
 		if (count($prodcustprice->lines) > 0 || $search_soc)
@@ -2005,7 +2012,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td></td>';
 		print '</tr>';
 
 		// Line for default price
@@ -2062,15 +2069,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '</td>';
 		if ($user->rights->produit->supprimer || $user->rights->service->supprimer)
 		{
-			print '<td class="right">';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&amp;id='.$object->id.'">';
+			print '<td class="nowraponall">';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_default_price&amp;id='.$object->id.'">';
 			print img_info($langs->trans('PriceByCustomerLog'));
 			print '</a>';
 			print ' ';
-			print '<a class="marginleftonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
+			print '<a class="marginleftonly marginrightonly editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_price&amp;id='.$object->id.'">';
 			print img_edit('default', 0, 'style="vertical-align: middle;"');
 			print '</a>';
-			print ' &nbsp; ';
 			print '</td>';
 		}
 		print "</tr>\n";
@@ -2107,8 +2113,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print '<tr class="oddeven">';
 
 				print "<td>".$staticsoc->getNomUrl(1)."</td>";
-				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
-
+				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				print '<td class="right">';
 
@@ -2117,13 +2122,13 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				if (price2num($line->localtax1_type)) $positiverates .= ($positiverates ? '/' : '').price2num($line->localtax1_tx);
 				if (price2num($line->localtax2_type)) $positiverates .= ($positiverates ? '/' : '').price2num($line->localtax2_tx);
 				if (empty($positiverates)) $positiverates = '0';
+
 				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
 
 				print "</td>";
 				print '<td class="right">'.price($line->price)."</td>";
 
-				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1")
-				{
+				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 					//print '<td class="right">' . price($line->price_ttc) . "</td>";
 					print '<td class="right">'.price($resultarray[2]).'</td>';
 				} else {
@@ -2162,16 +2167,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print "</tr>\n";
 			}
 		}
-		/*else
-		{
-			$colspan=9;
-			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
-			print "<tr ".$bc[false].">";
-			print '<td colspan="'.$colspan.'">'.$langs->trans('None').'</td>';
-			print "</tr>";
-		}*/
 
 		print "</table>";
+		print '</div>';
 
 		print "</form>";
 	}
