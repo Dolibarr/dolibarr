@@ -93,6 +93,8 @@ class FactureRec extends CommonInvoice
 	public $nb_gen_done;
 	public $nb_gen_max;
 
+	public $user_author;
+
 	/**
 	 * @var int Frequency
 	 */
@@ -111,7 +113,8 @@ class FactureRec extends CommonInvoice
 	public $date_lim_reglement;
 	public $suspended; // status
 
-	public $auto_validate;
+	public $auto_validate;			// 0 to create in draft, 1 to create and validate the new invoice
+	public $generate_pdf;			// 1 to generate PDF on invoice generation (default)
 
 
 	/**
@@ -549,7 +552,6 @@ class FactureRec extends CommonInvoice
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_project;
 				$this->fk_account             = $obj->fk_account;
-				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
