@@ -66,7 +66,7 @@ class AgendaEvents extends DolibarrApi
         if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
             throw new RestException(401, "Insufficient rights to read an event");
         }
-        if ($id == 0) {
+        if ($id === 0) {
             $result = $this->actioncomm->initAsSpecimen();
         } else {
             $result = $this->actioncomm->fetch($id);
