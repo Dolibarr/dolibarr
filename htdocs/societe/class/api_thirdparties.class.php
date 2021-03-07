@@ -1815,7 +1815,7 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
-		if ($rowid == 0) {
+		if ($rowid == 0 && empty($email) && empty($barcode)) {
 			$result = $this->company->initAsSpecimen();
 		} else {
 			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
