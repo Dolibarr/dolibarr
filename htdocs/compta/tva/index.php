@@ -47,8 +47,8 @@ if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) {
 $refresh = GETPOSTISSET('submit') ? true : false;
 
 if ($refresh === false) {
-	$year_current = intval(strftime('%Y', $now));
-	$month_current = intval(strftime('%m', $now));
+	$year_current = dol_print_date('%Y', $now);
+	$month_current = dol_print_date('%m', $now);
 
 	// 1 : Monthly (by default)
 	// 2 : Quarterly
@@ -91,7 +91,7 @@ if ($refresh === false) {
 	// Date range
 	$year = GETPOST("year", "int");
 	if (empty($year)) {
-		$year_current = strftime("%Y", dol_now());
+		$year_current = dol_print_date("%Y", dol_now());
 		if ($conf->global->SOCIETE_FISCAL_MONTH_START > date('m')) $year_current--;
 		$year_start = $year_current;
 	} else {
