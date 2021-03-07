@@ -79,13 +79,14 @@ class FactureRec extends CommonInvoice
 	 */
 	public $title;
 
+	public $socid;
 	public $number;
 	public $date;
 	public $remise;
+	public $remise_absolue;
+	public $remise_percent;
 	public $tva;
 	public $total;
-	public $db_table;
-	public $propalid;
 
 	public $date_last_gen;
 	public $date_when;
@@ -107,6 +108,7 @@ class FactureRec extends CommonInvoice
 
 	public $usenewprice = 0;
 
+	public $date_lim_reglement;
 	public $suspended; // status
 
 	public $auto_validate;
@@ -528,7 +530,6 @@ class FactureRec extends CommonInvoice
 				$this->title                  = $obj->title;
 				$this->ref                    = $obj->title;
 				$this->suspended              = $obj->suspended;
-				$this->date                   = $obj->df;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
 				$this->remise                 = $obj->remise;
@@ -537,8 +538,6 @@ class FactureRec extends CommonInvoice
 				$this->total_localtax1        = $obj->localtax1;
 				$this->total_localtax2        = $obj->localtax2;
 				$this->total_ttc              = $obj->total_ttc;
-				$this->close_code             = $obj->close_code;
-				$this->close_note             = $obj->close_note;
 				$this->socid                  = $obj->fk_soc;
 				$this->date_lim_reglement     = $this->db->jdate($obj->dlr);
 				$this->mode_reglement_id      = $obj->fk_mode_reglement;
