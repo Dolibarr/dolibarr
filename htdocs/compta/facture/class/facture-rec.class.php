@@ -557,7 +557,7 @@ class FactureRec extends CommonInvoice
 				$this->user_author            = $obj->fk_user_author;
 				$this->modelpdf               = $obj->model_pdf; // deprecated
 				$this->model_pdf              = $obj->model_pdf;
-				$this->special_code = $obj->special_code;
+				//$this->special_code = $obj->special_code;
 				$this->frequency			  = $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
 				$this->date_when			  = $this->db->jdate($obj->date_when);
