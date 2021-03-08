@@ -1272,7 +1272,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Civility
 		print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
-		print $object->getCivilityLabel();
+		switch ($object->civility) {
+		    case 'Madame':
+		        print '<i class="fas fa-venus"></i>';
+		        break;
+		    case 'Monsieur':
+		        print '<i class="fas fa-mars"></i>';
+		        break;
+		    default:
+		        print $object->getCivilityLabel();
+		        break;
+		}
 		print '</td></tr>';
 
 		// Job / position
