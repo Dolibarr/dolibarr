@@ -112,7 +112,7 @@ $userstatic = new User($db);
 $accountstatic = new Account($db);
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
-$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp as datesp, s.dateep as dateep, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
+$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp as datesp, s.dateep as dateep, s.fk_typepayment as type, s.fk_bank,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql .= " pst.code as payment_code,";
 $sql .= " SUM(ps.amount) as alreadypayed";
@@ -310,7 +310,7 @@ if ($result)
 		if (!$i) $totalarray['nbfield']++;
 
         // Type
-        print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+        print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
 		if (!$i) $totalarray['nbfield']++;
 
 		// Account
