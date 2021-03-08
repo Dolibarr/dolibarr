@@ -39,7 +39,6 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 	/**
 	 * @var DoliDB Database handler.
 	 */
-	public $db;
 
 	public $param;
 	public $info_box_head = array();
@@ -56,7 +55,7 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 		$langs->load("boxes");
 		$this->db = $db;
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("BoxTicketSeverity");
+		$this->boxlabel = $langs->transnoentitiesnoconv("BoxTicketLastXDayswidget");
 	}
 
 	/**
@@ -67,7 +66,7 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs,$db;
+		global $conf, $user, $langs;
 
 		$badgeStatus0 = '#cbd3d3'; // draft
 		$badgeStatus1 = '#bc9526'; // validated
@@ -114,13 +113,13 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 		$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 		$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL " . $days . " DAY)";
 		$sql .= " GROUP BY CAST(t.datec AS DATE)";
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			$dataseries = array();
 			while ($i < $num) {
-				$objp = $db->fetch_object($resql);
+				$objp = $this->db->fetch_object($resql);
 				while ($minimumdatecformated < $objp->datec) {
 					$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
 					$minimumdatec = date_add($minimumdatec, $intervaltoadd);
@@ -138,7 +137,7 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 				$i++;
 			}
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		if ($user->rights->ticket->read) {

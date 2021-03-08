@@ -67,7 +67,7 @@ class box_ticket_by_severity extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs,$db;
+		global $conf, $user, $langs;
 
 		$badgeStatus0 = '#cbd3d3'; // draft
 		$badgeStatus1 = '#bc9526'; // validated
@@ -102,14 +102,14 @@ class box_ticket_by_severity extends ModeleBoxes
 			$sql = "SELECT cts.rowid, cts.label, cts.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
 			$sql .= " WHERE cts.active = 1";
-			$sql .= $db->order('cts.rowid', 'ASC');
-			$resql = $db->query($sql);
+			$sql .= $this->db->order('cts.rowid', 'ASC');
+			$resql = $this->db->query($sql);
 
 			if ($resql) {
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 				$i = 0;
 				while ($i < $num) {
-					$objp = $db->fetch_object($resql);
+					$objp = $this->db->fetch_object($resql);
 					$listofoppcode[$objp->rowid] = $objp->code;
 					$listofopplabel[$objp->rowid] = $objp->label;
 					switch ($objp->code) {
@@ -131,7 +131,7 @@ class box_ticket_by_severity extends ModeleBoxes
 					$i++;
 				}
 			} else {
-				dol_print_error($db);
+				dol_print_error($this->db);
 			}
 
 			$dataseries = array();
@@ -140,20 +140,20 @@ class box_ticket_by_severity extends ModeleBoxes
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 			$sql .= " WHERE t.fk_statut <> 8";
 			$sql .= " GROUP BY t.severity_code";
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql) {
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 				$i = 0;
 				while ($i < $num) {
-					$objp = $db->fetch_object($resql);
+					$objp = $this->db->fetch_object($resql);
 					$data[$objp->severity_code] = $objp->nb;
 					$i++;
 				}
 				foreach ($listofoppcode as $rowid => $code) {
-					$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+					$dataseries[] = array('label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
 				}
 			} else {
-				dol_print_error($db);
+				dol_print_error($this->db);
 			}
 			$stringtoprint = '';
 			$stringtoprint .= '<div class="div-table-responsive-no-min ">';

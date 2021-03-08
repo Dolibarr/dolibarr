@@ -306,6 +306,7 @@ ChartTicketType=Number of open tickets by type
 BoxTicketSeverity=Number of open tickets by severity
 BoxNoTicketSeverity=No tickets opened
 BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 NumberOfTicketByDay=Number of new tickets by day
 ChartNewTicketVSClose=Number of today's new tickets versus today's closed tickets
