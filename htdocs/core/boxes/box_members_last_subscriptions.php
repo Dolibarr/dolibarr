@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_members.php
+ *	\file       htdocs/core/boxes/box_last_members_subscriptions.php
  *	\ingroup    adherent
  *	\brief      Module to show box of members
  */
@@ -28,13 +28,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last members
+ * Class to manage the box to show last modofied members
  */
-class box_members extends ModeleBoxes
+class box_last_members_subscriptions extends ModeleBoxes
 {
-	public $boxcode = "lastmembers";
+	public $boxcode = "box_last_members_subscriptions";
 	public $boximg = "object_user";
-	public $boxlabel = "BoxLastMembers";
+	public $boxlabel = "BoxLastMembersSubscriptions";
 	public $depends = array("adherent");
 
 	/**
@@ -84,19 +84,25 @@ class box_members extends ModeleBoxes
 		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$memberstatic = new Adherent($this->db);
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+		$staticmember = new Adherent($this->db);
+		$statictype = new AdherentType($this->db);
+		$subscriptionstatic = new Subscription($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
+		$this->info_box_head = array('text' => $langs->trans("LastSubscriptionsModified", $max));
 
 		if ($user->rights->adherent->lire) {
-			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
-			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
-			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
-			$sql .= " t.subscription, t.libelle as label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql .= " WHERE a.entity IN (".getEntity('member').")";
-			$sql .= " AND a.fk_adherent_type = t.rowid";
-			$sql .= " ORDER BY a.tms DESC";
+			$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+			$sql .= " a.gender, a.email, a.photo, a.morphy,";
+			$sql .= " a.datefin as date_end_subscription,";
+			$sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription,";
+			$sql .= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.subscription";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta, ".MAIN_DB_PREFIX."subscription as c";
+			$sql .= " WHERE a.entity IN (".getEntity('adherent').")";
+			$sql .= " AND a.fk_adherent_type = ta.rowid";
+			$sql .= " AND c.fk_adherent = a.rowid";
+			$sql .= $this->db->order("c.tms", "DESC");
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
@@ -105,53 +111,54 @@ class box_members extends ModeleBoxes
 
 				$line = 0;
 				while ($line < $num) {
-					$objp = $this->db->fetch_object($result);
-					$datec = $this->db->jdate($objp->datec);
-					$datem = $this->db->jdate($objp->tms);
-
-					$memberstatic->lastname = $objp->lastname;
-					$memberstatic->firstname = $objp->firstname;
-					$memberstatic->id = $objp->rowid;
-					$memberstatic->ref = $objp->ref;
-					$memberstatic->photo = $objp->photo;
-					$memberstatic->gender = $objp->gender;
-					$memberstatic->email = $objp->email;
-					$memberstatic->morphy = $objp->morphy;
-					$memberstatic->company = $objp->company;
-					$memberstatic->statut = $objp->status;
-					$memberstatic->date_creation = $datec;
-					$memberstatic->date_modification = $datem;
-					$memberstatic->need_subscription = $objp->subscription;
-					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
-
-					if (!empty($objp->fk_soc)) {
-						$memberstatic->socid = $objp->fk_soc;
-						$memberstatic->fetch_thirdparty();
-						$memberstatic->name = $memberstatic->thirdparty->name;
+					$obj = $this->db->fetch_object($result);
+					$staticmember->id = $obj->rowid;
+					$staticmember->ref = $obj->rowid;
+					$staticmember->lastname = $obj->lastname;
+					$staticmember->firstname = $obj->firstname;
+					$staticmember->gender = $obj->gender;
+					$staticmember->email = $obj->email;
+					$staticmember->photo = $obj->photo;
+					$staticmember->morphy = $obj->morphy;
+					$staticmember->statut = $obj->status;
+					$staticmember->need_subscription = $obj->need_subscription;
+					$staticmember->datefin = $this->db->jdate($obj->date_end_subscription);
+					if (!empty($obj->fk_soc)) {
+						$staticmember->fk_soc = $obj->fk_soc;
+						$staticmember->fetch_thirdparty();
+						$staticmember->name = $staticmember->thirdparty->name;
 					} else {
-						$memberstatic->name = $objp->company;
+						$staticmember->name = $obj->company;
 					}
 
+					$subscriptionstatic->id = $obj->cid;
+					$subscriptionstatic->ref = $obj->cid;
+
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $memberstatic->getNomUrl(-1),
+						'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+						'text' => $subscriptionstatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $memberstatic->company,
-						'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
+						'text' => $staticmember->getNomUrl(-1, 32, 'subscription'),
+						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => get_date_range($this->db->jdate($obj->date_start), $this->db->jdate($obj->date_end)),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $memberstatic->LibStatut($objp->status, $objp->subscription, $this->db->jdate($objp->date_end_subscription), 3),
+						'text' => price($obj->subscription),
+					);
+
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour'),
 					);
 
 					$line++;
