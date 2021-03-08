@@ -649,10 +649,7 @@ class FactureRec extends CommonInvoice
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
 		$sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
-		//$sql.= ' l.situation_percent, l.fk_prev_id,';
-		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql .= ' l.rang, l.special_code,';
-		//$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
 		$sql .= ' l.fk_unit, l.fk_contract_line,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
@@ -674,12 +671,12 @@ class FactureRec extends CommonInvoice
 				$line->rowid = $objp->rowid;
 				$line->desc             = $objp->description; // Description line
 				$line->description      = $objp->description; // Description line
-				$line->product_type     = $objp->product_type; // Type of line
 				$line->ref              = $objp->product_ref; // Ref product
 				$line->product_ref      = $objp->product_ref; // Ref product
 				$line->libelle          = $objp->product_label; // deprecated
 				$line->product_label = $objp->product_label; // Label product
 				$line->product_desc     = $objp->product_desc; // Description product
+				$line->product_type     = $objp->product_type; // Type of line
 				$line->fk_product_type  = $objp->fk_product_type; // Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
@@ -693,7 +690,7 @@ class FactureRec extends CommonInvoice
 				$line->localtax1_type   = $objp->localtax1_type;
 				$line->localtax2_type   = $objp->localtax2_type;
 				$line->remise_percent   = $objp->remise_percent;
-				$line->fk_remise_except = $objp->fk_remise_except;
+				//$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
 				$line->date_start_fill  = $objp->date_start_fill;
 				$line->date_end_fill    = $objp->date_end_fill;
@@ -1925,6 +1922,18 @@ class FactureLigneRec extends CommonInvoiceLine
 	public $table_element = 'facturedet_rec';
 
 
+	public $fk_product_fournisseur_price;
+	public $fk_fournprice;					// For backward compatibility
+
+	public $rang;
+
+	public $desc;
+	public $description;
+
+	public $fk_product_type;	// Use instead product_type
+
+	public $fk_contract_line;
+
 
 	/**
 	 * 	Delete line in database
@@ -2048,7 +2057,9 @@ class FactureLigneRec extends CommonInvoiceLine
 			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+
 			$this->buy_price_ht = $objp->buy_price_ht;
+
 			$this->fk_product_fournisseur_price = $objp->fk_product_fournisseur_price;
 			$this->fk_user_author = $objp->fk_user_author;
 			$this->fk_user_modif = $objp->fk_user_modif;
