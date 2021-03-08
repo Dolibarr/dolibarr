@@ -546,11 +546,11 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
-			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount, 0, $outputlangs, 1, -1, 2).'">';
+			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount).'">';
 			print "</td></tr>";
 		}
 		else {
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount).'</td></tr>';
 		}
 
 		// Mode of payment
