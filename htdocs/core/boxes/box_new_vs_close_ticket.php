@@ -19,19 +19,19 @@
  */
 
 /**
- *     \file        core/boxes/box_ticket_by_severity.php
+ *     \file        core/boxes/box_nb_ticket_last_x_days.php
  *     \ingroup     ticket
- *     \brief       This box shows open tickets by severity
+ *     \brief       This box shows the number of new daily tickets the last X days
  */
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box
  */
-class box_ticket_by_severity extends ModeleBoxes
+class box_new_vs_close_ticket extends ModeleBoxes
 {
 
-	public $boxcode = "box_ticket_by_severity";
+	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
@@ -39,7 +39,6 @@ class box_ticket_by_severity extends ModeleBoxes
 	/**
 	 * @var DoliDB Database handler.
 	 */
-	public $db;
 
 	public $param;
 	public $info_box_head = array();
@@ -56,7 +55,7 @@ class box_ticket_by_severity extends ModeleBoxes
 		$langs->load("boxes");
 		$this->db = $db;
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("BoxTicketSeverity");
+		$this->boxlabel = $langs->transnoentitiesnoconv("BoxNewTicketVSClose");
 	}
 
 	/**
@@ -81,105 +80,71 @@ class box_ticket_by_severity extends ModeleBoxes
 		$badgeStatus7 = '#baa32b';
 		$badgeStatus8 = '#993013';
 		$badgeStatus9 = '#e7f0f0';
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php')) {
-			include DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
-		}
-		$this->max = $max;
-
-		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
-
-		$text = $langs->trans("BoxTicketSeverity", $max);
+		$text = $langs->trans("BoxNewTicketVSClose");
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit' => dol_strlen($text)
 		);
 
-		$listofopplabel = array();
-		$listofoppcode = array();
-		$colorseriesstat = array();
 		if ($user->rights->ticket->read) {
-			$sql = "SELECT cts.rowid, cts.label, cts.code";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
-			$sql .= " WHERE cts.active = 1";
-			$sql .= $this->db->order('cts.rowid', 'ASC');
-			$resql = $this->db->query($sql);
-
-			if ($resql) {
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
-					$objp = $this->db->fetch_object($resql);
-					$listofoppcode[$objp->rowid] = $objp->code;
-					$listofopplabel[$objp->rowid] = $objp->label;
-					switch ($objp->code) {
-						case 'LOW':
-							$colorseriesstat[$objp->rowid] = $badgeStatus4;
-							break;
-						case 'NORMAL':
-							$colorseriesstat[$objp->rowid] = $badgeStatus2;
-							break;
-						case 'HIGH':
-							$colorseriesstat[$objp->rowid] = $badgeStatus1;
-							break;
-						case 'BLOCKING':
-							$colorseriesstat[$objp->rowid] = $badgeStatus8;
-							break;
-						default:
-							break;
-					}
-					$i++;
-				}
-			} else {
-				dol_print_error($this->db);
-			}
-
-			$dataseries = array();
 			$data = array();
-			$sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
+			$totalnb = 0;
+			$sql = "SELECT COUNT(t.datec) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-			$sql .= " WHERE t.fk_statut <> 8";
-			$sql .= " GROUP BY t.severity_code";
+			$sql .= " WHERE CAST(t.datec AS DATE) = CURRENT_DATE";
+			$sql .= " AND t.fk_statut <> 8";
+			$sql .= " GROUP BY CAST(t.datec AS DATE)";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
-				$i = 0;
-				while ($i < $num) {
+				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[$objp->severity_code] = $objp->nb;
-					$i++;
-				}
-				foreach ($listofoppcode as $rowid => $code) {
-					$dataseries[] = array('label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+					$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
+					$totalnb += $objp->nb;
+				} else {
+					$data[] = array($langs->trans('TicketCreatedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
 			}
+			$sql = "SELECT COUNT(t.date_close) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " WHERE CAST(t.date_close AS DATE) = CURRENT_DATE";
+			$sql .= " AND t.fk_statut = 8";
+			$sql .= " GROUP BY CAST(t.date_close AS DATE)";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				if ($num > 0) {
+					$objp = $this->db->fetch_object($resql);
+					$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+					$totalnb += $objp->nb;
+				} else {
+					$data[] = array($langs->trans('TicketClosedToday'), 0);
+				}
+			} else {
+				dol_print_error($this->db);
+			}
+			$colorseries = array();
+			$colorseries[] = $badgeStatus8;
+			$colorseries[] = $badgeStatus2;
 			$stringtoprint = '';
 			$stringtoprint .= '<div class="div-table-responsive-no-min ">';
-			if (!empty($dataseries) && count($dataseries) > 0) {
+			if (!empty($data) && count($data) > 0) {
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
-				$totalnb = 0;
 				if (!$mesg) {
-					$px1->SetDataColor(array_values($colorseriesstat));
-					$data = array();
-					$legend = array();
-					foreach ($dataseries as $value) {
-						$data[] = array($value['label'], $value['data']);
-						$totalnb += $value['data'];
-					}
+					$px1->SetDataColor(array_values($colorseries));
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
 					$px1->SetType(array('pie'));
-					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					//$px1->SetHeight($HEIGHT);
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode = 'depth';
 
-					$px1->draw('idgraphticketseverity');
+					$px1->draw('idgraphticketnewvsclosetoday');
 					$stringtoprint .= $px1->show($totalnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';
@@ -190,7 +155,7 @@ class box_ticket_by_severity extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity")
+					'text' => $langs->trans("BoxNoTicketSeverity"),
 				);
 			}
 		} else {

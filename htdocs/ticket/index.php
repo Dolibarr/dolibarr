@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -70,6 +71,7 @@ $object = new Ticket($db);
 /*
  * View
  */
+$resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
 $tickesupstatic = new Ticket($db);
@@ -77,7 +79,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback = '';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
+print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
 
 
 $dir = '';
@@ -181,7 +183,7 @@ if ($result) {
 		}
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	$dataseries = array();
 	$colorseries = array();
@@ -398,186 +400,23 @@ if ($result) {
 	dol_print_error($db);
 }
 
-/*
- * Chart of Ticket Type
- */
-
-$listofopplabel = array();
-$listofoppcode = array();
-$colorseriesstat = array();
-
-$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
-$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
-$sql .= " WHERE ctt.active = 1";
-$sql .= $db->order('ctt.rowid', 'ASC');
-$resql = $db->query($sql);
-
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$listofoppcode[$objp->rowid] = $objp->code;
-		$listofopplabel[$objp->rowid] = $objp->label;
-		switch ($objp->code) {
-			case 'COM':
-				$colorseriesstat[$objp->rowid] = $badgeStatus1;
-				break;
-			case 'HELP':
-				$colorseriesstat[$objp->rowid] = $badgeStatus2;
-				break;
-			case 'ISSUE':
-				$colorseriesstat[$objp->rowid] = $badgeStatus3;
-				break;
-			case 'REQUEST':
-				$colorseriesstat[$objp->rowid] = $badgeStatus4;
-				break;
-			case 'OTHER':
-				$colorseriesstat[$objp->rowid] = $badgeStatus5;
-				break;
-			default:
-				break;
-		}
-		$i++;
-	}
-} else {
-	dol_print_error($db);
-}
-
-$dataseries = array();
-$data = array();
-$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
-$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-$sql .= " WHERE t.fk_statut <> 8";
-$sql .= " GROUP BY t.type_code";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$data[$objp->type_code] = $objp->nb;
-		$i++;
-	}
-	foreach ($listofoppcode as $rowid => $code) {
-		$dataseries[] = array('label' => $langs->getLabelFromKey($db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
-	}
-} else {
-	dol_print_error($db);
-}
-$transChartTicketType = $langs->trans('ChartTicketType');
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
-print '<td class="">';
-if (!empty($dataseries) && count($dataseries) > 0) {
-	$px1 = new DolGraph();
-	$mesg = $px1->isGraphKo();
-	$totalnb = 0;
-	if (!$mesg) {
-		$px1->SetDataColor(array_values($colorseriesstat));
-		$data = array();
-		$legend = array();
-		foreach ($dataseries as $value) {
-			$data[] = array($value['label'], $value['data']);
-			$totalnb += $value['data'];
-		}
-		$px1->SetData($data);
-		$px1->setShowLegend(2);
-		$px1->SetType(array('pie'));
-		$px1->SetLegend($legend);
-		$px1->SetMaxValue($px1->GetCeilMaxValue());
-		$px1->SetHeight($HEIGHT);
-		$px1->SetShading(3);
-		$px1->SetHorizTickIncrement(1);
-		$px1->SetCssPrefix("cssboxes");
-		$px1->mode = 'depth';
-
-		$px1->draw('idgraphtickettype');
-		print $px1->show($totalnb ? 0 : 1);
-	}
-}
-
-print '</td>';
-print "</table>";
-print '</div>';
-
-
-$dataseries = array();
-$data = array();
-$totalnb = 0;
-$sql = "SELECT COUNT(t.datec) as nb";
-$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-$sql .= " WHERE CAST(t.datec AS DATE) = CURRENT_DATE";
-$sql .= " AND t.fk_statut <> 8";
-$sql .= " GROUP BY CAST(t.datec AS DATE)";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	if ($num > 0) {
-		$objp = $db->fetch_object($resql);
-		$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
-		$totalnb += $objp->nb;
-	} else {
-		$data[] = array($langs->trans('TicketCreatedToday'), 0);
-	}
-} else {
-	dol_print_error($db);
-}
-$sql = "SELECT COUNT(t.date_close) as nb";
-$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-$sql .= " WHERE CAST(t.date_close AS DATE) = CURRENT_DATE";
-$sql .= " AND t.fk_statut = 8";
-$sql .= " GROUP BY CAST(t.date_close AS DATE)";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	if ($num > 0) {
-		$objp = $db->fetch_object($resql);
-		$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
-		$totalnb += $objp->nb;
-	} else {
-		$data[] = array($langs->trans('TicketClosedToday'), 0);
-	}
-} else {
-	dol_print_error($db);
-}
-$colorseries = array();
-$colorseries[] = $badgeStatus8;
-$colorseries[] = $badgeStatus2;
-$transChartTicketType = $langs->trans('ChartNewTicketVSClose');
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><th colspan="5">' . $transChartTicketType . '</th></tr>';
-print '<td class="center">';
-
-
-$px1 = new DolGraph();
-$mesg = $px1->isGraphKo();
-if (!$mesg) {
-	$px1->SetDataColor(array_values($colorseries));
-	$px1->SetData($data);
-	$px1->setShowLegend(2);
-	$px1->SetType(array('pie'));
-	$px1->SetLegend($legend);
-	$px1->SetMaxValue($px1->GetCeilMaxValue());
-	$px1->SetHeight($HEIGHT);
-	$px1->SetShading(3);
-	$px1->SetHorizTickIncrement(1);
-	$px1->SetCssPrefix("cssboxes");
-	$px1->mode = 'depth';
-
-	$px1->draw('idgraphticketnewvsclosetoday');
-	print $px1->show($totalnb ? 0 : 1);
-}
-
-
-print '</td>';
-print "</table>";
-print '</div>';
-
-
 print '</div></div></div>';
+
+/*
+* Show boxes
+*/
+$boxlist .= '<div class="twocolumns">';
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>';
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>';
+$boxlist .= "\n";
+$boxlist .= '</div>';
+print $boxlist;
+
+print '</div>';
 print '<div style="clear:both"></div>';
 
 $parameters = array('user' => $user);

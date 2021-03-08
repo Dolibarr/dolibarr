@@ -55,7 +55,7 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 		$langs->load("boxes");
 		$this->db = $db;
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("BoxTicketLastXDayswidget");
+		$this->boxlabel = $langs->transnoentitiesnoconv("BoxNumberOfTicketByDay");
 	}
 
 	/**
@@ -109,38 +109,37 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 		$minimumdatec = date_sub($today, $intervaltosub);
 		$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
 
-		$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-		$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL " . $days . " DAY)";
-		$sql .= " GROUP BY CAST(t.datec AS DATE)";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			$dataseries = array();
-			while ($i < $num) {
-				$objp = $this->db->fetch_object($resql);
-				while ($minimumdatecformated < $objp->datec) {
+		if ($user->rights->ticket->read) {
+			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL " . $days . " DAY)";
+			$sql .= " GROUP BY CAST(t.datec AS DATE)";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				$dataseries = array();
+				while ($i < $num) {
+					$objp = $this->db->fetch_object($resql);
+					while ($minimumdatecformated < $objp->datec) {
+						$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
+						$minimumdatec = date_add($minimumdatec, $intervaltoadd);
+						$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+					}
+					$dataseries[] = array('label' => dol_print_date($objp->datec, 'day'), 'data' => $objp->nb);
+					$minimumdatec = date_add($minimumdatec, $intervaltoadd);
+					$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+					$i++;
+				}
+				while (count($dataseries) < $days) {
 					$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
 					$minimumdatec = date_add($minimumdatec, $intervaltoadd);
 					$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
+					$i++;
 				}
-				$dataseries[] = array('label' => dol_print_date($objp->datec, 'day'), 'data' => $objp->nb);
-				$minimumdatec = date_add($minimumdatec, $intervaltoadd);
-				$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
-				$i++;
+			} else {
+				dol_print_error($this->db);
 			}
-			while (count($dataseries) < $days) {
-				$dataseries[] = array('label' => dol_print_date($minimumdatecformated, 'day'), 'data' => 0);
-				$minimumdatec = date_add($minimumdatec, $intervaltoadd);
-				$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
-				$i++;
-			}
-		} else {
-			dol_print_error($this->db);
-		}
-
-		if ($user->rights->ticket->read) {
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
 			$stringtoshow .= '<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
@@ -170,7 +169,7 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 				$px1->SetData($data);
 				$px1->setShowLegend(2);
 				$px1->SetType(array('bar'));
-				$px1->SetLegend(array($langs->trans('NumberOfTicketByDay')));
+				$px1->SetLegend(array($langs->trans('BoxNumberOfTicketByDay')));
 				$px1->SetMaxValue($px1->GetCeilMaxValue());
 				$px1->SetHeight(192);
 				$px1->SetShading(3);

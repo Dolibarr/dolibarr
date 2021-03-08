@@ -19,19 +19,19 @@
  */
 
 /**
- *     \file        core/boxes/box_ticket_by_severity.php
+ *     \file        core/boxes/box_nb_ticket_last_x_days.php
  *     \ingroup     ticket
- *     \brief       This box shows open tickets by severity
+ *     \brief       This box shows the number of new daily tickets the last X days
  */
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box
  */
-class box_ticket_by_severity extends ModeleBoxes
+class box_nb_tickets_type extends ModeleBoxes
 {
 
-	public $boxcode = "box_ticket_by_severity";
+	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
@@ -39,7 +39,6 @@ class box_ticket_by_severity extends ModeleBoxes
 	/**
 	 * @var DoliDB Database handler.
 	 */
-	public $db;
 
 	public $param;
 	public $info_box_head = array();
@@ -56,7 +55,7 @@ class box_ticket_by_severity extends ModeleBoxes
 		$langs->load("boxes");
 		$this->db = $db;
 
-		$this->boxlabel = $langs->transnoentitiesnoconv("BoxTicketSeverity");
+		$this->boxlabel = $langs->transnoentitiesnoconv("BoxTicketType");
 	}
 
 	/**
@@ -81,14 +80,7 @@ class box_ticket_by_severity extends ModeleBoxes
 		$badgeStatus7 = '#baa32b';
 		$badgeStatus8 = '#993013';
 		$badgeStatus9 = '#e7f0f0';
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php')) {
-			include DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
-		}
-		$this->max = $max;
-
-		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
-
-		$text = $langs->trans("BoxTicketSeverity", $max);
+		$text = $langs->trans("BoxTicketType");
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit' => dol_strlen($text)
@@ -98,10 +90,10 @@ class box_ticket_by_severity extends ModeleBoxes
 		$listofoppcode = array();
 		$colorseriesstat = array();
 		if ($user->rights->ticket->read) {
-			$sql = "SELECT cts.rowid, cts.label, cts.code";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
-			$sql .= " WHERE cts.active = 1";
-			$sql .= $this->db->order('cts.rowid', 'ASC');
+			$sql = "SELECT ctt.rowid, ctt.label, ctt.code";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_type as ctt";
+			$sql .= " WHERE ctt.active = 1";
+			$sql .= $this->db->order('ctt.rowid', 'ASC');
 			$resql = $this->db->query($sql);
 
 			if ($resql) {
@@ -112,17 +104,20 @@ class box_ticket_by_severity extends ModeleBoxes
 					$listofoppcode[$objp->rowid] = $objp->code;
 					$listofopplabel[$objp->rowid] = $objp->label;
 					switch ($objp->code) {
-						case 'LOW':
-							$colorseriesstat[$objp->rowid] = $badgeStatus4;
-							break;
-						case 'NORMAL':
-							$colorseriesstat[$objp->rowid] = $badgeStatus2;
-							break;
-						case 'HIGH':
+						case 'COM':
 							$colorseriesstat[$objp->rowid] = $badgeStatus1;
 							break;
-						case 'BLOCKING':
-							$colorseriesstat[$objp->rowid] = $badgeStatus8;
+						case 'HELP':
+							$colorseriesstat[$objp->rowid] = $badgeStatus2;
+							break;
+						case 'ISSUE':
+							$colorseriesstat[$objp->rowid] = $badgeStatus3;
+							break;
+						case 'REQUEST':
+							$colorseriesstat[$objp->rowid] = $badgeStatus4;
+							break;
+						case 'OTHER':
+							$colorseriesstat[$objp->rowid] = $badgeStatus5;
 							break;
 						default:
 							break;
@@ -132,24 +127,23 @@ class box_ticket_by_severity extends ModeleBoxes
 			} else {
 				dol_print_error($this->db);
 			}
-
 			$dataseries = array();
 			$data = array();
-			$sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
+			$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 			$sql .= " WHERE t.fk_statut <> 8";
-			$sql .= " GROUP BY t.severity_code";
+			$sql .= " GROUP BY t.type_code";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
-					$data[$objp->severity_code] = $objp->nb;
+					$data[$objp->type_code] = $objp->nb;
 					$i++;
 				}
 				foreach ($listofoppcode as $rowid => $code) {
-					$dataseries[] = array('label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+					$dataseries[] = array('label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -173,13 +167,11 @@ class box_ticket_by_severity extends ModeleBoxes
 					$px1->SetType(array('pie'));
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					//$px1->SetHeight($HEIGHT);
 					$px1->SetShading(3);
 					$px1->SetHorizTickIncrement(1);
 					$px1->SetCssPrefix("cssboxes");
 					$px1->mode = 'depth';
-
-					$px1->draw('idgraphticketseverity');
+					$px1->draw('idgraphtickettype');
 					$stringtoprint .= $px1->show($totalnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';
@@ -190,7 +182,7 @@ class box_ticket_by_severity extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity")
+					'text' => $langs->trans("BoxNoTicketSeverity"),
 				);
 			}
 		} else {
