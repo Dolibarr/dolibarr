@@ -32,7 +32,9 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Allow/Disallow change to clear passwords once passwords are crypted
 $allow_disable_encryption = true;
@@ -40,10 +42,8 @@ $allow_disable_encryption = true;
 /*
  * Actions
  */
-if ($action == 'setgeneraterule')
-{
-	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $_GET["value"], 'chaine', 0, '', $conf->entity))
-	{
+if ($action == 'setgeneraterule') {
+	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $_GET["value"], 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
 	} else {
 		header("Location: ".$_SERVER["PHP_SELF"]);
@@ -51,89 +51,79 @@ if ($action == 'setgeneraterule')
 	}
 }
 
-if ($action == 'activate_encrypt')
-{
-    $error = 0;
+if ($action == 'activate_encrypt') {
+	$error = 0;
 
 	$db->begin();
 
-    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
 
-    $sql = "SELECT u.rowid, u.pass, u.pass_crypted";
-    $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql .= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5 value
+	$sql = "SELECT u.rowid, u.pass, u.pass_crypted";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sql .= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32"; // Not a MD5 value
 
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $numrows = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $numrows)
-        {
-            $obj = $db->fetch_object($resql);
-            if (dol_hash($obj->pass))
-            {
-                $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-                $sql .= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
-                $sql .= " WHERE rowid=".$obj->rowid;
-                //print $sql;
+	$resql = $db->query($sql);
+	if ($resql) {
+		$numrows = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $numrows) {
+			$obj = $db->fetch_object($resql);
+			if (dol_hash($obj->pass)) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+				$sql .= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
+				$sql .= " WHERE rowid=".$obj->rowid;
+				//print $sql;
 
-                $resql2 = $db->query($sql);
-                if (!$resql2)
-                {
-                    dol_print_error($db);
-                    $error++;
-                    break;
-                }
+				$resql2 = $db->query($sql);
+				if (!$resql2) {
+					dol_print_error($db);
+					$error++;
+					break;
+				}
 
-                $i++;
-            }
-        }
-    } else dol_print_error($db);
+				$i++;
+			}
+		}
+	} else {
+		dol_print_error($db);
+	}
 
 	//print $error." ".$sql;
-    //exit;
-    if (!$error)
-	{
+	//exit;
+	if (!$error) {
 		$db->commit();
 		header("Location: security.php");
-	    exit;
+		exit;
 	} else {
 		$db->rollback();
 		dol_print_error($db, '');
 	}
-} elseif ($action == 'disable_encrypt')
-{
+} elseif ($action == 'disable_encrypt') {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 	//Do not allow "disable encryption" as passwords cannot be decrypted
-	if ($allow_disable_encryption)
-	{
+	if ($allow_disable_encryption) {
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
-    }
+	}
 	header("Location: security.php");
-    exit;
+	exit;
 }
 
-if ($action == 'activate_encryptdbpassconf')
-{
+if ($action == 'activate_encryptdbpassconf') {
 	$result = encodedecode_dbpassconf(1);
-	if ($result > 0)
-	{
-	    sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
+	if ($result > 0) {
+		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
-	    // database value not required
+		// database value not required
 		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
 		exit;
 	} else {
 		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
 	}
-} elseif ($action == 'disable_encryptdbpassconf')
-{
+} elseif ($action == 'disable_encryptdbpassconf') {
 	$result = encodedecode_dbpassconf(0);
-	if ($result > 0)
-	{
-	    sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
+	if ($result > 0) {
+		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
 		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
@@ -144,38 +134,35 @@ if ($action == 'activate_encryptdbpassconf')
 	}
 }
 
-if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
-{
+if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK') {
 	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1', 'chaine', 0, '', $conf->entity);
 	header("Location: security.php");
 	exit;
-} elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
-{
+} elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK') {
 	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", $conf->entity);
 	header("Location: security.php");
 	exit;
 }
 
-if ($action == 'updatepattern')
-{
-    $pattern = GETPOST("pattern", "alpha");
-    $explodePattern = explode(';', $pattern);
+if ($action == 'updatepattern') {
+	$pattern = GETPOST("pattern", "alpha");
+	$explodePattern = explode(';', $pattern);
 
-    $patternInError = false;
-    if ($explodePattern[0] < 1 || $explodePattern[4] < 0) {
-        $patternInError = true;
-    }
+	$patternInError = false;
+	if ($explodePattern[0] < 1 || $explodePattern[4] < 0) {
+		$patternInError = true;
+	}
 
-    if ($explodePattern[0] < $explodePattern[1] + $explodePattern[2] + $explodePattern[3]) {
-        $patternInError = true;
-    }
+	if ($explodePattern[0] < $explodePattern[1] + $explodePattern[2] + $explodePattern[3]) {
+		$patternInError = true;
+	}
 
-    if (!$patternInError) {
-	    dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	    header("Location: security.php");
-	    exit;
-    }
+	if (!$patternInError) {
+		dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		header("Location: security.php");
+		exit;
+	}
 }
 
 
@@ -197,7 +184,7 @@ print "<br>\n";
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'passwords', $langs->trans("Security"), -1);
+print dol_get_fiche_head($head, 'passwords', '', -1);
 
 
 // Choix du gestionnaire du generateur de mot de passe
@@ -212,22 +199,19 @@ $dir = "../core/modules/security/generate";
 clearstatcache();
 $handle = opendir($dir);
 $i = 1;
-if (is_resource($handle))
-{
-    while (($file = readdir($handle)) !== false)
-    {
-        if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg))
-        {
-            // Charging the numbering class
-            $classname = $reg[1];
-            require_once $dir.'/'.$file;
+if (is_resource($handle)) {
+	while (($file = readdir($handle)) !== false) {
+		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
+			// Charging the numbering class
+			$classname = $reg[1];
+			require_once $dir.'/'.$file;
 
-            $obj = new $classname($db, $conf, $langs, $user);
-            $arrayhandler[$obj->id] = $obj;
-    		$i++;
-        }
-    }
-    closedir($handle);
+			$obj = new $classname($db, $conf, $langs, $user);
+			$arrayhandler[$obj->id] = $obj;
+			$i++;
+		}
+	}
+	closedir($handle);
 }
 asort($arrayhandler);
 
@@ -238,36 +222,43 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '<td class="center">'.$langs->trans("Activated").'</td>';
 print '</tr>';
 
-foreach ($arrayhandler as $key => $module)
-{
+foreach ($arrayhandler as $key => $module) {
 	// Show modules according to features level
-    if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+	if (!empty($module->version) && $module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+		continue;
+	}
+	if (!empty($module->version) && $module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+		continue;
+	}
 
-	if ($module->isEnabled())
-	{
-        print '<tr class="oddeven"><td width="100">';
-        print ucfirst($key);
-        print "</td><td>\n";
-        print $module->getDescription().'<br>';
-        print $langs->trans("MinLength").': '.$module->length;
-        print '</td>';
+	if ($module->isEnabled()) {
+		print '<tr class="oddeven"><td width="100">';
+		print ucfirst($key);
+		print "</td><td>\n";
+		print $module->getDescription().'<br>';
+		print $langs->trans("MinLength").': '.$module->length;
+		print '</td>';
 
-        // Show example of numbering module
-        print '<td class="nowrap">';
-        $tmp = $module->getExample();
-        if (preg_match('/^Error/', $tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; } elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-        else print $tmp;
-        print '</td>'."\n";
+		// Show example of numbering module
+		print '<td class="nowrap">';
+		$tmp = $module->getExample();
+		if (preg_match('/^Error/', $tmp)) {
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($tmp).'</div>';
+		} elseif ($tmp == 'NotConfigured') {
+			print $langs->trans($tmp);
+		} else {
+			print $tmp;
+		}
+		print '</td>'."\n";
 
-        print '<td width="100" align="center">';
-        if ($conf->global->USER_PASSWORD_GENERATED == $key)
-        {
-            print img_picto('', 'tick');
-        } else {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
-        }
-        print "</td></tr>\n";
+		print '<td width="100" align="center">';
+		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
+			print img_picto('', 'tick');
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
+		}
+		print "</td></tr>\n";
 	}
 }
 print '</table>';
@@ -323,7 +314,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '<br>';
 	print '<div class="center">';
-	print '<a class="button" id="linkChangePattern">'.$langs->trans("Save").'</a>';
+	print '<a class="button button-save" id="linkChangePattern">'.$langs->trans("Save").'</a>';
 	print '</div>';
 	print '<br><br>';
 
@@ -399,27 +390,23 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
-if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
-{
+if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
-if (!$conf->global->DATABASE_PWD_ENCRYPTED)
-{
+if (!$conf->global->DATABASE_PWD_ENCRYPTED) {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 
 // Database conf file encryption
-if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
-{
+if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 	print '<td align="center" width="100">';
-	if ($allow_disable_encryption)
-	{
+	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
-	  	//Do not allow "disable encryption" as passwords cannot be decrypted
-	  	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+		//Do not allow "disable encryption" as passwords cannot be decrypted
+		print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
 	} else {
 		print '-';
 	}
@@ -433,25 +420,21 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
-{
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 
 print '</td>';
 
 print '<td align="center" width="100">';
-if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass))
-{
+if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningPassIsEmpty"));
 } else {
-	if (empty($dolibarr_main_db_encrypted_pass))
-	{
+	if (empty($dolibarr_main_db_encrypted_pass)) {
 		print '<a href="security.php?action=activate_encryptdbpassconf">'.$langs->trans("Activate").'</a>';
 	}
-	if (!empty($dolibarr_main_db_encrypted_pass))
-	{
+	if (!empty($dolibarr_main_db_encrypted_pass)) {
 		print '<a href="security.php?action=disable_encryptdbpassconf">'.$langs->trans("Disable").'</a>';
 	}
 }
@@ -466,19 +449,16 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
 print '<td align="center" width="60">';
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
-{
+if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
-if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
-{
+if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
-{
+if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';
 	print "</td>";
@@ -491,16 +471,14 @@ print '</table>';
 print '</form>';
 print '<br>';
 
-if (GETPOST('info', 'int') > 0)
-{
-    if (function_exists('password_hash'))
-    {
-        print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
-    } else {
-        print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
-    }
-    print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
-    print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
+if (GETPOST('info', 'int') > 0) {
+	if (function_exists('password_hash')) {
+		print $langs->trans("Note: The function password_hash exists on your PHP")."<br>\n";
+	} else {
+		print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
+	}
+	print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
+	print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
 }
 
 print '</div>';

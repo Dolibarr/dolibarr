@@ -28,8 +28,9 @@ require '../../main.inc.php';
 $langs->loadLangs(array("install", "user", "admin"));
 
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -77,7 +78,6 @@ $configfileparameters = array(
 							'?dolibarr_lib_FPDI_PATH',
 							'?dolibarr_lib_TCPDI_PATH',
 							'?dolibarr_lib_NUSOAP_PATH',
-							'?dolibarr_lib_PHPEXCEL_PATH',
 							'?dolibarr_lib_GEOIP_PATH',
 							'?dolibarr_lib_ODTPHP_PATH',
 							'?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
@@ -124,7 +124,6 @@ $configfilelib = array(
 					'dolibarr_lib_TCPDF_PATH',
 					'dolibarr_lib_FPDI_PATH',
 					'dolibarr_lib_NUSOAP_PATH',
-					'dolibarr_lib_PHPEXCEL_PATH',
 					'dolibarr_lib_GEOIP_PATH',
 					'dolibarr_lib_ODTPHP_PATH',
 					'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
@@ -144,32 +143,31 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>'."\n";
 $i = 0;
-foreach ($configfileparameters as $key)
-{
+foreach ($configfileparameters as $key) {
 	$ignore = 0;
 
-	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore = 1;
-	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore = 1;
+	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) {
+		$ignore = 1;
+	}
+	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) {
+		$ignore = 1;
+	}
 
-	if (empty($ignore))
-	{
+	if (empty($ignore)) {
 		$newkey = preg_replace('/^\?/', '', $key);
 
-		if (preg_match('/^\?/', $key) && empty(${$newkey}))
-		{
+		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
 			$i++;
 			continue; // We discard parametes starting with ?
 		}
 
-		if ($newkey == 'separator' && $lastkeyshown == 'separator')
-		{
+		if ($newkey == 'separator' && $lastkeyshown == 'separator') {
 			$i++;
 			continue;
 		}
 
 		print '<tr class="oddeven">';
-		if ($newkey == 'separator')
-		{
+		if ($newkey == 'separator') {
 			print '<td colspan="3">&nbsp;</td>';
 		} else {
 			// Label
@@ -178,10 +176,16 @@ foreach ($configfileparameters as $key)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
-			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-			else print ${$newkey};
-			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
+			if ($newkey == 'dolibarr_main_db_pass') {
+				print preg_replace('/./i', '*', ${$newkey});
+			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
+				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			} else {
+				print ${$newkey};
+			}
+			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) {
+				print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
+			}
 			print "</td>";
 		}
 		print "</tr>\n";
@@ -200,7 +204,9 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
+if (empty($conf->multicompany->enabled) || !$user->entity) {
+	print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
+}
 print "</tr>\n";
 
 $sql = "SELECT";
@@ -211,29 +217,30 @@ $sql .= ", type";
 $sql .= ", note";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-if (empty($conf->multicompany->enabled))
-{
+if (empty($conf->multicompany->enabled)) {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
-	if ($user->entity) $sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+	if ($user->entity) {
+		$sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+	}
 }
 $sql .= " ORDER BY entity, name ASC";
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
 		print '<td>'.$obj->name.'</td>'."\n";
 		print '<td>'.$obj->value.'</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
+		if (empty($conf->multicompany->enabled) || !$user->entity) {
+			print '<td>'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
+		}
 		print "</tr>\n";
 
 		$i++;

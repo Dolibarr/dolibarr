@@ -2,7 +2,6 @@
 ActionsOwnedBy=Evento propiedad de
 Event=Evento
 ListOfActions=Lista de eventos
-ToUserOfGroup=A cualquier usuario del grupo
 EventOnFullDay=Evento de todo el día(s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos finalizados

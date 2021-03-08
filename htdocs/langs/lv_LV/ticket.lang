@@ -31,10 +31,8 @@ TicketDictType=Pieteikumu veids
 TicketDictCategory=Pieteikumu - grupas
 TicketDictSeverity=Pieteikuma svarīgums
 TicketDictResolution=Biļete - izšķirtspēja
-TicketTypeShortBUGSOFT=Dysfontionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Tirdzniecības jautājums
 
+TicketTypeShortCOM=Tirdzniecības jautājums
 TicketTypeShortHELP=Funkcionālās palīdzības pieprasījums
 TicketTypeShortISSUE=Izdošana, kļūda vai problēma
 TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Cits
 TicketSeverityShortLOW=Zems
 TicketSeverityShortNORMAL=Normāls
 TicketSeverityShortHIGH=Augsts
-TicketSeverityShortBLOCKING=Kritiski/bloķēšana
+TicketSeverityShortBLOCKING=Kritisks, bloķējošs
 
 ErrorBadEmailAddress=Lauks "%s" ir nepareizs
 MenuTicketMyAssign=Mani pieteikumi
@@ -60,7 +58,6 @@ OriginEmail=E-pasta avots
 Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
 
 # Status
-NotRead=Nav lasāms
 Read=Lasīt
 Assigned=Piešķirts
 InProgress=Procesā
@@ -72,7 +69,6 @@ Deleted=Dzēsts
 
 # Dict
 Type=Veids
-Category=Analītiskais kods
 Severity=Smagums
 
 # Email templates
@@ -127,8 +123,8 @@ TicketsActivatePublicInterfaceHelp=Publiskā saskarne ļauj apmeklētājiem izve
 TicketsAutoAssignTicket=Automātiski piešķirt lietotāju, kas izveidojis biļeti
 TicketsAutoAssignTicketHelp=Veidojot biļeti, lietotājs var automātiski piešķirt biļeti.
 TicketNumberingModules=Čeku numerācijas modulis
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
-TicketGroup=Grupa
 TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
 TicketsPublicNotificationNewMessage=Sūtiet e-pastu (s), kad tiek pievienots jauns ziņojums
 TicketsPublicNotificationNewMessageHelp=Sūtiet e-pastu (s), kad no publiskās saskarnes tiek pievienots jauns ziņojums (piešķirtajam lietotājam vai paziņojumu e-pastu uz (atjaunināt) un / vai paziņojumu e-pastu uz)
@@ -162,7 +158,7 @@ CreatedBy=Izveidojis
 NewTicket=Jauns notikums
 SubjectAnswerToTicket=Pieteikuma atbilde
 TicketTypeRequest=Pieprasījuma veids
-TicketCategory=Analītiskais kods
+TicketCategory=Grupa
 SeeTicket=Apskatīt pieteikumu
 TicketMarkedAsRead=Pieteikums ir atzīmēts kā lasīts
 TicketReadOn=Izlasīts
@@ -235,7 +231,6 @@ TicketLogStatusChanged=Statuss mainīts: %s līdz %s
 TicketNotNotifyTiersAtCreate=Neinformēt uzņēmumu par radīšanu
 Unread=Nelasīts
 TicketNotCreatedFromPublicInterface=Nav pieejams. Biļete netika izveidota no publiskās saskarnes.
-PublicInterfaceNotEnabled=Publiskā saskarne nebija iespējota
 ErrorTicketRefRequired=Nepieciešams biļetes atsauces nosaukums
 
 #

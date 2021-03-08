@@ -40,56 +40,63 @@ function contract_prepare_head(Contrat $object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-	    $nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
-	    $head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'contract');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contract');
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-    	$nbNote = 0;
-        if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
-    	$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
-    	$head[$h][2] = 'note';
-    	$h++;
-    }
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Notes");
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->contrat->dir_output."/".dol_sanitizeFileName($object->ref);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
+	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'documents';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id;
 	$head[$h][1] .= $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
-	{
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'contract', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'contract', 'remove');
 
 	return $head;
 }
@@ -119,13 +126,13 @@ function contract_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contract_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
+	$head[$h][2] = 'attributes';
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFieldsLines");
-    $head[$h][2] = 'attributeslines';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/contrat/admin/contractdet_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'attributeslines';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'contract_admin', 'remove');
 

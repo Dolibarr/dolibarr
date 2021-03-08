@@ -1,5 +1,7 @@
 <?php
-if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 
@@ -12,10 +14,16 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+	$prefix = 'background-';
+}
 
-if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
-if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+if (!isset($conf->global->THEME_SATURATE_RATIO)) {
+	$conf->global->THEME_SATURATE_RATIO = 0.7;
+}
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
+	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+}
 
 ?>
 
@@ -28,6 +36,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .vendor-back {
 	background-color: #599caf !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.user-back {
+	background-color: #79633f !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -105,7 +120,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 
 .info-box-module-external span.info-box-icon-version {
-    background: #bbb;
+	background: #bbb;
+}
+
+a.info-box-text.info-box-text-a {
+	display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+	font-size: 0.9em;
 }
 
 .info-box {
@@ -120,14 +142,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	border: 1px solid #e9e9e9;
 }
 .info-box.info-box-sm{
-    min-height: 80px;
-    margin-bottom: 10px;
+	min-height: 80px;
+	margin-bottom: 10px;
 }
 .info-box-more {
-    float: right;
-    top: 4px;
-    position: absolute;
-    right: 10px;
+	float: right;
+	top: 4px;
+	position: absolute;
+	right: 10px;
 }
 
 .info-box small {
@@ -168,17 +190,17 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	font-size: 45px;
 	line-height: 90px;
 	background: #eee;
-    <?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-        filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
-    <?php } ?>
+	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
+		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php } ?>
 }
 .info-box-sm .info-box-icon {
-    width: 80px;
-    font-size: 25px;
-    line-height: 92px;
+	width: 80px;
+	font-size: 25px;
+	line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
-    line-height: 80px;
+	line-height: 80px;
 }
 .info-box-module .info-box-icon {
 	height: 98px;
@@ -187,69 +209,69 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 55%;
+	max-width: 55%;
 }
 
 .info-box-icon-text{
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 90px;
-    bottom: 0px;
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.1);
-    cursor: default;
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 90px;
+	bottom: 0px;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.1);
+	cursor: default;
 
-    font-size: 10px;
-    line-height: 15px;
-    padding: 0px 3px;
-    text-align: center;
-    opacity: 0;
-    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
-    transition: opacity 0.5s, visibility 0s 0.5s;
+	font-size: 10px;
+	line-height: 15px;
+	padding: 0px 3px;
+	text-align: center;
+	opacity: 0;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
 .info-box-icon-version {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 90px;
-    bottom: 0px;
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.1);
-    cursor: default;
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 90px;
+	bottom: 0px;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.1);
+	cursor: default;
 
-    font-size: 10px;
-    line-height: 22px;
-    padding: 0px 3px;
-    text-align: center;
-    opacity: 1;
-    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
-    transition: opacity 0.5s, visibility 0s 0.5s;
+	font-size: 10px;
+	line-height: 22px;
+	padding: 0px 3px;
+	text-align: center;
+	opacity: 1;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
 .box-flex-item.info-box-module.info-box-module-disabled {
-    /* opacity: 0.6; */
+	/* opacity: 0.6; */
 }
 
 .info-box-actions {
 	position: absolute;
-    right: 0;
-    bottom: 0;
+	right: 0;
+	bottom: 0;
 }
 
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
-    opacity: 1;
+	opacity: 1;
 }
 <?php } ?>
 
 .info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
-    overflow: hidden;
-    width: 80px;
+	overflow: hidden;
+	width: 80px;
 }
 .info-box:hover .info-box-icon-text{
-    opacity: 1;
+	opacity: 1;
 }
 
 .info-box-content {
@@ -276,6 +298,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	font-weight: bold;
 	margin-bottom: 6px;
 }
+.info-box-title {
+	width: calc(100% - 20px);
+}
 .info-box-text{
 	font-size: 0.92em;
 }
@@ -298,8 +323,12 @@ a.info-box-text{ text-decoration: none;}
 }
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
-if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+if (!isset($conf->global->THEME_SATURATE_RATIO)) {
+	$conf->global->THEME_SATURATE_RATIO = 0.7;
+}
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
+	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+}
 ?>
 .bg-infobox-project i.fa{
 	color: #605ca8 !important;
@@ -378,24 +407,25 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .fa-weather-level0:before{
 	content: "\f185";
-	color : #000000;
+	color : #cfbf00;
 }
 .fa-weather-level1:before{
 	content: "\f6c4";
-	color : #000000;
+	color : #bc9526;
 }
 .fa-weather-level2:before{
-	content: "\f0c2";
-	color : #000000;
+	content: "\f743";
+	color : #b16000;
 }
 .fa-weather-level3:before{
 	content: "\f740";
-	color : #000000;
+	color : #b04000;
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #000000;
+	color : #b01000;
 }
+
 
 /* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
 /* For other themes just uncomment this part */
@@ -453,8 +483,29 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 .info-box-module {
 	min-width: 350px;
-    max-width: 350px;
+	max-width: 350px;
 }
+
 .info-box-module .info-box-content {
 	height: 6.3em;
 }
+
+
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+		min-width: 315px;
+		max-width: 315px;
+	}
+}
+@media only screen and (max-width: 767px) {
+	.info-box-module {
+		min-width: 260px;
+	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
+}
+

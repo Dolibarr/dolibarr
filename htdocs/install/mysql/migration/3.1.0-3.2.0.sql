@@ -62,7 +62,7 @@ ALTER TABLE llx_societe MODIFY code_compta varchar(24);
 ALTER TABLE llx_societe MODIFY code_compta_fournisseur varchar(24);
 
   
-ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp;
+ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_chargesociales ADD COLUMN date_creation         datetime; 
 ALTER TABLE llx_chargesociales ADD COLUMN date_valid            datetime;
 
@@ -118,7 +118,7 @@ CREATE TABLE llx_localtax
 (
 	rowid			integer		AUTO_INCREMENT PRIMARY KEY,
 	entity			integer			NOT NULL DEFAULT '1',
-	tms				timestamp,
+	tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datep			date			DEFAULT NULL,
 	datev			date			DEFAULT NULL,
 	amount			double			NOT NULL DEFAULT '0',

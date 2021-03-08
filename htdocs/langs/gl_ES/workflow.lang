@@ -1,20 +1,25 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=Configuración do modulo Fluxo de Traballo
+WorkflowDesc=Este módulo permite algunhas accíóns automátizadas. Por defecto, o fluxo de traballo está aberto (podense facer cousas na orde desexada) mais aquí pode activar algunhas accións automátizadas.
+ThereIsNoWorkflowToModify=No hai dispoñibles modificacións de fluxo de traballo nos módulos activados.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear automáticamente un pedimento de cliente despois da sinatura dun orzamento (o novo pedimento terá o mesmo importe que o orzamento)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura a cliente despois da sinatura dun orzamento (a nova factura terá o mesmo importe que o orzamento)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear unha factura a cliente automáticamente despois de validar un contrato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente unha factura a cliente despois de pechar o pedimento de cliente ( nova factura terá o mesmo importe que o pedimento)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar orzamento orixe como facturado cando o pedimento do cliente sexa marcado como facturado (e se o importe do pedimento é igual á suma dos importes dos orzamentos ligados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar o orzamento orixe como facturados cando a factura ao cliente sexa validada (e se o importe da factura é igual á suma dos importes dos orzamentos ligados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar pedimento de cliente orixe como facturado cando a factura ao cliente sexa validada (e se o importe da factura é igual á suma dos importes dos pedimentos ligados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar pedimento de cliente orixe como facturado cando a factura ao cliente sexa marcada como pagada (e se o importe da factura é igual á suma dos importes dos pedimentos ligados)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar automáticamente o pedimento orixe como enviado cando o envío sexa validado (e se a cantidade enviada por todos os envíos é a mesma que o pedimento a actualizar)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar o orzamento ligado de provedor orixe como facturado cando a factura de provedor sexa validada (e se o importe da factura é igual á suma do importe dos orzamentos ligados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar o pedimento orixe a provedor ligado como facturado cando a factura de provedor sexa validada (e se o importe da factura é igual á suma do importe dos pedimentos ligados)
+descWORKFLOW_BILL_ON_RECEPTION=Clasificar recepcións a "facturado" cando sexa validado un pedimento de provedor ligado
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Pecha todas as intervencións ligadas ao ticket cando o ticket está pechado
+AutomaticCreation=Creación automática
+AutomaticClassification=Clasificación automática
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Clasifique o envío orixe ligado como pechado cando a factura ao cliente sexa validada

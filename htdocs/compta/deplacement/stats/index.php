@@ -33,26 +33,29 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
-$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
+$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+	$userid = 0;
+}
+$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+	$socid = 0;
+}
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 // Other security check
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
-if ($userid > 0)
-{
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous) && !in_array($userid, $childids))
-	{
+if ($userid > 0) {
+	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous) && !in_array($userid, $childids)) {
 		accessforbidden();
 		exit;
 	}
@@ -84,10 +87,11 @@ print load_fiche_titre($title, $mesg);
 dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
-if (empty($useridtofilter))
-{
+if (empty($useridtofilter)) {
 	$useridtofilter = $childids;
-	if (!empty($user->rights->deplacement->readall) || !empty($user->rights->deplacement->lire_tous)) $useridtofilter = 0;
+	if (!empty($user->rights->deplacement->readall) || !empty($user->rights->deplacement->lire_tous)) {
+		$useridtofilter = 0;
+	}
 }
 
 $stats = new DeplacementStats($db, $socid, $useridtofilter);
@@ -104,12 +108,11 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;file
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	$i = $startyear;
+	$legend = array();
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -136,12 +139,11 @@ $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=tripsexpensesstats&amp;
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px2->SetData($data);
-	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	$i = $startyear;
+	$legend = array();
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -162,40 +164,46 @@ if (!$mesg)
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid)
-{
-    $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+if (!$user->rights->societe->client->voir || $user->socid) {
+	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') {
+		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	}
+	if ($mode == 'supplier') {
+		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	}
 } else {
-    $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-    if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
-    if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+	$filename_avg = $dir.'/ordersaverage-'.$year.'.png';
+	if ($mode == 'customer') {
+		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+	}
+	if ($mode == 'supplier') {
+		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
+	}
 }
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
-if (!$mesg)
-{
-    $px3->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->mode = 'depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
+if (!$mesg) {
+	$px3->SetData($data);
+	$i = $startyear;
+	$legend = array();
+	while ($i <= $endyear) {
+		$legend[] = $i;
+		$i++;
+	}
+	$px3->SetLegend($legend);
+	$px3->SetYLabel($langs->trans("AmountAverage"));
+	$px3->SetMaxValue($px3->GetCeilMaxValue());
+	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetWidth($WIDTH);
+	$px3->SetHeight($HEIGHT);
+	$px3->SetShading(3);
+	$px3->SetHorizTickIncrement(1);
+	$px3->mode = 'depth';
+	$px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg, $fileurl_avg);
+	$px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -203,9 +211,11 @@ if (!$mesg)
 $data = $stats->getAllByYear();
 $arrayyears = array();
 foreach ($data as $val) {
-    $arrayyears[$val['year']] = $val['year'];
+	$arrayyears[$val['year']] = $val['year'];
 }
-if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!count($arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 
 
 $h = 0;
@@ -217,7 +227,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'trip_stats');
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -238,12 +248,16 @@ print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("User").'</td><td>';
 $include = '';
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $include = 'hierarchy';
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+	$include = 'hierarchy';
+}
 print $form->select_dolusers($userid, 'userid', 1, '', 0, $include, '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
+if (!in_array($year, $arrayyears)) {
+	$arrayyears[$year] = $year;
+}
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -262,11 +276,9 @@ print '<td class="center">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data as $val)
-{
+foreach ($data as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1)
-	{	// If we have empty year
+	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 		print '<tr height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
@@ -292,12 +304,14 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; } else {
-    print $px1->show();
+if ($mesg) {
+	print $mesg;
+} else {
+	print $px1->show();
 	print "<br>\n";
 	print $px2->show();
-    print "<br>\n";
-    print $px3->show();
+	print "<br>\n";
+	print $px3->show();
 }
 print '</td></tr></table>';
 
@@ -306,7 +320,7 @@ print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

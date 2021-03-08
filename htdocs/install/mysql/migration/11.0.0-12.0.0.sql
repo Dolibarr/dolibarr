@@ -36,7 +36,7 @@ UPDATE llx_c_units set scale = 86400 where code = 'D' and unit_type = 'time';
 create table llx_commande_fournisseur_dispatch_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -57,7 +57,7 @@ create table llx_c_shipment_package_type
 create table llx_facturedet_rec_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -69,12 +69,16 @@ ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
 create table llx_mrp_mo_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_mrp_mo_extrafields DROP INDEX idx_fk_object;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
+
+
 
 -- This var is per entity now, so we remove const if global if exists
 delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
@@ -250,7 +254,10 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 
-ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer USING printable::integer;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable SET DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY';
@@ -296,12 +303,11 @@ ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_website_page_rowid FOREIGN KEY (fk_website_page) REFERENCES llx_website_page (rowid);
 
 ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime;
-ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp;
+ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
 
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
-
 
 -- VMYSQL4.3 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN fk_facture INTEGER NULL;
 -- VPGSQL8.2 ALTER TABLE llx_prelevement_facture_demande ALTER COLUMN fk_facture DROP NOT NULL;
@@ -327,3 +333,23 @@ ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_de
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+-- VMYSQL4.3 ALTER TABLE llx_mrp_mo MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_commande (fk_commande);
+ALTER TABLE llx_commande_fournisseurdet ADD INDEX idx_commande_fournisseurdet_fk_product (fk_product);
+
+
+-- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_shipment_mode ALTER COLUMN tracking DROP NOT NULL;
+
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (9,'INPERSON', 'In person at your site', NULL, NULL, 0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (10,'FEDEX', 'Fedex', NULL, 'https://www.fedex.com/apps/fedextrack/index.html?tracknumbers={TRACKID}', 0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (11,'TNT', 'TNT', NULL, 'https://www.tnt.com/express/fr_fr/site/outils-expedition/suivi.html?searchType=con&cons=={TRACKID}', 0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (12,'DHL', 'DHL', NULL, 'https://www.dhl.com/fr-fr/home/tracking/tracking-global-forwarding.html?submit=1&tracking-id={TRACKID}', 0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (13,'DPD', 'DPD', NULL, 'https://www.dpd.fr/trace/{TRACKID}', 0);
+INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (14,'MAINFREIGHT', 'Mainfreight', NULL, 'https://www.mainfreight.com/track?{TRACKID}', 0);
+
+

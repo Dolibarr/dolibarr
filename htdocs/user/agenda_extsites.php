@@ -41,7 +41,9 @@ $actiontest = GETPOST('test', 'alpha');
 $actionsave = GETPOST('save', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useragenda'; // To manage different context of search
 
-if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB = 5;
+if (empty($conf->global->AGENDA_EXT_NB)) {
+	$conf->global->AGENDA_EXT_NB = 5;
+}
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
 
 // List of available colors
@@ -55,14 +57,17 @@ $object->getrights();
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire))
-  accessforbidden();
+if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
+	accessforbidden();
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
@@ -73,7 +78,9 @@ $hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	if ($actionsave) {
@@ -150,7 +157,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = user_prepare_head($object);
 
-dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
+print dol_get_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 
 $linkback = '';
 
@@ -168,7 +175,11 @@ print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span
 print "<br>\n";
 
 $selectedvalue = $conf->global->AGENDA_DISABLE_EXT;
-if ($selectedvalue == 1) $selectedvalue = 0; else $selectedvalue = 1;
+if ($selectedvalue == 1) {
+	$selectedvalue = 0;
+} else {
+	$selectedvalue = 1;
+}
 
 
 print '<div class="div-table-responsive">';
@@ -183,8 +194,7 @@ print '<td class="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i = 1;
-while ($i <= $MAXAGENDA)
-{
+while ($i <= $MAXAGENDA) {
 	$key = $i;
 	$name = 'AGENDA_EXT_NAME_'.$id.'_'.$key;
 	$src = 'AGENDA_EXT_SRC_'.$id.'_'.$key;
@@ -215,10 +225,10 @@ print '</div>';
 
 
 print '<div class="center">';
-print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
+print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
 print "</div>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print "</form>\n";
 

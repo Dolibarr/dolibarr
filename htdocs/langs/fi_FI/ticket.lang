@@ -31,10 +31,8 @@ TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Kaupallinen kysymys
 
+TicketTypeShortCOM=Kaupallinen kysymys
 TicketTypeShortHELP=Request for functionnal help
 TicketTypeShortISSUE=Issue, bug or problem
 TicketTypeShortREQUEST=Change or enhancement request
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Muu
 TicketSeverityShortLOW=Matala
 TicketSeverityShortNORMAL=Normaali
 TicketSeverityShortHIGH=Korkea
-TicketSeverityShortBLOCKING=Critical/Blocking
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Kohta '%s' on väärin
 MenuTicketMyAssign=Minun tiketit
@@ -60,7 +58,6 @@ OriginEmail=Email source
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=Not read
 Read=Luettu
 Assigned=Assigned
 InProgress=Käsittelyssä
@@ -72,7 +69,6 @@ Deleted=Deleted
 
 # Dict
 Type=Tyyppi
-Category=Analytic code
 Severity=Vakavuus
 
 # Email templates
@@ -127,8 +123,8 @@ TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketNumberingModules=Tickets numbering module
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=Ryhmä
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -153,7 +149,7 @@ MessageListViewType=Show as table list
 #
 # Ticket card
 #
-Ticket=Ticket
+Ticket=Tiketti
 TicketCard=Ticket card
 CreateTicket=Create ticket
 EditTicket=Muokkaa tikettiä
@@ -162,7 +158,7 @@ CreatedBy=Luonut
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=Ryhmä
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Jatka lukemista
@@ -233,9 +229,8 @@ TicketChangeStatus=Vaihda tila
 TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
-Unread=Unread
+Unread=Lukematon
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Ticket reference name is required
 
 #

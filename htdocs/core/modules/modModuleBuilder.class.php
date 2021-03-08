@@ -30,89 +30,89 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modModuleBuilder extends DolibarrModules
 {
-    /**
+	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-    	global $langs, $conf;
+	 */
+	public function __construct($db)
+	{
+		global $langs, $conf;
 
-        $this->db = $db;
-        $this->numero = 3300;
+		$this->db = $db;
+		$this->numero = 3300;
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
-        $this->family = "technic";
-        $this->module_position = '90';
-        // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i', '', get_class($this));
-        $this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
+		$this->family = "technic";
+		$this->module_position = '90';
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+		$this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-        $this->version = 'dolibarr';
-        // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
-        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Name of image file used for this module.
-        $this->picto = 'bug';
+		$this->version = 'dolibarr';
+		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		// Name of image file used for this module.
+		$this->picto = 'bug';
 
-        // Data directories to create when module is enabled
-        $this->dirs = array();
+		// Data directories to create when module is enabled
+		$this->dirs = array();
 
-        // Config pages
-        //-------------
-        $this->config_page_url = array('setup.php@modulebuilder');
+		// Config pages
+		//-------------
+		$this->config_page_url = array('setup.php@modulebuilder');
 
-        // Dependencies
-        //-------------
-	    $this->hidden = false; // A condition to disable module
-	    $this->depends = array(); // List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array(); // List of modules id to disable if this one is disabled
-	    $this->conflictwith = array(); // List of modules id this module is in conflict with
-        $this->langfiles = array();
+		// Dependencies
+		//-------------
+		$this->hidden = false; // A condition to disable module
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array(); // List of modules id this module is in conflict with
+		$this->langfiles = array();
 
-        // Constants
-        //-----------
-
-
-        // New pages on tabs
-        // -----------------
-        $this->tabs = array();
-
-        // Boxes
-        //------
-        $this->boxes = array();
-
-        // Permissions
-        //------------
-        $this->rights = array(); // Permission array used by this module
-        $this->rights_class = 'modulebuilder';
-
-        $r = 0;
-
-        $r++;
-        $this->rights[$r][0] = 3301;
-        $this->rights[$r][1] = 'Generate new modules';
-        $this->rights[$r][2] = 'a';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'run';
+		// Constants
+		//-----------
 
 
-        // Main menu entries
-        //------------------
-        $this->menu = array();
+		// New pages on tabs
+		// -----------------
+		$this->tabs = array();
 
-        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
-            'type'=>'left',
-            'titre'=>'ModuleBuilder',
-            'mainmenu'=>'home',
-            'leftmenu'=>'admintools_modulebuilder',
-            'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
-            'langs'=>'modulebuilder',
-            'position'=>100,
-            'perms'=>'1',
-            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
-            'target'=>'_modulebuilder',
-            'user'=>0);
-    }
+		// Boxes
+		//------
+		$this->boxes = array();
+
+		// Permissions
+		//------------
+		$this->rights = array(); // Permission array used by this module
+		$this->rights_class = 'modulebuilder';
+
+		$r = 0;
+
+		$r++;
+		$this->rights[$r][0] = 3301;
+		$this->rights[$r][1] = 'Generate new modules';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'run';
+
+
+		// Main menu entries
+		//------------------
+		$this->menu = array();
+
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
+			'type'=>'left',
+			'titre'=>'ModuleBuilder',
+			'mainmenu'=>'home',
+			'leftmenu'=>'admintools_modulebuilder',
+			'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
+			'langs'=>'modulebuilder',
+			'position'=>100,
+			'perms'=>'1',
+			'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+			'target'=>'_modulebuilder',
+			'user'=>0);
+	}
 }

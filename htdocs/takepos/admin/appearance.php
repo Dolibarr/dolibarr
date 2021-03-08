@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 
@@ -38,8 +40,7 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
  * Actions
  */
 
-if (GETPOST('action', 'alpha') == 'set')
-{
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
 	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -47,19 +48,19 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-} elseif (GETPOST('action', 'alpha') == 'setmethod')
-{
-    dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif (GETPOST('action', 'alpha') == 'setmethod') {
+	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -74,8 +75,8 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
-$head = takepos_prepare_head();
-dol_fiche_head($head, 'appearance', 'TakePOS', -1, 'cash-register');
+$head = takepos_admin_prepare_head();
+print dol_get_fiche_head($head, 'appearance', 'TakePOS', -1, 'cash-register');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 : $terminal).'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -120,7 +121,7 @@ print '</table>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

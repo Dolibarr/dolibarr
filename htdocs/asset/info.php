@@ -29,21 +29,25 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'asset', $id, '');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'asset', $id);
 
 $object = new Asset($db);
 $object->fetch($id);
+
 
 /*
  * Actions
  */
 
+// None
 
 
 /*
@@ -60,7 +64,7 @@ $object->info($id);
 
 $head = asset_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
+print dol_get_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -80,7 +84,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

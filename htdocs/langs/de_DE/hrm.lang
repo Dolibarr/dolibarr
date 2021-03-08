@@ -11,8 +11,9 @@ CloseEtablishment=Einrichtung schliessen
 # Dictionary
 DictionaryPublicHolidays=PV - Öffentliche Feiertage
 DictionaryDepartment=PV - Abteilungsliste
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM - Stellenangebote
 # Module
-Employees=die Mitarbeiter
+Employees=Mitarbeiter
 Employee=Mitarbeiter/in
 NewEmployee=neuer Mitarbeiter
+ListOfEmployees=Liste der Mitarbeiter

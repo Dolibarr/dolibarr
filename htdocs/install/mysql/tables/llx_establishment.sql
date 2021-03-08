@@ -36,7 +36,7 @@ CREATE TABLE llx_establishment (
   fk_user_author 	integer NOT NULL,
   fk_user_mod		integer,
   datec				datetime NOT NULL,
-  tms				timestamp NOT NULL,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   status            tinyint DEFAULT 1
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

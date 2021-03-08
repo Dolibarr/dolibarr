@@ -27,14 +27,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Other parameters HRM_*
 $list = array(
-		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
+//		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
 /*
@@ -58,9 +59,11 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans('Parameters'));
 
 $form = new Form($db);
@@ -78,17 +81,15 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
+print dol_get_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans('Journaux').'</td>';
+print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
-	$var = !$var;
-
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$label = $langs->trans($key);
@@ -102,7 +103,7 @@ foreach ($list as $key) {
 
 print "</table>\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

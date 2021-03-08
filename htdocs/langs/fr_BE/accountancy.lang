@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - accountancy
-ConfigAccountingExpert=Configuration du module de compta expert
 Processing=Exécution
 Lineofinvoice=Lignes de facture
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 Doctype=Type de document
 ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
 TotalMarge=Marge de ventes totale

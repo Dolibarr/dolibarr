@@ -34,10 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->projet->enabled))
-{
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -48,7 +47,9 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax', '', 'vat', 'charges');
 
 
@@ -58,17 +59,23 @@ $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
-    $page = 0;
+	$page = 0;
 }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 
 $object = new Tva($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $upload_dir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'tax-vat';
@@ -78,14 +85,14 @@ $modulepart = 'tax-vat';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer)
-{
-    $object->fetch($id);
-    $result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
-    if ($result < 0)
-        setEventMessages($object->error, $object->errors, 'errors');
+if ($action == 'setlib' && $user->rights->tax->charges->creer) {
+	$object->fetch($id);
+	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 
@@ -94,19 +101,20 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  */
 
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
 $title = $langs->trans("VATPayment").' - '.$langs->trans("Documents");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
 
-if ($object->id)
-{
+if ($object->id) {
 	$alreadypayed = $object->getSommePaiement();
 
-    $head = vat_prepare_head($object);
+	$head = vat_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -123,33 +131,32 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    // Build file list
-    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-    $totalsize = 0;
-    foreach ($filearray as $key => $file)
-    {
-        $totalsize += $file['size'];
-    }
+	// Build file list
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file) {
+		$totalsize += $file['size'];
+	}
 
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print '</table>';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $permission = $user->rights->tax->charges->creer;
-    $permtoedit = $user->rights->fournisseur->facture->creer;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	$permission = $user->rights->tax->charges->creer;
+	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
-    print $langs->trans("ErrorUnknown");
+	print $langs->trans("ErrorUnknown");
 }
 
 

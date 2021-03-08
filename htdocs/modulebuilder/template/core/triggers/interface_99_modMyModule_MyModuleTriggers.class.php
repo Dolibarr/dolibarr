@@ -41,11 +41,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 class InterfaceMyModuleTriggers extends DolibarrTriggers
 {
 	/**
-	 * @var DoliDB Database handler
-	 */
-	protected $db;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -97,11 +92,26 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mymodule->enabled)) return 0; // If module is not enabled, we do nothing
+		if (empty($conf->mymodule->enabled)) {
+			return 0; // If module is not enabled, we do nothing
+		}
 
 		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
 
+		// You can isolate code for each action in a separate method: this method should be named like the trigger in camelCase.
+		// For example : COMPANY_CREATE => public function companyCreate($action, $object, User $user, Translate $langs, Conf $conf)
+		$methodName = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', strtolower($action)))));
+		$callback = array($this, $methodName);
+		if (is_callable($callback)) {
+			dol_syslog(
+				"Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id
+			);
+
+			return call_user_func($callback, $action, $object, $user, $langs, $conf);
+		};
+
+		// Or you can execute some code here
 		switch ($action) {
 			// Users
 			//case 'USER_CREATE':

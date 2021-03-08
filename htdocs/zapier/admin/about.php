@@ -34,10 +34,12 @@ require_once '../lib/zapier.lib.php';
 $langs->loadLangs(array("errors", "admin", "zapier@zapier"));
 
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 
@@ -64,13 +66,13 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier@zapi
 
 // Configuration header
 $head = zapierAdminPrepareHead();
-dol_fiche_head($head, 'about', '', 0, 'zapier@zapier');
+print dol_get_fiche_head($head, 'about', '', 0, 'zapier@zapier');
 
 dol_include_once('/zapier/core/modules/modZapier.class.php');
 $tmpmodule = new modZapier($db);
 print $tmpmodule->getDescLong();
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 llxFooter();
 $db->close();

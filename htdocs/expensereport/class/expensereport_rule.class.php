@@ -40,7 +40,7 @@ class ExpenseReportRule extends CoreObject
 	public $table_element = 'expensereport_rules';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_rule';
 
@@ -156,18 +156,15 @@ class ExpenseReportRule extends CoreObject
 		$sql = 'SELECT er.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
 		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
-		if (!empty($fk_c_type_fees))
-		{
+		if (!empty($fk_c_type_fees)) {
 			$sql .= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
 		}
-		if (!empty($date))
-		{
+		if (!empty($date)) {
 			$date = dol_print_date($date, '%Y-%m-%d');
 			$sql .= ' AND er.dates <= \''.$date.'\'';
 			$sql .= ' AND er.datee >= \''.$date.'\'';
 		}
-		if ($fk_user > 0)
-		{
+		if ($fk_user > 0) {
 			$sql .= ' AND (er.is_for_all = 1';
 			$sql .= ' OR er.fk_user = '.$fk_user;
 			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
@@ -177,13 +174,14 @@ class ExpenseReportRule extends CoreObject
 		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
 				$rule = new ExpenseReportRule($db);
-				if ($rule->fetch($obj->rowid) > 0) $rules[$rule->id] = $rule;
-				else dol_print_error($db);
+				if ($rule->fetch($obj->rowid) > 0) {
+					$rules[$rule->id] = $rule;
+				} else {
+					dol_print_error($db);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -201,11 +199,9 @@ class ExpenseReportRule extends CoreObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-		if ($this->fk_usergroup > 0)
-		{
+		if ($this->fk_usergroup > 0) {
 			$group = new UserGroup($this->db);
-			if ($group->fetch($this->fk_usergroup) > 0)
-			{
+			if ($group->fetch($this->fk_usergroup) > 0) {
 				return $group->nom;
 			} else {
 				$this->error = $group->error;
@@ -225,11 +221,9 @@ class ExpenseReportRule extends CoreObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-		if ($this->fk_user > 0)
-		{
+		if ($this->fk_user > 0) {
 			$u = new User($this->db);
-			if ($u->fetch($this->fk_user) > 0)
-			{
+			if ($u->fetch($this->fk_user) > 0) {
 				return dolGetFirstLastname($u->firstname, $u->lastname);
 			} else {
 				$this->error = $u->error;

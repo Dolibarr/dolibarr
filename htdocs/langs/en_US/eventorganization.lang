@@ -1,0 +1,72 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+ModuleEventOrganizationName = Event Organization
+EventOrganizationDescription = Event Organization through Module Project
+EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+
+#
+# Admin page
+#
+EventOrganizationSetup = Event Organization setup
+Settings = Settings
+EventOrganizationSetupPage = Event Organization setup page
+EVENTORGANIZATION_TASK_LABEL = Task label created when validate
+EVENTORGANIZATION_TASK_LABELTooltip = When validate a Conference or a booth, some tasks will be created in the project<br><br> for example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a subscription to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Conference Or Booth
+ManageOrganizeEvent = Manage event organisation
+ConferenceOrBooth = Conference Or Booth
+ConferenceOrBoothTab = Conference Or Booth
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Your request for conference was received
+YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
+EventOrganizationEmailAskConf = Request for conference
+EventOrganizationEmailAskBooth = Request for booth
+EventOrganizationEmailSubsBooth = Subscription for booth
+EventOrganizationEmailSubsEvent = Subscription for an event
+EventOrganizationMassEmailAttendees = Communication to attendes
+EventOrganizationMassEmailSpeakers = Communication to speakers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
+AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
+PriceOfRegistration=Price of registration
+PriceOfRegistrationHelp=Price of registration
+PriceOfBooth=Price of subscription
+PriceOfBoothHelp=Price of subscription
+EventOrganizationICSLink=Link ICS for events

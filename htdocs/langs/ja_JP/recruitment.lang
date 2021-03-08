@@ -1,0 +1,76 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = 採用
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = 新規職種の採用キャンペーンを管理およびフォローする
+
+#
+# Admin page
+#
+RecruitmentSetup = 採用設定
+Settings = 設定
+RecruitmentSetupPage = 採用モジュールの主なオプションの設定をここに入力する
+RecruitmentArea=採用エリア
+PublicInterfaceRecruitmentDesc=求人の公開ページは、開いている求人を表示して回答するための公開URLである。開いているジョブごとに1つの異なるリンクがあり、各ジョブレコードごとにある。
+EnablePublicRecruitmentPages=開いている求人の公開ページを有効にする
+
+#
+# About page
+#
+About = 約
+RecruitmentAbout = 採用について
+RecruitmentAboutPage = 採用に関してページ
+NbOfEmployeesExpected=予想される従業員数
+JobLabel=職位のラベル
+WorkPlace=職場
+DateExpected=予定日
+FutureManager=将来のマネージャー
+ResponsibleOfRecruitement=採用の担当
+IfJobIsLocatedAtAPartner=仕事がパートナーの場所にある場合
+PositionToBeFilled=職位
+PositionsToBeFilled=職位
+ListOfPositionsToBeFilled=職位一覧
+NewPositionToBeFilled=新規職種
+
+JobOfferToBeFilled=埋められる職位
+ThisIsInformationOnJobPosition=記入する職種の情報
+ContactForRecruitment=採用担当者
+EmailRecruiter=メール勧誘担当
+ToUseAGenericEmail=一般的な電子メールを使用するには。定義されていない場合は、採用担当者のメールが使用される
+NewCandidature=新規アプリ
+ListOfCandidatures=アプリケーションのリスト
+RequestedRemuneration=要求された報酬
+ProposedRemuneration=提案された報酬
+ContractProposed=提案された契約
+ContractSigned=契約締結
+ContractRefused=契約は拒否された
+RecruitmentCandidature=応用
+JobPositions=職位
+RecruitmentCandidatures=アプリケーション
+InterviewToDo=する面接
+AnswerCandidature=アプリケーションの回答
+YourCandidature=あなたの申請
+YourCandidatureAnswerMessage=お申し込みいただきありがとうございます。 <br>..。
+JobClosedTextCandidateFound=求人はクローズされている。ポジションが埋まった。
+JobClosedTextCanceled=求人はクローズされている。
+ExtrafieldsJobPosition=補完的な属性(職位)
+ExtrafieldsCandidatures=補完的な属性(求人応募)
+MakeOffer=申し出する

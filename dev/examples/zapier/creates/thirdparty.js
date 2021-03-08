@@ -72,7 +72,7 @@ module.exports = {
         },
 
         outputFields: [
-            {key: 'id', label: 'ID'},
+            {key: 'id', type: "integer", label: 'ID'},
             {key: 'name', label: 'Name'},
             {key: 'name_alias', label: 'Name alias'},
             {key: 'address', label: 'Address'},
@@ -81,8 +81,8 @@ module.exports = {
             {key: 'phone', label: 'Phone'},
             {key: 'fax', label: 'Fax'},
             {key: 'email', label: 'Email'},
-            {key: 'client', label: 'Customer/Prospect 0/1/2/3'},
-            {key: 'fournisseur', label: 'Supplier 0/1'},
+            {key: 'client', type: "integer", label: 'Customer/Prospect 0/1/2/3'},
+            {key: 'fournisseur', type: "integer", label: 'Supplier 0/1'},
             {key: 'code_client', label: 'Customer code'},
             {key: 'code_fournisseur', label: 'Supplier code'}
         ]

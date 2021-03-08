@@ -51,32 +51,32 @@ class Productbatch extends CommonObject
 	public $warehouseid;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_product;
 
 
 
-    /**
-     *  Constructor
-     *
-     *  @param	DoliDb		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDb		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    /**
-     *  Create object into database
-     *
-     *  @param	User	$user        User that creates
-     *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-     *  @return int      		   	 <0 if KO, Id of created object if OK
-     */
-    public function create($user, $notrigger = 0)
-    {
+	/**
+	 *  Create object into database
+	 *
+	 *  @param	User	$user        User that creates
+	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
+	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 
@@ -86,54 +86,53 @@ class Productbatch extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Insert request
+		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_batch (";
 		$sql .= "fk_product_stock,";
-		$sql .= "sellby,";
-		$sql .= "eatby,";
+		$sql .= "sellby,";				// no more used
+		$sql .= "eatby,";				// no more used
 		$sql .= "batch,";
 		$sql .= "qty,";
 		$sql .= "import_key";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->fk_product_stock) ? 'NULL' : $this->fk_product_stock).",";
-		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
-		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
+		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";		// no more used
+		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";			// no more used
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->qty) ? 'NULL' : $this->qty).",";
 		$sql .= " ".(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'")."";
-
 		$sql .= ")";
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-		if (!$error)
-		{
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
+		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 		}
 
-        // Commit or rollback
-		if ($error)
-		{
+		// Commit or rollback
+		if ($error) {
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-            return $this->id;
+			return $this->id;
 		}
-    }
+	}
 
 
-    /**
-     *  Load object in memory from the database
-     *
-     *  @param	int		$id		Id object
-     *  @return int          	<0 if KO, >0 if OK
-     */
-    public function fetch($id)
-    {
+	/**
+	 *  Load object in memory from the database
+	 *
+	 *  @param	int		$id		Id object
+	 *  @return int          	<0 if KO, >0 if OK
+	 */
+	public function fetch($id)
+	{
 		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -150,16 +149,14 @@ class Productbatch extends CommonObject
 		$sql .= " pl.eatby,";
 		$sql .= " pl.sellby";
 
-        $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
-        $sql .= " WHERE t.rowid = ".$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
+		$sql .= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -182,27 +179,26 @@ class Productbatch extends CommonObject
 		}
 	}
 
-    /**
-     *  Update object into database
-     *
-     *  @param	User	$user        User that modifies
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return int     		   	 <0 if KO, >0 if OK
-     */
-    public function update($user = null, $notrigger = 0)
-    {
-    	global $conf, $langs;
+	/**
+	 *  Update object into database
+	 *
+	 *  @param	User	$user        User that modifies
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return int     		   	 <0 if KO, >0 if OK
+	 */
+	public function update($user = null, $notrigger = 0)
+	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
 		$this->cleanParam();
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
-		if ($this->qty < 0)
-		{
+		if ($this->qty < 0) {
 		}
 
-        // Update request
+		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.self::$_table_element." SET";
 		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? $this->fk_product_stock : "null").",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
@@ -210,19 +206,19 @@ class Productbatch extends CommonObject
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-        $sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-        // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -232,39 +228,38 @@ class Productbatch extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-    }
+	}
 
-    /**
-     *  Delete object in database
-     *
-     *  @param  User	$user        User that deletes
-     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-     *  @return	int					 <0 if KO, >0 if OK
-     */
-    public function delete($user, $notrigger = 0)
-    {
+	/**
+	 *  Delete object in database
+	 *
+	 *  @param  User	$user        User that deletes
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
+	public function delete($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();
 
-		if (!$error)
-		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
-    		$sql .= " WHERE rowid=".$this->id;
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
+			$sql .= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-    		$resql = $this->db->query($sql);
-        	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
-        // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
@@ -289,7 +284,7 @@ class Productbatch extends CommonObject
 
 		$object = new Productbatch($this->db);
 
- 		$this->db->begin();
+		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
@@ -304,22 +299,19 @@ class Productbatch extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$this->errors = array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
 		} else {
@@ -354,24 +346,32 @@ class Productbatch extends CommonObject
 	 */
 	private function cleanParam()
 	{
-		if (isset($this->fk_product_stock)) $this->fk_product_stock = (int) trim($this->fk_product_stock);
-		if (isset($this->batch)) $this->batch = trim($this->batch);
-		if (isset($this->qty)) $this->qty = (float) trim($this->qty);
-		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (isset($this->fk_product_stock)) {
+			$this->fk_product_stock = (int) trim($this->fk_product_stock);
+		}
+		if (isset($this->batch)) {
+			$this->batch = trim($this->batch);
+		}
+		if (isset($this->qty)) {
+			$this->qty = (float) trim($this->qty);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 	}
 
-    /**
-     *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
-     *
-     *  @param	int			$fk_product_stock   id product_stock for objet
-     *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-     *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
-     *  @param	string		$batch_number   	batch number for object
-     *  @return int          					<0 if KO, >0 if OK
-     */
-    public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
-    {
-    	global $langs;
+	/**
+	 *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
+	 *
+	 *  @param	int			$fk_product_stock   id product_stock for objet
+	 *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+	 *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+	 *  @param	string		$batch_number   	batch number for object
+	 *  @return int          					<0 if KO, >0 if OK
+	 */
+	public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
+	{
+		global $langs;
 
 		$where = array();
 		$sql = "SELECT";
@@ -386,22 +386,28 @@ class Productbatch extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
 
-		if (!empty($eatby)) array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
-		if (!empty($sellby)) array_push($where, " sellby = '".$this->db->idate($sellby)."'"); // deprecated
+		if (!empty($eatby)) {
+			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
+		}
+		if (!empty($sellby)) {
+			array_push($where, " sellby = '".$this->db->idate($sellby)."'"); // deprecated
+		}
 
-		if (!empty($batch_number)) $sql .= " AND batch = '".$this->db->escape($batch_number)."'";
+		if (!empty($batch_number)) {
+			$sql .= " AND batch = '".$this->db->escape($batch_number)."'";
+		}
 
-		if (!empty($where)) $sql .= " AND (".implode(" OR ", $where).")";
+		if (!empty($where)) {
+			$sql .= " AND (".implode(" OR ", $where).")";
+		}
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_product_stock = $obj->fk_product_stock;
@@ -410,27 +416,27 @@ class Productbatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->qty = $obj->qty;
 				$this->import_key = $obj->import_key;
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        } else {
-      	    $this->error = "Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
-    /**
-     * Return all batch detail records for a given product and warehouse
-     *
-     *  @param	DoliDB		$db    				database object
-     *  @param	int			$fk_product_stock	id product_stock for objet
-     *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
-     *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
-     *  @return array         					<0 if KO, array of batch
-     */
-    public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
-    {
-    	global $langs;
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
+	/**
+	 * Return all batch detail records for a given product and warehouse
+	 *
+	 *  @param	DoliDB		$db    				database object
+	 *  @param	int			$fk_product_stock	id product_stock for objet
+	 *  @param	int			$with_qty    		1 = doesn't return line with 0 quantity
+	 *  @param  int         $fk_product         If set to a product id, get eatby and sellby from table llx_product_lot
+	 *  @return array         					<0 if KO, array of batch
+	 */
+	public static function findAll($db, $fk_product_stock, $with_qty = 0, $fk_product = 0)
+	{
+		global $langs;
 		$ret = array();
 
 		$sql = "SELECT";
@@ -442,28 +448,27 @@ class Productbatch extends CommonObject
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
 		$sql .= " t.import_key";
-		if ($fk_product > 0)
-		{
-		    $sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
-		    // TODO May add extrafields to ?
+		if ($fk_product > 0) {
+			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
+			// TODO May add extrafields to ?
 		}
-        $sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
-        if ($fk_product > 0)
-        {
-            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
-            // TODO May add extrafields to ?
-        }
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
+		if ($fk_product > 0) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
+			// TODO May add extrafields to ?
+		}
 		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
-		if ($with_qty) $sql .= " AND t.qty <> 0";
+		if ($with_qty) {
+			$sql .= " AND t.qty <> 0";
+		}
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql = $db->query($sql);
-        if ($resql) {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
 
 				$tmp = new Productbatch($db);
 				$tmp->id    = $obj->rowid;
@@ -478,15 +483,15 @@ class Productbatch extends CommonObject
 
 				$ret[$tmp->batch] = $tmp; // $ret is for a $fk_product_stock and unique key is on $fk_product_stock+batch
 				$i++;
-            }
-            $db->free($resql);
+			}
+			$db->free($resql);
 
-            return $ret;
-        } else {
-            $error = "Error ".$db->lasterror();
-            return -1;
-        }
-    }
+			return $ret;
+		} else {
+			$error = "Error ".$db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 * Return all batch for a product and a warehouse

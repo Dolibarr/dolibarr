@@ -27,7 +27,9 @@ require '../main.inc.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('homesetup'));
@@ -45,26 +47,25 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
-{
-    $conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
-    if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
-    {
-    	$i = 0;
-    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100)
-    	{
-    		$tmp = explode('|', $reg[1]);
-    		if (!empty($tmp[1])) $langs->load($tmp[1]);
-    		$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
-    		$i++;
-    	}
+if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
+	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+		$i = 0;
+		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100) {
+			$tmp = explode('|', $reg[1]);
+			if (!empty($tmp[1])) {
+				$langs->load($tmp[1]);
+			}
+			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
+			$i++;
+		}
 
-    	print "\n<!-- Start of welcome text for setup page -->\n";
-        print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-        print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
-        print '</td></tr></table><br>';
-        print "\n<!-- End of welcome text for setup page -->\n";
-    }
+		print "\n<!-- Start of welcome text for setup page -->\n";
+		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
+		print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
+		print '</td></tr></table><br>';
+		print "\n<!-- End of welcome text for setup page -->\n";
+	}
 }
 
 print '<span class="opacitymedium hideonsmartphone">';
@@ -77,10 +78,11 @@ print '</span>';
 print '<br>';
 
 // Show info setup company
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete = 1;
+if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+	$setupcompanynotcomplete = 1;
+}
 print img_picto('', 'puce').' '.$langs->trans("SetupDescription3", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit'), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
-if (!empty($setupcompanynotcomplete))
-{
+if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
@@ -91,8 +93,7 @@ print '<br>';
 
 // Show info setup module
 print img_picto('', 'puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
-if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
-{
+if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only user module enabled
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';
@@ -106,10 +107,9 @@ print '<br>';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addHomeSetup', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Show into other
-    print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
+	print '<span class="opacitymedium">'.$langs->trans("SetupDescription5")."</span><br>";
 	print "<br>";
 
 	// Show logo

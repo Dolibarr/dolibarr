@@ -29,12 +29,9 @@
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235, 235, 224);
 $theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(191, 75, 57), array(80, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
-if (!defined('ISLOADEDBYSTEELSHEET'))	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
-{
-	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) // user is loaded by dolgraph.class.php
-	{
-		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy')
-		{
+if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
+	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) { // user is loaded by dolgraph.class.php
+		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy') {
 			$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250, 190, 30), array(221, 75, 57), array(0, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 		} else {
 			// for now we use the same configuration for all types of color blind
@@ -97,6 +94,6 @@ $badgeStatus3 = '#bca52b';
 $badgeStatus4 = '#277d1e';
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
-$badgeStatus7 = '#baa32b';
+$badgeStatus7 = '#277d1e';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';

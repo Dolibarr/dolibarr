@@ -16,5 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Phân loại đơn đặt hàng bá
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Phân loại đề xuất nhà cung cấp nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của nhà cung cấp được xác nhận (và nếu số tiền hóa đơn giống với tổng số tiền của đề xuất được liên kết)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Phân loại đơn đặt hàng mua nguồn được liên kết là đã xuất hóa đơn khi hóa đơn của nhà cung cấp được xác nhận (và nếu số tiền hóa đơn giống với tổng số tiền của đơn hàng được liên kết)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Tạo tự động
 AutomaticClassification=Phân loại tự động
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

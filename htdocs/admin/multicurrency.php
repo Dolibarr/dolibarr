@@ -34,11 +34,11 @@ $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
 if (!$user->admin) {
-    accessforbidden();
+	accessforbidden();
 }
 
 // Parameters
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -46,31 +46,26 @@ $action = GETPOST('action', 'alpha');
  */
 
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = GETPOST($code, 'alpha');
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, 0) > 0)
-	{
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	if (dolibarr_del_const($db, $code, 0) > 0) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if ($action == 'add_currency')
-{
+if ($action == 'add_currency') {
 	$error = 0;
 
 	$langs->loadCacheCurrencies('');
@@ -81,78 +76,72 @@ if ($action == 'add_currency')
 	$currency->code = $code;
 	$currency->name = !empty($langs->cache_currencies[$code]['label']) ? $langs->cache_currencies[$code]['label'].' ('.$langs->getCurrencySymbol($code).')' : $code;
 
-	if (empty($rate))
-	{
+	if (empty($rate)) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 		$error++;
 	}
-	if (!$error)
-	{
-		if ($currency->create($user) > 0)
-		{
-			if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
-			else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
-		} else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+	if (!$error) {
+		if ($currency->create($user) > 0) {
+			if ($currency->addRate($rate)) {
+				setEventMessages($langs->trans('RecordSaved'), array());
+			} else {
+				setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
+			}
+		} else {
+			setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+		}
 	}
-} elseif ($action == 'update_currency')
-{
+} elseif ($action == 'update_currency') {
 	$error = 0;
 
-	if (GETPOST('updatecurrency', 'alpha'))
-	{
+	if (GETPOST('updatecurrency', 'alpha')) {
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
-		if (empty($rate))
-		{
+		if (empty($rate)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, 'errors');
 			$error++;
 		}
-		if (!$error)
-		{
-			if ($currency->fetch($fk_multicurrency) > 0)
-			{
+		if (!$error) {
+			if ($currency->fetch($fk_multicurrency) > 0) {
 				$result = $currency->updateRate($rate);
 				if ($result < 0) {
 					setEventMessages(null, $currency->errors, 'errors');
 				}
 			}
 		}
-	} elseif (GETPOST('deletecurrency', 'alpha'))
-	{
+	} elseif (GETPOST('deletecurrency', 'alpha')) {
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$currency = new MultiCurrency($db);
 
-		if ($currency->fetch($fk_multicurrency) > 0)
-		{
-			if ($currency->delete() > 0) setEventMessages($langs->trans('RecordDeleted'), array());
-			else setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
+		if ($currency->fetch($fk_multicurrency) > 0) {
+			if ($currency->delete() > 0) {
+				setEventMessages($langs->trans('RecordDeleted'), array());
+			} else {
+				setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
+			}
 		}
 	}
-} elseif ($action == 'setapilayer')
-{
-    if (GETPOSTISSET('modify_apilayer'))
-    {
-        dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
-        dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
-        //dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
-    } else {
-        $result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
-        if ($result > 0) {
-        	setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
-        }
-    }
+} elseif ($action == 'setapilayer') {
+	if (GETPOSTISSET('modify_apilayer')) {
+		dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
+		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
+		//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
+	} else {
+		$result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
+		if ($result > 0) {
+			setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
+		}
+	}
 }
 
 
 $TCurrency = array();
 $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE entity = '.$conf->entity;
 $resql = $db->query($sql);
-if ($resql)
-{
-	while ($obj = $db->fetch_object($resql))
-	{
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
 		$currency = new MultiCurrency($db);
 		$currency->fetch($obj->rowid);
 		$TCurrency[] = $currency;
@@ -176,7 +165,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = multicurrencyAdminPrepareHead();
-dol_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurrency");
+print dol_get_fiche_head($head, 'settings', $langs->trans("ModuleSetup"), -1, "multicurrency");
 
 
 print '<table class="noborder centpercent">';
@@ -189,10 +178,10 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
+	print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
 }
 print '</td></tr>';
 
@@ -201,26 +190,25 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
+	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX');
 } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
 }
 print '</td></tr>';
 
 // Online payment with currency on document. This option should be on by default.
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
-    print '<tr class="oddeven">';
-    print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
-    print '<td class="center">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
-    }
-    print '</td></tr>';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT").'</td>';
+	print '<td class="center">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
+	}
+	print '</td></tr>';
 }
 
 /* TODO uncomment when the functionality will integrated
@@ -256,11 +244,10 @@ print '</table>';
 
 print '<br>';
 
-if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
-{
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="setapilayer">';
+if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION)) {
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setapilayer">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -328,9 +315,10 @@ print '<td>'.$conf->currency.$form->textwithpicto(' ', $langs->trans("BaseCurren
 print '<td class="right">1</td>';
 print '</tr>';
 
-foreach ($TCurrency as &$currency)
-{
-	if ($currency->code == $conf->currency) continue;
+foreach ($TCurrency as &$currency) {
+	if ($currency->code == $conf->currency) {
+		continue;
+	}
 
 	print '<tr class="oddeven">';
 	print '<td>'.$currency->code.' - '.$currency->name.'</td>';

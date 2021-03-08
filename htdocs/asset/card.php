@@ -37,7 +37,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'assetcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -53,18 +53,26 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
-foreach ($object->fields as $key => $val)
-{
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+foreach ($object->fields as $key => $val) {
+	if (GETPOST('search_'.$key, 'alpha')) {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'view';
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'asset', $id);
 
 $permissiontoread = $user->rights->asset->read;
 $permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -80,10 +88,11 @@ $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object-
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	$error = 0;
 
 	$backurlforlist = dol_buildpath('/asset/list.php', 1);
@@ -106,12 +115,10 @@ if (empty($reshook))
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'set_thirdparty' && $permissiontoadd)
-	{
+	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
 	}
-	if ($action == 'classin' && $permissiontoadd)
-	{
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
@@ -122,50 +129,33 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
-
-
-
 /*
  * View
  *
- * Put here all code to build page
  */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$title = $langs->trans("Assets").' - '.$langs->trans("Card");
+$title = $langs->trans("Asset").' - '.$langs->trans("Card");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
-
 // Part to create
-if ($action == 'create')
-{
-	print load_fiche_titre($langs->trans("NewAsset"), '', 'accountancy');
+if ($action == 'create') {
+	print load_fiche_titre($langs->trans("NewAsset"), '', $object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -177,12 +167,12 @@ if ($action == 'create')
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -191,8 +181,7 @@ if ($action == 'create')
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
+if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Assets"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -200,10 +189,14 @@ if (($id || $ref) && $action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
@@ -215,43 +208,37 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
 	$head = asset_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Asset"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Asset"), -1, $object->picto);
 
 	$formconfirm = '';
 
 	// Confirmation to delete
-	if ($action == 'delete')
-	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAssets'), $langs->trans('ConfirmDeleteAssets'), 'confirm_delete', '', 0, 1);
-	}
-
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
-	{
-		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+	if ($action == 'delete') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAssets'), $langs->trans('ConfirmDeleteAsset'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+	if (empty($reshook)) {
+		$formconfirm .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$formconfirm = $hookmanager->resPrint;
+	}
 
 	// Print form confirm
 	print $formconfirm;
@@ -289,78 +276,59 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</table>';
 	print '</div>';
-	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
-	// Buttons for actions
-	if ($action != 'presend' && $action != 'editline') {
-		print '<div class="tabsAction">'."\n";
+	/*
+	 * Buttons
+	 */
+	if ($user->socid == 0) {
+		print '<div class="tabsAction">';
+
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		if (empty($reshook))
-		{
-			// Send
-			if (empty($user->socid)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-			}
-
-			if ($user->rights->asset->write)
-			{
+		if (empty($reshook)) {
+			if ($user->rights->asset->write) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 			}
 
-			if ($user->rights->asset->delete)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
+			if ($user->rights->asset->delete) {
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
 			}
 		}
-		print '</div>'."\n";
+		print "</div>";
 	}
 
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	if ($action != 'presend')
-	{
+	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
 		// Documents
-		/*$objref = dol_sanitizeFileName($object->ref);
-		$relativepath = $comref . '/' . $comref . '.pdf';
-		$filedir = $conf->asset->dir_output . '/' . $objref;
-		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+		$filename = dol_sanitizeFileName($object->ref);
+		$filedir = $conf->contrat->dir_output."/".dol_sanitizeFileName($object->ref);
+		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->rights->asset->read;	// If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->asset->create;	// If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('asset', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
+		$delallowed = $user->rights->asset->write;	// If you can create/edit, you can remove a file on card
+
+		print $formfile->showdocuments('asset', $filename, $filedir, $urlsource, 0, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/asset/asset_info.php', 1).'?id='.$object->id.'">';
-		$morehtmlright .= $langs->trans("SeeAll");
-		$morehtmlright .= '</a>';
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/asset/info.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -369,19 +337,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print '</div></div></div>';
 	}
-
-	//Select mail models is same action as presend
-	 if (GETPOST('modelselected')) $action = 'presend';
-
-	 // Presend form
-	 /*
-	 $modelmail='asset';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->asset->dir_output.'/asset';
-	 $trackid = 'asset'.$object->id;
-
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
 }
 
 

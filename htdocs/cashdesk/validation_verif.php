@@ -36,14 +36,13 @@ $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 $action = GETPOST('action', 'aZ09');
 $bankaccountid = GETPOST('cashdeskbank');
 
-switch ($action)
-{
+switch ($action) {
 	default:
-	    $redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
-	case 'valide_achat':
-	    $thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+	case 'validate_sell':
+		$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 
 		$company = new Societe($db);
 		$company->fetch($thirdpartyid);
@@ -55,15 +54,18 @@ switch ($action)
 		// To use a specific numbering module for POS, reset $conf->global->FACTURE_ADDON and other vars here
 		// and restore values just after
 		$sav_FACTURE_ADDON = '';
-		if (!empty($conf->global->POS_ADDON))
-		{
+		if (!empty($conf->global->POS_ADDON)) {
 			$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
 			$conf->global->FACTURE_ADDON = $conf->global->POS_ADDON;
 
 			// To force prefix only for POS with terre module
-			if (!empty($conf->global->POS_NUMBERING_TERRE_FORCE_PREFIX)) $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX = $conf->global->POS_NUMBERING_TERRE_FORCE_PREFIX;
+			if (!empty($conf->global->POS_NUMBERING_TERRE_FORCE_PREFIX)) {
+				$conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX = $conf->global->POS_NUMBERING_TERRE_FORCE_PREFIX;
+			}
 			// To force prefix only for POS with mars module
-			if (!empty($conf->global->POS_NUMBERING_MARS_FORCE_PREFIX)) $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX = $conf->global->POS_NUMBERING_MARS_FORCE_PREFIX;
+			if (!empty($conf->global->POS_NUMBERING_MARS_FORCE_PREFIX)) {
+				$conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX = $conf->global->POS_NUMBERING_MARS_FORCE_PREFIX;
+			}
 			// To force rule only for POS with mercure
 			//...
 		}
@@ -71,8 +73,7 @@ switch ($action)
 		$num = $invoice->getNextNumRef($company);
 
 		// Restore save values
-		if (!empty($sav_FACTURE_ADDON))
-		{
+		if (!empty($sav_FACTURE_ADDON)) {
 			$conf->global->FACTURE_ADDON = $sav_FACTURE_ADDON;
 		}
 
@@ -97,9 +98,9 @@ switch ($action)
 
 			$obj_facturation->amountReturned($encaisse - $total);
 		} else {
-		    //$txtDatePaiement=$_POST['txtDatePaiement'];
-		    $datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
-		    $txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
+			//$txtDatePaiement=$_POST['txtDatePaiement'];
+			$datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
+			$txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
 			$obj_facturation->paiementLe($txtDatePaiement);
 		}
 
@@ -112,7 +113,7 @@ switch ($action)
 		break;
 
 
-	case 'valide_facture':
+	case 'validate_invoice':
 		$now = dol_now();
 
 		// Recuperation de la date et de l'heure
@@ -120,14 +121,12 @@ switch ($action)
 		$heure = dol_print_date($now, 'hour');
 
 		$note = '';
-		if (!is_object($obj_facturation))
-		{
+		if (!is_object($obj_facturation)) {
 			dol_print_error('', 'Empty context');
 			exit;
 		}
 
-		switch ($obj_facturation->getSetPaymentMode())
-		{
+		switch ($obj_facturation->getSetPaymentMode()) {
 			case 'DIF':
 				$mode_reglement_id = 0;
 				//$cond_reglement_id = dol_getIdFromCode($db,'RECEP','cond_reglement','code','rowid')
@@ -151,8 +150,12 @@ switch ($action)
 				$cond_reglement_id = 0;
 				break;
 		}
-		if (empty($mode_reglement_id)) $mode_reglement_id = 0; // If mode_reglement_id not found
-		if (empty($cond_reglement_id)) $cond_reglement_id = 0; // If cond_reglement_id not found
+		if (empty($mode_reglement_id)) {
+			$mode_reglement_id = 0; // If mode_reglement_id not found
+		}
+		if (empty($cond_reglement_id)) {
+			$cond_reglement_id = 0; // If cond_reglement_id not found
+		}
 		$note .= $_POST['txtaNotes'];
 		dol_syslog("obj_facturation->getSetPaymentMode()=".$obj_facturation->getSetPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
 
@@ -175,8 +178,7 @@ switch ($action)
 
 		// Loop on each line into cart
 		$tab_liste_size = count($tab_liste);
-		for ($i = 0; $i < $tab_liste_size; $i++)
-		{
+		for ($i = 0; $i < $tab_liste_size; $i++) {
 			$tmp = getTaxesFromId($tab_liste[$i]['fk_tva']);
 			$vat_rate = $tmp['rate'];
 			$vat_npr = $tmp['npr'];
@@ -218,32 +220,32 @@ switch ($action)
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
 
 		// Si paiement differe ...
-		if ($obj_facturation->getSetPaymentMode() == 'DIF')
-		{
+		if ($obj_facturation->getSetPaymentMode() == 'DIF') {
 			$resultcreate = $invoice->create($user, 0, dol_stringtotime($obj_facturation->paiementLe()));
-			if ($resultcreate > 0)
-			{
+			if ($resultcreate > 0) {
 				$warehouseidtodecrease = (isset($_SESSION["CASHDESK_ID_WAREHOUSE"]) ? $_SESSION["CASHDESK_ID_WAREHOUSE"] : 0);
-				if (!empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease = 0; // If a particular stock is defined, we disable choice
+				if (!empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
+					$warehouseidtodecrease = 0; // If a particular stock is defined, we disable choice
+				}
 
 				$resultvalid = $invoice->validate($user, $obj_facturation->numInvoice(), 0);
 
-				if ($warehouseidtodecrease > 0)
-				{
+				if ($warehouseidtodecrease > 0) {
 					// Decrease
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 					// Loop on each line
 					$cpt = count($invoice->lines);
-					for ($i = 0; $i < $cpt; $i++)
-					{
-						if ($invoice->lines[$i]->fk_product > 0)
-						{
+					for ($i = 0; $i < $cpt; $i++) {
+						if ($invoice->lines[$i]->fk_product > 0) {
 							$mouvP = new MouvementStock($db);
 							$mouvP->origin = &$invoice;
 							// We decrease stock for product
-							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result = $mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
-							else $result = $mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) {
+								$result = $mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							} else {
+								$result = $mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							}
 							if ($result < 0) {
 								$error++;
 							}
@@ -252,38 +254,39 @@ switch ($action)
 				}
 			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
-			    $error++;
+				$error++;
 			}
 
 			$id = $invoice->id;
 		} else {
-		    $resultcreate = $invoice->create($user, 0, 0);
-			if ($resultcreate > 0)
-			{
+			$resultcreate = $invoice->create($user, 0, 0);
+			if ($resultcreate > 0) {
 				$warehouseidtodecrease = (isset($_SESSION["CASHDESK_ID_WAREHOUSE"]) ? $_SESSION["CASHDESK_ID_WAREHOUSE"] : 0);
-				if (!empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) $warehouseidtodecrease = 0; // If a particular stock is defined, we disable choice
+				if (!empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
+					$warehouseidtodecrease = 0; // If a particular stock is defined, we disable choice
+				}
 
 				$resultvalid = $invoice->validate($user, $obj_facturation->numInvoice(), 0);
 
-				if ($warehouseidtodecrease > 0)
-				{
+				if ($warehouseidtodecrease > 0) {
 					// Decrease
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 					// Loop on each line
 					$cpt = count($invoice->lines);
-					for ($i = 0; $i < $cpt; $i++)
-					{
-						if ($invoice->lines[$i]->fk_product > 0)
-						{
+					for ($i = 0; $i < $cpt; $i++) {
+						if ($invoice->lines[$i]->fk_product > 0) {
 							$mouvP = new MouvementStock($db);
 							$mouvP->origin = &$invoice;
 							// We decrease stock for product
-							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) $result = $mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
-							else $result = $mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							if ($invoice->type == $invoice::TYPE_CREDIT_NOTE) {
+								$result = $mouvP->reception($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							} else {
+								$result = $mouvP->livraison($user, $invoice->lines[$i]->fk_product, $warehouseidtodecrease, $invoice->lines[$i]->qty, $invoice->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarrFromPos", $invoice->newref));
+							}
 							if ($result < 0) {
-							    setEventMessages($mouvP->error, $mouvP->errors, 'errors');
-							    $error++;
+								setEventMessages($mouvP->error, $mouvP->errors, 'errors');
+								$error++;
 							}
 						}
 					}
@@ -294,49 +297,42 @@ switch ($action)
 				// Add the payment
 				$payment = new Paiement($db);
 				$payment->datepaye = $now;
-				$payment->bank_account = $conf_fkaccount;
 				$payment->amounts[$invoice->id] = $obj_facturation->amountWithTax();
-				$payment->note = $langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
+				$payment->note_public = $langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
 				$payment->paiementid = $invoice->mode_reglement_id;
 				$payment->num_paiement = '';
 				$payment->num_payment = '';
 
 				$paiement_id = $payment->create($user);
-				if ($paiement_id > 0)
-				{
-                    if (!$error)
-                    {
-                        $result = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
-                        if (!$result > 0)
-                        {
-                            $errmsg = $paiement->error;
-                            $error++;
-                        }
-                    }
+				if ($paiement_id > 0) {
+					if (!$error) {
+						$result = $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
+						if (!$result > 0) {
+							$errmsg = $paiement->error;
+							$error++;
+						}
+					}
 
-                    if (!$error)
-                    {
-                    	if ($invoice->total_ttc == $obj_facturation->amountWithTax()
-                    		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
-                    	{
-                    		// We set status to payed
-                    		$result = $invoice->set_paid($user);
-                  			//print 'set paid';exit;
-                    	}
-                    }
+					if (!$error) {
+						if ($invoice->total_ttc == $obj_facturation->amountWithTax()
+							&& $obj_facturation->getSetPaymentMode() != 'DIFF') {
+							// We set status to paid
+							$result = $invoice->setPaid($user);
+							//print 'set paid';exit;
+						}
+					}
 				} else {
-				    setEventMessages($invoice->error, $invoice->errors, 'errors');
-				    $error++;
+					setEventMessages($invoice->error, $invoice->errors, 'errors');
+					$error++;
 				}
 			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
-			    $error++;
+				$error++;
 			}
 		}
 
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			$redirection = 'affIndex.php?menutpl=validation_ok&facid='.$id; // Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		} else {
@@ -345,7 +341,7 @@ switch ($action)
 		}
 		break;
 
-		// End of case: valide_facture
+		// End of case: validate_invoice
 }
 
 unset($_SESSION['serObjFacturation']);

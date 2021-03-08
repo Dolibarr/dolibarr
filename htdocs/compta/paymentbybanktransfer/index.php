@@ -38,7 +38,9 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
 
@@ -55,10 +57,9 @@ $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
 llxHeader('', $langs->trans("SuppliersStandingOrdersArea"));
 
-if (prelevement_check_config() < 0)
-{
+if (prelevement_check_config('bank-transfer') < 0) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByBankTransfer")), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"));
@@ -68,7 +69,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 $thirdpartystatic = new Societe($db);
-$invoicestatic = new Facture($db);
+$invoicestatic = new FactureFournisseur($db);
 $bprev = new BonPrelevement($db);
 
 print '<div class="div-table-responsive-no-min">';
@@ -94,79 +95,82 @@ print '</td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid";
+$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 $sql .= " AND f.total_ttc > 0";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
-{
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 	$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 }
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture_fourn = f.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid) $sql .= " AND f.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
+if ($socid) {
+	$sql .= " AND f.fk_soc = ".$socid;
+}
 
 $resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    $i = 0;
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
-    if ($num)
-    {
-        while ($i < $num && $i < 20)
-        {
-            $obj = $db->fetch_object($resql);
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
+	if ($num) {
+		while ($i < $num && $i < 20) {
+			$obj = $db->fetch_object($resql);
 
-            $invoicestatic->id = $obj->rowid;
-            $invoicestatic->ref = $obj->ref;
-            $invoicestatic->statut = $obj->fk_statut;
-            $invoicestatic->paye = $obj->paye;
-            $invoicestatic->type = $obj->type;
-            $alreadypayed = $invoicestatic->getSommePaiement();
+			$invoicestatic->id = $obj->rowid;
+			$invoicestatic->ref = $obj->ref;
+			$invoicestatic->statut = $obj->fk_statut;
+			$invoicestatic->paye = $obj->paye;
+			$invoicestatic->type = $obj->type;
+			$alreadypayed = $invoicestatic->getSommePaiement();
 
-            $thirdpartystatic->id = $obj->socid;
-            $thirdpartystatic->name = $obj->name;
-            $thirdpartystatic->email = $obj->email;
+			$thirdpartystatic->id = $obj->socid;
+			$thirdpartystatic->name = $obj->name;
+			$thirdpartystatic->email = $obj->email;
+			$thirdpartystatic->tva_intra = $obj->tva_intra;
 
-            print '<tr class="oddeven"><td>';
-            print $invoicestatic->getNomUrl(1, 'withdraw');
-            print '</td>';
+			print '<tr class="oddeven"><td>';
+			print $invoicestatic->getNomUrl(1, 'withdraw');
+			print '</td>';
 
-            print '<td>';
-            print $thirdpartystatic->getNomUrl(1, 'customer');
-            print '</td>';
+			print '<td>';
+			print $thirdpartystatic->getNomUrl(1, 'supplier');
+			print '</td>';
 
-            print '<td class="right">';
-            print price($obj->amount);
-            print '</td>';
+			print '<td class="right">';
+			print price($obj->amount);
+			print '</td>';
 
-            print '<td class="right">';
-            print dol_print_date($db->jdate($obj->date_demande), 'day');
-            print '</td>';
+			print '<td class="right">';
+			print dol_print_date($db->jdate($obj->date_demande), 'day');
+			print '</td>';
 
-            print '<td class="right">';
-            print $invoicestatic->getLibStatut(3, $alreadypayed);
-            print '</td>';
-            print '</tr>';
-            $i++;
-        }
-    } else {
-        print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</td></tr>';
-    }
-    print "</table></div><br>";
+			print '<td class="right">';
+			print $invoicestatic->getLibStatut(3, $alreadypayed);
+			print '</td>';
+			print '</tr>';
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</td></tr>';
+	}
+	print "</table></div><br>";
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -185,49 +189,47 @@ $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 
 $result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
-    $i = 0;
+if ($result) {
+	$num = $db->num_rows($result);
+	$i = 0;
 
-    print"\n<!-- debut table -->\n";
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<th>'.$langs->trans("LatestBankTransferReceipts", $limit).'</th>';
-    print '<th>'.$langs->trans("Date").'</th>';
-    print '<th class="right">'.$langs->trans("Amount").'</th>';
-    print '<th class="right">'.$langs->trans("Status").'</th>';
-    print '</tr>';
+	print"\n<!-- debut table -->\n";
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th>'.$langs->trans("LatestBankTransferReceipts", $limit).'</th>';
+	print '<th>'.$langs->trans("Date").'</th>';
+	print '<th class="right">'.$langs->trans("Amount").'</th>';
+	print '<th class="right">'.$langs->trans("Status").'</th>';
+	print '</tr>';
 
-    if ($num > 0) {
-	    while ($i < min($num, $limit))
-	    {
-	        $obj = $db->fetch_object($result);
+	if ($num > 0) {
+		while ($i < min($num, $limit)) {
+			$obj = $db->fetch_object($result);
 
-	        print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
-	        print "<td>";
-	        $bprev->id = $obj->rowid;
-	        $bprev->ref = $obj->ref;
-	        $bprev->statut = $obj->statut;
-	        print $bprev->getNomUrl(1);
-	        print "</td>\n";
-	        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-	        print '<td class="right">'.price($obj->amount)."</td>\n";
-	        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+			print "<td>";
+			$bprev->id = $obj->rowid;
+			$bprev->ref = $obj->ref;
+			$bprev->statut = $obj->statut;
+			print $bprev->getNomUrl(1);
+			print "</td>\n";
+			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
+			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
-	        print "</tr>\n";
-	        $i++;
-	    }
-    } else {
-    	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
-    }
+			print "</tr>\n";
+			$i++;
+		}
+	} else {
+		print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
+	}
 
-    print "</table></div><br>";
-    $db->free($result);
+	print "</table></div><br>";
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 

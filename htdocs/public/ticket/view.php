@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/public/ticket/view.php
  *       \ingroup    ticket
- *       \brief      Public file to add and manage ticket
+ *       \brief      Public file to show one ticket
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -32,6 +32,12 @@ if (!defined('NOREQUIREMENU')) {
 // If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
 }
 // If this page is public (can be called outside logged session)
 
@@ -67,10 +73,8 @@ $object = new ActionsTicket($db);
  * Actions
  */
 
-if ($cancel)
-{
-	if (!empty($backtopage))
-	{
+if ($cancel) {
+	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
 	}
@@ -102,13 +106,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($ret && $object->dao->id > 0) {
 			// Check if emails provided is the one of author
 			$emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
-			if ($emailofticket == $email)
-			{
+			if ($emailofticket == $email) {
 				$display_ticket = true;
 				$_SESSION['email_customer'] = $email;
-			}
-			// Check if emails provided is inside list of contacts
-			else {
+			} else {
+				// Check if emails provided is inside list of contacts
 				$contacts = $object->dao->liste_contact(-1, 'external');
 				foreach ($contacts as $contact) {
 					if ($contact['email'] == $email) {
@@ -129,8 +131,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 				}
 			}
 			// Check if email is email of creator
-			if ($object->dao->fk_user_create > 0)
-			{
+			if ($object->dao->fk_user_create > 0) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->dao->fk_user_create);
 				if ($email == $tmpuser->email) {
@@ -139,8 +140,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 				}
 			}
 			// Check if email is email of creator
-			if ($object->dao->fk_user_assign > 0 && $object->dao->fk_user_assign != $object->dao->fk_user_create)
-			{
+			if ($object->dao->fk_user_assign > 0 && $object->dao->fk_user_assign != $object->dao->fk_user_create) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->dao->fk_user_assign);
 				if ($email == $tmpuser->email) {
@@ -155,37 +155,34 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 	}
 
-	if (!$error && $action == 'confirm_public_close' && $display_ticket)
-	{
+	if (!$error && $action == 'confirm_public_close' && $display_ticket) {
 		if ($object->dao->close($user)) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
 			header("Location: ".$url);
+			exit;
 		} else {
 			$action = '';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
-	{
+	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {
 		// TODO Add message...
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
 
 
 
 
-		if (!$error)
-		{
+		if (!$error) {
 			$action = 'view_ticket';
 		}
 	}
 
 	if ($error || $errors) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "add_message")
-		{
+		if ($action == "add_message") {
 			$action = 'presend';
 		} else {
 			$action = '';
@@ -225,8 +222,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 print '<div class="ticketpublicarea">';
 
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
-	if ($display_ticket)
-	{
+	if ($display_ticket) {
 		// Confirmation close
 		if ($action == 'close') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
@@ -238,17 +234,17 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Ref
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-		print $object->dao->ref;
+		print dol_escape_htmltag($object->dao->ref);
 		print '</td></tr>';
 
 		// Tracking ID
 		print '<tr><td>'.$langs->trans("TicketTrackId").'</td><td>';
-		print $object->dao->track_id;
+		print dol_escape_htmltag($object->dao->track_id);
 		print '</td></tr>';
 
 		// Subject
 		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
-		print $object->dao->subject;
+		print dol_escape_htmltag($object->dao->subject);
 		print '</td></tr>';
 
 		// Statut
@@ -258,17 +254,17 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Type
 		print '<tr><td>'.$langs->trans("Type").'</td><td>';
-		print $object->dao->type_label;
+		print dol_escape_htmltag($object->dao->type_label);
 		print '</td></tr>';
 
 		// Category
 		print '<tr><td>'.$langs->trans("Category").'</td><td>';
-		print $object->dao->category_label;
+		print dol_escape_htmltag($object->dao->category_label);
 		print '</td></tr>';
 
 		// Severity
 		print '<tr><td>'.$langs->trans("Severity").'</td><td>';
-		print $object->dao->severity_label;
+		print dol_escape_htmltag($object->dao->severity_label);
 		print '</td></tr>';
 
 		// Creation date
@@ -314,7 +310,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 		// Progression
 		print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-		print ($object->dao->progress > 0 ? $object->dao->progress : '0').'%';
+		print ($object->dao->progress > 0 ? dol_escape_htmltag($object->dao->progress) : '0').'%';
 		print '</td></tr>';
 
 		print '</table>';
@@ -371,7 +367,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'object_conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';

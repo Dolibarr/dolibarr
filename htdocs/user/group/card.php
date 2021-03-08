@@ -38,19 +38,18 @@ $candisableperms = ($user->admin || $user->rights->user->user->supprimer);
 $feature2 = 'user';
 
 // Advanced permissions
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
-    $canreadperms = ($user->admin || $user->rights->user->group_advance->read);
-    $caneditperms = ($user->admin || $user->rights->user->group_advance->write);
-    $candisableperms = ($user->admin || $user->rights->user->group_advance->delete);
-    $feature2 = 'group_advance';
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
+	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
+	$candisableperms = ($user->admin || $user->rights->user->group_advance->delete);
+	$feature2 = 'group_advance';
 }
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
@@ -62,9 +61,8 @@ $userid = GETPOST('user', 'int');
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-    accessforbidden();
+if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+	accessforbidden();
 }
 
 $object = new Usergroup($db);
@@ -87,29 +85,31 @@ $hookmanager->initHooks(array('groupcard', 'globalcard'));
 
 $parameters = array('id' => $id, 'userid' => $userid, 'caneditperms' => $caneditperms);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	$backurlforlist = DOL_URL_ROOT.'/user/group/list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-			else $backtopage = dol_buildpath('/user/group/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = dol_buildpath('/user/group/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			}
 		}
 	}
 
-	if ($cancel)
-	{
+	if ($cancel) {
 		header("Location: ".$backtopage);
 		exit;
 	}
 
 	// Action remove group
-	if ($action == 'confirm_delete' && $confirm == "yes")
-	{
-		if ($caneditperms)
-		{
+	if ($action == 'confirm_delete' && $confirm == "yes") {
+		if ($caneditperms) {
 			$object->fetch($id);
 			$object->delete($user);
 			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
@@ -121,31 +121,32 @@ if (empty($reshook)) {
 	}
 
 	// Action add group
-	if ($action == 'add')
-	{
-		if ($caneditperms)
-		{
-			if (! GETPOST("nom", "nohtml")) {
+	if ($action == 'add') {
+		if ($caneditperms) {
+			if (!GETPOST("nom", "nohtml")) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= trim(GETPOST("nom", 'nohtml'));
-				//$object->nom = $object->name; // For backward compatibility
-				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+				$object->name	= GETPOST("nom", 'nohtml');
+				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
-				if ($ret < 0) $error++;
+				if ($ret < 0) {
+					$error++;
+				}
 
-				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
-				else $object->entity = $_POST["entity"];
+				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+					$object->entity = 0;
+				} else {
+					$object->entity = $_POST["entity"];
+				}
 
 				$db->begin();
 
 				$id = $object->create();
 
-				if ($id > 0)
-				{
+				if ($id > 0) {
 					$db->commit();
 
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -165,22 +166,22 @@ if (empty($reshook)) {
 	}
 
 	// Add/Remove user into group
-	if ($action == 'adduser' || $action == 'removeuser')
-	{
-		if ($caneditperms)
-		{
-			if ($userid > 0)
-			{
+	if ($action == 'adduser' || $action == 'removeuser') {
+		if ($caneditperms) {
+			if ($userid > 0) {
 				$object->fetch($id);
 				$object->oldcopy = clone $object;
 
 				$edituser = new User($db);
 				$edituser->fetch($userid);
-				if ($action == 'adduser')    $result = $edituser->SetInGroup($object->id, $object->entity);
-				if ($action == 'removeuser') $result = $edituser->RemoveFromGroup($object->id, $object->entity);
+				if ($action == 'adduser') {
+					$result = $edituser->SetInGroup($object->id, $object->entity);
+				}
+				if ($action == 'removeuser') {
+					$result = $edituser->RemoveFromGroup($object->id, $object->entity);
+				}
 
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
@@ -194,31 +195,32 @@ if (empty($reshook)) {
 	}
 
 
-	if ($action == 'update')
-	{
-		if ($caneditperms)
-		{
+	if ($action == 'update') {
+		if ($caneditperms) {
 			$db->begin();
 
 			$object->fetch($id);
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= trim(GETPOST("nom", 'nohtml'));
-			//$object->nom = $object->name; // For backward compatibility
-			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
+			$object->name	= GETPOST("nom", 'nohtml');
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0) $error++;
+			if ($ret < 0) {
+				$error++;
+			}
 
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
-			else $object->entity = $_POST["entity"];
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				$object->entity = 0;
+			} else {
+				$object->entity = $_POST["entity"];
+			}
 
 			$ret = $object->update();
 
-			if ($ret >= 0 && !count($object->errors))
-			{
+			if ($ret >= 0 && !count($object->errors)) {
 				setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
 				$db->commit();
 			} else {
@@ -249,26 +251,23 @@ $fuserstatic = new User($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-if ($action == 'create')
-{
-    print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
+if ($action == 'create') {
+	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
-    print dol_set_focus('#nom');
+	print dol_set_focus('#nom');
 
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="add">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-    dol_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head('', '', '', 0, '');
 
-    print '<table class="border centpercent tableforfieldcreate">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Multicompany
-	if (!empty($conf->multicompany->enabled) && is_object($mc))
-	{
-		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
-		{
+	if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
@@ -285,36 +284,31 @@ if ($action == 'create')
 
 	print "</table>\n";
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<div class="center">';
-    print '<input class="button" name="add" value="'.$langs->trans("CreateGroup").'" type="submit">';
-    print ' &nbsp; ';
-    print '<input class="button" value="'.$langs->trans("Cancel").'" name="cancel" type="submit">';
-    print '</div>';
+	print '<div class="center">';
+	print '<input class="button" name="add" value="'.$langs->trans("CreateGroup").'" type="submit">';
+	print ' &nbsp; ';
+	print '<input class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" type="submit">';
+	print '</div>';
 
-    print "</form>";
-}
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
-else {
-    if ($id)
-    {
+	print "</form>";
+} else {
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* Visu et edition                                                            */
+	/*                                                                            */
+	/* ************************************************************************** */
+	if ($id) {
 		$res = $object->fetch_optionals();
 
-        $head = group_prepare_head($object);
-        $title = $langs->trans("Group");
+		$head = group_prepare_head($object);
+		$title = $langs->trans("Group");
 
 		/*
 		 * Confirmation suppression
 		 */
-		if ($action == 'delete')
-		{
+		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("DeleteAGroup"), $langs->trans("ConfirmDeleteGroup", $object->name), "confirm_delete", '', 0, 1);
 		}
 
@@ -322,9 +316,8 @@ else {
 		 * Fiche en mode visu
 		 */
 
-		if ($action != 'edit')
-		{
-			dol_fiche_head($head, 'group', $title, -1, 'group');
+		if ($action != 'edit') {
+			print dol_get_fiche_head($head, 'group', $title, -1, 'group');
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -336,21 +329,18 @@ else {
 
 			print '<table class="border centpercent tableforfield">';
 
-            // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-            if (!empty($conf->mutlicompany->enabled))
-            {
-    			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-    			print '<td class="valeur">'.dol_escape_htmltag($object->name);
-    			if (empty($object->entity))
-    			{
-    				print img_picto($langs->trans("GlobalGroup"), 'redstar');
-    			}
-    			print "</td></tr>\n";
-            }
+			// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
+			if (!empty($conf->mutlicompany->enabled)) {
+				print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
+				print '<td class="valeur">'.dol_escape_htmltag($object->name);
+				if (empty($object->entity)) {
+					print img_picto($langs->trans("GlobalGroup"), 'redstar');
+				}
+				print "</td></tr>\n";
+			}
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
-			{
+			if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -372,7 +362,7 @@ else {
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
 			/*
@@ -383,31 +373,29 @@ else {
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-			if ($caneditperms)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 			}
 
-			if ($candisableperms)
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteGroup").'</a>';
+			if ($caneditperms) {
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Modify").'</a>';
+			}
+
+			if ($candisableperms) {
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'&amp;token='.newToken().'">'.$langs->trans("DeleteGroup").'</a>';
 			}
 
 			print "</div>\n";
 
-            // List users in group
+			// List users in group
 
-            print load_fiche_titre($langs->trans("ListOfUsersInGroup"), '', 'user');
+			print load_fiche_titre($langs->trans("ListOfUsersInGroup"), '', 'user');
 
-            // On selectionne les users qui ne sont pas deja dans le groupe
-            $exclude = array();
+			// On selectionne les users qui ne sont pas deja dans le groupe
+			$exclude = array();
 
-			if (!empty($object->members))
-			{
-				foreach ($object->members as $useringroup)
-				{
+			if (!empty($object->members)) {
+				foreach ($object->members as $useringroup) {
 					$exclude[] = $useringroup->id;
 				}
 			}
@@ -417,10 +405,8 @@ else {
 			$reshook = $hookmanager->executeHooks('formAddUserToGroup', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			if (empty($reshook))
-			{
-				if ($caneditperms)
-				{
+			if (empty($reshook)) {
+				if ($caneditperms) {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
@@ -449,18 +435,16 @@ else {
 				print '<td class="liste_titre right" width="5">&nbsp;</td>';
 				print "</tr>\n";
 
-				if (!empty($object->members))
-				{
-					foreach ($object->members as $useringroup)
-					{
+				if (!empty($object->members)) {
+					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';
 						print '<td>';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if ($useringroup->admin && !$useringroup->entity) {
-                            print img_picto($langs->trans("SuperAdministrator"), 'redstar');
-                        } elseif ($useringroup->admin) {
-                            print img_picto($langs->trans("Administrator"), 'star');
-                        }
+							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+						} elseif ($useringroup->admin) {
+							print img_picto($langs->trans("Administrator"), 'star');
+						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
 						print '<td>'.$useringroup->firstname.'</td>';
@@ -486,52 +470,49 @@ else {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			/*
-	         * Documents generes
-	         */
+			 * Documents generes
+			 */
 
-	        $filename = dol_sanitizeFileName($object->ref);
-	        $filedir = $conf->usergroup->dir_output."/".dol_sanitizeFileName($object->ref);
-	        $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	        $genallowed = $user->rights->user->user->creer;
-	        $delallowed = $user->rights->user->user->supprimer;
+			$filename = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->usergroup->dir_output."/".dol_sanitizeFileName($object->ref);
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = $user->rights->user->user->creer;
+			$delallowed = $user->rights->user->user->supprimer;
 
-	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-	        // Show links to link elements
-	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
-	        $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+			// Show links to link elements
+			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-	        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			// List of actions on element
 			/*include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
 
-	        print '</div></div></div>';
-        }
+			print '</div></div></div>';
+		}
 
-        /*
-         * Fiche en mode edition
-         */
+		/*
+		 * Fiche en mode edition
+		 */
 
-        if ($action == 'edit' && $caneditperms)
-        {
-            print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="updategroup" enctype="multipart/form-data">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            print '<input type="hidden" name="action" value="update">';
+		if ($action == 'edit' && $caneditperms) {
+			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" name="updategroup" enctype="multipart/form-data">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-            dol_fiche_head($head, 'group', $title, 0, 'group');
+			print dol_get_fiche_head($head, 'group', $title, 0, 'group');
 
 			print '<table class="border centpercent tableforfieldedit">'."\n";
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc))
-			{
-				if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
-				{
+			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+				if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);
 					print "</td></tr>\n";
@@ -548,15 +529,15 @@ else {
 
 			print '</table>';
 
-            dol_fiche_end();
+			print dol_get_fiche_end();
 
-			print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-			print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+			print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
-            print '</form>';
-        }
-    }
+			print '</form>';
+		}
+	}
 }
 
 // End of page

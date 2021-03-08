@@ -50,9 +50,9 @@ class Ctyperesource
 	public $code;
 
 	/**
-     * @var string Type resource label
-     */
-    public $label;
+	 * @var string Type resource label
+	 */
+	public $label;
 
 	public $active;
 
@@ -172,9 +172,13 @@ class Ctyperesource
 
 
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if ($id)   $sql .= " WHERE t.id = ".$id;
-		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-		elseif ($label) $sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		if ($id) {
+			$sql .= " WHERE t.id = ".$id;
+		} elseif ($code) {
+			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+		} elseif ($label) {
+			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		}
 
 
 		$resql = $this->db->query($sql);
@@ -252,7 +256,7 @@ class Ctyperesource
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-		    $sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -482,9 +486,9 @@ class CtyperesourceLine
 	public $code;
 
 	/**
-     * @var string Type resource line label
-     */
-    public $label;
+	 * @var string Type resource line label
+	 */
+	public $label;
 
 	public $active;
 

@@ -17,7 +17,7 @@ const subscribeHook = (z, bundle) => {
     const options = {
         url: url,
         method: 'POST',
-        body: JSON.stringify(data)
+        body: data,
     };
 
     // You may return a promise or a normal data structure from any perform method.
@@ -112,7 +112,7 @@ module.exports = {
     noun: 'Thirdparty',
     display: {
         label: 'New Thirdparty',
-        description: 'Trigger when a new thirdpaty action is done in Dolibarr.'
+        description: 'Triggers when a new thirdpaty action is done in Dolibarr.'
     },
 
     // `operation` is where the business logic goes.
@@ -123,6 +123,7 @@ module.exports = {
         inputFields: [
             {
                 key: 'action',
+                required: true,
                 type: 'string',
                 helpText: 'Which action of thirdparty this should trigger on.',
                 choices: {
@@ -159,12 +160,12 @@ module.exports = {
         // outputFields: () => { return []; }
         // Alternatively, a static field definition should be provided, to specify labels for the fields
         outputFields: [
-            {key: 'id', label: 'ID'},
+            {key: 'id', type: "integer", label: 'ID'},
             {key: 'createdAt', label: 'Created At'},
             {key: 'name', label: 'Name'},
             {key: 'name_alias', label: 'Name alias'},
-            {key: 'firstname', label: 'Firstame'},
-            {key: 'authorId', label: 'Author ID'},
+            {key: 'firstname', label: 'Firstname'},
+            {key: 'authorId', type: "integer", label: 'Author ID'},
             {key: 'action', label: 'Action'},
             {key: 'client', label: 'Customer/Prospect 0/1/2/3'},
             {key: 'fournisseur', label: 'Supplier 0/1'},

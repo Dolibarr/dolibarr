@@ -22,7 +22,9 @@
  *       \brief      Page to define emailing targets
  */
 
-if (!defined('NOSTYLECHECK')) define('NOSTYLECHECK', '1');
+if (!defined('NOSTYLECHECK')) {
+	define('NOSTYLECHECK', '1');
+}
 
 require '../../main.inc.php';
 
@@ -41,22 +43,27 @@ if (!empty($conf->categorie->enabled)) {
 }
 
 // Security check
-if (!$user->rights->mailing->lire || $user->socid > 0)
+if (!$user->rights->mailing->lire || $user->socid > 0) {
 	accessforbidden();
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder)
+if (!$sortorder) {
 	$sortorder = "ASC";
-if (!$sortfield)
+}
+if (!$sortfield) {
 	$sortfield = "email";
+}
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
@@ -84,8 +91,7 @@ if (empty($template_id)) {
 	$result = $advTarget->fetch($template_id);
 }
 
-if ($result < 0)
-{
+if ($result < 0) {
 	setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 } else {
 	if (!empty($advTarget->id)) {
@@ -397,15 +403,11 @@ if ($_POST["button_removefilter"]) {
 	$search_email = '';
 }
 
-
 /*
  * View
  */
 
-
 llxHeader('', $langs->trans("MailAdvTargetRecipients"));
-
-
 
 $form = new Form($db);
 $formadvtargetemaling = new FormAdvTargetEmailing($db);
@@ -415,7 +417,7 @@ $formother = new FormOther($db);
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
+	print dol_get_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
 
 	print '<table class="border centpercent">';
 
@@ -426,7 +428,7 @@ if ($object->fetch($id) >= 0) {
 	print $form->showrefnav($object, 'id', $linkback);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+	print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
 
