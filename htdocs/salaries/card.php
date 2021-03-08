@@ -108,16 +108,15 @@ if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == '
 	$result = $object->set_paid($user);
 }
 
-if($action == 'setfk_user' && $user->rights->salaries->write) {
+if ($action == 'setfk_user' && $user->rights->salaries->write) {
 	$result = $object->fetch($id);
-	if ($result > 0){
+	if ($result > 0) {
 		$object->fk_user = $fk_user;
 		$object->update($user);
 	} else {
 		dol_print_error($db);
 		exit;
 	}
-
 }
 
 if ($action == 'reopen' && $user->rights->salaries->write) {
@@ -606,13 +605,13 @@ if ($id) {
 	}
 
 	//Employee
-	if($action != 'editfk_user') {
+	if ($action != 'editfk_user') {
 		$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
 
-		if(!empty($object->fk_user)) {
+		if (!empty($object->fk_user)) {
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
-			if ($result > 0){
+			if ($result > 0) {
 				$morehtmlref .= $userstatic->getNomUrl(1);
 			} else {
 				dol_print_error($db);
