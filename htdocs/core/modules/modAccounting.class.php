@@ -66,7 +66,7 @@ class modAccounting extends DolibarrModules
 		$this->depends = array("modFacture", "modBanque", "modTax"); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("accountancy", "compta");
 
@@ -292,7 +292,8 @@ class modAccounting extends DolibarrModules
 			'b.subledger_label'=>'SubledgerAccountLabel',
 			'b.label_operation'=>'LabelOperation',
 			'b.debit'=>"Debit",
-			'b.credit'=>"Credit"
+			'b.credit'=>"Credit",
+			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
@@ -309,7 +310,8 @@ class modAccounting extends DolibarrModules
 			'b.subledger_label'=>'',
 			'b.label_operation'=>"Sale of ABC",
 			'b.debit'=>"0",
-			'b.credit'=>"100"
+			'b.credit'=>"100",
+			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 
 		// Chart of accounts

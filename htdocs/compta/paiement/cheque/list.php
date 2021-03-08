@@ -35,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('banks', 'categories', 'bills'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', '', '');
 
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -46,12 +48,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "dp";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "dp";
+}
 
 $year = GETPOST("year");
 $month = GETPOST("month");
@@ -67,8 +75,7 @@ $accountstatic = new Account($db);
  */
 
 // If click on purge search criteria ?
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = '';
 	$search_amount = '';
 	$search_account = '';
@@ -93,20 +100,24 @@ $sql .= " WHERE bc.fk_bank_account = ba.rowid";
 $sql .= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)			$sql .= natural_search("bc.ref", $search_ref);
-if ($search_account > 0)	$sql .= " AND bc.fk_bank_account=".$search_account;
-if ($search_amount)			$sql .= natural_search("bc.amount", price2num($search_amount));
+if ($search_ref) {
+	$sql .= natural_search("bc.ref", $search_ref);
+}
+if ($search_account > 0) {
+	$sql .= " AND bc.fk_bank_account=".$search_account;
+}
+if ($search_amount) {
+	$sql .= natural_search("bc.amount", price2num($search_amount));
+}
 $sql .= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
 
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -116,20 +127,27 @@ $sql .= $db->plimit($limit + 1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.$contextpage;
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.$limit;
+	}
 
 	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
-	if (!empty($socid)) $url .= '&socid='.$socid;
+	if (!empty($socid)) {
+		$url .= '&socid='.$socid;
+	}
 	$newcardbutton = dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
@@ -150,7 +168,9 @@ if ($resql)
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
 	print '</td>';
@@ -178,10 +198,8 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	if ($num > 0)
-	{
-		while ($i < min($num, $limit))
-		{
+	if ($num > 0) {
+		while ($i < min($num, $limit)) {
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -199,8 +217,11 @@ if ($resql)
 
 			// Bank
 			print '<td>';
-			if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
-			else print '&nbsp;';
+			if ($objp->bid) {
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+			} else {
+				print '&nbsp;';
+			}
 			print '</td>';
 
 			// Number of cheques
@@ -220,9 +241,9 @@ if ($resql)
 			$i++;
 		}
 	} else {
-   		print '<tr class="oddeven">';
-   		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
-   		print '</tr>';
+		print '<tr class="oddeven">';
+		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
+		print '</tr>';
 	}
 	print "</table>";
 	print "</div>";

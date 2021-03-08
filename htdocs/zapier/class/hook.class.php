@@ -385,13 +385,13 @@ class Hook extends CommonObject
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*public function fetchLines()
-    {
-        $this->lines=array();
+	{
+		$this->lines=array();
 
-        // Load lines with object MyObjectLine
+		// Load lines with object MyObjectLine
 
-        return count($this->lines)?1:0;
-    }*/
+		return count($this->lines)?1:0;
+	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -542,11 +542,11 @@ class Hook extends CommonObject
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
 			/*
-             $hookmanager->initHooks(array('hookdao'));
-             $parameters=array('id'=>$this->id);
-             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-             */
+			 $hookmanager->initHooks(array('hookdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -621,7 +621,9 @@ class Hook extends CommonObject
 		}
 
 		$statusType = 'status5';
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status4';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -720,11 +722,11 @@ class Hook extends CommonObject
 /*
 class MyObjectLine
 {
-    // @var int ID
-    public $id;
-    // @var mixed Sample line property 1
-    public $prop1;
-    // @var mixed Sample line property 2
-    public $prop2;
+	// @var int ID
+	public $id;
+	// @var mixed Sample line property 1
+	public $prop1;
+	// @var mixed Sample line property 2
+	public $prop2;
 }
 */

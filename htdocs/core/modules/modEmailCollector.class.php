@@ -91,7 +91,7 @@ class modEmailCollector extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -108,8 +108,7 @@ class modEmailCollector extends DolibarrModules
 		);
 
 
-		if (!isset($conf->emailcollector) || !isset($conf->emailcollector->enabled))
-		{
+		if (!isset($conf->emailcollector) || !isset($conf->emailcollector->enabled)) {
 			$conf->emailcollector = new stdClass();
 			$conf->emailcollector->enabled = 0;
 		}
@@ -147,19 +146,19 @@ class modEmailCollector extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array();
 		/* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@dav',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
-        );
-        */
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@dav',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
 		// Boxes/Widgets
@@ -304,7 +303,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleFilterA3;
 				$sql[] = $sqlforexampleA4;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
@@ -346,7 +347,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleB2;
 				$sql[] = $sqlforexampleB3;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
@@ -375,7 +378,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleFilterC3;
 				$sql[] = $sqlforexampleC4;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity;
 		$tmpresql = $this->db->query($tmpsql);
@@ -403,7 +408,9 @@ class modEmailCollector extends DolibarrModules
 				$sql[] = $sqlforexampleFilterC3;
 				$sql[] = $sqlforexampleC4;
 			}
-		} else dol_print_error($this->db);
+		} else {
+			dol_print_error($this->db);
+		}
 
 		return $this->_init($sql, $options);
 	}

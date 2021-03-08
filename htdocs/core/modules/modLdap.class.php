@@ -67,7 +67,7 @@ class modLdap extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array(
@@ -85,6 +85,7 @@ class modLdap extends DolibarrModules
 		11=>array('LDAP_FIELD_PHONE', 'chaine', 'telephonenumber', '', 0),
 		12=>array('LDAP_FIELD_FAX', 'chaine', 'facsimiletelephonenumber', '', 0),
 		13=>array('LDAP_FIELD_MOBILE', 'chaine', 'mobile', '', 0),
+		14=>array('LDAP_GROUP_FILTER', 'chaine', '&(objectClass=groupOfNames)', '', 0),
 		);
 
 		// Boxes

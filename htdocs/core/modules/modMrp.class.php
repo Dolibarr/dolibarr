@@ -122,7 +122,7 @@ class modMrp extends DolibarrModules
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
-		$this->phpmin = array(5, 5); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(8, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -142,9 +142,9 @@ class modMrp extends DolibarrModules
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
-            'en_US:ParentCompany'=>'Parent company or reseller',
-            'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
-        )*/
+			'en_US:ParentCompany'=>'Parent company or reseller',
+			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
+		)*/
 
 		if (!isset($conf->mrp) || !isset($conf->mrp->enabled)) {
 			$conf->mrp = new stdClass();
@@ -182,28 +182,28 @@ class modMrp extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array();
 		/* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@mrp',
-            // List of tables we want to see into dictonnary editor
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),
-            // Label of tables
-            'tablib'=>array("Table1","Table2","Table3"),
-            // Request to select fields
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-            // Sort order
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
-            // List of fields (result of select to show dictionary)
-            'tabfield'=>array("code,label","code,label","code,label"),
-            // List of fields (list of fields to edit a record)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),
-            // List of fields (list of fields for insert)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),
-            // Name of columns with primary key (try to always name it 'rowid')
-            'tabrowid'=>array("rowid","rowid","rowid"),
-            // Condition to show each dictionary
-            'tabcond'=>array($conf->mrp->enabled,$conf->mrp->enabled,$conf->mrp->enabled)
-        );
-        */
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@mrp',
+			// List of tables we want to see into dictonnary editor
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),
+			// Label of tables
+			'tablib'=>array("Table1","Table2","Table3"),
+			// Request to select fields
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
+			// Sort order
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
+			// List of fields (result of select to show dictionary)
+			'tabfield'=>array("code,label","code,label","code,label"),
+			// List of fields (list of fields to edit a record)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),
+			// List of fields (list of fields for insert)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),
+			// Name of columns with primary key (try to always name it 'rowid')
+			'tabrowid'=>array("rowid","rowid","rowid"),
+			// Condition to show each dictionary
+			'tabcond'=>array($conf->mrp->enabled,$conf->mrp->enabled,$conf->mrp->enabled)
+		);
+		*/
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in mrp/core/boxes that contains a class to show a widget.
@@ -267,40 +267,40 @@ class modMrp extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT MO */
 		/*
-        $langs->load("mrp");
-        $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        $this->export_icon[$r]='mo@mrp';
-        $keyforclass = 'Mo'; $keyforclassfile='/mymobule/class/mo.class.php'; $keyforelement='mo';
-        include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-        $keyforselect='mo'; $keyforaliasextra='extra'; $keyforelement='mo';
-        include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-        $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mo as t';
-        $this->export_sql_end[$r] .=' WHERE 1 = 1';
-        $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
-        $r++; */
+		$langs->load("mrp");
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r]='mo@mrp';
+		$keyforclass = 'Mo'; $keyforclassfile='/mymobule/class/mo.class.php'; $keyforelement='mo';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		$keyforselect='mo'; $keyforaliasextra='extra'; $keyforelement='mo';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mo as t';
+		$this->export_sql_end[$r] .=' WHERE 1 = 1';
+		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
+		$r++; */
 		/* END MODULEBUILDER EXPORT MO */
 
 		// Imports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT MO */
 		/*
-         $langs->load("mrp");
-         $this->export_code[$r]=$this->rights_class.'_'.$r;
-         $this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-         $this->export_icon[$r]='mo@mrp';
-         $keyforclass = 'Mo'; $keyforclassfile='/mymobule/class/mo.class.php'; $keyforelement='mo';
-         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-         $keyforselect='mo'; $keyforaliasextra='extra'; $keyforelement='mo';
-         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-         //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-         $this->export_sql_start[$r]='SELECT DISTINCT ';
-         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mo as t';
-         $this->export_sql_end[$r] .=' WHERE 1 = 1';
-         $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
-         $r++; */
+		 $langs->load("mrp");
+		 $this->export_code[$r]=$this->rights_class.'_'.$r;
+		 $this->export_label[$r]='MoLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		 $this->export_icon[$r]='mo@mrp';
+		 $keyforclass = 'Mo'; $keyforclassfile='/mymobule/class/mo.class.php'; $keyforelement='mo';
+		 include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		 $keyforselect='mo'; $keyforaliasextra='extra'; $keyforelement='mo';
+		 include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		 //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		 $this->export_sql_start[$r]='SELECT DISTINCT ';
+		 $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mo as t';
+		 $this->export_sql_end[$r] .=' WHERE 1 = 1';
+		 $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('mo').')';
+		 $r++; */
 		/* END MODULEBUILDER IMPORT MO */
 	}
 
@@ -317,7 +317,9 @@ class modMrp extends DolibarrModules
 		global $conf, $langs;
 
 		$result = $this->_load_tables('/mrp/sql/');
-		if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -338,13 +340,11 @@ class modMrp extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/mrps';
 		$dest = $dirodt.'/template_mo.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

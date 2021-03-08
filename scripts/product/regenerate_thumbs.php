@@ -24,7 +24,9 @@
  * \brief Migrate pictures from old system prior to 3.7 to new path for 3.7+
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -90,14 +92,16 @@ foreach ($filearray as $keyf => $valf) {
 		// Create small thumbs for image
 		// Used on logon for example
 		$imgThumbSmall = vignette($vali['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbSmall))
+		if (preg_match('/Error/', $imgThumbSmall)) {
 			print $imgThumbSmall."\n";
+		}
 
 		// Create mini thumbs for image (Ratio is near 16/9)
 		// Used on menu or for setup page for example
 		$imgThumbMini = vignette($vali['fullname'], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
-		if (preg_match('/Error/', $imgThumbMini))
+		if (preg_match('/Error/', $imgThumbMini)) {
 			print $imgThumbMini."\n";
+		}
 	}
 }
 

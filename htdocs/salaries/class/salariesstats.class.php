@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (c) 2018      Fidesio              <contact@fidesio.com>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +66,11 @@ class SalariesStats extends Stats
 		if ($this->socid) {
 			$this->where .= " AND fk_soc = ".$this->socid;
 		}
-		if (is_array($this->userid) && count($this->userid) > 0) $this->where .= ' AND fk_user IN ('.join(',', $this->userid).')';
-		elseif ($this->userid > 0) $this->where .= ' AND fk_user = '.$this->userid;
+		if (is_array($this->userid) && count($this->userid) > 0) {
+			$this->where .= ' AND fk_user IN ('.join(',', $this->userid).')';
+		} elseif ($this->userid > 0) {
+			$this->where .= ' AND fk_user = '.$this->userid;
+		}
 	}
 
 
@@ -80,7 +84,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT YEAR(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		$sql .= " GROUP BY dm DESC";
-		$sql .= " WHERE ".$this->where;
+		//$sql .= " WHERE ".$this->where;
 
 		return $this->_getNbByYear($sql);
 	}
@@ -98,7 +102,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT MONTH(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE YEAR(datep) = ".$year;
-		$sql .= " AND ".$this->where;
+		//$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -120,7 +124,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT date_format(datep,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
-		$sql .= " AND ".$this->where;
+		//$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -141,7 +145,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT date_format(datep,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
-		$sql .= " AND ".$this->where;
+		//$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -157,7 +161,7 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT date_format(datep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE ".$this->where;
+		//$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
 

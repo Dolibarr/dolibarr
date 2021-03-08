@@ -180,7 +180,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeUpdate
 	 *
-	 * @param	Object		$localobject	Commande
+	 * @param	Commande		$localobject	Commande
 	 * @return	Commande
 	 *
 	 * @depends	testCommandeFetch
@@ -205,7 +205,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeValid
 	 *
-	 * @param   Object  $localobject    Order
+	 * @param   Commande  $localobject    Order
 	 * @return  Commande
 	 *
 	 * @depends	testCommandeUpdate
@@ -229,7 +229,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeCancel
 	 *
-	 * @param   Object  $localobject    Order
+	 * @param   Commande  $localobject    Order
 	 * @return  Commande
 	 *
 	 * @depends testCommandeValid
@@ -253,7 +253,7 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testCommandeOther
 	 *
-	 * @param   Object  $localobject    Order
+	 * @param   Commande  $localobject    Order
 	 * @return  int						Order id
 	 *
 	 * @depends testCommandeCancel

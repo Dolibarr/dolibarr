@@ -207,7 +207,7 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testActionCommUpdate
 	 *
-	 * @param	Object		$localobject	ActionComm
+	 * @param	ActionComm		$localobject	ActionComm
 	 * @return	int							Id action comm updated
 	 *
 	 * @depends	testActionCommFetch

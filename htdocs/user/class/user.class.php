@@ -611,31 +611,31 @@ class User extends CommonObject
 	public function loadDefaultValues()
 	{
 		global $conf;
+		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
+			// Load user->default_values for user. TODO Save this in memcached ?
+			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
-		// Load user->default_values for user. TODO Save this in memcached ?
-		$sql = "SELECT rowid, entity, type, page, param, value";
-		$sql .= " FROM ".MAIN_DB_PREFIX."default_values";
-		$sql .= " WHERE entity IN (".($this->entity > 0 ? $this->entity.", " : "").$conf->entity.")"; // Entity of user (if defined) + current entity
-		$sql .= " AND user_id IN (0".($this->id > 0 ? ", ".$this->id : "").")"; // User 0 (all) + me (if defined)
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->page) && !empty($obj->type) && !empty($obj->param)) {
-					// $obj->page is relative URL with or without params
-					// $obj->type can be 'filters', 'sortorder', 'createform', ...
-					// $obj->param is key or param
-					$pagewithoutquerystring = $obj->page;
-					$pagequeries = '';
-					$reg = array();
-					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg)) {	// There is query param
-						$pagewithoutquerystring = $reg[1];
-						$pagequeries = $reg[2];
+			$defaultValues = new DefaultValues($this->db);
+			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array($this->entity, $conf->entity)));	// User 0 (all) + me (if defined)
+
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+				dol_print_error($this->db);
+				return -1;
+			} elseif (count($result) > 0) {
+				foreach ($result as $defval) {
+					if (!empty($defval->page) && !empty($defval->type) && !empty($defval->param)) {
+						$pagewithoutquerystring = $defval->page;
+						$pagequeries = '';
+						$reg = array();
+						if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg)) {    // There is query param
+							$pagewithoutquerystring = $reg[1];
+							$pagequeries = $reg[2];
+						}
+						$this->default_values[$pagewithoutquerystring][$defval->type][$pagequeries ? $pagequeries : '_noquery_'][$defval->param] = $defval->value;
 					}
-					$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries ? $pagequeries : '_noquery_'][$obj->param] = $obj->value;
-					//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
 				}
 			}
-			// Sort by key, so _noquery_ is last
 			if (!empty($this->default_values)) {
 				foreach ($this->default_values as $a => $b) {
 					foreach ($b as $c => $d) {
@@ -643,13 +643,8 @@ class User extends CommonObject
 					}
 				}
 			}
-			$this->db->free($resql);
-
-			return 1;
-		} else {
-			dol_print_error($this->db);
-			return -1;
 		}
+		return 1;
 	}
 
 	/**
@@ -1402,6 +1397,7 @@ class User extends CommonObject
 		$this->address = $contact->address;
 		$this->zip = $contact->zip;
 		$this->town = $contact->town;
+		$this->setUpperOrLowerCase();
 		$this->state_id = $contact->state_id;
 		$this->country_id = $contact->country_id;
 		$this->employee = 0;
@@ -1474,12 +1470,13 @@ class User extends CommonObject
 		$this->civility_code = $member->civility_id;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
-		$this->gender = $member->gender;
+		$this->gender		= $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
 		$this->address      = $member->address;
 		$this->zip          = $member->zip;
 		$this->town         = $member->town;
+		$this->setUpperOrLowerCase();
 		$this->state_id     = $member->state_id;
 		$this->country_id   = $member->country_id;
 		$this->socialnetworks = $member->socialnetworks;
@@ -1637,6 +1634,7 @@ class User extends CommonObject
 		$this->address = empty($this->address) ? '' : $this->address;
 		$this->zip			= empty($this->zip) ? '' : $this->zip;
 		$this->town = empty($this->town) ? '' : $this->town;
+		$this->setUpperOrLowerCase();
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color = empty($this->color) ? '' : $this->color;
 		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
@@ -2500,9 +2498,8 @@ class User extends CommonObject
 			// Only picto
 			if ($withpictoimg > 0) {
 				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
-			}
-			// Picto must be a photo
-			else {
+			} else {
+				// Picto must be a photo
 				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 			}
 			$result .= $picto;
@@ -2737,9 +2734,9 @@ class User extends CommonObject
 			if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
 				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 			}
-		}
-		// Set LDAP password if possible
-		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') { // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
+		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+			// Set LDAP password if possible
+			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
@@ -2747,9 +2744,8 @@ class User extends CommonObject
 						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
-			}
-			// Use $this->pass_indatabase value if exists
-			elseif (!empty($this->pass_indatabase)) {
+			} elseif (!empty($this->pass_indatabase)) {
+				// Use $this->pass_indatabase value if exists
 				if (!empty($conf->global->LDAP_FIELD_PASSWORD)) {
 					$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}

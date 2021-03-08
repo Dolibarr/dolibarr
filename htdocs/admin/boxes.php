@@ -319,7 +319,7 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
-print '<td width="160" class="center">'.$langs->trans("ActivateOn").'</td>';
+print '<td width="160" class="center">'.$langs->trans("ActivatableOn").'</td>';
 print "</tr>\n";
 
 foreach ($boxtoadd as $box) {
@@ -377,7 +377,7 @@ print '<table class="tagtable liste">'."\n";
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
-print '<td class="center" width="160">'.$langs->trans("ActiveOn").'</td>';
+print '<td class="center" width="160">'.$langs->trans("ActivatableOn").'</td>';
 print '<td class="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Disable").'</td>';
 print '</tr>'."\n";

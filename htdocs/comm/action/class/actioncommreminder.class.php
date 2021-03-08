@@ -146,8 +146,12 @@ class ActionCommReminder extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->multicompany->enabled)) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 	}
 
 	/**
@@ -225,16 +229,25 @@ class ActionCommReminder extends CommonObject
 		global $langs;
 
 		$labelStatus = $langs->trans('ToDo');
-		if ($status == 1) $labelStatus = $langs->trans('Done');
-		elseif ($status == -1) $labelStatus = $langs->trans('Error');
+		if ($status == 1) {
+			$labelStatus = $langs->trans('Done');
+		} elseif ($status == -1) {
+			$labelStatus = $langs->trans('Error');
+		}
 
 		$labelStatusShort = $langs->trans('ToDo');
-		if ($status == 1) $labelStatus = $langs->trans('Done');
-		elseif ($status == -1) $labelStatus = $langs->trans('Error');
+		if ($status == 1) {
+			$labelStatus = $langs->trans('Done');
+		} elseif ($status == -1) {
+			$labelStatus = $langs->trans('Error');
+		}
 
 		$statusType = 'status5';
-		if ($status == 1) $statusType = 'status4';
-		elseif ($status == -1) $statusType = 'status8';
+		if ($status == 1) {
+			$statusType = 'status4';
+		} elseif ($status == -1) {
+			$statusType = 'status8';
+		}
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}

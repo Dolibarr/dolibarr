@@ -40,8 +40,7 @@ class FormCategory extends Form
 	{
 		global $langs;
 
-		if (empty($preSelected) || !is_array($preSelected))
-		{
+		if (empty($preSelected) || !is_array($preSelected)) {
 			$preSelected = array();
 		}
 
@@ -52,7 +51,8 @@ class FormCategory extends Form
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
-		$filter .= $langs->trans('Categories').": ";
+		$filter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
+		//$filter .= $langs->trans('Categories').": ";
 		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300");
 		$filter .= "</div>";
 

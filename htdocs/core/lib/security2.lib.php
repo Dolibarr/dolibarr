@@ -35,8 +35,12 @@
 function dol_getwebuser($mode)
 {
 	$t = '?';
-	if ($mode == 'user')  $t = getenv('APACHE_RUN_USER'); // $_ENV['APACHE_RUN_USER'] is empty
-	if ($mode == 'group') $t = getenv('APACHE_RUN_GROUP');
+	if ($mode == 'user') {
+		$t = getenv('APACHE_RUN_USER'); // $_ENV['APACHE_RUN_USER'] is empty
+	}
+	if ($mode == 'group') {
+		$t = getenv('APACHE_RUN_GROUP');
+	}
 	return $t;
 }
 
@@ -56,44 +60,44 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 	//global $dolauthmode;    // To return authentication finally used
 
 	// Check parameters
-	if ($entitytotest == '') $entitytotest = 1;
+	if ($entitytotest == '') {
+		$entitytotest = 1;
+	}
 
 	dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',', $authmode));
 	$login = '';
 
 	// Validation of login/pass/entity with standard modules
-	if (empty($login))
-	{
+	if (empty($login)) {
 		$test = true;
-		foreach ($authmode as $mode)
-		{
-			if ($test && $mode && !$login)
-			{
+		foreach ($authmode as $mode) {
+			if ($test && $mode && !$login) {
 				// Validation of login/pass/entity for mode $mode
 				$mode = trim($mode);
 				$authfile = 'functions_'.$mode.'.php';
 				$fullauthfile = '';
 
 				$dirlogin = array_merge(array("/core/login"), (array) $conf->modules_parts['login']);
-				foreach ($dirlogin as $reldir)
-				{
+				foreach ($dirlogin as $reldir) {
 					$dir = dol_buildpath($reldir, 0);
 					$newdir = dol_osencode($dir);
 
 					// Check if file found (do not use dol_is_file to avoid loading files.lib.php)
 					$tmpnewauthfile = $newdir.(preg_match('/\/$/', $newdir) ? '' : '/').$authfile;
-					if (is_file($tmpnewauthfile)) $fullauthfile = $tmpnewauthfile;
+					if (is_file($tmpnewauthfile)) {
+						$fullauthfile = $tmpnewauthfile;
+					}
 				}
 
 				$result = false;
-				if ($fullauthfile) $result = include_once $fullauthfile;
-				if ($fullauthfile && $result)
-				{
+				if ($fullauthfile) {
+					$result = include_once $fullauthfile;
+				}
+				if ($fullauthfile && $result) {
 					// Call function to check user/password
 					$function = 'check_user_password_'.$mode;
 					$login = call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
-					if ($login && $login != '--bad-login-validity--')	// Login is successfull
-					{
+					if ($login && $login != '--bad-login-validity--') {	// Login is successfull
 						$test = false; // To stop once at first login success
 						$conf->authmode = $mode; // This properties is defined only when logged to say what mode was successfully used
 						$dol_tz = GETPOST('tz');
@@ -117,8 +121,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 }
 
 
-if (!function_exists('dol_loginfunction'))
-{
+if (!function_exists('dol_loginfunction')) {
 	/**
 	 * Show Dolibarr default login page.
 	 * Part of this code is also duplicated into main.inc.php::top_htmlhead
@@ -147,7 +150,9 @@ if (!function_exists('dol_loginfunction'))
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.' '.constant('DOL_VERSION');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = $conf->global->MAIN_APPLICATION_TITLE;
+		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+			$title = $conf->global->MAIN_APPLICATION_TITLE;
+		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
@@ -169,13 +174,14 @@ if (!function_exists('dol_loginfunction'))
 		*/
 
 		// Select templates dir
-		if (!empty($conf->modules_parts['tpl']))	// Using this feature slow down application
-		{
+		if (!empty($conf->modules_parts['tpl'])) {	// Using this feature slow down application
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl/'));
-			foreach ($dirtpls as $reldir)
-			{
+			foreach ($dirtpls as $reldir) {
 				$tmp = dol_buildpath($reldir.'login.tpl.php');
-				if (file_exists($tmp)) { $template_dir = preg_replace('/login\.tpl\.php$/', '', $tmp); break; }
+				if (file_exists($tmp)) {
+					$template_dir = preg_replace('/login\.tpl\.php$/', '', $tmp);
+					break;
+				}
 			}
 		} else {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
@@ -184,18 +190,25 @@ if (!function_exists('dol_loginfunction'))
 		// Set cookie for timeout management
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
-		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+			setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", null, (empty($dolibarr_main_force_https) ? false : true), true);
+		}
 
-		if (GETPOST('urlfrom', 'alpha')) $_SESSION["urlfrom"] = GETPOST('urlfrom', 'alpha');
-		else unset($_SESSION["urlfrom"]);
+		if (GETPOST('urlfrom', 'alpha')) {
+			$_SESSION["urlfrom"] = GETPOST('urlfrom', 'alpha');
+		} else {
+			unset($_SESSION["urlfrom"]);
+		}
 
-		if (!GETPOST("username", 'alpha')) $focus_element = 'username';
-		else $focus_element = 'password';
+		if (!GETPOST("username", 'alpha')) {
+			$focus_element = 'username';
+		} else {
+			$focus_element = 'password';
+		}
 
 		$demologin = '';
 		$demopassword = '';
-		if (!empty($dolibarr_main_demo))
-		{
+		if (!empty($dolibarr_main_demo)) {
 			$tab = explode(',', $dolibarr_main_demo);
 			$demologin = $tab[0];
 			$demopassword = $tab[1];
@@ -219,23 +232,21 @@ if (!function_exists('dol_loginfunction'))
 		$width = 0;
 		$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
-		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
-		{
+		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
-		{
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))	{
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 			$width = 128;
-		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
-		{
+		} elseif (!empty($mysoc->logo_squarred_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
+		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 		}
 
 		// Security graphical code
 		$captcha = 0;
 		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
-		{
+		if (function_exists("imagecreatefrompng") && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
 			$captcha = 1;
 			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
 		}
@@ -243,23 +254,19 @@ if (!function_exists('dol_loginfunction'))
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK) || empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
-		{
-			if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
-			{
+		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK) || empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) {
+			if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
 				$forgetpasslink = 1;
 			}
 
-			if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK))
-			{
+			if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) {
 				$helpcenterlink = 1;
 			}
 		}
 
 		// Home message
 		$main_home = '';
-		if (!empty($conf->global->MAIN_HOME))
-		{
+		if (!empty($conf->global->MAIN_HOME)) {
 			$substitutionarray = getCommonSubstitutionArray($langs);
 			complete_substitutions_array($substitutionarray, $langs);
 			$texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
@@ -274,11 +281,17 @@ if (!function_exists('dol_loginfunction'))
 		$dol_loginmesg = (!empty($_SESSION["dol_loginmesg"]) ? $_SESSION["dol_loginmesg"] : '');
 
 		$favicon = DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png';
-		if (!empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
-		if (!empty($conf->global->MAIN_FAVICON_URL)) $favicon = $conf->global->MAIN_FAVICON_URL;
+		if (!empty($mysoc->logo_squarred_mini)) {
+			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		if (!empty($conf->global->MAIN_FAVICON_URL)) {
+			$favicon = $conf->global->MAIN_FAVICON_URL;
+		}
 
 		$jquerytheme = 'base';
-		if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+		if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) {
+			$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+		}
 
 		// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_no_mouse_hover
 		$dol_hide_topmenu = GETPOST('dol_hide_topmenu', 'int');
@@ -308,18 +321,28 @@ if (!function_exists('dol_loginfunction'))
 function makesalt($type = CRYPT_SALT_LENGTH)
 {
 	dol_syslog("makesalt type=".$type);
-	switch ($type)
-	{
+	switch ($type) {
 		case 12:	// 8 + 4
-			$saltlen = 8; $saltprefix = '$1$'; $saltsuffix = '$'; break;
+			$saltlen = 8;
+			$saltprefix = '$1$';
+			$saltsuffix = '$';
+			break;
 		case 8:		// 8 (Pour compatibilite, ne devrait pas etre utilise)
-			$saltlen = 8; $saltprefix = '$1$'; $saltsuffix = '$'; break;
+			$saltlen = 8;
+			$saltprefix = '$1$';
+			$saltsuffix = '$';
+			break;
 		case 2:		// 2
 		default: 	// by default, fall back on Standard DES (should work everywhere)
-			$saltlen = 2; $saltprefix = ''; $saltsuffix = ''; break;
+			$saltlen = 2;
+			$saltprefix = '';
+			$saltsuffix = '';
+			break;
 	}
 	$salt = '';
-	while (dol_strlen($salt) < $saltlen) $salt .= chr(mt_rand(64, 126));
+	while (dol_strlen($salt) < $saltlen) {
+		$salt .= chr(mt_rand(64, 126));
+	}
 
 	$result = $saltprefix.$salt.$saltsuffix;
 	dol_syslog("makesalt return=".$result);
@@ -339,33 +362,27 @@ function encodedecode_dbpassconf($level = 0)
 	$passwd = '';
 	$passwd_crypted = '';
 
-	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php', 'r'))
-	{
-		while (!feof($fp))
-		{
+	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php', 'r')) {
+		while (!feof($fp)) {
 			$buffer = fgets($fp, 4096);
 
 			$lineofpass = 0;
 
-			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg))	// Old way to save crypted value
-			{
+			if (preg_match('/^[^#]*dolibarr_main_db_encrypted_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {	// Old way to save crypted value
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
-				if (!empty($val))
-				{
+				if (!empty($val)) {
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
 					$lineofpass = 1;
 				}
-			} elseif (preg_match('/^[^#]*dolibarr_main_db_pass[\s]*=[\s]*(.*)/i', $buffer, $reg))
-			{
+			} elseif (preg_match('/^[^#]*dolibarr_main_db_pass[\s]*=[\s]*(.*)/i', $buffer, $reg)) {
 				$val = trim($reg[1]); // This also remove CR/LF
 				$val = preg_replace('/^["\']/', '', $val);
 				$val = preg_replace('/["\'][\s;]*$/', '', $val);
-				if (preg_match('/crypted:/i', $buffer))
-				{
+				if (preg_match('/crypted:/i', $buffer)) {
 					$val = preg_replace('/crypted:/i', '', $val);
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
@@ -379,15 +396,12 @@ function encodedecode_dbpassconf($level = 0)
 			}
 
 			// Output line
-			if ($lineofpass)
-			{
+			if ($lineofpass) {
 				// Add value at end of file
-				if ($level == 0)
-				{
+				if ($level == 0) {
 					$config .= '$dolibarr_main_db_pass=\''.$passwd.'\';'."\n";
 				}
-				if ($level == 1)
-				{
+				if ($level == 1) {
 					$config .= '$dolibarr_main_db_pass=\'crypted:'.$passwd_crypted.'\';'."\n";
 				}
 
@@ -401,8 +415,7 @@ function encodedecode_dbpassconf($level = 0)
 
 		// Write new conf file
 		$file = DOL_DOCUMENT_ROOT.'/conf/conf.php';
-		if ($fp = @fopen($file, 'w'))
-		{
+		if ($fp = @fopen($file, 'w')) {
 			fputs($fp, $config);
 			fflush($fp);
 			fclose($fp);
@@ -437,8 +450,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	global $db, $conf, $langs, $user;
 
 	$generated_password = '';
-	if ($generic)
-	{
+	if ($generic) {
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
 		$numbers = "1234567890";
@@ -446,8 +458,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		$nbofchar = round($length / 3);
 		$nbofcharlast = ($length - 2 * $nbofchar);
 		//var_dump($nbofchar.'-'.$nbofcharlast);
-		if (function_exists('random_int'))	// Cryptographic random
-		{
+		if (function_exists('random_int')) {	// Cryptographic random
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
 				$tmp = random_int(0, $max);
@@ -485,8 +496,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 
 			$generated_password = str_shuffle($randomCode);
 		}
-	} elseif (!empty($conf->global->USER_PASSWORD_GENERATED))
-	{
+	} elseif (!empty($conf->global->USER_PASSWORD_GENERATED)) {
 		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier = $nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
@@ -497,8 +507,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 	}
 
 	// Do we have to discard some alphabetic characters ?
-	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0)
-	{
+	if (is_array($replaceambiguouschars) && count($replaceambiguouschars) > 0) {
 		$numbers = "ABCDEF";
 		$max = strlen($numbers) - 1;
 		if (function_exists('random_int')) {	// Cryptographic random

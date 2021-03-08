@@ -98,11 +98,12 @@ class box_external_rss extends ModeleBoxes
 		$link = $rssparser->getLink();
 
 		$title = $langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
-		if ($result < 0 || !empty($rssparser->error))
-		{
+		if ($result < 0 || !empty($rssparser->error)) {
 			// Show warning
 			$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ? dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
-			if ($rssparser->error) $errormessage .= " - ".$rssparser->error;
+			if ($rssparser->error) {
+				$errormessage .= " - ".$rssparser->error;
+			}
 			$title .= " ".img_error($errormessage);
 			$this->info_box_head = array('text' => $title, 'limit' => 0);
 		} else {
@@ -119,34 +120,44 @@ class box_external_rss extends ModeleBoxes
 		$items = $rssparser->getItems();
 		//print '<pre>'.print_r($items,true).'</pre>';
 		$nbitems = count($items);
-		for ($line = 0; $line < $max && $line < $nbitems; $line++)
-		{
+		for ($line = 0; $line < $max && $line < $nbitems; $line++) {
 			$item = $items[$line];
 
 			// Feed common fields
 			$href = $item['link'];
 			$title = urldecode($item['title']);
 			$date = $item['date_timestamp']; // date will be empty if conversion into timestamp failed
-			if ($rssparser->getFormat() == 'rss')   // If RSS
-			{
-				if (!$date && isset($item['pubdate']))    $date = $item['pubdate'];
-				if (!$date && isset($item['dc']['date'])) $date = $item['dc']['date'];
+			if ($rssparser->getFormat() == 'rss') {   // If RSS
+				if (!$date && isset($item['pubdate'])) {
+					$date = $item['pubdate'];
+				}
+				if (!$date && isset($item['dc']['date'])) {
+					$date = $item['dc']['date'];
+				}
 				//$item['dc']['language']
 				//$item['dc']['publisher']
 			}
-			if ($rssparser->getFormat() == 'atom')	// If Atom
-			{
-				if (!$date && isset($item['issued']))    $date = $item['issued'];
-				if (!$date && isset($item['modified']))  $date = $item['modified'];
+			if ($rssparser->getFormat() == 'atom') {	// If Atom
+				if (!$date && isset($item['issued'])) {
+					$date = $item['issued'];
+				}
+				if (!$date && isset($item['modified'])) {
+					$date = $item['modified'];
+				}
 				//$item['issued']
 				//$item['modified']
 				//$item['atom_content']
 			}
-			if (is_numeric($date)) $date = dol_print_date($date, "dayhour");
+			if (is_numeric($date)) {
+				$date = dol_print_date($date, "dayhour");
+			}
 
 			$isutf8 = utf8_check($title);
-			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') $title = utf8_encode($title);
-			elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $title = utf8_decode($title);
+			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
+				$title = utf8_encode($title);
+			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
+				$title = utf8_decode($title);
+			}
 
 			$title = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $title); // Gere probleme des apostrophes mal codee/decodee par utf8
 			$title = preg_replace("/^\s+/", "", $title); // Supprime espaces de debut
@@ -155,8 +166,11 @@ class box_external_rss extends ModeleBoxes
 			$tooltip = $title;
 			$description = !empty($item['description']) ? $item['description'] : '';
 			$isutf8 = utf8_check($description);
-			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') $description = utf8_encode($description);
-			elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') $description = utf8_decode($description);
+			if (!$isutf8 && $conf->file->character_set_client == 'UTF-8') {
+				$description = utf8_encode($description);
+			} elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') {
+				$description = utf8_decode($description);
+			}
 			$description = preg_replace("/([[:alnum:]])\?([[:alnum:]])/", "\\1'\\2", $description);
 			$description = preg_replace("/^\s+/", "", $description);
 			$description = str_replace("\r\n", "", $description);

@@ -23,13 +23,27 @@
  *       \brief      File to return Ajax response on product list request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
 require '../../main.inc.php';
 
@@ -49,7 +63,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 top_httphead();
 
-if (empty($htmlname) && !GETPOST('mode', 'aZ09')) return;
+if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
+	return;
+}
 
 // Mode to get list of projects
 if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {

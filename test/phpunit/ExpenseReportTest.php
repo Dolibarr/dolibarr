@@ -195,7 +195,7 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testExpenseReportValid
 	 *
-	 * @param   Object $localobject     Supplier order
+	 * @param   ExpenseReport $localobject     ExpenseReport
 	 * @return  void
 	 *
 	 * @depends testExpenseReportFetch
@@ -219,7 +219,7 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testExpenseReportApprove
 	 *
-	 * @param   Object $localobject Supplier order
+	 * @param   ExpenseReport $localobject ExpenseReport
 	 * @return  void
 	 *
 	 * @depends testExpenseReportValid
@@ -243,7 +243,7 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testExpenseReportCancel
 	 *
-	 * @param   Object  $localobject        Supplier order
+	 * @param   ExpenseReport  $localobject        ExpenseReport
 	 * @return  void
 	 *
 	 * @depends testExpenseReportApprove
@@ -267,7 +267,7 @@ class ExpenseReportTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testExpenseReportOther
 	 *
-	 * @param   Object $localobject     Supplier order
+	 * @param   ExpenseReport $localobject     ExpenseReport
 	 * @return  void
 	 *
 	 * @depends testExpenseReportCancel

@@ -189,7 +189,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testAccountingAccountUpdate
 	 *
-	 * @param	Object		$localobject	AccountingAccount
+	 * @param	AccountingAccount		$localobject	AccountingAccount
 	 * @return	int							ID accounting account
 	 *
 	 * @depends	testAccountingAccountFetch

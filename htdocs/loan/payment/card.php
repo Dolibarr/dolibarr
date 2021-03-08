@@ -24,7 +24,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
-if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "loan"));
@@ -33,15 +35,18 @@ $langs->loadLangs(array("bills", "banks", "companies", "loan"));
 $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
-if ($id > 0)
-{
+if ($id > 0) {
 	$result = $payment->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 
 
@@ -50,8 +55,7 @@ if ($id > 0)
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->delete)
-{
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->delete) {
 	$db->begin();
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".$payment->fk_bank;
@@ -60,8 +64,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 	$fk_loan = $payment->fk_loan;
 
 	$result = $payment->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 		header("Location: ".DOL_URL_ROOT."/loan/card.php?id=".$fk_loan);
 		exit;
@@ -93,8 +96,7 @@ print dol_get_fiche_head($head, $hselected, $langs->trans("PaymentLoan"), -1, 'p
 /*
  * Confirm deletion of the payment
  */
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -127,10 +129,8 @@ print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($payment->note_p
 print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($payment->note_public).'</td></tr>';
 
 // Bank account
-if (!empty($conf->banque->enabled))
-{
-	if ($payment->bank_account)
-	{
+if (!empty($conf->banque->enabled)) {
+	if ($payment->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($payment->bank_line);
 
@@ -149,7 +149,7 @@ print '</div>';
 
 
 /*
- * List of loans payed
+ * List of loans paid
  */
 
 $disable_delete = 0;
@@ -161,8 +161,7 @@ $sql .= ' AND pl.rowid = '.$payment->id;
 
 dol_syslog("loan/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
@@ -176,10 +175,8 @@ if ($resql)
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
-	if ($num > 0)
-	{
-		while ($i < $num)
-		{
+	if ($num > 0) {
+		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -194,13 +191,12 @@ if ($resql)
 			// print '<td class="right">'.price($objp->capital).'</td>';
 			// Status
 			print '<td class="center">'.$loan->getLibStatut(4, $objp->amount_capital).'</td>';
-			// Amount payed
+			// Amount paid
 			$amount_payed = $objp->amount_capital + $objp->amount_insurance + $objp->amount_interest;
 
 			print '<td class="right">'.price($amount_payed).'</td>';
 			print "</tr>\n";
-			if ($objp->paid == 1)	// If at least one invoice is paid, disable delete
-			{
+			if ($objp->paid == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
 			$total = $total + $objp->amount_capital;
@@ -224,10 +220,8 @@ print '</div>';
 
 print '<div class="tabsAction">';
 
-if (empty($action) && !empty($user->rights->loan->delete))
-{
-	if (!$disable_delete)
-	{
+if (empty($action) && !empty($user->rights->loan->delete)) {
+	if (!$disable_delete) {
 		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';

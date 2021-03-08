@@ -47,26 +47,30 @@ if ($user->socid) {
 	$action = '';
 	$socid = $user->socid;
 }
-if ($user->socid)
+if ($user->socid) {
 	$socid = $user->socid;
+}
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder)
+if (!$sortorder) {
 	$sortorder = "ASC";
-if (!$sortfield)
+}
+if (!$sortfield) {
 	$sortfield = "name";
+}
 
 $object = new Account($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 	$account = $object->id; // Force the search field on id of account
 }
@@ -75,8 +79,7 @@ $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
 // Define number of receipt to show (current, previous or next one ?)
 $found = false;
-if ($_GET["rel"] == 'prev')
-{
+if ($_GET["rel"] == 'prev') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -86,18 +89,15 @@ if ($_GET["rel"] == 'prev')
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$numrows = $db->num_rows($resql);
-		if ($numrows > 0)
-		{
+		if ($numrows > 0) {
 			$obj = $db->fetch_object($resql);
 			$numref = $obj->num;
 			$found = true;
 		}
 	}
-} elseif ($_GET["rel"] == 'next')
-{
+} elseif ($_GET["rel"] == 'next') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -107,11 +107,9 @@ if ($_GET["rel"] == 'prev')
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$numrows = $db->num_rows($resql);
-		if ($numrows > 0)
-		{
+		if ($numrows > 0) {
 			$obj = $db->fetch_object($resql);
 			$numref = $obj->num;
 			$found = true;
@@ -127,13 +125,12 @@ if ($_GET["rel"] == 'prev')
  * Actions
  */
 
-if (!empty($numref))
-{
+if (!empty($numref)) {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($numref);
 }
 $backtopage = $_SERVER['PHP_SELF']."?account=".$id."&num=".$numref;
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -189,14 +186,14 @@ if ($id > 0 || !empty($ref)) {
 		$permission = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
 		$param = '&id='.$object->id.'&num='.urlencode($numref);
-		$moreparam = '&num='.urlencode($numref); ;
+		$moreparam = '&num='.urlencode($numref);
 		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($numref)."/";
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}
 } else {
-	Header('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

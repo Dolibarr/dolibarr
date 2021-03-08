@@ -27,14 +27,17 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'salaries'));
 
 // Security check
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -47,8 +50,7 @@ $list = array(
  * Actions
  */
 
-if ($action == 'update')
-{
+if ($action == 'update') {
 	$error = 0;
 
 	foreach ($list as $constname) {
@@ -59,11 +61,18 @@ if ($action == 'update')
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+$reg = array();
+if (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
+	// Set boolean (on/off) constants
+	if (!dolibarr_set_const($db, $reg[2], ($reg[1] === 'set' ? '1' : '0'), 'chaine', 0, '', $conf->entity) > 0) {
+		dol_print_error($db);
 	}
 }
 
@@ -74,7 +83,9 @@ if ($action == 'update')
 llxHeader('', $langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+if (!empty($conf->accounting->enabled)) {
+	$formaccounting = new FormAccounting($db);
+}
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('SalariesSetup'), $linkback, 'title_setup');
@@ -99,8 +110,7 @@ print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60">'.$langs->trans("Value")."</td>\n";
 print "</tr>\n";
 
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -109,8 +119,7 @@ foreach ($list as $key)
 
 	// Value
 	print '<td>';
-	if (!empty($conf->accounting->enabled))
-	{
+	if (!empty($conf->accounting->enabled)) {
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
@@ -126,7 +135,21 @@ print "</table>\n";
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
-print '</form>';
+print '</form><br>';
+
+echo '<div>';
+echo '<table class="noborder centpercent">';
+echo '<thead>';
+echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '</thead>';
+echo '<tbody>';
+
+$key = 'CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT';
+echo '<tr><td>', $langs->trans($key), '</td><td>', ajax_constantonoff($key), '</td></tr>';
+
+echo '</tbody>';
+echo '</table>';
+echo '</div>';
 
 // End of page
 llxFooter();

@@ -310,9 +310,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
 		$_POST['param8c']='< with space after is ok';
+		$_POST['param8d']='<abc123 is html to clean';
+		$_POST['param8e']='<123abc is not html to clean';
 		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 		$_POST["param11"]=' Name <email@email.com> ';
+		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
 
 		$result=GETPOST('id', 'int');              // Must return nothing
 		print __METHOD__." result=".$result."\n";
@@ -386,6 +389,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_POST['param8c'], $result, 'Test a string with non closing html tag with alphanohtml');
 
+		$result=GETPOST("param8d", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc123 is html to clean', $result, 'Test a string with non closing html tag with alphanohtml');
+
+		$result=GETPOST("param8e", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($_POST['param8e'], $result, 'Test a string with non closing html tag with alphanohtml');
+
 		$result=GETPOST("param9", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_POST["param9"], $result);
@@ -401,6 +412,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param11", 'alphawithlgt');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param11"]), $result, 'Test an email string with alphawithlgt');
+
+		$result=GETPOST("param12", 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
 		return $result;
 	}

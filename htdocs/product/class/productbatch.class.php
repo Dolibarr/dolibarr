@@ -107,15 +107,15 @@ class Productbatch extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-		if (!$error)
-		{
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
+		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
+		if ($error) {
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
@@ -155,10 +155,8 @@ class Productbatch extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -197,8 +195,7 @@ class Productbatch extends CommonObject
 		$this->cleanParam();
 
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
-		if ($this->qty < 0)
-		{
+		if ($this->qty < 0) {
 		}
 
 		// Update request
@@ -215,13 +212,13 @@ class Productbatch extends CommonObject
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -247,21 +244,20 @@ class Productbatch extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
 			$sql .= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -288,7 +284,7 @@ class Productbatch extends CommonObject
 
 		$object = new Productbatch($this->db);
 
- 		$this->db->begin();
+		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
@@ -303,22 +299,19 @@ class Productbatch extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$this->errors = array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
 		} else {
@@ -353,10 +346,18 @@ class Productbatch extends CommonObject
 	 */
 	private function cleanParam()
 	{
-		if (isset($this->fk_product_stock)) $this->fk_product_stock = (int) trim($this->fk_product_stock);
-		if (isset($this->batch)) $this->batch = trim($this->batch);
-		if (isset($this->qty)) $this->qty = (float) trim($this->qty);
-		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (isset($this->fk_product_stock)) {
+			$this->fk_product_stock = (int) trim($this->fk_product_stock);
+		}
+		if (isset($this->batch)) {
+			$this->batch = trim($this->batch);
+		}
+		if (isset($this->qty)) {
+			$this->qty = (float) trim($this->qty);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 	}
 
 	/**
@@ -385,19 +386,25 @@ class Productbatch extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
 
-		if (!empty($eatby)) array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
-		if (!empty($sellby)) array_push($where, " sellby = '".$this->db->idate($sellby)."'"); // deprecated
+		if (!empty($eatby)) {
+			array_push($where, " eatby = '".$this->db->idate($eatby)."'"); // deprecated
+		}
+		if (!empty($sellby)) {
+			array_push($where, " sellby = '".$this->db->idate($sellby)."'"); // deprecated
+		}
 
-		if (!empty($batch_number)) $sql .= " AND batch = '".$this->db->escape($batch_number)."'";
+		if (!empty($batch_number)) {
+			$sql .= " AND batch = '".$this->db->escape($batch_number)."'";
+		}
 
-		if (!empty($where)) $sql .= " AND (".implode(" OR ", $where).")";
+		if (!empty($where)) {
+			$sql .= " AND (".implode(" OR ", $where).")";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -414,7 +421,7 @@ class Productbatch extends CommonObject
 
 			return 1;
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -441,27 +448,26 @@ class Productbatch extends CommonObject
 		$sql .= " t.batch,";
 		$sql .= " t.qty,";
 		$sql .= " t.import_key";
-		if ($fk_product > 0)
-		{
+		if ($fk_product > 0) {
 			$sql .= ", pl.rowid as lotid, pl.eatby as eatby, pl.sellby as sellby";
 			// TODO May add extrafields to ?
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t";
-		if ($fk_product > 0)
-		{
+		if ($fk_product > 0) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.fk_product = ".$fk_product." AND pl.batch = t.batch";
 			// TODO May add extrafields to ?
 		}
 		$sql .= " WHERE fk_product_stock=".$fk_product_stock;
-		if ($with_qty) $sql .= " AND t.qty <> 0";
+		if ($with_qty) {
+			$sql .= " AND t.qty <> 0";
+		}
 
 		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				$tmp = new Productbatch($db);

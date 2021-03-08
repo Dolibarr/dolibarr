@@ -35,11 +35,17 @@ $text_color = array(0, 0, 0);
 /* ******************************************************************** */
 /*                          FONT FILE                                   */
 /* ******************************************************************** */
-if (defined('DOL_DEFAULT_TTF_BOLD')) $font_loc = constant('DOL_DEFAULT_TTF_BOLD');
+if (defined('DOL_DEFAULT_TTF_BOLD')) {
+	$font_loc = constant('DOL_DEFAULT_TTF_BOLD');
+}
 // Automatic-Detection of Font if running Windows
 // @CHANGE LDR
-if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR'])) $font_loc = $_SERVER['WINDIR'].'\Fonts\arialbd.ttf';
-if (empty($font_loc)) die('DOL_DEFAULT_TTF_BOLD must de defined with full path to a TTF font.');
+if (isset($_SERVER['WINDIR']) && @file_exists($_SERVER['WINDIR'])) {
+	$font_loc = $_SERVER['WINDIR'].'\Fonts\arialbd.ttf';
+}
+if (empty($font_loc)) {
+	die('DOL_DEFAULT_TTF_BOLD must de defined with full path to a TTF font.');
+}
 
 
 /* ******************************************************************** */
@@ -50,8 +56,11 @@ if (empty($font_loc)) die('DOL_DEFAULT_TTF_BOLD must de defined with full path t
 * genbarcode is needed to render encodings other than EAN-12/EAN-13/ISBN
 */
 
-if (defined('PHP-BARCODE_PATH_COMMAND')) $genbarcode_loc = constant('PHP-BARCODE_PATH_COMMAND');
-else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+if (defined('PHP-BARCODE_PATH_COMMAND')) {
+	$genbarcode_loc = constant('PHP-BARCODE_PATH_COMMAND');
+} else {
+	$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+}
 
 
 
@@ -70,15 +79,19 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
 	dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
 	$bars = barcode_encode($code, $encoding);
-	if (!$bars || !empty($bars['error']))
-	{
+	if (!$bars || !empty($bars['error'])) {
 		// Return error message instead of array
-		if (empty($bars['error'])) $error = 'Bad Value '.$code.' for encoding '.$encoding;
-		else $error = $bars['error'];
+		if (empty($bars['error'])) {
+			$error = 'Bad Value '.$code.' for encoding '.$encoding;
+		} else {
+			$error = $bars['error'];
+		}
 		dol_syslog('barcode.lib.php::barcode_print '.$error, LOG_ERR);
 		return $error;
 	}
-	if (!$mode) $mode = "png";
+	if (!$mode) {
+		$mode = "png";
+	}
 	//if (preg_match("/^(text|txt|plain)$/i",$mode)) print barcode_outtext($bars['text'],$bars['bars']);
 	//elseif (preg_match("/^(html|htm)$/i",$mode)) print barcode_outhtml($bars['text'],$bars['bars'], $scale,0, 0);
 	//else
@@ -112,8 +125,7 @@ function barcode_encode($code, $encoding)
 {
 	global $genbarcode_loc;
 
-	if (
-	(preg_match("/^ean$/i", $encoding))
+	if ((preg_match("/^ean$/i", $encoding))
 
 	|| (($encoding) && (preg_match("/^isbn$/i", $encoding))
 	&& ((strlen($code) == 9 || strlen($code) == 10) ||
@@ -122,13 +134,11 @@ function barcode_encode($code, $encoding)
 
 	|| ((!isset($encoding) || !$encoding || (preg_match("/^ANY$/i", $encoding)))
 	&& (preg_match("/^[0-9]{12,13}$/", $code)))
-	)
-	{
+	) {
 		/* use built-in EAN-Encoder */
 		dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
 		$bars = barcode_encode_ean($code, $encoding);
-	} elseif (file_exists($genbarcode_loc))	// For example C39
-	{
+	} elseif (file_exists($genbarcode_loc)) {	// For example C39
 		/* use genbarcode */
 		dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
 		$bars = barcode_encode_genbarcode($code, $encoding);
@@ -157,11 +167,16 @@ function barcode_encode($code, $encoding)
  */
 function barcode_gen_ean_sum($ean)
 {
-	$even = true; $esum = 0; $osum = 0;
+	$even = true;
+	$esum = 0;
+	$osum = 0;
 	$ln = strlen($ean) - 1;
-	for ($i = $ln; $i >= 0; $i--)
-	{
-		if ($even) $esum += $ean[$i]; else $osum += $ean[$i];
+	for ($i = $ln; $i >= 0; $i--) {
+		if ($even) {
+			$esum += $ean[$i];
+		} else {
+			$osum += $ean[$i];
+		}
 		$even = !$even;
 	}
 	return (10 - ((3 * $esum + $osum) % 10)) % 10;
@@ -181,18 +196,19 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	$guards = array("9a1a", "1a1a1", "a1a");
 
 	$ean = trim($ean);
-	if (preg_match("/[^0-9]/i", $ean))
-	{
+	if (preg_match("/[^0-9]/i", $ean)) {
 		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
 	}
 	$encoding = strtoupper($encoding);
-	if ($encoding == "ISBN")
-	{
-		if (!preg_match("/^978/", $ean)) $ean = "978".$ean;
+	if ($encoding == "ISBN") {
+		if (!preg_match("/^978/", $ean)) {
+			$ean = "978".$ean;
+		}
 	}
-	if (preg_match("/^978/", $ean)) $encoding = "ISBN";
-	if (strlen($ean) < 12 || strlen($ean) > 13)
-	{
+	if (preg_match("/^978/", $ean)) {
+		$encoding = "ISBN";
+	}
+	if (strlen($ean) < 12 || strlen($ean) > 13) {
 		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
 	}
 
@@ -200,24 +216,34 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	$eansum = barcode_gen_ean_sum($ean);
 	$ean .= $eansum;
 	$line = $guards[0];
-	for ($i = 1; $i < 13; $i++)
-	{
+	for ($i = 1; $i < 13; $i++) {
 		$str = $digits[$ean[$i]];
-		if ($i < 7 && $mirror[$ean[0]][$i - 1] == 1) $line .= strrev($str); else $line .= $str;
-		if ($i == 6) $line .= $guards[1];
+		if ($i < 7 && $mirror[$ean[0]][$i - 1] == 1) {
+			$line .= strrev($str);
+		} else {
+			$line .= $str;
+		}
+		if ($i == 6) {
+			$line .= $guards[1];
+		}
 	}
 	$line .= $guards[2];
 
 	/* create text */
 	$pos = 0;
 	$text = "";
-	for ($a = 0; $a < 13; $a++)
-	{
-		if ($a > 0) $text .= " ";
+	for ($a = 0; $a < 13; $a++) {
+		if ($a > 0) {
+			$text .= " ";
+		}
 		$text .= "$pos:12:{$ean[$a]}";
-		if ($a == 0) $pos += 12;
-		elseif ($a == 6) $pos += 12;
-		else $pos += 7;
+		if ($a == 0) {
+			$pos += 12;
+		} elseif ($a == 6) {
+			$pos += 12;
+		} else {
+			$pos += 7;
+		}
 	}
 
 	return array(
@@ -240,8 +266,12 @@ function barcode_encode_genbarcode($code, $encoding)
 	global $genbarcode_loc;
 
 	// Clean parameters
-	if (preg_match("/^ean$/i", $encoding) && strlen($code) == 13) $code = substr($code, 0, 12);
-	if (!$encoding) $encoding = "ANY";
+	if (preg_match("/^ean$/i", $encoding) && strlen($code) == 13) {
+		$code = substr($code, 0, 12);
+	}
+	if (!$encoding) {
+		$encoding = "ANY";
+	}
 	$encoding = preg_replace("/[\\\|]/", "_", $encoding);
 	$code = preg_replace("/[\\\|]/", "_", $code);
 
@@ -254,8 +284,7 @@ function barcode_encode_genbarcode($code, $encoding)
 
 	dol_syslog("Run command ".$fullcommandclear);
 	$fp = popen($fullcommandclear, "r");
-	if ($fp)
-	{
+	if ($fp) {
 		$bars = fgets($fp, 1024);
 		$text = fgets($fp, 1024);
 		$encoding = fgets($fp, 1024);
@@ -272,14 +301,20 @@ function barcode_encode_genbarcode($code, $encoding)
 		"error" => ""
 	);
 	//var_dump($ret);
-	if (preg_match('/permission denied/i', $ret['bars']))
-	{
-		$ret['error'] = $ret['bars']; $ret['bars'] = '';
+	if (preg_match('/permission denied/i', $ret['bars'])) {
+		$ret['error'] = $ret['bars'];
+		$ret['bars'] = '';
 		return $ret;
 	}
-	if (!$ret['bars']) return false;
-	if (!$ret['text']) return false;
-	if (!$ret['encoding']) return false;
+	if (!$ret['bars']) {
+		return false;
+	}
+	if (!$ret['text']) {
+		return false;
+	}
+	if (!$ret['encoding']) {
+		return false;
+	}
 	return $ret;
 }
 
@@ -305,27 +340,29 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	//var_dump($font_loc);
 
 	/* set defaults */
-	if ($scale < 1) $scale = 2;
+	if ($scale < 1) {
+		$scale = 2;
+	}
 	$total_y = (int) $total_y;
-	if ($total_y < 1) $total_y = (int) $scale * 60;
-	if (!$space)
-	$space = array('top'=>2 * $scale, 'bottom'=>2 * $scale, 'left'=>2 * $scale, 'right'=>2 * $scale);
+	if ($total_y < 1) {
+		$total_y = (int) $scale * 60;
+	}
+	if (!$space) {
+		$space = array('top'=>2 * $scale, 'bottom'=>2 * $scale, 'left'=>2 * $scale, 'right'=>2 * $scale);
+	}
 
 	/* count total width */
 	$xpos = 0;
 	$width = true;
 	$ln = strlen($bars);
-	for ($i = 0; $i < $ln; $i++)
-	{
+	for ($i = 0; $i < $ln; $i++) {
 		$val = strtolower($bars[$i]);
-		if ($width)
-		{
+		if ($width) {
 			$xpos += $val * $scale;
 			$width = false;
 			continue;
 		}
-		if (preg_match("/[a-z]/", $val))
-		{
+		if (preg_match("/[a-z]/", $val)) {
 			/* tall bar */
 			$val = ord($val) - ord('a') + 1;
 		}
@@ -336,8 +373,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	/* allocate the image */
 	$total_x = ($xpos) + $space['right'] + $space['right'];
 	$xpos = $space['left'];
-	if (!function_exists("imagecreate"))
-	{
+	if (!function_exists("imagecreate")) {
 		print "You don't have the gd2 extension enabled<br>\n";
 		return "";
 	}
@@ -352,21 +388,20 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	/* paint the bars */
 	$width = true;
 	$ln = strlen($bars);
-	for ($i = 0; $i < $ln; $i++)
-	{
+	for ($i = 0; $i < $ln; $i++) {
 		$val = strtolower($bars[$i]);
-		if ($width)
-		{
+		if ($width) {
 			$xpos += $val * $scale;
 			$width = false;
 			continue;
 		}
-		if (preg_match("/[a-z]/", $val))
-		{
+		if (preg_match("/[a-z]/", $val)) {
 			/* tall bar */
 			$val = ord($val) - ord('a') + 1;
 			$h = $height2;
-		} else $h = $height;
+		} else {
+			$h = $height;
+		}
 		imagefilledrectangle($im, $xpos, $space['top'], $xpos + ($val * $scale) - 1, $h, $col_bar);
 		$xpos += $val * $scale;
 		$width = true;

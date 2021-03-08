@@ -87,7 +87,7 @@ class modHoliday extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
@@ -221,7 +221,9 @@ class modHoliday extends DolibarrModules
 		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
 		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
-		$keyforselect = 'holiday'; $keyforelement = 'holiday'; $keyforaliasextra = 'extra';
+		$keyforselect = 'holiday';
+		$keyforelement = 'holiday';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -302,7 +304,7 @@ class modHoliday extends DolibarrModules
 				return 0;
 			}
 		}
-        */
+		*/
 
 		$sql = array(
 		//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".$conf->entity,

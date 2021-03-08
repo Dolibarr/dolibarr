@@ -62,7 +62,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->workflow->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->workflow->enabled)) {
+			return 0; // Module not active, we do nothing
+		}
 
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
@@ -76,7 +78,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$newobject->context['origin_id'] = $object->id;
 
 				$ret = $newobject->createFromProposal($object, $user);
-				if ($ret < 0) { $this->error = $newobject->error; $this->errors[] = $newobject->error; }
+				if ($ret < 0) {
+					$this->error = $newobject->error;
+					$this->errors[] = $newobject->error;
+				}
 				return $ret;
 			}
 		}
@@ -93,7 +98,10 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$newobject->context['origin_id'] = $object->id;
 
 				$ret = $newobject->createFromOrder($object, $user);
-				if ($ret < 0) { $this->error = $newobject->error; $this->errors[] = $newobject->error; }
+				if ($ret < 0) {
+					$this->error = $newobject->error;
+					$this->errors[] = $newobject->error;
+				}
 				return $ret;
 			}
 		}
@@ -106,7 +114,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['propal'] as $element) {
-						if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
@@ -130,7 +140,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['commande'] as $element) {
-						if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
@@ -147,7 +159,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['propal'] as $element) {
-						if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
@@ -183,7 +197,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['order_supplier'] as $element) {
-						if ($element->statut == CommandeFournisseur::STATUS_ACCEPTED || $element->statut == CommandeFournisseur::STATUS_ORDERSENT || $element->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY || $element->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == CommandeFournisseur::STATUS_ACCEPTED || $element->statut == CommandeFournisseur::STATUS_ORDERSENT || $element->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY || $element->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
@@ -201,7 +217,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['supplier_proposal'] as $element) {
-						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == SupplierProposal::STATUS_SIGNED || $element->statut == SupplierProposal::STATUS_BILLED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
@@ -223,7 +241,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['commande'] as $element) {
-						if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Commande::STATUS_VALIDATED || $element->statut == Commande::STATUS_SHIPMENTONPROCESS || $element->statut == Commande::STATUS_CLOSED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
@@ -248,17 +268,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$order = new Commande($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
-					$this->error = $order->error; $this->errors = $order->errors;
+					$this->error = $order->error;
+					$this->errors = $order->errors;
 					return $ret;
 				}
 				$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
 				if ($ret < 0) {
-					$this->error = $order->error; $this->errors = $order->errors;
+					$this->error = $order->error;
+					$this->errors = $order->errors;
 					return $ret;
 				}
 				//Build array of quantity shipped by product for an order
 				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
-					foreach ($order->linkedObjects as $type=>$shipping_array) {
+					foreach ($order->linkedObjects as $type => $shipping_array) {
 						if ($type == 'shipping' && is_array($shipping_array) && count($shipping_array) > 0) {
 							foreach ($shipping_array as $shipping) {
 								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
@@ -275,7 +297,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (is_array($order->lines) && count($order->lines) > 0) {
 					foreach ($order->lines as $orderline) {
 						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) continue;
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) {
+							continue;
+						}
 						$qtyordred[$orderline->fk_product] += $orderline->qty;
 					}
 				}
@@ -287,7 +311,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					//No diff => mean everythings is shipped
 					$ret = $object->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $object->error; $this->errors = $object->errors;
+						$this->error = $object->error;
+						$this->errors = $object->errors;
 						return $ret;
 					}
 				}
@@ -302,12 +327,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Reception::STATUS_VALIDATED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
-							$ret = $element->set_billed();
+							$ret = $element->setBilled();
 						}
 					}
 				}

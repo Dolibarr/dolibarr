@@ -68,7 +68,7 @@ class modProjet extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array('projects');
 
 		// Constants
@@ -238,13 +238,13 @@ class modProjet extends DolibarrModules
 			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.description'=>"Description"
 		);
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
-		{
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('project'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r] += array('p.entity'=>'Entity');
+			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r] += array('p.entity'=>'Entity');
+			}
 		}
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
+		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			unset($this->export_fields_array[$r]['p.opp_percent']);
 			unset($this->export_fields_array[$r]['p.opp_amount']);
 			unset($this->export_fields_array[$r]['cls.code']);
@@ -253,13 +253,17 @@ class modProjet extends DolibarrModules
 		// Add fields for project
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array());
 		// Add extra fields for project
-		$keyforselect = 'projet'; $keyforelement = 'project'; $keyforaliasextra = 'extra';
+		$keyforselect = 'projet';
+		$keyforelement = 'project';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// Add fields for tasks
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pt.rowid'=>'TaskId', 'pt.ref'=>'RefTask', 'pt.label'=>'LabelTask', 'pt.dateo'=>"TaskDateStart", 'pt.datee'=>"TaskDateEnd", 'pt.duration_effective'=>"DurationEffective", 'pt.planned_workload'=>"PlannedWorkload", 'pt.progress'=>"Progress", 'pt.description'=>"TaskDescription"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pt.rowid'=>'projecttask', 'pt.ref'=>'projecttask', 'pt.label'=>'projecttask', 'pt.dateo'=>"projecttask", 'pt.datee'=>"projecttask", 'pt.duration_effective'=>"projecttask", 'pt.planned_workload'=>"projecttask", 'pt.progress'=>"projecttask", 'pt.description'=>"projecttask"));
 		// Add extra fields for task
-		$keyforselect = 'projet_task'; $keyforelement = 'projecttask'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'projet_task';
+		$keyforelement = 'projecttask';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.task_date'=>'TaskTimeDate', 'ptt.task_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
@@ -283,8 +287,7 @@ class modProjet extends DolibarrModules
 
 
 		// Import list of tasks
-		if (empty($conf->global->PROJECT_HIDE_TASKS))
-		{
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 			$r++;
 			$this->import_code[$r] = 'tasksofprojects';
 			$this->import_label[$r] = 'ImportDatasetTasks';
@@ -295,10 +298,8 @@ class modProjet extends DolibarrModules
 			// Add extra fields
 			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'projet_task' AND entity IN (0,".$conf->entity.")";
 			$resql = $this->db->query($sql);
-			if ($resql)    // This can fail when class is used on old database (during migration for example)
-			{
-				while ($obj = $this->db->fetch_object($resql))
-				{
+			if ($resql) {    // This can fail when class is used on old database (during migration for example)
+				while ($obj = $this->db->fetch_object($resql)) {
 					$fieldname = 'extra.'.$obj->name;
 					$fieldlabel = ucfirst($obj->label);
 					$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
@@ -337,13 +338,11 @@ class modProjet extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/projects';
 		$dest = $dirodt.'/template_project.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
@@ -355,13 +354,11 @@ class modProjet extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tasks';
 		$dest = $dirodt.'/template_task_summary.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
