@@ -546,7 +546,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
-			print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
+			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount, 0, $outputlangs, 1, -1, 2).'">';
 			print "</td></tr>";
 		}
 		else {
