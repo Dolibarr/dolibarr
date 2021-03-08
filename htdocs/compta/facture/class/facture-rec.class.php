@@ -116,6 +116,12 @@ class FactureRec extends CommonInvoice
 	public $auto_validate;			// 0 to create in draft, 1 to create and validate the new invoice
 	public $generate_pdf;			// 1 to generate PDF on invoice generation (default)
 
+	/**
+	 * @var int 1 if status is draft
+	 * @deprecated
+	 */
+	public $brouillon;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -837,6 +843,7 @@ class FactureRec extends CommonInvoice
 		$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
 
 		// Clean vat code
+		$reg = array();
 		$vat_src_code = '';
 		if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 			$vat_src_code = $reg[1];
@@ -1277,6 +1284,8 @@ class FactureRec extends CommonInvoice
 
 					$facture->type = self::TYPE_STANDARD;
 					$facture->brouillon = 1;
+					$facture->statut = self::STATUS_DRAFT;
+					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;
 
@@ -1602,6 +1611,7 @@ class FactureRec extends CommonInvoice
 		// Initialize parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
+		$this->title = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->socid = 1;
 		$this->date = $nownotime;
