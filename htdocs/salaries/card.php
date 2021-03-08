@@ -156,7 +156,6 @@ if ($action == 'add' && empty($cancel)) {
 	$object->dateep = $dateep;
 	$object->note = GETPOST("note", 'restricthtml');
 	$object->type_payment = ($type_payment > 0 ? $type_payment : 0);
-	$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 	$object->fk_user_author = $user->id;
 	$object->fk_project = $projectid;
 
