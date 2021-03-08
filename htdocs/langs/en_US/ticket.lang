@@ -145,13 +145,6 @@ OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
 ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
-ChartTicketType=Number of tickets by type
-ChartTicketSeverity=Number of tickets by severity
-ChartTicketLastXDays=Number of new tickets by days the last %s days
-NumberOfTicketByDay=Number of new tickets by day
-ChartNewTicketVSClose=Number of today's new tickets versus today's closed tickets
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
 
 #
 # Ticket card
@@ -309,3 +302,12 @@ BoxLastModifiedTicket=Latest modified tickets
 BoxLastModifiedTicketDescription=Latest %s modified tickets
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No recent modified tickets
+ChartTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxNoTicketLastXDays=No new tickets the last %s days
+NumberOfTicketByDay=Number of new tickets by day
+ChartNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
