@@ -100,9 +100,15 @@ if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == '
 }
 
 if($action == 'setfk_user' && $user->rights->salaries->write) {
-	$object->fetch($id);
-	$object->fk_user = $fk_user;
-	$object->update($user);
+	$result = $object->fetch($id);
+	if ($result > 0){
+		$object->fk_user = $fk_user;
+		$object->update($user);
+	} else {
+		dol_print_error($db);
+		exit;
+	}
+
 }
 
 if ($action == 'reopen' && $user->rights->salaries->write) {
@@ -641,8 +647,13 @@ if ($id)
 
 		if(!empty($object->fk_user)) {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->fk_user);
-			$morehtmlref .= $userstatic->getNomUrl(1);
+			$result = $userstatic->fetch($object->fk_user);
+			if ($result > 0){
+				$morehtmlref .= $userstatic->getNomUrl(1);
+			} else {
+				dol_print_error($db);
+				exit();
+			}
 		}
 	} else {
 		$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
