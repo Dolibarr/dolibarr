@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
  * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2020       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1845,7 +1845,7 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
-		if ($rowid == 0) {
+		if ($rowid === 0) {
 			$result = $this->company->initAsSpecimen();
 		} else {
 			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
