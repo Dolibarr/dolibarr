@@ -1355,7 +1355,12 @@ class ProductFournisseur extends Product
 	 */
 	protected function getFieldList()
 	{
-		$keys = array('rowid', 'entity', 'datec', 'tms', 'fk_product', 'fk_soc', 'ref_fourn', 'desc_fourn',  'fk_availability', 'price', 'quantity', 'remise_percent', 'remise', 'unitprice', 'charges', 'default_vat_code', 'tva_tx', 'info_bits', 'fk_user', 'fk_supplier_price_expression', 'import_key', 'delivery_time_days', 'supplier_reputation', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx', 'multicurrency_price', 'multicurrency_unitprice', 'localtax1_tx', 'localtax1_type', 'localtax2_tx', 'localtax2_type', 'barcode', 'fk_barcode_type', 'packaging');
+		$keys = array('rowid', 'entity', 'datec', 'tms', 'fk_product', 'fk_soc', 'ref_fourn', 'desc_fourn',
+		'fk_availability', 'price', 'quantity', 'remise_percent', 'remise', 'unitprice', 'charges', 'default_vat_code',
+		'tva_tx', 'info_bits', 'fk_user', 'fk_supplier_price_expression', 'import_key', 'delivery_time_days',
+		'supplier_reputation', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx', 'multicurrency_price',
+		'multicurrency_unitprice', 'localtax1_tx', 'localtax1_type', 'localtax2_tx', 'localtax2_type', 'barcode',
+		'fk_barcode_type', 'packaging');
 		return implode(',', $keys);
 	}
 }
