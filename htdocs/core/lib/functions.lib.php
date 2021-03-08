@@ -1874,7 +1874,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaye);
@@ -2119,7 +2119,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	global $conf, $langs;
 
 	if ($tzoutput === 'auto') {
-		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
+		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
 
 	// Clean parameters
@@ -4277,7 +4277,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param	string	$text				Text info
  *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv				No div
- *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
+ *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error', 'warning', 'xxx'=Other
  *  @param	string	$morecss			More CSS ('', 'warning', 'error')
  *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
  *	@return	string						String with info text
@@ -5159,12 +5159,12 @@ function price2num($amount, $rounding = '', $option = 0)
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
-		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+		//print "\n".'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
 			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
-		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
+		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come from input data, so 1.123 is 1123
 			$amount = str_replace($thousand, '', $amount);
 		}
 
@@ -5188,6 +5188,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
 	}
+	//print ' XX'.$amount.' '.$rounding;
 
 	// Now, make a rounding if required
 	if ($rounding) {
@@ -5205,13 +5206,13 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
-		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
+		//print " RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) {
 			$amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		} else {
 			return 'ErrorBadParameterProvidedToFunction';
 		}
-		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
+		//print ' SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
@@ -5811,9 +5812,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
-				//print 'VATRULE 6';
-				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					//print 'VATRULE 6';
+					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+				}
 			}
 			//print 'VATRULE 3';
 			return 0;

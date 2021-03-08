@@ -139,6 +139,7 @@ class Ldap
 		$this->groups              = $conf->global->LDAP_GROUP_DN;
 
 		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION; // Filter on user
+		$this->filtergroup         = $conf->global->LDAP_GROUP_FILTER; // Filter on groups
 		$this->filtermember        = $conf->global->LDAP_MEMBER_FILTER; // Filter on member
 
 		// Users
@@ -935,7 +936,7 @@ class Ldap
 	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
-	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'member'=use field this->filtermember as filter
+	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array						Array of [id_record][ldap_field]=value
 	 */
@@ -955,6 +956,8 @@ class Ldap
 		if (!empty($activefilter)) {
 			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
+			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
+				$filter = '('.$this->filtergroup.')';
 			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
 			} else {

@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2011-2018 Alexandre Spangaro <aspangaro@open-dsi.fr>
+-- Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,13 +17,13 @@
 --
 -- ===================================================================
 
-create table llx_payment_salary
+create table llx_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
-  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  tms             timestamp,
   datec           datetime,                   -- Create date
-  fk_user         integer DEFAULT NULL,
+  fk_user         integer NOT NULL,
   datep           date,                       -- payment date
   datev           date,                       -- value date (this field should not be here, only into bank tables)
   salary          double(24,8),               -- salary of user when payment was done
@@ -36,7 +37,8 @@ create table llx_payment_salary
   entity          integer DEFAULT 1 NOT NULL, -- multi company id
   note            text,
   fk_bank         integer,
+  paye            smallint default 0 NOT NULL,
+  fk_account      integer,
   fk_user_author  integer,                    -- user creating
-  fk_user_modif   integer,                     -- user making last change
-  fk_salary       integer
+  fk_user_modif   integer                     -- user making last change
 )ENGINE=innodb;

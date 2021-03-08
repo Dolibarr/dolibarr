@@ -7714,8 +7714,8 @@ class Form
 						print '<td class="center">'.$objp->ref.'</td>';
 						print '<td>'.$objp->ref_client.'</td>';
 						print '<td class="right">';
-						if ($possiblelink[label] == 'LinkToContract') {
-							$form = new Form($db);
+						if ($possiblelink['label'] == 'LinkToContract') {
+							$form = new Form($this->db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}
 						print price($objp->total_ht).'</td>';
@@ -7732,8 +7732,6 @@ class Form
 					dol_print_error($this->db);
 				}
 				print '</div>';
-				if ($num > 0) {
-				}
 
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
 				if ($num > 0) {

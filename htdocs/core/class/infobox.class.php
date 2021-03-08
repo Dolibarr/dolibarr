@@ -42,6 +42,7 @@ class InfoBox
 				0 => 'Home',
 				1 => 'userhome',
 				2 => 'membersindex',
+				3 => 'thirdpartiesindex',
 				27 => 'AccountancyHome'
 			);
 		} else {

@@ -104,10 +104,12 @@ if (($line->info_bits & 2) == 2) {
 	print '</a>';
 	if ($line->description) {
 		if ($line->description == '(CREDIT_NOTE)' && $line->fk_remise_except > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
-		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0) {
+		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)	{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
@@ -115,11 +117,13 @@ if (($line->info_bits & 2) == 2) {
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
 				print ' ('.dol_print_date($discount->datec).')';
 			}
-		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
+		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)	{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 		} elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
