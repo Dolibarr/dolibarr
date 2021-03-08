@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_members.php
+ *	\file       htdocs/core/boxes/box_last_modified_members.php
  *	\ingroup    adherent
  *	\brief      Module to show box of members
  */
@@ -28,13 +28,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last members
+ * Class to manage the box to show last modofied members
  */
-class box_members extends ModeleBoxes
+class box_last_modified_members extends ModeleBoxes
 {
-	public $boxcode = "lastmembers";
+	public $boxcode = "box_last_modified_members";
 	public $boximg = "object_user";
-	public $boxlabel = "BoxLastMembers";
+	public $boxlabel = "BoxLastModifiedMembers";
 	public $depends = array("adherent");
 
 	/**
@@ -84,7 +84,9 @@ class box_members extends ModeleBoxes
 		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 		$memberstatic = new Adherent($this->db);
+		$statictype = new AdherentType($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
@@ -92,7 +94,7 @@ class box_members extends ModeleBoxes
 			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
-			$sql .= " t.subscription, t.libelle as label";
+			$sql .= " t.rowid as typeid, t.subscription, t.libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE a.entity IN (".getEntity('member').")";
 			$sql .= " AND a.fk_adherent_type = t.rowid";
@@ -119,11 +121,8 @@ class box_members extends ModeleBoxes
 					$memberstatic->morphy = $objp->morphy;
 					$memberstatic->company = $objp->company;
 					$memberstatic->statut = $objp->status;
-					$memberstatic->date_creation = $datec;
-					$memberstatic->date_modification = $datem;
 					$memberstatic->need_subscription = $objp->subscription;
 					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
-
 					if (!empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
 						$memberstatic->fetch_thirdparty();
@@ -131,6 +130,9 @@ class box_members extends ModeleBoxes
 					} else {
 						$memberstatic->name = $objp->company;
 					}
+					$statictype->id = $objp->typeid;
+					$statictype->label = $objp->label;
+					$statictype->subscription = $objp->subscription;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
@@ -140,8 +142,8 @@ class box_members extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $memberstatic->company,
-						'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
+						'text' => $statictype->getNomUrl(1, 32),
+						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(

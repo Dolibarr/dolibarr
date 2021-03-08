@@ -1829,7 +1829,7 @@ div.fichehalfleft {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1837,7 +1837,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
