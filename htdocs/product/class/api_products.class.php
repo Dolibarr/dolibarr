@@ -1799,24 +1799,24 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a product object
-	 *
+	 * Get properties of 1 product object.
 	 * Return an array with product information.
 	 *
-	 * @param  int    $id                 ID of product
-	 * @param  string $ref                Ref of element
-	 * @param  string $ref_ext            Ref ext of element
-	 * @param  string $barcode            Barcode of element
-	 * @param  int    $includestockdata   Load also information about stock (slower)
-	 * @param  bool   $includesubproducts Load information about subproducts (if product is a virtual product)
-	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
-	 * @return array|mixed                Data without useless information
+	 * @param  int    $id                 		ID of product
+	 * @param  string $ref                		Ref of element
+	 * @param  string $ref_ext            		Ref ext of element
+	 * @param  string $barcode            		Barcode of element
+	 * @param  int    $includestockdata   		Load also information about stock (slower)
+	 * @param  bool   $includesubproducts 		Load information about subproducts (if product is a virtual product)
+	 * @param  bool   $includeparentid    		Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  bool   $includeifobjectisused	Check if product object is used and set is_object_used with result.
+	 * @return array|mixed                		Data without useless information
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
+	private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includeifobjectisused = false)
 	{
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
 			throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -1871,8 +1871,9 @@ class Products extends DolibarrApi
 			}
 		}
 
-		// product is used
-		$this->product->is_object_used = $this->product->isObjectUsed() > 0;
+		if ($includeifobjectisused) {
+			$this->product->is_object_used = ($this->product->isObjectUsed() > 0);
+		}
 
 		return $this->_cleanObjectDatas($this->product);
 	}

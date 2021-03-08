@@ -92,10 +92,10 @@ class Product extends CommonObject
 
 	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into images.lib.php
 
-	/*
-	* @deprecated
-	* @see label
-	*/
+	/**
+	 * @deprecated
+	 * @see $label
+	 */
 	public $libelle;
 
 	/**
@@ -406,6 +406,14 @@ class Product extends CommonObject
 	 * @var array
 	 */
 	public $supplierprices;
+
+	/**
+	 * Property set to save result of isObjectUsed(). Used for example by Product API.
+	 *
+	 * @var boolean
+	 */
+	public $is_object_used;
+
 
 	/**
 	 * @var array fields of object product
