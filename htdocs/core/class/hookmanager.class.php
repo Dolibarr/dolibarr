@@ -120,7 +120,8 @@ class HookManager
 						if ($resaction) {
 							$controlclassname = 'Actions'.ucfirst($module);
 							$actionInstance = new $controlclassname($this->db);
-							$this->hooks[$context][$module] = $actionInstance;
+							$priority = empty($actionInstance->priority) ? 50 : $actionInstance->priority;
+							$this->hooks[$context][$priority.':'.$module] = $actionInstance;
 						}
 					}
 				}
@@ -129,6 +130,8 @@ class HookManager
 		if (count($arraytolog) > 0) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
+
+		ksort($this->hooks[$context], SORT_NATURAL);
 
 		return 1;
 	}
@@ -238,8 +241,10 @@ class HookManager
 		$error = 0;
 		foreach ($this->hooks as $context => $modules) {    // $this->hooks is an array with context as key and value is an array of modules that handle this context
 			if (!empty($modules)) {
+				// Loop on each active hooks of module for this context
 				foreach ($modules as $module => $actionclassinstance) {
-					//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
+					$module = preg_replace('/^\d+:/', '', $module);
+					//print "Before hook ".get_class($actionclassinstance)." method=".$method." module=".$module." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
 					// test to avoid running twice a hook, when a module implements several active contexts
 					if (in_array($module, $modulealreadyexecuted)) {
