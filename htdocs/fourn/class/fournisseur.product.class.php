@@ -1293,7 +1293,7 @@ class ProductFournisseur extends Product
 
         $sql = 'SELECT ';
         $sql .= $this->getFieldList();
-        $sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as t';
         $sql .= ' WHERE t.entity IN ('.getEntity('productsupplierprice').')';
 
         // Manage filter
