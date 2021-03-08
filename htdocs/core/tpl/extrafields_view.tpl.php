@@ -213,8 +213,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
 				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
 				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
-				if (!is_numeric($object->array_options['options_'.$tmpkeyextra]))	// For backward compatibility
-				{
+				if (!is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');

@@ -356,7 +356,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	if (!empty($conf->salaries->enabled) &&
 		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
 		) {
-		$salary = new PaymentSalary($db);
+		$payment_salary = new PaymentSalary($db);
 
 		$sql = "SELECT ps.rowid, s.datesp, s.dateep, ps.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
@@ -372,7 +372,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->id.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 

@@ -107,6 +107,8 @@ if ($result < 0) {
 		exit;
 	}
 }
+$user->getrights();
+
 $id = GETPOST('id', 'alpha'); // We accept non numeric id. We will filter later.
 
 
