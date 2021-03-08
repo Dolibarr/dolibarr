@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -472,6 +473,7 @@ if ($sql_select) {
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
 		$documentstatic->paye = $objp->paid;
+		$documentstatic->alreadypaid = $objp->paid;
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
@@ -487,6 +489,8 @@ if ($sql_select) {
 		print '<td class="center">';
 		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(5);
+		} elseif ($type_element == 'invoice') {
+			print $documentstatic->getLibStatut(5, $objp->paid);
 		} else {
 			print $documentstatic->getLibStatut(5);
 		}
@@ -496,7 +500,9 @@ if ($sql_select) {
 		print '<td class="tdoverflowmax300">';
 
 		// Define text, description and type
-		$text = ''; $description = ''; $type = 0;
+		$text = '';
+		$description = '';
+		$type = 0;
 
 		// Code to show product duplicated from commonobject->printObjectLine
 		if ($objp->fk_product > 0) {
