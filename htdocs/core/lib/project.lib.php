@@ -806,7 +806,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				// Contacts of task
+				// Contacts of tasks. Disabled, because available by default just after
+				/*
 				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 					print '<td>';
 					foreach (array('internal', 'external') as $source) {
@@ -822,6 +823,36 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								}
 								$c->fetch($contacttask['id']);
 								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
+							}
+						}
+					}
+					print '</td>';
+				}*/
+
+				// Contacts of task
+				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+					print '<td>';
+					foreach (array('internal', 'external') as $source) {
+						$tab = $lines[$i]->liste_contact(-1, $source);
+						$num = count($tab);
+						if (!empty($num)) {
+							foreach ($tab as $contacttask) {
+								//var_dump($contacttask);
+								if ($source == 'internal') {
+									$c = new User($db);
+								} else {
+									$c = new Contact($db);
+								}
+								$c->fetch($contacttask['id']);
+								if (!empty($c->photo)) {
+									print $c->getNomUrl(-2).'&nbsp;';
+								} else {
+									if (get_class($c) == 'User') {
+										print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+									} else {
+										print $c->getNomUrl(2);//.'&nbsp;';
+									}
+								}
 							}
 						}
 					}
@@ -965,8 +996,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 			}
 		}
-		// Contacts of task
+		// Contacts of task for backward compatibility,
 		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+			print '<td></td>';
+		}
+		// Contacts of task
+		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
 		print '<td class=""></td>';
