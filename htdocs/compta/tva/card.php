@@ -590,9 +590,9 @@ if ($id)
 	print '</td></tr>';
 
 	if ($action == 'edit') {
-		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . $object->amount . '"></td></tr>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount, 0, $outputlangs, 1, -1, 2) . '"></td></tr>';
 	} else {
-		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount) . '</td></tr>';
+		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, 2, $conf->currency) . '</td></tr>';
 	}
 
 	// Mode of payment
