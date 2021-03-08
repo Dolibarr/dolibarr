@@ -176,7 +176,7 @@ class ProductFournisseur extends Product
 			'localtax2_type' => array('type'=>'varchar(10)', 'label'=>'Localtax2type', 'enabled'=>'1', 'position'=>165, 'notnull'=>1, 'visible'=>-1,),
 			'fk_barcode_type' => array('type'=>'integer', 'label'=>'Fkbarcodetype', 'enabled'=>'1', 'position'=>175, 'notnull'=>0, 'visible'=>-1,),
 			'packaging' => array('type'=>'varchar(64)', 'label'=>'Packaging', 'enabled'=>'1', 'position'=>180, 'notnull'=>0, 'visible'=>-1,),
-		))
+		));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1349,6 +1349,6 @@ class ProductFournisseur extends Product
         }
     }
 	public function getFieldList() {
-		return array('rowid', 'entity', 'datec', 'tms', 'fk_product', 'fk_soc', 'ref_fourn', 'desc_fourn',  'fk_availability', 'price', 'quantity', 'remise_percent', 'remise', 'unitprice', 'charges', 'default_vat_code', 'tva_tx', 'info_bits', 'fk_user', 'fk_supplier_price_expression', 'import_key', 'delivery_time_days', 'supplier_reputation', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx', 'multicurrency_price', 'multicurrency_unitprice', 'localtax1_tx', 'localtax1_type', 'localtax2_tx', 'localtax2_type', 'barcode', 'fk_barcode_type', 'packaging')
+		return array('rowid', 'entity', 'datec', 'tms', 'fk_product', 'fk_soc', 'ref_fourn', 'desc_fourn',  'fk_availability', 'price', 'quantity', 'remise_percent', 'remise', 'unitprice', 'charges', 'default_vat_code', 'tva_tx', 'info_bits', 'fk_user', 'fk_supplier_price_expression', 'import_key', 'delivery_time_days', 'supplier_reputation', 'fk_multicurrency', 'multicurrency_code', 'multicurrency_tx', 'multicurrency_price', 'multicurrency_unitprice', 'localtax1_tx', 'localtax1_type', 'localtax2_tx', 'localtax2_type', 'barcode', 'fk_barcode_type', 'packaging');
 	}
 }
