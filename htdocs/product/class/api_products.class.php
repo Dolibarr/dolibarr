@@ -165,7 +165,7 @@ class Products extends DolibarrApi
 	 * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
-	 * @param  bool   $ids_only   Get a list of product ids
+	 * @param  bool   $ids_only   Return only IDs of product instead of all properties
 	 * @return array                Array of product objects
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false)
