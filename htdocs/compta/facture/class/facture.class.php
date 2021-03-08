@@ -177,6 +177,7 @@ class Facture extends CommonInvoice
 	//! id of source invoice if replacement invoice or credit note
 	public $fk_facture_source;
 	public $linked_objects = array();
+
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement

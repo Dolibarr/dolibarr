@@ -111,6 +111,9 @@ class FactureRec extends CommonInvoice
 	public $usenewprice = 0;
 
 	public $date_lim_reglement;
+	public $cond_reglement_code; // Code in llx_c_paiement
+	public $mode_reglement_code; // Code in llx_c_paiement
+
 	public $suspended; // status
 
 	public $auto_validate;			// 0 to create in draft, 1 to create and validate the new invoice
