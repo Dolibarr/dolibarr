@@ -343,7 +343,7 @@ if ($action == 'create')
 	print $langs->trans("Date");
 	print '</td>';
 	print '<td>';
-	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1, 1);
 	print '</td>';
 	print "</tr>\n";
 
