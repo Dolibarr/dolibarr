@@ -226,7 +226,7 @@ class Products extends DolibarrApi
 						$obj_ret[] = $this->_cleanObjectDatas($product_static);
 					}
 				} else {
-					$obj_ret[] = $obj;
+					$obj_ret[] = $obj->rowid;
 				}
 				$i++;
 			}
