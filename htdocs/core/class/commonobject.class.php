@@ -8255,11 +8255,10 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @param   array   $alias   content informations of field
-	 *
-	 * @return string
+	 * @param   string   $alias   	String of alias of table for fields. For example 't'.
+	 * @return  string				list of alias fields
 	 */
-	protected function getFieldList($alias = 't')
+	protected function getFieldList($alias = '')
 	{
 		$keys = array_keys($this->fields);
 		if (!empty($alias)) {
