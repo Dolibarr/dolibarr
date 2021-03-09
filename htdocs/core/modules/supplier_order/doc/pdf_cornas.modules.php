@@ -1534,12 +1534,17 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
-			'status' => true,
+			'status' => false,
 			'title' => array(
 				'textkey' => 'PriceUHT'
 			),
 			'border-left' => true, // add left line separator
 		);
+
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE))
+		{
+			$this->cols['subprice']['status'] = true;
+		}
 
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
@@ -1590,6 +1595,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			),
 			'border-left' => true, // add left line separator
 		);
+
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN))
+		{
+			$this->cols['totalexcltax']['status'] = true;
+		}
 
 		// Add extrafields cols
 		if (!empty($object->lines)) {
