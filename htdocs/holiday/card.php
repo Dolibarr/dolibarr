@@ -153,7 +153,7 @@ if (empty($reshook))
 				|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->id != $fuserid && empty($user->rights->holiday->writeall_advance))
 				) {
 				$error++;
-				setEventMessages($langs->trans("NotEnoughPermission"), null, 'errors');
+				setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 			} else {
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)) {
 					if (!in_array($fuserid, $childids)) {
