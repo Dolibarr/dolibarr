@@ -1211,12 +1211,12 @@ abstract class CommonObject
 		$listId = null;
 		$typeContact = $this->liste_type_contact($source, '', 0, 0, $code);
 
-        if (! empty($typeContact)) {
-            foreach ($typeContact as $key => $value) {
-                array_push($temp, $key);
-            }
-            $listId = implode(",", $temp);
-        }
+		if (! empty($typeContact)) {
+			foreach ($typeContact as $key => $value) {
+				array_push($temp, $key);
+			}
+			$listId = implode(",", $temp);
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql .= " WHERE element_id = ".$this->id;
