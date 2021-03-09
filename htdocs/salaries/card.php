@@ -546,7 +546,7 @@ if ($action == 'create')
 	// Comments
 	print '<tr class="hide_if_no_auto_create_payment">';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note','alphanohtml').'</textarea></td>';
 	print '</tr>';
 
 	// Bouton Save payment
@@ -642,16 +642,24 @@ if ($id)
 
 	//Employee
 	if($action != 'editfk_user') {
-		$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
-
-		if(!empty($object->fk_user)) {
+		if ($object->getSommePaiement() > 0 && !empty($object->fk_user)){
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0){
-				$morehtmlref .= $userstatic->getNomUrl(1);
-			} else {
-				dol_print_error($db);
-				exit();
+				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+			}
+		} else {
+			$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+
+			if(!empty($object->fk_user)) {
+				$userstatic = new User($db);
+				$result = $userstatic->fetch($object->fk_user);
+				if ($result > 0){
+					$morehtmlref .= $userstatic->getNomUrl(1);
+				} else {
+					dol_print_error($db);
+					exit();
+				}
 			}
 		}
 	} else {
