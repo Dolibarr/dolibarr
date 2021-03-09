@@ -604,15 +604,11 @@ if ($id) {
 		$morehtmlref .= '</form>';
 	}
 
-	$sql = 'SELECT fk_salary, amount';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary';
-	$sql .= ' WHERE fk_salary = '.$object->id;
-
-	$resql = $db->query($sql);
-	$obj = $db->fetch_object($resql);
+	$sal = new Salary($db);
+	$sal->fetch($object->id);
 	//Employee
 	if ($action != 'editfk_user') {
-		if (!empty($obj) && !empty($object->fk_user)) {
+		if ($sal->getSommePaiement() > 0 && !empty($object->fk_user)){
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0) {
