@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchhaltungskonto für Partner Benutzer
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das Buchhaltungskonto auf der Benutzerkarte wird nur im Nebenbuch journalisiert. Dieser Eintrag wird im Hauptbuch Geführt. Weiter ist das auch das Standardkonto, falls auf der Benutzerkarte kein Konto eingetragen ist.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard - Buchhaltungskonto für Lohnzahlungen
+AddSalaryPayment=Neue Lohnzahlung
+THM=Durchschnittlicher Stundenlohn
+TJM=Durchschnittlicher Tageslohn
+THMDescription=Wenn das Modul Projektmanagement aktiv ist, dient dieser Wert zum Berechnen der aktuellen Projektzeitkosten.
+TJMDescription=Dieser Wert ist im Moment rein informativ und fliesst in keinerlei Berechnungen ein.
+LastSalaries=Die neuesten %s Lohnzahlungen
+SalariesStatistics=Lohnstatistik
+SalariesAndPayments=Löhne und Lohnzahlungen

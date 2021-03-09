@@ -5,16 +5,21 @@ ThereIsNoWorkflowToModify=Det finns inga arbetsflödesändringar tillgängliga m
 # Autocreate
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Skapa automatiskt en försäljningsorder när ett kommersiellt förslag är undertecknat (den nya ordern kommer att ha samma belopp som förslaget)
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa automatiskt en kundfaktura efter att ett kommersiellt förslag har skrivits (den nya fakturan kommer att ha samma belopp som förslaget)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa automatiskt en kundfaktura efter att ett kontrakt är validerat
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa automatiskt en kundfaktura efter att ett kontrakt är bekräftat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter att en order har stängts (den nya fakturan kommer att ha samma belopp som beställningen)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassificera länkad källans förslag som fakturerad när försäljningsordern är inställd att faktureras (och om orderens storlek är densamma som det totala beloppet för det signerade länkade förslaget)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassificera länkad källans förslag som fakturerad när kundfakturan är validerad (och om fakturans belopp är samma som det totala beloppet för det signerade länkade förslaget)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassificera länkad källsäljorder som fakturerad när kundfaktura är validerad (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassificera länkad källsäljorder som fakturerad när kundfaktura är inställd att betala (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassificera länkad källsäljningsorder som skickas när en försändelse är validerad (och om den mängd som skickas av alla leveranser är densamma som i den ordning som ska uppdateras)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Märk det länkade källoffert som fakturerad när försäljningsordern är märkt fakturerad (och om orderens storlek är densamma som det totala beloppet för det signerade länkade förslaget)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Märk länkad källans förslag som fakturerad när kundfakturan är bekräftat (och om fakturans belopp är samma som det totala beloppet för det signerade länkade förslaget)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Märk länkad källsäljorder som fakturerad när kundfaktura är bekräftat (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Märk länkad källsäljorder som fakturerad när kundfaktura är inställd att betala (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Märk länkad källsäljningsorder som skickas när en försändelse är bekräftat (och om den mängd som skickas av alla leveranser är densamma som i den ordning som ska uppdateras)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassificera länkad källleverantörsförslag som fakturerat när leverantörsfaktura är validerad (och om fakturans storlek är densamma som det totala beloppet för det länkade förslaget)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassificera kopplad inköpsorder som fakturerad när leverantörsfaktura är validerad (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Märk länkad källleverantörsförslag som fakturerat när leverantörsfaktura är bekräftat (och om fakturans storlek är densamma som det totala beloppet för det länkade förslaget)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Märk kopplad inköpsorder som fakturerad när leverantörsfaktura är bekräftat (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatisk skapande
-AutomaticClassification=Automatisk klassificering
+AutomaticClassification=Automatisk uppmärkning
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - stocks
-Stock=Valores
-Stocks=Cepo
-ListOfStockMovements=Lista de movimientos de stock
+UnitPurchaseValue=Precio unitario de compra
+PMPValue=Precio promedio ponderado
+AverageUnitPricePMPShort=Precio promedio ponderado
 inventoryEdit=Editar
 SelectCategory=Filtro de categoria
 inventoryDeleteLine=Eliminar linea

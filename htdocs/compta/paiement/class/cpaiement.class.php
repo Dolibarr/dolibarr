@@ -109,35 +109,35 @@ class Cpaiement
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		$sql.= 'entity,';
-		$sql.= 'code,';
-		$sql.= 'libelle,';
-		$sql.= 'type,';
-		$sql.= 'active,';
-		$sql.= 'accountancy_code,';
-		$sql.= 'module';
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql .= 'entity,';
+		$sql .= 'code,';
+		$sql .= 'libelle,';
+		$sql .= 'type,';
+		$sql .= 'active,';
+		$sql .= 'accountancy_code,';
+		$sql .= 'module';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(! isset($this->entity)?getEntity('c_paiement'):$this->entity).',';
-		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
-		$sql .= ' '.(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").',';
-		$sql .= ' '.(! isset($this->type)?'NULL':$this->type).',';
-		$sql .= ' '.(! isset($this->active)?'NULL':$this->active).',';
-		$sql .= ' '.(! isset($this->accountancy_code)?'NULL':"'".$this->db->escape($this->accountancy_code)."'").',';
-		$sql .= ' '.(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'");
+		$sql .= ' '.(!isset($this->entity) ?getEntity('c_paiement') : $this->entity).',';
+		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
+		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
+		$sql .= ' '.(!isset($this->type) ? 'NULL' : $this->type).',';
+		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
+		$sql .= ' '.(!isset($this->accountancy_code) ? 'NULL' : "'".$this->db->escape($this->accountancy_code)."'").',';
+		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ')';
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action to call a trigger.
@@ -154,7 +154,7 @@ class Cpaiement
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -182,12 +182,12 @@ class Cpaiement
 		$sql .= " t.active,";
 		$sql .= " t.accountancy_code,";
 		$sql .= " t.module";
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (null !== $ref) {
 			$sql .= ' WHERE t.entity IN ('.getEntity('c_paiement').')';
-			$sql .= ' AND t.code = ' . '\'' . $ref . '\'';
+			$sql .= " AND t.code = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' WHERE t.id = ' . $id;
+			$sql .= ' WHERE t.id = '.$id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -214,10 +214,10 @@ class Cpaiement
 				return 0;
 			}
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -265,23 +265,23 @@ class Cpaiement
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		$sql .= ' id = '.(isset($this->id)?$this->id:"null").',';
-		$sql .= ' code = '.(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").',';
-		$sql .= ' libelle = '.(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").',';
-		$sql .= ' type = '.(isset($this->type)?$this->type:"null").',';
-		$sql .= ' active = '.(isset($this->active)?$this->active:"null").',';
-		$sql .= ' accountancy_code = '.(isset($this->accountancy_code)?"'".$this->db->escape($this->accountancy_code)."'":"null").',';
-		$sql .= ' module = '.(isset($this->module)?"'".$this->db->escape($this->module)."'":"null");
-		$sql .= ' WHERE id=' . $this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+		$sql .= ' id = '.(isset($this->id) ? $this->id : "null").',';
+		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
+		$sql .= ' libelle = '.(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").',';
+		$sql .= ' type = '.(isset($this->type) ? $this->type : "null").',';
+		$sql .= ' active = '.(isset($this->active) ? $this->active : "null").',';
+		$sql .= ' accountancy_code = '.(isset($this->accountancy_code) ? "'".$this->db->escape($this->accountancy_code)."'" : "null").',';
+		$sql .= ' module = '.(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
+		$sql .= ' WHERE id='.$this->id;
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
 
 		// Uncomment this and change MYOBJECT to your own tag if you
@@ -298,7 +298,7 @@ class Cpaiement
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -333,14 +333,14 @@ class Cpaiement
 		//}
 
 		if (!$error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE id=' . $this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql .= ' WHERE id='.$this->id;
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -348,7 +348,7 @@ class Cpaiement
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 

@@ -27,32 +27,39 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Secrutiy check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-if (! $user->rights->facture->lire)
-accessforbidden();
+if (!$user->rights->facture->lire) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->load("companies");
 
-$mode=GETPOST("mode");
+$mode = GETPOST("mode");
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "nom";
+}
 
 
 /*
@@ -61,19 +68,17 @@ if (! $sortfield) $sortfield="nom";
 
 llxHeader();
 
-$thirdpartystatic=new Societe($db);
+$thirdpartystatic = new Societe($db);
 
-if ($action == 'note')
-{
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$note."' WHERE rowid=".$socid;
+if ($action == 'note') {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($note)."' WHERE rowid=".$socid;
 	$result = $db->query($sql);
 }
 
-if ($mode == 'search')
-{
-	$resql=$db->query($sql);
+if ($mode == 'search') {
+	$resql = $db->query($sql);
 	if ($resql) {
-		if ( $db->num_rows($resql) == 1) {
+		if ($db->num_rows($resql) == 1) {
 			$obj = $db->fetch_object($resql);
 			$socid = $obj->rowid;
 		}
@@ -88,50 +93,48 @@ if ($mode == 'search')
  */
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
-$sql.= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
-$sql.= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if (dol_strlen($stcomm))
-{
-	$sql.= " AND s.fk_stcomm=".$stcomm;
+$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", sc.fk_soc, sc.fk_user ";
 }
-if ($socname)
-{
-	$sql.= natural_search("s.nom", $socname);
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
+$sql .= " AND s.entity IN (".getEntity('societe').")";
+if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+}
+if (dol_strlen($stcomm)) {
+	$sql .= " AND s.fk_stcomm=".$stcomm;
+}
+if ($socname) {
+	$sql .= natural_search("s.nom", $socname);
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
-if ($_GET["search_nom"])
-{
-	$sql.= natural_search("s.nom", GETPOST("search_nom"));
+if ($_GET["search_nom"]) {
+	$sql .= natural_search("s.nom", GETPOST("search_nom"));
 }
-if ($_GET["search_compta"])
-{
-	$sql.= natural_search("s.code_compta", GETPOST("search_compta"));
+if ($_GET["search_compta"]) {
+	$sql .= natural_search("s.code_compta", GETPOST("search_compta"));
 }
-if ($_GET["search_code_client"])
-{
-	$sql.= natural_search("s.code_client", GETPOST("search_code_client"));
+if ($_GET["search_code_client"]) {
+	$sql .= natural_search("s.code_client", GETPOST("search_code_client"));
 }
-if (dol_strlen($begin))
-{
-	$sql.= natural_search("s.nom", $begin);
+if (dol_strlen($begin)) {
+	$sql .= natural_search("s.nom", $begin);
 }
-if ($socid)
-{
-	$sql.= " AND s.rowid = ".$socid;
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
 }
-$sql.= " ORDER BY $sortfield $sortorder ";
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -172,15 +175,14 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-	while ($i < min($num, $conf->liste_limit))
-	{
+	while ($i < min($num, $conf->liste_limit)) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
 		print '<td>';
-		$thirdpartystatic->id=$obj->rowid;
-		$thirdpartystatic->name=$obj->name;
-		$thirdpartystatic->client=$obj->client;
+		$thirdpartystatic->id = $obj->rowid;
+		$thirdpartystatic->name = $obj->name;
+		$thirdpartystatic->client = $obj->client;
 		print $thirdpartystatic->getNomUrl(1, 'compta');
 		print '</td>';
 		print '<td>'.$obj->town.'&nbsp;</td>';
@@ -195,9 +197,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

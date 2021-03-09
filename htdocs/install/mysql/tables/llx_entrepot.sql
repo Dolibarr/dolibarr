@@ -23,7 +23,7 @@ create table llx_entrepot
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(255) NOT NULL,
   datec           datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   description     text,
   lieu            varchar(64),					-- resume lieu situation
@@ -32,6 +32,8 @@ create table llx_entrepot
   town            varchar(50),
   fk_departement  integer,
   fk_pays         integer DEFAULT 0,
+  phone           varchar(20),                  -- phone number
+  fax             varchar(20),                  -- fax number
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   fk_user_author  integer,
   model_pdf       varchar(255),

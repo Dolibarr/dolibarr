@@ -35,8 +35,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -44,11 +43,21 @@ if (empty($object) || !is_object($object))
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
-if (empty($dateSelector)) $dateSelector = 0;
-if (empty($forceall)) $forceall = 0;
-if (empty($senderissupplier)) $senderissupplier = 0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
-if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax = 0;
+if (empty($dateSelector)) {
+	$dateSelector = 0;
+}
+if (empty($forceall)) {
+	$forceall = 0;
+}
+if (empty($senderissupplier)) {
+	$senderissupplier = 0;
+}
+if (empty($inputalsopricewithtax)) {
+	$inputalsopricewithtax = 0;
+}
+if (empty($outputalsopricetotalwithtax)) {
+	$outputalsopricetotalwithtax = 0;
+}
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -79,10 +88,9 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
-{
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	print '<td class="linecoluseunit nowrap left">';
-	$label = $line->getLabelOfUnit('short');
+	$label = $tmpproduct->getLabelOfUnit('long');
 	if ($label !== '') {
 		print $langs->trans($label);
 	}
@@ -95,32 +103,37 @@ echo $line->qty_frozen ? yn($line->qty_frozen) : '';
 print '</td>';
 print '<td class="linecoldisablestockchange nowrap right">';
 $coldisplay++;
-echo $line->disable_stock_change ? yn($line->disable_stock_change) : '';  // Yes, it is a quantity, not a price, but we just want the formating role of function price
+echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
 print '</td>';
 
-//print '<td class="linecolqty nowrap right">';
-//$coldisplay++;
-//echo $line->efficiency;
-//print '</td>';
+print '<td class="linecolefficiency nowrap right">';
+$coldisplay++;
+echo $line->efficiency;
+print '</td>';
 
-if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) {
+print '<td class="linecolcost nowrap right">';
+$coldisplay++;
+echo price($line->total_cost);
+print '</td>';
+
+if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
-    if (($line->info_bits & 2) == 2 || ! empty($disableedit)) {
-    } else {
-        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';
-    }
-    print '</td>';
+	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
+	} else {
+		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'">'.img_edit().'</a>';
+	}
+	print '</td>';
 
-    print '<td class="linecoldelete center">';
-    $coldisplay++;
-    if (($line->fk_prev_id == null) && empty($disableremove)) {
-        //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;lineid='.$line->id.'">';
-        print img_delete();
-        print '</a>';
-    }
-    print '</td>';
+	print '<td class="linecoldelete center">';
+	$coldisplay++;
+	if (($line->fk_prev_id == null) && empty($disableremove)) {
+		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$line->id.'">';
+		print img_delete();
+		print '</a>';
+	}
+	print '</td>';
 
 	if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
 		print '<td class="linecolmove tdlineupdown center">';
@@ -141,22 +154,21 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines' ) 
 		$coldisplay++;
 	}
 } else {
-    print '<td colspan="3"></td>';
-    $coldisplay = $coldisplay + 3;
+	print '<td colspan="3"></td>';
+	$coldisplay = $coldisplay + 3;
 }
 
 if ($action == 'selectlines') {
-    print '<td class="linecolcheck center">';
-    print '<input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$line->id.'" >';
-    print '</td>';
+	print '<td class="linecolcheck center">';
+	print '<input type="checkbox" class="linecheckbox" name="line_checkbox['.($i + 1).']" value="'.$line->id.'" >';
+	print '</td>';
 }
 
 print '</tr>';
 
 //Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+if (!empty($extrafields)) {
+	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1, 'line');
 }
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

@@ -21,10 +21,12 @@ TOKEN_EXPIRED=Токенът е изтекъл
 TOKEN_EXPIRE_AT=Токенът изтича на
 TOKEN_DELETE=Изтриване на съхранен токен
 OAUTH_GOOGLE_NAME=OAuth услуга на Google
-OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_ID=OAuth Google идентификатор
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Отидете на <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">тази страница</a> след това „Удостоверения“, за да създадете OAuth идентификационни данни
+OAUTH_GOOGLE_DESC=Отидете на <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">тази страница</a> след това 'Удостоверения', за да създадете OAuth удостоверения
 OAUTH_GITHUB_NAME=OAuth услуга на GitHub
-OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_ID=OAuth GitHub идентификатор
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Отидете на <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">тази страница</a> след това „Регистрирайте ново приложение“, за да създадете OAuth идентификационни данни
+OAUTH_GITHUB_DESC=Отидете на <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">тази страница</a> след това 'Регистриране на ново приложение', за да създадете OAuth удостоверения
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe тест
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

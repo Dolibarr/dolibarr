@@ -41,9 +41,7 @@ InterventionsArea=منطقة التدخلات
 DraftFichinter=مشروع التدخلات
 LastModifiedInterventions=Latest %s modified interventions
 FichinterToProcess=Interventions to process
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=متابعة العملاء الاتصال
-# Modele numérotation
 PrintProductsOnFichinter=Print also lines of type "product" (not only services) on intervention card
 PrintProductsOnFichinterDetails=التدخلات المتولدة من أوامر
 UseServicesDurationOnFichinter=Use services duration for interventions generated from orders
@@ -53,14 +51,16 @@ InterventionStatistics=Statistics of interventions
 NbOfinterventions=No. of intervention cards
 NumberOfInterventionsByMonth=No. of intervention cards by month (date of validation)
 AmountOfInteventionNotIncludedByDefault=Amount of intervention is not included by default into profit (in most cases, timesheets are used to count time spent). Add option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1 into home-setup-other to include them.
-##### Exports #####
 InterId=تدخل معرف
 InterRef=تدخل المرجع.
 InterDateCreation=تدخل تاريخ الإنشاء
 InterDuration=تدخل مدة
 InterStatus=التدخل الوضع
 InterNote=ملاحظة التدخل
+InterLine=Line of intervention
 InterLineId=تدخل معرف الخط
 InterLineDate=تدخل تاريخ الخط
 InterLineDuration=تدخل مدة خط
 InterLineDesc=خط وصف التدخل
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

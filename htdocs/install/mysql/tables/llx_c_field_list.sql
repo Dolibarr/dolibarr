@@ -24,7 +24,7 @@
 create table llx_c_field_list
 (
   rowid			integer  AUTO_INCREMENT PRIMARY KEY,
-  tms			timestamp,
+  tms			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   element		varchar(64)        			NOT NULL,		-- name of element list
   entity		integer			DEFAULT 1 	NOT NULL,		-- entity id
   name			varchar(32)        			NOT NULL,		-- name of field with table alias (ex: p.ref)

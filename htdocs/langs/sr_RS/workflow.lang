@@ -1,20 +1,25 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Podešavanja modula Workflow
-WorkflowDesc=Ovaj modul je namenjen za izmene automatskih akcija u aplikaciji. Po defaultu, workflow je otvoren (možete vršiti akcije redosledom kojim poželite). Možete aktivirati automatske akcije koje Vas interesuju.
+WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
 ThereIsNoWorkflowToModify=Nema mogućih izmena workflow-a u aktiviranim modulima.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatski kreiraj fakturu klijenta posle potvrde ugovora
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatsko kriranje
 AutomaticClassification=Automatsko klasifikovanje
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

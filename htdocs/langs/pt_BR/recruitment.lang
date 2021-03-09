@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - recruitment
+ModuleRecruitmentDesc =Gerenciar e acompanhar campanhas de recrutamento para novos cargos
+RecruitmentSetup =Configuração de recrutamento
+RecruitmentAbout =Sobre o recrutamento
+RecruitmentAboutPage =Recrutamento sobre a página
+NbOfEmployeesExpected=Número esperado de funcionários
+JobLabel=Etiqueta do cargo
+PositionToBeFilled=Cargo

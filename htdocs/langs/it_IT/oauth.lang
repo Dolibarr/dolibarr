@@ -14,7 +14,7 @@ DeleteAccess=Click qui per eliminare il token
 UseTheFollowingUrlAsRedirectURI=Usa il seguente indirizzo come Redirect URI quando crei le credenziali sul tuo provider OAuth:
 ListOfSupportedOauthProviders=Inserisci qui le credenziali fornite dal tuo provider OAuth. Vengono visualizzati solo i provider supportati. Questa configurazione può essere usata ache dagli altri moduli che necessitano di autenticazione OAuth2.
 OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
+SeePreviousTab=Vedi la scheda precedente
 OAuthIDSecret=OAuth ID and Secret
 TOKEN_REFRESH=Token Refresh Present
 TOKEN_EXPIRED=Token scaduto
@@ -28,3 +28,5 @@ OAUTH_GITHUB_NAME=Oauth GitHub service
 OAUTH_GITHUB_ID=Oauth GitHub Id
 OAUTH_GITHUB_SECRET=Oauth GitHub Secret
 OAUTH_GITHUB_DESC=Vai su <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">questa pagina</a> poi su "Registra una nuova applicazione" per creare le credenziali Oauth
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

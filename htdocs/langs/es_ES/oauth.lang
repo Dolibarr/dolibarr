@@ -28,3 +28,5 @@ OAUTH_GITHUB_NAME=Servicio Oauth GitHub
 OAUTH_GITHUB_ID=Id Oauth Github
 OAUTH_GITHUB_SECRET=Oauth GitHub Secret
 OAUTH_GITHUB_DESC=Vaya a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta página</a> y a  "Register a new application" para crear crecenciales Oauth
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

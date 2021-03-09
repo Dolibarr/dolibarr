@@ -8,3 +8,4 @@ LinkRemoved=Link %s je uklonjen
 ErrorFailedToDeleteLink= Greška prilikom uklanjanja linka '<b>%s</b>'
 ErrorFailedToUpdateLink= Greška prilikom ažuriranja linka '<b>%s</b>'
 URLToLink=URL za link
+OverwriteIfExists=Overwrite file if exists

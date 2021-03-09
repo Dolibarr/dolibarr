@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - loan
 Loan=Loan
-Loans=Loans
+Loans=Kölcsönök
 NewLoan=New Loan
 ShowLoan=Show Loan
 PaymentLoan=Loan payment
@@ -23,6 +23,9 @@ AddLoan=Create loan
 FinancialCommitment=Financial commitment
 InterestAmount=Interest
 CapitalRemain=Capital remain
+TermPaidAllreadyPaid = This term is allready paid
+CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
+CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
 # Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default

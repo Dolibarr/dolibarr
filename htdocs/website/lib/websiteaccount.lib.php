@@ -35,7 +35,7 @@ function websiteaccountPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/website/websiteaccount_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("WebsiteAccount");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -46,7 +46,7 @@ function websiteaccountPrepareHead($object)
 		if(!empty($object->fields['note_public'])) $nbNote++;
 		$head[$h][0] = dol_buildpath('/monmodule/websiteaccount_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');
 		$head[$h][2] = 'note';
 		$h++;
 	}*/
@@ -59,7 +59,7 @@ function websiteaccountPrepareHead($object)
 	$nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/monmodule/websiteaccount_document.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>' : '');
 	$head[$h][2] = 'document';
 	$h++;
 

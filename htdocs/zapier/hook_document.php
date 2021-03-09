@@ -46,15 +46,22 @@ $ref = GETPOST('ref', 'alpha');
 //$result = restrictedArea($user, 'mymodule', $id);
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 //if (! $sortfield) $sortfield="position_name";
 
 // Initialize technical objects
@@ -70,14 +77,16 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/myobject/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity]."/myobject/".dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->sellyoursaas->multidir_output[$object->entity]."/myobject/".dol_sanitizeFileName($object->ref);
+}
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -91,21 +100,19 @@ $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if ($object->id)
-{
+if ($object->id) {
 	/*
 	 * Show tabs
 	 */
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');
 
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
@@ -115,9 +122,9 @@ if ($object->id)
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
 	// Number of files
@@ -130,10 +137,8 @@ if ($object->id)
 
 	print '</div>';
 
-	dol_fiche_end();
-}
-else
-{
+	print dol_get_fiche_end();
+} else {
 	accessforbidden('', 0, 0);
 }
 

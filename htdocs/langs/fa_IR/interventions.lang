@@ -41,9 +41,7 @@ InterventionsArea=بخش پادرمیانی
 DraftFichinter=پادرمیانی‌های پیش‌نویس
 LastModifiedInterventions=آخرین %s پادرمیانی ویرایش شده
 FichinterToProcess=پادرمیانی‌های قابل پردازش
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=طرف‌تماس پیگیر مشتری
-# Modele numérotation
 PrintProductsOnFichinter=همچنین سطور نوع "محصول" (نه فقط خدمات) روی کارت پادرمیانی چاپ شود
 PrintProductsOnFichinterDetails=پادرمیانی‌های تولید شده از سفارش‌ها
 UseServicesDurationOnFichinter=استفاده از طول‌مدت خدمات برای پادرمیانی‌های تولید شده از سفارش‌ها
@@ -53,14 +51,16 @@ InterventionStatistics=آمار پادرمیانی‌ها
 NbOfinterventions=تعداد کارت‌های پادرمیانی
 NumberOfInterventionsByMonth=تعداد کارت‌های پادرمیانی بر حسب ما (تاریخ تائید اعتبار)
 AmountOfInteventionNotIncludedByDefault=به طور پیش‌فرض مبلغ پادرمیانی در سود محاسبه نمی‌شود (در اکثر موارد، برگه‌های زمان برای محاسبۀ زمان صرف شده استفاده می‌شوند). برای شامل کردن سود آن‌ها گزینۀ PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT را در خانه-برپاسازی-سایر به 1 تغییر دهید.
-##### Exports #####
 InterId=شناسۀ پادرمیانی
 InterRef=ش.ارجاع پادرمیانی
 InterDateCreation=تاریخ ساخت پادرمیانی
 InterDuration=طول‌مدت پادرمیانی
 InterStatus=وضعیت پادرمیانی
 InterNote=یادداشت پادرمیانی
+InterLine=Line of intervention
 InterLineId=شناسۀ سطر پادرمیانی
 InterLineDate=تاریخ سطر پادرمیانی
 InterLineDuration=طول‌مدت سطر پادرمیانی
 InterLineDesc=توضیحات سطر پادرمیانی
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

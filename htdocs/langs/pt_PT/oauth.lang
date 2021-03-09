@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Configuração de Oauth
-OAuthServices=Serviços de OAuth
+ConfigOAuth=OAuth Configuration
+OAuthServices=OAuth Services
 ManualTokenGeneration=Geração manual de token
-TokenManager=Gestor de token
+TokenManager=Token Manager
 IsTokenGenerated=O token foi gerado?
 NoAccessToken=Nenhum token de acesso guardado na base-de-dados local
 HasAccessToken=Um token foi gerado e guardado na base-de-dados local
@@ -11,8 +11,8 @@ ToCheckDeleteTokenOnProvider=Clique aqui para verificar/eliminar a autorização
 TokenDeleted=Token eliminado
 RequestAccess=Clique aqui para solicitar/renovar o acesso e receber um novo token para guardar
 DeleteAccess=Clique aqui para eliminar o token
-UseTheFollowingUrlAsRedirectURI=Use o seguinte URL como o URI de Redirecionamento ao criar sua credencial no seu fornecedor OAuth:
-ListOfSupportedOauthProviders=Digite aqui a credencial fornecida pelo seu fornecedor OAuth2. Somente os fornecedores OAuth2 suportados são visíveis aqui. Esta configuração pode ser usada por outros módulos que precisam de autenticação OAuth2.
+UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
+ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
 OAuthSetupForLogin=Página para gerar um token OAuth
 SeePreviousTab=Veja o separador anterior
 OAuthIDSecret=ID OAuth e Segredo
@@ -20,11 +20,13 @@ TOKEN_REFRESH=Token Refresh presente
 TOKEN_EXPIRED=O token expirou
 TOKEN_EXPIRE_AT=O token expirará em
 TOKEN_DELETE=Eliminar token guardado
-OAUTH_GOOGLE_NAME=Serviço Oauth Google
-OAUTH_GOOGLE_ID=ID Oauth Google
-OAUTH_GOOGLE_SECRET=Segredo Oauth Google
-OAUTH_GOOGLE_DESC=Vá a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">esta página</a> e depois "Credenciais" para criar credenciais Oauth
-OAUTH_GITHUB_NAME=Serviço Oauth GitHub
-OAUTH_GITHUB_ID=Id. Oauth GitHub
-OAUTH_GITHUB_SECRET=Segredo Oauth GitHub
-OAUTH_GITHUB_DESC=Vá para <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">esta página</a> e clique em "Registar uma nova aplicação" para criar as credenciais de Oauth
+OAUTH_GOOGLE_NAME=OAuth Google service
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
+OAUTH_GITHUB_NAME=OAuth GitHub service
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Go to <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create OAuth credentials
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

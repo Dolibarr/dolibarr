@@ -10,7 +10,11 @@
 https://github.com/Dolibarr/foundation
 
 
-* Few icons are from http://led24.de/iconset/. This is original README file for this source:
+* Few icons are / were from website led24.de 
+
+* Attention: This website is no longer available! 
+
+This is original README file for this source:
 -------------------------------------------------------
 You can do whatever you want with these icons (use on web or in desktop applications) as long as you don’t pass them off as your own and remove this readme file. A credit statement and a link back to
 http://led24.de/iconset/ or http://led24.de/ would be appreciated.

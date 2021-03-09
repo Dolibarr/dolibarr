@@ -26,7 +26,6 @@ PaymentAmount=Montant de paiement
 AddBill=Créer facture ou note de crédit
 EnterPaymentDueToCustomer=Réaliser règlement de crédits dus au client
 ErrorInvoiceAvoirMustBeNegative=Erreur, une facture de type Note de crédit doit avoir un montant négatif
-ShowInvoiceAvoir=Afficher note de crédit
 EscompteOfferedShort=Ristourne
 Discounts=Ristournes
 AddDiscount=Créer ristourne

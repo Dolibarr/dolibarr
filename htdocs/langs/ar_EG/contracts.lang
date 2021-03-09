@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - contracts
+ContractStatusValidated=معتمد
+ContractStatusClosed=مقفول
+ServiceStatusClosed=مقفول

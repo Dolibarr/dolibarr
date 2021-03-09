@@ -29,16 +29,11 @@
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235, 235, 224);
 $theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(191, 75, 57), array(80, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
-if (!defined('ISLOADEDBYSTEELSHEET'))	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
-{
-	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) // user is loaded by dolgraph.class.php
-	{
-		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy')
-		{
+if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
+	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) { // user is loaded by dolgraph.class.php
+		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy') {
 			$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250, 190, 30), array(221, 75, 57), array(0, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
-		}
-		else
-		{
+		} else {
 			// for now we use the same configuration for all types of color blind
 			$theme_datacolor = array(array(248, 220, 1), array(9, 85, 187), array(42, 208, 255), array(0, 0, 0), array(169, 169, 169), array(253, 102, 136), array(120, 154, 190), array(146, 146, 55), array(0, 52, 251), array(196, 226, 161), array(222, 160, 41), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 		}
@@ -61,10 +56,11 @@ $colorbacklinepair1 = '248,248,248'; // line pair
 $colorbacklinepair2 = '246,246,246'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
-$colorbacklinebreak = '214,218,220';
+$colorbacklinebreak = '250,246,251';
 $colorbackbody = '248,248,248';
-$colortexttitlenotab = '90,90,90';
+$colortexttitlenotab = '80,71,5';
 $colortexttitle = '20,20,20';
+$colortexttitlelink = '0,0,120';
 $colortext = '0,0,0';
 $colortextlink = '0,0,120';
 $fontsize = '14';
@@ -98,6 +94,6 @@ $badgeStatus3 = '#bca52b';
 $badgeStatus4 = '#277d1e';
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
-$badgeStatus7 = '#baa32b';
+$badgeStatus7 = '#277d1e';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';

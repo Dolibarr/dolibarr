@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=Commerce
 CommercialArea=Commerce area
-Customer=Customer
-Customers=Customers
+Customer=Покупець
+Customers=Покупці
 Prospect=Prospect
-Prospects=Prospects
+Prospects=Потенційні клієнти
 DeleteAction=Delete an event
 NewAction=New event
 AddAction=Create event

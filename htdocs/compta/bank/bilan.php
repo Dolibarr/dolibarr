@@ -28,8 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-if (!$user->rights->banque->lire)
-  accessforbidden();
+if (!$user->rights->banque->lire) {
+	accessforbidden();
+}
 
 
 /**
@@ -44,10 +45,9 @@ function valeur($sql)
 
 	$valeur = 0;
 
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$obj=$db->fetch_object($resql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
 		$valeur = $obj->amount;
 		$db->free($resql);
 	}

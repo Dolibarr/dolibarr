@@ -15,6 +15,7 @@ CancelCP=Poništeno
 RefuseCP=Odbijeno
 ValidatorCP=Odobrio
 ListeCP=List of leave
+Leave=Zahtjev za odsustvom
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserID=User ID

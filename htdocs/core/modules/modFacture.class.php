@@ -48,7 +48,7 @@ class modFacture extends DolibarrModules
 		$this->numero = 30;
 
 		$this->family = "financial";
-		$this->module_position = '10';
+		$this->module_position = '11';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des factures";
@@ -111,12 +111,13 @@ class modFacture extends DolibarrModules
 		$this->boxes = array(
 				0=>array('file'=>'box_factures_imp.php', 'enabledbydefaulton'=>'Home'),
 				1=>array('file'=>'box_factures.php', 'enabledbydefaulton'=>'Home'),
-				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home')
+				2=>array('file'=>'box_graph_invoices_permonth.php', 'enabledbydefaulton'=>'Home'),
+				3=>array('file'=>'box_customers_outstanding_bill_reached.php', 'enabledbydefaulton'=>'Home')
 		);
 
 		// Cronjobs
-		$arraydate=dol_getdate(dol_now());
-		$datestart=dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>1, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
 		);
@@ -146,7 +147,7 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][1] = 'Devalidate invoices';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'invoice_advance';
+		$this->rights[$r][4] = 'invoice_advance';
 		$this->rights[$r][5] = 'unvalidate';
 
 		$r++;
@@ -163,7 +164,7 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
-        $this->rights[$r][5] = 'send';
+		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 16;
@@ -210,13 +211,15 @@ class modFacture extends DolibarrModules
 		$this->export_icon[$r] = 'invoice';
 		$this->export_permission[$r] = array(array("facture", "facture", "export", "other"));
 		$this->export_fields_array[$r] = array(
-		    's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 'cd.nom'=>'State',
-		    's.phone'=>'Phone',
-			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
-			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
+			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 'cd.nom'=>'State',
+			's.phone'=>'Phone',
+			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4',
+			's.code_compta'=>'CustomerAccountancyCode',
+			's.code_compta_fournisseur'=>'SupplierAccountancyCode',
+			's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
@@ -225,18 +228,16 @@ class modFacture extends DolibarrModules
 			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
 			'p.accountancy_code_sell'=>'ProductAccountancySellCode'
 		);
-		if (! empty($conf->multicurrency->enabled))
-		{
-		    $this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
-		    $this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
-		    $this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
-		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
-		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+		if (!empty($conf->multicurrency->enabled)) {
+			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
-		{
-			$this->export_fields_array[$r]['f.module_source']='Module';
-			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+			$this->export_fields_array[$r]['f.module_source'] = 'Module';
+			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
@@ -250,10 +251,9 @@ class modFacture extends DolibarrModules
 			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
 			'p.accountancy_code_sell'=>'Text'
 		);
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
-		{
-			$this->export_TypeFields_array[$r]['f.module_source']='Text';
-			$this->export_TypeFields_array[$r]['f.pos_source']='Text';
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+			$this->export_TypeFields_array[$r]['f.module_source'] = 'Text';
+			$this->export_TypeFields_array[$r]['f.pos_source'] = 'Text';
 		}
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 'cd.nom'=>'company', 's.phone'=>'company',
@@ -266,15 +266,23 @@ class modFacture extends DolibarrModules
 		);
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		$keyforselect = 'facture'; $keyforelement = 'invoice'; $keyforaliasextra = 'extra';
+		$keyforselect = 'facture';
+		$keyforelement = 'invoice';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'facturedet'; $keyforelement = 'invoice_line'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'facturedet';
+		$keyforelement = 'invoice_line';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra3';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra3';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as cd on s.fk_departement = cd.rowid,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture as f';
@@ -288,7 +296,9 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND sc.fk_user = '.$user->id;
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+		}
 		$r++;
 
 
@@ -297,13 +307,13 @@ class modFacture extends DolibarrModules
 		$this->export_icon[$r] = 'invoice';
 		$this->export_permission[$r] = array(array("facture", "facture", "export"));
 		$this->export_fields_array[$r] = array(
-		    's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 'cd.nom'=>'State',
-		    's.phone'=>'Phone',
+			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.code_client'=>'CustomerCode', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 'cd.nom'=>'State',
+			's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef",  'f.ref_client'=>'RefCustomer',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
 			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LocalTax1', 'f.localtax2'=>'LocalTax2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
@@ -311,22 +321,20 @@ class modFacture extends DolibarrModules
 			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
 		);
 		$this->export_help_array[$r] = array('f.paye'=>'InvoicePaidCompletelyHelp');
-		if (! empty($conf->multicurrency->enabled))
-		{
-		    $this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
-		    $this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
-		    $this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
-		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
-		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
-		    $this->export_examplevalues_array[$r]['f.multicurrency_code'] = 'EUR';
+		if (!empty($conf->multicurrency->enabled)) {
+			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
+			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
+			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
+			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
+			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
+			$this->export_examplevalues_array[$r]['f.multicurrency_code'] = 'EUR';
 		}
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
-		{
-			$this->export_fields_array[$r]['f.module_source']='POSModule';
-			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';
+			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
-		    's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
+			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
 			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
@@ -335,10 +343,9 @@ class modFacture extends DolibarrModules
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.title'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',
 			'p.fk_bank'=>'Numeric', 'p.note'=>'Text', 'pt.code'=>'Text', 'pt.libelle'=>'text', 'ba.ref'=>'Text'
 		);
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
-		{
-			$this->export_fields_array[$r]['f.module_source']='POSModule';
-			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';
+			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 'cd.nom'=>'company', 's.phone'=>'company',
@@ -349,26 +356,32 @@ class modFacture extends DolibarrModules
 		);
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
 		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them, or just to have field we need
-		$keyforselect = 'facture'; $keyforelement = 'invoice'; $keyforaliasextra = 'extra';
+		$keyforselect = 'facture';
+		$keyforelement = 'invoice';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as cd on s.fk_departement = cd.rowid,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture as f';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON f.fk_user_author = uc.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON f.fk_user_valid = uv.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
-		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('invoice').')';
-		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as cd on s.fk_departement = cd.rowid,';
+		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'facture as f';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pj ON f.fk_projet = pj.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uc ON f.fk_user_author = uc.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as uv ON f.fk_user_valid = uv.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pt ON pt.id = p.fk_paiement';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON b.rowid = p.fk_bank';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
+		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
+		}
 		$r++;
 	}
 
@@ -378,7 +391,7 @@ class modFacture extends DolibarrModules
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-     *  @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
+	 *  @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *  @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -393,13 +406,11 @@ class modFacture extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/invoices';
 		$dest = $dirodt.'/template_invoice.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

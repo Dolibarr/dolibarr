@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi-valuta
+ErrorAddRateFail=Fejl i tilføjet sats
+ErrorAddCurrencyFail=Fejl i tilføjet valuta
+ErrorDeleteCurrencyFail=Fejl sletning mislykkes
+multicurrency_syncronize_error=Synkroniseringsfejl: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Brug datoen for dokumentet til at finde valutakursen i stedet for at bruge den senest kendte sats
+multicurrency_useOriginTx=Når et objekt er oprettet fra et andet, skal du holde den oprindelige sats fra kildeobjektet (ellers bruge den senest kendte sats)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=Du skal oprette en konto på webstedet %s for at bruge denne funktionalitet.<br> Få din <b>API-nøgle</b>. <br>Hvis du bruger en gratis konto, kan du ikke ændre <b>kildevalutaen</b> (USD som standard). <br>Hvis din hovedvaluta ikke er USD, vil applikationen automatisk genberegn det.<br><br> Du er begrænset til 1000 synkroniseringer om måneden.
+multicurrency_appId=API-nøgle
+multicurrency_appCurrencySource=Valuta kilde
+multicurrency_alternateCurrencySource=Alternativ valuta kilde
+CurrenciesUsed=Brugte valutaer
+CurrenciesUsed_help_to_add=Tilføj de forskellige valutaer og satser, du skal bruge på dine <b> forslag </ b>, <b> ordrer </ b> osv.
+rate=sats
+MulticurrencyReceived=Modtaget, original valuta
+MulticurrencyRemainderToTake=Resterende beløb, original valuta
+MulticurrencyPaymentAmount=Betalingsbeløb, oprindelig valuta
+AmountToOthercurrency=Beløb til (i valuta for modtagende konto)
+CurrencyRateSyncSucceed=Valutakurssynkronisering udført med succes
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Brug dokumentets valuta til onlinebetalinger

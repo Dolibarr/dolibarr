@@ -41,18 +41,18 @@ class CompanyBankAccount extends Account
 	public $date_rum;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
-    public $datem;
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
+	public $datem;
 
 
 	/**
@@ -78,53 +78,48 @@ class CompanyBankAccount extends Account
 	 * @param   int    $notrigger   1=Disable triggers
 	 * @return	int					<0 if KO, >= 0 if OK
 	 */
-    public function create(User $user = null, $notrigger = 0)
+	public function create(User $user = null, $notrigger = 0)
 	{
 		$now	= dol_now();
 		$error = 0;
 		// Correct default_rib to be sure to have always one default
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1 AND type = 'ban'";
-   		$result = $this->db->query($sql);
-		if ($result)
-		{
+		$result = $this->db->query($sql);
+		if ($result) {
 			$numrows = $this->db->num_rows($result);
-			if ($this->default_rib && $numrows > 0) $this->default_rib = 0;
-			if (empty($this->default_rib) && $numrows == 0) $this->default_rib = 1;
+			if ($this->default_rib && $numrows > 0) {
+				$this->default_rib = 0;
+			}
+			if (empty($this->default_rib) && $numrows == 0) {
+				$this->default_rib = 1;
+			}
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
 		$sql .= " VALUES (".$this->socid.", 'ban', '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->affected_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe_rib");
 
-				if (!$notrigger)
-				{
-				   	// Call trigger
+				if (!$notrigger) {
+					// Call trigger
 					$result = $this->call_trigger('COMPANY_RIB_CREATE', $user);
-					if ($result < 0) $error++;
+					if ($result < 0) {
+						$error++;
+					}
 					// End call triggers
 
-					if (!$error)
-					{
+					if (!$error) {
 						return 1;
-					}
-					else
-					{
+					} else {
 						return 0;
 					}
-				}
-				else
-				{
+				} else {
 					return 1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 			return 0;
 		}
@@ -137,65 +132,64 @@ class CompanyBankAccount extends Account
 	 *  @param  int     $notrigger   1=Disable triggers
 	 *	@return	int				     <=0 if KO, >0 if OK
 	 */
-    public function update(User $user = null, $notrigger = 0)
+	public function update(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 		$error = 0;
 
-		if (! $this->id) return -1;
+		if (!$this->id) {
+			return -1;
+		}
 
-		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
-		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
+		if (dol_strlen($this->domiciliation) > 255) {
+			$this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		}
+		if (dol_strlen($this->owner_address) > 255) {
+			$this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
+		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
-		$sql.= " bank = '" .$this->db->escape($this->bank)."'";
-		$sql.= ",code_banque='".$this->db->escape($this->code_banque)."'";
-		$sql.= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
-		$sql.= ",number='".$this->db->escape($this->number)."'";
-		$sql.= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
-		$sql.= ",bic='".$this->db->escape($this->bic)."'";
-		$sql.= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql.= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-		$sql.= ",proprio = '".$this->db->escape($this->proprio)."'";
-		$sql.= ",owner_address = '".$this->db->escape($this->owner_address)."'";
-		$sql.= ",default_rib = ".$this->default_rib;
-		if ($conf->prelevement->enabled)
-		{
-			$sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
-			$sql.= ",rum = '".$this->db->escape($this->rum)."'";
-			$sql.= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
+		$sql .= " bank = '".$this->db->escape($this->bank)."'";
+		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
+		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
+		$sql .= ",number='".$this->db->escape($this->number)."'";
+		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
+		$sql .= ",bic='".$this->db->escape($this->bic)."'";
+		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+		$sql .= ",default_rib = ".$this->default_rib;
+		if ($conf->prelevement->enabled) {
+			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
+			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
 		}
-		if (trim($this->label) != '')
-			$sql.= ",label = '".$this->db->escape($this->label)."'";
-		else
-			$sql.= ",label = NULL";
-		$sql.= " WHERE rowid = ".$this->id;
+		if (trim($this->label) != '') {
+			$sql .= ",label = '".$this->db->escape($this->label)."'";
+		} else {
+			$sql .= ",label = NULL";
+		}
+		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if (! $notrigger)
-			{
+		if ($result) {
+			if (!$notrigger) {
 				// Call trigger
-				$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
-				if ($result < 0) $error++;
-				// End call triggers
-				if(! $error )
-				{
-					return 1;
+				$result = $this->call_trigger('COMPANY_RIB_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
 				}
-				else
-				{
+				// End call triggers
+				if (!$error) {
+					return 1;
+				} else {
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				return 1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -210,26 +204,31 @@ class CompanyBankAccount extends Account
 	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
-    public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
+	public function fetch($id, $socid = 0, $default = 1, $type = 'ban')
 	{
-		if (empty($id) && empty($socid)) return -1;
+		if (empty($id) && empty($socid)) {
+			return -1;
+		}
 
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
-		if ($id)    $sql .= " WHERE rowid = ".$id;
-		if ($socid)
-		{
+		if ($id) {
+			$sql .= " WHERE rowid = ".$id;
+		}
+		if ($socid) {
 			$sql .= " WHERE fk_soc  = ".$socid;
-			if ($default > -1) $sql .= " AND default_rib = ".$this->db->escape($default);
-			if ($type) $sql .= " AND type ='".$this->db->escape($type)."'";
+			if ($default > -1) {
+				$sql .= " AND default_rib = ".$this->db->escape($default);
+			}
+			if ($type) {
+				$sql .= " AND type ='".$this->db->escape($type)."'";
+			}
 		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->ref = $obj->fk_soc.'-'.$obj->label; // Generate an artificial ref
@@ -258,9 +257,7 @@ class CompanyBankAccount extends Account
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -273,7 +270,7 @@ class CompanyBankAccount extends Account
 	 *	@param  	int		$notrigger	1=Disable triggers
 	 *  @return		int		            <0 if KO, >0 if OK
 	 */
-    public function delete(User $user = null, $notrigger = 0)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 
@@ -283,33 +280,29 @@ class CompanyBankAccount extends Account
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger)
-		{
+		if (!$error && !$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('COMPANY_RIB_DELETE', $user);
-			if ($result < 0) $error++;
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
 			$sql .= " WHERE rowid  = ".$this->id;
 
-			if (!$this->db->query($sql))
-			{
+			if (!$this->db->query($sql)) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1 * $error;
 		}
@@ -342,21 +335,17 @@ class CompanyBankAccount extends Account
 	 * @param   int     $rib    RIB id
 	 * @return  int             0 if KO, 1 if OK
 	 */
-    public function setAsDefault($rib = 0)
+	public function setAsDefault($rib = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);
-		if ($result1)
-		{
-			if ($this->db->num_rows($result1) == 0)
-			{
+		if ($result1) {
+			if ($this->db->num_rows($result1) == 0) {
 				return 0;
-			}
-			else
-			{
+			} else {
 				$obj = $this->db->fetch_object($result1);
 
 				$this->db->begin();
@@ -371,21 +360,16 @@ class CompanyBankAccount extends Account
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result3 = $this->db->query($sql3);
 
-				if (!$result2 || !$result3)
-				{
+				if (!$result2 || !$result3) {
 					dol_print_error($this->db);
 					$this->db->rollback();
 					return -1;
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 					return 1;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -398,7 +382,7 @@ class CompanyBankAccount extends Account
 	 *
 	 *  @return	void
 	 */
-    public function initAsSpecimen()
+	public function initAsSpecimen()
 	{
 		$this->specimen        = 1;
 		$this->ref             = 'CBA';

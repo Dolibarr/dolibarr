@@ -164,6 +164,12 @@ source_file = htdocs/langs/en_US/hrm.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.intracommreport]
+file_filter = htdocs/langs/<lang>/intracommreport.lang
+source_file = htdocs/langs/en_US/intracommreport.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.install]
 file_filter = htdocs/langs/<lang>/install.lang
 source_file = htdocs/langs/en_US/install.lang
@@ -323,6 +329,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.receptions]
 file_filter = htdocs/langs/<lang>/receptions.lang
 source_file = htdocs/langs/en_US/receptions.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.recruitment]
+file_filter = htdocs/langs/<lang>/recruitment.lang
+source_file = htdocs/langs/en_US/recruitment.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

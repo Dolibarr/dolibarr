@@ -26,7 +26,7 @@
  * Prepare array of tabs for EmailCollector
  *
  * @param	EmailCollector	$object		EmailCollector
- * @return 	array					Array of tabs
+ * @return 	array						Array of tabs
  */
 function emailcollectorPrepareHead($object)
 {
@@ -38,7 +38,7 @@ function emailcollectorPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/admin/emailcollector_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("EmailCollector");
 	$head[$h][2] = 'card';
 	$h++;
 

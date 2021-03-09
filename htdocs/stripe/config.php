@@ -25,8 +25,8 @@
 *  \brief      Page to move config in api
 */
 
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/lib/Stripe.php';
 
 //global $stripe;
 global $conf;
@@ -34,25 +34,22 @@ global $stripearrayofkeysbyenv;
 
 $stripearrayofkeysbyenv = array(
 	0=>array(
-		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
+		"secret_key"      => empty($conf->global->STRIPE_TEST_SECRET_KEY) ? '' : $conf->global->STRIPE_TEST_SECRET_KEY,
+		"publishable_key" => empty($conf->global->STRIPE_TEST_PUBLISHABLE_KEY) ? '' : $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
 	),
 	1=>array(
-		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
-		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
+		"secret_key"      => empty($conf->global->STRIPE_LIVE_SECRET_KEY) ? '' : $conf->global->STRIPE_LIVE_SECRET_KEY,
+		"publishable_key" => empty($conf->global->STRIPE_LIVE_PUBLISHABLE_KEY) ? '' : $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
 	)
 );
 
 $stripearrayofkeys = array();
-if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-{
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[0]; // Test
-}
-else
-{
+} else {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[1]; // Live
 }
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
-\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION) ? "2019-09-09" : $conf->global->STRIPE_FORCE_VERSION); // force version API
+\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION) ? "2020-08-27" : $conf->global->STRIPE_FORCE_VERSION); // force version API

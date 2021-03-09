@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=این تعداد محصول از 
 ValidateOrderFirstBeforeReception=ابتدا باید سفارش را تائید کنید تا امکان ایجاد «دریافت‌کالا» داشته باشید
 ReceptionsNumberingModules=واحد شماره‌گذاری برای دریافت‌ها
 ReceptionsReceiptModel=قالب اسناد دریافت‌کالا
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

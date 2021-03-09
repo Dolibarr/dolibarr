@@ -32,10 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'trips'));
 
-$id=GETPOST('id');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$id = GETPOST('id');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
 
 /*
  * Actions
@@ -56,7 +56,7 @@ $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -1, 'payment');
 
 
 //$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
@@ -75,7 +75,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

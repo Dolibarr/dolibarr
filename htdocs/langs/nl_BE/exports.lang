@@ -1,2 +1,2 @@
 # Dolibarr language file - Source file is en_US - exports
-DataLoadedWithId=Alle gegevens worden geladen met de volgende import id: <b>%s</b>
+ExportStringFilter=%% laat het vervangen toe van één of meer tekens in de tekst

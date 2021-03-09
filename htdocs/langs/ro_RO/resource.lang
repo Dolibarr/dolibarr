@@ -5,7 +5,7 @@ DeleteResource=Şterge resursa
 ConfirmDeleteResourceElement=Confirmaţi ştergerea resursei pentru acest element
 NoResourceInDatabase=Nicio resursă în baza de date.
 NoResourceLinked=Nicio resursă legată
-
+ActionsOnResource=Evenimente despre această resursă
 ResourcePageIndex=Lista resurse
 ResourceSingular=Resursă
 ResourceCard=Fişă resursă
@@ -30,7 +30,10 @@ DictionaryResourceType=Tipuri resurse
 
 SelectResource=Selectează resursa
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=Id resursă
+AssetNumber=Număr serial
+ResourceTypeCode=Codul tipului de resursă
 ImportDataset_resource_1=Resurse
+
+ErrorResourcesAlreadyInUse=O parte din resurse sunt deja în uz
+ErrorResourceUseInEvent= %sutilizat în %seveniment

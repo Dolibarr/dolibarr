@@ -38,11 +38,11 @@ class modMultiCurrency extends DolibarrModules
 	 *
 	 * @param DoliDB $db Database handler
 	 */
-    public function __construct($db)
-    {
-        global $langs, $conf;
+	public function __construct($db)
+	{
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -88,7 +88,7 @@ class modMultiCurrency extends DolibarrModules
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("multicurrency");
 
@@ -101,8 +101,8 @@ class modMultiCurrency extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@multicurrency:$user->rights->multicurrency->read:/multicurrency/mynewtab1.php?id=__ID__',  					// To add a new tab identified by code tabname1
-        //                              'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@multicurrency:$user->rights->othermodule->read:/multicurrency/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        //                              'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//                              'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@multicurrency:$user->rights->othermodule->read:/multicurrency/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		//                              'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
@@ -123,35 +123,34 @@ class modMultiCurrency extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
-        $this->tabs = array();
+		$this->tabs = array();
 
-        // Dictionaries
-	    if (!isset($conf->multicurrency->enabled))
-        {
-        	$conf->multicurrency = new stdClass();
-        	$conf->multicurrency->enabled = 0;
-        }
+		// Dictionaries
+		if (!isset($conf->multicurrency->enabled)) {
+			$conf->multicurrency = new stdClass();
+			$conf->multicurrency->enabled = 0;
+		}
 		$this->dictionaries = array();
-        /* Example:
-        if (! isset($conf->multicurrency->enabled)) $conf->multicurrency->enabled=0;	// This is to avoid warnings
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@multicurrency',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+		/* Example:
+		if (! isset($conf->multicurrency->enabled)) $conf->multicurrency->enabled=0;	// This is to avoid warnings
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@multicurrency',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
 			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
 			// Sort order
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->multicurrency->enabled,$conf->multicurrency->enabled,$conf->multicurrency->enabled)												// Condition to show each dictionary
-        );
-        */
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->multicurrency->enabled,$conf->multicurrency->enabled,$conf->multicurrency->enabled)												// Condition to show each dictionary
+		);
+		*/
 
-        // Boxes
+		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-        $this->boxes = array(); // List of boxes
+		$this->boxes = array(); // List of boxes
 		// Example:
 		//$this->boxes=array(
 		//    0=>array('file'=>'myboxa.php@multicurrency','note'=>'','enabledbydefaulton'=>'Home'),
@@ -215,8 +214,8 @@ class modMultiCurrency extends DolibarrModules
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;
 		// $this->export_label[$r]='MyModule';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        // $this->export_enabled[$r]='1';                               // Condition to show export in list (ie: '$user->id==3'). Set to 1 to always show when module is enabled.
-        // $this->export_icon[$r]='generic:MyModule';
+		// $this->export_enabled[$r]='1';                               // Condition to show export in list (ie: '$user->id==3'). Set to 1 to always show when module is enabled.
+		// $this->export_icon[$r]='generic:MyModule';
 		// $this->export_permission[$r]=array(array("multicurrency","level1","level2"));
 		// $this->export_fields_array[$r]=array(
 		//	's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',
@@ -259,7 +258,7 @@ class modMultiCurrency extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -269,8 +268,7 @@ class modMultiCurrency extends DolibarrModules
 		//$this->_load_tables('/multicurrency/sql/');
 		$res = $this->_init($sql, $options);
 
-		if ($res)
-		{
+		if ($res) {
 			$this->createFirstCurrency();
 		}
 
@@ -302,8 +300,7 @@ class modMultiCurrency extends DolibarrModules
 	{
 		global $conf, $user, $langs;
 
-		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency))
-		{
+		if (!MultiCurrency::checkCodeAlreadyExists($conf->currency)) {
 			$langs->loadCacheCurrencies('');
 
 			$multicurrency = new MultiCurrency($this->db);
@@ -311,7 +308,9 @@ class modMultiCurrency extends DolibarrModules
 			$multicurrency->name = $langs->cache_currencies[$conf->currency]['label'].' ('.$langs->getCurrencySymbol($conf->currency).')';
 			$r = $multicurrency->create($user);
 
-			if ($r > 0)	$multicurrency->addRate(1);
+			if ($r > 0) {
+				$multicurrency->addRate(1);
+			}
 		}
 	}
 }

@@ -1,30 +1,32 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Configuration
-OAuthServices=OAuth services
-ManualTokenGeneration=Manual token generation
-TokenManager=Token manager
-IsTokenGenerated=Is token generated ?
-NoAccessToken=No access token saved into local database
-HasAccessToken=A token was generated and saved into local database
-NewTokenStored=Token received and saved
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
-TokenDeleted=Token deleted
-RequestAccess=Click here to request/renew access and receive a new token to save
-DeleteAccess=Click here to delete token
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credential on your OAuth provider:
-ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
-OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
+ConfigOAuth=OAuth-konfiguration
+OAuthServices=OAuth Services
+ManualTokenGeneration=Manuell token generation
+TokenManager=Token Manager
+IsTokenGenerated=Genereras token?
+NoAccessToken=Ingen åtkomsttoken sparas i den lokala databasen
+HasAccessToken=En token genererades och sparades i den lokala databasen
+NewTokenStored=Token mottagen och sparad
+ToCheckDeleteTokenOnProvider=Klicka här för att kontrollera / radera behörighet som sparats av %s OAuth-leverantören
+TokenDeleted=Token raderad
+RequestAccess=Klicka här för att begära / förnya åtkomst och få en ny token att spara
+DeleteAccess=Klicka här för att radera token
+UseTheFollowingUrlAsRedirectURI=Använd följande URL-adress som omdirigerings-URI när du skapar dina uppgifter med din OAuth-leverantör:
+ListOfSupportedOauthProviders=Ange inloggningsuppgifterna från din OAuth2-leverantör. Endast stödda OAuth2-leverantörer listas här. Dessa tjänster kan användas av andra moduler som behöver OAuth2-autentisering.
+OAuthSetupForLogin=Sida för att skapa en OAuth-token
+SeePreviousTab=Se föregående flik
+OAuthIDSecret=OAuth ID och Secret
 TOKEN_REFRESH=Token Refresh Present
-TOKEN_EXPIRED=Token expired
-TOKEN_EXPIRE_AT=Token expire at
-TOKEN_DELETE=Delete saved token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials
+TOKEN_EXPIRED=Token utgått
+TOKEN_EXPIRE_AT=Token upphör att gälla vid
+TOKEN_DELETE=Radera sparade token
+OAUTH_GOOGLE_NAME=OAuth Google-tjänst
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Gå till <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> den här sidan </a> och sedan "Credentials" för att skapa OAuth-uppgifter
+OAUTH_GITHUB_NAME=OAuth GitHub service
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=Gå till <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> den här sidan </a> sedan "Registrera en ny applikation" för att skapa OAuth-uppgifter
+OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

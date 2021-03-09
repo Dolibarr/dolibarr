@@ -15,6 +15,7 @@ CancelCP=Tühistatud
 RefuseCP=Keeldutud
 ValidatorCP=Heaks kiitja
 ListeCP=List of leave
+Leave=Leave request
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserID=User ID

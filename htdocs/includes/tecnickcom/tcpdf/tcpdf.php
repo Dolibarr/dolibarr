@@ -18888,8 +18888,21 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));
 					$type = '';
 				} else {
-					if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
-						// fix image path
+					// @CHANGE LDR Add support for src="file://..." links
+					if (strpos($imgsrc, 'file://') === 0) {
+						$imgsrc = str_replace('file://', '/', $imgsrc);
+						$imgsrc = urldecode($imgsrc);
+						$testscrtype = @parse_url($imgsrc);
+						if (empty($testscrtype['query'])) {
+							// convert URL to server path
+							$imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
+						} elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
+							// convert URL to server path
+							$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
+						}
+					}
+					elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+							// fix image path
 						$findroot = strpos($imgsrc, $_SERVER['DOCUMENT_ROOT']);
 						if (($findroot === false) OR ($findroot > 1)) {
 							if (substr($_SERVER['DOCUMENT_ROOT'], -1) == '/') {
@@ -18908,6 +18921,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 							$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
 						}
 					}
+
 					// get image type
 					$type = TCPDF_IMAGES::getImageFileType($imgsrc);
 				}

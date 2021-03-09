@@ -1,4 +1,25 @@
 # Dolibarr language file - Source file is en_US - sms
-SmsSuccessfulySent=SMS korekkte gesendet (von %s an %s)
-ConfirmValidSms=Freigabe dieser Kampagne?
+SmsSetup=SMS Einrichtung
+SmsDesc=Hier kommen die globalen SMS - Einstellungen rein.
+AllSms=Alle SMS - Kampagnen
+SmsTopic=Thema der SMS
+ListOfSms=SMS Kampagnen anzeigen
+NewSms=Neue SMS Kampagne
+EditSms=SMS anpassen
+DeleteSms=SMS Kampagne löschen
+DeleteASms=SMS Kampagne löschen
+PrepareSms=SMS anlegen
+CreateSms=SMS erzeugen
+SmsResult=SMS Sendebericht
+TestSms=SMS testen
+ValidSms=SMS prüfen
+ApproveSms=SMS frei geben
+SmsStatusValidated=Bestätigen
+SmsSuccessfulySent=SMS - Versand erfolgreich (von %s an %s)
+ConfirmValidSms=Willst du diese SMS Kampagne wirklich frei geben?
+NbOfUniqueSms=Anzahl eindeutige Handynummern
+NbOfSms=Anzahl Handynummern
+SmsInfoCharRemain=Restliche Buchstaben
+SmsInfoNumero=(internationales Format z.B.: +41 79 999 99 99)
 SmsNoPossibleSenderFound=Kein Absender verfügbar. Prüfen Sie die Einstellungen Ihres SMS Anbieters.
+DisableStopIfSupported=STOP Meldung unterbinden (wenn möglich)

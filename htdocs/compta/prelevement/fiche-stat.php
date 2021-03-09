@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/compta/prelevement/fiche-stat.php
  *  \ingroup    prelevement
- *	\brief      Prelevement statistics
+ *	\brief      Debit order or credit transfer statistics
  */
 
 require '../../main.inc.php';
@@ -33,24 +33,41 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
 
 // Security check
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+$type = GETPOST('type', 'aZ09');
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+
+if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+	accessforbidden();
+}
+if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
+	accessforbidden();
+}
+
 
 
 /*
@@ -59,14 +76,12 @@ $object = new BonPrelevement($db, "");
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref)
-{
-	if ($object->fetch($prev_id, $ref) >= 0)
-	{
+if ($prev_id > 0 || $ref) {
+	if ($object->fetch($prev_id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
-		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+		print dol_get_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -78,27 +93,18 @@ if ($prev_id > 0 || $ref)
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-		// Status
-		/*
-		print '<tr><td>'.$langs->trans('Status').'</td>';
-		print '<td>'.$object->getLibStatut(1).'</td>';
-		print '</tr>';
-		*/
-
-		if ($object->date_trans <> 0)
-		{
+		if ($object->date_trans <> 0) {
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if ($object->date_credit <> 0)
-		{
+		if ($object->date_credit <> 0) {
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
 			print '</td></tr>';
@@ -115,34 +121,44 @@ if ($prev_id > 0 || $ref)
 		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans("BankToReceiveWithdraw");
+		$labelofbankfield = "BankToReceiveWithdraw";
+		if ($object->type == 'bank-transfer') {
+			$labelofbankfield = 'BankToPayCreditTransfer';
+		}
+		print $langs->trans($labelofbankfield);
 		print '</td>';
 		print '<td>';
-		if ($acc->id > 0)
+		if ($acc->id > 0) {
 			print $acc->getNomUrl(1);
+		}
 		print '</td>';
 		print '</tr>';
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans("WithdrawalFile").'</td><td>';
+		$labelfororderfield = 'WithdrawalFile';
+		if ($object->type == 'bank-transfer') {
+			$labelfororderfield = 'CreditTransferFile';
+		}
+		print $langs->trans($labelfororderfield).'</td><td>';
 		$relativepath = 'receipts/'.$object->ref.'.xml';
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') {
+			$modulepart = 'paymentbybanktransfer';
+		}
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
 
-		dol_fiche_end();
-	}
-	else
-	{
-		$langs->load("errors");
-		print $langs->trans("Error");
+		print dol_get_fiche_end();
+	} else {
+		dol_print_error($db);
 	}
 
 	/*
 	 * Stats
 	 */
-	$ligne = new LignePrelevement($db, $user);
+	$line = new LignePrelevement($db);
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -150,8 +166,7 @@ if ($prev_id > 0 || $ref)
 	$sql .= " GROUP BY pl.statut";
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -162,19 +177,20 @@ if ($prev_id > 0 || $ref)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$row = $db->fetch_row($resql);
 
 			print '<tr class="oddeven"><td>';
 
-			print $ligne->LibStatut($row[1], 1);
+			print $line->LibStatut($row[1], 1);
 
 			print '</td><td class="right">';
 			print price($row[0]);
 
 			print '</td><td class="right">';
-			if ($object->amount) print round($row[0] / $object->amount * 100, 2)." %";
+			if ($object->amount) {
+				print round($row[0] / $object->amount * 100, 2)." %";
+			}
 			print '</td>';
 
 			print "</tr>\n";
@@ -185,9 +201,7 @@ if ($prev_id > 0 || $ref)
 
 		print "</table>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		print $db->error().' '.$sql;
 	}
 }

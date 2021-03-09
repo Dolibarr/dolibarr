@@ -31,12 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 $langs->loadLangs(array('users', 'admin', 'companies', 'ldap'));
 
 $id = GETPOST('id', 'int');
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userldap';   // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userldap'; // To manage different context of search
 
 // Security check
-$socid=0;
-if ($user->socid > 0) $socid = $user->socid;
-$feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
+$socid = 0;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
@@ -45,7 +47,7 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','userldap','globalcard'));
+$hookmanager->initHooks(array('usercard', 'userldap', 'globalcard'));
 
 
 /*
@@ -53,30 +55,28 @@ $hookmanager->initHooks(array('usercard','userldap','globalcard'));
  */
 
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$parameters = array('id'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if ($_GET["action"] == 'dolibarr2ldap')
-	{
+if (empty($reshook)) {
+	if ($_GET["action"] == 'dolibarr2ldap') {
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
-			$olddn = $dn;    // We can say that old dn = dn as we force synchro
+			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
 			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
 
 		if ($result >= 0) {
 			setEventMessages($langs->trans("UserSynchronized"), null, 'mesgs');
-		}
-		else {
+		} else {
 			setEventMessages($ldap->error, $ldap->errors, 'errors');
 		}
 	}
@@ -93,7 +93,7 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'ldap', $title, 0, 'user');
+print dol_get_fiche_head($head, 'ldap', $title, 0, 'user');
 
 $linkback = '';
 
@@ -110,22 +110,17 @@ print '<table class="border centpercent">';
 
 // Login
 print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-if ($object->ldap_sid)
-{
+if ($object->ldap_sid) {
 	print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
-}
-else
-{
+} else {
 	print '<td>'.$object->login.'</td>';
 }
 print '</tr>';
 
-if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
-{
+if ($conf->global->LDAP_SERVER_TYPE == "activedirectory") {
 	$ldap = new Ldap();
 	$result = $ldap->connect_bind();
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$userSID = $ldap->getObjectSid($object->login);
 	}
 	print '<tr><td class="valigntop">'.$langs->trans("SID").'</td>';
@@ -150,7 +145,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 /*
  * Barre d'actions
@@ -158,14 +153,15 @@ dol_fiche_end();
 
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
-{
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+	print "<br>\n";
+}
 
 
 
@@ -180,12 +176,11 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
-if ($result > 0)
-{
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
+if ($result > 0) {
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
 	$records = $ldap->getAttribute($dn, $search);
@@ -193,27 +188,19 @@ if ($result > 0)
 	//print_r($records);
 
 	// Affichage arbre
-	if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
-	{
-		if (! is_array($records))
-		{
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
+		if (!is_array($records)) {
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+		} else {
+			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
-		else
-		{
-			$result=show_ldap_content($records, 0, $records['count'], true);
-		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();
 	$ldap->close();
-}
-else
-{
+} else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

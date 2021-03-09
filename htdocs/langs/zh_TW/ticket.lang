@@ -30,10 +30,9 @@ Permission56005=查看所有合作方的服務單（對外部用戶無效，始�
 TicketDictType=服務單-類型
 TicketDictCategory=服務單-組別
 TicketDictSeverity=服務單-嚴重程度
-TicketTypeShortBUGSOFT=軟體故障
-TicketTypeShortBUGHARD=設備故障
-TicketTypeShortCOM=商業問題
+TicketDictResolution=服務單-決議
 
+TicketTypeShortCOM=商業問題
 TicketTypeShortHELP=請求有用的幫助
 TicketTypeShortISSUE=錯誤或問題
 TicketTypeShortREQUEST=變更或增強要求
@@ -43,7 +42,7 @@ TicketTypeShortOTHER=其他
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
-TicketSeverityShortBLOCKING=嚴重/阻止
+TicketSeverityShortBLOCKING=嚴重，阻止中
 
 ErrorBadEmailAddress=欄位'%s'不正確
 MenuTicketMyAssign=我的服務單
@@ -59,7 +58,6 @@ OriginEmail=電子郵件來源
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status
-NotRead=未讀
 Read=已讀
 Assigned=已分配
 InProgress=進行中
@@ -71,7 +69,6 @@ Deleted=已刪除
 
 # Dict
 Type=類型
-Category=分析代碼
 Severity=嚴重程度
 
 # Email templates
@@ -109,7 +106,7 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=此段文字將出現在用戶的�
 ExtraFieldsTicket=額外屬性
 TicketCkEditorEmailNotActivated=HTML編輯器未啟動。請將FCKEDITOR_ENABLE_MAIL內容設為1即可啟動。
 TicketsDisableEmail=不要為服務單建立或訊息紀錄發送電子郵件
-TicketsDisableEmailHelp=預設情況下，在建立新服務單或訊息時會發送電子郵件。啟用此選項可禁用*所有*電子郵件通知
+TicketsDisableEmailHelp=預設情況下，在建立新服務單或訊息時會發送電子郵件。啟用此選項可關閉*所有*電子郵件通知
 TicketsLogEnableEmail=通過電子郵件啟用日誌
 TicketsLogEnableEmailHelp=每次更改時，都會向與此服務單有關的**每個聯絡人**發送電子郵件。
 TicketParams=參數
@@ -126,13 +123,17 @@ TicketsActivatePublicInterfaceHelp=公共界面允許任何訪客建立服務單
 TicketsAutoAssignTicket=自動分配建立服務單的用戶
 TicketsAutoAssignTicketHelp=建立服務單時，可以自動將用戶分配給服務單。
 TicketNumberingModules=服務單編號模組
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=建立時通知合作方
-TicketGroup=群組
 TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
+TicketsPublicNotificationNewMessage=當有新訊息時寄送電子郵件
+TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
+TicketPublicNotificationNewMessageDefaultEmail=通知電子郵件寄送到（更新）
+TicketPublicNotificationNewMessageDefaultEmailHelp=如果沒有分配服務單或用戶沒有電子郵件，請通過電子郵件向此信箱寄送新消息通知。
 #
 # Index & list page
 #
-TicketsIndex=服務單-主頁
+TicketsIndex=服務單區域
 TicketList=服務單清單
 TicketAssignedToMeInfos=此頁面顯示由目前用戶建立或分配給目前用戶的服務單清單
 NoTicketsFound=找不到服務單
@@ -157,7 +158,7 @@ CreatedBy=建立者
 NewTicket=新服務單
 SubjectAnswerToTicket=服務單回應
 TicketTypeRequest=需求類型
-TicketCategory=分析代碼
+TicketCategory=群組
 SeeTicket=查閱服務單
 TicketMarkedAsRead=服務單已標記為已讀
 TicketReadOn=繼續讀取
@@ -176,7 +177,7 @@ TicketMessageSuccessfullyAdded=訊息已成功新增
 TicketMessagesList=訊息清單
 NoMsgForThisTicket=沒有關於此服務單的訊息
 Properties=分類
-LatestNewTickets=最後的%s最新服務單（未讀）
+LatestNewTickets=最後%s張最新服務單（未讀）
 TicketSeverity=嚴重程度
 ShowTicket=查閱服務單
 RelatedTickets=相關服務單
@@ -230,7 +231,6 @@ TicketLogStatusChanged=狀態已更改：%s到%s
 TicketNotNotifyTiersAtCreate=建立時不通知公司
 Unread=未讀
 TicketNotCreatedFromPublicInterface=無法使用。服務單不是從公共界面建立的。
-PublicInterfaceNotEnabled=未啟用公共界面
 ErrorTicketRefRequired=服務單參考名稱為必填
 
 #
@@ -253,7 +253,7 @@ TicketPublicDesc=您可以從現有編號建立支援服務單或進行檢查。
 YourTicketSuccessfullySaved=服務單已成功儲存！
 MesgInfosPublicTicketCreatedWithTrackId=已建立一個新的服務單，其ID為%s和參考%s。
 PleaseRememberThisId=請保留追蹤編號，我們稍後可能會詢問您。
-TicketNewEmailSubject=服務單建立確認-參考%s
+TicketNewEmailSubject=服務單建立確認-參考%s(發布服務單 ID%s)
 TicketNewEmailSubjectCustomer=新支援服務單
 TicketNewEmailBody=這是一封自動電子郵件，用於確認您已註冊新服務單。
 TicketNewEmailBodyCustomer=這是一封自動電子郵件，用於確認您的帳戶中剛剛建立了新服務單。
@@ -272,7 +272,7 @@ Subject=主題
 ViewTicket=檢視服務單
 ViewMyTicketList=檢視我的服務單清單
 ErrorEmailMustExistToCreateTicket=錯誤：在我們的數據庫中找不到此電子郵件地址
-TicketNewEmailSubjectAdmin=已建立新服務單-參考 %s
+TicketNewEmailSubjectAdmin=服務單建立已建立-參考%s(發布服務單 ID%s)
 TicketNewEmailBodyAdmin=<p>服務單已被建立,編號為＃%s，請參閱以下資訊： </p>
 SeeThisTicketIntomanagementInterface=在管理界面中查看服務單
 TicketPublicInterfaceForbidden=服務單的公共界面未啟用
@@ -295,10 +295,10 @@ ActionsOnTicket=服務單的事件
 # Boxes
 #
 BoxLastTicket=最新建立的服務單
-BoxLastTicketDescription=最新%s建立的服務單
+BoxLastTicketDescription=最新%s張建立的服務單
 BoxLastTicketContent=
 BoxLastTicketNoRecordedTickets=沒有最近未讀的服務單
 BoxLastModifiedTicket=最新修改的服務單
-BoxLastModifiedTicketDescription=最新%s修改的服務單
+BoxLastModifiedTicketDescription=最新%s張修改的服務單
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=沒有最近修改的服務單
