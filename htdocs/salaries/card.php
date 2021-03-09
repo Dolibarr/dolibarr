@@ -608,7 +608,7 @@ if ($id) {
 	$sal->fetch($object->id);
 	//Employee
 	if ($action != 'editfk_user') {
-		if ($sal->getSommePaiement() > 0 && !empty($object->fk_user)){
+		if ($sal->getSommePaiement() > 0 && !empty($object->fk_user)) {
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
 			if ($result > 0) {
