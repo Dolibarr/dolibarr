@@ -818,7 +818,7 @@ if (empty($reshook))
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-					if(!empty ($price_ht_devise)) {
+					if (!empty($price_ht_devise)) {
 					    $pu_ht = null;
 					    $pu_ht_devise = price2num($price_ht_devise, 'MU');
 					}

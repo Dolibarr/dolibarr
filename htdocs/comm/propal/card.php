@@ -974,13 +974,13 @@ if (empty($reshook))
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-					if(!empty ($price_ht_devise)) {
-					   $pu_ht = null;
-					   $pu_ht_devise = price2num($price_ht_devise, 'MU');
+					if (!empty($price_ht_devise)) {
+						$pu_ht = null;
+						$pu_ht_devise = price2num($price_ht_devise, 'MU');
 					}
 				}// On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-				
+
 				elseif ($tmpvat != $tmpprodvat) {
 					if ($price_base_type != 'HT') {
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
@@ -1062,7 +1062,6 @@ if (empty($reshook))
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
 			} else {
-			    
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
