@@ -165,9 +165,10 @@ class Products extends DolibarrApi
 	 * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+	 * @param  bool   $ids_only   Return only IDs of product instead of all properties (faster, above all if list is long)
 	 * @return array                Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false)
 	{
 		global $db, $conf;
 
@@ -219,9 +220,13 @@ class Products extends DolibarrApi
 			$i = 0;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
-				$product_static = new Product($this->db);
-				if ($product_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($product_static);
+				if (!$ids_only) {
+					$product_static = new Product($this->db);
+					if ($product_static->fetch($obj->rowid)) {
+						$obj_ret[] = $this->_cleanObjectDatas($product_static);
+					}
+				} else {
+					$obj_ret[] = $obj->rowid;
 				}
 				$i++;
 			}
@@ -1794,24 +1799,24 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a product object
-	 *
+	 * Get properties of 1 product object.
 	 * Return an array with product information.
 	 *
-	 * @param  int    $id                 ID of product
-	 * @param  string $ref                Ref of element
-	 * @param  string $ref_ext            Ref ext of element
-	 * @param  string $barcode            Barcode of element
-	 * @param  int    $includestockdata   Load also information about stock (slower)
-	 * @param  bool   $includesubproducts Load information about subproducts (if product is a virtual product)
-	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
-	 * @return array|mixed                Data without useless information
+	 * @param  int    $id                 		ID of product
+	 * @param  string $ref                		Ref of element
+	 * @param  string $ref_ext            		Ref ext of element
+	 * @param  string $barcode            		Barcode of element
+	 * @param  int    $includestockdata   		Load also information about stock (slower)
+	 * @param  bool   $includesubproducts 		Load information about subproducts (if product is a virtual product)
+	 * @param  bool   $includeparentid    		Load also ID of parent product (if product is a variant of a parent product)
+	 * @param  bool   $includeifobjectisused	Check if product object is used and set is_object_used with result.
+	 * @return array|mixed                		Data without useless information
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
+	private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false, $includeifobjectisused = false)
 	{
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
 			throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -1864,6 +1869,10 @@ class Products extends DolibarrApi
 			if (($fk_product_parent = $prodcomb->fetchByFkProductChild($this->product->id)) > 0) {
 				$this->product->fk_product_parent = $fk_product_parent;
 			}
+		}
+
+		if ($includeifobjectisused) {
+			$this->product->is_object_used = ($this->product->isObjectUsed() > 0);
 		}
 
 		return $this->_cleanObjectDatas($this->product);

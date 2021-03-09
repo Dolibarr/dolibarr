@@ -1670,7 +1670,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$linkeduser->fetch($object->user_id);
 				print $linkeduser->getNomUrl(-1);
 			} else {
-				print $langs->trans("NoDolibarrAccess");
+				print '<span class="opacitymedium">'.$langs->trans("NoDolibarrAccess").'</span>';
 			}
 		}
 		print '</td></tr>';

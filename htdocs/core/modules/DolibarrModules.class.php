@@ -1183,7 +1183,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$lastid = $this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def", "rowid");
 
 							foreach ($pos_name as $key2 => $val2) {
-									//print 'key2='.$key2.'-val2='.$val2."<br>\n";
+								//print 'key2='.$key2.'-val2='.$val2."<br>\n";
 								if ($enabledbydefaulton && $val2 != $enabledbydefaulton) {
 									continue; // Not enabled by default onto this page.
 								}
@@ -1202,8 +1202,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						if (!$err) {
 							$this->db->commit();
 						} else {
-								  $this->error = $this->db->lasterror();
-								  $this->db->rollback();
+							$this->error = $this->db->lasterror();
+							$this->db->rollback();
 						}
 					}
 					// else box already registered into database

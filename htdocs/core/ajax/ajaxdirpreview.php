@@ -284,9 +284,8 @@ if ($type == 'directory') {
 		$perm = $user->rights->ecm->upload;
 
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
-	}
-	// Manual list
-	else {
+	} else {
+		// Manual list
 		if ($module == 'medias') {
 			/*
 			   $_POST is array like

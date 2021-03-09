@@ -90,7 +90,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $conf, $langs, $db;
 
-		$pryymm = ''; $max = '';
+		$pryymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -102,7 +103,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$pryymm = substr($row[0], 0, 6); $max = $row[0];
+				$pryymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 

@@ -72,7 +72,9 @@ $sql .= " ORDER BY c.label";
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0; $totalnb = 0;
+	$i = 0;
+	$total = 0;
+	$totalnb = 0;
 
 	while ($i < $num) {
 		$objp = $db->fetch_object($result);

@@ -237,17 +237,14 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 		// If directory is son of expanded directory, we show line
 		if (in_array($val['id_mere'], $expandedsectionarray)) {
 			$showline = 4;
-		}
-		// If directory is brother of selected directory, we show line
-		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) {
+		} elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) {
+			// If directory is brother of selected directory, we show line
 			$showline = 3;
-		}
-		// If directory is parent of selected directory or is selected directory, we show line
-		elseif (preg_match('/'.$val['fullpath'].'_/i', $fullpathselected.'_')) {
+		} elseif (preg_match('/'.$val['fullpath'].'_/i', $fullpathselected.'_')) {
+			// If directory is parent of selected directory or is selected directory, we show line
 			$showline = 2;
-		}
-		// If we are level one we show line
-		elseif ($val['level'] < 2) {
+		} elseif ($val['level'] < 2) {
+			// If we are level one we show line
 			$showline = 1;
 		}
 

@@ -37,15 +37,18 @@ llxHeader();
 
 print load_fiche_titre("XDebug", '', 'title_setup');
 
-print "<br>\n";
-
-
 if (!function_exists('xdebug_is_enabled')) {
+	print "<br>\n";
 	print 'XDebug seems to be not installed. Function xdebug_is_enabled not found.';
 	llxFooter();
 	exit;
 }
 
+print '<span class="opacitymedium">';
+print $langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
+print '</span>';
+
+print '<br><br>';
 
 if (function_exists('socket_create')) {
 	$address = ini_get('xdebug.remote_host') ?ini_get('xdebug.remote_host') : '127.0.0.1';

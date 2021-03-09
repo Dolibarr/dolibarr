@@ -182,7 +182,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -1115,7 +1116,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
 	}
 	if (!empty($arrayfields['bu.label']['checked'])) {
-		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], 'bu.label', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['ba.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
@@ -1188,8 +1189,8 @@ if ($resql) {
 					// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
 					if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc') {
 						$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
-					} // If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
-					else {
+					} else {
+						// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
 						$balance = $objforbalance->previoustotal;
 					}
 				}
@@ -1419,6 +1420,7 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'member') {
 				} elseif ($links[$key]['type'] == 'sc') {
 				} elseif ($links[$key]['type'] == 'vat') {
+				} elseif ($links[$key]['type'] == 'salary') {
 				} else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) {

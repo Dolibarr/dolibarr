@@ -215,7 +215,7 @@
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
     <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis" />
-    <!-- <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" /> -->
+    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" />
     <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword" />
 
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />

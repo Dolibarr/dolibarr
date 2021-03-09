@@ -370,7 +370,9 @@ class MenuManager
 			}
 
 			if (empty($noout)) {
-				$alt = 0; $altok = 0; $blockvmenuopened = false;
+				$alt = 0;
+				$altok = 0;
+				$blockvmenuopened = false;
 				$num = count($menu_array);
 				for ($i = 0; $i < $num; $i++) {
 					$alt++;

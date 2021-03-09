@@ -200,7 +200,8 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			return '';
 		}
 
-		$field = ''; $where = '';
+		$field = '';
+		$where = '';
 		if ($type == 0) {
 			$field = 'ref';
 			//$where = ' AND client in (1,2)';

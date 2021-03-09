@@ -323,7 +323,7 @@ if ($action == 'create') {
 	print $langs->trans("Date");
 	print '</td>';
 	print '<td>';
-	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1, 1);
 	print '</td>';
 	print "</tr>\n";
 
@@ -536,10 +536,10 @@ if ($id > 0) {
 		// Amount
 		if ($action == 'edit') {
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
-			print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
+			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount).'">';
 			print "</td></tr>";
 		} else {
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Mode of payment
@@ -612,7 +612,8 @@ if ($id > 0) {
 			$totalpaye = 0;
 
 			$num = $db->num_rows($resql);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder paymenttable">';

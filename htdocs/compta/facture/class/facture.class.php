@@ -100,6 +100,12 @@ class Facture extends CommonInvoice
 	protected $table_ref_field = 'ref';
 
 	/**
+	 * @var int 1 if status is draft
+	 * @deprecated
+	 */
+	public $brouillon;
+
+	/**
 	 * @var int thirdparty ID
 	 */
 	public $socid;
@@ -171,6 +177,7 @@ class Facture extends CommonInvoice
 	//! id of source invoice if replacement invoice or credit note
 	public $fk_facture_source;
 	public $linked_objects = array();
+
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
@@ -446,6 +453,8 @@ class Facture extends CommonInvoice
 			$this->mode_reglement_id = 0;
 		}
 		$this->brouillon = 1;
+		$this->status = self::STATUS_DRAFT;
+		$this->statut = self::STATUS_DRAFT;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
@@ -537,6 +546,8 @@ class Facture extends CommonInvoice
 				$this->mode_reglement_id = 0;
 			}
 			$this->brouillon = 1;
+			$this->status = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
@@ -917,8 +928,9 @@ class Facture extends CommonInvoice
 					$localtax1_tx = $_facrec->lines[$i]->localtax1_tx;
 					$localtax2_tx = $_facrec->lines[$i]->localtax2_tx;
 
-					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price) ?null:$_facrec->lines[$i]->fk_product_fournisseur_price;
+					$fk_product_fournisseur_price = empty($_facrec->lines[$i]->fk_product_fournisseur_price) ? null : $_facrec->lines[$i]->fk_product_fournisseur_price;
 					$buyprice = empty($_facrec->lines[$i]->buyprice) ? 0 : $_facrec->lines[$i]->buyprice;
+
 					// If buyprice not defined from template invoice, we try to guess the best value
 					if (!$buyprice && $_facrec->lines[$i]->fk_product > 0) {
 						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -1181,6 +1193,7 @@ class Facture extends CommonInvoice
 		foreach ($object->lines as $i => $line) {
 			if (($object->lines[$i]->info_bits & 0x02) == 0x02) {	// We do not clone line of discounts
 				unset($object->lines[$i]);
+				continue;
 			}
 
 			// Bloc to update dates of service (month by month only if previously filled and similare to start and end of month)
@@ -1207,7 +1220,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
+			$object->lines[$i]->ref_ext = '';	// Do not clone ref_ext
 		}
 
 		// Create clone
@@ -1681,7 +1694,7 @@ class Facture extends CommonInvoice
 					$this->fetchPreviousNextSituationInvoice();
 				}
 
-				if ($this->statut == self::STATUS_DRAFT) {
+				if ($this->status == self::STATUS_DRAFT) {
 					$this->brouillon = 1;
 				}
 
@@ -1972,7 +1985,8 @@ class Facture extends CommonInvoice
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -2581,8 +2595,8 @@ class Facture extends CommonInvoice
 		$this->fetch_lines();
 
 		// Check parameters
-		if (!$this->brouillon) {
-			dol_syslog(get_class($this)."::validate no draft status", LOG_WARNING);
+		if ($this->statut != self::STATUS_DRAFT) {
+			dol_syslog(get_class($this)."::validate status is not draft. operation canceled.", LOG_WARNING);
 			return 0;
 		}
 		if (count($this->lines) <= 0) {
@@ -2807,7 +2821,8 @@ class Facture extends CommonInvoice
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -2845,6 +2860,7 @@ class Facture extends CommonInvoice
 				$this->ref = $num;
 				$this->ref = $num;
 				$this->statut = self::STATUS_VALIDATED;
+				$this->status = self::STATUS_VALIDATED;
 				$this->brouillon = 0;
 				$this->date_validation = $now;
 				$i = 0;
@@ -2883,7 +2899,7 @@ class Facture extends CommonInvoice
 	 * Update price of next invoice
 	 *
 	 * @param	Translate	$langs	Translate object
-	 * @return bool		false if KO, true if OK
+	 * @return 	bool				false if KO, true if OK
 	 */
 	public function updatePriceNextInvoice(&$langs)
 	{
@@ -2896,6 +2912,7 @@ class Facture extends CommonInvoice
 			}
 
 			$next_invoice->brouillon = 1;
+
 			foreach ($next_invoice->lines as $line) {
 				$result = $next_invoice->updateline(
 					$line->id,
@@ -2991,12 +3008,14 @@ class Facture extends CommonInvoice
 				$old_statut = $this->statut;
 				$this->brouillon = 1;
 				$this->statut = self::STATUS_DRAFT;
+				$this->status = self::STATUS_DRAFT;
 
 				// Call trigger
 				$result = $this->call_trigger('BILL_UNVALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 					$this->statut = $old_statut;
+					$this->status = $old_statut;
 					$this->brouillon = 0;
 				}
 				// End call triggers
@@ -3358,7 +3377,7 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::updateline rowid=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, date_start=$date_start, date_end=$date_end, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, type=$type, fk_parent_line=$fk_parent_line pa_ht=$pa_ht, special_code=$special_code, fk_unit=$fk_unit, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
 
-		if ($this->brouillon) {
+		if ($this->statut == self::STATUS_DRAFT) {
 			if (!$this->is_last_in_cycle() && empty($this->error)) {
 				if (!$this->checkProgressLine($rowid, $situation_percent)) {
 					if (!$this->error) {
@@ -3627,7 +3646,7 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
 
-		if (!$this->brouillon) {
+		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -1;
 		}

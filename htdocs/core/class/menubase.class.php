@@ -578,7 +578,10 @@ class Menubase
 					//var_dump($this->newmenu->liste);
 				} else {
 					// Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
-					$searchlastsub = 0; $lastid = 0; $nextid = 0; $found = 0;
+					$searchlastsub = 0;
+					$lastid = 0;
+					$nextid = 0;
+					$found = 0;
 					foreach ($this->newmenu->liste as $keyparent => $valparent) {
 						//var_dump($valparent);
 						if ($searchlastsub) {    // If we started to search for last submenu

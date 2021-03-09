@@ -632,9 +632,8 @@ abstract class CommonInvoice extends CommonObject
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
-		}
-		// 1 : application of the "end of the month" rule
-		elseif ($cdr_type == 1) {
+		} elseif ($cdr_type == 1) {
+			// 1 : application of the "end of the month" rule
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$mois = date('m', $datelim);
@@ -650,9 +649,8 @@ abstract class CommonInvoice extends CommonObject
 			$datelim -= (3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
-		}
-		// 2 : application of the rule, the N of the current or next month
-		elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
+		} elseif ($cdr_type == 2 && !empty($cdr_decalage)) {
+			// 2 : application of the rule, the N of the current or next month
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
@@ -878,6 +876,13 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $subprice;
 
 	/**
+	 * Unit price before taxes
+	 * @var float
+	 * @deprecated
+	 */
+	public $price;
+
+	/**
 	 * Id of corresponding product
 	 * @var int
 	 */
@@ -908,10 +913,29 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $localtax2_tx;
 
 	/**
+	 * Local tax 1 type
+	 * @var string
+	 */
+	public $localtax1_type;
+
+	/**
+	 * Local tax 2 type
+	 * @var string
+	 */
+	public $localtax2_type;
+
+	/**
 	 * Percent of discount
 	 * @var float
 	 */
 	public $remise_percent;
+
+	/**
+	 * Fixed discount
+	 * @var float
+	 * @deprecated
+	 */
+	public $remise;
 
 	/**
 	 * Total amount before taxes
@@ -946,6 +970,13 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $date_start_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_start at creation
 	public $date_end_fill; // If set to 1, when invoice is created from a template invoice, it will also auto set the field date_end at creation
 
+	public $buy_price_ht;
+	public $buyprice;		// For backward compatibility
+	public $pa_ht;			// For backward compatibility
+
+	public $marge_tx;
+	public $marque_tx;
+
 	/**
 	 * List of cumulative options:
 	 * Bit 0:	0 for common VAT - 1 if VAT french NPR
@@ -962,4 +993,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
+
+	public $fk_user_author;
+	public $fk_user_modif;
 }

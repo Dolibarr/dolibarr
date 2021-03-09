@@ -309,8 +309,9 @@ function getResultColumn($name, array $activated, array $loaded, array $function
 		}
 		if (strtolower($name) == 'xdebug') {
 			$html .= ' '.$langs->trans("ModuleActivated", "xdebug");
+			$html .= ' - '.$langs->trans("ModuleActivatedMayExposeInformation");
 		} else {
-			$html .= ' '.$langs->trans("PHPSupport", $name);
+			$html .= ' <span class="opacitymedium">'.$langs->trans("PHPSupport", $name).'</span>';
 		}
 	} else {
 		if (strtolower($name) == 'xdebug') {

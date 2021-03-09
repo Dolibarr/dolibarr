@@ -61,7 +61,8 @@ class DolGeoIP
 				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} else {
-			print 'ErrorBadParameterInConstructor'; return 0;
+			print 'ErrorBadParameterInConstructor';
+			return 0;
 		}
 
 		// Here, function exists (embedded into PHP or exists because we made include)
@@ -129,7 +130,7 @@ class DolGeoIP
 					}
 				} else {
 					if (!function_exists('geoip_country_code_by_addr')) {
-						return strtolower(geoip_country_code_by_name($this->gi, $ip));
+						return strtolower(geoip_country_code_by_name($ip));
 					}
 					return strtolower(geoip_country_code_by_addr($this->gi, $ip));
 				}

@@ -40,6 +40,9 @@ class InfoBox
 		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2) {
 			return array(
 				0 => 'Home',
+				1 => 'userhome',
+				2 => 'membersindex',
+				3 => 'thirdpartiesindex',
 				27 => 'AccountancyHome'
 			);
 		} else {
@@ -151,7 +154,7 @@ class InfoBox
 						$box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
 						$box->fk_user = (empty($obj->fk_user) ? 0 : $obj->fk_user);
 						$box->sourcefile = $relsourcefile;
-						$box->class     = $boxname;
+						$box->class = $boxname;
 
 						if ($mode == 'activated' && !is_object($user)) {	// List of activated box was not yet personalized into database
 							if (is_numeric($box->box_order)) {

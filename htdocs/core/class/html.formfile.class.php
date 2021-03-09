@@ -659,9 +659,8 @@ class FormFile
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 				if (file_exists($file)) {
 					$res = include_once $file;
-				}
-				// For normalized external modules.
-				else {
+				} else {
+					// For normalized external modules.
 					$file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 					$res = include_once $file;
 				}
@@ -699,7 +698,8 @@ class FormFile
 			$out .= '<tr class="liste_titre">';
 
 			$addcolumforpicto = ($delallowed || $printer || $morepicto);
-			$colspan = (3 + ($addcolumforpicto ? 1 : 0)); $colspanmore = 0;
+			$colspan = (3 + ($addcolumforpicto ? 1 : 0));
+			$colspanmore = 0;
 
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
@@ -1221,7 +1221,9 @@ class FormFile
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 			}
 
-			$i = 0; $nboflines = 0; $lastrowid = 0;
+			$i = 0;
+			$nboflines = 0;
+			$lastrowid = 0;
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
@@ -1366,7 +1368,7 @@ class FormFile
 							// $section is inside $param
 							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
-							print '<a class="editfielda" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 
 						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6) {	// 6=Media file manager
@@ -1390,7 +1392,7 @@ class FormFile
 
 							if ($permtoeditline) {
 								$paramsectiondir = (in_array($modulepart, array('medias', 'ecm')) ? '&section_dir='.urlencode($relativepath) : '');
-								print '<a class="editfielda reposition" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" class="editfilelink" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
 						if ($permonobject) {
@@ -1639,19 +1641,24 @@ class FormFile
 				// Define relative path used to store the file
 				$relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
-				$id = 0; $ref = '';
+				$id = 0;
+				$ref = '';
 
 				// To show ref or specific information according to view to show (defined by $module)
 				$reg = array();
 				if ($modulepart == 'company' || $modulepart == 'tax') {
-					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : '');
+					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
+					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif ($modulepart == 'invoice_supplier') {
-					preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) {
-						$id = $ref; $ref = '';
+					preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg);
+					$ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) {
+						$id = $ref;
+						$ref = '';
 					}
-				}	// $ref may be also id with old supplier invoices
-				elseif ($modulepart == 'user' || $modulepart == 'holiday') {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : '');
+				} elseif ($modulepart == 'user' || $modulepart == 'holiday') {
+					// $ref may be also id with old supplier invoices
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$id = (isset($reg[1]) ? $reg[1] : '');
 				} elseif (in_array($modulepart, array(
 					'invoice',
 					'propal',
@@ -1666,7 +1673,8 @@ class FormFile
 					'recruitment-recruitmentcandidature',
 					'mrp-mo',
 					'banque'))) {
-					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : '');
+					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
+					$ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
 					$parameters = array('modulepart'=>$modulepart,'fileinfo'=>$file);
 					$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
@@ -1703,10 +1711,13 @@ class FormFile
 					}
 
 					if ($result > 0) {  // Save object loaded into a cache
-						$found = 1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
+						$found = 1;
+						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = clone $object_instance;
 					}
 					if ($result == 0) {
-						$found = 1; $this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = 'notfound'; unset($filearray[$key]);
+						$found = 1;
+						$this->cache_objects[$modulepart.'_'.$id.'_'.$ref] = 'notfound';
+						unset($filearray[$key]);
 					}
 				}
 

@@ -108,7 +108,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$trackid = GETPOST('trackid', 'aZ09');
 	}
 
-	$subject = ''; $actionmsg = ''; $actionmsg2 = '';
+	$subject = '';
+	$actionmsg = '';
+	$actionmsg2 = '';
 
 	$langs->load('mails');
 

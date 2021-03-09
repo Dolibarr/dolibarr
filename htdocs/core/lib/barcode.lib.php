@@ -167,7 +167,9 @@ function barcode_encode($code, $encoding)
  */
 function barcode_gen_ean_sum($ean)
 {
-	$even = true; $esum = 0; $osum = 0;
+	$even = true;
+	$esum = 0;
+	$osum = 0;
 	$ln = strlen($ean) - 1;
 	for ($i = $ln; $i >= 0; $i--) {
 		if ($even) {
@@ -300,7 +302,8 @@ function barcode_encode_genbarcode($code, $encoding)
 	);
 	//var_dump($ret);
 	if (preg_match('/permission denied/i', $ret['bars'])) {
-		$ret['error'] = $ret['bars']; $ret['bars'] = '';
+		$ret['error'] = $ret['bars'];
+		$ret['bars'] = '';
 		return $ret;
 	}
 	if (!$ret['bars']) {

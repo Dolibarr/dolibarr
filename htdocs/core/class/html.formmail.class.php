@@ -441,7 +441,7 @@ class FormMail extends Form
 				$out .= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
 
 				$out .= '<a id="formmail" name="formmail"></a>';
-				$out .= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
+				$out .= '<input style="display:none" type="submit" id="sendmailhidden" name="sendmail">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'" />';
 				$out .= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
 			}
@@ -917,7 +917,8 @@ class FormMail extends Form
 				}
 
 				// Complete substitution array with the url to make online payment
-				$paymenturl = ''; $validpaymentmethod = array();
+				$paymenturl = '';
+				$validpaymentmethod = array();
 				if (empty($this->substit['__REF__'])) {
 					$paymenturl = '';
 				} else {
