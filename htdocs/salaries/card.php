@@ -603,7 +603,7 @@ if ($id) {
 		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		$morehtmlref .= '</form>';
 	}
-	
+
 	//Employee
 	if ($action != 'editfk_user') {
 		if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
