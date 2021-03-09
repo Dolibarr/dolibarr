@@ -8532,7 +8532,7 @@ abstract class CommonObject
 		$objectline = new $objectlineclassname($this->db);
 
 		$sql = 'SELECT '.$objectline->getFieldList('l');
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element.' as l';
 		$sql .= ' WHERE l.fk_'.$this->element.' = '.$this->id;
 		if ($morewhere) {
 			$sql .= $morewhere;
