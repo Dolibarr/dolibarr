@@ -187,7 +187,7 @@ class box_members_by_type extends ModeleBoxes
 				);
 				$line++;
 				foreach ($AdherentType as $key => $adhtype) {
-					$SommeA += isset($MemberToValidate[$key]) ? $MemberToValidate[$key] : 0;
+					$SommeA += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
 					$SommeB += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0;
 					$SommeC += isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0;
 					$SommeD += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
@@ -198,7 +198,7 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0 ? $MemberToValidate[$key] : '') . ' ' . $staticmember->LibStatut(-1, $adhtype->subscription, 0, 3),
+						'text' => (isset($MembersToValidate[$key]) && $MembersToValidate[$key] > 0 ? $MembersToValidate[$key] : '') . ' ' . $staticmember->LibStatut(-1, $adhtype->subscription, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
