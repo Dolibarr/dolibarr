@@ -11,6 +11,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Ferran Marcet         	<fmarcet@2byte.es>
+ * Copyright (C) 2020       Charlene Benke         	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -506,6 +507,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$line->fk_product          = $objp->fk_product;
 
+				$line->label               = $objp->label;
 				$line->libelle             = $objp->product_label; // deprecated
 				$line->product_label       = $objp->product_label;
 				$line->product_desc        = $objp->product_desc;
@@ -1659,9 +1661,11 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param 		string	$pu_ht_devise			Amount in currency
 	 *  @param		string	$origin					'order', ...
 	 *  @param		int		$origin_id				Id of origin object
+	 *  @param 		string	$label_product 			Label product (if empty we take this from product)
+
 	 *	@return     int             				<=0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $label_product = '')
 	{
 		global $langs, $mysoc, $conf;
 
@@ -1735,6 +1739,9 @@ class CommandeFournisseur extends CommonOrder
 					$prod = new Product($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
+						// if we use given other we use the product label
+                        $label = ($label_product && $label_product != $prod->label) ? $label_product : $prod->label;
+
 						$label = $prod->label;
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
@@ -3484,7 +3491,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
-		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
+		$sql .= ' cd.label,';
+		$sql .= ' p.ref as product_ref, p.label as product_libel, p.description as product_desc,';
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc';
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
@@ -3529,7 +3537,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->ref = $objp->product_ref;
 
 				$this->product_ref      = $objp->product_ref;
-				$this->product_label    = $objp->product_label;
+        $this->product_label  = $objp->label?$objp->label:$objp->product_label;
 				$this->product_desc     = $objp->product_desc;
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$this->packaging = $objp->packaging;
