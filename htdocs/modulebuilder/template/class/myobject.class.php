@@ -425,7 +425,7 @@ class MyObject extends CommonObject
 		$records = array();
 
 		$sql = 'SELECT ';
-		$sql .= $this->getFieldList();
+		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
