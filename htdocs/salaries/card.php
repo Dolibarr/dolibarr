@@ -604,18 +604,32 @@ if ($id) {
 		$morehtmlref .= '</form>';
 	}
 
-	//Employee
-	if ($action != 'editfk_user') {
-		$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+	$sql = 'SELECT fk_salary, amount';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary';
+	$sql .= ' WHERE fk_salary = '.$object->id;
 
-		if (!empty($object->fk_user)) {
+	$resql = $db->query($sql);
+	$obj = $db->fetch_object($resql);
+	//Employee
+	if($action != 'editfk_user') {
+		if (!empty($obj) && !empty($object->fk_user)){
 			$userstatic = new User($db);
 			$result = $userstatic->fetch($object->fk_user);
-			if ($result > 0) {
-				$morehtmlref .= $userstatic->getNomUrl(1);
-			} else {
-				dol_print_error($db);
-				exit();
+			if ($result > 0){
+				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+			}
+		} else {
+			$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+
+			if(!empty($object->fk_user)) {
+				$userstatic = new User($db);
+				$result = $userstatic->fetch($object->fk_user);
+				if ($result > 0){
+					$morehtmlref .= $userstatic->getNomUrl(1);
+				} else {
+					dol_print_error($db);
+					exit();
+				}
 			}
 		}
 	} else {
