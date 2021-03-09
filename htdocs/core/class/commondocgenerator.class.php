@@ -789,7 +789,7 @@ abstract class CommonDocGenerator
 		// Load product data optional fields to the line -> enables to use "line_product_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0) {
 			$tmpproduct = new Product($this->db);
-			result = $tmpproduct->fetch($line->fk_product);
+			$tmpproduct->fetch($line->fk_product);
 			foreach ($tmpproduct->array_options as $key=>$label)
 				$resarray["line_product_".$key] = $label;
 		}
