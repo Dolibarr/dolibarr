@@ -91,8 +91,8 @@ if ($refresh === false) {
 	// Date range
 	$year = GETPOST("year", "int");
 	if (empty($year)) {
-		$year_current = dol_print_date("%Y", dol_now());
-		if ($conf->global->SOCIETE_FISCAL_MONTH_START > date('m')) $year_current--;
+		$year_current = dol_print_date(dol_now(), "%Y");
+		if ($conf->global->SOCIETE_FISCAL_MONTH_START > dol_print_date(dol_now(), "%m")) $year_current--;
 		$year_start = $year_current;
 	} else {
 		$year_current = $year;

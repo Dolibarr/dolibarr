@@ -429,7 +429,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span+1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
-			print ' - <a href="' . dol_buildpath('/compta/tva/quadri_detail.php', 1) . '?invoice_type=customer&amp;vat_rate_show=' . $rate . '&amp;year=' . $year_start . '&amp;month=' . $month_start . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
+			print ' - <a href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?invoice_type=customer&amp;vat_rate_show=' . urlencode($rate) . '&amp;year=' . urlencode($year_start) . '&amp;month=' . urlencode($month_start) . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
 			print '</td>';
 			print '</tr>'."\n";
 
