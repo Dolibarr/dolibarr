@@ -44,7 +44,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	// Add Xdebug code coverage
 	//define('XDEBUGCOVERAGE',1);
 	if (defined('XDEBUGCOVERAGE')) {
-		xdebug_start_code_coverage();
+		xdebug_start_code_coverage('sdfd');
 	}
 }
 
