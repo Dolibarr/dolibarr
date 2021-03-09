@@ -1116,7 +1116,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
 	}
 	if (!empty($arrayfields['bu.label']['checked'])) {
-		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], 'bu.label', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['ba.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
@@ -1420,6 +1420,7 @@ if ($resql) {
 				} elseif ($links[$key]['type'] == 'member') {
 				} elseif ($links[$key]['type'] == 'sc') {
 				} elseif ($links[$key]['type'] == 'vat') {
+				} elseif ($links[$key]['type'] == 'salary') {
 				} else {
 					// Show link with label $links[$key]['label']
 					if (!empty($objp->label) && !empty($links[$key]['label'])) {

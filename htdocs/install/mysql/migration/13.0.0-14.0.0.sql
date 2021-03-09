@@ -48,6 +48,10 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN tag varchar(64) NULL;
+ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
+
+
 ALTER TABLE llx_c_availability ADD COLUMN position integer NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_adherent ADD COLUMN ref varchar(30) AFTER rowid;
@@ -167,7 +171,7 @@ create table llx_payment_vat
 ALTER TABLE llx_tva ADD COLUMN paye smallint default 1 NOT NULL;
 ALTER TABLE llx_tva ADD COLUMN fk_account integer;
 
---INSERT INTO llx_payment_vat (fk_tva, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_bank, fk_user_creat, fk_user_modif) SELECT rowid, NOW(), datep, amount, COALESCE(fk_typepayment, 0), num_payment, '', fk_bank, fk_user_creat, fk_user_modif FROM llx_tva;
+INSERT INTO llx_payment_vat (rowid, fk_tva, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_bank, fk_user_creat, fk_user_modif) SELECT rowid, rowid, NOW(), datep, amount, COALESCE(fk_typepayment, 0), num_payment, 'Created automatically by migration v13 to v14', fk_bank, fk_user_creat, fk_user_modif FROM llx_tva WHERE fk_bank IS NOT NULL;
 --UPDATE llx_bank_url as url INNER JOIN llx_tva tva ON tva.rowid = url.url_id SET url.type = 'vat', url.label = CONCAT('(', tva.label, ')') WHERE type = 'payment_vat';
 --INSERT INTO llx_bank_url (fk_bank, url_id, url, label, type) SELECT b.fk_bank, ptva.rowid, REPLACE(b.url, 'tva/card.php', 'payment_vat/card.php'), '(paiement)', 'payment_vat' FROM llx_bank_url b INNER JOIN llx_tva tva ON (tva.fk_bank = b.fk_bank) INNER JOIN llx_payment_vat ptva on (ptva.fk_bank = b.fk_bank) WHERE type = 'vat';
 
@@ -211,3 +215,44 @@ ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
+
+--VMYSQL4.3 ALTER TABLE llx_c_civility CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+--VPGSQL8.2 CREATE SEQUENCE llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
+--VPGSQL8.2 ALTER TABLE llx_c_civility ALTER COLUMN rowid SET DEFAULT nextval('llx_c_civility_rowid_seq');
+--VPGSQL8.2 SELECT setval('llx_c_civility_rowid_seq', MAX(rowid)) FROM llx_c_civility;
+
+
+-- Change for salary intent table
+create table llx_salary
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
+  label           varchar(255),
+  tms             timestamp,
+  datec           datetime,                   -- Create date
+  fk_user         integer NOT NULL,
+  datep           date,                       -- payment date
+  datev           date,                       -- value date (this field should not be here, only into bank tables)
+  salary          double(24,8),               -- salary of user when payment was done
+  amount          double(24,8) NOT NULL DEFAULT 0,
+  fk_projet       integer DEFAULT NULL,
+  datesp          date,                       -- date start period
+  dateep          date,                       -- date end period
+  entity          integer DEFAULT 1 NOT NULL, -- multi company id
+  note            text,
+  fk_bank         integer,
+  paye            smallint default 1 NOT NULL,
+  fk_typepayment  integer NOT NULL,			  -- default payment mode for payment
+  fk_account      integer,					  -- default bank account for payment
+  fk_user_author  integer,                    -- user creating
+  fk_user_modif   integer                     -- user making last change
+) ENGINE=innodb;
+
+ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
+
+INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
+UPDATE llx_payment_salary as ps SET ps.fk_salary = ps.rowid WHERE ps.fk_salary IS NULL;
+UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
+
+ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;

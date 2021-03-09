@@ -96,7 +96,7 @@ class Mo extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'maxwidth300'),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
@@ -168,7 +168,7 @@ class Mo extends CommonObject
 	/**
 	 * @var string    Name of subtable line
 	 */
-	public $table_element_line = 'mo_production';
+	public $table_element_line = 'mrp_production';
 
 	/**
 	 * @var string    Field with ID of parent key if this field has a parent
@@ -632,8 +632,20 @@ class Mo extends CommonObject
 			$moline->fk_mo = $this->id;
 			$moline->qty = $this->qty;
 			$moline->fk_product = $this->fk_product;
-			$moline->role = 'toproduce';
 			$moline->position = 1;
+
+			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
+				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+				$bom = new Bom($this->db);
+				$bom->fetch($this->fk_bom);
+				if ($bom->bomtype == 1) {
+					$role = 'toproduce';
+					$moline->role = 'toconsume';
+				} else {
+					$role = 'toconsume';
+					$moline->role = 'toproduce';
+				}
+			}
 
 			$resultline = $moline->create($user, false); // Never use triggers here
 			if ($resultline <= 0) {
@@ -644,9 +656,6 @@ class Mo extends CommonObject
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
-				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-				$bom = new Bom($this->db);
-				$bom->fetch($this->fk_bom);
 				if ($bom->id > 0) {
 					// Lines to consume
 					if (!$error) {
@@ -667,7 +676,7 @@ class Mo extends CommonObject
 								break;
 							} else {
 								$moline->fk_product = $line->fk_product;
-								$moline->role = 'toconsume';
+								$moline->role = $role;
 								$moline->position = $line->position;
 								$moline->qty_frozen = $line->qty_frozen;
 								$moline->disable_stock_change = $line->disable_stock_change;

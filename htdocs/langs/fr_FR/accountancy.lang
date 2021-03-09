@@ -131,7 +131,7 @@ InvoiceLinesDone=Lignes de factures liées
 ExpenseReportLines=Lignes de notes de frais à lier
 ExpenseReportLinesDone=Lignes de notes de frais liées
 IntoAccount=Lier ligne avec le compte comptable
-TotalForAccount=Total pour le compte comptable
+TotalForAccount=Total compte comptable
 
 
 Ventilate=Lier

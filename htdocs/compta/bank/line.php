@@ -315,10 +315,11 @@ if ($result) {
 		$i++;
 
 		// Bank account
-		print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Account").'</td>';
 		print '<td>';
 		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
-			$form->select_comptes($acct->id, 'accountid', 0, '', 0);
+			print img_picto('', 'bank_account', 'class="paddingright"');
+			print $form->select_comptes($acct->id, 'accountid', 0, '', 0, '', 0, '', 1);
 		} else {
 			print $acct->getNomUrl(1, 'transactions', 'reflabel');
 		}
@@ -367,6 +368,11 @@ if ($result) {
 					print img_object($langs->trans('VATDeclaration'), 'bill').' ';
 					print $langs->trans("VATDeclaration").($links[$key]['label'] ? '&nbsp;'.$links[$key]['label'] : '');
 					print '</a>';
+				} elseif ($links[$key]['type'] == 'salary') {
+					print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('Salary'), 'bill').' ';
+					print $langs->trans("Salary").($links[$key]['label'] ? ' - '.$links[$key]['label'] : '');
+					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_sc') {
 					print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('Payment'), 'payment').' ';
@@ -378,7 +384,7 @@ if ($result) {
 					print $langs->trans("VATPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_salary') {
-					print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('PaymentSalary'), 'payment').' ';
 					print $langs->trans("SalaryPayment");
 					print '</a>';
@@ -561,7 +567,7 @@ if ($result) {
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
-			print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
+			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
 			print "</td></tr>";
 		}
 

@@ -192,8 +192,12 @@ class modAdherent extends DolibarrModules
 		// Boxes
 		//-------
 		$this->boxes = array(
-			0=>array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home')
+			0 => array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
+			2 => array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
+			3 => array('file'=>'box_members_last_modified', 'enabledbydefaulton'=>'membersindex'),
+			4 => array('file'=>'box_members_last_subscriptions', 'enabledbydefaulton'=>'membersindex'),
+			5 => array('file'=>'box_members_subscriptions_by_year', 'enabledbydefaulton'=>'membersindex'),
+			6 => array('file'=>'box_members_by_type', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
@@ -399,19 +403,17 @@ class modAdherent extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		//ODT template
+		// ODT template
 		/*
 		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
 		$dest=$dirodt.'/template_order.odt';
 
-		if (file_exists($src) && ! file_exists($dest))
-		{
+		if (file_exists($src) && ! file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result=dol_copy($src,$dest,0,0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
 				return 0;
