@@ -57,7 +57,7 @@ class Inventory extends CommonObject
 	/**
 	 * @var string String with name of icon for inventory
 	 */
-	public $picto = 'stock';
+	public $picto = 'inventory';
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
