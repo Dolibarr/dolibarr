@@ -7467,12 +7467,22 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
+	 * @param   array   $alias   content informations of field
+	 *
 	 * @return string
 	 */
-	protected function getFieldList()
+	protected function getFieldList($alias = 't')
 	{
 		$keys = array_keys($this->fields);
-		return implode(',', $keys);
+		if (!empty($alias)) {
+			$keys_with_alias = array();
+			foreach ($keys as $fieldname) {
+				$keys_with_alias[] = $alias . '.' . $fieldname;
+			}
+			return implode(',', $keys_with_alias);
+		} else {
+			return implode(',', $keys);
+		}
 	}
 
 	/**
@@ -7646,13 +7656,13 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref) && empty($morewhere)) return -1;
 
-		$sql = 'SELECT '.$this->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
+		$sql = 'SELECT '.$this->getFieldList('t');
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 
-		if (!empty($id))  $sql .= ' WHERE rowid = '.$id;
-		elseif (!empty($ref)) $sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+		if (!empty($id))  $sql .= ' WHERE t.rowid = '.$id;
+		elseif (!empty($ref)) $sql .= " WHERE t.ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
-		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' AND entity IN ('.getEntity($this->table_element).')';
+		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' AND t.entity IN ('.getEntity($this->table_element).')';
 		if ($morewhere)   $sql .= $morewhere;
 		$sql .= ' LIMIT 1'; // This is a fetch, to be sure to get only one record
 
@@ -7695,9 +7705,9 @@ abstract class CommonObject
 
 		$objectline = new $objectlineclassname($this->db);
 
-		$sql = 'SELECT '.$objectline->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
-		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		$sql = 'SELECT '.$objectline->getFieldList('l');
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element.' as l';
+		$sql .= ' WHERE l.fk_'.$this->element.' = '.$this->id;
 		if ($morewhere)   $sql .= $morewhere;
 
 		$resql = $this->db->query($sql);
