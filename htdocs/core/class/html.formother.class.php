@@ -1076,7 +1076,7 @@ class FormOther
 		{
 			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
 		}
-//var_dump($boxidactivatedforuser);
+
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
 		if (!empty($user->conf->$confuserzone))
@@ -1209,7 +1209,6 @@ class FormOther
 			if (!empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
 
 			$ii = 0;
-
 			foreach ($boxactivated as $key => $box)
 			{
 				if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
@@ -1221,7 +1220,6 @@ class FormOther
 					//print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
 					// Show box
 					$box->loadBox($box_max_lines);
-					//var_dump($key,$box);
 					$boxlista .= $box->showBox(null, null, 1);
 				}
 			}
