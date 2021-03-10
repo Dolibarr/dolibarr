@@ -919,8 +919,7 @@ if (!empty($conf->barcode->enabled) && !empty($conf->global->BARCODE_PRODUCT_ADD
 }
 
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
-{
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 	// When used with CANVAS
 	// -----------------------------------------
@@ -936,8 +935,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
-	if ($action == 'create' && $usercancreate)
-	{
+	if ($action == 'create' && $usercancreate) {
 		//WYSIWYG Editor
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -1276,7 +1274,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 
 			// Accountancy_code_sell_intra
@@ -1289,7 +1287,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				} else {
 					$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT);
 				}
-				print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, '');
+				print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 				print '</td></tr>';
 			}
 
@@ -1302,7 +1300,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 
 			// Accountancy_code_buy
@@ -1313,7 +1311,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             } else {
                 $accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT);
             }
-			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
+            print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 
 			// Accountancy_code_buy_intra
@@ -1326,7 +1324,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				} else {
 					$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT);
 				}
-				print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, '');
+				print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 				print '</td></tr>';
 			}
 
@@ -1339,7 +1337,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			} else {
 				$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 		} else // For external software
 		{

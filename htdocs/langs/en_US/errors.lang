@@ -256,6 +256,7 @@ ErrorPublicInterfaceNotEnabled=Public interface was not enabled
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
 ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
 ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
+ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
