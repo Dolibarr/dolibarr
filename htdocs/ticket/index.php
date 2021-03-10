@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -70,6 +71,7 @@ $object = new Ticket($db);
 /*
  * View
  */
+$resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
 $tickesupstatic = new Ticket($db);
@@ -77,7 +79,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback = '';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
+print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
 
 
 $dir = '';
@@ -112,7 +114,12 @@ $startyear = $endyear - 1;
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
 $HEIGHT = '200';
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 /*
  * Statistics area
@@ -181,7 +188,7 @@ if ($result) {
 		}
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	$dataseries = array();
 	$colorseries = array();
@@ -279,8 +286,13 @@ print '</div>';
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '<br>'."\n";
 
+print $resultboxes['boxlista'];
+
+print '</div>'."\n";
+
+print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
  * Latest tickets
@@ -398,11 +410,19 @@ if ($result) {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+print $resultboxes['boxlistb'];
+
+print '</div>';
+print '</div>';
+print '</div>';
+
+
 print '<div style="clear:both"></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+
 
 // End of page
 llxFooter('');

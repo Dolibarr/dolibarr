@@ -203,18 +203,23 @@ if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck)) {
 	}
 	// Another test is done later on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 }
-if (empty($dolibarr_main_db_host)) {
+if (empty($dolibarr_main_db_host) && !defined('NOREQUIREDB')) {
 	print '<div class="center">Dolibarr setup is not yet complete.<br><br>'."\n";
 	print '<a href="install/index.php">Click here to finish Dolibarr install process</a> ...</div>'."\n";
 	die;
 }
-if (empty($dolibarr_main_url_root)) {
+if (empty($dolibarr_main_url_root) && !defined('NOREQUIREVIRTUALURL')) {
 	print 'Value for parameter \'dolibarr_main_url_root\' is not defined in your \'htdocs\conf\conf.php\' file.<br>'."\n";
 	print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
 	die;
 }
+
+if (empty($dolibarr_main_document_root_alt)) {
+	$dolibarr_main_document_root_alt = $dolibarr_main_document_root.'/custom';
+}
+
 if (empty($dolibarr_main_data_root)) {
-	// Si repertoire documents non defini, on utilise celui par defaut
+	// If directory not defined, we use the default hardcoded value
 	$dolibarr_main_data_root = str_replace("/htdocs", "", $dolibarr_main_document_root);
 	$dolibarr_main_data_root .= "/documents";
 }

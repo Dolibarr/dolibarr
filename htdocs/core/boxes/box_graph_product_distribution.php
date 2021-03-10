@@ -44,6 +44,8 @@ class box_graph_product_distribution extends ModeleBoxes
 	public $info_box_head = array();
 	public $info_box_contents = array();
 
+	public $widgettype = 'graph';
+
 
 	/**
 	 *  Constructor

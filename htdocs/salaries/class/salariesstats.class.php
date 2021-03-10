@@ -62,8 +62,8 @@ class SalariesStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field = 'amount';
 
-		$this->where .= " entity = ".$conf->entity;
-		if ($this->socid) {
+		$this->where = " entity = ".$conf->entity;
+		if ($this->socid > 0) {
 			$this->where .= " AND fk_soc = ".$this->socid;
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
@@ -83,8 +83,8 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT YEAR(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm DESC";
-		//$sql .= " WHERE ".$this->where;
 
 		return $this->_getNbByYear($sql);
 	}
@@ -102,12 +102,12 @@ class SalariesStats extends Stats
 		$sql = "SELECT MONTH(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE YEAR(datep) = ".$year;
-		//$sql .= " AND ".$this->where;
+		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -124,12 +124,11 @@ class SalariesStats extends Stats
 		$sql = "SELECT date_format(datep,'%m') as dm, sum(".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
-		//$sql .= " AND ".$this->where;
+		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
 
 		return $res;
 	}
@@ -145,7 +144,7 @@ class SalariesStats extends Stats
 		$sql = "SELECT date_format(datep,'%m') as dm, avg(".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		$sql .= " WHERE date_format(datep,'%Y') = '".$this->db->escape($year)."'";
-		//$sql .= " AND ".$this->where;
+		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
@@ -161,7 +160,7 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT date_format(datep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		//$sql .= " WHERE ".$this->where;
+		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
 
