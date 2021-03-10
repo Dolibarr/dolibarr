@@ -1541,7 +1541,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Morphy
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
-		
+
 		print '</td></tr>';
 
 		// Company

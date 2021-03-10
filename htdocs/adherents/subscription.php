@@ -492,7 +492,7 @@ if ($rowid > 0) {
 	// Morphy
 	print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 	print '</tr>';
-	
+
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
