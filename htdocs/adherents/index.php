@@ -318,8 +318,8 @@ print "</table></div>";
 
 print "<br>\n";
 
-
 print $resultboxes['boxlista'];
+
 print '</div>'."\n";
 
 print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';

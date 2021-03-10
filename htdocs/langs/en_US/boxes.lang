@@ -111,5 +111,9 @@ BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
 BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
-AccountancyHome=Accountancy
+UsersHome=Home users and groups
+MembersHome=Home Membership
+ThirdpartiesHome=Home Thirdparties
+TicketsHome=Home Tickets
+AccountancyHome=Home Accountancy
 ValidatedProjects=Validated projects

@@ -1845,12 +1845,15 @@ div.fichehalfright {
 		print "margin-top: 10px;\n";
 	} ?>
 }
-div.firstcolumn div.box {
+
+/*div.firstcolumn div.box {
 	padding-right: 10px;
 }
 div.secondcolumn div.box {
 	padding-left: 10px;
-}
+}*/
+
+
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 1000px)
 {
