@@ -114,7 +114,12 @@ $startyear = $endyear - 1;
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
 $HEIGHT = '200';
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 /*
  * Statistics area
@@ -281,8 +286,13 @@ print '</div>';
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '<br>'."\n";
 
+print $resultboxes['boxlista'];
+
+print '</div>'."\n";
+
+print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
  * Latest tickets
@@ -400,27 +410,19 @@ if ($result) {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
-
-/*
-* Show boxes
-*/
-$boxlist .= '<div class="twocolumns">';
-$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-$boxlist .= $resultboxes['boxlista'];
-$boxlist .= '</div>';
-$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
-$boxlist .= $resultboxes['boxlistb'];
-$boxlist .= '</div>';
-$boxlist .= "\n";
-$boxlist .= '</div>';
-print $boxlist;
+print $resultboxes['boxlistb'];
 
 print '</div>';
+print '</div>';
+print '</div>';
+
+
 print '<div style="clear:both"></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+
 
 // End of page
 llxFooter('');

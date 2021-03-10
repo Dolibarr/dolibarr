@@ -157,7 +157,10 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 			$stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src="' . img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1) . '">';
 			$stringtoshow .= '</form>';
 			$stringtoshow .= '</div>';
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$px1 = new DolGraph();
+
 			$mesg = $px1->isGraphKo();
 			$totalnb = 0;
 			if (!$mesg) {
