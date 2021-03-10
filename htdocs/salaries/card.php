@@ -432,7 +432,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Employee
-	print '<tr><td>';
+	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
 	print img_picto('', 'user', 'class="paddingrighonly"').$form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
@@ -459,7 +459,7 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
 	// Project
@@ -472,7 +472,7 @@ if ($action == 'create') {
 	}
 
 	// Comments
-	print '<tr class="hide_if_no_auto_create_payment">';
+	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
