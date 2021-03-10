@@ -452,7 +452,7 @@ if ($id > 0) {
 					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
 				}
 			} else {
-				$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
 				if (!empty($object->fk_user)) {
 					$userstatic = new User($db);
 					$result = $userstatic->fetch($object->fk_user);
