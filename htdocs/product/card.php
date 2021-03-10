@@ -1444,7 +1444,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border allwidth">';
 
 			// Ref
-			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
@@ -1690,7 +1690,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($conf->accounting->enabled))
 			{
 				// Accountancy_code_sell
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
 				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 				print '</td></tr>';
@@ -1698,14 +1698,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Accountancy_code_sell_intra
 				if ($mysoc->isInEEC())
 				{
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_sell_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 				print '<td>';
 				print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
 				print '</td></tr>';
@@ -1719,34 +1719,34 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Accountancy_code_buy_intra
 				if ($mysoc->isInEEC())
 				{
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, '', 1, 1);
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_buy_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 				print '<td>';
 				print $formaccounting->select_account($object->accountancy_code_buy_export, 'accountancy_code_buy_export', 1, '', 1, 1);
 				print '</td></tr>';
 			} else {
 				// For external software
 				// Accountancy_code_sell
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 				print '</td></tr>';
 
 				// Accountancy_code_sell_intra
 				if ($mysoc->isInEEC())
 				{
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_sell_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 				print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
 				print '</td></tr>';
 
@@ -1758,13 +1758,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Accountancy_code_buy_intra
 				if ($mysoc->isInEEC())
 				{
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
 					print '<td><input name="accountancy_code_buy_intra" class="maxwidth200" value="'.$object->accountancy_code_buy_intra.'">';
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_buy_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 				print '<td><input name="accountancy_code_buy_export" class="maxwidth200" value="'.$object->accountancy_code_buy_export.'">';
 				print '</td></tr>';
 			}
