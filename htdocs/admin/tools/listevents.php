@@ -74,7 +74,7 @@ $nowarray = dol_getdate($now);
 
 if (!GETPOSTISSET("date_startmonth")) {
 	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], 'tzuserrel');
-} else if (GETPOST("date_startmonth") > 0) {
+} elseif (GETPOST("date_startmonth") > 0) {
 	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth", 'int'), GETPOST("date_startday", 'int'), GETPOST("date_startyear", 'int'), 'tzuserrel');
 } else {
 	$date_start = -1;

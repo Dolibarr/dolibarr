@@ -8255,12 +8255,21 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @return string
+	 * @param   string   $alias   	String of alias of table for fields. For example 't'.
+	 * @return  string				list of alias fields
 	 */
-	protected function getFieldList()
+	protected function getFieldList($alias = '')
 	{
 		$keys = array_keys($this->fields);
-		return implode(',', $keys);
+		if (!empty($alias)) {
+			$keys_with_alias = array();
+			foreach ($keys as $fieldname) {
+				$keys_with_alias[] = $alias . '.' . $fieldname;
+			}
+			return implode(',', $keys_with_alias);
+		} else {
+			return implode(',', $keys);
+		}
 	}
 
 	/**
@@ -8462,23 +8471,23 @@ abstract class CommonObject
 			return -1;
 		}
 
-		$fieldlist = $this->getFieldList();
+		$fieldlist = $this->getFieldList('t');
 		if (empty($fieldlist)) {
 			return 0;
 		}
 
 		$sql = 'SELECT '.$fieldlist;
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 
 		if (!empty($id)) {
-			$sql .= ' WHERE rowid = '.$id;
+			$sql .= ' WHERE t.rowid = '.$id;
 		} elseif (!empty($ref)) {
-			$sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+			$sql .= " WHERE t.ref = ".$this->quote($ref, $this->fields['ref']);
 		} else {
 			$sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		}
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' AND entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' AND t.entity IN ('.getEntity($this->table_element).')';
 		}
 		if ($morewhere) {
 			$sql .= $morewhere;
@@ -8522,9 +8531,9 @@ abstract class CommonObject
 
 		$objectline = new $objectlineclassname($this->db);
 
-		$sql = 'SELECT '.$objectline->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
-		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		$sql = 'SELECT '.$objectline->getFieldList('l');
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element.' as l';
+		$sql .= ' WHERE l.fk_'.$this->element.' = '.$this->id;
 		if ($morewhere) {
 			$sql .= $morewhere;
 		}

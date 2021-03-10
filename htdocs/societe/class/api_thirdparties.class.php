@@ -1823,7 +1823,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param    int	$rowid      Id of third party to load
+	 * @param    int	$rowid      Id of third party to load (Use 0 to get a specimen record, use null to use other search criterias)
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$barcode    Barcode of third party to load
