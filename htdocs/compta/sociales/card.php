@@ -444,19 +444,19 @@ if ($id > 0) {
 		$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 
 		// Employee
-		if($action != 'editfk_user') {
-			if ($object->getSommePaiement() > 0 && !empty($object->fk_user)){
+		if ($action != 'editfk_user') {
+			if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
 				$userstatic = new User($db);
 				$result = $userstatic->fetch($object->fk_user);
-				if ($result > 0){
+				if ($result > 0) {
 					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
 				}
 			} else {
 				$morehtmlref .= '<br />' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
-				if(!empty($object->fk_user)) {
+				if (!empty($object->fk_user)) {
 					$userstatic = new User($db);
 					$result = $userstatic->fetch($object->fk_user);
-					if ($result > 0){
+					if ($result > 0) {
 						$morehtmlref .= $userstatic->getNomUrl(1);
 					} else {
 						dol_print_error($db);
@@ -465,7 +465,6 @@ if ($id > 0) {
 				}
 			}
 		} else {
-
 			$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
 			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
