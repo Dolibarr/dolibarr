@@ -131,6 +131,7 @@ if (empty($reshook))
 				// and pass CCCNNNNN + (num of company * 100 000 000) as offset to the run_sql as a new parameter to say to update sql on the fly to add offset to rowid and account_parent value.
 				// This is to be sure there is no conflict for each chart of account, whatever is country, whatever is company when multicompany is used.
 				$tmp = file_get_contents($sqlfile);
+				$reg = array();
 				if (preg_match('/-- ADD (\d+) to rowid/ims', $tmp, $reg))
 				{
 					$offsetforchartofaccount += $reg[1];
@@ -302,7 +303,7 @@ if ($resql)
 
 	// Box to select active chart of account
 	print $langs->trans("Selectchartofaccounts")." : ";
-	print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
+	print '<select class="flat minwidth200" name="chartofaccounts" id="chartofaccounts">';
 	$sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
@@ -313,6 +314,7 @@ if ($resql)
 	if ($resqlchart) {
 		$numbis = $db->num_rows($resqlchart);
 		$i = 0;
+		print '<option value="-1">&nbsp;</option>';
 		while ($i < $numbis) {
 			$obj = $db->fetch_object($resqlchart);
 
