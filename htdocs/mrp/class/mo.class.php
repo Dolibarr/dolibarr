@@ -248,7 +248,7 @@ class Mo extends CommonObject
 
 		$this->db->begin();
 
-        // Check that product is not a kit/virtual product
+		// Check that product is not a kit/virtual product
 		if (empty($conf->global->ALLOW_USE_KITS_INTO_BOM_AND_MO) and $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
