@@ -195,6 +195,7 @@ if ($conf->use_javascript_ajax) {
 
 	$SommeA = 0;
 	$SommeB = 0;
+
 	$SommeC = 0;
 	$SommeD = 0;
 	$total = 0;
@@ -491,6 +492,8 @@ print '</tr>';
 
 print "</table>\n";
 print "</div>";
+
+print '<br>';
 
 print $resultboxes['boxlistb'];
 

@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 /**
  * Class to manage the box
  */
-class box_nb_ticket_last_x_days extends ModeleBoxes
+class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 {
 
 	public $boxcode = "box_nb_ticket_last_x_days";
@@ -36,13 +36,11 @@ class box_nb_ticket_last_x_days extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("ticket");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-
 	public $param;
 	public $info_box_head = array();
 	public $info_box_contents = array();
+
+	public $widgettype = 'graph';
 
 	/**
 	 * Constructor

@@ -110,6 +110,12 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $note;
 
 	/**
+	 * @var string 	Widget type ('graph' means the widget is a graph widget)
+	 */
+	public $widgettype = '';
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param   DoliDB  $db     Database handler
