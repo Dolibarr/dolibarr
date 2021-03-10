@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -70,6 +71,7 @@ $object = new Ticket($db);
 /*
  * View
  */
+$resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
 $tickesupstatic = new Ticket($db);
@@ -77,7 +79,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback = '';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
+print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
 
 
 $dir = '';
@@ -181,7 +183,7 @@ if ($result) {
 		}
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	$dataseries = array();
 	$colorseries = array();
@@ -399,6 +401,22 @@ if ($result) {
 }
 
 print '</div></div></div>';
+
+/*
+* Show boxes
+*/
+$boxlist .= '<div class="twocolumns">';
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>';
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>';
+$boxlist .= "\n";
+$boxlist .= '</div>';
+print $boxlist;
+
+print '</div>';
 print '<div style="clear:both"></div>';
 
 $parameters = array('user' => $user);
