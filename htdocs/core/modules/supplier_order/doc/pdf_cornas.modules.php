@@ -1557,8 +1557,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			'border-left' => true, // add left line separator
 		);
 
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE))
-		{
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE)) {
 			$this->cols['subprice']['status'] = true;
 		}
 
@@ -1612,8 +1611,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			'border-left' => true, // add left line separator
 		);
 
-		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN))
-		{
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN)) {
 			$this->cols['totalexcltax']['status'] = true;
 		}
 
