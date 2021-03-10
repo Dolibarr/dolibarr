@@ -1466,27 +1466,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>'."\n";
 			}
 
-			// Gender
-			print '<tr><td>'.$langs->trans("Gender").'</td>';
-			print '<td>';
-			if ($object->gender) {
-				switch ($object->gender) {
-					case 'man':
-						print '<i class="fas fa-mars"></i>';
-						break;
-					case 'woman':
-						print '<i class="fas fa-venus"></i>';
-						break;
-					case 'other':
-						print '<i class="fas fa-genderless"></i>';
-						break;
-					default:
-						print $langs->trans("Gender".$object->gender);
-						break;
-				}
-			}
-			print '</td></tr>';
-
 			// Employee
 			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
 			print yn($object->employee);
