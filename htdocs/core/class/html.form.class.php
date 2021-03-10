@@ -7894,7 +7894,7 @@ class Form
 		if (empty($fieldref)) {
 			$fieldref = 'ref';
 		}
-		
+
 		// Preparing gender's display if there is one
 		if ($object->gender) {
 			$addgendertxt = ' ';
