@@ -7896,6 +7896,7 @@ class Form
 		}
 
 		// Preparing gender's display if there is one
+		$addgendertxt = '';
 		if ($object->gender) {
 			$addgendertxt = ' ';
 			switch ($object->gender) {
@@ -7909,7 +7910,7 @@ class Form
 					$addgendertxt .= '<i class="fas fa-genderless"></i>';
 					break;
 			}
-		} else $addgendertxt = '';
+		}
 
 		// Add where from hooks
 		if (is_object($hookmanager)) {
