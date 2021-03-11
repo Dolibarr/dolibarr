@@ -2060,6 +2060,19 @@ if ($action == 'exportsite') {
 
 // Regenerate site
 if ($action == 'regeneratesite') {
+	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+	$pathtomedias = DOL_DATA_ROOT.'/medias';
+	$pathtomediasinwebsite = $pathofwebsite.'/medias';
+	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+		dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+		$result = symlink($pathtomedias, $pathtomediasinwebsite);
+		if (!$result) {
+			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			$action = 'importsite';
+		}
+	}
+
 	$result = $object->rebuildWebSiteFiles();
 	if ($result > 0) {
 		setEventMessages($langs->trans("PagesRegenerated", $result), null, 'mesgs');
@@ -2077,7 +2090,7 @@ if ($action == 'importsiteconfirm') {
 		$action = 'importsite';
 	} else {
 		if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-			// Check symlink to medias and restore it if ko
+			// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
 			$pathtomedias = DOL_DATA_ROOT.'/medias';
 			$pathtomediasinwebsite = $pathofwebsite.'/medias';
 			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
