@@ -623,10 +623,10 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			// If external user: Check permission for external users
 			if ($user->socid > 0 && empty($conf->global->MAIN_EXTERNAL_USERS_CAN_SEE_SUBSIDIARY_COMPANIES)) {
 				if ($user->socid <> $objectid) {
-          return false;
-        }
+					return false;
+				}
 			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir)) {
-        // If internal user: Check permission for internal users that are restricted on their objects
+				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
