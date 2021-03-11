@@ -80,7 +80,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("eventorganization"));
 
-			if (!empty($conf->global->EVENTORGANIZATION_TASK_LABEL)) {
+			if (!empty($conf->global->EVENTORGANIZATION_TASK_LABEL) && !empty($object->usage_organize_event)) {
 				$taskToDo = explode("\n", $conf->global->EVENTORGANIZATION_TASK_LABEL);
 				if (is_array($taskToDo) && count($taskToDo)>0) {
 					$this->db->begin();
@@ -107,17 +107,18 @@ class InterfaceEventOrganization extends DolibarrTriggers
 							$error++;
 						}
 					}
+
+					if (empty($error)) {
+						$this->db->commit();
+						return 1;
+					} else {
+						dol_syslog("InterfaceEventOrganization.class.php: ".implode(',', $this->errors), LOG_ERR);
+						$this->db->rollback();
+						return -1;
+					}
 				}
 			}
-
-			if (empty($error)) {
-				$this->db->commit();
-				return 1;
-			} else {
-				dol_syslog("InterfaceEventOrganization.class.php: ".implode(',', $this->errors), LOG_ERR);
-				$this->db->rollback();
-				return -1;
-			}
 		}
+		return 0;
 	}
 }
