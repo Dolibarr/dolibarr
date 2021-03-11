@@ -36,9 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batc
 class mod_lot_advanced extends ModeleNumRefBatch
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -52,14 +52,14 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	public $name = 'lot_advanced';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -90,22 +90,22 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
