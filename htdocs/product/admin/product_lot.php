@@ -16,9 +16,9 @@
  */
 
 /**
- *  \file       htdocs/product/admin/product_lot.php
- *  \ingroup    produit
- *  \brief      Setup page of product lot module
+ *  \file	   htdocs/product/admin/product_lot.php
+ *  \ingroup	produit
+ *  \brief	  Setup page of product lot module
  */
 
 require '../../main.inc.php';
@@ -120,7 +120,7 @@ foreach ($dirmodels as $reldir)
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false)
 			{
-			    if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+				if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -136,13 +136,13 @@ foreach ($dirmodels as $reldir)
 						print $module->info();
 						print '</td>';
 
-                        // Show example of numbering model
-                        print '<td class="nowrap">';
-                        $tmp = $module->getExample();
-                        if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-                        else print $tmp;
-                        print '</td>'."\n";
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp = $module->getExample();
+						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						else print $tmp;
+						print '</td>'."\n";
 
 						print '<td class="center">';
 						if ($conf->global->LOT_ADDON == $file) {
@@ -161,16 +161,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval = $module->getNextValue($mysoc, $batch);
-                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-                            $htmltooltip .= ''.$langs->trans("NextValue").': ';
-                            if ($nextval) {
-                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-                                    $nextval = $langs->trans($nextval);
-                                $htmltooltip .= $nextval.'<br>';
-                            } else {
-                                $htmltooltip .= $langs->trans($module->error).'<br>';
-                            }
-                        }
+						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
+							if ($nextval) {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									$nextval = $langs->trans($nextval);
+								$htmltooltip .= $nextval.'<br>';
+							} else {
+								$htmltooltip .= $langs->trans($module->error).'<br>';
+							}
+						}
 
 						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
@@ -214,7 +214,7 @@ foreach ($dirmodels as $reldir)
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false)
 			{
-			    if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+				if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -230,13 +230,13 @@ foreach ($dirmodels as $reldir)
 						print $module->info();
 						print '</td>';
 
-                        // Show example of numbering model
-                        print '<td class="nowrap">';
-                        $tmp = $module->getExample();
-                        if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-                        else print $tmp;
-                        print '</td>'."\n";
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp = $module->getExample();
+						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						else print $tmp;
+						print '</td>'."\n";
 
 						print '<td class="center">';
 						if ($conf->global->SN_ADDON == $file) {
@@ -255,16 +255,16 @@ foreach ($dirmodels as $reldir)
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$nextval = $module->getNextValue($mysoc, $batch);
-                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-                            $htmltooltip .= ''.$langs->trans("NextValue").': ';
-                            if ($nextval) {
-                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-                                    $nextval = $langs->trans($nextval);
-                                $htmltooltip .= $nextval.'<br>';
-                            } else {
-                                $htmltooltip .= $langs->trans($module->error).'<br>';
-                            }
-                        }
+						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
+							if ($nextval) {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									$nextval = $langs->trans($nextval);
+								$htmltooltip .= $nextval.'<br>';
+							} else {
+								$htmltooltip .= $langs->trans($module->error).'<br>';
+							}
+						}
 
 						print '<td class="center">';
 						print $form->textwithpicto('', $htmltooltip, 1, 0);
