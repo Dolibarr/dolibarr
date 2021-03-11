@@ -25,35 +25,68 @@
  *		\brief      File for The Web App
  */
 
-if (!defined('NOREQUIREUSER'))   define('NOREQUIREUSER', '1');
-if (!defined('NOREQUIREDB'))     define('NOREQUIREDB', '1');
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', '1');
-if (!defined('NOLOGIN'))         define('NOLOGIN', '1');
-if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
+}
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 require_once __DIR__.'/../../main.inc.php';
 
 $appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+}
 
 top_httphead('text/json');
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+	// For a text/json, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + 10800) . ' GMT');
+} else {
+	header('Cache-Control: no-cache');
+}
 
 ?>
 {
-    "name": "<?php echo $appli; ?>",
-    "icons": [
-        {
-            "src": "<?php echo DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png'; ?>",
-            "sizes": "256x256",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+	"name": "<?php echo $appli; ?>",
+	"icons": [
+		{
+			"src": "<?php echo DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png'; ?>",
+			"sizes": "256x256",
+			"type": "image/png"
+		}
+	],
+	"theme_color": "#ffffff",
+	"background_color": "#ffffff",
+	"display": "standalone"
 }

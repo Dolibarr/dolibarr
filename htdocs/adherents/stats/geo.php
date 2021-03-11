@@ -25,6 +25,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $graphwidth = DolGraph::getDefaultGraphSizeForStats('width', 700);
 $mapratio = 0.5;
@@ -52,18 +53,30 @@ $langs->loadLangs(array("companies", "members", "banks"));
  * View
  */
 
+$memberstatic = new Adherent($db);
+
 $arrayjs = array('https://www.google.com/jsapi');
-if (!empty($conf->dol_use_jmobile)) $arrayjs = array();
+if (!empty($conf->dol_use_jmobile)) {
+	$arrayjs = array();
+}
 
 $title = $langs->trans("Statistics");
-if ($mode == 'memberbycountry') $title = $langs->trans("MembersStatisticsByCountries");
-if ($mode == 'memberbystate') $title = $langs->trans("MembersStatisticsByState");
-if ($mode == 'memberbytown') $title = $langs->trans("MembersStatisticsByTown");
-if ($mode == 'memberbyregion') $title = $langs->trans("MembersStatisticsByRegion");
+if ($mode == 'memberbycountry') {
+	$title = $langs->trans("MembersStatisticsByCountries");
+}
+if ($mode == 'memberbystate') {
+	$title = $langs->trans("MembersStatisticsByState");
+}
+if ($mode == 'memberbytown') {
+	$title = $langs->trans("MembersStatisticsByTown");
+}
+if ($mode == 'memberbyregion') {
+	$title = $langs->trans("MembersStatisticsByRegion");
+}
 
 llxHeader('', $title, '', '', 0, 0, $arrayjs);
 
-print load_fiche_titre($title, '', 'object_group');
+print load_fiche_titre($title, '',  $memberstatic->picto);
 
 dol_mkdir($dir);
 
@@ -196,7 +209,7 @@ if ($mode) {
 
 $head = member_stats_prepare_head($adh);
 
-print dol_get_fiche_head($head, $tab, $langs->trans("Statistics"), -1, 'user');
+print dol_get_fiche_head($head, $tab, '', -1, '');
 
 
 // Print title
@@ -204,11 +217,15 @@ if ($mode && !count($data)) {
 	print $langs->trans("NoValidatedMemberYet").'<br>';
 	print '<br>';
 } else {
-	if ($mode == 'memberbycountry') print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
-	elseif ($mode == 'memberbystate') print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
-	elseif ($mode == 'memberbytown') print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
-	elseif ($mode == 'memberbyregion') print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
-	else {
+	if ($mode == 'memberbycountry') {
+		print '<span class="opacitymedium">'.$langs->trans("MembersByCountryDesc").'</span><br>';
+	} elseif ($mode == 'memberbystate') {
+		print '<span class="opacitymedium">'.$langs->trans("MembersByStateDesc").'</span><br>';
+	} elseif ($mode == 'memberbytown') {
+		print '<span class="opacitymedium">'.$langs->trans("MembersByTownDesc").'</span><br>';
+	} elseif ($mode == 'memberbyregion') {
+		print '<span class="opacitymedium">'.$langs->trans("MembersByRegion").'</span><br>'; //+
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("MembersStatisticsDesc").'</span><br>';
 		print '<br>';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?mode=memberbycountry">'.$langs->trans("MembersStatisticsByCountries").'</a><br>';
@@ -226,7 +243,9 @@ if ($mode && !count($data)) {
 // Show graphics
 if (count($arrayjs) && $mode == 'memberbycountry') {
 	$color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-	if (is_readable($color_file)) include_once $color_file;
+	if (is_readable($color_file)) {
+		include_once $color_file;
+	}
 
 	// Assume we've already included the proper headers so just call our script inline
 	// More doc: https://developers.google.com/chart/interactive/docs/gallery/geomap?hl=fr-FR
@@ -245,11 +264,15 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 	foreach ($data as $val) {
 		$valcountry = strtoupper($val['code']); // Should be ISO-3166 code (faster)
 		//$valcountry=ucfirst($val['label_en']);
-		if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }    // fix case of uk (when we use labels)
+		if ($valcountry == 'Great Britain') {
+			$valcountry = 'United Kingdom';
+		}    // fix case of uk (when we use labels)
 		print "\tdata.setValue(".$i.", 0, \"".$valcountry."\");\n";
 		print "\tdata.setValue(".$i.", 1, ".$val['nb'].");\n";
 		// Google's Geomap only supports up to 400 entries
-		if ($i >= 400) { break; }
+		if ($i >= 400) {
+			break;
+		}
 		$i++;
 	}
 
@@ -268,7 +291,6 @@ if (count($arrayjs) && $mode == 'memberbycountry') {
 
 	// print the div tag that will contain the map
 	print '<div class="center" id="'.$mode.'"></div>'."\n";
-	print '<br>';
 }
 
 if ($mode) {
@@ -277,7 +299,9 @@ if ($mode) {
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$label.'</td>';
-	if ($label2) print '<td class="center">'.$label2.'</td>';
+	if ($label2) {
+		print '<td class="center">'.$label2.'</td>';
+	}
 	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
 	print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
 	print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
@@ -287,7 +311,9 @@ if ($mode) {
 		$year = $val['year'];
 		print '<tr class="oddeven">';
 		print '<td>'.$val['label'].'</td>';
-		if ($label2) print '<td class="center">'.$val['label2'].'</td>';
+		if ($label2) {
+			print '<td class="center">'.$val['label2'].'</td>';
+		}
 		print '<td class="right">'.$val['nb'].'</td>';
 		print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
 		print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';

@@ -43,7 +43,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adm
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'bills'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $error = 0;
 
@@ -57,14 +59,14 @@ $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
-|| ($action == 'updateedit'))
-{
+|| ($action == 'updateedit')) {
 	$tmparray = getCountry(GETPOST('country_id', 'int'), 'all', $db, $langs, 0);
-	if (!empty($tmparray['id']))
-	{
+	if (!empty($tmparray['id'])) {
 		$mysoc->country_id   = $tmparray['id'];
 		$mysoc->country_code = $tmparray['code'];
 		$mysoc->country_label = $tmparray['label'];
@@ -76,8 +78,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 
 	$tmparray = getState(GETPOST('state_id', 'int'), 'all', $db, $langs, 0);
-	if (!empty($tmparray['id']))
-	{
+	if (!empty($tmparray['id'])) {
 		$mysoc->state_id   = $tmparray['id'];
 		$mysoc->state_code = $tmparray['code'];
 		$mysoc->state_label = $tmparray['label'];
@@ -107,59 +108,58 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 
 	$arrayofimages = array('logo', 'logo_squarred');
 
-	foreach ($arrayofimages as $varforimage)
-	{
+	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
 		}
 
-		if ($_FILES[$varforimage]["tmp_name"])
-		{
+		if ($_FILES[$varforimage]["tmp_name"]) {
 			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg))
-			{
+			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
 				$original_file = $reg[1];
 
 				$isimage = image_format_supported($original_file);
-				if ($isimage >= 0)
-				{
+				if ($isimage >= 0) {
 					dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
-					if (!is_dir($dirforimage))
-					{
+					if (!is_dir($dirforimage)) {
 						dol_mkdir($dirforimage);
 					}
 					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
-					if ($result > 0)
-					{
+					if ($result > 0) {
 						$constant = "MAIN_INFO_SOCIETE_LOGO";
-						if ($varforimage == 'logo_squarred') $constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+						if ($varforimage == 'logo_squarred') {
+							$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+						}
 
 						dolibarr_set_const($db, $constant, $original_file, 'chaine', 0, '', $conf->entity);
 
 						// Create thumbs of logo (Note that PDF use original file and not thumbs)
-						if ($isimage > 0)
-						{
+						if ($isimage > 0) {
 							// Create thumbs
 							//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
 							// Create small thumb, Used on logon for example
 							$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-							if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg))
-							{
+							if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 								$imgThumbSmall = $reg[1]; // Save only basename
 								dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-							} else dol_syslog($imgThumbSmall);
+							} else {
+								dol_syslog($imgThumbSmall);
+							}
 
 							// Create mini thumb, Used on menu or for setup page for example
 							$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-							if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg))
-							{
+							if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 								$imgThumbMini = $reg[1]; // Save only basename
 								dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-							} else dol_syslog($imgThumbMini);
-						} else dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
+							} else {
+								dol_syslog($imgThumbMini);
+							}
+						} else {
+							dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
+						}
 					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
 						$error++;
 						$langs->load("errors");
@@ -198,13 +198,11 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$usevat = GETPOST("optiontva", 'aZ09');
 	$uselocaltax1 = GETPOST("optionlocaltax1", 'aZ09');
 	$uselocaltax2 = GETPOST("optionlocaltax2", 'aZ09');
-	if ($uselocaltax1 == 'localtax1on' && !$usevat)
-	{
+	if ($uselocaltax1 == 'localtax1on' && !$usevat) {
 		setEventMessages($langs->trans("IfYouUseASecondTaxYouMustSetYouUseTheMainTax"), null, 'errors');
 		$error++;
 	}
-	if ($uselocaltax2 == 'localtax2on' && !$usevat)
-	{
+	if ($uselocaltax2 == 'localtax2on' && !$usevat) {
 		setEventMessages($langs->trans("IfYouUseAThirdTaxYouMustSetYouUseTheMainTax"), null, 'errors');
 		$error++;
 	}
@@ -213,8 +211,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 
-	if ($_POST["optionlocaltax1"] == "localtax1on")
-	{
+	if ($_POST["optionlocaltax1"] == "localtax1on") {
 		if (!GETPOSTISSET('lt1')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0, 'chaine', 0, '', $conf->entity);
 		} else {
@@ -222,8 +219,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC1", GETPOST("clt1", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
-	if ($_POST["optionlocaltax2"] == "localtax2on")
-	{
+	if ($_POST["optionlocaltax2"] == "localtax2on") {
 		if (!GETPOSTISSET('lt2')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0, 'chaine', 0, '', $conf->entity);
 		} else {
@@ -232,8 +228,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC2", GETPOST("clt2", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		if (GETPOST('save')) {	// To avoid to show message when we juste switch the country that resubmit the form.
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
@@ -242,24 +237,22 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		$db->rollback();
 	}
 
-	if ($action != 'updateedit' && !$error)
-	{
+	if ($action != 'updateedit' && !$error) {
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 }
 
-if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumbs
-{
-	if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"]))
-	{
+if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thumbs
+	if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"])) {
 		$isimage = image_format_supported($_GET["file"]);
 
 		// Create thumbs of logo
-		if ($isimage > 0)
-		{
+		if ($isimage > 0) {
 			$constant = "MAIN_INFO_SOCIETE_LOGO";
-			if ($action == 'addthumbsquarred') $constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+			if ($action == 'addthumbsquarred') {
+				$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+			}
 
 			$reg = array();
 
@@ -268,19 +261,21 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumb
 
 			// Create small thumb. Used on logon for example
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $quality);
-			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg))
-			{
+			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
 				$imgThumbSmall = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-			} else dol_syslog($imgThumbSmall);
+			} else {
+				dol_syslog($imgThumbSmall);
+			}
 
 			// Create mini thumbs. Used on menu or for setup page for example
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini', $quality);
-			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg))
-			{
+			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
 				$imgThumbMini = $reg[1]; // Save only basename
 				dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-			} else dol_syslog($imgThumbMini);
+			} else {
+				dol_syslog($imgThumbMini);
+			}
 
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
@@ -299,54 +294,67 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumb
 }
 
 
-if ($action == 'removelogo' || $action == 'removelogosquarred')
-{
+if ($action == 'removelogo' || $action == 'removelogosquarred') {
 	$constant = "MAIN_INFO_SOCIETE_LOGO";
-	if ($action == 'removelogosquarred') $constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+	if ($action == 'removelogosquarred') {
+		$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofilename = $mysoc->logo;
 	$logofilenamebis = $mysoc->logo_squarred;
-	if ($action == 'removelogosquarred')
-	{
+	if ($action == 'removelogosquarred') {
 		$logofilename = $mysoc->logo_squarred;
 		$logofilenamebis = $mysoc->logo;
 	}
 
 	$logofile = $conf->mycompany->dir_output.'/logos/'.$logofilename;
-	if ($logofilename != '' && $logofilename != $logofilenamebis) dol_delete_file($logofile);
+	if ($logofilename != '' && $logofilename != $logofilenamebis) {
+		dol_delete_file($logofile);
+	}
 	dolibarr_del_const($db, $constant, $conf->entity);
-	if ($action == 'removelogosquarred') $mysoc->logo_squarred = '';
-	else $mysoc->logo = '';
+	if ($action == 'removelogosquarred') {
+		$mysoc->logo_squarred = '';
+	} else {
+		$mysoc->logo = '';
+	}
 
 	$logofilename = $mysoc->logo_small;
 	$logofilenamebis = $mysoc->logo_squarred_small;
-	if ($action == 'removelogosquarred')
-	{
+	if ($action == 'removelogosquarred') {
 		$logofilename = $mysoc->logo_squarred_small;
 		$logofilenamebis = $mysoc->logo_small;
 	}
 
 	$logosmallfile = $conf->mycompany->dir_output.'/logos/thumbs/'.$logofilename;
-	if ($logofilename != '' && $logofilename != $logofilenamebis) dol_delete_file($logosmallfile);
+	if ($logofilename != '' && $logofilename != $logofilenamebis) {
+		dol_delete_file($logosmallfile);
+	}
 	dolibarr_del_const($db, $constant."_SMALL", $conf->entity);
-	if ($action == 'removelogosquarred') $mysoc->logo_squarred_small = '';
-	else $mysoc->logo_small = '';
+	if ($action == 'removelogosquarred') {
+		$mysoc->logo_squarred_small = '';
+	} else {
+		$mysoc->logo_small = '';
+	}
 
 	$logofilename = $mysoc->logo_mini;
 	$logofilenamebis = $mysoc->logo_squarred_mini;
-	if ($action == 'removelogosquarred')
-	{
+	if ($action == 'removelogosquarred') {
 		$logofilename = $mysoc->logo_squarred_mini;
 		$logofilenamebis = $mysoc->logo_mini;
 	}
 
 	$logominifile = $conf->mycompany->dir_output.'/logos/thumbs/'.$logofilename;
-	if ($logofilename != '' && $logofilename != $logofilenamebis) dol_delete_file($logominifile);
+	if ($logofilename != '' && $logofilename != $logofilenamebis) {
+		dol_delete_file($logominifile);
+	}
 	dolibarr_del_const($db, $constant."_MINI", $conf->entity);
-	if ($action == 'removelogosquarred') $mysoc->logo_squarred_mini = '';
-	else $mysoc->logo_mini = '';
+	if ($action == 'removelogosquarred') {
+		$mysoc->logo_squarred_mini = '';
+	} else {
+		$mysoc->logo_mini = '';
+	}
 }
 
 
@@ -411,13 +419,14 @@ print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SO
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 print $form->select_country($mysoc->country_id, 'country_id');
-if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+if ($user->admin) {
+	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+}
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
 $state_id = 0;
-if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE))
-{
+if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
 	$tmp = explode(':', $conf->global->MAIN_INFO_SOCIETE_STATE);
 	$state_id = $tmp[0];
 }
@@ -473,13 +482,13 @@ if (!empty($mysoc->logo_small)) {
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small).'">';
 		print '</div>';
 	} elseif (!empty($mysoc->logo)) {
-	    if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
-	        $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $quality);
-	    }
-	    $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $quality);
-	    print '<div class="inline-block valignmiddle">';
-	    print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
-	    print '</div>';
+		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_mini', $quality);
+		}
+		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo, $maxwidthmini, $maxheightmini, '_small', $quality);
+		print '<div class="inline-block valignmiddle">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo)) {
@@ -508,13 +517,13 @@ if (!empty($mysoc->logo_squarred_small)) {
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small).'">';
 		print '</div>';
 	} elseif (!empty($mysoc->logo_squarred)) {
-	    if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-	        $imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $quality);
-	    }
-	    $imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
-	    print '<div class="inline-block valignmiddle">';
-	    print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
-	    print '</div>';
+		if (!file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_mini', $quality);
+		}
+		$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$mysoc->logo_squarred, $maxwidthmini, $maxheightmini, '_small', $quality);
+		print '<div class="inline-block valignmiddle">';
+		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.basename($imgThumbSmall)).'">';
+		print '</div>';
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } elseif (!empty($mysoc->logo_squarred)) {
@@ -523,8 +532,7 @@ if (!empty($mysoc->logo_squarred_small)) {
 		print '<img style="max-height: 80px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo_squarred).'">';
 		print '</div>';
 		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
-	}
-	else {
+	} else {
 		print '<div class="inline-block valignmiddle">';
 		print '<img height="80" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
 		print '</div>';
@@ -572,11 +580,9 @@ if ($mysoc->country_code) {
 print '</td></tr>';
 
 // ProfId1
-if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-')
-{
+if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
-	if (!empty($mysoc->country_code))
-	{
+	if (!empty($mysoc->country_code)) {
 		print '<input name="siren" id="profid1" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '').'">';
 	} else {
 		print $countrynotdefined;
@@ -585,11 +591,9 @@ if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-')
 }
 
 // ProfId2
-if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-')
-{
+if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
-	if (!empty($mysoc->country_code))
-	{
+	if (!empty($mysoc->country_code)) {
 		print '<input name="siret" id="profid2" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '').'">';
 	} else {
 		print $countrynotdefined;
@@ -598,11 +602,9 @@ if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-')
 }
 
 // ProfId3
-if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-')
-{
+if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid3">'.$langs->transcountry("ProfId3", $mysoc->country_code).'</label></td><td>';
-	if (!empty($mysoc->country_code))
-	{
+	if (!empty($mysoc->country_code)) {
 		print '<input name="ape" id="profid3" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '').'">';
 	} else {
 		print $countrynotdefined;
@@ -611,11 +613,9 @@ if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-')
 }
 
 // ProfId4
-if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-')
-{
+if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid4">'.$langs->transcountry("ProfId4", $mysoc->country_code).'</label></td><td>';
-	if (!empty($mysoc->country_code))
-	{
+	if (!empty($mysoc->country_code)) {
 		print '<input name="rcs" id="profid4" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '').'">';
 	} else {
 		print $countrynotdefined;
@@ -624,11 +624,9 @@ if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-')
 }
 
 // ProfId5
-if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-')
-{
+if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid5">'.$langs->transcountry("ProfId5", $mysoc->country_code).'</label></td><td>';
-	if (!empty($mysoc->country_code))
-	{
+	if (!empty($mysoc->country_code)) {
 		print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '').'">';
 	} else {
 		print $countrynotdefined;
@@ -637,11 +635,9 @@ if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-')
 }
 
 // ProfId6
-if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-')
-{
+if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid6">'.$langs->transcountry("ProfId6", $mysoc->country_code).'</label></td><td>';
-	if (!empty($mysoc->country_code))
-	{
+	if (!empty($mysoc->country_code)) {
 		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dol_escape_htmltag(!empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '').'">';
 	} else {
 		print $countrynotdefined;
@@ -689,7 +685,9 @@ print "</tr>\n";
 print '<tr class="oddeven"><td width="140"><label><input type="radio" name="optiontva" id="use_vat" value="1"'.(empty($conf->global->FACTURE_TVAOPTION) ? "" : " checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
 print '<td colspan="2">';
 $tooltiphelp = '';
-if ($mysoc->country_code == 'FR') $tooltiphelp = '<i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
+if ($mysoc->country_code == 'FR') {
+	$tooltiphelp = '<i>'.$langs->trans("Example").': '.$langs->trans("VATIsUsedExampleFR")."</i>";
+}
 print "<label for=\"use_vat\">".$form->textwithpicto($langs->trans("VATIsUsedDesc"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
@@ -697,7 +695,9 @@ print "</td></tr>\n";
 print '<tr class="oddeven"><td width="140"><label><input type="radio" name="optiontva" id="no_vat" value="0"'.(empty($conf->global->FACTURE_TVAOPTION) ? " checked" : "")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
 print '<td colspan="2">';
 $tooltiphelp = '';
-if ($mysoc->country_code == 'FR') $tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
+if ($mysoc->country_code == 'FR') {
+	$tooltiphelp = "<i>".$langs->trans("Example").': '.$langs->trans("VATIsNotUsedExampleFR")."</i>\n";
+}
 print "<label for=\"no_vat\">".$form->textwithpicto($langs->trans("VATIsNotUsedDesc"), $tooltiphelp)."</label>";
 print "</td></tr>\n";
 
@@ -711,8 +711,7 @@ print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax1Man
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
-if ($mysoc->useLocalTax(1))
-{
+if ($mysoc->useLocalTax(1)) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
 	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax1" id="lt1" value="localtax1on"'.(($conf->global->FACTURE_LOCAL_TAX1_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION == "localtax1on") ? " checked" : "")."> ".$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
@@ -720,8 +719,7 @@ if ($mysoc->useLocalTax(1))
 	$tooltiphelp = $langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code);
 	$tooltiphelp = ($tooltiphelp != "LocalTax1IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	print '<label for="lt1">'.$form->textwithpicto($langs->transcountry("LocalTax1IsUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
-	if (!isOnlyOneLocalTax(1))
-	{
+	if (!isOnlyOneLocalTax(1)) {
 		print '<br><label for="lt1">'.$langs->trans("LTRate").'</label>: ';
 		$formcompany->select_localtax(1, $conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
 	}
@@ -740,8 +738,7 @@ if ($mysoc->useLocalTax(1))
 	print "<label for=\"nolt1\">".$form->textwithpicto($langs->transcountry("LocalTax1IsNotUsedDesc", $mysoc->country_code), $tooltiphelp)."</label>";
 	print "</td></tr>\n";
 } else {
-	if (empty($mysoc->country_code))
-	{
+	if (empty($mysoc->country_code)) {
 		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
 		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</td></tr>';
@@ -758,8 +755,7 @@ print '<td width="25%">'.$form->textwithpicto($langs->transcountry("LocalTax2Man
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
 
-if ($mysoc->useLocalTax(2))
-{
+if ($mysoc->useLocalTax(2)) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
 	print '<tr class="oddeven"><td><input type="radio" name="optionlocaltax2" id="lt2" value="localtax2on"'.(($conf->global->FACTURE_LOCAL_TAX2_OPTION == '1' || $conf->global->FACTURE_LOCAL_TAX2_OPTION == "localtax2on") ? " checked" : "")."> ".$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code)."</td>";
 	print '<td colspan="2">';
@@ -767,8 +763,7 @@ if ($mysoc->useLocalTax(2))
 	print '<label for="lt2">'.$langs->transcountry("LocalTax2IsUsedDesc", $mysoc->country_code)."</label>";
 	$tooltiphelp = $langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code);
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
-	if (!isOnlyOneLocalTax(2))
-	{
+	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
 		$formcompany->select_localtax(2, $conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
 	}
@@ -786,8 +781,7 @@ if ($mysoc->useLocalTax(2))
 	print "</div>";
 	print "</td></tr>\n";
 } else {
-	if (empty($mysoc->country_code))
-	{
+	if (empty($mysoc->country_code)) {
 		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
 		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</td></tr>';
@@ -804,8 +798,7 @@ print '<tr class="liste_titre">';
 print '<td width="25%">'.$form->textwithpicto($langs->trans("RevenueStamp"), $langs->trans("RevenueStampDesc")).'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
 print "</tr>\n";
-if ($mysoc->useRevenueStamp())
-{
+if ($mysoc->useRevenueStamp()) {
 	// Note: When option is not set, it must not appears as set on on, because there is no default value for this option
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("UseRevenueStamp");
@@ -814,8 +807,7 @@ if ($mysoc->useRevenueStamp())
 	print $langs->trans("UseRevenueStampExample", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"));
 	print "</td></tr>\n";
 } else {
-	if (empty($mysoc->country_code))
-	{
+	if (empty($mysoc->country_code)) {
 		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
 	} else {
 		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</td></tr>';

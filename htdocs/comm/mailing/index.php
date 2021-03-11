@@ -80,16 +80,14 @@ print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistic
 $dir = DOL_DOCUMENT_ROOT."/core/modules/mailings";
 $handle = opendir($dir);
 
-if (is_resource($handle))
-{
-	while (($file = readdir($handle)) !== false)
-	{
-		if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg))
-			{
+if (is_resource($handle)) {
+	while (($file = readdir($handle)) !== false) {
+		if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg)) {
 				$modulename = $reg[1];
-	   			if ($modulename == 'example') continue;
+				if ($modulename == 'example') {
+					continue;
+				}
 
 				// Loading Class
 				$file = $dir."/".$modulename.".modules.php";
@@ -98,10 +96,8 @@ if (is_resource($handle))
 				$mailmodule = new $classname($db);
 
 				$qualified = 1;
-				foreach ($mailmodule->require_module as $key)
-				{
-					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin))
-					{
+				foreach ($mailmodule->require_module as $key) {
+					if (!$conf->$key->enabled || (!$user->admin && $mailmodule->require_admin)) {
 						$qualified = 0;
 						//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
 						break;
@@ -109,10 +105,8 @@ if (is_resource($handle))
 				}
 
 				// Si le module mailing est qualifi�
-				if ($qualified)
-				{
-					foreach ($mailmodule->getSqlArrayForStats() as $sql)
-					{
+				if ($qualified) {
+					foreach ($mailmodule->getSqlArrayForStats() as $sql) {
 						print '<tr class="oddeven">';
 
 						$result = $db->query($sql);
@@ -121,8 +115,7 @@ if (is_resource($handle))
 
 							$i = 0;
 
-							while ($i < $num)
-							{
+							while ($i < $num) {
 								$obj = $db->fetch_object($result);
 								print '<td>'.img_object('', $mailmodule->picto).' '.$obj->label.'</td><td class="right">'.$obj->nb.'<td>';
 								$i++;
@@ -169,12 +162,10 @@ if ($result) {
 	print '<td class="right"><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("AllEMailings").'</a></td></tr>';
 
 	$num = $db->num_rows($result);
-	if ($num > 0)
-	{
+	if ($num > 0) {
 		$i = 0;
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 			$mailstatic = new Mailing($db);
 			$mailstatic->id = $obj->rowid;

@@ -28,15 +28,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "install", "users", "other"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -45,12 +45,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "dateevent";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "dateevent";
+}
 
 
 /*
@@ -58,25 +64,20 @@ if (!$sortfield) $sortfield = "dateevent";
  */
 
 // Purge sessions
-if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
-{
+if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
 	$res = purgeSessions(session_id());
 }
 
 // Lock new sessions
-if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin)
-{
-	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text', 1, 'Logon is restricted to a particular user', 0) < 0)
-	{
+if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin) {
+	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text', 1, 'Logon is restricted to a particular user', 0) < 0) {
 		dol_print_error($db);
 	}
 }
 
 // Unlock new sessions
-if ($action == 'confirm_unlock' && $user->admin)
-{
-	if (dolibarr_del_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', -1) < 0)
-	{
+if ($action == 'confirm_unlock' && $user->admin) {
+	if (dolibarr_del_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', -1) < 0) {
 		dol_print_error($db);
 	}
 }
@@ -107,22 +108,23 @@ $suhosin = empty($phparray['suhosin']["suhosin.session.encrypt"]["local"]) ? '' 
 
 print '<b>'.$langs->trans("SessionSaveHandler").'</b>: '.$savehandler.'<br>';
 print '<b>'.$langs->trans("SessionSavePath").'</b>: '.$savepath.'<br>';
-if ($openbasedir) print '<b>'.$langs->trans("OpenBaseDir").'</b>: '.$openbasedir.'<br>';
-if ($suhosin) print '<b>'.$langs->trans("SuhosinSessionEncrypt").'</b>: '.$suhosin.'<br>';
+if ($openbasedir) {
+	print '<b>'.$langs->trans("OpenBaseDir").'</b>: '.$openbasedir.'<br>';
+}
+if ($suhosin) {
+	print '<b>'.$langs->trans("SuhosinSessionEncrypt").'</b>: '.$suhosin.'<br>';
+}
 print '<br>';
 
-if ($action == 'purge')
-{
+if ($action == 'purge') {
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
-} elseif ($action == 'lock')
-{
+} elseif ($action == 'lock') {
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);
 }
 
-if ($savehandler == 'files')
-{
+if ($savehandler == 'files') {
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "login", "", "", 'align="left"', $sortfield, $sortorder);
@@ -134,8 +136,7 @@ if ($savehandler == 'files')
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	foreach ($listofsessions as $key => $sessionentry)
-	{
+	foreach ($listofsessions as $key => $sessionentry) {
 		print '<tr class="oddeven">';
 
 		// Login
@@ -143,8 +144,11 @@ if ($savehandler == 'files')
 
 		// ID
 		print '<td class="nowrap left">';
-		if ("$key" == session_id()) print $form->textwithpicto($key, $langs->trans("YourSession"));
-		else print $key;
+		if ("$key" == session_id()) {
+			print $form->textwithpicto($key, $langs->trans("YourSession"));
+		} else {
+			print $key;
+		}
 		print '</td>';
 
 		// Date creation
@@ -165,8 +169,7 @@ if ($savehandler == 'files')
 		$i++;
 	}
 
-	if (count($listofsessions) == 0)
-	{
+	if (count($listofsessions) == 0) {
 		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
 	print "</table>";
@@ -181,17 +184,14 @@ if ($savehandler == 'files')
 print '<div class="tabsAction">';
 
 
-if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
-{
+if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
 } else {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
 }
 
-if ($savehandler == 'files')
-{
-	if (count($listofsessions))
-	{
+if ($savehandler == 'files') {
+	if (count($listofsessions)) {
 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
 	}
 }

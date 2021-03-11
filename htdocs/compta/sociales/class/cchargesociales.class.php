@@ -430,10 +430,11 @@ class Cchargesociales
 		$link .= '>';
 		$linkend = '</a>';
 
-		if ($withpicto)
-		{
+		if ($withpicto) {
 			$result .= ($link.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
-			if ($withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) {
+				$result .= ' ';
+			}
 		}
 		$result .= $link.$this->ref.$linkend;
 		return $result;
@@ -463,30 +464,42 @@ class Cchargesociales
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+		if ($mode == 0) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 1) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 2) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 3) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5');
+			}
+		} elseif ($mode == 4) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 5) {
+			if ($status == 1) {
+				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			}
 		}
 	}
 

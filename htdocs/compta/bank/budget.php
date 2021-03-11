@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories'));
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque');
 
 
@@ -41,7 +43,10 @@ $result = restrictedArea($user, 'banque');
 
 $companystatic = new Societe($db);
 
-llxHeader();
+$title = $langs->trans('ListTransactionsByCategory');
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+
+llxHeader('', $title, $help_url);
 
 // List movements bu category for bank transactions
 print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'bank_account');
@@ -65,13 +70,13 @@ $sql .= " GROUP BY c.label, c.rowid";
 $sql .= " ORDER BY c.label";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0; $totalnb = 0;
+	$i = 0;
+	$total = 0;
+	$totalnb = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';

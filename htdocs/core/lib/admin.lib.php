@@ -106,10 +106,12 @@ function versioncompare($versionarray1, $versionarray2)
 		$level++;
 		//print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
 		if ($operande1 < $operande2) {
-			$ret = -$level; break;
+			$ret = -$level;
+			break;
 		}
 		if ($operande1 > $operande2) {
-			$ret = $level; break;
+			$ret = $level;
+			break;
 		}
 	}
 	//print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
@@ -457,22 +459,24 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		} else {
 			print '<span class="error">'.$langs->trans("Error").'</span>';
 		}
-		//if (! empty($conf->use_javascript_ajax)) {
-			print '<script type="text/javascript" language="javascript">
-			jQuery(document).ready(function() {
-				function init_trrunsql()
-				{
-					console.log("toggle .trforrunsql");
-					jQuery(".trforrunsql").toggle();
-				}
+
+		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			function init_trrunsql()
+			{
+				console.log("toggle .trforrunsql");
+				jQuery(".trforrunsql").toggle();
+			}
+			init_trrunsql();
+			jQuery(".trforrunsqlshowhide").click(function() {
 				init_trrunsql();
-				jQuery(".trforrunsqlshowhide").click(function() {
-					init_trrunsql();
-				});
 			});
-			</script>';
-			print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		});
+		</script>';
+		print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
+
 		print '</td></tr>'."\n";
 	}
 
@@ -1238,40 +1242,52 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 								//var_dump($objMod->dictionaries['tabname']);
 								$nbtabname = $nbtablib = $nbtabsql = $nbtabsqlsort = $nbtabfield = $nbtabfieldvalue = $nbtabfieldinsert = $nbtabrowid = $nbtabcond = $nbtabfieldcheck = $nbtabhelp = 0;
 								foreach ($objMod->dictionaries['tabname'] as $val) {
-									$nbtabname++; $taborder[] = max($taborder) + 1; $tabname[] = $val;
+									$nbtabname++;
+									$taborder[] = max($taborder) + 1;
+									$tabname[] = $val;
 								}		// Position
 								foreach ($objMod->dictionaries['tablib'] as $val) {
-									$nbtablib++; $tablib[] = $val;
+									$nbtablib++;
+									$tablib[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabsql'] as $val) {
-									$nbtabsql++; $tabsql[] = $val;
+									$nbtabsql++;
+									$tabsql[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabsqlsort'] as $val) {
-									$nbtabsqlsort++; $tabsqlsort[] = $val;
+									$nbtabsqlsort++;
+									$tabsqlsort[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabfield'] as $val) {
-									$nbtabfield++; $tabfield[] = $val;
+									$nbtabfield++;
+									$tabfield[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabfieldvalue'] as $val) {
-									$nbtabfieldvalue++; $tabfieldvalue[] = $val;
+									$nbtabfieldvalue++;
+									$tabfieldvalue[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabfieldinsert'] as $val) {
-									$nbtabfieldinsert++; $tabfieldinsert[] = $val;
+									$nbtabfieldinsert++;
+									$tabfieldinsert[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabrowid'] as $val) {
-									$nbtabrowid++; $tabrowid[] = $val;
+									$nbtabrowid++;
+									$tabrowid[] = $val;
 								}
 								foreach ($objMod->dictionaries['tabcond'] as $val) {
-									$nbtabcond++; $tabcond[] = $val;
+									$nbtabcond++;
+									$tabcond[] = $val;
 								}
 								if (!empty($objMod->dictionaries['tabhelp'])) {
 									foreach ($objMod->dictionaries['tabhelp'] as $val) {
-										$nbtabhelp++; $tabhelp[] = $val;
+										$nbtabhelp++;
+										$tabhelp[] = $val;
 									}
 								}
 								if (!empty($objMod->dictionaries['tabfieldcheck'])) {
 									foreach ($objMod->dictionaries['tabfieldcheck'] as $val) {
-										$nbtabfieldcheck++; $tabfieldcheck[] = $val;
+										$nbtabfieldcheck++;
+										$tabfieldcheck[] = $val;
 									}
 								}
 
@@ -1438,15 +1454,15 @@ function complete_elementList_with_modules(&$elementList)
 							$dirmod[$i] = $dir;
 							//print "x".$modName." ".$orders[$i]."\n<br>";
 
-                            if (!empty($objMod->module_parts['contactelement'])) {
-                            	if (is_array($objMod->module_parts['contactelement'])) {
+							if (!empty($objMod->module_parts['contactelement'])) {
+								if (is_array($objMod->module_parts['contactelement'])) {
 									foreach ($objMod->module_parts['contactelement'] as $elem => $title) {
 										$elementList[$elem] = $langs->trans($title);
 									}
 								} else {
 									$elementList[$objMod->name] = $langs->trans($objMod->name);
 								}
-                            }
+							}
 
 							$j++;
 							$i++;

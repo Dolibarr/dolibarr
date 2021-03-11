@@ -35,7 +35,9 @@ $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -43,8 +45,11 @@ if (!$user->admin) accessforbidden();
  */
 
 if ($action == 'setMEMBER_ENABLE_PUBLIC') {
-	if (GETPOST('value')) dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
-	else dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+	if (GETPOST('value')) {
+		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
+	} else {
+		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 if ($action == 'update') {
@@ -58,14 +63,17 @@ if ($action == 'update') {
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT", $editamount, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE", $payonline, 'chaine', 0, '', $conf->entity);
-	if ($forcetype < 0) $res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
-	else {
+	if ($forcetype < 0) {
+		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
+	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error) {
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -133,6 +141,7 @@ if ($conf->use_javascript_ajax) {
 
 print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").'</span><br><br>';
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
@@ -194,9 +203,15 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) $listofval['paybox'] = 'Paybox';
-	if (!empty($conf->paypal->enabled)) $listofval['paypal'] = 'PayPal';
-	if (!empty($conf->stripe->enabled)) $listofval['stripe'] = 'Stripe';
+	if (!empty($conf->paybox->enabled)) {
+		$listofval['paybox'] = 'Paybox';
+	}
+	if (!empty($conf->paypal->enabled)) {
+		$listofval['paypal'] = 'PayPal';
+	}
+	if (!empty($conf->stripe->enabled)) {
+		$listofval['stripe'] = 'Stripe';
+	}
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
 	print "</td></tr>\n";
 

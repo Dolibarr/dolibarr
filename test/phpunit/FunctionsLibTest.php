@@ -108,7 +108,15 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		if (! function_exists('mb_substr')) {
-			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die();
+			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(1);
+		}
+
+		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n"; die(1);
+		}
+
+		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n"; die(1);
 		}
 
 		print __METHOD__."\n";
@@ -765,36 +773,36 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolTrunc()
 	{
-		// Default trunc (will add ... if truncation truncation or keep last char if only one char)
+		// Default trunc (will add … if truncation truncation or keep last char if only one char)
 		$input="éeéeéeàa";
 		$after=dol_trunc($input, 3);
-		$this->assertEquals("éeé...", $after, 'Test A1');
+		$this->assertEquals("éeé…", $after, 'Test A1');
 		$after=dol_trunc($input, 2);
-		$this->assertEquals("ée...", $after, 'Test A2');
+		$this->assertEquals("ée…", $after, 'Test A2');
 		$after=dol_trunc($input, 1);
-		$this->assertEquals("é...", $after, 'Test A3');
-		$input="éeéeé";
+		$this->assertEquals("é…", $after, 'Test A3');
+		$input="éeée";
 		$after=dol_trunc($input, 3);
-		$this->assertEquals("éeéeé", $after, 'Test B1');
+		$this->assertEquals("éeée", $after, 'Test B1');
 		$after=dol_trunc($input, 2);
-		$this->assertEquals("éeéeé", $after, 'Test B2');
+		$this->assertEquals("ée…", $after, 'Test B2');
 		$after=dol_trunc($input, 1);
-		$this->assertEquals("é...", $after, 'Test B3');
+		$this->assertEquals("é…", $after, 'Test B3');
 		$input="éeée";
 		$after=dol_trunc($input, 3);
 		$this->assertEquals("éeée", $after, 'Test C1');
 		$after=dol_trunc($input, 2);
-		$this->assertEquals("éeée", $after, 'Test C2');
+		$this->assertEquals("ée…", $after, 'Test C2');
 		$after=dol_trunc($input, 1);
-		$this->assertEquals("éeée", $after, 'Test C3');
+		$this->assertEquals("é…", $after, 'Test C3');
 		$input="éeé";
 		$after=dol_trunc($input, 3);
 		$this->assertEquals("éeé", $after, 'Test C');
 		$after=dol_trunc($input, 2);
 		$this->assertEquals("éeé", $after, 'Test D');
 		$after=dol_trunc($input, 1);
-		$this->assertEquals("éeé", $after, 'Test E');
-		// Trunc with no ...
+		$this->assertEquals("é…", $after, 'Test E');
+		// Trunc with no …
 		$input="éeéeéeàa";
 		$after=dol_trunc($input, 3, 'right', 'UTF-8', 1);
 		$this->assertEquals("éeé", $after, 'Test F');
@@ -809,7 +817,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals("é", $after, 'Test J');
 		$input="éeéeéeàa";
 		$after=dol_trunc($input, 4, 'middle');
-		$this->assertEquals("ée...àa", $after, 'Test K');
+		$this->assertEquals("ée…àa", $after, 'Test K');
 
 		return true;
 	}
@@ -1294,7 +1302,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(1000.123456, price2num('1 000.123456'));
 
 		// Round down
-		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'));
+		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'), 'Error in round down with MT');
 		$this->assertEquals(1000.12345, price2num('1 000.123452', 'MU'), "Test MU");
 
 		// Round up

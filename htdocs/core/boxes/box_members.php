@@ -92,7 +92,7 @@ class box_members extends ModeleBoxes
 			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
-			$sql .= " t.subscription";
+			$sql .= " t.subscription, t.libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE a.entity IN (".getEntity('member').")";
 			$sql .= " AND a.fk_adherent_type = t.rowid";
@@ -119,8 +119,11 @@ class box_members extends ModeleBoxes
 					$memberstatic->morphy = $objp->morphy;
 					$memberstatic->company = $objp->company;
 					$memberstatic->statut = $objp->status;
+					$memberstatic->date_creation = $datec;
+					$memberstatic->date_modification = $datem;
 					$memberstatic->need_subscription = $objp->subscription;
 					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
+
 					if (!empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
 						$memberstatic->fetch_thirdparty();

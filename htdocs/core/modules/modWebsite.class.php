@@ -72,10 +72,10 @@ class modWebsite extends DolibarrModules
 		$this->langfiles = array("website");
 
 		// Constants
-	   	$this->const = array();
+		$this->const = array();
 
 		// New pages on tabs
-	   	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
+		//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();
@@ -130,7 +130,9 @@ class modWebsite extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'MyWebsitePages'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'globe';
-		$keyforclass = 'WebsitePage'; $keyforclassfile = '/website/class/websitepage.class.php'; $keyforelement = 'Website';
+		$keyforclass = 'WebsitePage';
+		$keyforclassfile = '/website/class/websitepage.class.php';
+		$keyforelement = 'Website';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -159,18 +161,15 @@ class modWebsite extends DolibarrModules
 
 		// Copy flags and octicons directory
 		$dirarray = array('common/flags'=>'flags', 'common/octicons/build/svg'=>'octicons');
-		foreach ($dirarray as $dirfrom => $dirtarget)
-		{
+		foreach ($dirarray as $dirfrom => $dirtarget) {
 			$src = DOL_DOCUMENT_ROOT.'/theme/'.$dirfrom;
 			$dest = DOL_DATA_ROOT.'/medias/image/'.$dirtarget;
 
-			if (is_dir($src))
-			{
+			if (is_dir($src)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_mkdir($dest);
 				$result = dolCopyDir($src, $dest, 0, 0);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
 					return 0;

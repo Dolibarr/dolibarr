@@ -40,7 +40,7 @@ $action = GETPOST('action', 'aZ09');
 
 
 // Define possible position of boxes
-$pos_name = InfoBox::getListOfPagesForBoxes();
+$arrayofhomepages = InfoBox::getListOfPagesForBoxes();
 $boxes = array();
 
 
@@ -319,7 +319,7 @@ print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
-print '<td width="160" class="center">'.$langs->trans("ActivateOn").'</td>';
+print '<td width="160" class="center">'.$langs->trans("ActivatableOn").'</td>';
 print "</tr>\n";
 
 foreach ($boxtoadd as $box) {
@@ -348,7 +348,7 @@ foreach ($boxtoadd as $box) {
 
 	// For each possible position, an activation link is displayed if the box is not already active for that position
 	print '<td class="center">';
-	print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, -1, 1, 0, 0, '', 1)."\n";
+	print $form->selectarray("boxid[".$box->box_id."][pos]", $arrayofhomepages, -1, 1, 0, 0, '', 1)."\n";
 	print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
 	print '</td>';
 
@@ -377,7 +377,7 @@ print '<table class="tagtable liste">'."\n";
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
-print '<td class="center" width="160">'.$langs->trans("ActiveOn").'</td>';
+print '<td class="center" width="160">'.$langs->trans("ActivatableOn").'</td>';
 print '<td class="center" width="60" colspan="2">'.$langs->trans("PositionByDefault").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Disable").'</td>';
 print '</tr>'."\n";
@@ -406,7 +406,7 @@ foreach ($boxactivated as $key => $box) {
 		print ($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>';
-	print '<td class="center">'.(empty($pos_name[$box->position]) ? '' : $langs->trans($pos_name[$box->position])).'</td>';
+	print '<td class="center">'.(empty($arrayofhomepages[$box->position]) ? '' : $langs->trans($arrayofhomepages[$box->position])).'</td>';
 	$hasnext = ($key < (count($boxactivated) - 1));
 	$hasprevious = ($key != 0);
 	print '<td class="center">'.($key + 1).'</td>';

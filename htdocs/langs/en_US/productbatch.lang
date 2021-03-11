@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Use lot/serial number
-ProductStatusOnBatch=Yes (lot/serial required)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=No (lot/serial not used)
-ProductStatusOnBatchShort=Yes
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=No
 Batch=Lot/Serial
 atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
@@ -22,3 +24,5 @@ ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot
 ShowLogOfMovementIfLot=Show log of movements for couple product/lot
 StockDetailPerBatch=Stock detail per lot
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %S

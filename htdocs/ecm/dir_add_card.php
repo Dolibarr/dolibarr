@@ -186,10 +186,8 @@ if ($action == 'add' && $permtoadd) {
 			exit;
 		}
 	}
-}
-
-// Deleting file
-elseif ($action == 'confirm_deletesection' && $confirm == 'yes') {
+} elseif ($action == 'confirm_deletesection' && $confirm == 'yes') {
+	// Deleting file
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
 }

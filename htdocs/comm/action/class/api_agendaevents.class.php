@@ -16,9 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
 
 /**
  * API class for Agenda Events
@@ -66,7 +67,7 @@ class AgendaEvents extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
 			throw new RestException(401, "Insufficient rights to read an event");
 		}
-		if ($id == 0) {
+		if ($id === 0) {
 			$result = $this->actioncomm->initAsSpecimen();
 		} else {
 			$result = $this->actioncomm->fetch($id);
@@ -114,34 +115,50 @@ class AgendaEvents extends DolibarrApi
 
 		// case of external user
 		$socid = 0;
-		if (!empty(DolibarrApiAccess::$user->socid)) $socid = DolibarrApiAccess::$user->socid;
+		if (!empty(DolibarrApiAccess::$user->socid)) {
+			$socid = DolibarrApiAccess::$user->socid;
+		}
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
-		if (empty($conf->societe->enabled)) $search_sale = 0; // If module thirdparty not enabled, sale representative is something that does not exists
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
+		if (empty($conf->societe->enabled)) {
+			$search_sale = 0; // If module thirdparty not enabled, sale representative is something that does not exists
+		}
 
 		$sql = "SELECT t.id as rowid";
-		if (!empty($conf->societe->enabled))
-			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		if (!empty($conf->societe->enabled)) {
+			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+				$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+			}
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as t";
-		if (!empty($conf->societe->enabled))
-			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if (!empty($conf->societe->enabled)) {
+			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+			}
+		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('agenda').')';
-		if (!empty($conf->societe->enabled))
-			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($user_ids) $sql .= " AND t.fk_user_action IN (".$user_ids.")";
-		if ($socid > 0) $sql .= " AND t.fk_soc = ".$socid;
+		if (!empty($conf->societe->enabled)) {
+			if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
+				$sql .= " AND t.fk_soc = sc.fk_soc";
+			}
+		}
+		if ($user_ids) {
+			$sql .= " AND t.fk_user_action IN (".$user_ids.")";
+		}
+		if ($socid > 0) {
+			$sql .= " AND t.fk_soc = ".$socid;
+		}
 		// Insert sale filter
-		if ($search_sale > 0)
-		{
+		if ($search_sale > 0) {
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -150,8 +167,7 @@ class AgendaEvents extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -161,13 +177,11 @@ class AgendaEvents extends DolibarrApi
 
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$actioncomm_static = new ActionComm($this->db);
 				if ($actioncomm_static->fetch($obj->rowid)) {
@@ -206,12 +220,12 @@ class AgendaEvents extends DolibarrApi
 			$this->actioncomm->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
-          $lines = array();
-          foreach ($request_data["lines"] as $line) {
-            array_push($lines, (object) $line);
-          }
-          $this->expensereport->lines = $lines;
-        }*/
+		  $lines = array();
+		  foreach ($request_data["lines"] as $line) {
+			array_push($lines, (object) $line);
+		  }
+		  $this->expensereport->lines = $lines;
+		}*/
 		if ($this->actioncomm->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating event", array_merge(array($this->actioncomm->error), $this->actioncomm->errors));
 		}
@@ -251,12 +265,15 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$this->actioncomm->$field = $value;
 		}
 
-		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0)
+		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {
 			return $this->get($id);
+		}
 
 		return false;
 	}
@@ -316,8 +333,9 @@ class AgendaEvents extends DolibarrApi
 	{
 		$event = array();
 		foreach (AgendaEvents::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$event[$field] = $data[$field];
 		}
 		return $event;

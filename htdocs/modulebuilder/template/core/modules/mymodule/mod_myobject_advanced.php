@@ -113,8 +113,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		/*$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;*/
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -135,8 +134,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		// We get cursor rule
 		$mask = $conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

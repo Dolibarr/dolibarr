@@ -193,9 +193,13 @@ class modContrat extends DolibarrModules
 		'p.rowid'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text');
 
 
-		$keyforselect = 'contrat'; $keyforelement = 'contract'; $keyforaliasextra = 'coextra';
+		$keyforselect = 'contrat';
+		$keyforelement = 'contract';
+		$keyforaliasextra = 'coextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'contratdet'; $keyforelement = 'contract_line'; $keyforaliasextra = 'codextra';
+		$keyforselect = 'contratdet';
+		$keyforelement = 'contract_line';
+		$keyforaliasextra = 'codextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -230,13 +234,11 @@ class modContrat extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/contracts';
 		$dest = $dirodt.'/template_contract.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

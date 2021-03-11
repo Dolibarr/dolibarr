@@ -20,12 +20,24 @@
  *       \brief      File to return Ajax response on a selection list request
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
 
 require '../../main.inc.php';
 
@@ -54,22 +66,21 @@ $form = new Form($db);
 
 top_httphead();
 
-if (empty($htmlname)) return;
+if (empty($htmlname)) {
+	return;
+}
 
 
 $InfoFieldList = explode(":", $objectdesc);
 $classname = $InfoFieldList[0];
 $classpath = $InfoFieldList[1];
-if (!empty($classpath))
-{
+if (!empty($classpath)) {
 	dol_include_once($classpath);
-	if ($classname && class_exists($classname))
-	{
+	if ($classname && class_exists($classname)) {
 		$objecttmp = new $classname($db);
 	}
 }
-if (!is_object($objecttmp))
-{
+if (!is_object($objecttmp)) {
 	dol_syslog('Error bad param objectdesc', LOG_WARNING);
 	print 'Error bad param objectdesc';
 }
@@ -84,4 +95,6 @@ $arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchke
 
 $db->close();
 
-if ($outjson) print json_encode($arrayresult);
+if ($outjson) {
+	print json_encode($arrayresult);
+}

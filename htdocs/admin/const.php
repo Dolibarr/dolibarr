@@ -30,8 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $rowid = GETPOST('rowid', 'int');
 $entity = GETPOST('entity', 'int');
@@ -49,37 +50,38 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (empty($sortfield)) $sortfield = 'entity,name';
-if (empty($sortorder)) $sortorder = 'ASC';
+if (empty($sortfield)) {
+	$sortfield = 'entity,name';
+}
+if (empty($sortorder)) {
+	$sortorder = 'ASC';
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'add' || (GETPOST('add') && $action != 'update'))
-{
+if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
 	$error = 0;
 
-	if (empty($constname))
-	{
+	if (empty($constname)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 		$error++;
 	}
-	if ($constvalue == '')
-	{
+	if ($constvalue == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Value")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
-		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0)
-		{
+	if (!$error) {
+		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action = "";
 			$constname = "";
@@ -92,50 +94,44 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 }
 
 // Mass update
-if (!empty($consts) && $action == 'update')
-{
+if (!empty($consts) && $action == 'update') {
 	$nbmodified = 0;
-	foreach ($consts as $const)
-	{
-		if (!empty($const["check"]))
-		{
-			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0)
-			{
+	foreach ($consts as $const) {
+		if (!empty($const["check"])) {
+			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) >= 0) {
 				$nbmodified++;
 			} else {
 				dol_print_error($db);
 			}
 		}
 	}
-	if ($nbmodified > 0) setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	if ($nbmodified > 0) {
+		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	}
 	$action = '';
 }
 
 // Mass delete
-if (!empty($consts) && $action == 'delete')
-{
+if (!empty($consts) && $action == 'delete') {
 	$nbdeleted = 0;
-	foreach ($consts as $const)
-	{
-		if (!empty($const["check"]))	// Is checkbox checked
-		{
-			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0)
-			{
+	foreach ($consts as $const) {
+		if (!empty($const["check"])) {	// Is checkbox checked
+			if (dolibarr_del_const($db, $const["rowid"], -1) >= 0) {
 				$nbdeleted++;
 			} else {
 				dol_print_error($db);
 			}
 		}
 	}
-	if ($nbdeleted > 0) setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	if ($nbdeleted > 0) {
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+	}
 	$action = '';
 }
 
 // Delete line from delete picto
-if ($action == 'delete')
-{
-	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
-	{
+if ($action == 'delete') {
+	if (dolibarr_del_const($db, $rowid, $entity) >= 0) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	} else {
 		dol_print_error($db);
@@ -153,8 +149,7 @@ $wikihelp = 'EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 // Add logic to show/hide buttons
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
@@ -173,7 +168,7 @@ jQuery(document).ready(function() {
 	});
 });
 </script>
-    <?php
+	<?php
 }
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
@@ -196,8 +191,7 @@ print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '
 print getTitleFieldOfList("Value", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print getTitleFieldOfList("Comment", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-if (!empty($conf->multicompany->enabled) && !$user->entity)
-{
+if (!empty($conf->multicompany->enabled) && !$user->entity) {
 	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 }
 print getTitleFieldOfList("", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
@@ -219,8 +213,7 @@ print '</td>';
 print '<td>';
 print '</td>';
 // Limit to superadmin
-if (!empty($conf->multicompany->enabled) && !$user->entity)
-{
+if (!empty($conf->multicompany->enabled) && !$user->entity) {
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
@@ -245,20 +238,23 @@ $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 $sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
-if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
-elseif (!GETPOST('visible') || GETPOST('visible') != 'all') $sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
-if (GETPOST('name')) $sql .= natural_search("name", GETPOST('name'));
+if ((empty($user->entity) || $user->admin) && $debug) {
+} elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
+	// to force for superadmin to debug
+	$sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
+}
+if (GETPOST('name')) {
+	$sql .= natural_search("name", GETPOST('name'));
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 dol_syslog("Const::listConstant", LOG_DEBUG);
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
 		print "\n";
@@ -270,22 +266,21 @@ if ($result)
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
 		print '</td>';
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
 		print '</td>';
 
 		// Date last change
-		print '<td>';
+		print '<td class="nowraponall">';
 		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 
 		// Entity limit to superadmin
-		if (!empty($conf->multicompany->enabled) && !$user->entity)
-		{
+		if (!empty($conf->multicompany->enabled) && !$user->entity) {
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
@@ -295,8 +290,7 @@ if ($result)
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 
-		if ($conf->use_javascript_ajax)
-		{
+		if ($conf->use_javascript_ajax) {
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
@@ -313,8 +307,7 @@ if ($result)
 print '</table>';
 print '</div>';
 
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print '<br>';
 	print '<div id="updateconst" class="right">';
 	print '<input type="submit" name="update" class="button marginbottomonly" value="'.$langs->trans("Modify").'">';

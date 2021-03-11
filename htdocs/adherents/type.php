@@ -52,12 +52,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {  $sortorder = "DESC"; }
-if (!$sortfield) {  $sortfield = "d.lastname"; }
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "d.lastname";
+}
 
 $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
@@ -118,7 +124,9 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
 	if (empty($object->label)) {
 		$error++;
@@ -167,7 +175,9 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
 	$ret = $object->update($user);
 
@@ -203,7 +213,8 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
@@ -221,8 +232,12 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$i = 0;
 
 		$param = '';
-		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+			$param .= '&contextpage='.$contextpage;
+		}
+		if ($limit > 0 && $limit != $conf->liste_limit) {
+			$param .= '&limit='.$limit;
+		}
 
 		$newcardbutton = '';
 		if ($user->rights->adherent->configurer) {
@@ -230,7 +245,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		if ($optioncss != '') {
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		}
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
@@ -272,14 +289,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td class="center">';
-			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorAndPhy");
+			if ($objp->morphy == 'phy') {
+				print $langs->trans("Physical");
+			} elseif ($objp->morphy == 'mor') {
+				print $langs->trans("Moral");
+			} else {
+				print $langs->trans("MorAndPhy");
+			}
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-			if ($user->rights->adherent->configurer)
+			if ($user->rights->adherent->configurer) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else {
+			} else {
 				print '<td class="right">&nbsp;</td>';
 			}
 			print "</tr>";
@@ -317,19 +340,19 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
-  	print '</td></tr>';
+	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
+	print '</td></tr>';
 
 	// Morphy
-  	$morphys = array();
-  	$morphys[""] = $langs->trans("MorAndPhy");
-  	$morphys["phy"] = $langs->trans("Physical");
+	$morphys = array();
+	$morphys[""] = $langs->trans("MorAndPhy");
+	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr><td><span>'.$langs->trans("MembersNature").'</span></td><td>';
 	print $form->selectarray("morphy", $morphys, GETPOSTISSET("morphy") ? GETPOST("morphy", 'aZ09') : 'morphy');
 	print "</td></tr>";
 
-  	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
@@ -484,8 +507,8 @@ if ($rowid > 0) {
 		}
 		if ($action == 'search') {
 			if (GETPOST('search', 'alpha')) {
-		  		$sql .= natural_search(array("d.firstname", "d.lastname"), GETPOST('search', 'alpha'));
-		  	}
+				$sql .= natural_search(array("d.firstname", "d.lastname"), GETPOST('search', 'alpha'));
+			}
 		}
 		if (!empty($search_lastname)) {
 			$sql .= natural_search(array("d.firstname", "d.lastname"), $search_lastname);
@@ -509,8 +532,11 @@ if ($rowid > 0) {
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$resql = $db->query($sql);
-			if ($resql) $nbtotalofrecords = $db->num_rows($result);
-			else dol_print_error($db);
+			if ($resql) {
+				$nbtotalofrecords = $db->num_rows($result);
+			} else {
+				dol_print_error($db);
+			}
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
@@ -550,12 +576,24 @@ if ($rowid > 0) {
 			}
 
 			$param = "&rowid=".$object->id;
-			if (!empty($status))			$param .= "&status=".$status;
-			if (!empty($search_lastname))	$param .= "&search_lastname=".$search_lastname;
-			if (!empty($search_firstname))	$param .= "&search_firstname=".$search_firstname;
-			if (!empty($search_login))		$param .= "&search_login=".$search_login;
-			if (!empty($search_email))		$param .= "&search_email=".$search_email;
-			if (!empty($filter))			$param .= "&filter=".$filter;
+			if (!empty($status)) {
+				$param .= "&status=".$status;
+			}
+			if (!empty($search_lastname)) {
+				$param .= "&search_lastname=".$search_lastname;
+			}
+			if (!empty($search_firstname)) {
+				$param .= "&search_firstname=".$search_firstname;
+			}
+			if (!empty($search_login)) {
+				$param .= "&search_login=".$search_login;
+			}
+			if (!empty($search_email)) {
+				$param .= "&search_email=".$search_email;
+			}
+			if (!empty($filter)) {
+				$param .= "&filter=".$filter;
+			}
 
 			if ($sall) {
 				print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
@@ -632,10 +670,10 @@ if ($rowid > 0) {
 
 				// Type
 				/*print '<td class="nowrap">';
-		        $membertypestatic->id=$objp->type_id;
-		        $membertypestatic->label=$objp->type;
-		        print $membertypestatic->getNomUrl(1,12);
-		        print '</td>';
+				$membertypestatic->id=$objp->type_id;
+				$membertypestatic->label=$objp->type;
+				print $membertypestatic->getNomUrl(1,12);
+				print '</td>';
 				*/
 
 				// Moral/Physique
@@ -662,7 +700,9 @@ if ($rowid > 0) {
 					print '<td class="nowrap left">';
 					if ($objp->subscription == 'yes') {
 						print $langs->trans("SubscriptionNotReceived");
-						if ($objp->status > 0) print " ".img_warning();
+						if ($objp->status > 0) {
+							print " ".img_warning();
+						}
 					} else {
 						print '&nbsp;';
 					}

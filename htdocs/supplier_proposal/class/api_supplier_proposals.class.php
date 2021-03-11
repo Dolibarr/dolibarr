@@ -33,7 +33,7 @@ class Supplierproposals extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid'
 	);
 
@@ -105,28 +105,37 @@ class Supplierproposals extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('propal').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= " AND t.fk_soc = sc.fk_soc";
+		}
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$socids.")";
+		}
+		if ($search_sale > 0) {
+			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
 		// Insert sale filter
-		if ($search_sale > 0)
-		{
+		if ($search_sale > 0) {
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -135,8 +144,7 @@ class Supplierproposals extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -146,13 +154,11 @@ class Supplierproposals extends DolibarrApi
 
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$propal_static = new SupplierProposal($this->db);
 				if ($propal_static->fetch($obj->rowid)) {
@@ -181,8 +187,9 @@ class Supplierproposals extends DolibarrApi
 	{
 		$propal = array();
 		foreach (SupplierProposals::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$propal[$field] = $data[$field];
 		}
 		return $propal;

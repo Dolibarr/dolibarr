@@ -78,6 +78,12 @@ class mymodulewidget1 extends ModeleBoxes
 	public $info_box_contents = array();
 
 	/**
+	 * @var string 	Widget type ('graph' means the widget is a graph widget)
+	 */
+	public $widgettype = 'graph';
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler

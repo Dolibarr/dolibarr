@@ -28,7 +28,7 @@ create table llx_mailing_cibles
   firstname			varchar(160),
   email				varchar(160) NOT NULL,
   other				varchar(255) NULL,
-  tag				varchar(128) NULL,
+  tag				varchar(64) NULL,					-- a unique key as a hash of: dolibarr_main_instance_unique_id;email;lastname;mailing_id;MAILING_EMAIL_UNSUBSCRIBE_KEY
   statut			smallint NOT NULL DEFAULT 0,		-- -1 = error, 0 = not sent, ...
   source_url		varchar(255),
   source_id			integer,

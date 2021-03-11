@@ -256,10 +256,11 @@ class modUser extends DolibarrModules
 			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
 			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member"
 		);
-		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
+		$keyforselect = 'user';
+		$keyforelement = 'user';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		if (empty($conf->adherent->enabled))
-		{
+		if (empty($conf->adherent->enabled)) {
 			unset($this->export_fields_array[$r]['u.fk_member']);
 			unset($this->export_entities_array[$r]['u.fk_member']);
 		}
@@ -294,10 +295,8 @@ class modUser extends DolibarrModules
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');

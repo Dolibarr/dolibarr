@@ -143,7 +143,11 @@ class modTicket extends DolibarrModules
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		$this->boxes = array(
 			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home')
+			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_ticket_by_severity.php', 'enabledbydefaulton'=>'ticketindex'),
+			3=>array('file'=>'box_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
+			4=>array('file'=>'box_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
+			5=>array('file'=>'box_new_vs_close_ticket.php', 'enabledbydefaulton'=>'ticketindex')
 		); // Boxes list
 
 		// Permissions
@@ -208,7 +212,7 @@ class modTicket extends DolibarrModules
 		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket',
 			'type' => 'left',
 			'titre' => 'Ticket',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticket',
 			'url' => '/ticket/index.php',
@@ -295,13 +299,11 @@ class modTicket extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
 		$dest = $dirodt.'/template_order.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

@@ -47,9 +47,15 @@ $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 
 // Security check
-if ($user->socid > 0) $socid = $user->socid;
-if (!empty($conf->comptabilite->enabled)) $result = restrictedArea($user, 'compta', '', '', 'resultat');
-if (!empty($conf->accounting->enabled)) $result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
 
 /*
  * Actions
@@ -73,8 +79,7 @@ llxHeader('', $langs->trans("SellsJournal"), '', '', 0, 0, '', '', $morequery);
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
-if ($pastmonth == 0)
-{
+if ($pastmonth == 0) {
 	$pastmonth = 12;
 	$pastmonthyear--;
 }
@@ -82,9 +87,9 @@ if ($pastmonth == 0)
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
-	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false); $date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
+	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
+	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
 $name = $langs->trans("SellsJournal");
@@ -92,8 +97,11 @@ $periodlink = '';
 $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescSellsJournal").'<br>';
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-else $description .= $langs->trans("DepositsAreIncluded");
+if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description .= $langs->trans("DepositsAreNotIncluded");
+} else {
+	$description .= $langs->trans("DepositsAreIncluded");
+}
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink);
 
@@ -119,15 +127,18 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 
 $sql .= " AND fd.product_type IN (0,1)";
-if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+if ($date_start && $date_end) {
+	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+}
 $sql .= " ORDER BY f.rowid";
 
 // TODO Find a better trick to avoid problem with some mysql installations
-if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
+if (in_array($db->type, array('mysql', 'mysqli'))) {
+	$db->query('SET SQL_BIG_SELECTS=1');
+}
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$tabfac = array();
 	$tabht = array();
 	$tabtva = array();
@@ -139,19 +150,20 @@ if ($result)
 	$account_localtax2 = 0;
 
 	$num = $db->num_rows($result);
-   	$i = 0;
-   	$resligne = array();
-   	while ($i < $num)
-   	{
-   		$obj = $db->fetch_object($result);
-   		// les variables
-   		$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-   		$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
+	$i = 0;
+	$resligne = array();
+	while ($i < $num) {
+		$obj = $db->fetch_object($result);
+		// les variables
+		$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+		$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
-		if (empty($compta_prod))
-		{
-			if ($obj->product_type == 0) $compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
-			else $compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+		if (empty($compta_prod)) {
+			if ($obj->product_type == 0) {
+				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+			} else {
+				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+			}
 		}
 		$cpttva = (!empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
@@ -178,22 +190,34 @@ if ($result)
 		}
 
 		//la ligne facture
-   		$tabfac[$obj->rowid]["date"] = $obj->datef;
-   		$tabfac[$obj->rowid]["ref"] = $obj->ref;
-   		$tabfac[$obj->rowid]["type"] = $obj->type;
-   		if (!isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc] = 0;
-   		if (!isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod] = 0;
-   		if (!isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva] = 0;
-   		if (!isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
-   		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		$tabfac[$obj->rowid]["date"] = $obj->datef;
+		$tabfac[$obj->rowid]["ref"] = $obj->ref;
+		$tabfac[$obj->rowid]["type"] = $obj->type;
+		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
+			$tabttc[$obj->rowid][$compta_soc] = 0;
+		}
+		if (!isset($tabht[$obj->rowid][$compta_prod])) {
+			$tabht[$obj->rowid][$compta_prod] = 0;
+		}
+		if (!isset($tabtva[$obj->rowid][$compta_tva])) {
+			$tabtva[$obj->rowid][$compta_tva] = 0;
+		}
+		if (!isset($tablocaltax1[$obj->rowid][$compta_localtax1])) {
+			$tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
+		}
+		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
+			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		}
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc * $situation_ratio;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
-		if ($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
-   		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
-   		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-   		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
-   		$i++;
-   	}
+		if ($obj->recuperableonly != 1) {
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio;
+		}
+		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
+		$i++;
+	}
 } else {
 	dol_print_error($db);
 }
@@ -216,8 +240,7 @@ print "</tr>\n";
 $invoicestatic = new Facture($db);
 $companystatic = new Client($db);
 
-foreach ($tabfac as $key => $val)
-{
+foreach ($tabfac as $key => $val) {
 	$invoicestatic->id = $key;
 	$invoicestatic->ref = $val["ref"];
 	$invoicestatic->type = $val["type"];
@@ -251,19 +274,15 @@ foreach ($tabfac as $key => $val)
 		)
 	);
 
-	foreach ($lines as $line)
-	{
-		foreach ($line['var'] as $k => $mt)
-		{
-			if (isset($line['nomtcheck']) || $mt)
-			{
+	foreach ($lines as $line) {
+		foreach ($line['var'] as $k => $mt) {
+			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
 				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
-				if (isset($line['inv']))
-				{
+				if (isset($line['inv'])) {
 					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 				} else {
