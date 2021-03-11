@@ -109,12 +109,11 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * 	Return next free value
@@ -123,8 +122,8 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objprod, $object)
-    {
+	public function getNextValue($objprod, $object)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -132,8 +131,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		// We get cursor rule
 		$mask = $conf->global->BATCH_ADVANCED_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

@@ -57,7 +57,7 @@ class mod_sn_standard extends ModeleNumRefBatch
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -91,13 +91,11 @@ class mod_sn_standard extends ModeleNumRefBatch
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql)	{
 			$row = $db->fetch_row($resql);
 			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
 		}
-		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
-		{
+		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -125,14 +123,11 @@ class mod_sn_standard extends ModeleNumRefBatch
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql)	{
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_sn_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}

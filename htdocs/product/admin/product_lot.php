@@ -42,8 +42,7 @@ $value = GETPOST('value', 'alpha');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMaskLot')
-{
+if ($action == 'updateMaskLot') {
 	$maskconstbatch = GETPOST('maskconstLot', 'alpha');
 	$maskbatch = GETPOST('maskLot', 'alpha');
 
@@ -51,17 +50,13 @@ if ($action == 'updateMaskLot')
 
 	if (!$res > 0) $error++;
 
- 	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 
-} elseif ($action == 'updateMaskSN')
-{
+} elseif ($action == 'updateMaskSN') {
 	$maskconstbatch = GETPOST('maskconstSN', 'alpha');
 	$maskbatch = GETPOST('maskSN', 'alpha');
 
@@ -69,21 +64,16 @@ if ($action == 'updateMaskLot')
 
 	if (!$res > 0) $error++;
 
- 	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 
-} elseif ($action == 'setmodlot')
-{
+} elseif ($action == 'setmodlot') {
 	dolibarr_set_const($db, "LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 
-} elseif ($action == 'setmodsn')
-{
+} elseif ($action == 'setmodsn') {
 	dolibarr_set_const($db, "SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
@@ -125,15 +115,12 @@ foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/product_batch/");
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
+		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false)
 			{
-			    if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-				{
+			    if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -144,8 +131,7 @@ foreach ($dirmodels as $reldir)
 					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-					if ($module->isEnabled())
-					{
+					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -159,12 +145,9 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->LOT_ADDON == $file)
-						{
+						if ($conf->global->LOT_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
@@ -226,15 +209,12 @@ foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/product_batch/");
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
+		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false)
 			{
-			    if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
-				{
+			    if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
@@ -245,8 +225,7 @@ foreach ($dirmodels as $reldir)
 					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-					if ($module->isEnabled())
-					{
+					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -260,12 +239,9 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->SN_ADDON == $file)
-						{
+						if ($conf->global->SN_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
