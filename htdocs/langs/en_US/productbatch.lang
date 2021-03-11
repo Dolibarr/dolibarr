@@ -28,3 +28,6 @@ SerialNumberAlreadyInUse=Serial number %s is already used for product %s
 TooManyQtyForSerialNumber=You can only have one product %s for serial number %S
 BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
 BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+WrongCountOfSerialsForQty=Number of serial numbers different from quantity for stock movement on %s
+ProductLotOtherConf=Other parameters
+SerialNumbersSeparator=Serial numbers separator

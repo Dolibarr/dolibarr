@@ -36,6 +36,11 @@ if (!$user->admin || (empty($conf->productbatch->enabled)))
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 
+// Clean param
+if (empty($conf->global->SERIALS_SEPARATOR)) {
+	dolibarr_set_const($db, 'SERIALS_SEPARATOR', ";", 'chaine', 0, '', $conf->entity);
+}
+
 /*
  * Actions
  */
@@ -72,6 +77,12 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmodsn') {
 	dolibarr_set_const($db, "SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
+}
+elseif ($action == 'other' && GETPOST('value_SERIALS_SEPARATOR') > 0) {
+	$res = dolibarr_set_const($db, "SERIALS_SEPARATOR", GETPOST('value_SERIALS_SEPARATOR'), 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 /*
@@ -273,6 +284,40 @@ foreach ($dirmodels as $reldir) {
 }
 
 print "</table><br>\n";
+
+/*
+ * Other conf
+ */
+
+print "<br>";
+
+print load_fiche_titre($langs->trans("ProductLotOtherConf"), '', '');
+
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="other">';
+print '<input type="hidden" name="page_y" value="">';
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>'."\n";
+
+// Serial numbers separator
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("SerialNumbersSeparator").'</td>';
+print '<td class="right"><input size="3" type="text" class="flat" name="value_SERIALS_SEPARATOR" value="'.$conf->global->SERIALS_SEPARATOR.'"></td>';
+print '</tr>';
+
+print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
+print '</div>';
+
+print '</form>';
 
 // End of page
 llxFooter();

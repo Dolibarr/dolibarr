@@ -1933,7 +1933,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	int			$notrigger          	1 = notrigger
 	 * @return 	int						<0 if KO, >0 if OK
 	 */
-	public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0)
+	public function dispatchProduct($user, $fk_product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -1949,6 +1949,10 @@ class CommandeFournisseur extends CommonOrder
 			$this->error = 'ErrorBadValueForParameterQty';
 			return -1;
 		}
+		if ($fk_product < 0) {
+			$this->error = 'ErrorBadValueForParameterProduct';
+			return -1;
+		}
 
 		$dispatchstatus = 1;
 		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
@@ -1962,7 +1966,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch) VALUES";
-			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
+			$sql .= " ('".$this->id."','".$fk_product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null");
 			$sql .= ")";
 
@@ -1985,17 +1989,44 @@ class CommandeFournisseur extends CommonOrder
 
 			// If module stock is enabled and the stock increase is done on purchase order dispatching
 			if (!$error && $entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-				$mouv = new MouvementStock($this->db);
-				if ($product > 0) {
-					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
-					$mouv->origin = &$this;
-					$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
-					if ($result < 0) {
-						$this->error = $mouv->error;
-						$this->errors = $mouv->errors;
-						dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',', $this->errors), LOG_ERR);
-						$error++;
+				$product = new Product($this->db);
+				if ($product->fetch($fk_product) > 0) {
+					if ($product->tobatch == 1) {
+						$mouv = new MouvementStock($this->db);
+						// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
+						$mouv->origin = &$this;
+						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+						if ($result < 0) {
+							$this->error = $mouv->error;
+							$this->errors = $mouv->errors;
+							dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',', $this->errors), LOG_ERR);
+							$error++;
+						}
+					} elseif ($product->tobatch == 2) {
+						$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
+						if (count($serials != $qty)) {
+							$error++;
+							$this->errors[] = $langs->trans("WrongCountOfSerialsForQty");
+						}
+						if ($error == 0) {
+							foreach ($serials as $sn) {
+								$mouv = new MouvementStock($this->db);
+								// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
+								$mouv->origin = &$this;
+								$result = $mouv->reception($user, $product, $entrepot, 1, $price, $comment, $eatby, $sellby, $sn);
+								if ($result < 0) {
+									$this->error = $mouv->error;
+									$this->errors = $mouv->errors;
+									dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',', $this->errors), LOG_ERR);
+									$error++;
+								}
+							}
+						}
 					}
+				}
+				else {
+					$error++;
+					$this->error = $product->error;
 				}
 			}
 

@@ -77,7 +77,7 @@ class modProductBatch extends DolibarrModules
 		$this->langfiles = array("productbatch");
 
 		// Constants
-		$this->const = array();
+		$this->const = array('SERIALS_SEPARATOR' => ";");
 
 		$this->tabs = array();
 

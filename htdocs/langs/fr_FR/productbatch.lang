@@ -28,3 +28,6 @@ SerialNumberAlreadyInUse=Le numéro de série %s est déjà utilisé pour le pro
 TooManyQtyForSerialNumber=Vous ne pouvez avoir qu'un produit %s avec le numéro de série %s
 BatchLotNumberingModules=Modèle de génération et contrôle des numéros de lot
 BatchSerialNumberingModules=Modèle de génération et contrôle des numéros de série
+WrongCountOfSerialsForQty=Nombre de numéros de série différent de la quantité renseignée pour le mouvement de stock sur %s
+ProductLotOtherConf=Autres paramètres
+SerialNumbersSeparator=Séparateur pour les numéros de série
