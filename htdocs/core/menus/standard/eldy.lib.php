@@ -1145,8 +1145,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$langs->load("salaries");
 				$newmenu->add("/salaries/list.php?leftmenu=tax_salary&amp;mainmenu=billing", $langs->trans("Salaries"), 0, $user->rights->salaries->read, '', $mainmenu, 'tax_salary', 0, '', '', '', img_picto('', 'salary', 'class="paddingright pictofixedwidth"'));
 				if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_salary/i', $leftmenu)) {
-					$newmenu->add("/salaries/card.php?leftmenu=tax_salary&action=create", $langs->trans("NewPayment"), 1, $user->rights->salaries->write);
-					$newmenu->add("/salaries/list.php?leftmenu=tax_salary", $langs->trans("Payments"), 1, $user->rights->salaries->read);
+					$newmenu->add("/salaries/card.php?leftmenu=tax_salary&action=create", $langs->trans("New"), 1, $user->rights->salaries->write);
+					$newmenu->add("/salaries/list.php?leftmenu=tax_salary", $langs->trans("List"), 1, $user->rights->salaries->read);
+					$newmenu->add("/salaries/payments.php?leftmenu=tax_salary", $langs->trans("Payments"), 1, $user->rights->salaries->read);
 					$newmenu->add("/salaries/stats/index.php?leftmenu=tax_salary", $langs->trans("Statistics"), 1, $user->rights->salaries->read);
 				}
 			}
@@ -1608,7 +1609,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->rights->stock->lire);
 						}
 					} else {
-						$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("Inventories"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock', 0, '', '', '', img_picto('', 'inventory', 'class="pictofixedwidth"'));
 						if ($usemenuhider || empty($leftmenu) || $leftmenu == "stock_inventories") {
 							$newmenu->add("/product/inventory/card.php?action=create&leftmenu=stock_inventories", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
 							$newmenu->add("/product/inventory/list.php?leftmenu=stock_inventories", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);

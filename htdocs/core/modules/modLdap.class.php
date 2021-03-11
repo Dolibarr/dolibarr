@@ -85,6 +85,7 @@ class modLdap extends DolibarrModules
 		11=>array('LDAP_FIELD_PHONE', 'chaine', 'telephonenumber', '', 0),
 		12=>array('LDAP_FIELD_FAX', 'chaine', 'facsimiletelephonenumber', '', 0),
 		13=>array('LDAP_FIELD_MOBILE', 'chaine', 'mobile', '', 0),
+		14=>array('LDAP_GROUP_FILTER', 'chaine', '&(objectClass=groupOfNames)', '', 0),
 		);
 
 		// Boxes

@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlgic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -43,8 +45,31 @@ $result = restrictedArea($user, 'adherent');
 
 
 /*
+ * Actions
+ */
+
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOST('areacode', 'aZ09');
+	$userid = GETPOST('userid', 'int');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
+
+
+/*
  * View
  */
+
+$form = new Form($db);
+
+// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$resultboxes = FormOther::getBoxesArea($user, "2");
 
 llxHeader('', $langs->trans("Members"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
@@ -52,7 +77,7 @@ $staticmember = new Adherent($db);
 $statictype = new AdherentType($db);
 $subscriptionstatic = new Subscription($db);
 
-print load_fiche_titre($langs->trans("MembersArea"), '', 'member');
+print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist'], 'members');
 
 $Adherents = array();
 $AdherentsAValider = array();
@@ -125,10 +150,7 @@ if ($result) {
 	$db->free();
 }
 
-
-print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
+$searchbox = '';
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
 	// Search contact/address
 	if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
@@ -136,27 +158,27 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 	}
 
 	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
+		$searchbox .='<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+		$searchbox .='<input type="hidden" name="token" value="'.newToken().'">';
+		$searchbox .='<div class="div-table-responsive-no-min">';
+		$searchbox .='<table class="noborder nohover centpercent">';
 		$i = 0;
 		foreach ($listofsearchfields as $key => $value) {
 			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+				$searchbox .='<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 			}
-			print '<tr class="oddeven">';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+			$searchbox .='<tr class="oddeven">';
+			$searchbox .='<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+				$searchbox .='<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 			}
-			print '</tr>';
+			$searchbox .='</tr>';
 			$i++;
 		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
+		$searchbox .='</table>';
+		$searchbox .='</div>';
+		$searchbox .='</form>';
+		$searchbox .='<br>';
 	}
 }
 
@@ -164,15 +186,16 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 /*
  * Statistics
  */
-
+$boxgraph = '';
 if ($conf->use_javascript_ajax) {
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-	print '<tr><td class="center" colspan="2">';
+	$boxgraph .='<div class="div-table-responsive-no-min">';
+	$boxgraph .='<table class="noborder nohover centpercent">';
+	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+	$boxgraph .='<tr><td class="center" colspan="2">';
 
 	$SommeA = 0;
 	$SommeB = 0;
+
 	$SommeC = 0;
 	$SommeD = 0;
 	$total = 0;
@@ -196,7 +219,7 @@ if ($conf->use_javascript_ajax) {
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
@@ -207,17 +230,26 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph->SetType(array('pie'));
 	$dolgraph->setHeight('200');
 	$dolgraph->draw('idgraphstatus');
-	print $dolgraph->show($total ? 0 : 1);
+	$boxgraph .=$dolgraph->show($total ? 0 : 1);
 
-	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	print $SommeA + $SommeB + $SommeC + $SommeD;
-	print '</td></tr>';
-	print '</table>';
-	print '</div>';
+	$boxgraph .= '</td></tr>';
+	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+	$boxgraph .= $SommeA + $SommeB + $SommeC + $SommeD;
+	$boxgraph .= '</td></tr>';
+	$boxgraph .= '</table>';
+	$boxgraph .= '</div>';
+	$boxgraph .= '<br>';
 }
 
-print '<br>';
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+print $searchbox;
+print $boxgraph;
 
 // List of subscription by year
 $Total = array();
@@ -257,7 +289,7 @@ print "</tr>\n";
 
 krsort($Total);
 $i = 0;
-foreach ($Total as $key => $value) {
+foreach ($Total as $key=>$value) {
 	if ($i >= 8) {
 		print '<tr class="oddeven">';
 		print "<td>...</td>";
@@ -284,17 +316,21 @@ print '<td class="right">'.price($tot)."</td>";
 print "<td class=\"right\">".price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT'))."</td>";
 print "</tr>\n";
 print "</table></div>";
+
 print "<br>\n";
 
+print $resultboxes['boxlista'];
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div>'."\n";
+
+print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
  * Latest modified members
  */
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-$sql = "SELECT a.rowid, a.ref, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+$sql = "SELECT a.rowid, a.statut as status, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql .= " a.gender, a.email, a.photo, a.morphy,";
 $sql .= " a.tms as datem, a.datefin as date_end_subscription,";
 $sql .= " ta.rowid as typeid, ta.libelle as label, ta.subscription as need_subscription";
@@ -318,7 +354,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 
 			$staticmember->id = $obj->rowid;
-			$staticmember->ref = $obj->ref;
+			$staticmember->ref = $obj->rowid;
 			$staticmember->lastname = $obj->lastname;
 			$staticmember->firstname = $obj->firstname;
 			$staticmember->gender = $obj->gender;
@@ -457,7 +493,14 @@ print '</tr>';
 print "</table>\n";
 print "</div>";
 
-print '</div></div></div>';
+print '<br>';
+
+print $resultboxes['boxlistb'];
+
+print '</div>'."\n";
+
+print '</div>';
+print '</div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardMembers', $parameters, $object); // Note that $action and $object may have been modified by hook

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018      Alexandre Spangaro <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Fidesio            <contact@fidesio.com>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +28,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("salaries", "companies"));
+$langs->loadLangs(array("salaries", "companies", "bills"));
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+$userid = GETPOST('userid', 'int');
+if ($userid < 0) {
 	$userid = 0;
 }
-$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+$socid = GETPOST('socid', 'int');
+if ($socid < 0) {
 	$socid = 0;
 }
 $id = GETPOST('id', 'int');
@@ -200,8 +203,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // User
-print '<tr><td>'.$langs->trans("User").'</td><td>';
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print '<tr><td>'.$langs->trans("Employee").'</td><td>';
+print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';

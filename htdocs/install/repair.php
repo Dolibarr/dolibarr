@@ -897,7 +897,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
 	$sql .= " WHERE p.rowid = ps.fk_product";
-	$sql .= " AND p.tobatch = 1";
+	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
 	$sql .= " HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
 	print $sql;
@@ -981,7 +981,7 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
 	$sql .= " WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
-	$sql .= " AND p.tobatch = 1";
+	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
 	$sql .= " HAVING reel != SUM(pb.qty)";
 	$resql = $db->query($sql);

@@ -496,7 +496,8 @@ class ActionComm extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
-		$sql .= "(datec,";
+		$sql .= "(ref,";
+		$sql .= "datec,";
 		$sql .= "datep,";
 		$sql .= "datep2,";
 		$sql .= "durationp,"; // deprecated
@@ -529,6 +530,7 @@ class ActionComm extends CommonObject
 		$sql .= "event_paid,";
 		$sql .= "status";
 		$sql .= ") VALUES (";
+		$sql .= "'(PROV)', ";
 		$sql .= "'".$this->db->idate($now)."', ";
 		$sql .= (strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : "null").", ";
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
@@ -560,7 +562,7 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->errors_to) ? "'".$this->db->escape($this->errors_to)."'" : "null").", ";
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
-		$sql .= (!empty($this->status) ? (int) $this->status : "null");
+		$sql .= (!empty($this->status) ? (int) $this->status : "0");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -744,7 +746,7 @@ class ActionComm extends CommonObject
 		$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
-		$sql .= " num_vote, event_paid, status";
+		$sql .= " num_vote, event_paid, a.status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
@@ -1800,8 +1802,8 @@ class ActionComm extends CommonObject
 			$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
 			$sql .= " u.firstname, u.lastname, u.email,";
 			$sql .= " s.nom as socname,";
-			$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label";
-			$sql .= " num_vote, event_paid, status";
+			$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label,";
+			$sql .= " num_vote, event_paid, a.status";
 			$sql .= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author"; // Link to get author of event for export
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";

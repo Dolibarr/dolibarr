@@ -92,10 +92,10 @@ class Product extends CommonObject
 
 	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into images.lib.php
 
-	/*
-	* @deprecated
-	* @see label
-	*/
+	/**
+	 * @deprecated
+	 * @see $label
+	 */
 	public $libelle;
 
 	/**
@@ -408,14 +408,23 @@ class Product extends CommonObject
 	public $supplierprices;
 
 	/**
+	 * Property set to save result of isObjectUsed(). Used for example by Product API.
+	 *
+	 * @var boolean
+	 */
+	public $is_object_used;
+
+
+	/**
 	 * @var array fields of object product
 	 */
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'visible'=>-1, 'showoncombobox'=>1),
-		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1),
+		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>5),
+		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
+		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'position'=>20, 'visible'=>-1, 'showoncombobox'=>1),
+		'fk_barcode_type' => array('type'=>'integer', 'label'=>'BarcodeType', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>-1,),
 		'note_public'   =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
 		'note'          =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62),
 		'datec'         =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
@@ -424,6 +433,10 @@ class Product extends CommonObject
 		'fk_user_author'=>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'localtax1_tx' => array('type'=>'double(6,3)', 'label'=>'Localtax1tx', 'enabled'=>'1', 'position'=>150, 'notnull'=>0, 'visible'=>-1,),
+		'localtax1_type' => array('type'=>'varchar(10)', 'label'=>'Localtax1type', 'enabled'=>'1', 'position'=>155, 'notnull'=>1, 'visible'=>-1,),
+		'localtax2_tx' => array('type'=>'double(6,3)', 'label'=>'Localtax2tx', 'enabled'=>'1', 'position'=>160, 'notnull'=>0, 'visible'=>-1,),
+		'localtax2_type' => array('type'=>'varchar(10)', 'label'=>'Localtax2type', 'enabled'=>'1', 'position'=>165, 'notnull'=>1, 'visible'=>-1,),
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
@@ -4747,10 +4760,10 @@ class Product extends CommonObject
 		if ($type == 2) {
 			switch ($mode) {
 				case 0:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial')));
+					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : ($status == 1 ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial')));
 					return dolGetStatus($label);
 				case 1:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort')));
+					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : ($status == 1 ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort')));
 					return dolGetStatus($label);
 				case 2:
 					return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
@@ -4788,10 +4801,10 @@ class Product extends CommonObject
 				$labelStatus = $langs->trans('ProductStatusOnBuyShort');
 				$labelStatusShort = $langs->trans('ProductStatusOnBuy');
 			} elseif ($type == 2) {
-				$labelStatus = ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial'));
-				$labelStatusShort = ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort'));
+				$labelStatus = ($status == 1 ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial'));
+				$labelStatusShort = ($status == 1 ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort'));
 			}
-		} elseif (! empty($conf->global->MAIN_ADVANCE_NUMLOT) && $type == 2 && $status == 2) {
+		} elseif ( $type == 2 && $status == 2 ) {
 			$labelStatus = $langs->trans('ProductStatusOnSerial');
 			$labelStatusShort = $langs->trans('ProductStatusOnSerialShort');
 		}

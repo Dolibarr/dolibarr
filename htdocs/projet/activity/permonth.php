@@ -491,7 +491,10 @@ print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").
 /*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></td>';
+print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br>';
+print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
+print '</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</td>';
 
 foreach ($TWeek as $week_number) {
