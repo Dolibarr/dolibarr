@@ -18,9 +18,9 @@
  */
 
 /**
- *       \file       htdocs/core/modules/product/mod_batch_free.php
- *       \ingroup    product
- *       \brief      Fichier de la classe des gestion leopard des codes produits
+ *       \file       htdocs/core/modules/product/mod_lot_free.php
+ *       \ingroup    productbatch
+ *       \brief      File containing class for numbering model of Lot free
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batc
  *	\class 		mod_codeproduct_leopard
  *	\brief 		Classe permettant la gestion leopard des codes produits
  */
-class mod_batch_free extends ModeleNumRefBatch
+class mod_lot_free extends ModeleNumRefBatch
 {
 	/*
 	 * Attention ce module est utilise par defaut si aucun module n'a
@@ -38,17 +38,11 @@ class mod_batch_free extends ModeleNumRefBatch
 	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
 	 */
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Free';
 
 	/**
 	 * @var string model name
 	 */
-	public $name = 'Free';
+	public $name = 'lot_free';
 
 	public $code_modifiable; // Code modifiable
 

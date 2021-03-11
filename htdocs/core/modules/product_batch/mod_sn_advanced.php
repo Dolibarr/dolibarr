@@ -24,7 +24,7 @@
 /**
  * \file       htdocs/core/modules/product_batch/mod_batch_advanced.php
  * \ingroup    productbatch
- * \brief      File containing class for numbering model of Batch advanced
+ * \brief      File containing class for numbering model of SN advanced
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batc
 /**
  *	Class to manage Batch numbering rules advanced
  */
-class mod_batch_advanced extends ModeleNumRefBatch
+class mod_sn_advanced extends ModeleNumRefBatch
 {
 	/**
      * Dolibarr version of the loaded document
@@ -49,7 +49,7 @@ class mod_batch_advanced extends ModeleNumRefBatch
 	/**
 	 * @var string name
 	 */
-	public $name = 'advanced';
+	public $name = 'sn_advanced';
 
 
     /**
@@ -68,8 +68,8 @@ class mod_batch_advanced extends ModeleNumRefBatch
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBatch" value="BATCH_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="action" value="updateMaskSN">';
+		$texte .= '<input type="hidden" name="maskconstSN" value="SN_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
@@ -80,7 +80,7 @@ class mod_batch_advanced extends ModeleNumRefBatch
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMo" value="'.$conf->global->BATCH_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskSN" value="'.$conf->global->SN_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -140,7 +140,7 @@ class mod_batch_advanced extends ModeleNumRefBatch
 
 		$date = $object->date;
 
-		$numFinal = get_next_value($db, $mask, 'product_lot', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'product_sn', 'ref', '', null, $date);
 
 		return  $numFinal;
 	}

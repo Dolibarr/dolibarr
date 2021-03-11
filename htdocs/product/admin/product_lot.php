@@ -42,10 +42,10 @@ $value = GETPOST('value', 'alpha');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask')
+if ($action == 'updateMaskLot')
 {
-	$maskconstbatch = GETPOST('maskconstBatch', 'alpha');
-	$maskbatch = GETPOST('maskMo', 'alpha');
+	$maskconstbatch = GETPOST('maskconstLot', 'alpha');
+	$maskbatch = GETPOST('maskLot', 'alpha');
 
 	if ($maskconstbatch) $res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
 
@@ -59,16 +59,33 @@ if ($action == 'updateMask')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
 
-elseif ($action == 'setmod')
+} elseif ($action == 'updateMaskSN')
 {
-	// TODO Check if numbering module chosen can be activated
-	// by calling method canBeActivated
+	$maskconstbatch = GETPOST('maskconstSN', 'alpha');
+	$maskbatch = GETPOST('maskSN', 'alpha');
 
-	dolibarr_set_const($db, "BATCH_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($maskconstbatch) $res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
+
+	if (!$res > 0) $error++;
+
+ 	if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+
+} elseif ($action == 'setmodlot')
+{
+	dolibarr_set_const($db, "LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+
+} elseif ($action == 'setmodsn')
+{
+	dolibarr_set_const($db, "SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
-
 
 /*
  * View
@@ -88,10 +105,10 @@ $head = product_lot_admin_prepare_head();
 dol_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'productbatch');
 
 /*
- * MOs Numbering model
+ * Lot Numbering models
  */
 
-print load_fiche_titre($langs->trans("BatchNumberingModules"), '', '');
+print load_fiche_titre($langs->trans("BatchLotNumberingModules"), '', '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -115,7 +132,7 @@ foreach ($dirmodels as $reldir)
 		{
 			while (($file = readdir($handle)) !== false)
 			{
-			    if (substr($file, 0, 10) == 'mod_batch_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
+			    if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
@@ -142,13 +159,114 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->BATCH_ADDON == $file)
+						if ($conf->global->LOT_ADDON == $file)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						}
 						else
 						{
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
+							print '</a>';
+						}
+						print '</td>';
+
+						$batch = new Productlot($db);
+						$batch->initAsSpecimen();
+
+						// Info
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval = $module->getNextValue($mysoc, $batch);
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+                            $htmltooltip .= ''.$langs->trans("NextValue").': ';
+                            if ($nextval) {
+                                if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+                                    $nextval = $langs->trans($nextval);
+                                $htmltooltip .= $nextval.'<br>';
+                            } else {
+                                $htmltooltip .= $langs->trans($module->error).'<br>';
+                            }
+                        }
+
+						print '<td class="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print '</td>';
+
+						print "</tr>\n";
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+
+print "</table><br>\n";
+
+
+/*
+ * Serials Numbering models
+ */
+
+print load_fiche_titre($langs->trans("BatchSerialNumberingModules"), '', '');
+
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir)
+{
+	$dir = dol_buildpath($reldir."core/modules/product_batch/");
+
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+			    if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
+				{
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					require_once $dir.$file.'.php';
+
+					$module = new $file($db);
+
+					// Show modules according to features level
+					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+					if ($module->isEnabled())
+					{
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+						print $module->info();
+						print '</td>';
+
+                        // Show example of numbering model
+                        print '<td class="nowrap">';
+                        $tmp = $module->getExample();
+                        if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+                        else print $tmp;
+                        print '</td>'."\n";
+
+						print '<td class="center">';
+						if ($conf->global->SN_ADDON == $file)
+						{
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						}
+						else
+						{
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}

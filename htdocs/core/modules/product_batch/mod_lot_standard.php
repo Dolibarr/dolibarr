@@ -19,16 +19,16 @@
  */
 
 /**
- *  \file       htdocs/core/modules/product_batch/mod_batch_sn.php
+ *  \file       htdocs/core/modules/product_batch/mod_lot_standard.php
  *  \ingroup    productbatch
- *  \brief      File of class to manage MO numbering rules standard
+ *  \brief      File of class to manage Lot numbering rules standard
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
 
 /**
  *	Class to manage MO numbering rules standard
  */
-class mod_batch_sn extends ModeleNumRefBatch
+class mod_lot_standard extends ModeleNumRefBatch
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -36,7 +36,7 @@ class mod_batch_sn extends ModeleNumRefBatch
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'SN';
+	public $prefix = 'LOT';
 
 	/**
 	 * @var string Error code (or message)
@@ -46,7 +46,7 @@ class mod_batch_sn extends ModeleNumRefBatch
 	/**
 	 * @var string name
 	 */
-	public $name = 'Serial number';
+	public $name = 'lot_standard';
 
 
 	/**
@@ -133,7 +133,7 @@ class mod_batch_sn extends ModeleNumRefBatch
 		}
 		else
 		{
-			dol_syslog("mod_mo_standard::getNextValue", LOG_DEBUG);
+			dol_syslog("mod_lot_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -144,7 +144,7 @@ class mod_batch_sn extends ModeleNumRefBatch
 		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s", $max + 1);
 
-		dol_syslog("mod_mo_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog("mod_lot_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 }
