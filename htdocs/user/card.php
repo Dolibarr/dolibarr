@@ -1466,14 +1466,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>'."\n";
 			}
 
-			// Gender
-			print '<tr><td>'.$langs->trans("Gender").'</td>';
-			print '<td>';
-			if ($object->gender) {
-				print $langs->trans("Gender".$object->gender);
-			}
-			print '</td></tr>';
-
 			// Employee
 			print '<tr><td>'.$langs->trans("Employee").'</td><td colspan="2">';
 			print yn($object->employee);
