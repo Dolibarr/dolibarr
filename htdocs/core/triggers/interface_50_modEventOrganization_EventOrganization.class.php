@@ -74,15 +74,17 @@ class InterfaceEventOrganization extends DolibarrTriggers
 		if (empty($conf->eventorganization->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
+		
 		$error=0;
+		
 		// Actions
 		if ($action == 'PROJECT_VALIDATE') {
-			// Load translation files required by the page
-			$langs->loadLangs(array("eventorganization"));
-
 			if (!empty($conf->global->EVENTORGANIZATION_TASK_LABEL) && !empty($object->usage_organize_event)) {
 				$taskToDo = explode("\n", $conf->global->EVENTORGANIZATION_TASK_LABEL);
 				if (is_array($taskToDo) && count($taskToDo)>0) {
+					// Load translation files required by the page
+					$langs->loadLangs(array("eventorganization"));
+					
 					$this->db->begin();
 					foreach ($taskToDo as $taskLabel) {
 						$task = new Task($this->db);
