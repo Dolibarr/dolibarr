@@ -2069,7 +2069,7 @@ if ($action == 'regeneratesite') {
 		$result = symlink($pathtomedias, $pathtomediasinwebsite);
 		if (!$result) {
 			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
-			$action = 'importsite';
+			$action = 'preview';
 		}
 	}
 
