@@ -1,0 +1,250 @@
+# Copyright (C) 2009-2020 Regis Houssin  <regis.houssin@inodbox.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+CHARSET=UTF-8
+Module5000Name=Entidades multiplias
+Module5000Desc=Gerenciamento de várias empresas em uma única instalação
+Permission5001=Read entities (For superadmin users)
+Permission5002=Create/modify entities (For superadmin users)
+Permission5003=Delete entities (For superadmin users)
+
+# Third parties
+Permission5011=Read shared third parties
+Permission5012=Create/modify shared third parties
+Permission5013=Delete shared third parties
+
+# Contacts
+Permission5021=Read shared contacts
+Permission5022=Create/modify shared contacts
+Permission5023=Delete shared contacts
+
+# Products/Services
+Permission5031=Read shared products/services
+Permission5032=Create/modify shared products/services
+Permission5033=Delete shared products/services
+
+# Customer proposals
+Permission5041=Read shared customer proposals
+Permission5042=Create/modify shared customer proposals
+Permission5043=Validate shared customer proposals
+Permission5044=Send shared customer proposals
+Permission5045=Close shared customer proposals
+Permission5046=Delete shared customer proposals
+
+# Customer orders
+Permission5051=Read shared customer orders
+Permission5052=Create/modify shared customer orders
+Permission5054=Validate shared customer orders
+Permission5056=Send shared customer orders
+Permission5057=Close shared customer orders
+Permission5058=Cancel shared customer orders
+Permission5059=Delete shared customer orders
+
+# Customer invoices
+Permission5061=Read shared customer invoices
+Permission5062=Create/modify shared customer invoices
+Permission5063=Devalidate shared customer invoices
+Permission5064=Validate shared customer invoices
+Permission5065=Send shared customer invoices
+Permission5066=Issue payments on shared customer invoices
+Permission5067=Re-open a fully paid shared customer invoices
+Permission5069=Delete shared customer invoices
+
+MasterEntity=Entidade principal
+MasterEntityDesc=A entidade principal não pode ser apagada
+SwitchToAnotherEntity=Mudar para outra entidade
+SelectAnEntity=Select an entity:
+AllEntities=Todas as entidades
+
+# Admin parameters tab
+EntitiesManagement=Gestão das entidades
+ListOfEntities=Listas das entidades
+AddEntity=Adicionar uma entidade
+EditEntity=Editar uma entidade
+EntityName=Nome da entidade
+NoOtherEntityAvailable=No other entity available
+DefaultLanguageShort=Idioma padrão
+CommonParameters=Parâmetros comuns para compartilhamentos
+ReferringEntity=Entidade referente para valores de configuração
+ReferringEntityForProposalNumber=Referring entity for configuration values of proposal numbering
+ReferringEntityForInvoiceNumber=Referring entity for configuration values of invoice numbering
+DeleteAnEntity=Apagar entidade
+ModifyEntity=Alterar entidade
+SwitchEntity=Change entity
+AddAndStay=Add and stay
+UpdateAndStay=Update and stay
+CancelAndStay=Cancel and stay
+ConfirmDeleteEntity=Tem certeza de que deseja apagar esta entidade?
+ConfirmedEntityDeleted=A entidade foi apagada.
+MulticompanyMoreModules=Outros módulos do mesmo autor e o alojamento internet seguro Dolibarr estão disponíveis em %s
+MultiCompanyUpgradeIsNeeded=Você usa uma nova versão do módulo MULTICOMPANY, desative e reative o módulo para aplicar a atualização.
+MultiCompanyIsOlderThanDolibarr=You are using an older version of the Multicompany module, please update it!
+DolibarrIsOlderThanMulticompany=Your Multicompany module is newer than your Dolibarr, please update your Dolibarr or use a previous version of Multicompany!
+
+THIRDPARTYSharing=Compartilhando terceiros e contatos
+THIRDPARTYSharingDescription=Seleção de entidades que compartilham seu banco de dados terceiras partes / contatos com a entidade.
+PRODUCTSharing=Compartilhamento de produtos / serviços
+PRODUCTSharingDescription=Seleção de entidades que compartilham seus produtos / serviços de banco de dados com essa entidade.
+PRODUCTPRICESharing=Compartilhe os preços dos produtos / serviços
+PRODUCTPRICESharingDescription=Seleção de entidades que compartilham os preços dos produtos / serviços com essa entidade.
+PRODUCTSUPPLIERPRICESharing=Share supplier prices of products/services
+PRODUCTSUPPLIERPRICESharingDescription=Selection of entities that share supplier prices of products/services with this entity.
+CATEGORYSharing=Compartilhando categorias
+CATEGORYSharingDescription=Seleção de entidades que compartilham categorias com essa entidade.
+AGENDASharing=Compartilhamento de calendário
+AGENDASharingDescription=Seleção de entidades que compartilham o calendário com essa entidade.
+STOCKSharing=Compartilhamento de stock
+STOCKSharingDescription=Seleção de entidades que compartilham estoque de produtos com essa entidade.
+BANKACCOUNTSharing=Compartilhamento de contas bancárias
+BANKACCOUNTSharingDescription=Seleção de entidades que compartilham contas bancárias com essa entidade.
+PROPOSALNUMBERSharing=Proposal number sharing
+PROPOSALNUMBERSharingDescription=Selection of entities that share proposal number with this entity.
+INVOICENUMBERSharing=Compartilhamento de número de fatura
+INVOICENUMBERSharingDescription=Seleção de entidades que compartilham o número da nota fiscal com essa entidade.
+EXPENSEREPORTSharing=Compartilhamento de relatórios de despesas
+EXPENSEREPORTSharingDescription=Seleção de entidades que compartilham o relatório de despesas com essa entidade.
+PROJECTSharing=Compartilhamento de projetos
+PROJECTSharingDescription=Seleção de entidades que compartilham projetos com essa entidade.
+MEMBERSharing=Compartilhamento de membros
+MEMBERSharingDescription=Seleção de entidades que compartilham membros com essa entidade.
+MEMBER_TYPESharing=Members type sharing
+MEMBER_TYPESharingDescription=Selection of entities that share members type with this entity.
+HOLIDAYSharing=Holidays sharing
+HOLIDAYSharingDescription=Selection of entities that share holidays with this entity.
+PROPOSALSharing=Customers proposals sharing
+PROPOSALSharingDescription=Selection of entities that share customers proposals with this entity.
+ORDERSharing=Customers orders sharing
+ORDERSharingDescription=Selection of entities that share customers orders with this entity.
+INVOICESharing=Customers invoices sharing
+INVOICESharingDescription=Selection of entities that share customers invoices with this entity.
+
+# Admin options tab
+Options=Opções
+Template=Template
+DuplicateRights=Duplicate rights of user groups
+DuplicateRightsInfo=Duplicates the rights of this group from an entity or entity template to one or more other entities.
+SelectRightsOfEntityToDuplicate=Selection of the entity that will serve as a model:
+SelectEntitiesToOverride=Select the entities you want to edit:
+TemplateOfEntity=Template of entity
+ActivatingShares=Ativando compartilhamentos
+EntityActiveByDefault=Enable entities by default when they are created
+EntityVisibleByDefault=Make entities visible by default in the drop-down lists when they are created
+EntityLogoInLoginPage=Display of the logo of the selected entity on the login page
+EntityBackgroundInLoginPage=Display of the background of the selected entity on the login page
+DisableSwitchEntityDropdownMenu=Disable the new entity change drop-down menu.
+GroupModeTransversal=Ative o gerenciamento centralizado de usuários e grupos na entidade principal
+GroupModeTransversalTitle=Permitir gerenciamento centralizado de usuários e grupos
+GroupModeTransversalInfo=Por padrão, cada entidade é autônoma com seu próprio gerenciamento de usuários. Esta opção permite centralizar o gerenciamento de usuários e grupos na entidade principal, atribuindo-lhes direitos sobre um grupo e uma entidade.
+GroupModeTransversalInfoFull=Por padrão, cada entidade é autônoma com seu próprio gerenciamento de usuários. Esta opção permite centralizar o gerenciamento de usuários e grupos na entidade principal, atribuindo-lhes direitos sobre um grupo e uma entidade. A criação de grupos de usuários é necessária para gerenciar os direitos de acesso da entidade.
+HideLoginCombobox=Ocultar a escolha da entidade na página de login
+EnableGlobalSharings=Ativar recursos compartilhados entre entidades
+ShareProduct=Enable sharing of products/services
+ProductSharingInfo=This option allows you to share products/services between entities.<br>INFO: If you want to be able to customize the price of the product in each entity, this requires enabling the "Several segment of prices per product/service" option in the Product/Service module configuration in each entity that uses this share.<br>If you want to personalize the VAT rates of the price levels, you have to add this constant:<br>"PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL" with as value 1 in each entity that uses this share.
+ShareProductprice=Enable sharing of products/services prices
+ProductPriceSharingInfo=This option allows you to share the price levels of a product.<br>IMPORTANT: This requires enabling the "Several segment of prices per product/service" option in the Product/Service module configuration.
+ShareProductsupplierprice=Enable sharing of products/services supplier prices
+ShareThirdpartiesAndContacts=Ativar o compartilhamento de terceiros e contatos
+ShareCategory=Enable sharing categories
+ShareAgenda=Ativar compartilhar calendários
+ShareStock=Ativar a partilha de stocks
+ShareBankaccount=Enable sharing of bank accounts
+ShareProposalnumber=Enable sharing of proposals number
+ProposalNumberSharingInfo=This option allows you to have an overall incrementation of the proposal numbers between the entities that use this share. You will need to select a referring entity for the configuration values of the selected numbering module. Each entity will have to use the same numbering model.
+ShareOrdernumber=Enable sharing of orders number
+OrderNumberSharingInfo=This option allows you to have an overall incrementation of the order numbers between the entities that use this share. You will need to select a referring entity for the configuration values of the selected numbering module. Each entity will have to use the same numbering model.
+ShareInvoicenumber=Enable sharing of invoices number
+InvoiceNumberSharingInfo=This option allows you to have an overall incrementation of the invoice numbers between the entities that use this share. You will need to select a referring entity for the configuration values of the selected numbering module. Each entity will have to use the same numbering model.
+ShareExpensereport=Enable sharing of expenses reports
+ShareProject=Ativar o compartilhamento de projetos
+ShareMember=Enable sharing of members
+ShareMember_type=Enable sharing of members type
+ShareHoliday=Enable sharing of holidays
+GlobalSharings=Compartilhando recursos
+GlobalSharingsInfo=Depois que as opções de compartilhamento são ativadas, será necessário configurar cada entidade no guia "Ambientes" para permitir os compartilhamentos entre as entidades.
+ActivatingDictsShares=Customizando Dicionários
+DictsSharingsInfo=Por padrão, todas as entidades usam os dicionários da entidade principal.<br> Você pode ativar a personalização de um dicionário para ter uma versão diferente por entidade.
+ShareC_paiement=Ativar a personalização dos métodos de pagamento por entidade (llx_c_paiement)
+ShareC_payment_term=Ativar a personalização dos termos de pagamento por entidade (llx_c_payment_term)
+ActivatingObjectShares=Activating objects sharing
+ObjectSharingsInfo=After sharing options are activated, it will be necessary to configure each entity in the "Environments" tab to allow the shares between entities.
+ShareProposal=Share customers proposals
+ShareOrder=Share customers orders
+ShareInvoice=Share customers invoices
+TemplateOfEntityManagement=Templates of entities management
+TemplateOfEntityManagementInfo=This option allows you to create feature templates to enable and pre-configure modules, shares between entities, and user access rights only with the user centralization mode on the primary entity.
+TemplateOfCompany=Define as a template of entity
+SelectTemplateOfCompany=Use a template for this new entity
+AddNewEntityInAllOtherEntities=Add this new entity in the sharing of other entities
+WarningThisIsATemplate=Warning ! This is a non-functional entity template and will only be visible to super administrators
+WarningMulticompanyIsInDevelopMode=Warning ! You are in development mode in your Dolibarr
+ShowTopMenuEntityLabel=Show entity label in top menu
+
+# Admin caches tab
+MulticompanyCacheSystemInfo=The use of a cache can be useful if you have a large number of entities (≈50+), this will accelerate the display of Dolibarr.
+MulticompanySession=PHP $_SESSION cache
+MulticompanySessionDescription=Os dados são armazenados na variável global PHP $_SESSION. <br>Este cache não é compartilhado e está limitado ao usuário atual.
+MulticompanyMemcached=Servidor Memcached
+MulticompanyMemcachedDescription=Esta opção permite que você use um servidor Memcached para melhorar a velocidade do cargamento da pagina. <br>Requer um servidor Memcached e o plugin Memcached ou Memcache para PHP.
+MulticompanyMemcachedUnavailable=Memcached ou Memcache não estão disponíveis no seu PHP.
+MemcachedServerIsReady=O servidor Memcached está acessível
+MemcachedServerIsNotReady=O servidor Memcached não está acessível, verifique o endereço e a porta.
+MulticompanyShmop=Memória compartilhada (Shmop)
+MulticompanyShmopDescription=O Shmop é um conjunto de funções simples para gerenciar memória compartilhada com PHP. <br>(ler, escrever, criar e exclua segmentos de memória compartilhada UNIX).
+MulticompanyShmopAvailable=Shmop is available on your PHP
+MulticompanyShmopUnavailable=Shmop não está disponível no seu PHP
+
+# Select/Change entity
+GlobalEntityDesc=A modificação da entidade só será permitida se nenhum documento tiver sido criado. (Proposta comercial, orçamento, faturas, etc ...)
+ThirdpartyEntityDesc=Você pode usar a entidade atual ou atribuir esse terceiro a outra entidade
+ThirdpartyModifyEntity=You can change its membership entity
+ThirdpartyModifyEntityDescription=Gostaria de alterar a entidade desse terceiro?
+ThirdpartyModifyEntitySuccess=A entidade deste terceiro foi modificada com sucesso
+ContactModifyEntity=You can change its membership entity
+ContactModifyEntityDescription=Would you like to change the entity of that contact?
+ContactModifyEntitySuccess=The entity of this contact has been modified successfully
+ModifyEntityNotAllowed=A modificação da entidade não é permitida
+
+# Errors
+ErrorEntityLabelAlreadyExist=Erro: a etiqueta dessa entidade já existe.
+ErrorEntityIsNotValid=Erro: Esta entidade não é válida.
+ErrorNotDeleteMasterEntity=Erro: Não é possível apagar a entidade principal.
+ErrorThirdpartyModifyEntity=Erro: alterar a entidade desse terceiro não pode ser finalizado!
+ErrorDropDownListOfEntitiesMustBeHidden=The drop-down list of entities on the login page must be hidden!
+ErrorLinkUserGroupEntity=You must associate user with a group and one or more entities in order to define permissions !!
+ErrorMulticompanyConfAuthentication=You need to enable Multicompany authentication by changing this line in conf.php with this value: $dolibarr_main_authentication = 'mc';
+ErrorDolibarrConfAuthentication=You need to enable Dolibarr authentication by changing this line in conf.php with this value: $dolibarr_main_authentication = 'dolibarr';
+
+# Multiselect
+EntitiesSelected=Entities selected
+EntitiesAvailable=Entities available
+
+# Datatables
+CloseDialog=Fechar
+LineEntries=linhas
+Showing=Mostrando
+ShowingOf=Mostando o
+TotalOf=total de
+Print=Imprimir
+FilteredFrom=filtrado por
+TotalEntries=entradas totais
+ShowHideColumns=Mostrar / ocultar colunas
+LoadingDataFromServer=Carregando dados do servidor
+NoRecordsToDisplay=Não há registros para mostrar
+NoEntriesToShow=Não há entradas para mostrar
+Processing=Em processamento...
+To=para
+First=Primeiro
+Last=Ultimo
+Tools=Ferramentas

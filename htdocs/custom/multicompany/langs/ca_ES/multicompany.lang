@@ -1,0 +1,250 @@
+# Copyright (C) 2009-2020 Regis Houssin  <regis.houssin@inodbox.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+CHARSET=UTF-8
+Module5000Name=Multi-Empresa
+Module5000Desc=Gestió de Multiempresa en una instal·lació simple
+Permission5001=Consulta entitats (per usuaris superadmin)
+Permission5002=Crea/modifica entitats (per usuaris superadmin)
+Permission5003=Elimina entitats (per usuaris superadmin)
+
+# Third parties
+Permission5011=Consulta tercers compartits
+Permission5012=Crea/modifica tercers compartits
+Permission5013=Elimina tercers compartits
+
+# Contacts
+Permission5021=Consulta contactes compartits
+Permission5022=Crea/modifica contactes compartits
+Permission5023=Elimina contactes compartits
+
+# Products/Services
+Permission5031=Consulta productes/serveis compartits
+Permission5032=Crea/modifica productes/serveis compartits
+Permission5033=Elimina productes/serveis compartits
+
+# Customer proposals
+Permission5041=Consulta pressupostos de client compartits
+Permission5042=Crea/modifica pressupostos de client compartits
+Permission5043=Valida pressupostos de client compartits
+Permission5044=Envia pressupostos de client compartits
+Permission5045=Tanca pressupostos de client compartits
+Permission5046=Elimina pressupostos de client compartits
+
+# Customer orders
+Permission5051=Consulta comandes de client compartides
+Permission5052=Crea/modifica comandes de client compartides
+Permission5054=Valida comandes de client compartides
+Permission5056=Envia comandes de client compartides
+Permission5057=Tanca comandes de client compartides
+Permission5058=Anul·la comandes de client compartides
+Permission5059=Elimina comandes de client compartides
+
+# Customer invoices
+Permission5061=Consulta factures de client compartides
+Permission5062=Crea/modifica factures de client compartides
+Permission5063=Desvalida factures de client compartides
+Permission5064=Valida factures de client compartides
+Permission5065=Envia factures de client compartides
+Permission5066=Gestiona pagaments en factures de client compartides
+Permission5067=Reobre factures de client compartides totalment pagades
+Permission5069=Elimina factures de client compartides
+
+MasterEntity=Entitat mestra
+MasterEntityDesc=Entitat mestra, no pot ser eliminada
+SwitchToAnotherEntity=Canviar d'entitat
+SelectAnEntity=Selecciona una entitat:
+AllEntities=Totes les entitas
+
+# Admin parameters tab
+EntitiesManagement=Gestió d'entitats
+ListOfEntities=Llistat d'entitats
+AddEntity=Afegir entitat
+EditEntity=Editar entitat
+EntityName=nom de l'entitat
+NoOtherEntityAvailable=No hi ha altres entitats disponibles
+DefaultLanguageShort=Idioma per defecte
+CommonParameters=Paràmetres comuns d'accions
+ReferringEntity=Entitat de referència per als valors de configuració
+ReferringEntityForProposalNumber=Entitat referida pels valors de configuració de la numeració de pressupostos
+ReferringEntityForInvoiceNumber=Entitat referida pels valors de configuració de la numeració de factures
+DeleteAnEntity=Eliminar una entitat
+ModifyEntity=Canviar entitat
+SwitchEntity=Canviar entitat
+AddAndStay=Afegeix i continua
+UpdateAndStay=Actualitza i continua
+CancelAndStay=Cancel·la i continua
+ConfirmDeleteEntity=Esteu segur de voler eliminar aquesta entitat?
+ConfirmedEntityDeleted=L'entitat ha estat eliminada.
+MulticompanyMoreModules=Altres móduls del mateix autor i hosting segur de Dolibarr són disponibles a %s
+MultiCompanyUpgradeIsNeeded=Utilitzes una nova versió del mòdul MULTICOMPANY, si us plau desactiveu i torneu a activar el mòdul per a que s'aplique l'actulització.
+MultiCompanyIsOlderThanDolibarr=Estàs utilitzant una versió antiga del mòdul Multicompany, actualitza'l si us plau!
+DolibarrIsOlderThanMulticompany=El teu mòdul Multicompany és més nou que el teu Dolibarr, actualitza el teu Dolibarr o utilitza una versió anterior de Multicompany!
+
+THIRDPARTYSharing=Intercanviar tercers i contactes
+THIRDPARTYSharingDescription=Selecció d'entitats que intercanvien els seus tercers/contactes amb aquesta entitat.
+PRODUCTSharing=Intercanviar productes/serveis
+PRODUCTSharingDescription=Selecció d'entitats que intercanvien els seus productes/serveis amb aquesta entitat.
+PRODUCTPRICESharing=Compartir preu de productes/serveis
+PRODUCTPRICESharingDescription=Entitats que comparteixen preus de productes/serveis amb aquesta entitat.
+PRODUCTSUPPLIERPRICESharing=Intercanviar preus de proveïdor de productes/serveis
+PRODUCTSUPPLIERPRICESharingDescription=Selecció d'entitats que comparteixen preus de proveïdors de productes/serveis amb aquesta entitat.
+CATEGORYSharing=Intercanviar categories
+CATEGORYSharingDescription=Selecció d'entitats que intercanvien les seus categories amb aquesta entitat.
+AGENDASharing=Intercanviar agendes
+AGENDASharingDescription=Selecció d'entitats que intercanvien la agenda amb aquesta entitat.
+STOCKSharing=Intercanvi de stock
+STOCKSharingDescription=Conjunt d'entitats que comparteixen stock de productes amb aquesta entitat.
+BANKACCOUNTSharing=Intercanviar comptes  bancaris
+BANKACCOUNTSharingDescription=Selecció d'entitats que intercanvien els seus comptes bancaris amb aquesta entitat.
+PROPOSALNUMBERSharing=Intercanvi de numeració de pressupostos
+PROPOSALNUMBERSharingDescription=Selecciona les entitats que comparteixen la numeració de pressupostos amb aquesta entitat.
+INVOICENUMBERSharing=Intercanvi de numeració de factures
+INVOICENUMBERSharingDescription=Conjunt d'entitats que comparteixen factures amb aquesta entitat.
+EXPENSEREPORTSharing=Intercanvi d'informe de despeses
+EXPENSEREPORTSharingDescription=Conjunt d'entitats que comparteixen informes de despeses amb aquesta entitat.
+PROJECTSharing=Intercanvi de projectes
+PROJECTSharingDescription=Conjunt d'entitats que comparteixen projectes amb aquesta entitat.
+MEMBERSharing=Intercanvi de membres
+MEMBERSharingDescription=Conjunt d'entitats que comparteixen membres amb aquesta entitat.
+MEMBER_TYPESharing=Intercanvi de tipus de membres
+MEMBER_TYPESharingDescription=Conjunt d'entitats que comparteixen tipus de membres amb aquesta entitat.
+HOLIDAYSharing=Intercanvi de vacances
+HOLIDAYSharingDescription=Selecció d'entitats que intercanvien vacances amb aquesta entitat.
+PROPOSALSharing=Intercanvi de pressupostos de clients
+PROPOSALSharingDescription=Selecciona les entitats que comparteixen la numeració de pressupostos de clients amb aquesta entitat.
+ORDERSharing=Intercanvi de comandes de clients
+ORDERSharingDescription=Selecciona les entitats que comparteixen la numeració de comandes de clients amb aquesta entitat.
+INVOICESharing=Intercanvi de factures de clients
+INVOICESharingDescription=Selecciona les entitats que comparteixen la numeració de factures de clients amb aquesta entitat.
+
+# Admin options tab
+Options=Opcions
+Template=Plantilla
+DuplicateRights=Duplica els permisos de grups d'usuari
+DuplicateRightsInfo=Duplica els permisos d'aquest grup des d'una entitat o plantilla d'entitat cap a una o més entitats.
+SelectRightsOfEntityToDuplicate=Selecció de l'entitat que servirà com a model:
+SelectEntitiesToOverride=Selecciona les entitats que vols editar:
+TemplateOfEntity=Plantilla d'entitat
+ActivatingShares=Activar intercanvi
+EntityActiveByDefault=Activar les entitats per defecte quan són creades
+EntityVisibleByDefault=Fes que les entitats siguin visibles per defecte en el llistat desplegable quan siguin creades
+EntityLogoInLoginPage=Mostra del logo de l'entitat seleccionada en la pàgina d'inici de sessió
+EntityBackgroundInLoginPage=Mostra la imatge de fons de l'entitat seleccionada en la pàgina d'inici de sessió
+DisableSwitchEntityDropdownMenu=Deshabilita el nou menú desplegable de canvi d'entitat 
+GroupModeTransversal=Activar gestió centralitzada d'usuaris i grups en l'entitat principal
+GroupModeTransversalTitle=Activar gestió centralitzada d'usuaris i grups
+GroupModeTransversalInfo=Per defecte, cada entitat és independent amb la seva pròpia gestió d'usuaris. Aquesta opció permet centralitzar la gestió d'usuaris i grups en l'entitat principal mitjançant l'assignació de drets relatius a un grup i a una entitat.
+GroupModeTransversalInfoFull=Per defecte, cada entitat és independent en la seva gestió. Esta opció fa posible centralitzar la gestió d'usuaris i grups en l'entitat principal mitjançant l'asignació de drets relatius a un grup i a una entitat. Cal crear grups d'usuari per gestionar els accessos a les entitats.
+HideLoginCombobox=Ocultar la selecció de l'entitat a la pàgina d'inici
+EnableGlobalSharings=Activar les funcions d'intercanvi entre entitats
+ShareProduct=Activar l'intercanvi de productes/serveis
+ProductSharingInfo=Aquesta opció et permet compartir productes/serveis entre entitats.<br>INFO: Si vols personalitzar el preu del producte en cada entitat, es requereix habilitar l'opció "Varis nivells de preus per producte/servei" en la configuració del mòdul Producte/Servei en cada entitat que utilitza aquesta compartició.<br>Si vols personalitzar les taxes d'IVA dels nivells de preus, has d'afegir aquesta constant:<br> "PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL" amb el valor 1 en cada entitat que utilitza aquesta compartició.
+ShareProductprice=Activar l'intercanvi de preus de productes/serveis
+ProductPriceSharingInfo=Aquesta opció et permet compartir els nivells de preu d'un producte.<br>IMPORTANT: Això requereix habilitar l'opció "Varis nivells de preus per producte/servei" en la configuració del mòdul Producte/Servei.
+ShareProductsupplierprice=Activar l'intercanvi de preus de compra de productes/serveis
+ShareThirdpartiesAndContacts=Activar l'intercanvi de tercers i contactes
+ShareCategory=Activar l'intercanvi de categories
+ShareAgenda=Activar l'intercanvi de l'agenda
+ShareStock=Activar l'intercanvi de stocks
+ShareBankaccount=Activar l'intercanvi de comptes bancaris
+ShareProposalnumber=Activar l'intercanvi de numeració de pressupostos
+ProposalNumberSharingInfo=Aquesta opció et permet tenir un increment general dels números de pressupost entre les entitats que utilitzen aquesta compartició. Necessitaràs seleccionar l'entitat referent pels valors de configuració del mòdul de numeració seleccionat.
+ShareOrdernumber=Activar l'intercanvi de numeració de comandes
+OrderNumberSharingInfo=Aquesta opció et permet tenir un increment general dels números de comanda entre les entitats que utilitzen aquesta compartició. Necessitaràs seleccionar l'entitat referent pels valors de configuració del mòdul de numeració seleccionat.
+ShareInvoicenumber=Activar l'intercanvi de numeració de factures
+InvoiceNumberSharingInfo=Aquesta opció et permet tenir un increment general dels números de factura entre les entitats que utilitzen aquesta compartició. Necessitaràs seleccionar l'entitat referent pels valors de configuració del mòdul de numeració seleccionat.
+ShareExpensereport=Activar l'intercanvi d'informes de despeses
+ShareProject=Activar intercanvi de projectes
+ShareMember=Activar l'intercanvi de socis
+ShareMember_type=Activar l'intercanvi de tipus de socis
+ShareHoliday=Activar l'intercanvi de vacances
+GlobalSharings=Sharing features
+GlobalSharingsInfo=En el moment que s'activen les opcions d'intercanvi, haurà de configurar cada entitat per permetre els intercanvis entre entitats.
+ActivatingDictsShares=Personalització de diccionaris
+DictsSharingsInfo=De manera predeterminada, totes les entitats utilitzen els diccionaris de l'entitat principal.<br>Pots activar la personalització d'un diccionari per tindre una versió diferent per entitat.
+ShareC_paiement=Activar personalització de mètodes de pagament per entitat (llx_c_paiement)
+ShareC_payment_term=Activar personalització de condicions de pagament per entitat (llx_c_payment_term)
+ActivatingObjectShares=Activar intercanvi d'objectes
+ObjectSharingsInfo=Després d'activar les opcions de compartició, serà necessari configurar cada entitat en la pestanya "Entorns" per permetre les comparticions entre entitats.
+ShareProposal=Intercanvi de pressupostos de clients
+ShareOrder=Intercanvi de comandes de clients
+ShareInvoice=Intercanvi de factures de clients
+TemplateOfEntityManagement=Plantilles de gestió d'entitats
+TemplateOfEntityManagementInfo=Aquesta opció et permet crear plantilles de funcionalitats per habilitar i preconfigurar mòduls, comparticions entre entitats, i permisos d'accés d'usuaris només amb el mode de centralització d'usuaris en l'entitat mestra.
+TemplateOfCompany=Defineix com a plantilla d'entitat
+SelectTemplateOfCompany=Utilitza una plantilla per aquesta nova entitat
+AddNewEntityInAllOtherEntities=Afegeix aquesta nova entitat en la compartició d'altres entitats
+WarningThisIsATemplate=Alerta ! Aquesta és una plantilla d'entitat no funcional i només estarà visible a super administradors
+WarningMulticompanyIsInDevelopMode=Alerta! Estàs en mode desenvolupament en el teu Dolibarr
+ShowTopMenuEntityLabel=Show entity label in top menu
+
+# Admin caches tab
+MulticompanyCacheSystemInfo=L'ús de caché pot ser útil si tens un gran número d'entitats (=50+), això accelerarà la visualització de Dolibarr.
+MulticompanySession=PHP $_SESSION cache
+MulticompanySessionDescription=Les dades estan emmagatzemades en la variable global de PHP $_SESSION.<br>Aquesta caché no és compartida i està limitada a l'usuari actual.
+MulticompanyMemcached=Servidor Memcached
+MulticompanyMemcachedDescription=Aquesta opció et permet utilitzar un servidor Memcached per millorar la velocitat de visualització.<br>Es requereix un servidor Memcached i l'extensió PHP de Memcached o Memcache.
+MulticompanyMemcachedUnavailable=Memcached o Memcache no està disponible en el vostre PHP.
+MemcachedServerIsReady=El servidor Memcached està accessible
+MemcachedServerIsNotReady=El servidor Memcached noestà accessible, comprova l'adreça i el port.
+MulticompanyShmop=Memòria compartida (Shmop)
+MulticompanyShmopDescription=Shmop és un conjunt de funcions simples per gestionar la memòria compartida amb PHP.<br>(Llegir, escriure i eliminar segments de memòria compartida de UNIX)
+MulticompanyShmopAvailable=Shmop està disponible en el vostre PHP
+MulticompanyShmopUnavailable=Shmop no està disponible en el vostre PHP
+
+# Select/Change entity
+GlobalEntityDesc=La modificació de l'entitat sols serà permesa si cap document ha estat creat (Pressupostos, comandes, factures...)
+ThirdpartyEntityDesc=Pots utilitzar l'entitat actual o assignar aquest tercer a un altra entitat
+ThirdpartyModifyEntity=Pots canviar la seva subscripció a l'entitat
+ThirdpartyModifyEntityDescription=Vols canviar l'entitat d'aquest tercer?
+ThirdpartyModifyEntitySuccess=L'entitat d'aquest tercer ha estat modificada correctament
+ContactModifyEntity=Pots canviar la seva subscripció a l'entitat
+ContactModifyEntityDescription=Vols canviar l'entitat d'aquest contacte?
+ContactModifyEntitySuccess=L'entitat d'aquest contacte ha estat modificada correctament
+ModifyEntityNotAllowed=La modificació d'aquesta entitat no està permesa
+
+# Errors
+ErrorEntityLabelAlreadyExist=Error: L'etiqueta d'aquesta entitat ja existeix
+ErrorEntityIsNotValid=Error: Aquesta entitat no és vàlida
+ErrorNotDeleteMasterEntity=Error: No pots eliminar l'entitat mestra
+ErrorThirdpartyModifyEntity=Error: El canvi d'entitat d'aquest tercer no és pot finalitzar!
+ErrorDropDownListOfEntitiesMustBeHidden=La llista desplegable d'entitats en la pàgina d'accés estarà amagada!
+ErrorLinkUserGroupEntity=Has d'associar l'usuari amb un grup i amb una o més entitats per poder definir els permisos !!
+ErrorMulticompanyConfAuthentication=Es necessari habilitar l'autenticació Multicompany canviant aquesta línia al conf.php amb aquest valor: $dolibarr_main_authentication = 'mc';
+ErrorDolibarrConfAuthentication=Es necessari habilitar l'autenticació Dolibarr canviant aquesta línia al conf.php amb aquest valor: $dolibarr_main_authentication = 'dolibarr';
+
+# Multiselect
+EntitiesSelected=Entitats seleccionades
+EntitiesAvailable=Entitats disponibles
+
+# Datatables
+CloseDialog=Tanca
+LineEntries=línies
+Showing=Mostrant
+ShowingOf=Mostrant de
+TotalOf=total de
+Print=Imprimeix
+FilteredFrom=filtrat des de
+TotalEntries=entrades totals
+ShowHideColumns=Mostra/oculta columnes
+LoadingDataFromServer=Carregant dades del servidor
+NoRecordsToDisplay=No hi ha registres per mostrar
+NoEntriesToShow=No hi ha entrades per mostrar
+Processing=Processant...
+To=fins a
+First=Primer
+Last=Últim
+Tools=Eines
