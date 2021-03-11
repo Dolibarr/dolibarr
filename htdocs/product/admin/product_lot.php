@@ -55,7 +55,6 @@ if ($action == 'updateMaskLot') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-
 } elseif ($action == 'updateMaskSN') {
 	$maskconstbatch = GETPOST('maskconstSN', 'alpha');
 	$maskbatch = GETPOST('maskSN', 'alpha');
@@ -69,10 +68,8 @@ if ($action == 'updateMaskLot') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-
 } elseif ($action == 'setmodlot') {
 	dolibarr_set_const($db, "LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
-
 } elseif ($action == 'setmodsn') {
 	dolibarr_set_const($db, "SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
@@ -111,15 +108,13 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/product_batch/");
 
 	if (is_dir($dir)) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false)
-			{
+			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
@@ -205,15 +200,13 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/product_batch/");
 
 	if (is_dir($dir)) {
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false)
-			{
+			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
