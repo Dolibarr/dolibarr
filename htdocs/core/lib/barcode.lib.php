@@ -182,6 +182,36 @@ function barcode_gen_ean_sum($ean)
 	return (10 - ((3 * $esum + $osum) % 10)) % 10;
 }
 
+
+/**
+ * Generate EAN bars
+ *
+ * @param	string	$ean	EAN to encode
+ * @return	string			Encoded EAN
+ */
+function barcode_gen_ean_bars($ean)
+{
+	$digits = array(3211, 2221, 2122, 1411, 1132, 1231, 1114, 1312, 1213, 3112);
+	$mirror = array("000000", "001011", "001101", "001110", "010011", "011001", "011100", "010101", "010110", "011010");
+	$guards = array("9a1a", "1a1a1", "a1a");
+
+	$line = $guards[0];
+	for ($i = 1; $i < 13; $i++) {
+		$str = $digits[$ean[$i]];
+		if ($i < 7 && $mirror[$ean[0]][$i - 1] == 1) {
+			$line .= strrev($str);
+		} else {
+			$line .= $str;
+		}
+		if ($i == 6) {
+			$line .= $guards[1];
+		}
+	}
+	$line .= $guards[2];
+
+	return $line;
+}
+
 /**
  * Encode EAN
  *
@@ -191,10 +221,6 @@ function barcode_gen_ean_sum($ean)
  */
 function barcode_encode_ean($ean, $encoding = "EAN-13")
 {
-	$digits = array(3211, 2221, 2122, 1411, 1132, 1231, 1114, 1312, 1213, 3112);
-	$mirror = array("000000", "001011", "001101", "001110", "010011", "011001", "011100", "010101", "010110", "011010");
-	$guards = array("9a1a", "1a1a1", "a1a");
-
 	$ean = trim($ean);
 	if (preg_match("/[^0-9]/i", $ean)) {
 		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
@@ -215,19 +241,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	$ean = substr($ean, 0, 12);
 	$eansum = barcode_gen_ean_sum($ean);
 	$ean .= $eansum;
-	$line = $guards[0];
-	for ($i = 1; $i < 13; $i++) {
-		$str = $digits[$ean[$i]];
-		if ($i < 7 && $mirror[$ean[0]][$i - 1] == 1) {
-			$line .= strrev($str);
-		} else {
-			$line .= $str;
-		}
-		if ($i == 6) {
-			$line .= $guards[1];
-		}
-	}
-	$line .= $guards[2];
+	$bars = barcode_gen_ean_bars($ean);
 
 	/* create text */
 	$pos = 0;
@@ -249,7 +263,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	return array(
 		"error" => '',
 		"encoding" => $encoding,
-		"bars" => $line,
+		"bars" => $bars,
 		"text" => $text
 	);
 }
