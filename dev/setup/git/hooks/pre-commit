@@ -61,7 +61,7 @@ then
         then
             ${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
             #${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
-            echo "Found some errors in syntax rules. An automatice fix has been applied. Check it before commit." 1>&2;
+            echo "Found some errors in syntax rules. An automatic fix has been applied. Check it before commit." 1>&2;
             exit 1
         else 
             echo "Found some errors in syntax rules. Fix the error(s) before commit." 1>&2;
