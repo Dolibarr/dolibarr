@@ -237,7 +237,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 			$ean = "978".$ean;
 		}
 	}
-	if (preg_match("/^978/", $ean)) {
+	if (preg_match("/^97[89]/", $ean)) {
 		$encoding = "ISBN";
 	}
 	if (strlen($ean) < 12 || strlen($ean) > 13) {
