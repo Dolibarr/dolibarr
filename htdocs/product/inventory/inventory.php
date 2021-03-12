@@ -505,10 +505,10 @@ if ($object->id > 0) {
 			}
 
 			print '<td class="right">';
-			print 'TODO';
+			print $obj->qty_stock;
 			print '</td>';
 			print '<td class="center">';
-			print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.' value="'.GETPOST("id_".$obj->rowid).'">';
+			print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.'" value="'.GETPOST("id_".$obj->rowid).'">';
 			print '</td>';
 			print '<td class="right">';
 			print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
