@@ -306,11 +306,11 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 		}
 		$text .= "$pos:12:{$upc[$a]}";
 		if ($a == 1) {
-			$pos += 19;
+			$pos += 15;
 		} elseif ($a == 6) {
-			$pos += 11;
-		} elseif ($a == 11) {
 			$pos += 17;
+		} elseif ($a == 11) {
+			$pos += 15;
 		} else {
 			$pos += 7;
 		}
