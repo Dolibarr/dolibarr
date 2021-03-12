@@ -1570,11 +1570,13 @@ $dirins_ok = (dol_is_dir($dirins));
 
 llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
 	array(
-	'/includes/ace/src/ace.js',
-	'/includes/ace/src/ext-statusbar.js',
-	'/includes/ace/src/ext-language_tools.js',
-	//'/includes/ace/src/ext-chromevox.js'
-	), array(), '', 'classforhorizontalscrolloftabs');
+		'/includes/ace/src/ace.js',
+		'/includes/ace/src/ext-statusbar.js',
+		'/includes/ace/src/ext-language_tools.js',
+		//'/includes/ace/src/ext-chromevox.js'
+	),
+	array()
+);
 
 
 $text = $langs->trans("ModuleBuilder");
