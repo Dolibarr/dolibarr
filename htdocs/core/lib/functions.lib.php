@@ -8387,6 +8387,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	// Audio
 	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) { $mime = 'audio'; $imgmime = 'audio.png'; $famime = 'file-audio-o'; }
 	// Video
+	if (preg_match('/\.mp4$/i', $tmpfile)) { $mime = 'video/mp4'; $imgmime = 'video.png'; $famime = 'file-video-o'; }
 	if (preg_match('/\.ogv$/i', $tmpfile)) { $mime = 'video/ogg'; $imgmime = 'video.png'; $famime = 'file-video-o'; }
 	if (preg_match('/\.webm$/i', $tmpfile)) { $mime = 'video/webm'; $imgmime = 'video.png'; $famime = 'file-video-o'; }
 	if (preg_match('/\.avi$/i', $tmpfile)) { $mime = 'video/x-msvideo'; $imgmime = 'video.png'; $famime = 'file-video-o'; }
