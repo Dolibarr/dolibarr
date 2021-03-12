@@ -102,13 +102,13 @@ class modPhpbarcode extends ModeleBarCode
 		if ($encoding == 'ISBN') {
 			$supported = 1;
 		}
+		if ($encoding == 'UPC') {
+			$supported = 1;
+		}
 		// Formats that hangs on Windows (when genbarcode.exe for Windows is called, so they are not
 		// activated on Windows)
 		if (file_exists($genbarcode_loc) && empty($_SERVER["WINDIR"])) {
 			if ($encoding == 'EAN8') {
-				$supported = 1;
-			}
-			if ($encoding == 'UPC') {
 				$supported = 1;
 			}
 			if ($encoding == 'C39') {
