@@ -307,7 +307,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 			//setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
 
 			// Make a redirect to avoid to have ticket submitted twice if we make back
-			setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>'.$object->track_id.'</strong>', '<strong>'.$object->ref.'</strong>'), null, 'warnings');
+			setEventMessages($langs->transnoentities('MesgInfosPublicTicketCreatedWithTrackId', '<strong>'.$object->track_id.'</strong>', '<strong>'.$object->ref.'</strong>'), null, 'warnings');
 			setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
 			header("Location: index.php");
 			exit;
