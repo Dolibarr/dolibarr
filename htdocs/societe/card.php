@@ -80,7 +80,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
-if ($user->socid) {
+if ($user->socid && empty($conf->global->MAIN_EXTERNAL_USERS_CAN_SEE_SUBSIDIARY_COMPANIES)) {
 	$socid = $user->socid;
 }
 if (empty($socid) && $action == 'view') {
