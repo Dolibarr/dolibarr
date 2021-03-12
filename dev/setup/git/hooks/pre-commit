@@ -48,7 +48,7 @@ then
     #~/vendor/bin/phpcs --version
     #phpcs --standard=PSR2 --encoding=utf-8 -n -p $FILES
     # Check Dolibarr standard
-    phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+    ${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
     # Check your own standard
     #${DIRPHPCS}phpcs -s -p -d memory_limit=-1 --parallel=2 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
     
@@ -59,7 +59,7 @@ then
         # Fix standard errors
         if [ "x$AUTOFIX" != "x0" ]
         then
-            phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
+            ${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
             #${DIRPHPCS}phpcbf -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=htdocs/custom/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $FILES
             echo "Found some errors in syntax rules. An automatice fix has been applied. Check it before commit." 1>&2;
             exit 1
