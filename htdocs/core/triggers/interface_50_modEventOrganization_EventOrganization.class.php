@@ -84,7 +84,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 				if (is_array($taskToDo) && count($taskToDo)>0) {
 					// Load translation files required by the page
 					$langs->loadLangs(array("eventorganization"));
-	
+
 					$this->db->begin();
 					foreach ($taskToDo as $taskLabel) {
 						$task = new Task($this->db);
