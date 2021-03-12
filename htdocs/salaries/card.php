@@ -61,6 +61,7 @@ $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 
 $datesp = dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
 $dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
 $label = GETPOST('label');
+$fk_user = GETPOST('userid', 'int');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -107,7 +108,17 @@ if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == '
 	$result = $object->set_paid($user);
 }
 
-// Reopen
+if ($action == 'setfk_user' && $user->rights->salaries->write) {
+	$result = $object->fetch($id);
+	if ($result > 0) {
+		$object->fk_user = $fk_user;
+		$object->update($user);
+	} else {
+		dol_print_error($db);
+		exit;
+	}
+}
+
 if ($action == 'reopen' && $user->rights->salaries->write) {
 	$result = $object->fetch($id);
 	if ($object->paye) {
@@ -421,7 +432,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Employee
-	print '<tr><td>';
+	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
 	print img_picto('', 'user', 'class="paddingrighonly"').$form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
@@ -448,7 +459,7 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
 	// Project
@@ -461,7 +472,7 @@ if ($action == 'create') {
 	}
 
 	// Comments
-	print '<tr class="hide_if_no_auto_create_payment">';
+	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
@@ -593,10 +604,37 @@ if ($id) {
 		$morehtmlref .= '</form>';
 	}
 
-	// Employee
-	$userstatic = new User($db);
-	$userstatic->fetch($object->fk_user);
-	$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+	//Employee
+	if ($action != 'editfk_user') {
+		if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
+			$userstatic = new User($db);
+			$result = $userstatic->fetch($object->fk_user);
+			if ($result > 0) {
+				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+			}
+		} else {
+			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+
+			if (!empty($object->fk_user)) {
+				$userstatic = new User($db);
+				$result = $userstatic->fetch($object->fk_user);
+				if ($result > 0) {
+					$morehtmlref .= $userstatic->getNomUrl(1);
+				} else {
+					dol_print_error($db);
+					exit();
+				}
+			}
+		}
+	} else {
+		$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
+		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
+		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$morehtmlref .= $form->select_dolusers($object->fk_user, 'userid', 1);
+		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '</form>';
+	}
 
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -674,7 +712,7 @@ if ($id) {
 	print '</td></tr>';*/
 
 	if ($action == 'edit') {
-		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . $object->amount . '"></td></tr>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
 	} else {
 		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency) . '</td></tr>';
 	}

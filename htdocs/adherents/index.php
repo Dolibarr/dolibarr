@@ -195,6 +195,7 @@ if ($conf->use_javascript_ajax) {
 
 	$SommeA = 0;
 	$SommeB = 0;
+
 	$SommeC = 0;
 	$SommeD = 0;
 	$total = 0;
@@ -218,7 +219,7 @@ if ($conf->use_javascript_ajax) {
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
@@ -491,6 +492,8 @@ print '</tr>';
 
 print "</table>\n";
 print "</div>";
+
+print '<br>';
 
 print $resultboxes['boxlistb'];
 

@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 /**
  * Class to manage the box
  */
-class box_ticket_by_severity extends ModeleBoxes
+class box_graph_ticket_by_severity extends ModeleBoxes
 {
 
 	public $boxcode = "box_ticket_by_severity";
@@ -44,6 +44,9 @@ class box_ticket_by_severity extends ModeleBoxes
 	public $param;
 	public $info_box_head = array();
 	public $info_box_contents = array();
+
+	public $widgettype = 'graph';
+
 
 	/**
 	 * Constructor
