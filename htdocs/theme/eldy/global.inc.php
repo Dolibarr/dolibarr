@@ -393,7 +393,7 @@ input.pageplusone {
 	opacity: 0.6;
 }
 .opacityhigh {
-	opacity: 0.2;
+	opacity: 0.24;
 }
 .opacitytransp {
 	opacity: 0;
@@ -760,6 +760,12 @@ textarea.centpercent {
 	max-height: 250px;
 	max-width: 100%;
 	overflow-y: auto;
+}
+
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+	color: #888 !important;
+	opacity: 0.4;
+	padding-<?php echo $left; ?>: 3px;
 }
 
 body[class*="colorblind-"] .text-warning{

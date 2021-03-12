@@ -585,7 +585,7 @@ input.pageplusone {
 	opacity: 0.6;
 }
 .opacityhigh {
-	opacity: 0.2;
+	opacity: 0.24;
 }
 .opacitytransp {
 	opacity: 0;
@@ -892,6 +892,12 @@ textarea.centpercent {
 	max-height: 250px;
 	max-width: 100%;
 	overflow-y: auto;
+}
+
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+	color: #888 !important;
+	opacity: 0.4;
+	padding-<?php echo $left; ?>: 3px;
 }
 
 .text-warning{
@@ -1597,7 +1603,7 @@ td.showDragHandle {
 	padding-bottom: 10px;
 <?php if (GETPOST('optioncss', 'aZ09') != 'print') { ?>
 	padding-left: 229px;
-	padding-top: 12px;
+	padding-top: 16px;
 <?php } ?>
 }
 
@@ -1780,8 +1786,8 @@ div.fiche {
 <?php } ?>
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '22' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
 		print 'margin-top: 12px;';
 	} ?>
