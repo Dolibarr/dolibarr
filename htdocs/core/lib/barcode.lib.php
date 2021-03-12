@@ -100,7 +100,7 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
 }
 
 /**
- * Encodes $code with $encoding using genbarcode OR built-in encoder if you don't have genbarcode only EAN-13/ISBN is possible
+ * Encodes $code with $encoding using genbarcode OR built-in encoder if you don't have genbarcode only EAN-13/ISBN or UPC is possible
  *
  * You can use the following encodings (when you have genbarcode):
  *   ANY    choose best-fit (default)
@@ -125,7 +125,13 @@ function barcode_encode($code, $encoding)
 {
 	global $genbarcode_loc;
 
-	if ((preg_match("/^ean$/i", $encoding))
+	if ((preg_match("/^upc$/i", $encoding))
+	&& (preg_match("/^[0-9]{11,12}$/", $code))
+	) {
+		/* use built-in UPC-Encoder */
+		dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_upc");
+		$bars = barcode_encode_upc($code, $encoding);
+	} elseif ((preg_match("/^ean$/i", $encoding))
 
 	|| (($encoding) && (preg_match("/^isbn$/i", $encoding))
 	&& ((strlen($code) == 9 || strlen($code) == 10) ||
@@ -193,7 +199,7 @@ function barcode_gen_ean_bars($ean)
 {
 	$digits = array(3211, 2221, 2122, 1411, 1132, 1231, 1114, 1312, 1213, 3112);
 	$mirror = array("000000", "001011", "001101", "001110", "010011", "011001", "011100", "010101", "010110", "011010");
-	$guards = array("9a1a", "1a1a1", "a1a");
+	$guards = array("9a1a", "1a1a1", "a1a7");
 
 	$line = $guards[0];
 	for ($i = 1; $i < 13; $i++) {
@@ -255,6 +261,56 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 			$pos += 12;
 		} elseif ($a == 6) {
 			$pos += 12;
+		} else {
+			$pos += 7;
+		}
+	}
+
+	return array(
+		"error" => '',
+		"encoding" => $encoding,
+		"bars" => $bars,
+		"text" => $text
+	);
+}
+
+/**
+ * Encode UPC
+ *
+ * @param	string	$upc		Code
+ * @param	string	$encoding	Encoding
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
+ */
+function barcode_encode_upc($upc, $encoding = "UPC")
+{
+	$upc = trim($upc);
+	if (preg_match("/[^0-9]/i", $upc)) {
+		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)");
+	}
+	$encoding = strtoupper($encoding);
+	if (strlen($upc) < 11 || strlen($upc) > 12) {
+		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)");
+	}
+
+	$upc = substr("0".$upc, 0, 12);
+	$eansum = barcode_gen_ean_sum($upc);
+	$upc .= $eansum;
+	$bars = barcode_gen_ean_bars($upc);
+
+	/* create text */
+	$pos = 0;
+	$text = "";
+	for ($a = 1; $a < 13; $a++) {
+		if ($a > 1) {
+			$text .= " ";
+		}
+		$text .= "$pos:12:{$upc[$a]}";
+		if ($a == 1) {
+			$pos += 19;
+		} elseif ($a == 6) {
+			$pos += 11;
+		} elseif ($a == 11) {
+			$pos += 17;
 		} else {
 			$pos += 7;
 		}
