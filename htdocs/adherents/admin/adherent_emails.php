@@ -55,6 +55,7 @@ $constantes = array(
 	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'	=>'emailtemplate:member', /* old was ADHERENT_MAIL_VALID */
 	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'		=>'emailtemplate:member', /* old was ADHERENT_MAIL_COTIS */
 	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'		=>'emailtemplate:member', /* old was ADHERENT_MAIL_RESIL */
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'		=>'emailtemplate:member', 
 	'ADHERENT_MAIL_FROM'=>'string',
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'=>'string',
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'=>'html',
