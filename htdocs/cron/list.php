@@ -493,11 +493,11 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if (!empty($obj->datestart)) { print dol_print_date($db->jdate($obj->datestart), 'dayhour'); }
+		if (!empty($obj->datestart)) { print dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver'); }
 		print '</td>';
 
 		print '<td class="center">';
-		if (!empty($obj->dateend)) { print dol_print_date($db->jdate($obj->dateend), 'dayhour'); }
+		if (!empty($obj->dateend)) { print dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver'); }
 		print '</td>';
 
 		print '<td class="right">';
@@ -507,7 +507,7 @@ if ($num > 0)
 
 		// Date start last run
 		print '<td class="center">';
-		if (!empty($datelastrun)) { print dol_print_date($datelastrun, 'dayhoursec'); }
+		if (!empty($datelastrun)) { print dol_print_date($datelastrun, 'dayhoursec', 'tzserver'); }
 		print '</td>';
 
 		// Duration

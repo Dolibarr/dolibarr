@@ -1581,7 +1581,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width: calc(100% - 210px);
 	display: inline-block;
 }
 
@@ -1685,8 +1685,15 @@ div.vmenu, td.vmenu {
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
+	/* no side-nav */
 	body.sidebar-collapse .side-nav {
 		display: none;
+	}
+
+	/* if no side-nav, we don't need to have width forced */
+	.classforhorizontalscrolloftabs #id-right {
+		width: unset;
+		display: unset;
 	}
 
 	body.sidebar-collapse .login_block {

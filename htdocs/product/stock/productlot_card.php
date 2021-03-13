@@ -103,18 +103,26 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($action == 'seteatby' && $user->rights->stock->creer)
-	{
-		$newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+	if ($action == 'seteatby' && $user->rights->stock->creer) {
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editeatby';
+		} else {
+			$action = 'view';
+		}
 	}
 
-	if ($action == 'setsellby' && $user->rights->stock->creer)
-	{
-		$newvalue = dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+	if ($action == 'setsellby' && $user->rights->stock->creer) {
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editsellby';
+		} else {
+			$action = 'view';
+		}
 	}
 
 	if ($action == 'update_extras')
@@ -136,8 +144,9 @@ if (empty($reshook))
 			}
 		}
 
-		if ($error)
+		if ($error) {
 			$action = 'edit_extras';
+		}
 	}
 
 	// Action to add record
@@ -346,7 +355,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 	// Other attributes
-	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
@@ -391,7 +399,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
  * Documents generes
  */
 
-if (empty($action))
+if (empty($action) || $action == 'view')
 {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre

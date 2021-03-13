@@ -280,12 +280,10 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) dol_print_error('', 'BadParameter');
 
-	$out = '';
 	$histo = array();
 	$numaction = 0;
 	$now = dol_now();
 
-	// Open DSI -- Fix order by -- Begin
 	$sortfield_list = explode(',', $sortfield);
 	$sortfield_label_list = array('a.id' => 'id', 'a.datep' => 'dp', 'a.percent' => 'percent');
 	$sortfield_new_list = array();
@@ -294,9 +292,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	if (!empty($conf->agenda->enabled))
-	{
-		// Recherche histo sur actioncomm
+	if (!empty($conf->agenda->enabled)) {
+		// Search histo on actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
 		} else {
@@ -443,85 +440,95 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$sql = $sql2;
 	}
 
-	//TODO Add limit in nb of results
-	$sql .= $db->order($sortfield_new, $sortorder);
+	// TODO Add limit in nb of results
+	if ($sql) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
+		$sql .= $db->order($sortfield_new, $sortorder);
 
-	dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$i = 0;
-		$num = $db->num_rows($resql);
+		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$i = 0;
+			$num = $db->num_rows($resql);
 
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
 
-			if ($obj->type == 'action') {
-				$contactaction = new ActionComm($db);
-				$contactaction->id = $obj->id;
-				$result = $contactaction->fetchResources();
-				if ($result < 0) {
-					dol_print_error($db);
-					setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+				if ($obj->type == 'action') {
+					$contactaction = new ActionComm($db);
+					$contactaction->id = $obj->id;
+					$result = $contactaction->fetchResources();
+					if ($result < 0) {
+						dol_print_error($db);
+						setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+					}
+
+					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
+					//elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+					$tododone = '';
+					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone = 'todo';
+
+					$histo[$numaction] = array(
+						'type'=>$obj->type,
+						'tododone'=>$tododone,
+						'id'=>$obj->id,
+						'datestart'=>$db->jdate($obj->dp),
+						'dateend'=>$db->jdate($obj->dp2),
+						'note'=>$obj->label,
+						'message'=>$obj->message,
+						'percent'=>$obj->percent,
+
+						'userid'=>$obj->user_id,
+						'login'=>$obj->user_login,
+						'userfirstname'=>$obj->user_firstname,
+						'userlastname'=>$obj->user_lastname,
+						'userphoto'=>$obj->user_photo,
+
+						'contact_id'=>$obj->fk_contact,
+						'socpeopleassigned' => $contactaction->socpeopleassigned,
+						'lastname'=>$obj->lastname,
+						'firstname'=>$obj->firstname,
+						'fk_element'=>$obj->fk_element,
+						'elementtype'=>$obj->elementtype,
+						// Type of event
+						'acode'=>$obj->acode,
+						'alabel'=>$obj->alabel,
+						'libelle'=>$obj->alabel, // deprecated
+						'apicto'=>$obj->apicto
+					);
+				} else {
+					$histo[$numaction] = array(
+						'type'=>$obj->type,
+						'tododone'=>'done',
+						'id'=>$obj->id,
+						'datestart'=>$db->jdate($obj->dp),
+						'dateend'=>$db->jdate($obj->dp2),
+						'note'=>$obj->label,
+						'message'=>$obj->message,
+						'percent'=>$obj->percent,
+						'acode'=>$obj->acode,
+
+						'userid'=>$obj->user_id,
+						'login'=>$obj->user_login,
+						'userfirstname'=>$obj->user_firstname,
+						'userlastname'=>$obj->user_lastname,
+						'userphoto'=>$obj->user_photo
+					);
 				}
 
-				//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
-				//elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
-				$tododone = '';
-				if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) $tododone = 'todo';
-
-				$histo[$numaction] = array(
-					'type'=>$obj->type,
-					'tododone'=>$tododone,
-					'id'=>$obj->id,
-					'datestart'=>$db->jdate($obj->dp),
-					'dateend'=>$db->jdate($obj->dp2),
-					'note'=>$obj->label,
-					'message'=>$obj->message,
-					'percent'=>$obj->percent,
-
-					'userid'=>$obj->user_id,
-					'login'=>$obj->user_login,
-					'userfirstname'=>$obj->user_firstname,
-					'userlastname'=>$obj->user_lastname,
-					'userphoto'=>$obj->user_photo,
-
-					'contact_id'=>$obj->fk_contact,
-					'socpeopleassigned' => $contactaction->socpeopleassigned,
-					'lastname'=>$obj->lastname,
-					'firstname'=>$obj->firstname,
-					'fk_element'=>$obj->fk_element,
-					'elementtype'=>$obj->elementtype,
-					// Type of event
-					'acode'=>$obj->acode,
-					'alabel'=>$obj->alabel,
-					'libelle'=>$obj->alabel, // deprecated
-					'apicto'=>$obj->apicto
-				);
-			} else {
-				$histo[$numaction] = array(
-					'type'=>$obj->type,
-					'tododone'=>'done',
-					'id'=>$obj->id,
-					'datestart'=>$db->jdate($obj->dp),
-					'dateend'=>$db->jdate($obj->dp2),
-					'note'=>$obj->label,
-					'message'=>$obj->message,
-					'percent'=>$obj->percent,
-					'acode'=>$obj->acode,
-
-					'userid'=>$obj->user_id,
-					'login'=>$obj->user_login,
-					'userfirstname'=>$obj->user_firstname,
-					'userlastname'=>$obj->user_lastname,
-					'userphoto'=>$obj->user_photo
-				);
+				$numaction++;
+				$i++;
 			}
-
-			$numaction++;
-			$i++;
+		} else {
+			dol_print_error($db);
 		}
-	} else {
-		dol_print_error($db);
+	}
+
+	// Set $out to sow events
+	$out = '';
+
+	if (empty($conf->agenda->enabled)) {
+		$langs->loadLangs(array("admin", "errors"));
+		$out = info_admin($langs->trans("WarningModuleXDisabledSoYouMayMissEventHere", $langs->transnoentitiesnoconv("Module2400Name")), 0, 0, 'warning');
 	}
 
 	if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {

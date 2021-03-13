@@ -32,6 +32,7 @@ if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined("NOSESSION"))      define("NOSESSION", '1');
 
 /**
  * Header empty
@@ -58,6 +59,8 @@ global $user, $conf, $langs;
 
 $langs->loadLangs(array("main", "mails"));
 
+$mtid = GETPOST('mtid');
+$email = GETPOST('email');
 $tag = GETPOST('tag');
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
@@ -80,7 +83,7 @@ if (!empty($tag) && ($unsuscrib == '1'))
 {
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
 
-	$sql = "SELECT mc.email, m.entity";
+	$sql = "SELECT mc.rowid, mc.email, mc.statut, m.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
@@ -89,11 +92,26 @@ if (!empty($tag) && ($unsuscrib == '1'))
 
 	$obj = $db->fetch_object($resql);
 
-	if (empty($obj->email))
-	{
-		print 'Email not found. No need to unsubscribe.';
+	if (empty($obj)) {
+		print 'Email target not valid. Operation canceled.';
 		exit;
 	}
+	if (empty($obj->email)) {
+		print 'Email target not valid. Operation canceled.';
+		exit;
+	}
+	if ($obj->statut == 3) {
+		print 'Email target already set to unsubscribe. Operation canceled.';
+		exit;
+	}
+	// TODO Test that mtid and email match also with the one found from $tag
+	/*
+	if ($obj->email != $email)
+	{
+		print 'Email does not match tagnot found. No need to unsubscribe.';
+		exit;
+	}
+	*/
 
 	// Update status of mail in recipient mailing list table
 	$statut = '3';
@@ -117,7 +135,7 @@ if (!empty($tag) && ($unsuscrib == '1'))
 	*/
 
 	// Update status communication of email (new usage)
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
 
 	$resql = $db->query($sql);
 	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed

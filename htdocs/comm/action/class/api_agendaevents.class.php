@@ -16,9 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
 
 /**
  * API class for Agenda Events
@@ -51,33 +52,32 @@ class AgendaEvents extends DolibarrApi
 		$this->actioncomm = new ActionComm($this->db);
 	}
 
-	/**
-	 * Get properties of a Agenda Events object
-	 *
-	 * Return an array with Agenda Events informations
-	 *
-	 * @param       int         $id         ID of Agenda Events
-	 * @return 	    array|mixed             Data without useless information
-	 *
-	 * @throws 	RestException
-	 */
-	public function get($id)
-	{
-		if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
-			throw new RestException(401, "Insufficient rights to read an event");
-		}
-		if ($id == 0) {
-			$result = $this->actioncomm->initAsSpecimen();
-		} else {
-			$result = $this->actioncomm->fetch($id);
-			if ($result) {
-				$this->actioncomm->fetch_optionals();
-				$this->actioncomm->fetchObjectLinked();
-			}
-		}
-		if (!$result) {
-			throw new RestException(404, 'Agenda Events not found');
-		}
+    /**
+     * Get properties of a Agenda Events object
+     * Return an array with Agenda Events informations
+     *
+     * @param       int         $id         ID of Agenda Events
+     * @return 	    array|mixed             Data without useless information
+     *
+     * @throws 	RestException
+     */
+    public function get($id)
+    {
+        if (!DolibarrApiAccess::$user->rights->agenda->myactions->read) {
+            throw new RestException(401, "Insufficient rights to read an event");
+        }
+        if ($id === 0) {
+            $result = $this->actioncomm->initAsSpecimen();
+        } else {
+            $result = $this->actioncomm->fetch($id);
+            if ($result) {
+                $this->actioncomm->fetch_optionals();
+                $this->actioncomm->fetchObjectLinked();
+            }
+        }
+        if (!$result) {
+            throw new RestException(404, 'Agenda Events not found');
+        }
 
 		if (!DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
 			throw new RestException(401, "Insufficient rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
