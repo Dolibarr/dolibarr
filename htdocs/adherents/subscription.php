@@ -642,7 +642,7 @@ if ($rowid > 0) {
 	 * Action buttons
 	 */
 
-	// Button to create a new subscription if member no draft neither resiliated
+	// Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)
 	if ($user->rights->adherent->cotisation->creer) {
 		if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<div class="tabsAction">';
