@@ -184,6 +184,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// Should be OK
 		$expectedresult=0;
 
+		/*
+		$test = '';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual(0, $result, 'Error on testSqlAndScriptInject kkk');
+		*/
+
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0a');
