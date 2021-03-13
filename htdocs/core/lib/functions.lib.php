@@ -613,7 +613,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
 	if ($paramname == 'backtopage') {
 		$out = str_replace('\\', '/', $out);
-		$out = preg_replace(array('/^\/\/+/', '/^[a-z]*:/i'), '', $out);
+		$out = preg_replace(array('/^:*\/\/+/', '/^[a-z]*:+/i'), '', $out);
 	}
 
 	// Code for search criteria persistence.
