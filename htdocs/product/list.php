@@ -1644,7 +1644,7 @@ if ($resql) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
 				$decimals = !isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
-				print price($product_static->stock_reel, 0, $langs->defaultlang,1,-1,$decimals);
+				print price($product_static->stock_reel, 0, $langs->defaultlang, 1, -1, $decimals);
 				//print price2num($product_static->stock_reel, 'MS');
 			}
 			print '</td>';
@@ -1660,7 +1660,7 @@ if ($resql) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
 				$decimals = !isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? 5 : $conf->global->MAIN_MAX_DECIMALS_STOCK;
-				print price($product_static->stock_theorique, 0, $langs->defaultlang,1,-1,$decimals);
+				print price($product_static->stock_theorique, 0, $langs->defaultlang, 1, -1, $decimals);
 				//print price2num($product_static->stock_theorique, 'MS');
 			}
 			print '</td>';
