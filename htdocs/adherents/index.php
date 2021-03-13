@@ -214,7 +214,7 @@ if ($conf->use_javascript_ajax) {
 		$SommeB += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0;
 		$SommeC += isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0;
 		$SommeD += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
-		$SommeE += isset($MembersExcluded[$key]) ? $MembersExcluded è[$key] : 0;
+		$SommeE += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
 		$i++;
 	}
 	$total = $SommeA + $SommeB + $SommeC + $SommeD;
