@@ -76,7 +76,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr[] = array(
 		'name' => 'Home',
 		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
-		'title' => (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-home"></span>' : "Home"),
+		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,
 		'target' => $atarget,
@@ -86,7 +86,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'home',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => '<span class="fa fa-home fa-fw paddingright"></span>',
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
@@ -111,7 +111,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'members',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'member', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members") ? 0 : 1),
 		'loadLangs' => array(),
 		'submenus' => array(),
@@ -140,7 +140,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'companies',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'company', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies") ? 0 : 1),
 		'loadLangs' => array("companies", "suppliers"),
 		'submenus' => array(),
@@ -167,7 +167,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'products',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'product', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products") ? 0 : 1),
 		'loadLangs' => array("products"),
 		'submenus' => array(),
@@ -192,7 +192,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'mrp',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'mrp', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mrp") ? 0 : 1),
 		'loadLangs' => array("mrp"),
 		'submenus' => array(),
@@ -217,7 +217,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'project',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'project', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project") ? 0 : 1),
 		'loadLangs' => array("projects"),
 		'submenus' => array(),
@@ -263,7 +263,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'commercial',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'contract', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial") ? 0 : 1),
 		'loadLangs' => array("commercial"),
 		'submenus' => array(),
@@ -297,7 +297,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'billing',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
+		'prefix' => img_picto('', 'bill', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "billing") ? 0 : 1),
 		'loadLangs' => array("compta"),
 		'submenus' => array(),
@@ -322,10 +322,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'bank',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
-
+		'prefix' => img_picto('', 'bank', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "bank") ? 0 : 1),
-
 		'loadLangs' => array("compta", "banks"),
 		'submenus' => array(),
 	);
@@ -349,10 +347,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'accountancy',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
-
+		'prefix' => img_picto('', 'account', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy") ? 0 : 1),
-
 		'loadLangs' => array("compta", "accountancy", "assets", "intracommreport"),
 		'submenus' => array(),
 	);
@@ -377,10 +373,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'hrm',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
-
+		'prefix' => img_picto('', 'hrm', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "hrm") ? 0 : 1),
-
 		'loadLangs' => array("holiday"),
 		'submenus' => array(),
 	);
@@ -404,10 +398,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'id' => $id,
 		'idsel' => 'tools',
 		'classname' =>  $classname = ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools") ? 'class="tmenusel"' : 'class="tmenu"',
-		'prefix' => '',
-
+		'prefix' => img_picto('', 'tools', 'class="fa-fw paddingright"'),
 		'session' => (($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
-
 		'loadLangs' => array("other"),
 		'submenus' => array(),
 	);
@@ -496,7 +488,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$newTabMenu[$i]['position'],
 			$id,
 			$idsel,
-			$classname
+			$classname,
+			$newTabMenu[$i]['prefix']
 		);
 	}
 

@@ -3443,7 +3443,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'contract', 'cron', 'cubes',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
@@ -3474,7 +3474,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'user-cog',
+				'user-cog', 'website',
 				'eventorganization', 'object_eventorganization'
 			))) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
@@ -3494,7 +3494,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'search-dollar', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book', 'asset'=>'money-check-alt',
 				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
-				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments',
+				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
 				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
@@ -3552,10 +3553,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('holiday', 'project'))) {
+			if (in_array($pictowithouttext, array('collab', 'holiday', 'project'))) {
 				$morecss = 'em088';
 			}
 			if (in_array($pictowithouttext, array('intervention', 'info', 'payment', 'loan', 'stock', 'technic'))) {
@@ -3577,7 +3578,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
-				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'conversation'=>'infobox-contrat',
+				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
 				'donation'=>'infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'infobox-action',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
 				'multicurrency'=>'infobox-bank_account',
