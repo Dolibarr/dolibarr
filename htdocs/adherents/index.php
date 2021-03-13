@@ -119,6 +119,9 @@ if ($result) {
 		if ($objp->statut == 0) {
 			$MembersResiliated[$objp->rowid] = $objp->somme;
 		}
+		if ($objp->statut == -2) {
+			$MembersExcludeded[$objp->rowid] = $objp->somme;
+		}
 
 		$i++;
 	}
@@ -206,10 +209,12 @@ if ($conf->use_javascript_ajax) {
 		$dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0);
 		$dataval['uptodate'][] = array($i, isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0);
 		$dataval['resiliated'][] = array($i, isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0);
+		$dataval['excluded'][] = array($i, isset($MembersExcluded[$key]) ? $MembersExcluded[$key] : 0);
 		$SommeA += isset($MemberToValidate[$key]) ? $MemberToValidate[$key] : 0;
 		$SommeB += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0;
 		$SommeC += isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0;
 		$SommeD += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
+		$SommeE += isset($MembersExcluded[$key]) ? $MembersExcluded è[$key] : 0;
 		$i++;
 	}
 	$total = $SommeA + $SommeB + $SommeC + $SommeD;
@@ -217,6 +222,7 @@ if ($conf->use_javascript_ajax) {
 	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SommeB));
 	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SommeC));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), round($SommeE));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
@@ -471,6 +477,7 @@ print '<th class=right>'.$langs->trans("MembersStatusToValid").'</th>';
 print '<th class=right>'.$langs->trans("OutOfDate").'</th>';
 print '<th class=right>'.$langs->trans("UpToDate").'</th>';
 print '<th class=right>'.$langs->trans("MembersStatusResiliated").'</th>';
+print '<th class=right>'.$langs->trans("MembersStatusExcluded").'</th>';
 print "</tr>\n";
 
 foreach ($AdherentType as $key => $adhtype) {
@@ -480,6 +487,7 @@ foreach ($AdherentType as $key => $adhtype) {
 	print '<td class="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
 	print '<td class="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
 	print '<td class="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
+	print '<td class="right">'.(isset($MembersExcluded[$key]) && $MembersExcluded[$key] > 0 ? $MembersExcluded[$key] : '').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
 	print "</tr>\n";
 }
 print '<tr class="liste_total">';
@@ -488,6 +496,7 @@ print '<td class="liste_total right">'.$SommeA.' '.$staticmember->LibStatut(-1, 
 print '<td class="liste_total right">'.$SommeB.' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
 print '<td class="liste_total right">'.$SommeC.' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
 print '<td class="liste_total right">'.$SommeD.' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeD.' '.$staticmember->LibStatut(-2, $adhtype->subscription, 0, 3).'</td>';
 print '</tr>';
 
 print "</table>\n";
