@@ -48,6 +48,18 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
 	}
 }
 
+if (!function_exists('is_countable')) {
+	/**
+	 * function is_countable (to remove when php version supported will be >= 7.3)
+	 * @param mixed $c data to check if countable
+	 * @return bool
+	 */
+	function is_countable($c)
+	{
+		return is_array($c) || $c instanceof Countable;
+	}
+}
+
 /**
  * Security: WAF layer for SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  * Warning: Such a protection can't be enough. It is not reliable as it will alwyas be possible to bypass this. Good protection can
