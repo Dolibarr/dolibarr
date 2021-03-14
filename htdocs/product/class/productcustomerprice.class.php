@@ -274,8 +274,8 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int $id object
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	int 	$id 	ID of customer price
+	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -301,7 +301,6 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.localtax2_tx,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key";
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -331,10 +330,15 @@ class Productcustomerprice extends CommonObject
 				$this->localtax2_tx = $obj->localtax2_tx;
 				$this->fk_user = $obj->fk_user;
 				$this->import_key = $obj->import_key;
-			}
-			$this->db->free($resql);
 
-			return 1;
+				$this->db->free($resql);
+
+				return 1;
+			} else {
+				$this->db->free($resql);
+
+				return 0;
+			}
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
@@ -487,7 +491,6 @@ class Productcustomerprice extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.entity,";
 		$sql .= " t.datec,";
 		$sql .= " t.fk_product,";
@@ -507,27 +510,25 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
 		$sql .= " prod.ref as prodref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price_log as t ";
-		$sql .= " ,".MAIN_DB_PREFIX."product as prod ";
-		$sql .= " ,".MAIN_DB_PREFIX."societe as soc ";
-		$sql .= " WHERE soc.rowid=t.fk_soc ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_customer_price_log as t";
+		$sql .= " ,".MAIN_DB_PREFIX."product as prod";
+		$sql .= " ,".MAIN_DB_PREFIX."societe as soc";
+		$sql .= " WHERE soc.rowid=t.fk_soc";
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (".getEntity('product').")";
 		$sql .= " AND t.entity IN (".getEntity('productprice').")";
-
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { 				// To allow $filter['YEAR(s.dated)']=>$year
 					$sql .= ' AND '.$key.' = \''.$value.'\'';
 				} elseif ($key == 'soc.nom') {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				} else {
-					$sql .= ' AND '.$key.' = '.$value;
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				}
 			}
 		}
-
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if (!empty($limit)) {
 			$sql .= ' '.$this->db->plimit($limit + 1, $offset);
