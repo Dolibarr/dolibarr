@@ -488,7 +488,7 @@ foreach ($AdherentType as $key => $adhtype) {
 	print '<td class="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
 	print '<td class="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '').' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
 	print '<td class="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
-	print '<td class="right">'.(isset($MembersExcluded[$key]) && $MembersExcluded[$key] > 0 ? $MembersExcluded[$key] : '').' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
+	print '<td class="right">'.(isset($MembersExcluded[$key]) && $MembersExcluded[$key] > 0 ? $MembersExcluded[$key] : '').' '.$staticmember->LibStatut(-2, $adhtype->subscription, 0, 3).'</td>';
 	print "</tr>\n";
 }
 print '<tr class="liste_total">';
@@ -497,7 +497,7 @@ print '<td class="liste_total right">'.$SommeA.' '.$staticmember->LibStatut(-1, 
 print '<td class="liste_total right">'.$SommeB.' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3).'</td>';
 print '<td class="liste_total right">'.$SommeC.' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3).'</td>';
 print '<td class="liste_total right">'.$SommeD.' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3).'</td>';
-print '<td class="liste_total right">'.$SommeD.' '.$staticmember->LibStatut(-2, $adhtype->subscription, 0, 3).'</td>';
+print '<td class="liste_total right">'.$SommeE.' '.$staticmember->LibStatut(-2, $adhtype->subscription, 0, 3).'</td>';
 print '</tr>';
 
 print "</table>\n";
