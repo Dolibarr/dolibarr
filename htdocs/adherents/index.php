@@ -202,6 +202,8 @@ if ($conf->use_javascript_ajax) {
 
 	$SommeC = 0;
 	$SommeD = 0;
+	$SommeE = 0;
+
 	$total = 0;
 	$dataval = array();
 	$i = 0;
@@ -218,7 +220,7 @@ if ($conf->use_javascript_ajax) {
 		$SommeE += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
 		$i++;
 	}
-	$total = $SommeA + $SommeB + $SommeC + $SommeD;
+	$total = $SommeA + $SommeB + $SommeC + $SommeD +$SommeE;
 	$dataseries = array();
 	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SommeB));
 	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SommeC));
@@ -241,7 +243,7 @@ if ($conf->use_javascript_ajax) {
 
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	$boxgraph .= $SommeA + $SommeB + $SommeC + $SommeD;
+	$boxgraph .= $SommeA + $SommeB + $SommeC + $SommeD + $SommeE;
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '</table>';
 	$boxgraph .= '</div>';
