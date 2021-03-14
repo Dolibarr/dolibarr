@@ -336,6 +336,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
 
 		// Test alpha
+
 		$result=GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $_GET["param2"], 'Test on param2');
@@ -349,6 +350,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result, 'dir');
 
 		// Test aZ09
+
 		$result=GETPOST("param1", 'aZ09');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $_GET["param1"]);
@@ -378,6 +380,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('">', $result);
 
 		// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
+
 		$result=GETPOST("param7", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
@@ -424,6 +427,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
 		// Special test for GETPOST of backtopage parameter
+
 		$_POST["backtopage"]='//www.google.com';
 		$result=GETPOST("backtopage");
 		print __METHOD__." result=".$result."\n";
@@ -438,6 +442,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("backtopage");
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='http:www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('httpwww.google.com', $result, 'Test for backtopage param');
 
 		$_POST["backtopage"]='/mydir/mypage.php?aa=a%10a';
 		$result=GETPOST("backtopage");
