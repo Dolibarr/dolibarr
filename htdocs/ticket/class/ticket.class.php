@@ -2909,6 +2909,7 @@ class Ticket extends CommonObject
 		global $conf, $user, $langs;
 
 		$now = dol_now();
+		$delay_warning = 0;
 
 		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
@@ -2951,8 +2952,8 @@ class Ticket extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 				if ($mode == 'opened') {
-					$datelimit = $this->db->jdate($obj->datefin);
-					if ($datelimit < ($now - $delay_warning)) {
+					$datelimit = $this->db->jdate($obj->datec) + $delay_warning;
+					if ($datelimit < $now) {
 						//$response->nbtodolate++;
 					}
 				}
