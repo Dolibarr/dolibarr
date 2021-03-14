@@ -323,7 +323,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
-		if ($id > 0) {
+		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} elseif (!empty($ref_ext)) {
 			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
