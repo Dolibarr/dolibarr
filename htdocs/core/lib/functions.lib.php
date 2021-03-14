@@ -617,7 +617,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 
 		do {
 			$oldstringtoclean = $out;
-			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#x3a'), '', $out);
+			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $out);
 		} while ($oldstringtoclean != $out);
 
 		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);
@@ -1029,7 +1029,7 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 	do {
 		$oldstringtoclean = $stringtoclean;
 
-		$stringtoclean = str_ireplace(array('javascript', 'vbscript', '&colon', '&#x3a'), '', $stringtoclean);
+		$stringtoclean = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $stringtoclean);
 	} while ($oldstringtoclean != $stringtoclean);
 
 	if ($type == 1) {
