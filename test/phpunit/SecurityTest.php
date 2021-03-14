@@ -662,6 +662,28 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * testDolSanitizeUrl
+	 *
+	 * @return void
+	 */
+	public function testDolSanitizeUrl()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$test = 'javajavascriptscript&cjavascriptolon;alert(1)';
+		$result=dol_sanitizeUrl($test);
+		$this->assertEquals('alert(1)', $result, 'Test on dol_sanitizeUrl');
+
+		$test = '/javas:cript/google.com';
+		$result=dol_sanitizeUrl($test);
+		$this->assertEquals('google.com', $result, 'Test on dol_sanitizeUrl');
+	}
+
+	/**
 	 * testDolSanitizeFileName
 	 *
 	 * @return void

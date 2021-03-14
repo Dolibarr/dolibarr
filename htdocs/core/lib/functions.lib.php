@@ -1001,14 +1001,34 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 }
 
 /**
- *  Clean a string to use it as an URL
+ *  Clean a string to use it as an URL (into a href or src attribute)
  *
  *  @param      string		$stringtoclean		String to clean
+ *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
  *  @return     string     		 				Escaped string.
  */
-function dol_sanitizeUrl($stringtoclean)
+function dol_sanitizeUrl($stringtoclean, $type = 1)
 {
-	$stringtoclean = str_replace('javascript', '', $stringtoclean);
+	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
+	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	$stringtoclean = preg_replace('/[\x00-\x1F\x7F]/u', '', $stringtoclean); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+	$val = preg_replace('/<!--[^>]*-->/', '', $val);
+
+	$stringtoclean = str_replace('\\', '/', $stringtoclean);
+	$stringtoclean = str_replace(array(':', '@'), '', $stringtoclean);
+
+	do {
+		$oldstringtoclean = $stringtoclean;
+		$stringtoclean = str_replace(array('javascript', 'vbscript'), '', $stringtoclean);
+		if ($type == 1) {
+			$stringtoclean = str_replace(array(':', '&colon', ';'), '', $stringtoclean);
+		}
+	} while ($oldstringtoclean != $stringtoclean);
+
+	if ($type == 1) {
+		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
+	}
 
 	return $stringtoclean;
 }
