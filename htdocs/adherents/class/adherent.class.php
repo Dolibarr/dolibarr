@@ -2085,9 +2085,9 @@ class Adherent extends CommonObject
 		}
 		$label .= '</div>';
 
-		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
+		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
 		if ($option == 'subscription') {
-			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id;
+			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
 		}
 
 		if ($option != 'nolink') {

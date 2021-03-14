@@ -754,7 +754,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " fk_user=".$user->id.",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -897,7 +897,6 @@ class Productcustomerprice extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-
 		global $conf, $langs;
 		$error = 0;
 
@@ -912,7 +911,7 @@ class Productcustomerprice extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_customer_price";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);

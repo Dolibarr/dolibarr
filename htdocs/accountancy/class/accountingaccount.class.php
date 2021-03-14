@@ -414,7 +414,7 @@ class AccountingAccount extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_account";
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::delete sql=".$sql);
 				$resql = $this->db->query($sql);

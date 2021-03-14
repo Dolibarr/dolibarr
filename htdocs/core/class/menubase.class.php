@@ -294,7 +294,7 @@ class Menubase
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-					dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+					dol_syslog(get_class($this)."::create record added has rowid=".((int) $this->id), LOG_DEBUG);
 
 					return $this->id;
 				} else {
@@ -364,7 +364,7 @@ class Menubase
 		$sql .= " perms='".$this->db->escape($this->perms)."',";
 		$sql .= " enabled='".$this->db->escape($this->enabled)."',";
 		$sql .= " usertype='".$this->db->escape($this->user)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -461,7 +461,7 @@ class Menubase
 		//global $conf, $langs;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

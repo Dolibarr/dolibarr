@@ -832,7 +832,7 @@ class Project extends CommonObject
 		// Delete project
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

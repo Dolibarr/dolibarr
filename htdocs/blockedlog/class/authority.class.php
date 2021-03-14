@@ -259,7 +259,7 @@ class BlockedLogAuthority
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."blockedlog_authority SET ";
 		$sql .= " blockchain='".$this->db->escape($this->blockchain)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$res = $this->db->query($sql);
 		if ($res) {

@@ -180,7 +180,7 @@ class Localtax extends CommonObject
 		$sql .= " fk_bank=".(int) $this->fk_bank.",";
 		$sql .= " fk_user_creat=".(int) $this->fk_user_creat.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -284,7 +284,7 @@ class Localtax extends CommonObject
 		// End call triggers
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

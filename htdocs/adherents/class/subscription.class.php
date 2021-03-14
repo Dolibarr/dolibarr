@@ -417,7 +417,7 @@ class Subscription extends CommonObject
 			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
+		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.((int) $this->id);
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

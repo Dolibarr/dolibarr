@@ -148,7 +148,7 @@ class Salary extends CommonObject
 		$sql .= " fk_user_author=".((int) $this->fk_user_author).",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : 'null');
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -293,7 +293,7 @@ class Salary extends CommonObject
 		}*/
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

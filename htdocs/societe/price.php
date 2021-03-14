@@ -145,7 +145,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOST('lineid');
+		$prodcustprice->id = GETPOST('lineid', 'int');
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
