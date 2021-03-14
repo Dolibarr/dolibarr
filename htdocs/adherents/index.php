@@ -220,12 +220,12 @@ if ($conf->use_javascript_ajax) {
 		$SommeE += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
 		$i++;
 	}
-	$total = $SommeA + $SommeB + $SommeC + $SommeD +$SommeE;
+	$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE;
 	$dataseries = array();
 	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SommeB));
 	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SommeC));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), round($SommeE));
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
@@ -233,7 +233,7 @@ if ($conf->use_javascript_ajax) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus8, '-'.$badgeStatus0));
+	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus8, $badgeStatus6, '-'.$badgeStatus0));
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
@@ -458,7 +458,7 @@ if ($resql) {
 			print '<td class="nowraponall">'.$staticmember->getNomUrl(-1, 32, 'subscription').'</td>';
 			print '<td class="nowraponall">'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
 			print '<td class="right">'.price($obj->subscription).'</td>';
-			//print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
+			//print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes' ? 1 : 0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '<td class="right nowraponall">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
 			print '</tr>';
 			$i++;
