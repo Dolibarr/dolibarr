@@ -613,7 +613,13 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
 	if ($paramname == 'backtopage' || $paramname == 'backtolist') {
 		$out = str_replace('\\', '/', $out);
-		$out = str_replace(array(':', '@'), '', $out);
+		$out = str_replace(array(':', ';', '@'), '', $out);
+
+		do {
+			$oldstringtoclean = $out;
+			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#x3a'), '', $out);
+		} while ($oldstringtoclean != $out);
+
 		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);
 	}
 
@@ -1010,20 +1016,20 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 function dol_sanitizeUrl($stringtoclean, $type = 1)
 {
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
-	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	// We should use dol_string_nounprintableascii but function may not be yet loaded/available
 	$stringtoclean = preg_replace('/[\x00-\x1F\x7F]/u', '', $stringtoclean); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
 	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
 
 	$stringtoclean = str_replace('\\', '/', $stringtoclean);
-	$stringtoclean = str_replace(array(':', '@'), '', $stringtoclean);
+	if ($type == 1) {
+		$stringtoclean = str_replace(array(':', ';', '@'), '', $stringtoclean);
+	}
 
 	do {
 		$oldstringtoclean = $stringtoclean;
-		$stringtoclean = str_replace(array('javascript', 'vbscript'), '', $stringtoclean);
-		if ($type == 1) {
-			$stringtoclean = str_replace(array(':', '&colon', ';'), '', $stringtoclean);
-		}
+
+		$stringtoclean = str_ireplace(array('javascript', 'vbscript', '&colon', '&#x3a'), '', $stringtoclean);
 	} while ($oldstringtoclean != $stringtoclean);
 
 	if ($type == 1) {
@@ -6240,10 +6246,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = str_replace('<!DOCTYPE html>', '__!DOCTYPE_HTML__', $stringtoclean);	// Replace DOCTYPE to avoid to have it removed by the strip_tags
 
 	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
-	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 
 	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
-	$stringtoclean = preg_replace('/&#58;|&#0000058|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+
+	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
+	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -6256,7 +6263,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	}
 
 	// Remove 'javascript:' that we should not find into a text with
-	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by the GETPOST).
+	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by a GETPOST(.., powerfullfilter)).
 	if ($cleanalsojavascript) {
 		$temp = preg_replace('/javascript\s*:/i', '', $temp);
 	}

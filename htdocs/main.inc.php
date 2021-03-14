@@ -68,7 +68,7 @@ function testSqlAndScriptInject($val, $type)
 		$oldval = $val;
 		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
 	} while ($oldval != $val);
-	//print "after decoding $val\n";
+	//print "after  decoding $val\n";
 
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available

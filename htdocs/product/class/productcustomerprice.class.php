@@ -455,7 +455,7 @@ class Productcustomerprice extends CommonObject
 				$line->socname = $obj->socname;
 				$line->prodref = $obj->prodref;
 
-				$this->lines [] = $line;
+				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
 
