@@ -1013,7 +1013,7 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	$stringtoclean = preg_replace('/[\x00-\x1F\x7F]/u', '', $stringtoclean); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
-	$val = preg_replace('/<!--[^>]*-->/', '', $val);
+	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
 
 	$stringtoclean = str_replace('\\', '/', $stringtoclean);
 	$stringtoclean = str_replace(array(':', '@'), '', $stringtoclean);
