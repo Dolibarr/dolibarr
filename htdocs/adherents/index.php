@@ -83,6 +83,7 @@ $Adherents = array();
 $AdherentsAValider = array();
 $MemberUpToDate = array();
 $AdherentsResilies = array();
+$MembersExcluded = array();
 
 $AdherentType = array();
 
@@ -111,7 +112,7 @@ if ($result) {
 		$AdherentType[$objp->rowid] = $adhtype;
 
 		if ($objp->statut == -1) {
-			$MemberToValidate[$objp->rowid] = $objp->somme;
+			$MembersToValidate[$objp->rowid] = $objp->somme;
 		}
 		if ($objp->statut == 1) {
 			$MembersValidated[$objp->rowid] = $objp->somme;
@@ -120,7 +121,7 @@ if ($result) {
 			$MembersResiliated[$objp->rowid] = $objp->somme;
 		}
 		if ($objp->statut == -2) {
-			$MembersExcludeded[$objp->rowid] = $objp->somme;
+			$MembersExcluded[$objp->rowid] = $objp->somme;
 		}
 
 		$i++;
