@@ -322,6 +322,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST['param8c']='< with space after is ok';
 		$_POST['param8d']='<abc123 is html to clean';
 		$_POST['param8e']='<123abc is not html to clean';
+		$_POST['param8f']='abc<<svg <><<animate onbegin=alert(document.domain) a';
 		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 		$_POST["param11"]=' Name <email@email.com> ';
@@ -410,6 +411,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param8e", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_POST['param8e'], $result, 'Test a string with non closing html tag with alphanohtml');
+
+		$result=GETPOST("param8f", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abcsvg animate onbegin=alert(document.domain) a', $result, 'Test a string with html tag open with several <');
 
 		$result=GETPOST("param9", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
