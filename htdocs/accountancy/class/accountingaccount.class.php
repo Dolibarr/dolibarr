@@ -553,7 +553,7 @@ class AccountingAccount extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_account as a';
-		$sql .= ' WHERE a.rowid = '.$id;
+		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info sql='.$sql);
 		$result = $this->db->query($sql);

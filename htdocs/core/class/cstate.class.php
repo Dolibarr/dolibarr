@@ -163,7 +163,7 @@ class Cstate // extends CommonObject
 		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_departements as t";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} elseif ($code) {
 			$sql .= " WHERE t.code_departement = '".$this->db->escape($code)."'";
 		}

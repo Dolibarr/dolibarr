@@ -126,7 +126,7 @@ class BankCateg // extends CommonObject
 		$sql .= " t.rowid,";
 		$sql .= " t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

@@ -228,7 +228,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.tms";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

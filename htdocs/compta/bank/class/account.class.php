@@ -2271,7 +2271,7 @@ class AccountLine extends CommonObject
 		$sql = 'SELECT b.rowid, b.datec, b.tms as datem,';
 		$sql .= ' b.fk_user_author, b.fk_user_rappro';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'bank as b';
-		$sql .= ' WHERE b.rowid = '.$id;
+		$sql .= ' WHERE b.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

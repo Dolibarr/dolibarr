@@ -286,7 +286,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE t.ref = '".$ref."'";
 		} else {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 
 		dol_syslog(get_class($this)."::fetch");

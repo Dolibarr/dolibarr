@@ -194,7 +194,7 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " t.import_key";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (!empty($id)) {
-			$sql .= ' WHERE t.rowid = '.$id;
+			$sql .= ' WHERE t.rowid = '.((int) $id);
 		} else {
 			$sql .= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
 		}

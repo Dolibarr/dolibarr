@@ -149,7 +149,7 @@ class ChargeSociales extends CommonObject
 		if ($ref) {
 			$sql .= " AND cs.rowid = ".$ref;
 		} else {
-			$sql .= " AND cs.rowid = ".$id;
+			$sql .= " AND cs.rowid = ".((int) $id);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -672,7 +672,7 @@ class ChargeSociales extends CommonObject
 		$sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
 		$sql .= " e.fk_user_author, e.fk_user_modif, e.fk_user_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);

@@ -218,7 +218,7 @@ class Salary extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
-		$sql .= " WHERE s.rowid = ".$id;
+		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -585,7 +585,7 @@ class Salary extends CommonObject
 	{
 		$sql = 'SELECT ps.rowid, ps.datec, ps.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'salary as ps';
-		$sql .= ' WHERE ps.rowid = '.$id;
+		$sql .= ' WHERE ps.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

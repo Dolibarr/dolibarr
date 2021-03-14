@@ -2644,7 +2644,7 @@ class Adherent extends CommonObject
 		$sql .= ' a.tms as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
-		$sql .= ' WHERE a.rowid = '.$id;
+		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);

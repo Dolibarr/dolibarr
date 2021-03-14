@@ -200,7 +200,7 @@ class MultiCurrency extends CommonObject
 		if (!empty($code)) {
 			$sql .= ' WHERE c.code = \''.$this->db->escape($code).'\' AND c.entity = '.$conf->entity;
 		} else {
-			$sql .= ' WHERE c.rowid = '.$id;
+			$sql .= ' WHERE c.rowid = '.((int) $id);
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -833,7 +833,7 @@ class CurrencyRate extends CommonObjectLine
 
 		$sql = 'SELECT cr.rowid, cr.rate, cr.date_sync, cr.fk_multicurrency, cr.entity';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS cr';
-		$sql .= ' WHERE cr.rowid = '.$id;
+		$sql .= ' WHERE cr.rowid = '.((int) $id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

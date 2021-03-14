@@ -548,7 +548,7 @@ class ExpenseReport extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " WHERE d.rowid = ".$id;
+			$sql .= " WHERE d.rowid = ".((int) $id);
 		}
 		//$sql.= $restrict;
 
@@ -751,7 +751,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.fk_user_valid,";
 		$sql .= " f.fk_user_approve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -993,7 +993,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " total_ht = ".$total_ht;
 			$sql .= " , total_ttc = ".$total_ttc;
 			$sql .= " , total_tva = ".$total_tva;
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 			$result = $this->db->query($sql);
 			if ($result) :
 				$this->db->free($result);

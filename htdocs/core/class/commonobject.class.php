@@ -1847,7 +1847,7 @@ abstract class CommonObject
 		$result = false;
 		if (!empty($id) && !empty($field) && !empty($table)) {
 			$sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -4173,7 +4173,7 @@ abstract class CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity IN (".getEntity($this->element).")";
 		if (!empty($id)) {
-			$sql .= " AND rowid = ".$id;
+			$sql .= " AND rowid = ".((int) $id);
 		}
 		if (!empty($ref)) {
 			$sql .= " AND ref = '".$this->db->escape($ref)."'";
@@ -8480,7 +8480,7 @@ abstract class CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 
 		if (!empty($id)) {
-			$sql .= ' WHERE t.rowid = '.$id;
+			$sql .= ' WHERE t.rowid = '.((int) $id);
 		} elseif (!empty($ref)) {
 			$sql .= " WHERE t.ref = ".$this->quote($ref, $this->fields['ref']);
 		} else {

@@ -277,7 +277,7 @@ class Productlot extends CommonObject
 		if ($product_id > 0 && $batch != '') {
 			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".$product_id;
 		} else {
-			$sql .= ' WHERE t.rowid = '.$id;
+			$sql .= ' WHERE t.rowid = '.((int) $id);
 		}
 
 		$resql = $this->db->query($sql);

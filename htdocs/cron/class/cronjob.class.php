@@ -435,7 +435,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.test";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 		if ($id > 0) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
 			$sql .= " AND t.objectname = '".$this->db->escape($objectname)."'";
@@ -1027,7 +1027,7 @@ class Cronjob extends CommonObject
 		$sql = "SELECT";
 		$sql .= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

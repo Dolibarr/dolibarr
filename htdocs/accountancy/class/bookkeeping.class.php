@@ -729,7 +729,7 @@ class BookKeeping extends CommonObject
 		if (null !== $ref) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		}
 
 		$resql = $this->db->query($sql);

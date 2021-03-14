@@ -181,7 +181,7 @@ class CUnits // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
 		$sql_where = array();
 		if ($id) {
-			$sql_where[] = " t.rowid = ".$id;
+			$sql_where[] = " t.rowid = ".((int) $id);
 		}
 		if ($unit_type) {
 			$sql_where[] = " t.unit_type = '".$this->db->escape($unit_type)."'";

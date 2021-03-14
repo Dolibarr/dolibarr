@@ -2873,7 +2873,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.fk_unit";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " WHERE t.rowid = '".$this->db->escape($ref)."'";

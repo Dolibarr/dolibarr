@@ -896,7 +896,7 @@ class Fichinter extends CommonObject
 		$sql .= " f.fk_user_modif as fk_user_modification,";
 		$sql .= " f.fk_user_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

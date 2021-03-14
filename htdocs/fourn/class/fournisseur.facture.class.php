@@ -2140,7 +2140,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = 'SELECT c.rowid, datec, tms as datem, ';
 		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

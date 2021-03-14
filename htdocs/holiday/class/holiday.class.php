@@ -380,7 +380,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		if ($id > 0) {
-			$sql .= " WHERE cp.rowid = ".$id;
+			$sql .= " WHERE cp.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE cp.ref = '".$this->db->escape($ref)."'";
 		}
@@ -2116,7 +2116,7 @@ class Holiday extends CommonObject
 		$sql .= " f.fk_validator as fk_user_approve,";
 		$sql .= " f.fk_user_refuse as fk_user_refuse";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);

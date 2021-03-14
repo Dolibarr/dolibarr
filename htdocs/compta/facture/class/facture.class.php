@@ -3955,7 +3955,7 @@ class Facture extends CommonInvoice
 		$sql .= ' date_closing as dateclosing,';
 		$sql .= ' fk_user_author, fk_user_valid, fk_user_closing';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

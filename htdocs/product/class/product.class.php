@@ -1065,7 +1065,7 @@ class Product extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
 
 			// stock field is not here because it is a denormalized value from product_stock.
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 
@@ -2000,7 +2000,7 @@ class Product extends CommonObject
 			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " tva_tx='".price2num($newvat)."',";
 			$sql .= " recuperableonly='".$this->db->escape($newnpr)."'";
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -5706,7 +5706,7 @@ class Product extends CommonObject
 		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		$sql .= " WHERE p.rowid = ".$id;
+		$sql .= " WHERE p.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

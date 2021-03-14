@@ -161,7 +161,7 @@ class BlockedLogAuthority
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
 		if ($id) {
-			$sql .= " WHERE b.rowid = ".$id;
+			$sql .= " WHERE b.rowid = ".((int) $id);
 		} elseif ($signature) {
 			$sql .= " WHERE b.signature = '".$this->db->escape($signature)."'";
 		}

@@ -181,7 +181,7 @@ class Propalmergepdfproduct extends CommonObject
 
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
