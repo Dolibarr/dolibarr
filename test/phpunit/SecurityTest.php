@@ -423,6 +423,27 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
+		// Special test for GETPOST of backtopage parameter
+		$_POST["backtopage"]='//www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='https:https://www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='::HTTPS://www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='/mydir/mypage.php?aa=a%10a';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('/mydir/mypage.php?aa=a%10a', $result, 'Test for backtopage param');
+
 		return $result;
 	}
 
