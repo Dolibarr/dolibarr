@@ -611,7 +611,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
-	if ($paramname == 'backtopage') {
+	if ($paramname == 'backtopage' || $paramname == 'backtolist') {
 		$out = str_replace('\\', '/', $out);
 		$out = str_replace(array(':', '@'), '', $out);
 		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);
@@ -1001,6 +1001,19 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 }
 
 /**
+ *  Clean a string to use it as an URL
+ *
+ *  @param      string		$stringtoclean		String to clean
+ *  @return     string     		 				Escaped string.
+ */
+function dol_sanitizeUrl($stringtoclean)
+{
+	$stringtoclean = str_replace('javascript', '', $stringtoclean);
+
+	return $stringtoclean;
+}
+
+/**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
  *	@param	string	$str			String to clean
@@ -1097,7 +1110,6 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 		return preg_replace('/[\x00-\x08\x11-\x12\x14-\x1F\x7F]/u', '', $str); // /u operator should make UTF8 valid characters being ignored so are not included into the replace
 	}
 }
-
 
 /**
  *  Returns text escaped for inclusion into javascript code

@@ -192,7 +192,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
-		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0a');
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should be ok');
 
 		$test = 'This is a < inside string with < and > also and tag like <a> before the >';
 		$result=testSqlAndScriptInject($test, 0);
@@ -203,7 +203,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject 1b');
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
+
+		$test = 'javascript&colon&#x3B;alert(1)';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 1b');
 
 		$test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
 		$result=testSqlAndScriptInject($test, 0);
@@ -322,6 +326,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 		$_POST["param11"]=' Name <email@email.com> ';
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
+		$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
 
 		$result=GETPOST('id', 'int');              // Must return nothing
 		print __METHOD__." result=".$result."\n";
@@ -426,7 +431,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
 
-		// Special test for GETPOST of backtopage parameter
+		// Special test for GETPOST of backtopage or backtolist parameter
 
 		$_POST["backtopage"]='//www.google.com';
 		$result=GETPOST("backtopage");
@@ -438,8 +443,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
 
-		$_POST["backtopage"]='::HTTPS://www.google.com';
-		$result=GETPOST("backtopage");
+		$_POST["backtolist"]='::HTTPS://www.google.com';
+		$result=GETPOST("backtolist");
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
 
