@@ -13,6 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020       Charlene Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -791,7 +792,7 @@ if (!defined('NOLOGIN')) {
 	} else {
 		// We are already into an authenticated session
 		$login = $_SESSION["dol_login"];
-		$entity = $_SESSION["dol_entity"];
+		$entity = isset($_SESSION["dol_entity"]) ? $_SESSION["dol_entity"] : 0;
 		dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
 		$resultFetchUser = $user->fetch('', $login, '', 1, ($entity > 0 ? $entity : -1));
