@@ -1023,16 +1023,20 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 
 	$stringtoclean = str_replace('\\', '/', $stringtoclean);
 	if ($type == 1) {
+		// removing : should disable links to external url like http:aaa)
+		// removing ';' should disable "named" html entities encode into an url (we should not have this into an url)
 		$stringtoclean = str_replace(array(':', ';', '@'), '', $stringtoclean);
 	}
 
 	do {
 		$oldstringtoclean = $stringtoclean;
-
+		// removing '&colon' should disable links to external url like http:aaa)
+		// removing '&#' should disable "numeric" html entities encode into an url (we should not have this into an url)
 		$stringtoclean = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $stringtoclean);
 	} while ($oldstringtoclean != $stringtoclean);
 
 	if ($type == 1) {
+		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
 
