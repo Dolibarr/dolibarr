@@ -1393,7 +1393,7 @@ if (empty($reshook)) {
  *	View
  */
 
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
