@@ -2055,9 +2055,9 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 				if (method_exists($object, 'get_prev_progress')) {
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
-				$result = ($object->lines[$i]->situation_percent - $prev_progress).'%';
+				$result = round($object->lines[$i]->situation_percent - $prev_progress).'%';
 			} else {
-				$result = $object->lines[$i]->situation_percent.'%';
+				$result = round($object->lines[$i]->situation_percent).'%';
 			}
 		}
 	}
