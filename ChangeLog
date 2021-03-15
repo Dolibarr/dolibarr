@@ -21,6 +21,8 @@ FIX: #16487
 FIX: #16503
 FIX: #16530
 FIX: #16533
+FIX: #16629
+FIX: #16671 Can not generate zip file of documents in backup tool
 FIX: Add "Now" link on social charges creation card
 FIX: avoid undefined url and missing token
 FIX: Bad project filter in ticket list
