@@ -7897,7 +7897,7 @@ class Form
 
 		// Preparing gender's display if there is one
 		$addgendertxt = '';
-		if ($object->gender) {
+		if (!empty($object->gender)) {
 			$addgendertxt = ' ';
 			switch ($object->gender) {
 				case 'man':
