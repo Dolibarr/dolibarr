@@ -104,13 +104,13 @@ $arrayfields = array(
 
 // Create predefined intervention
 if ($action == 'add') {
-	if (!GETPOSTISSET('titre')) {
+	if (!GETPOST('titre')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
 
-	if (!GETPOSTISSET('socid')) {
+	if (!GETPOST('socid')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Customer")), null, 'errors');
 		$action = "create";
 		$error++;
