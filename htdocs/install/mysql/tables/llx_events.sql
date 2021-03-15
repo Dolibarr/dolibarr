@@ -26,8 +26,8 @@ create table llx_events
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,                   -- last modification date
   type           varchar(32)  NOT NULL,       -- action type
-  entity         integer DEFAULT 1 NOT NULL,	-- multi company id
-  prefix_session varchar(255) NULL,				  -- prefix of session, obtained with dol_getprefix
+  entity         integer DEFAULT 1 NOT NULL,  -- multi company id
+  prefix_session varchar(255) NULL,			  -- prefix of session, obtained with dol_getprefix
   dateevent      datetime,                    -- date event
   fk_user        integer,                     -- id user
   description    varchar(250) NOT NULL,       -- full description of action
@@ -36,10 +36,3 @@ create table llx_events
   fk_object      integer                      -- id of related object
 ) ENGINE=innodb;
 
--- 
--- List of codes for the field entity
---
--- 1 : first company events
--- 2 : second company events
--- 3 : etc...
---
