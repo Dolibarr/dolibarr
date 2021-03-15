@@ -442,7 +442,7 @@ class FactureFournisseur extends CommonInvoice
 
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1007,7 +1007,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2140,7 +2140,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = 'SELECT c.rowid, datec, tms as datem, ';
 		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3166,7 +3166,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	{
 		global $user, $conf;
 
-		dol_syslog(get_class($this)."::deleteline rowid=".$this->id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteline rowid=".((int) $this->id), LOG_DEBUG);
 
 		$error = 0;
 

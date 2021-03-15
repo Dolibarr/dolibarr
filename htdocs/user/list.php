@@ -925,16 +925,16 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.fk_soc']['checked'])) {
-		print "<td>";
+		print '<td class="tdoverflowmax200">';
 		if ($obj->fk_soc) {
 			$companystatic->id = $obj->fk_soc;
 			$companystatic->name = $obj->name;
 			$companystatic->canvas = $obj->canvas;
 			print $companystatic->getNomUrl(1);
 		} elseif ($obj->ldap_sid) {
-			print $langs->trans("DomainUser");
+			print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
 		} else {
-			print $langs->trans("InternalUser");
+			print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
 		}
 		print '</td>';
 		if (!$i) {

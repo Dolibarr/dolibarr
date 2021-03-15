@@ -1812,6 +1812,7 @@ class Societe extends CommonObject
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 			$result = -3;
 		}
 
@@ -1937,7 +1938,7 @@ class Societe extends CommonObject
 			// Remove third party
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
-				$sql .= " WHERE rowid = ".$id;
+				$sql .= " WHERE rowid = ".((int) $id);
 				if (!$this->db->query($sql)) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
@@ -3632,7 +3633,7 @@ class Societe extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.datec as date_creation, tms as date_modification,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.rowid = ".$id;
+		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

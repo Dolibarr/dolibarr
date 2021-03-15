@@ -1038,7 +1038,7 @@ class ActionComm extends CommonObject
 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
 	 *    @return   int     				<0 if KO, >0 if OK
 	 */
-	public function update($user, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $langs, $conf, $hookmanager;
 

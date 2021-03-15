@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -116,16 +116,16 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = (empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE);
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -242,7 +242,7 @@ if ($mysoc->tva_assuj) {
 	$vatsup .= ' ('.$langs->trans("ToGetBack").')';
 }
 
-$optioncss = GETPOST('optioncss');
+$optioncss = GETPOST('optioncss', 'alpha');
 if ($optioncss != "print") {
 	report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 }

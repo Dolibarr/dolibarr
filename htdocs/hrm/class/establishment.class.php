@@ -293,7 +293,7 @@ class Establishment extends CommonObject
 		$sql .= ' c.code as country_code, c.label as country';
 		$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -330,7 +330,7 @@ class Establishment extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".$id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -397,7 +397,7 @@ class Establishment extends CommonObject
 	{
 		$sql = 'SELECT e.rowid, e.ref, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
-		$sql .= ' WHERE e.rowid = '.$id;
+		$sql .= ' WHERE e.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);

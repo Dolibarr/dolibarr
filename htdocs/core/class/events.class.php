@@ -206,7 +206,7 @@ class Events // extends CommonObject
 		$sql .= " type='".$this->db->escape($this->type)."',";
 		$sql .= " dateevent='".$this->db->idate($this->dateevent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -238,7 +238,7 @@ class Events // extends CommonObject
 		$sql .= " t.user_agent,";
 		$sql .= " t.prefix_session";
 		$sql .= " FROM ".MAIN_DB_PREFIX."events as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -275,7 +275,7 @@ class Events // extends CommonObject
 	public function delete($user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

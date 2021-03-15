@@ -694,7 +694,7 @@ class Facture extends CommonInvoice
 
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1978,7 +1978,7 @@ class Facture extends CommonInvoice
 		$sql .= " retained_warranty=".(empty($this->retained_warranty) ? "0" : $this->db->escape($this->retained_warranty)).",";
 		$sql .= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit) != '' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
 		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ?intval($this->retained_warranty_fk_cond_reglement) : "null");
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2375,7 +2375,7 @@ class Facture extends CommonInvoice
 
 			$now = dol_now();
 
-			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_paid rowid=".((int) $this->id), LOG_DEBUG);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql .= ' fk_statut='.self::STATUS_CLOSED;
@@ -2513,7 +2513,7 @@ class Facture extends CommonInvoice
 	 */
 	public function setCanceled($user, $close_code = '', $close_note = '')
 	{
-		dol_syslog(get_class($this)."::setCanceled rowid=".$this->id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::setCanceled rowid=".((int) $this->id), LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -3955,7 +3955,7 @@ class Facture extends CommonInvoice
 		$sql .= ' date_closing as dateclosing,';
 		$sql .= ' fk_user_author, fk_user_valid, fk_user_closing';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -4825,7 +4825,7 @@ class Facture extends CommonInvoice
 			$fieldname = 'retained_warranty';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.floatval($value);
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->retained_warranty = floatval($value);
@@ -4862,7 +4862,7 @@ class Facture extends CommonInvoice
 			$fieldname = 'retained_warranty_date_limit';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(strval($timestamp) != '' ? '\''.$this->db->idate($timestamp).'\'' : 'null');
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->retained_warranty_date_limit = $timestamp;

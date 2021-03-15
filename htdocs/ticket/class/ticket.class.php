@@ -914,7 +914,7 @@ class Ticket extends CommonObject
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " date_read=".(dol_strlen($this->date_read) != 0 ? "'".$this->db->idate($this->date_read)."'" : 'null').",";
 		$sql .= " date_close=".(dol_strlen($this->date_close) != 0 ? "'".$this->db->idate($this->date_close)."'" : 'null')."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1008,7 +1008,7 @@ class Ticket extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ticket";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql = $this->db->query($sql);
@@ -2909,6 +2909,7 @@ class Ticket extends CommonObject
 		global $conf, $user, $langs;
 
 		$now = dol_now();
+		$delay_warning = 0;
 
 		$this->nbtodo = $this->nbtodolate = 0;
 		$clause = " WHERE";
@@ -2951,8 +2952,8 @@ class Ticket extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 				if ($mode == 'opened') {
-					$datelimit = $this->db->jdate($obj->datefin);
-					if ($datelimit < ($now - $delay_warning)) {
+					$datelimit = $this->db->jdate($obj->datec) + $delay_warning;
+					if ($datelimit < $now) {
 						//$response->nbtodolate++;
 					}
 				}
