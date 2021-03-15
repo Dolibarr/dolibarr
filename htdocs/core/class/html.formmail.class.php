@@ -1617,7 +1617,14 @@ class ModelMail
 	 */
 	public $label;
 
+	/**
+	 * @var string Model mail topic
+	 */
 	public $topic;
+
+	/**
+	 * @var string Model mail content
+	 */
 	public $content;
 	public $content_lines;
 	public $lang;
