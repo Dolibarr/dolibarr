@@ -13,7 +13,7 @@
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018       David Beniamine     <David.Beniamine@Tetras-Libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1247,9 +1247,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 } else {
 	// View and edit mode
 	if ($id > 0) {
-		$object->fetch($id, '', '', 1);
+		$res = $object->fetch($id, '', '', 1);
 		if ($res < 0) {
-			dol_print_error($db, $object->error); exit;
+			dol_print_error($db, $object->error);
+			exit;
 		}
 		$res = $object->fetch_optionals();
 

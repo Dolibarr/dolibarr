@@ -48,6 +48,11 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
+ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN tag varchar(64) NULL;
 ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
 

@@ -798,7 +798,7 @@ class Export
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 

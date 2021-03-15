@@ -305,7 +305,7 @@ class Fichinter extends CommonObject
 
 			if ($this->id) {
 				$this->ref = '(PROV'.$this->id.')';
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -896,7 +896,7 @@ class Fichinter extends CommonObject
 		$sql .= " f.fk_user_modif as fk_user_modification,";
 		$sql .= " f.fk_user_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

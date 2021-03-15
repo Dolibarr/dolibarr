@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,13 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
 		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[] = array('src'=>$conf->global->$source, 'name'=>$conf->global->$name, 'offsettz'=>$conf->global->$offsettz, 'color'=>$conf->global->$color, 'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0));
+			$listofextcals[] = array(
+				'src'=>$conf->global->$source,
+				'name'=>$conf->global->$name,
+				'offsettz' => (!empty($conf->global->$offsettz) ? $conf->global->$offsettz : 0),
+				'color'=>$conf->global->$color,
+				'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
+			);
 		}
 	}
 }
@@ -275,7 +281,13 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[] = array('src'=>$user->conf->$source, 'name'=>$user->conf->$name, 'offsettz'=>$user->conf->$offsettz, 'color'=>$user->conf->$color, 'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0));
+			$listofextcals[] = array(
+				'src'=>$user->conf->$source,
+				'name'=>$user->conf->$name,
+				'offsettz' => (!empty($user->conf->$offsettz) ? $user->conf->$offsettz : 0),
+				'color'=>$user->conf->$color,
+				'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
+			);
 		}
 	}
 }

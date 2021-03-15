@@ -522,7 +522,7 @@ class Website extends CommonObject
 		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -597,7 +597,7 @@ class Website extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

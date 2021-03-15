@@ -209,7 +209,7 @@ class Tva extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_user_creat=".$this->fk_user_creat.",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -305,7 +305,7 @@ class Tva extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -360,7 +360,7 @@ class Tva extends CommonObject
 		// End call triggers
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

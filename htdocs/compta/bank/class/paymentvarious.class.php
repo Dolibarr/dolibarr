@@ -214,7 +214,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -274,7 +274,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " b.rappro";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
-		$sql .= " WHERE v.rowid = ".$id;
+		$sql .= " WHERE v.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -334,7 +334,7 @@ class PaymentVarious extends CommonObject
 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_various";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -742,7 +742,7 @@ class PaymentVarious extends CommonObject
 	{
 		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
-		$sql .= ' WHERE v.rowid = '.$id;
+		$sql .= ' WHERE v.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

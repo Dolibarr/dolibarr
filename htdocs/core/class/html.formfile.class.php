@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -966,6 +966,7 @@ class FormFile
 
 			// Loop on each file found
 			$found = 0;
+			$i = 0;
 			foreach ($file_list as $file) {
 				$i++;
 				if ($filter && !preg_match('/'.$filter.'/i', $file["name"])) {
