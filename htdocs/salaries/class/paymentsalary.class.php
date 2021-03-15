@@ -98,6 +98,13 @@ class PaymentSalary extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var array
+	 */
+	public $fields = array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+	);
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler

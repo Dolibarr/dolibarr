@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1183,9 +1183,10 @@ class Holiday extends CommonObject
 	 *
 	 *	@param	int			$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	 *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int         $notooltip					1=Disable tooltip
 	 *	@return	string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $langs;
 
