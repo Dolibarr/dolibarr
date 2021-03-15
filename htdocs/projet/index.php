@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
 $search_project_user = GETPOST('search_project_user', 'int');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
-	$search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
+	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
 }
 if ($search_project_user == $user->id) {
 	$mine = 1;
