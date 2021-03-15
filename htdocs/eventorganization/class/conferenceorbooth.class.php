@@ -107,9 +107,11 @@ class ConferenceOrBooth extends ActionComm
 		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1::eventorganization', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
 		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
+		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
+		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_author' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -185,9 +187,7 @@ class ConferenceOrBooth extends ActionComm
 	public function create(User $user, $notrigger = false)
 	{
 		$this->setPercentageFromStatus();
-		$this->userownerid=$user->id;
-		$this->type_code=$this->fk_action;
-		$this->socid=$this->fk_soc;
+		$this->setActionCommFields($user);
 		return parent::create($user, $notrigger);
 	}
 
@@ -196,7 +196,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 * @return void
 	 */
-	public function setPercentageFromStatus()
+	protected function setPercentageFromStatus()
 	{
 		if ($this->status==self::STATUS_DONE) {
 			$this->percentage=100;
@@ -204,6 +204,32 @@ class ConferenceOrBooth extends ActionComm
 		if ($this->status==self::STATUS_DRAFT) {
 			$this->percentage=0;
 		}
+	}
+
+	/**
+	 * Set action comm fields
+	 *
+	 * @param User $user User
+	 * @return void
+	 */
+	protected function setActionCommFields(User $user)
+	{
+		$this->userownerid=$user->id;
+		$this->type_id=$this->fk_action;
+		$this->socid=$this->fk_soc;
+		$this->datef=$this->datep2;
+	}
+
+	/**
+	 * Get action comm fields
+	 *
+	 * @return void
+	 */
+	protected function getActionCommFields()
+	{
+		$this->fk_action=$this->type_id;
+		$this->fk_soc=$this->socid;
+		$this->datep2=$this->datef;
 	}
 
 	/**
@@ -218,6 +244,7 @@ class ConferenceOrBooth extends ActionComm
 	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
 	{
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
+		$this->getActionCommFields();
 		return $result;
 	}
 
@@ -313,6 +340,7 @@ class ConferenceOrBooth extends ActionComm
 	public function update(User $user, $notrigger = false)
 	{
 		$this->setPercentageFromStatus();
+		$this->setActionCommFields($user);
 		return parent::update($user, $notrigger);
 	}
 

@@ -393,7 +393,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=eventorganizationconforbooth',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'List',
-			'url'=>'htdocs/eventorganization/conferenceorbooth_list.php?mainmenu=project',
+			'url'=>'/eventorganization/conferenceorbooth_list.php?mainmenu=project',
 			'langs'=>'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
