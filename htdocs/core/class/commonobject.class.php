@@ -1619,6 +1619,9 @@ abstract class CommonObject
 		if ($idtofetch) {
 			$thirdparty = new Societe($this->db);
 			$result = $thirdparty->fetch($idtofetch);
+			if ($result<0) {
+				$this->errors=array_merge($this->errors, $thirdparty->errors);
+			}
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
@@ -5704,7 +5707,7 @@ abstract class CommonObject
 					return 0;
 				}
 			} else {
-				dol_print_error($this->db);
+				$this->errors[]=$this->db->lasterror;
 				return -1;
 			}
 		}
@@ -8258,7 +8261,7 @@ abstract class CommonObject
 	 * @param   string   $alias   	String of alias of table for fields. For example 't'.
 	 * @return  string				list of alias fields
 	 */
-	protected function getFieldList($alias = '')
+	public function getFieldList($alias = '')
 	{
 		$keys = array_keys($this->fields);
 		if (!empty($alias)) {

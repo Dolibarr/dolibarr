@@ -36,6 +36,17 @@
 require_once 'filefunc.inc.php';
 
 
+if (!function_exists('is_countable')) {
+	/**
+	 * function is_countable (to remove when php version supported will be >= 7.3)
+	 * @param mixed $c data to check if countable
+	 * @return bool
+	 */
+	function is_countable($c)
+	{
+		return is_array($c) || $c instanceof Countable;
+	}
+}
 
 /*
  * Create $conf object
