@@ -799,7 +799,11 @@ class FormMail extends Form
 
 			// CCC
 			if (!empty($this->withtoccc) || is_array($this->withtoccc)) {
-				$out .= $this->getHtmlForWithCcc();
+				if (!empty($conf->global->MAIL_USE_NEW_INPUT)) {
+					$out .= $this->getHtmlInputForWithCcc();
+				} else {
+					$out .= $this->getHtmlForWithCcc();
+				}
 			}
 
 			// Replyto
@@ -1072,11 +1076,11 @@ class FormMail extends Form
 	}
 
 	/**
-	 * get html For WithCCC
+	 * get html For WithCCC (with combined input of free email)
 	 *
 	 * @return string html
 	 */
-	public function getHtmlForWithCcc()
+	public function getHtmlInputForWithCcc()
 	{
 		global $conf, $langs, $form;
 		$tmparray = array();
@@ -1098,6 +1102,62 @@ class FormMail extends Form
 			}
 			$withtocccselected = GETPOST("receiverccc", 'array'); // Array of selected value
 			$out .= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, 'quatrevingtpercent', 0, '', '', 'email', '', -1, !empty($this->withtofree) ? 1 : 0);
+		}
+
+		$showinfobcc = '';
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && !empty($this->param['models']) && $this->param['models'] == 'propal_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && !empty($this->param['models']) && $this->param['models'] == 'order_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) && !empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) && !empty($this->param['models']) && $this->param['models'] == 'invoice_supplier_send') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO;
+		}
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO) && !empty($this->param['models']) && $this->param['models'] == 'project') {
+			$showinfobcc = $conf->global->MAIN_MAIL_AUTOCOPY_PROJECT_TO;
+		}
+		if ($showinfobcc) {
+			$out .= ' + '.$showinfobcc;
+		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For WithCCC
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForWithCcc()
+	{
+		global $conf, $langs, $form;
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		$out .= '</td><td>';
+		if (!empty($this->withtocccreadonly)) {
+			$out .= (!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : "";
+		} else {
+			$out .= '<input class="minwidth200" id="sendtoccc" name="sendtoccc" value="'.(GETPOSTISSET("sendtoccc") ? GETPOST("sendtoccc", "alpha") : ((!is_array($this->withtoccc) && !is_numeric($this->withtoccc)) ? $this->withtoccc : '')).'" />';
+			if (!empty($this->withtoccc) && is_array($this->withtoccc)) {
+				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtoccc;
+				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtocccselected = GETPOST("receiverccc", 'array'); // Array of selected value
+				$out .= $form->multiselectarray("receiverccc", $tmparray, $withtocccselected, null, null, null, null, "90%");
+			}
 		}
 
 		$showinfobcc = '';
