@@ -69,12 +69,12 @@ class InterfaceStripe extends DolibarrTriggers
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-		$stripe = new Stripe($db);
-
-		if (empty($conf->stripe->enabled)) {
+		if (empty($conf->stripe) || empty($conf->stripe->enabled)) {
 			return 0;
 		}
+
+		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+		$stripe = new Stripe($db);
 
 		$ok = 1;
 

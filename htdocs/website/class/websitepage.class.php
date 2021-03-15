@@ -284,7 +284,7 @@ class WebsitePage extends CommonObject
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
 		if ($id > 0) {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		} else {
 			if ($id < 0) {
 				$sql .= ' AND t.rowid <> '.abs($id);

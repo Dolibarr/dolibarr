@@ -71,7 +71,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->eventorganization->enabled)) {
+		if (empty($conf->eventorganization) || empty($conf->eventorganization->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 

@@ -1981,7 +1981,7 @@ img.hideonsmartphone.pictoactionview {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	width: 44px;
+	width: 50px;
 	text-align:center;
 }
 div.attacharea {

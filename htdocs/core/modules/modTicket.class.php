@@ -198,6 +198,7 @@ class modTicket extends DolibarrModules
 		$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
 			'type' => 'top', // This is a Top menu entry
 			'titre' => 'Ticket',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu' => 'ticket',
 			'leftmenu' => '1', // Use 1 if you also want to add left menu entries using this descriptor.
 			'url' => '/ticket/index.php',

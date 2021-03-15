@@ -36,7 +36,12 @@ if ($conf->categorie->enabled) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects', 'users', 'companies'));
+$langsLoad=array('projects', 'users', 'companies');
+if (!empty($conf->eventorganization->enabled)) {
+	$langsLoad[]='eventorganization';
+}
+
+$langs->loadLangs($langsLoad);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -351,9 +356,19 @@ llxHeader("", $title, $help_url);
 
 
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
-	$object->fetch_thirdparty();
-	$res = $object->fetch_optionals();
+	$result = $object->fetch($id, $ref);
+	if ($result < 0) {
+		setEventMessages(null, $object->errors, 'errors');
+	}
+	$result = $object->fetch_thirdparty();
+	if ($result < 0) {
+		setEventMessages(null, $object->errors, 'errors');
+	}
+	$result = $object->fetch_optionals();
+	if ($result < 0) {
+		setEventMessages(null, $object->errors, 'errors');
+	}
+
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
@@ -468,6 +483,11 @@ if ($id > 0 || !empty($ref)) {
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
 		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 		print '<br>';
+	}
+	if (!empty($conf->eventorganization->enabled)) {
+		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 	}
 	print '</td></tr>';
 

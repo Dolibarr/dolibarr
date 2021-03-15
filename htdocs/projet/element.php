@@ -134,6 +134,9 @@ if (!empty($conf->salaries->enabled)) {
 if (!empty($conf->mrp->enabled)) {
 	$langs->load("mrp");
 }
+if (!empty($conf->eventorganization->enabled)) {
+	$langs->load("eventorganization");
+}
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -253,6 +256,11 @@ if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 	$htmltext = $langs->trans("ProjectBillTimeDescription");
 	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 	print '<br>';
+}
+if (!empty($conf->eventorganization->enabled)) {
+	print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+	print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 }
 print '</td></tr>';
 

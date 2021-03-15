@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +151,7 @@ if (!empty($conf->holiday->enabled)) {
 		print '<td colspan="3">';
 
 		$out = '';
+		$nb_holiday = 0;
 		$typeleaves = $holiday->getTypes(1, 1);
 		foreach ($typeleaves as $key => $val) {
 			$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);

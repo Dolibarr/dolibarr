@@ -131,7 +131,7 @@ class Loan extends CommonObject
 		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
 		$sql .= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
-		$sql .= " WHERE l.rowid = ".$id;
+		$sql .= " WHERE l.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -317,7 +317,7 @@ class Loan extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."loan where rowid=".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -364,7 +364,7 @@ class Loan extends CommonObject
 		$sql .= " fk_projet=".(empty($this->fk_project) ? 'NULL' : $this->fk_project).",";
 		$sql .= " fk_user_modif = ".$user->id.",";
 		$sql .= " insurance_amount = '".price2num($this->db->escape($this->insurance_amount))."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -681,7 +681,7 @@ class Loan extends CommonObject
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
 		$sql .= ' l.tms';
-		$sql .= ' WHERE l.rowid = '.$id;
+		$sql .= ' WHERE l.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

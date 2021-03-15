@@ -2131,9 +2131,9 @@ class Adherent extends CommonObject
 		}
 		$label .= '</div>';
 
-		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
+		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
 		if ($option == 'subscription') {
-			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id;
+			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
 		}
 
 		if ($option != 'nolink') {
@@ -2262,7 +2262,7 @@ class Adherent extends CommonObject
 				$statusType = 'status1';
 				$labelStatus = $langs->trans("MemberStatusActive");
 				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-			} elseif ($date_end_subscription < time()) {
+			} elseif ($date_end_subscription < dol_now()) {
 				$statusType = 'status3';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
@@ -2694,7 +2694,7 @@ class Adherent extends CommonObject
 		$sql .= ' a.tms as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
-		$sql .= ' WHERE a.rowid = '.$id;
+		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
