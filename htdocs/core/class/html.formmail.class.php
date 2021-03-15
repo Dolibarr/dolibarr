@@ -828,7 +828,7 @@ class FormMail extends Form
 
 				$out .= '<td>';
 
-				if ($this->withmaindocfile)	{
+				if ($this->withmaindocfile) {
 					// withmaindocfile is set to 1 or -1 to show the checkbox (-1 = checked or 1 = not checked)
 					if (GETPOSTISSET('sendmail')) {
 						$this->withmaindocfile = (GETPOST('addmaindocfile', 'alpha') ? -1 : 1);
