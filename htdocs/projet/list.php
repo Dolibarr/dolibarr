@@ -1198,8 +1198,8 @@ while ($i < min($num, $limit)) {
 		// Event Organization
 		if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
 			print '<td class="right">';
-			if ($obj->usage_event_organization) {
-				print yn($obj->usage_event_organization);
+			if ($obj->usage_organize_event) {
+				print yn($obj->usage_organize_event);
 			}
 			print '</td>';
 			if (!$i) {

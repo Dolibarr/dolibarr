@@ -16,10 +16,15 @@
 #
 # Generic
 #
-
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
 EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+
+#
+# Menu
+#
+EventOrganizationMenuLeft = Organized events
+EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 
 #
 # Admin page
@@ -70,3 +75,13 @@ PriceOfRegistrationHelp=Price of registration
 PriceOfBooth=Price of subscription
 PriceOfBoothHelp=Price of subscription
 EventOrganizationICSLink=Link ICS for events
+
+#
+# Status
+#
+EvntOrgDraft = Draft
+EvntOrgSuggested = Suggested
+EvntOrgConfirmed = Confirmed
+EvntOrgNotQualified = Not Qualified
+EvntOrgDone = Done
+EvntOrgCancelled = Cancelled

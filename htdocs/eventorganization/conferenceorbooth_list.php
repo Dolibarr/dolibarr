@@ -205,11 +205,11 @@ $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBoot
 
 if ($projectid > 0) {
 	$project = new Project($db);
-	$result=$project->fetch($projectid);
+	$result = $project->fetch($projectid);
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
 	}
-	$result=$project->fetch_thirdparty();
+	$result = $project->fetch_thirdparty();
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
 	}
@@ -305,7 +305,7 @@ if ($projectid > 0) {
 		print '<br>';
 	}
 	if (!empty($conf->eventorganization->enabled)) {
-		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+		print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
 		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 	}
@@ -555,7 +555,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?action=create'.(!empty($projectid)?'&fk_project='.$projectid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
