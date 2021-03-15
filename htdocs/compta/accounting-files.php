@@ -694,7 +694,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				} elseif ($data['item'] == 'SalaryPayment') {
 					$salary_payment->id = $data['id'];
 					$salary_payment->ref = $data['ref'];
-					print $salary_payment->getNomUrl(1, '', 0, '', 0);
+					print $salary_payment->getNomUrl(1);
 				} elseif ($data['item'] == 'Donation') {
 					$don->id = $data['id'];
 					$don->ref = $data['ref'];

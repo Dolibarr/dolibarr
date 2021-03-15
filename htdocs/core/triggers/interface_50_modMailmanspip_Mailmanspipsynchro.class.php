@@ -59,7 +59,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mailmanspip->enabled)) {
+		if (empty($conf->mailmanspip) || empty($conf->mailmanspip->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 

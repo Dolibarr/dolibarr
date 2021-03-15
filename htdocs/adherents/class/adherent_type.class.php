@@ -623,7 +623,7 @@ class AdherentType extends CommonObject
 			$label .= '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
 		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

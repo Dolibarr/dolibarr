@@ -177,8 +177,8 @@ class Workstation extends CommonObject
 	{
 		global $conf, $langs;
 
-		dol_include_once('/workstation/class/workstationusergroup.class.php');
-		dol_include_once('/workstation/class/workstationresource.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationresource.class.php';
 
 		$this->db = $db;
 
@@ -872,7 +872,7 @@ class Workstation extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

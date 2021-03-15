@@ -276,7 +276,7 @@ class Task extends CommonObject
 		if (!empty($ref)) {
 			$sql .= "t.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= "t.rowid = ".$id;
+			$sql .= "t.rowid = ".((int) $id);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -381,7 +381,7 @@ class Task extends CommonObject
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -535,7 +535,7 @@ class Task extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1369,7 +1369,7 @@ class Task extends CommonObject
 		$sql .= " t.thm,";
 		$sql .= " t.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetchTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
