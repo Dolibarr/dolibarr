@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL   	<gauthier.verdol@atm-consulting.fr>
  *
@@ -869,23 +869,23 @@ abstract class CommonObject
 					$outdone++;
 				}
 			} else {	// Old code to remove
-				if ($this->skype) {
+				if (!empty($this->skype)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				}
 				$outdone++;
-				if ($this->jabberid) {
+				if (!empty($this->jabberid)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
 				}
 				$outdone++;
-				if ($this->twitter) {
+				if (!empty($this->twitter)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
 				}
 				$outdone++;
-				if ($this->facebook) {
+				if (!empty($this->facebook)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
 				}
 				$outdone++;
-				if ($this->linkedin) {
+				if (!empty($this->linkedin)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
 				}
 				$outdone++;
