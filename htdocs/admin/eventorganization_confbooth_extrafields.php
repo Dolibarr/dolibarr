@@ -60,7 +60,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  */
 
 
-llxHeader('', $langs->trans("EventOrganizationSetup"), $help_url);
+llxHeader('', $langs->trans("EventOrganizationSetup"));
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
