@@ -96,8 +96,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("MyObject").' - '.$langs->trans("Files");
-$help_url = '';
-//$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$help_url = 'EN:Hooks_system|FR:Système_de_Hooks';
+
 llxHeader('', $title, $help_url);
 
 if ($object->id) {
