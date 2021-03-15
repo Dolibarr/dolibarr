@@ -177,8 +177,8 @@ class Workstation extends CommonObject
 	{
 		global $conf, $langs;
 
-		dol_include_once('/workstation/class/workstationusergroup.class.php');
-		dol_include_once('/workstation/class/workstationresource.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationresource.class.php';
 
 		$this->db = $db;
 
