@@ -755,27 +755,11 @@ class FormMail extends Form
 
 			// CC
 			if (!empty($this->withtocc) || is_array($this->withtocc)) {
-				$out .= '<tr><td>';
-				$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
-				$out .= '</td><td>';
-				if ($this->withtoccreadonly) {
-					$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+				if (!empty($conf->global->MAIL_USE_NEW_INPUT)) {
+					$out .= $this->getHtmlInputForCc();
 				} else {
-					$keyval = (GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : ''));
-					$tmparray[$keyval] = dol_htmlentities($keyval, null, 'UTF-8', true);
-					//var_dump($tmparray, $this->withtocc);
-					if ($this->withtocc == $keyval && !is_array($this->withtocc)) {
-						$this->withtocc = $tmparray;
-					}
-					// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-					$tmparray = $this->withtocc;
-					foreach ($tmparray as $key => $val) {
-						$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-					}
-					$withtoccselected = GETPOST("receivercc", 'array:none'); // Array of selected value
-					$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'quatrevingtpercent', 0, '', '', 'email', '', -1, !empty($this->withtofree) ? 1 : 0);
+					$out .= $this->getHtmlForCc();
 				}
-				$out .= "</td></tr>\n";
 			}
 
 			// To User cc
@@ -1073,6 +1057,67 @@ class FormMail extends Form
 
 			return $out;
 		}
+	}
+	/**
+	 * get html For WithCCC (with combined input of free email)
+	 *
+	 * @return string html
+	 */
+	public function getHtmlInputForCc()
+	{
+		global $langs, $form;
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseFreeEmailsForRecipients"));
+		$out .= '</td><td>';
+		if ($this->withtoccreadonly) {
+			$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+		} else {
+			$keyval = (GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : ''));
+			$tmparray[$keyval] = dol_htmlentities($keyval, null, 'UTF-8', true);
+			//var_dump($tmparray, $this->withtocc);
+			if ($this->withtocc == $keyval && !is_array($this->withtocc)) {
+				$this->withtocc = $tmparray;
+			}
+			// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+			$tmparray = $this->withtocc;
+			foreach ($tmparray as $key => $val) {
+				$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+			}
+			$withtoccselected = GETPOST("receivercc", 'array:none'); // Array of selected value
+			$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'quatrevingtpercent', 0, '', '', 'email', '', -1, !empty($this->withtofree) ? 1 : 0);
+		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For CC
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForCc()
+	{
+		global $langs, $form;
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		$out .= '</td><td>';
+		if ($this->withtoccreadonly) {
+			$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+		} else {
+			$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
+			if (!empty($this->withtocc) && is_array($this->withtocc)) {
+				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtocc;
+				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
+				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
+			}
+		}
+		$out .= "</td></tr>\n";
+		return $out;
 	}
 
 	/**
