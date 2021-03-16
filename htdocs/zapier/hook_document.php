@@ -96,7 +96,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("MyObject").' - '.$langs->trans("Files");
-$help_url = 'EN:Hooks_system|FR:Système_de_Hooks';
+$help_url = 'EN:Module_Zapier|ES:Módulo Zapier|FR:Module_Zapier_FR|DE:Modul_Zapier';
 
 llxHeader('', $title, $help_url);
 
