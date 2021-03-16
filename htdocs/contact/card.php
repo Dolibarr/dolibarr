@@ -1441,7 +1441,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
-		// Barre d'actions
+		/*
+		 * Action bar
+		 */
 		print '<div class="tabsAction">';
 
 		$parameters = array();
