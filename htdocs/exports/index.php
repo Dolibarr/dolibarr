@@ -39,7 +39,10 @@ $export->load_arrays($user);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ExportsArea"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+
+$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones';
+
+llxHeader('', $langs->trans("ExportsArea"), $help_url);
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
