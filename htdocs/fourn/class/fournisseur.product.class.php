@@ -1057,7 +1057,7 @@ class ProductFournisseur extends Product
 			//$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
 			foreach ($productFournLogList as $productFournLog) {
-				$out .= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
+				$out .= '<tr><td>'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
 				$out .= '<td class="right">'.price($productFournLog['price'], 0, $langs, 1, -1, -1, $conf->currency);
 				if ($productFournLog['multicurrency_code'] != $conf->currency) {
 					$out .= ' ('.price($productFournLog['multicurrency_price'], 0, $langs, 1, -1, -1, $productFournLog['multicurrency_code']).')';
