@@ -1212,7 +1212,7 @@ if (count($listofextcals)) {
 					// LOW      = 0 to 4
 					// MEDIUM   = 5
 					// HIGH     = 6 to 9
-					if ($icalevent['PRIORITY']) {
+					if (!empty($icalevent['PRIORITY'])) {
 						$event->priority = $icalevent['PRIORITY'];
 					}
 
@@ -1233,7 +1233,7 @@ if (count($listofextcals)) {
 						// X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
 					}
 
-					if ($icalevent['LOCATION']) {
+					if (!empty($icalevent['LOCATION'])) {
 						$event->location = $icalevent['LOCATION'];
 					}
 
