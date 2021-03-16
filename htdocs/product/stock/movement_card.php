@@ -1173,7 +1173,7 @@ if ($resql) {
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 //Area for doc and last events of warehouse are stored on the main card of warehouse
 $modulepart = 'movement';

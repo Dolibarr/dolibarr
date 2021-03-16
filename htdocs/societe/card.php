@@ -2875,7 +2875,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<a name="builddoc"></a>'; // ancre
 
 				/*
-				 * Documents generes
+				 * Generated documents
 				 */
 				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;

@@ -2160,7 +2160,7 @@ if ($id > 0) {
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;

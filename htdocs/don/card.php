@@ -857,7 +857,7 @@ if (!empty($id) && $action != 'edit') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	/*
-	 * Documents generes
+	 * Generated documents
 	 */
 	$filename = dol_sanitizeFileName($object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
