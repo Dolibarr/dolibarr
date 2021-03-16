@@ -1311,9 +1311,9 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Card");
-$helpurl = "EN:Module_Expense_Reports";
+$help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 
-llxHeader("", $title, $helpurl);
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -2485,9 +2485,8 @@ if ($action == 'create') {
 }
 
 /*
- * Barre d'actions
+ * Action bar
  */
-
 print '<div class="tabsAction">';
 
 if ($action != 'create' && $action != 'edit') {

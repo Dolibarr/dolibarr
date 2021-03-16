@@ -102,9 +102,11 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					$date		= $this->db->jdate($objp->date_movement);
 					$journal	= $objp->code_journal;
 					$label = $objp->label_operation;
-					$amount		= $objp->amount;
+					$amount = $objp->amount;
 
-					$bookkeepingstatic->id = $objp->id;
+					// adding id (rowid) will give two lines (debit and credit)
+					// so rowid isn't in sql request
+					// $bookkeepingstatic->id = $objp->id;
 					$bookkeepingstatic->piece_num = $objp->piece_num;
 
 					$this->info_box_contents[$line][] = array(

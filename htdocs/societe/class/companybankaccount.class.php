@@ -214,7 +214,7 @@ class CompanyBankAccount extends Account
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 		}
 		if ($socid) {
 			$sql .= " WHERE fk_soc  = ".$socid;

@@ -769,7 +769,7 @@ $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("Member")." - ".$langs->trans("Card");
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
@@ -1542,12 +1542,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
 
-		// Gender
-		print '<tr><td>'.$langs->trans("Gender").'</td>';
-		print '<td>';
-		if ($object->gender) {
-			print $langs->trans("Gender".$object->gender);
-		}
 		print '</td></tr>';
 
 		// Company
@@ -1824,7 +1818,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			// Documents generes
+			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
 			//$filename =  'tmp_cards.php';
 			//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);

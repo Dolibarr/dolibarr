@@ -305,7 +305,7 @@ if (!empty($conf->accounting->enabled)) {
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
-$helpurl = "";
+$helpurl = "EN:Module_Banks_and_Cash";
 llxHeader("", $title, $helpurl);
 
 
@@ -777,7 +777,7 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 		/*
-		 * Barre d'actions
+		 * Action bar
 		 */
 		print '<div class="tabsAction">';
 

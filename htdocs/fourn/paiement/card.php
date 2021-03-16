@@ -356,8 +356,7 @@ if ($result > 0) {
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	// Documents generes
-
+	// Generated documents
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
 	if (is_array($modellist)) {

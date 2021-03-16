@@ -262,7 +262,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " fk_parent='".$this->db->escape($this->fk_parent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -403,7 +403,7 @@ class EcmDirectory extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);

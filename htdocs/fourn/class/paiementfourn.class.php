@@ -99,7 +99,7 @@ class PaiementFourn extends Paiement
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0) {
-			$sql .= ' AND p.rowid = '.$id;
+			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
 			$sql .= ' AND p.rowid = '.$ref;
 		} elseif ($fk_bank) {
@@ -394,7 +394,7 @@ class PaiementFourn extends Paiement
 	{
 		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

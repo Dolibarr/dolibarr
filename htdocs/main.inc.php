@@ -13,6 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020       Charlene Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,12 +60,16 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  */
 function testSqlAndScriptInject($val, $type)
 {
-	// Decode string first
+	// Decode string first bcause a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
-	$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
-
-	// TODO loop to decode until no more thing to decode ?
+	// Loop to decode until no more thing to decode.
+	//print "before decoding $val\n";
+	do {
+		$oldval = $val;
+		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
+	} while ($oldval != $val);
+	//print "after  decoding $val\n";
 
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
@@ -135,16 +140,18 @@ function testSqlAndScriptInject($val, $type)
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1) {
-		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure="
+		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure=" for the export/import module
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
 	if ($type == 2) {
 		$inj += preg_match('/[;"]/', $val); // PHP_SELF is a file system path. It can contains spaces.
 	}
+
 	return $inj;
 }
 
@@ -164,7 +171,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			} else {
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
+				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type).' paramkey='.htmlentities($key).' paramvalue='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]);
 				print $errormessage;
 				// Add entry into error log
 				if (function_exists('error_log')) {
@@ -464,6 +471,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		unset($_GET['massaction']);
 		$_POST['id'] = ((int) $savid);
 	}
+
+	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -785,7 +794,7 @@ if (!defined('NOLOGIN')) {
 	} else {
 		// We are already into an authenticated session
 		$login = $_SESSION["dol_login"];
-		$entity = $_SESSION["dol_entity"];
+		$entity = isset($_SESSION["dol_entity"]) ? $_SESSION["dol_entity"] : 0;
 		dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
 		$resultFetchUser = $user->fetch('', $login, '', 1, ($entity > 0 ? $entity : -1));

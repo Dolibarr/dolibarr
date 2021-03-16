@@ -394,12 +394,12 @@ if ($cancel) {
 }
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode($pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
 if ($sortfield) {
-	$backtopage .= '&sortfield='.$sortfield;
+	$backtopage .= '&sortfield='.urlencode($sortfield);
 }
 if ($sortorder) {
-	$backtopage .= '&sortorder='.$sortorder;
+	$backtopage .= '&sortorder='.urlencode($sortorder);
 }
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
@@ -1511,6 +1511,7 @@ if ($action == 'updatecss') {
 			if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
 				$action = 'preview';
 				if ($backtopage) {
+					$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
 					header("Location: ".$backtopage);
 					exit;
 				}
@@ -1907,7 +1908,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			// Security analysis
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 			//print dol_escape_htmltag($phpfullcodestring);exit;
-			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open");
+			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open", "eval", "dol_eval");
 			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
 				$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 			}
@@ -2060,6 +2061,19 @@ if ($action == 'exportsite') {
 
 // Regenerate site
 if ($action == 'regeneratesite') {
+	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+	$pathtomedias = DOL_DATA_ROOT.'/medias';
+	$pathtomediasinwebsite = $pathofwebsite.'/medias';
+	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+		dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+		$result = symlink($pathtomedias, $pathtomediasinwebsite);
+		if (!$result) {
+			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			$action = 'preview';
+		}
+	}
+
 	$result = $object->rebuildWebSiteFiles();
 	if ($result > 0) {
 		setEventMessages($langs->trans("PagesRegenerated", $result), null, 'mesgs');
@@ -2077,7 +2091,7 @@ if ($action == 'importsiteconfirm') {
 		$action = 'importsite';
 	} else {
 		if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-			// Check symlink to medias and restore it if ko
+			// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
 			$pathtomedias = DOL_DATA_ROOT.'/medias';
 			$pathtomediasinwebsite = $pathofwebsite.'/medias';
 			if (!is_link(dol_osencode($pathtomediasinwebsite))) {

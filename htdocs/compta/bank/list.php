@@ -62,6 +62,7 @@ if (!empty($conf->categorie->enabled)) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
 }
 
+$socid = 0;
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;

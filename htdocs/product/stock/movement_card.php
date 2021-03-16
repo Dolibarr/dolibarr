@@ -664,12 +664,9 @@ if ($resql) {
 	}
 
 
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Barre d'action                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	/*
+	 * Action bar
+	 */
 	if ((empty($action) || $action == 'list') && $id > 0) {
 		print "<div class=\"tabsAction\">\n";
 
@@ -1176,7 +1173,7 @@ if ($resql) {
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 //Area for doc and last events of warehouse are stored on the main card of warehouse
 $modulepart = 'movement';

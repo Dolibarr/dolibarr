@@ -117,7 +117,7 @@ class Bookmark extends CommonObject
 		$sql = "SELECT rowid, fk_user, dateb as datec, url, target,";
 		$sql .= " title, position, favicon";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		dol_syslog("Bookmark::fetch", LOG_DEBUG);
@@ -239,7 +239,7 @@ class Bookmark extends CommonObject
 	public function remove($id)
 	{
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog("Bookmark::remove", LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -784,7 +784,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition');
+$help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
+
+llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);

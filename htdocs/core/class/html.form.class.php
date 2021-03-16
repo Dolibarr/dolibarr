@@ -7895,6 +7895,23 @@ class Form
 			$fieldref = 'ref';
 		}
 
+		// Preparing gender's display if there is one
+		$addgendertxt = '';
+		if (!empty($object->gender)) {
+			$addgendertxt = ' ';
+			switch ($object->gender) {
+				case 'man':
+					$addgendertxt .= '<i class="fas fa-mars"></i>';
+					break;
+				case 'woman':
+					$addgendertxt .= '<i class="fas fa-venus"></i>';
+					break;
+				case 'other':
+					$addgendertxt .= '<i class="fas fa-genderless"></i>';
+					break;
+			}
+		}
+
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array();
@@ -8021,12 +8038,12 @@ class Form
 			$ret .= $object->ref.'<br>';
 			$fullname = $object->getFullName($langs);
 			if ($object->morphy == 'mor' && $object->societe) {
-				$ret .= dol_htmlentities($object->societe).((!empty($fullname) && $object->societe != $fullname) ? ' ('.dol_htmlentities($fullname).')' : '');
+				$ret .= dol_htmlentities($object->societe).((!empty($fullname) && $object->societe != $fullname) ? ' ('.dol_htmlentities($fullname).$addgendertxt.')' : '');
 			} else {
-				$ret .= dol_htmlentities($fullname).((!empty($object->societe) && $object->societe != $fullname) ? ' ('.dol_htmlentities($object->societe).')' : '');
+				$ret .= dol_htmlentities($fullname).$addgendertxt.((!empty($object->societe) && $object->societe != $fullname) ? ' ('.dol_htmlentities($object->societe).')' : '');
 			}
 		} elseif (in_array($object->element, array('contact', 'user', 'usergroup'))) {
-			$ret .= dol_htmlentities($object->getFullName($langs));
+			$ret .= dol_htmlentities($object->getFullName($langs)).$addgendertxt;
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
 			$ret .= $object->ref.'<br>'.$object->label;
 		} elseif (in_array($object->element, array('adherent_type'))) {

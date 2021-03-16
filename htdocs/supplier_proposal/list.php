@@ -90,6 +90,7 @@ $yearvalid = GETPOST("yearvalid");
 $monthvalid = GETPOST("monthvalid");
 $dayvalid = GETPOST("dayvalid");
 
+$optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');

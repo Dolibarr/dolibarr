@@ -78,6 +78,12 @@ class mymodulewidget1 extends ModeleBoxes
 	public $info_box_contents = array();
 
 	/**
+	 * @var string 	Widget type ('graph' means the widget is a graph widget)
+	 */
+	public $widgettype = 'graph';
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -206,6 +212,6 @@ class mymodulewidget1 extends ModeleBoxes
 	{
 		// You may make your own code here…
 		// … or use the parent's class function using the provided head and contents templates
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

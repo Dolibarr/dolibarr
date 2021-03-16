@@ -2110,3 +2110,5 @@ AdvancedModeOnly=Permision available in Advanced permission mode only
 ConfFileIsReadableOrWritableByAnyUsers=The conf file is reabable or writable by any users. Give permission to web server user and group only.
 MailToSendEventOrganization=Event Organization
 AGENDA_EVENT_DEFAULT_STATUS=Default event status when creating a event from the form
+YouShouldDisablePHPFunctions=You should disable PHP functions
+IfCLINotRequiredYouShouldDisablePHPFunctions=Except if you need to run system commands (for the module Scheduled job for example), you shoud disable PHP functions

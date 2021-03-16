@@ -35,6 +35,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		$total = 0;
 		$totalnb = 0;
 		$totaloppnb = 0;
 		$totalamount = 0;

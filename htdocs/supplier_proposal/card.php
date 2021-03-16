@@ -1786,30 +1786,31 @@ if ($action == 'create') {
 
 	if ($action == 'statut') {
 		// Form to set proposal accepted/refused
-		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce">';
+		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce paddingbottom paddingleft paddingright">';
 		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 
 		if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) {
 			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
 		}
-		$form_close .= '<table class="border centpercent">';
-		$form_close .= '<tr><td width="150"  class="left">'.$langs->trans("CloseAs").'</td><td class="left">';
+		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
+		$form_close .= '<tr><td>'.$langs->trans("CloseAs").'</td><td class="left">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
 		$form_close .= '<option value="2">'.$langs->trans('SupplierProposalStatusSigned').'</option>';
 		$form_close .= '<option value="3">'.$langs->trans('SupplierProposalStatusNotSigned').'</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-		$form_close .= $object->note;
+		$form_close .= '<tr><td class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
+		$form_close .= $object->note_private;
 		$form_close .= '</textarea></td></tr>';
-		$form_close .= '<tr><td class="center" colspan="2">';
+		$form_close .= '</table>';
+		$form_close .= '<center>';
 		$form_close .= '<input type="submit" class="button button-save" name="validate" value="'.$langs->trans("Save").'">';
 		$form_close .= ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</td>';
-		$form_close .= '</tr></table></form>';
+		$form_close .= '</center>';
+		$form_close .= '</form>';
 
 		print $form_close;
 	}
@@ -1894,7 +1895,7 @@ if ($action == 'create') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
 		/*
-		 * Documents generes
+		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->supplier_proposal->dir_output."/".dol_sanitizeFileName($object->ref);

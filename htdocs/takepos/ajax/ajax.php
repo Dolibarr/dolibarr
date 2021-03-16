@@ -47,7 +47,7 @@ if (!defined('NOBROWSERNOTIF')) {
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$category = GETPOST('category', 'alpha');
+$category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');

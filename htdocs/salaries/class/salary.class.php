@@ -64,7 +64,6 @@ class Salary extends CommonObject
 	public $fk_project;
 
 	public $type_payment;
-	public $num_payment;
 
 	/**
 	 * @var string salary payments label
@@ -141,7 +140,6 @@ class Salary extends CommonObject
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " fk_projet=".((int) $this->fk_project).",";
 		$sql .= " fk_typepayment=".$this->type_payment.",";
-		$sql .= " num_payment='".$this->db->escape($this->num_payment)."',";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
 		$sql .= " dateep='".$this->db->idate($this->dateep)."',";
@@ -150,7 +148,7 @@ class Salary extends CommonObject
 		$sql .= " fk_user_author=".((int) $this->fk_user_author).",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : 'null');
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -206,7 +204,6 @@ class Salary extends CommonObject
 		$sql .= " s.amount,";
 		$sql .= " s.fk_projet as fk_project,";
 		$sql .= " s.fk_typepayment,";
-		$sql .= " s.num_payment,";
 		$sql .= " s.label,";
 		$sql .= " s.datesp,";
 		$sql .= " s.dateep,";
@@ -221,7 +218,7 @@ class Salary extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
-		$sql .= " WHERE s.rowid = ".$id;
+		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -238,7 +235,6 @@ class Salary extends CommonObject
 				$this->amount = $obj->amount;
 				$this->fk_project = $obj->fk_project;
 				$this->type_payment = $obj->fk_typepayment;
-				$this->num_payment = $obj->num_payment;
 				$this->label			= $obj->label;
 				$this->datesp			= $this->db->jdate($obj->datesp);
 				$this->dateep			= $this->db->jdate($obj->dateep);
@@ -297,7 +293,7 @@ class Salary extends CommonObject
 		}*/
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -393,7 +389,6 @@ class Salary extends CommonObject
 		$sql .= ", salary";
 		$sql .= ", fk_typepayment";
 		$sql .= ", fk_account";
-		$sql .= ", num_payment";
 		if ($this->note) $sql .= ", note";
 		$sql .= ", label";
 		$sql .= ", datesp";
@@ -412,7 +407,6 @@ class Salary extends CommonObject
 		$sql .= ", ".($this->salary > 0 ? $this->salary : "null");
 		$sql .= ", ".($this->type_payment > 0 ? $this->type_payment : 0);
 		$sql .= ", ".($this->accountid > 0 ? $this->accountid : "null");
-		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
@@ -591,7 +585,7 @@ class Salary extends CommonObject
 	{
 		$sql = 'SELECT ps.rowid, ps.datec, ps.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'salary as ps';
-		$sql .= ' WHERE ps.rowid = '.$id;
+		$sql .= ' WHERE ps.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

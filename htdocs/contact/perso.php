@@ -308,7 +308,9 @@ if ($action == 'edit') {
 
 
 if ($action != 'edit') {
-	// Barre d'actions
+	/*
+	 * Action bar
+	 */
 	if ($user->socid == 0) {
 		print '<div class="tabsAction">';
 
