@@ -971,7 +971,10 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+
+llxHeader('', $langs->trans("Contract"), $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
