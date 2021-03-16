@@ -1138,7 +1138,11 @@ if (count($listofextcals)) {
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
 					// For full day events, date are also GMT but they wont but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
-					$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
+					if (empty($icalevent['DTEND;VALUE=DATE'])) {
+						$dateend = $datestart + 86400 - 1;
+					} else {
+						$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
+					}
 					//print 'x'.$datestart.'-'.$dateend;exit;
 					//print dol_print_date($dateend,'dayhour','gmt');
 					$event->fulldayevent = 1;
