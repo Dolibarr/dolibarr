@@ -762,7 +762,8 @@ abstract class CommonObject
 				$out .= img_picto($langs->trans("Address"), 'map-marker-alt');
 				$out .= '</a> ';
 			}
-			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
+			$out .= dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', ');
+			$outdone++;
 			$outdone++;
 
 			// List of extra languages
@@ -1181,7 +1182,8 @@ abstract class CommonObject
 			if (!$notrigger) {
 				$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
 				if ($result < 0) {
-					$this->db->rollback(); return -1;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 
@@ -1617,6 +1619,9 @@ abstract class CommonObject
 		if ($idtofetch) {
 			$thirdparty = new Societe($this->db);
 			$result = $thirdparty->fetch($idtofetch);
+			if ($result<0) {
+				$this->errors=array_merge($this->errors, $thirdparty->errors);
+			}
 			$this->thirdparty = $thirdparty;
 
 			// Use first price level if level not defined for third party
@@ -1845,7 +1850,7 @@ abstract class CommonObject
 		$result = false;
 		if (!empty($id) && !empty($field) && !empty($table)) {
 			$sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2235,10 +2240,13 @@ abstract class CommonObject
 			if (get_class($this) == 'Tva') {
 				$fieldname = 'fk_typepayment';
 			}
+			if (get_class($this) == 'Salary') {
+				$fieldname = 'fk_typepayment';
+			}
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->mode_reglement_id = $id;
@@ -2273,7 +2281,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname." = '".$this->db->escape($code)."'";
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->multicurrency_code = $code;
@@ -2311,7 +2319,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.$rate;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->multicurrency_tx = $rate;
@@ -2519,7 +2527,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->cond_reglement_id = $id;
@@ -2561,7 +2569,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->transport_mode_id = $id;
@@ -2596,7 +2604,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.$id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->retained_warranty_fk_cond_reglement = $id;
@@ -2674,7 +2682,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_shipping_method = ".$shipping_method_id;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
@@ -2721,7 +2729,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_warehouse = ".$warehouse_id;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		if ($this->db->query($sql)) {
 			$this->warehouse_id = ($warehouse_id == 'NULL') ?null:$warehouse_id;
@@ -2798,7 +2806,7 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_account = ".$fk_account;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -3154,9 +3162,8 @@ abstract class CommonObject
 					return $this->getRangOfLine($fk_parent_line);
 				}
 			}
-		}
-		// If not, search the last rang of element
-		else {
+		} else {
+			// If not, search the last rang of element
 			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 
@@ -3745,42 +3752,60 @@ abstract class CommonObject
 					if ($objecttype == 'facture') {
 						$classpath = 'compta/facture/class';
 					} elseif ($objecttype == 'facturerec') {
-						$classpath = 'compta/facture/class'; $module = 'facture';
+						$classpath = 'compta/facture/class';
+						$module = 'facture';
 					} elseif ($objecttype == 'propal') {
 						$classpath = 'comm/propal/class';
 					} elseif ($objecttype == 'supplier_proposal') {
 						$classpath = 'supplier_proposal/class';
 					} elseif ($objecttype == 'shipping') {
-						$classpath = 'expedition/class'; $subelement = 'expedition'; $module = 'expedition_bon';
+						$classpath = 'expedition/class';
+						$subelement = 'expedition';
+						$module = 'expedition_bon';
 					} elseif ($objecttype == 'delivery') {
-						$classpath = 'delivery/class'; $subelement = 'delivery'; $module = 'delivery_note';
+						$classpath = 'delivery/class';
+						$subelement = 'delivery';
+						$module = 'delivery_note';
 					} elseif ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier') {
-						$classpath = 'fourn/class'; $module = 'fournisseur';
+						$classpath = 'fourn/class';
+						$module = 'fournisseur';
 					} elseif ($objecttype == 'fichinter') {
-						$classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
+						$classpath = 'fichinter/class';
+						$subelement = 'fichinter';
+						$module = 'ficheinter';
 					} elseif ($objecttype == 'subscription') {
-						$classpath = 'adherents/class'; $module = 'adherent';
+						$classpath = 'adherents/class';
+						$module = 'adherent';
 					} elseif ($objecttype == 'contact') {
 						 $module = 'societe';
 					}
 
 					// Set classfile
-					$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+					$classfile = strtolower($subelement);
+					$classname = ucfirst($subelement);
 
 					if ($objecttype == 'order') {
-						$classfile = 'commande'; $classname = 'Commande';
+						$classfile = 'commande';
+						$classname = 'Commande';
 					} elseif ($objecttype == 'invoice_supplier') {
-						$classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
+						$classfile = 'fournisseur.facture';
+						$classname = 'FactureFournisseur';
 					} elseif ($objecttype == 'order_supplier') {
-						$classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
+						$classfile = 'fournisseur.commande';
+						$classname = 'CommandeFournisseur';
 					} elseif ($objecttype == 'supplier_proposal') {
-						$classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+						$classfile = 'supplier_proposal';
+						$classname = 'SupplierProposal';
 					} elseif ($objecttype == 'facturerec') {
-						$classfile = 'facture-rec'; $classname = 'FactureRec';
+						$classfile = 'facture-rec';
+						$classname = 'FactureRec';
 					} elseif ($objecttype == 'subscription') {
-						$classfile = 'subscription'; $classname = 'Subscription';
+						$classfile = 'subscription';
+						$classname = 'Subscription';
 					} elseif ($objecttype == 'project' || $objecttype == 'projet') {
-						$classpath = 'projet/class'; $classfile = 'project'; $classname = 'Project';
+						$classpath = 'projet/class';
+						$classfile = 'project';
+						$classname = 'Project';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -4151,7 +4176,7 @@ abstract class CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity IN (".getEntity($this->element).")";
 		if (!empty($id)) {
-			$sql .= " AND rowid = ".$id;
+			$sql .= " AND rowid = ".((int) $id);
 		}
 		if (!empty($ref)) {
 			$sql .= " AND ref = '".$this->db->escape($ref)."'";
@@ -4618,7 +4643,8 @@ abstract class CommonObject
 
 		$element = $this->element;
 
-		$text = ''; $description = '';
+		$text = '';
+		$description = '';
 
 		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id) {
@@ -4985,7 +5011,8 @@ abstract class CommonObject
 			if (!$notrigger) {
 				$result = $this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
 				if ($result < 0) {
-					$this->db->rollback(); return -1;
+					$this->db->rollback();
+					return -1;
 				}
 			}
 			$this->db->commit();
@@ -5106,7 +5133,8 @@ abstract class CommonObject
 							$tmpdir = trim($tmpdir);
 							$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 							if (!$tmpdir) {
-								unset($listofdir[$key]); continue;
+								unset($listofdir[$key]);
+								continue;
 							}
 							if (is_dir($tmpdir)) {
 								$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
@@ -5679,7 +5707,7 @@ abstract class CommonObject
 					return 0;
 				}
 			} else {
-				dol_print_error($this->db);
+				$this->errors[]=$this->db->lasterror;
 				return -1;
 			}
 		}
@@ -6343,6 +6371,7 @@ abstract class CommonObject
 
 		$out = '';
 		$type = '';
+		$isDependList=0;
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
@@ -6380,6 +6409,7 @@ abstract class CommonObject
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
+
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
@@ -6428,11 +6458,10 @@ abstract class CommonObject
 			}
 		}
 
-		if (in_array($type, array('date', 'datetime'))) {
+		if (in_array($type, array('date'))) {
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
-
-			$showtime = in_array($type, array('datetime')) ? 1 : 0;
+			$showtime = 0;
 
 			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') {
@@ -6441,6 +6470,16 @@ abstract class CommonObject
 
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
+		} elseif (in_array($type, array('datetime'))) {
+			$tmp = explode(',', $size);
+			$newsize = $tmp[0];
+			$showtime = 1;
+
+			// Do not show current date when field not required (see selectDate() method)
+			if (!$required && $value == '') $value = '-1';
+
+			// TODO Must also support $moreparam
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', '', 1, '', '', 'tzuserrel');
 		} elseif (in_array($type, array('duration'))) {
 			$out = $form->select_duration($keyprefix.$key.$keysuffix, $value, 0, 'text', 0, 1);
 		} elseif (in_array($type, array('int', 'integer'))) {
@@ -6489,7 +6528,7 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -6511,7 +6550,7 @@ abstract class CommonObject
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -6528,7 +6567,6 @@ abstract class CommonObject
 				// 3 : key field parent (for dependent lists)
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
-
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
@@ -6633,6 +6671,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
+								$isDependList=1;
 							}
 
 							$out .= '<option value="'.$obj->rowid.'"';
@@ -6787,6 +6826,7 @@ abstract class CommonObject
 
 							if (!empty($InfoFieldList[3]) && $parentField) {
 								$parent = $parentName.':'.$obj->{$parentField};
+								$isDependList=1;
 							}
 
 							$data[$obj->rowid] = $labeltoshow;
@@ -6874,6 +6914,10 @@ abstract class CommonObject
 		}
 		if (!empty($hidden)) {
 			$out = '<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
+		}
+
+		if ($isDependList==1) {
+			$out .= $this->getJSListDependancies('_common');
 		}
 		/* Add comments
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
@@ -6993,13 +7037,13 @@ abstract class CommonObject
 			$value = $this->getLibStatut(3);
 		} elseif ($type == 'date') {
 			if (!empty($value)) {
-				$value = dol_print_date($value, 'day');
+				$value = dol_print_date($value, 'day');	// We suppose dates without time are always gmt (storage of course + output)
 			} else {
 				$value = '';
 			}
 		} elseif ($type == 'datetime' || $type == 'timestamp') {
 			if (!empty($value)) {
-				$value = dol_print_date($value, 'dayhour');
+				$value = dol_print_date($value, 'dayhour', 'tzuserrel');
 			} else {
 				$value = '';
 			}
@@ -7378,12 +7422,19 @@ abstract class CommonObject
 						}
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
-						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime'))) {
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
 							$datenotinstring = $this->array_options['options_'.$key];
 							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
 								$datenotinstring = $this->db->jdate($datenotinstring);
 							}
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(12, 0, 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+						}
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
+							$datenotinstring = $this->array_options['options_'.$key];
+							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+								$datenotinstring = $this->db->jdate($datenotinstring);
+							}
+							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."sec", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3), 'tzuserrel') : $datenotinstring;
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
@@ -7472,10 +7523,28 @@ abstract class CommonObject
 				$out .= "\n";
 				// Add code to manage list depending on others
 				if (!empty($conf->use_javascript_ajax)) {
-					$out .= '
+					$out .= $this->getJSListDependancies();
+				}
+
+				$out .= '<!-- /showOptionals --> '."\n";
+			}
+		}
+
+		$out .= $hookmanager->resPrint;
+
+		return $out;
+	}
+
+	/**
+	 * @param 	string 	$type	Type for prefix
+	 * @return 	string			Javacript code to manage dependency
+	 */
+	public function getJSListDependancies($type = '_extra')
+	{
+		$out = '
 					<script>
 					jQuery(document).ready(function() {
-						function showOptions(child_list, parent_list, orig_select)
+						function showOptions'.$type.'(child_list, parent_list, orig_select)
 						{
 							var val = $("select[name=\""+parent_list+"\"]").val();
 							var parentVal = parent_list + ":" + val;
@@ -7499,7 +7568,7 @@ abstract class CommonObject
 								$("select[name=\""+child_list+"\"]").append(options);
 							}
 						}
-						function setListDependencies() {
+						function setListDependencies'.$type.'() {
 							jQuery("select option[parent]").parent().each(function() {
 								var orig_select = {};
 								var child_list = $(this).attr("name");
@@ -7524,7 +7593,7 @@ abstract class CommonObject
 
 								//When we change parent list
 								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list, orig_select[child_list]);
+									showOptions'.$type.'(child_list, parent_list, orig_select[child_list]);
 									//Select the value 0 on child list after a change on the parent list
 									$("#"+child_list).val(0).trigger("change");
 									//Hide child lists if the parent value is set to 0
@@ -7534,20 +7603,12 @@ abstract class CommonObject
 								});
 							});
 						}
-						setListDependencies();
+
+						setListDependencies'.$type.'();
 					});
 					</script>'."\n";
-				}
-
-				$out .= '<!-- /showOptionals --> '."\n";
-			}
-		}
-
-		$out .= $hookmanager->resPrint;
-
 		return $out;
 	}
-
 
 	/**
 	 * Returns the rights used for this class
@@ -8132,12 +8193,14 @@ abstract class CommonObject
 	 */
 	public function setVarsFromFetchObj(&$obj)
 	{
+		global $db;
+
 		foreach ($this->fields as $field => $info) {
 			if ($this->isDate($info)) {
-				if (empty($obj->{$field}) || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
-					$this->{$field} = 0;
+				if (is_null($obj->{$field}) || $obj->{$field} === '' || $obj->{$field} === '0000-00-00 00:00:00' || $obj->{$field} === '1000-01-01 00:00:00') {
+					$this->{$field} = '';
 				} else {
-					$this->{$field} = strtotime($obj->{$field});
+					$this->{$field} = $db->jdate($obj->{$field});
 				}
 			} elseif ($this->isArray($info)) {
 				if (!empty($obj->{$field})) {
@@ -8195,12 +8258,21 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @return string
+	 * @param   string   $alias   	String of alias of table for fields. For example 't'.
+	 * @return  string				list of alias fields
 	 */
-	protected function getFieldList()
+	public function getFieldList($alias = '')
 	{
 		$keys = array_keys($this->fields);
-		return implode(',', $keys);
+		if (!empty($alias)) {
+			$keys_with_alias = array();
+			foreach ($keys as $fieldname) {
+				$keys_with_alias[] = $alias . '.' . $fieldname;
+			}
+			return implode(',', $keys_with_alias);
+		} else {
+			return implode(',', $keys);
+		}
 	}
 
 	/**
@@ -8402,23 +8474,23 @@ abstract class CommonObject
 			return -1;
 		}
 
-		$fieldlist = $this->getFieldList();
+		$fieldlist = $this->getFieldList('t');
 		if (empty($fieldlist)) {
 			return 0;
 		}
 
 		$sql = 'SELECT '.$fieldlist;
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 
 		if (!empty($id)) {
-			$sql .= ' WHERE rowid = '.$id;
+			$sql .= ' WHERE t.rowid = '.((int) $id);
 		} elseif (!empty($ref)) {
-			$sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+			$sql .= " WHERE t.ref = ".$this->quote($ref, $this->fields['ref']);
 		} else {
 			$sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		}
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' AND entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' AND t.entity IN ('.getEntity($this->table_element).')';
 		}
 		if ($morewhere) {
 			$sql .= $morewhere;
@@ -8462,9 +8534,9 @@ abstract class CommonObject
 
 		$objectline = new $objectlineclassname($this->db);
 
-		$sql = 'SELECT '.$objectline->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
-		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		$sql = 'SELECT '.$objectline->getFieldList('l');
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element.' as l';
+		$sql .= ' WHERE l.fk_'.$this->element.' = '.$this->id;
 		if ($morewhere) {
 			$sql .= $morewhere;
 		}
@@ -8553,7 +8625,7 @@ abstract class CommonObject
 			}*/
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(', ', $tmp).' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 		if (!$error) {
@@ -8699,7 +8771,7 @@ abstract class CommonObject
 		}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.$this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE rowid='.((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if ($res === false) {

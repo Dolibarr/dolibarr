@@ -92,10 +92,10 @@ class Product extends CommonObject
 
 	public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into images.lib.php
 
-	/*
-	* @deprecated
-	* @see label
-	*/
+	/**
+	 * @deprecated
+	 * @see $label
+	 */
 	public $libelle;
 
 	/**
@@ -408,14 +408,23 @@ class Product extends CommonObject
 	public $supplierprices;
 
 	/**
+	 * Property set to save result of isObjectUsed(). Used for example by Product API.
+	 *
+	 * @var boolean
+	 */
+	public $is_object_used;
+
+
+	/**
 	 * @var array fields of object product
 	 */
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'visible'=>-1, 'showoncombobox'=>1),
-		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1),
+		'entity'        =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>5),
+		'label'         =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
+		'barcode'       =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>'!empty($conf->barcode->enabled)', 'position'=>20, 'visible'=>-1, 'showoncombobox'=>1),
+		'fk_barcode_type' => array('type'=>'integer', 'label'=>'BarcodeType', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>-1,),
 		'note_public'   =>array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
 		'note'          =>array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62),
 		'datec'         =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
@@ -424,6 +433,10 @@ class Product extends CommonObject
 		'fk_user_author'=>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'localtax1_tx' => array('type'=>'double(6,3)', 'label'=>'Localtax1tx', 'enabled'=>'1', 'position'=>150, 'notnull'=>0, 'visible'=>-1,),
+		'localtax1_type' => array('type'=>'varchar(10)', 'label'=>'Localtax1type', 'enabled'=>'1', 'position'=>155, 'notnull'=>1, 'visible'=>-1,),
+		'localtax2_tx' => array('type'=>'double(6,3)', 'label'=>'Localtax2tx', 'enabled'=>'1', 'position'=>160, 'notnull'=>0, 'visible'=>-1,),
+		'localtax2_type' => array('type'=>'varchar(10)', 'label'=>'Localtax2type', 'enabled'=>'1', 'position'=>165, 'notnull'=>1, 'visible'=>-1,),
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
@@ -1052,7 +1065,7 @@ class Product extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
 
 			// stock field is not here because it is a denormalized value from product_stock.
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 
@@ -1987,7 +2000,7 @@ class Product extends CommonObject
 			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
 			$sql .= " tva_tx='".price2num($newvat)."',";
 			$sql .= " recuperableonly='".$this->db->escape($newnpr)."'";
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -4210,14 +4223,15 @@ class Product extends CommonObject
 	 *  Fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
 	 *  Define value of this->res
 	 *
-	 * @param  array  $prod       Products array
-	 * @param  string $compl_path Directory path of parents to add before
-	 * @param  int    $multiply   Because each sublevel must be multiplicated by parent nb
-	 * @param  int    $level      Init level
-	 * @param  int    $id_parent  Id parent
+	 * @param  array  $prod       			Products array
+	 * @param  string $compl_path 			Directory path of parents to add before
+	 * @param  int    $multiply   			Because each sublevel must be multiplicated by parent nb
+	 * @param  int    $level      			Init level
+	 * @param  int    $id_parent  			Id parent
+	 * @param  int    $ignore_stock_load 	Ignore stock load
 	 * @return void
 	 */
-	public function fetch_prod_arbo($prod, $compl_path = "", $multiply = 1, $level = 1, $id_parent = 0)
+	public function fetch_prod_arbo($prod, $compl_path = '', $multiply = 1, $level = 1, $id_parent = 0, $ignore_stock_load = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -4230,7 +4244,7 @@ class Product extends CommonObject
 				$nb = (!empty($desc_pere[1]) ? $desc_pere[1] : '');
 				$type = (!empty($desc_pere[2]) ? $desc_pere[2] : '');
 				$label = (!empty($desc_pere[3]) ? $desc_pere[3] : '');
-				$incdec = !empty($desc_pere[4]) ? $desc_pere[4] : 0;
+				$incdec = (!empty($desc_pere[4]) ? $desc_pere[4] : 0);
 
 				if ($multiply < 1) {
 					$multiply = 1;
@@ -4241,9 +4255,11 @@ class Product extends CommonObject
 					$tmpproduct = new Product($this->db); // So we initialize tmpproduct only once for all loop.
 				}
 				$tmpproduct->fetch($id); // Load product to get ->ref
-				$tmpproduct->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
-				//$this->fetch($id);        				   // Load product to get ->ref
-				//$this->load_stock('nobatch,novirtual');    // Load stock to get true ->stock_reel
+
+				if (empty($ignore_stock_load) && ($tmpproduct->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+					$tmpproduct->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+				}
+
 				$this->res[] = array(
 					'id'=>$id, // Id product
 					'id_parent'=>$id_parent,
@@ -4264,7 +4280,7 @@ class Product extends CommonObject
 				// Recursive call if there is childs to child
 				if (is_array($desc_pere['childs'])) {
 					   //print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					   $this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id);
+					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
 				}
 			}
 		}
@@ -4272,20 +4288,21 @@ class Product extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Build the tree of subproducts into an array
-	 *  this->sousprods is loaded by this->get_sousproduits_arbo()
+	 *  Build the tree of subproducts into an array ->res and return it.
+	 *  this->sousprods must have been loaded by this->get_sousproduits_arbo()
 	 *
-	 * @param  int $multiply Because each sublevel must be multiplicated by parent nb
-	 * @return array                     $this->res
+	 * @param  int 		$multiply 			Because each sublevel must be multiplicated by parent nb
+	 * @param  int    	$ignore_stock_load 	Ignore stock load
+	 * @return array                    	$this->res
 	 */
-	public function get_arbo_each_prod($multiply = 1)
+	public function get_arbo_each_prod($multiply = 1, $ignore_stock_load = 0)
 	{
 		// phpcs:enable
 		$this->res = array();
 		if (isset($this->sousprods) && is_array($this->sousprods)) {
 			foreach ($this->sousprods as $prod_name => $desc_product) {
 				if (is_array($desc_product)) {
-					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id);
+					$this->fetch_prod_arbo($desc_product, "", $multiply, 1, $this->id, $ignore_stock_load);
 				}
 			}
 		}
@@ -4426,6 +4443,10 @@ class Product extends CommonObject
 	public function getChildsArbo($id, $firstlevelonly = 0, $level = 1)
 	{
 		global $alreadyfound;
+
+		if (empty($id)) {
+			return array();
+		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label as label, p.fk_product_type,";
 		$sql .= " pa.qty as qty, pa.fk_product_fils as id, pa.incdec";
@@ -4743,10 +4764,10 @@ class Product extends CommonObject
 		if ($type == 2) {
 			switch ($mode) {
 				case 0:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial')));
+					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : ($status == 1 ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial')));
 					return dolGetStatus($label);
 				case 1:
-					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort')));
+					$label = ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : ($status == 1 ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort')));
 					return dolGetStatus($label);
 				case 2:
 					return $this->LibStatut($status, 3, 2).' '.$this->LibStatut($status, 1, 2);
@@ -4784,10 +4805,10 @@ class Product extends CommonObject
 				$labelStatus = $langs->trans('ProductStatusOnBuyShort');
 				$labelStatusShort = $langs->trans('ProductStatusOnBuy');
 			} elseif ($type == 2) {
-				$labelStatus = ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial'));
-				$labelStatusShort = ($status == 1 || empty($conf->global->MAIN_ADVANCE_NUMLOT) ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort'));
+				$labelStatus = ($status == 1 ? $langs->trans('ProductStatusOnBatch') : $langs->trans('ProductStatusOnSerial'));
+				$labelStatusShort = ($status == 1 ? $langs->trans('ProductStatusOnBatchShort') : $langs->trans('ProductStatusOnSerialShort'));
 			}
-		} elseif (! empty($conf->global->MAIN_ADVANCE_NUMLOT) && $type == 2 && $status == 2) {
+		} elseif ( $type == 2 && $status == 2 ) {
 			$labelStatus = $langs->trans('ProductStatusOnSerial');
 			$labelStatusShort = $langs->trans('ProductStatusOnSerialShort');
 		}
@@ -5689,7 +5710,7 @@ class Product extends CommonObject
 		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-		$sql .= " WHERE p.rowid = ".$id;
+		$sql .= " WHERE p.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

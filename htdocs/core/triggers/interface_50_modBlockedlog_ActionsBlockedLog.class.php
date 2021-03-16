@@ -59,7 +59,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->blockedlog->enabled)) {
+		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 

@@ -114,6 +114,7 @@ class modWebsite extends DolibarrModules
 		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top', // This is a Left menu entry
 								'titre'=>'WebSites',
+								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 								'mainmenu'=>'website',
 								'url'=>'/website/index.php',
 								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -130,7 +131,9 @@ class modWebsite extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'MyWebsitePages'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'globe';
-		$keyforclass = 'WebsitePage'; $keyforclassfile = '/website/class/websitepage.class.php'; $keyforelement = 'Website';
+		$keyforclass = 'WebsitePage';
+		$keyforclassfile = '/website/class/websitepage.class.php';
+		$keyforelement = 'Website';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';

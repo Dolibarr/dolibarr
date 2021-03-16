@@ -228,7 +228,9 @@ function displayBox($selectedDate, $month, $year)
 	$mydate = dol_get_first_day_week(1, $month, $year, true); // mydate = cursor date
 
 	// Loop on each day of month
-	$stoploop = 0; $day = 1; $cols = 0;
+	$stoploop = 0;
+	$day = 1;
+	$cols = 0;
 	while (!$stoploop) {
 		//print_r($mydate);
 		if ($mydate < $firstdate) {	// At first run

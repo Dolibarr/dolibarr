@@ -679,7 +679,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
 		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null");
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -742,7 +742,7 @@ class EcmFiles extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

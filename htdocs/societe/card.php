@@ -80,7 +80,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
-if ($user->socid) {
+if ($user->socid && empty($conf->global->MAIN_EXTERNAL_USERS_CAN_SEE_SUBSIDIARY_COMPANIES)) {
 	$socid = $user->socid;
 }
 if (empty($socid) && $action == 'view') {
@@ -247,6 +247,7 @@ if (empty($reshook)) {
 					// TODO Mutualise the list into object societe.class.php
 					$objects = array(
 						'Adherent' => '/adherents/class/adherent.class.php',
+						'Don' => '/don/class/don.class.php',
 						'Societe' => '/societe/class/societe.class.php',
 						//'Categorie' => '/categories/class/categorie.class.php',
 						'ActionComm' => '/comm/action/class/actioncomm.class.php',
@@ -278,6 +279,7 @@ if (empty($reshook)) {
 						if (!$error && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id)) {
 							$error++;
 							setEventMessages($db->lasterror(), null, 'errors');
+							break;
 						}
 					}
 				}
@@ -1270,7 +1272,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 			$tmpcode = $modCodeClient->getNextValue($object, 0);
 		}
-		print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+		print '<input type="text" name="customer_code" id="customer_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 		print '</td><td>';
 		$s = $modCodeClient->getToolTip($langs, $object, 0);
 		print $form->textwithpicto('', $s, 1);
@@ -1305,7 +1307,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 				}
-				print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+				print '<input type="text" name="supplier_code" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 				print '</td><td>';
 				$s = $modCodeFournisseur->getToolTip($langs, $object, 1);
 				print $form->textwithpicto('', $s, 1);
@@ -1944,9 +1946,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 					$tmpcode = $modCodeClient->getNextValue($object, 0);
 				}
-				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 			} elseif ($object->codeclient_modifiable()) {
-				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
+				print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="24">';
 			} else {
 				print $object->code_client;
 				print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
@@ -1984,9 +1986,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 					}
-					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="24">';
 				} elseif ($object->codefournisseur_modifiable()) {
-					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="15">';
+					print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($object->code_fournisseur).'" maxlength="24">';
 				} else {
 					print $object->code_fournisseur;
 					print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';

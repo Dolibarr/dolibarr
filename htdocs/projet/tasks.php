@@ -36,7 +36,12 @@ if ($conf->categorie->enabled) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects', 'users', 'companies'));
+$langsLoad=array('projects', 'users', 'companies');
+if (!empty($conf->eventorganization->enabled)) {
+	$langsLoad[]='eventorganization';
+}
+
+$langs->loadLangs($langsLoad);
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -137,6 +142,7 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>8),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>9),
 	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>10),
+	'c.assigned'=>array('label'=>$langs->trans("TaskRessourceLinks"), 'checked'=>1, 'position'=>11),
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
@@ -350,9 +356,19 @@ llxHeader("", $title, $help_url);
 
 
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
-	$object->fetch_thirdparty();
-	$res = $object->fetch_optionals();
+	$result = $object->fetch($id, $ref);
+	if ($result < 0) {
+		setEventMessages(null, $object->errors, 'errors');
+	}
+	$result = $object->fetch_thirdparty();
+	if ($result < 0) {
+		setEventMessages(null, $object->errors, 'errors');
+	}
+	$result = $object->fetch_optionals();
+	if ($result < 0) {
+		setEventMessages(null, $object->errors, 'errors');
+	}
+
 
 	// To verify role of users
 	//$userAccess = $object->restrictedProjectArea($user,'read');
@@ -467,6 +483,11 @@ if ($id > 0 || !empty($ref)) {
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
 		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 		print '<br>';
+	}
+	if (!empty($conf->eventorganization->enabled)) {
+		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 	}
 	print '</td></tr>';
 
@@ -808,9 +829,16 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 			print '</td>';
 		}
 	}
-
+	// Contacts of task, disabled because available by default jsut after
+	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print '<td class="liste_titre"></td>';
+	}
+	*/
+
+	if (!empty($arrayfields['c.assigned']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
 	}
 
 	$extrafieldsobjectkey = $taskstatic->table_element;
@@ -863,8 +891,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
+	// Contacts of task, disabled because available by default jsut after
+	/*
 	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
+	}
+	*/
+	if (!empty($arrayfields['c.assigned']['checked'])) {
+		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '');
 	}
 	// Extra fields
 	$disablesortlink = 1;

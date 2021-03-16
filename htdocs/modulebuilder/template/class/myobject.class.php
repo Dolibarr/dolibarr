@@ -356,7 +356,7 @@ class MyObject extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
+			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -425,7 +425,7 @@ class MyObject extends CommonObject
 		$records = array();
 
 		$sql = 'SELECT ';
-		$sql .= $this->getFieldList();
+		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
@@ -894,7 +894,7 @@ class MyObject extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

@@ -61,6 +61,9 @@ class Dolresource extends CommonObject
 
 	public $cache_code_type_resource = array();
 
+	/**
+	 * @var Dolresource Clone of object before changing it
+	 */
 	public $oldcopy;
 
 	/**
@@ -272,7 +275,7 @@ class Dolresource extends CommonObject
 		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -776,7 +779,7 @@ class Dolresource extends CommonObject
 		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 

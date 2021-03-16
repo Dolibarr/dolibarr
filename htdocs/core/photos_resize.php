@@ -102,8 +102,8 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		accessforbidden();
 	}
 	$accessallowed = 1;
-} else // ticket, holiday, expensereport, societe...
-{
+} else {
+	// ticket, holiday, expensereport, societe...
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
 	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) {
 		accessforbidden();
@@ -320,9 +320,8 @@ if (empty($backtourl)) {
 			$section_dir .= '/';
 		}
 		$backtourl = DOL_URL_ROOT."/website/index.php?action=file_manager&website=".$website.'&section_dir='.urlencode($section_dir);
-	}
-	// Generic case that should work for everybody else
-	else {
+	} else {
+		// Generic case that should work for everybody else
 		$backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($file);
 	}
 }
@@ -532,7 +531,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	$infoarray = dol_getImageSize($dir."/".GETPOST("file"));
 	$height = $infoarray['height'];
 	$width = $infoarray['width'];
-	$widthforcrop = $width; $refsizeforcrop = 'orig'; $ratioforcrop = 1;
+	$widthforcrop = $width;
+	$refsizeforcrop = 'orig';
+	$ratioforcrop = 1;
 	// If image is too large, we use another scale.
 	if (!empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth'] / 2))) {
 		$ratioforcrop = 2;

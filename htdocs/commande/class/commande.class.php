@@ -1060,7 +1060,7 @@ class Commande extends CommonOrder
 					$initialref = $this->ref;
 				}
 
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
 
@@ -2741,7 +2741,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET fk_availability = '.$availability_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2805,7 +2805,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2962,11 +2962,12 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as not invoiced
 	 *
-	 * @return     int     <0 if ko, >0 if ok
+	 * @param	User    $user       Object user making the change
+	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+	 * @return  int     			<0 if ko, >0 if ok
 	 */
-	public function classifyUnBilled()
+	public function classifyUnBilled(User $user, $notrigger = 0)
 	{
-		global $conf, $user, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -2981,12 +2982,14 @@ class Commande extends CommonOrder
 				$this->billed = 1;
 			}
 
-			// Call trigger
-			$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$notrigger && empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 
 			if (!$error) {
 				$this->billed = 0;
@@ -3307,7 +3310,7 @@ class Commande extends CommonOrder
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -3683,7 +3686,7 @@ class Commande extends CommonOrder
 				$label .= ' '.$this->getLibStatut(5);
 			}
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this-ref_client) : $this->ref_customer);
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}
@@ -3760,7 +3763,7 @@ class Commande extends CommonOrder
 		$sql .= ' date_cloture as datecloture,';
 		$sql .= ' fk_user_author, fk_user_valid, fk_user_cloture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

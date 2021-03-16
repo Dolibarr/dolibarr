@@ -30,7 +30,7 @@ require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
-$_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ?GETPOST('mainmenu', 'aZ09') : 'home';
+$_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ? GETPOST('mainmenu', 'aZ09') : 'home';
 $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
@@ -41,18 +41,15 @@ $hookmanager->initHooks(array('index'));
  */
 
 // Check if company name is defined (first install)
-if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM))
-{
+if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM)) {
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
-if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
-{
+if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only user module enabled
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
-if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
-{
+if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOST('areacode', 'aZ09');
 	$userid = GETPOST('userid', 'int');
@@ -60,7 +57,9 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
 }
 
 
@@ -68,11 +67,15 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
-if (!isset($form) || !is_object($form)) $form = new Form($db);
+if (!isset($form) || !is_object($form)) {
+	$form = new Form($db);
+}
 
 // Title
 $title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = $langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$title = $langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
+}
 
 llxHeader('', $title);
 
@@ -82,11 +85,9 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
-if (!empty($conf->global->MAIN_MOTD))
-{
+if (!empty($conf->global->MAIN_MOTD)) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD);
-	if (!empty($conf->global->MAIN_MOTD))
-	{
+	if (!empty($conf->global->MAIN_MOTD)) {
 		$substitutionarray = getCommonSubstitutionArray($langs);
 		complete_substitutions_array($substitutionarray, $langs);
 		$texttoshow = make_substitutions($conf->global->MAIN_MOTD, $substitutionarray, $langs);
@@ -258,8 +259,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	$object = new stdClass();
 	$parameters = array();
 	$action = '';
-	$reshook = $hookmanager->executeHooks('addOpenElementsDashboardLine', $parameters, $object,
-		$action); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks(
+		'addOpenElementsDashboardLine',
+		$parameters,
+		$object,
+		$action
+	); // Note that $action and $object may have been modified by some hooks
 	if ($reshook == 0) {
 		$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
 	}
@@ -414,8 +419,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	$boxwork .= '<th class="liste_titre"><div class="inline-block valignmiddle">'.$langs->trans("DolibarrWorkBoard").'</div>';
 	if ($showweather) {
 		if ($totallate > 0) {
-			$text = $langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",
-					$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
+			$text = $langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv(
+				"NActionsLate",
+				$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')
+			).')';
 		} else {
 			$text = $langs->transnoentitiesnoconv("NoItemLate");
 		}
@@ -457,17 +464,17 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$globalStatsKey = $groupElement['globalStatsKey'];
 					$groupElement['globalStats'] = array();
 
-					if (is_array($keys) && in_array($globalStatsKey, $keys))
-					{
+					if (isset($keys) && is_array($keys) && in_array($globalStatsKey, $keys)) {
 						// get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
 						$keyIndex = array_search($globalStatsKey, $keys);
 
 						$classe = (!empty($classes[$keyIndex]) ? $classes[$keyIndex] : '');
-						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe]))
-						{
+						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe])) {
 							$groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
 							$nbTotal = doubleval($groupElement['globalStats']['total']);
-							if ($nbTotal >= 10000) { $nbTotal = round($nbTotal / 1000, 2).'k'; }
+							if ($nbTotal >= 10000) {
+								$nbTotal = round($nbTotal / 1000, 2).'k';
+							}
 							$groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
 							$groupElement['globalStats']['total'] = $nbTotal;
 							$groupElement['globalStats']['link'] = $links[$keyIndex];
@@ -549,13 +556,15 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		}
 
 		if ($showweather && !empty($isIntopOpenedDashBoard)) {
-		    $appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '');
+			$appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '');
 			$weather = getWeatherStatus($totallate);
 
 			$text = '';
 			if ($totallate > 0) {
-				$text = $langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",
-						$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
+				$text = $langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv(
+					"NActionsLate",
+					$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')
+				).')';
 			} else {
 				$text = $langs->transnoentitiesnoconv("NoItemLate");
 			}
@@ -570,16 +579,24 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$weatherDashBoard .= '			<div class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</div>'."\n";
 
 			if ($totallatePercentage > 0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate",
-						price($totallatePercentage).'%').'</span>'."\n";
-				$weatherDashBoard .= '			<span class="progress-description">'.$langs->trans('NActionsLate',
-						$totalLateNumber).'</span>'."\n";
+				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv(
+					"NActionsLate",
+					price($totallatePercentage).'%'
+				).'</span>'."\n";
+				$weatherDashBoard .= '			<span class="progress-description">'.$langs->trans(
+					'NActionsLate',
+					$totalLateNumber
+				).'</span>'."\n";
 			} else {
-				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv("NActionsLate",
-						$totalLateNumber).'</span>'."\n";
+				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv(
+					"NActionsLate",
+					$totalLateNumber
+				).'</span>'."\n";
 				if ($totallatePercentage > 0) {
-					$weatherDashBoard .= '			<span class="progress-description">'.$langs->trans('NActionsLate',
-							price($totallatePercentage).'%').'</span>'."\n";
+					$weatherDashBoard .= '			<span class="progress-description">'.$langs->trans(
+						'NActionsLate',
+						price($totallatePercentage).'%'
+					).'</span>'."\n";
 				}
 			}
 
@@ -627,8 +644,11 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				$boxwork .= '<div class="dashboardlinelatecoin nowrap">';
 				$boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late).'">';
 				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
-				$boxwork .= img_picto($textlate, "warning_white",
-						'class="inline-block hideonsmartphone valigntextbottom"').'';
+				$boxwork .= img_picto(
+					$textlate,
+					"warning_white",
+					'class="inline-block hideonsmartphone valigntextbottom"'
+				).'';
 				$boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'">';
 				$boxwork .= $board->nbtodolate;
 				$boxwork .= '</span>';
@@ -679,8 +699,7 @@ print '<div class="fichecenter fichecenterbis">';
 $boxlist = '<div class="twocolumns">';
 
 $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-if (!empty($nbworkboardcount))
-{
+if (!empty($nbworkboardcount)) {
 	$boxlist .= $boxwork;
 }
 
@@ -708,30 +727,26 @@ print '</div>';
  */
 
 // Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
-{
+if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	$message = '';
 
 	// Check if install lock file is present
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
-	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install"))
-	{
+	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (! empty($message)) $message.='<br>';
 		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile))
-	{
+	if (is_writable($conffile)) {
 		$langs->load("errors");
 		//$langs->load("other");
 		//if (! empty($message)) $message.='<br>';
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
-	if ($message)
-	{
+	if ($message) {
 		print $message;
 		//$message.='<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));

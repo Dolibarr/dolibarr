@@ -750,7 +750,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 			print '</tr>';
 
-			//Unsubscribe
+			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
 				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
@@ -784,6 +784,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<tr>';
 						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
 						print '<td colspan="3">';
+						if (!empty($value['icon'])) {
+							print '<span class="fa '.$value['icon'].'"></span>';
+						}
 						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
 						print '</td>';
 						print '</tr>';
@@ -1069,6 +1072,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<tr>';
 						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
 						print '<td colspan="3">';
+						if (!empty($value['icon'])) {
+							print '<span class="fa '.$value['icon'].'"></span>';
+						}
 						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
 						print '</td>';
 						print '</tr>';

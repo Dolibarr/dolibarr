@@ -510,7 +510,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classifybilled' && $user->rights->ficheinter->creer) {
 		// Classify Billed
-		$result = $object->setStatut(2);
+		$result = $object->setStatut(Fichinter::STATUS_BILLED);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
@@ -519,7 +519,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classifyunbilled' && $user->rights->ficheinter->creer) {
 		// Classify unbilled
-		$result = $object->setStatut(1);
+		$result = $object->setStatut(Fichinter::STATUS_VALIDATED);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
@@ -528,7 +528,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'classifydone' && $user->rights->ficheinter->creer) {
 		// Classify Done
-		$result = $object->setStatut(3);
+		$result = $object->setStatut(Fichinter::STATUS_CLOSED);
 		if ($result > 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;

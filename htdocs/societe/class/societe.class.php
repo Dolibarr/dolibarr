@@ -1612,7 +1612,7 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON d.fk_region = r.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON d.fk_region = r.code_region ';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
@@ -1812,6 +1812,7 @@ class Societe extends CommonObject
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 			$result = -3;
 		}
 
@@ -1937,7 +1938,7 @@ class Societe extends CommonObject
 			// Remove third party
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
-				$sql .= " WHERE rowid = ".$id;
+				$sql .= " WHERE rowid = ".((int) $id);
 				if (!$this->db->query($sql)) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
@@ -3632,7 +3633,7 @@ class Societe extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.datec as date_creation, tms as date_modification,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.rowid = ".$id;
+		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

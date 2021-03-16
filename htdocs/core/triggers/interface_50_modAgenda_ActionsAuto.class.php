@@ -75,7 +75,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->agenda->enabled)) {
+		if (empty($conf->agenda) || empty($conf->agenda->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -628,10 +628,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("InvoiceCanceledInDolibarr", $object->ref);
 
 			$object->sendtoid = 0;
-		}
-
-		// Members
-		elseif ($action == 'MEMBER_VALIDATE') {
+		} elseif ($action == 'MEMBER_VALIDATE') {
+			// Members
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
@@ -745,10 +743,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
 
 			$object->sendtoid = 0;
-		}
-
-		// Projects
-		elseif ($action == 'PROJECT_CREATE') {
+		} elseif ($action == 'PROJECT_CREATE') {
+			// Projects
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "projects"));
 
@@ -784,10 +780,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
-		}
-
-		// Project tasks
-		elseif ($action == 'TASK_CREATE') {
+		} elseif ($action == 'TASK_CREATE') {
+			// Project tasks
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "projects"));
 
@@ -843,10 +837,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg .= "\n".$langs->transnoentities("NewUser").': '.$langs->trans("None");
 			}
 			$object->sendtoid = 0;
-		}
-		// TODO Merge all previous cases into this generic one
-		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
-		{
+		} else {
+			// TODO Merge all previous cases into this generic one
+			// $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 			// Note that these key can be set in agenda setup, only if defined into c_action_trigger
 			// Load translation files required by the page
@@ -1026,7 +1019,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode); // When several action are called on same object, we must be sure to not reuse value of first action.
+		unset($object->actionmsg);
+		unset($object->actionmsg2);
+		unset($object->actiontypecode); // When several action are called on same object, we must be sure to not reuse value of first action.
 
 		if ($ret > 0) {
 			$_SESSION['LAST_ACTION_CREATED'] = $ret;

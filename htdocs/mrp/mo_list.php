@@ -76,7 +76,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
+	$sortfield = "t.ref"; // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -463,7 +463,7 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val) {
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -515,7 +515,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Show here line of result
 	print '<tr class="oddeven">';
 	foreach ($object->fields as $key => $val) {
-		$cssforfield = (empty($val['css']) ? '' : $val['css']);
+		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
 		} elseif ($key == 'status') {

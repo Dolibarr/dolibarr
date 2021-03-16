@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,6 +70,8 @@ class PaymentVarious extends CommonObject
 	public $amount;
 	public $type_payment;
 	public $num_payment;
+	public $chqemetteur;
+	public $chqbank;
 	public $category_transaction;
 
 	/**
@@ -212,7 +214,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -272,7 +274,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " b.rappro";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
-		$sql .= " WHERE v.rowid = ".$id;
+		$sql .= " WHERE v.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -332,7 +334,7 @@ class PaymentVarious extends CommonObject
 
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_various";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -504,8 +506,8 @@ class PaymentVarious extends CommonObject
 						$this->num_payment,
 						($this->category_transaction > 0 ? $this->category_transaction : 0),
 						$user,
-						'',
-						'',
+						$this->chqemetteur,
+						$this->chqbank,
 						'',
 						$this->datev
 					);
@@ -740,7 +742,7 @@ class PaymentVarious extends CommonObject
 	{
 		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
-		$sql .= ' WHERE v.rowid = '.$id;
+		$sql .= ' WHERE v.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

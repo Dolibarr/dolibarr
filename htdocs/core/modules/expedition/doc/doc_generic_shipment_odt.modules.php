@@ -136,7 +136,8 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) {
-				unset($listofdir[$key]); continue;
+				unset($listofdir[$key]);
+				continue;
 			}
 			if (!is_dir($tmpdir)) {
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
@@ -448,7 +449,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 
 				// Replace tags of object + external modules
-				$tmparray = $this->get_substitutionarray_shipment($object, $outputlangs);
+				$tmparray = array_merge($tmparray, $this->get_substitutionarray_shipment($object, $outputlangs));
 
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook

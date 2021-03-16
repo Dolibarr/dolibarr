@@ -1644,14 +1644,15 @@ class Propal extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -1891,7 +1892,8 @@ class Propal extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -2457,7 +2459,8 @@ class Propal extends CommonObject
 		dol_syslog(get_class($this)."::reopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
 			if (!$notrigger) {
@@ -2993,7 +2996,7 @@ class Propal extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
 			$sql .= ' SET fk_availability = '.$availability_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$availability_id.')', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3057,7 +3060,7 @@ class Propal extends CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
 			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__.' demand_reason('.$demand_reason_id.')', LOG_DEBUG);
 			$resql = $this->db->query($sql);

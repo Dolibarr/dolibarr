@@ -37,7 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 $choices = array('yesno', 'texte', 'chaine');
@@ -126,17 +128,24 @@ if ($action == 'update' || $action == 'add') {
 	$constname = GETPOST('constname', 'alpha');
 	$constvalue = (GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
-	if (($constname == 'ADHERENT_CARD_TYPE' || $constname == 'ADHERENT_ETIQUETTE_TYPE' || $constname == 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue = '';
+	if (($constname == 'ADHERENT_CARD_TYPE' || $constname == 'ADHERENT_ETIQUETTE_TYPE' || $constname == 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) {
+		$constvalue = '';
+	}
 	if ($constname == 'ADHERENT_LOGIN_NOT_REQUIRED') { // Invert choice
-		if ($constvalue) $constvalue = 0;
-		else $constvalue = 1;
+		if ($constvalue) {
+			$constvalue = 0;
+		} else {
+			$constvalue = 1;
+		}
 	}
 
 	$consttype = GETPOST('consttype', 'alpha');
 	$constnote = GETPOST('constnote');
 	$res = dolibarr_set_const($db, $constname, $constvalue, $choices[$consttype], 0, $constnote, $conf->entity);
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -169,7 +178,7 @@ if ($action == 'unset') {
 
 $form = new Form($db);
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
 llxHeader('', $langs->trans("MembersSetup"), $help_url);
 
@@ -211,9 +220,15 @@ print "</td></tr>\n";
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
 $arraychoices = array('0'=>$langs->trans("None"));
-if (!empty($conf->banque->enabled)) $arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
-if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) $arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
-if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) $arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
+if (!empty($conf->banque->enabled)) {
+	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
+}
+if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+	$arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
+}
+if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
+}
 print '<td>';
 print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, $conf->global->ADHERENT_BANK_USE, 0);
 if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice') {
@@ -349,7 +364,9 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								$modulequalified = 0;
+							}
 							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
 								$modulequalified = 0;
 							}
@@ -404,8 +421,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Preview
 								print '<td class="center">';
-								if ($module->type == 'pdf')
-								{
+								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');

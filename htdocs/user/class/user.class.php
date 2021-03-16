@@ -457,7 +457,7 @@ class User extends CommonObject
 		} elseif ($email) {
 			$sql .= " AND u.email = '".$this->db->escape($email)."'";
 		} else {
-			$sql .= " AND u.rowid = ".$id;
+			$sql .= " AND u.rowid = ".((int) $id);
 		}
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
 
@@ -611,31 +611,31 @@ class User extends CommonObject
 	public function loadDefaultValues()
 	{
 		global $conf;
+		if (!empty($conf->global->MAIN_ENABLE_DEFAULT_VALUES)) {
+			// Load user->default_values for user. TODO Save this in memcached ?
+			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
-		// Load user->default_values for user. TODO Save this in memcached ?
-		$sql = "SELECT rowid, entity, type, page, param, value";
-		$sql .= " FROM ".MAIN_DB_PREFIX."default_values";
-		$sql .= " WHERE entity IN (".($this->entity > 0 ? $this->entity.", " : "").$conf->entity.")"; // Entity of user (if defined) + current entity
-		$sql .= " AND user_id IN (0".($this->id > 0 ? ", ".$this->id : "").")"; // User 0 (all) + me (if defined)
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->page) && !empty($obj->type) && !empty($obj->param)) {
-					// $obj->page is relative URL with or without params
-					// $obj->type can be 'filters', 'sortorder', 'createform', ...
-					// $obj->param is key or param
-					$pagewithoutquerystring = $obj->page;
-					$pagequeries = '';
-					$reg = array();
-					if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg)) {	// There is query param
-						$pagewithoutquerystring = $reg[1];
-						$pagequeries = $reg[2];
+			$defaultValues = new DefaultValues($this->db);
+			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array($this->entity, $conf->entity)));	// User 0 (all) + me (if defined)
+
+			if (!is_array($result) && $result < 0) {
+				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
+				dol_print_error($this->db);
+				return -1;
+			} elseif (count($result) > 0) {
+				foreach ($result as $defval) {
+					if (!empty($defval->page) && !empty($defval->type) && !empty($defval->param)) {
+						$pagewithoutquerystring = $defval->page;
+						$pagequeries = '';
+						$reg = array();
+						if (preg_match('/^([^\?]+)\?(.*)$/', $pagewithoutquerystring, $reg)) {    // There is query param
+							$pagewithoutquerystring = $reg[1];
+							$pagequeries = $reg[2];
+						}
+						$this->default_values[$pagewithoutquerystring][$defval->type][$pagequeries ? $pagequeries : '_noquery_'][$defval->param] = $defval->value;
 					}
-					$this->default_values[$pagewithoutquerystring][$obj->type][$pagequeries ? $pagequeries : '_noquery_'][$obj->param] = $obj->value;
-					//if ($pagequeries) $this->default_values[$pagewithoutquerystring][$obj->type.'_queries']=$pagequeries;
 				}
 			}
-			// Sort by key, so _noquery_ is last
 			if (!empty($this->default_values)) {
 				foreach ($this->default_values as $a => $b) {
 					foreach ($b as $c => $d) {
@@ -643,13 +643,8 @@ class User extends CommonObject
 					}
 				}
 			}
-			$this->db->free($resql);
-
-			return 1;
-		} else {
-			dol_print_error($this->db);
-			return -1;
 		}
+		return 1;
 	}
 
 	/**
@@ -1508,7 +1503,7 @@ class User extends CommonObject
 			} elseif (!empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".$this->db->escape($this->pass_crypted)."'";
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1519,7 +1514,7 @@ class User extends CommonObject
 			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET fk_soc=".$member->fk_soc;
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2503,9 +2498,8 @@ class User extends CommonObject
 			// Only picto
 			if ($withpictoimg > 0) {
 				$picto = '<!-- picto user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : 'class="paddingright classfortooltip"'), 0, 0, $notooltip ? 0 : 1).'</span>';
-			}
-			// Picto must be a photo
-			else {
+			} else {
+				// Picto must be a photo
 				$picto = '<!-- picto photo user --><span class="nopadding userimg'.($morecss ? ' '.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
 			}
 			$result .= $picto;
@@ -2740,9 +2734,9 @@ class User extends CommonObject
 			if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
 				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 			}
-		}
-		// Set LDAP password if possible
-		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') { // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
+		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+			// Set LDAP password if possible
+			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
@@ -2750,9 +2744,8 @@ class User extends CommonObject
 						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
-			}
-			// Use $this->pass_indatabase value if exists
-			elseif (!empty($this->pass_indatabase)) {
+			} elseif (!empty($this->pass_indatabase)) {
+				// Use $this->pass_indatabase value if exists
 				if (!empty($conf->global->LDAP_FIELD_PASSWORD)) {
 					$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
@@ -2873,7 +2866,7 @@ class User extends CommonObject
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
 		$sql .= " u.tms as date_modification, u.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.rowid = ".$id;
+		$sql .= " WHERE u.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

@@ -121,7 +121,7 @@ if ($action == 'setcoder') {
 $form = new Form($db);
 $formbarcode = new FormBarCode($db);
 
-$help_url = 'EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra';
+$help_url = 'EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra|DE:Modul_Barcode';
 llxHeader('', $langs->trans("BarcodeSetup"), $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

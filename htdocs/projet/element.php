@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ if (!empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 }
 if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -132,6 +133,9 @@ if (!empty($conf->salaries->enabled)) {
 }
 if (!empty($conf->mrp->enabled)) {
 	$langs->load("mrp");
+}
+if (!empty($conf->eventorganization->enabled)) {
+	$langs->load("eventorganization");
 }
 
 $id = GETPOST('id', 'int');
@@ -252,6 +256,11 @@ if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 	$htmltext = $langs->trans("ProjectBillTimeDescription");
 	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 	print '<br>';
+}
+if (!empty($conf->eventorganization->enabled)) {
+	print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+	print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 }
 print '</td></tr>';
 
@@ -564,7 +573,7 @@ $listofreferent = array(
 'salaries'=>array(
 	'name'=>"Salaries",
 	'title'=>"ListSalariesAssociatedProject",
-	'class'=>'PaymentSalary',
+	'class'=>'Salary',
 	'table'=>'payment_salary',
 	'datefieldname'=>'datev',
 	'margin'=>'minus',

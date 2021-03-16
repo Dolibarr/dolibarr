@@ -128,7 +128,7 @@ $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $object->name." - ".$langs->trans('TabLetteringCustomer');
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);

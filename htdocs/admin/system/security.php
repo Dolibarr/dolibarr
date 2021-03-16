@@ -76,7 +76,7 @@ if ($test) {
 print '<br>';
 
 print '<br>';
-print load_fiche_titre($langs->trans("ConfigurationFile"), '', 'folder');
+print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
 print '<strong>'.$langs->trans("dolibarr_main_prod").'</strong>: '.$dolibarr_main_prod;
 if (empty($dolibarr_main_prod)) {
@@ -98,7 +98,7 @@ print '<br>';
 
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Permissions"), '', 'folder');
+print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 // TODO Check permission are read only except for custom dir
@@ -151,9 +151,18 @@ print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"),
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? $langs->trans("Undefined") : '')." &nbsp; ";
-print '<span class="opacitymedium"> &nbsp; If unset: \'md5\'</span> ';
-print '<span class="opacitymedium"> - Recommanded value: \'password_hash\'</span><br>';
-print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? $langs->trans("Undefined") : '').'<br>';
+print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span><br>';
+if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? $langs->trans("Undefined") : $conf->global->MAIN_SECURITY_SALT).'<br>';
+}
+if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+	print '<span class="opacitymedium">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print 'If you really want to switch, you must:<br>';
+	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
+	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
+	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
+	print '</span><br>';
+}
 print '<br>';
 // TODO
 

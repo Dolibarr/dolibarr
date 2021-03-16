@@ -151,7 +151,7 @@ class CProductNature // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		$sql_where = array();
 		if ($id) {
-			$sql_where[] = " t.rowid = ".$id;
+			$sql_where[] = " t.rowid = ".((int) $id);
 		}
 		if ($code >= 0) {
 			$sql_where[] = " t.code = ".((int) $code);

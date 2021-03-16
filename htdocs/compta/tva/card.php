@@ -549,7 +549,7 @@ if ($id) {
 	print '</td></tr>';
 
 	if ($action == 'edit') {
-		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . $object->amount . '"></td></tr>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
 	} else {
 		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount) . '</td></tr>';
 	}
@@ -630,7 +630,8 @@ if ($id) {
 		$totalpaye = 0;
 
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0;
+		$i = 0;
+		$total = 0;
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder paymenttable">';

@@ -169,7 +169,7 @@ class Paiement extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' WHERE p.entity IN ('.getEntity('invoice').')';
 		if ($id > 0) {
-			$sql .= ' AND p.rowid = '.$id;
+			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
 			$sql .= " AND p.ref = '".$ref."'";
 		} elseif ($fk_bank) {
@@ -335,9 +335,8 @@ class Paiement extends CommonObject
 								dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
 							} elseif ($remaintopay) {
 								dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
-							}
-							//else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
-							else {
+								// } else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
+							} else {
 								// If invoice is a down payment, we also convert down payment to discount
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$amount_ht = $amount_tva = $amount_ttc = array();
@@ -900,7 +899,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT p.rowid, p.datec, p.fk_user_creat, p.fk_user_modif, p.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
-		$sql .= ' WHERE p.rowid = '.$id;
+		$sql .= ' WHERE p.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

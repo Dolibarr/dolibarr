@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017      Pierre-Henry Favre   <support@atm-consulting.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -693,7 +694,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				} elseif ($data['item'] == 'SalaryPayment') {
 					$salary_payment->id = $data['id'];
 					$salary_payment->ref = $data['ref'];
-					print $salary_payment->getNomUrl(1, '', 0, '', 0);
+					print $salary_payment->getNomUrl(1);
 				} elseif ($data['item'] == 'Donation') {
 					$don->id = $data['id'];
 					$don->ref = $data['ref'];

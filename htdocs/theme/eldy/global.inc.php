@@ -393,7 +393,7 @@ input.pageplusone {
 	opacity: 0.6;
 }
 .opacityhigh {
-	opacity: 0.2;
+	opacity: 0.24;
 }
 .opacitytransp {
 	opacity: 0;
@@ -760,6 +760,12 @@ textarea.centpercent {
 	max-height: 250px;
 	max-width: 100%;
 	overflow-y: auto;
+}
+
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+	color: #888 !important;
+	opacity: 0.4;
+	padding-<?php echo $left; ?>: 3px;
 }
 
 body[class*="colorblind-"] .text-warning{
@@ -1606,7 +1612,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width: calc(100% - 210px);
 	display: inline-block;
 }
 
@@ -1710,8 +1716,15 @@ div.vmenu, td.vmenu {
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
+	/* no side-nav */
 	body.sidebar-collapse .side-nav {
 		display: none;
+	}
+
+	/* if no side-nav, we don't need to have width forced */
+	.classforhorizontalscrolloftabs #id-right {
+		width: unset;
+		display: unset;
 	}
 
 	body.sidebar-collapse .login_block {
@@ -1767,8 +1780,8 @@ div.vmenu, td.vmenu {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '32' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu)) {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
@@ -1815,14 +1828,14 @@ div.fichetwothirdright {
 	} ?>
 }
 div.fichetwothirdright div.ficheaddleft {
-	 padding-<?php echo $left; ?>: 20px;
+	 padding-<?php echo $left; ?>: 28px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1830,7 +1843,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1838,12 +1851,15 @@ div.fichehalfright {
 		print "margin-top: 10px;\n";
 	} ?>
 }
-div.firstcolumn div.box {
+
+/*div.firstcolumn div.box {
 	padding-right: 10px;
 }
 div.secondcolumn div.box {
 	padding-left: 10px;
-}
+}*/
+
+
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 1000px)
 {
@@ -1994,7 +2010,7 @@ span.widthpictotitle.pictotitle {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	width: 44px;
+	width: 50px;
 	text-align:center;
 }
 div.attacharea {

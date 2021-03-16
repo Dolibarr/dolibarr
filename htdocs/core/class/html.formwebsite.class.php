@@ -246,7 +246,8 @@ class FormWebsite
 
 		if ($atleastonepage) {
 			if (empty($pageid) && $action != 'createcontainer') {      // Page id is not defined, we try to take one
-				$firstpageid = 0; $homepageid = 0;
+				$firstpageid = 0;
+				$homepageid = 0;
 				foreach ($website->lines as $key => $valpage) {
 					if (empty($firstpageid)) {
 						$firstpageid = $valpage->id;

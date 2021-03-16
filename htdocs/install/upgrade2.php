@@ -4169,7 +4169,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod = new modBlockedLog($db);
 				// For this module we only reload menus.
 				$mod->delete_menus();
-				$mod->insert_menus($reloadmode);
+				$mod->insert_menus();
 			}
 		} elseif ($moduletoreload == 'MAIN_MODULE_CRON') {
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");

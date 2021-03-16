@@ -208,7 +208,7 @@ function project_prepare_head(Project $project)
 		$langs->load('eventorganization');
 		//TODO : Count
 		$nbConfOrBooth = 1;
-		$head[$h][0] = DOL_URL_ROOT . '/projet/event.php?id=' . $project->id;
+		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
 		if ($nbContact > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
@@ -806,7 +806,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				// Contacts of task
+				// Contacts of tasks. Disabled, because available by default just after
+				/*
 				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 					print '<td>';
 					foreach (array('internal', 'external') as $source) {
@@ -822,6 +823,36 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								}
 								$c->fetch($contacttask['id']);
 								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
+							}
+						}
+					}
+					print '</td>';
+				}*/
+
+				// Contacts of task
+				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+					print '<td>';
+					foreach (array('internal', 'external') as $source) {
+						$tab = $lines[$i]->liste_contact(-1, $source);
+						$num = count($tab);
+						if (!empty($num)) {
+							foreach ($tab as $contacttask) {
+								//var_dump($contacttask);
+								if ($source == 'internal') {
+									$c = new User($db);
+								} else {
+									$c = new Contact($db);
+								}
+								$c->fetch($contacttask['id']);
+								if (!empty($c->photo)) {
+									print $c->getNomUrl(-2).'&nbsp;';
+								} else {
+									if (get_class($c) == 'User') {
+										print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+									} else {
+										print $c->getNomUrl(2);//.'&nbsp;';
+									}
+								}
 							}
 						}
 					}
@@ -965,8 +996,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 			}
 		}
-		// Contacts of task
+		// Contacts of task for backward compatibility,
 		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+			print '<td></td>';
+		}
+		// Contacts of task
+		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
 		print '<td class=""></td>';
@@ -1125,7 +1160,8 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			print dol_print_date($lines[$i]->timespent_datehour, 'day');
 			print '</td>';
 
-			$disabledproject = 1; $disabledtask = 1;
+			$disabledproject = 1;
+			$disabledtask = 1;
 			//print "x".$lines[$i]->fk_project;
 			//var_dump($lines[$i]);
 			//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -1480,7 +1516,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 				print "</td>\n";
 
-				$disabledproject = 1; $disabledtask = 1;
+				$disabledproject = 1;
+				$disabledtask = 1;
 				//print "x".$lines[$i]->fk_project;
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -1870,7 +1907,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				}
 				print "</td>\n";
 
-				$disabledproject = 1; $disabledtask = 1;
+				$disabledproject = 1;
+				$disabledtask = 1;
 				//print "x".$lines[$i]->fk_project;
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -1887,7 +1925,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 
 				// Fields to show current time
-				$tableCell = ''; $modeinput = 'hours';
+				$tableCell = '';
+				$modeinput = 'hours';
 				for ($idw = 0; $idw < 7; $idw++) {
 					$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
@@ -2148,7 +2187,8 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				}
 				print "</td>\n";
 
-				$disabledproject = 1; $disabledtask = 1;
+				$disabledproject = 1;
+				$disabledtask = 1;
 				//print "x".$lines[$i]->fk_project;
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -2165,7 +2205,8 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 				//TODO
 				// Fields to show current time
-				$tableCell = ''; $modeinput = 'hours';
+				$tableCell = '';
+				$modeinput = 'hours';
 				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y', $firstdaytoshow));
 				$TFirstDay[reset($TWeek)] = 1;
 				foreach ($TFirstDay as &$fday) {

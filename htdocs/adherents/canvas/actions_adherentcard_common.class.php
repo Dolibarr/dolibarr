@@ -64,13 +64,15 @@ abstract class ActionsAdherentCardCommon
 		//$ret = $this->getInstanceDao();
 
 		/*if (is_object($this->object) && method_exists($this->object,'fetch'))
-    	{
-    		if (! empty($id)) $this->object->fetch($id);
-    	}
-    	else
-    	{*/
+		{
+			if (! empty($id)) $this->object->fetch($id);
+		}
+		else
+		{*/
 			$object = new Adherent($this->db);
-			if (!empty($id)) $object->fetch($id);
+		if (!empty($id)) {
+			$object->fetch($id);
+		}
 			$this->object = $object;
 		//}
 	}
@@ -89,7 +91,9 @@ abstract class ActionsAdherentCardCommon
 		global $conf, $langs, $user, $canvas;
 		global $form, $formcompany, $objsoc;
 
-		if ($action == 'add' || $action == 'update') $this->assign_post();
+		if ($action == 'add' || $action == 'update') {
+			$this->assign_post();
+		}
 
 		foreach ($this->object as $key => $value) {
 			$this->tpl[$key] = $value;
@@ -123,12 +127,24 @@ abstract class ActionsAdherentCardCommon
 
 			// Predefined with third party
 			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE')) {
-				if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
-				if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->zip;
-				if (dol_strlen(trim($this->object->town)) == 0) $this->object->town = $objsoc->town;
-				if (dol_strlen(trim($this->object->phone_perso)) == 0) $this->object->phone_perso = $objsoc->phone;
-				if (dol_strlen(trim($this->object->phone_mobile)) == 0) $this->object->phone_mobile = $objsoc->phone_mobile;
-				if (dol_strlen(trim($this->object->email)) == 0) $this->object->email = $objsoc->email;
+				if (dol_strlen(trim($this->object->address)) == 0) {
+					$this->tpl['address'] = $objsoc->address;
+				}
+				if (dol_strlen(trim($this->object->zip)) == 0) {
+					$this->object->zip = $objsoc->zip;
+				}
+				if (dol_strlen(trim($this->object->town)) == 0) {
+					$this->object->town = $objsoc->town;
+				}
+				if (dol_strlen(trim($this->object->phone_perso)) == 0) {
+					$this->object->phone_perso = $objsoc->phone;
+				}
+				if (dol_strlen(trim($this->object->phone_mobile)) == 0) {
+					$this->object->phone_mobile = $objsoc->phone_mobile;
+				}
+				if (dol_strlen(trim($this->object->email)) == 0) {
+					$this->object->email = $objsoc->email;
+				}
 			}
 
 			// Zip
@@ -137,17 +153,24 @@ abstract class ActionsAdherentCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) $this->object->country_id = $objsoc->country_id;
+			if (dol_strlen(trim($this->object->country_id)) == 0) {
+				$this->object->country_id = $objsoc->country_id;
+			}
 
 			// Country
 			$this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
 			$countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-			if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if ($user->admin) {
+				$this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
 
 			// State
-			if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
-			else $this->tpl['select_state'] = $countrynotdefined;
+			if ($this->object->country_id) {
+				$this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
+			} else {
+				$this->tpl['select_state'] = $countrynotdefined;
+			}
 
 			// Physical or Moral
 			$selectarray = array('0'=>$langs->trans("Physical"), '1'=>$langs->trans("Moral"));
@@ -166,7 +189,9 @@ abstract class ActionsAdherentCardCommon
 				$dolibarr_user = new User($this->db);
 				$result = $dolibarr_user->fetch($this->object->user_id);
 				$this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
-			} else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+			} else {
+				$this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+			}
 		}
 
 		if ($action == 'view' || $action == 'delete') {
@@ -205,7 +230,7 @@ abstract class ActionsAdherentCardCommon
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$login = dol_buildlogin($this->object->lastname, $this->object->firstname);
 
-	   		$generated_password = getRandomPassword(false);
+			$generated_password = getRandomPassword(false);
 			$password = $generated_password;
 
 			// Create a form array

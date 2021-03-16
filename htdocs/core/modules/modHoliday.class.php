@@ -221,7 +221,9 @@ class modHoliday extends DolibarrModules
 		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
 		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
-		$keyforselect = 'holiday'; $keyforelement = 'holiday'; $keyforaliasextra = 'extra';
+		$keyforselect = 'holiday';
+		$keyforelement = 'holiday';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

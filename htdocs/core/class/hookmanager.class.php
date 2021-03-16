@@ -120,7 +120,8 @@ class HookManager
 						if ($resaction) {
 							$controlclassname = 'Actions'.ucfirst($module);
 							$actionInstance = new $controlclassname($this->db);
-							$this->hooks[$context][$module] = $actionInstance;
+							$priority = empty($actionInstance->priority) ? 50 : $actionInstance->priority;
+							$this->hooks[$context][$priority.':'.$module] = $actionInstance;
 						}
 					}
 				}
@@ -128,6 +129,10 @@ class HookManager
 		}
 		if (count($arraytolog) > 0) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
+		}
+
+		if (!empty($this->hooks[$context])) {
+			ksort($this->hooks[$context], SORT_NATURAL);
 		}
 
 		return 1;
@@ -228,15 +233,20 @@ class HookManager
 		}
 
 		// Init return properties
-		$this->resPrint = ''; $this->resArray = array(); $this->resNbOfHooks = 0;
+		$this->resPrint = '';
+		$this->resArray = array();
+		$this->resNbOfHooks = 0;
 
 		// Loop on each hook to qualify modules that have declared context
 		$modulealreadyexecuted = array();
-		$resaction = 0; $error = 0;
+		$resaction = 0;
+		$error = 0;
 		foreach ($this->hooks as $context => $modules) {    // $this->hooks is an array with context as key and value is an array of modules that handle this context
 			if (!empty($modules)) {
+				// Loop on each active hooks of module for this context
 				foreach ($modules as $module => $actionclassinstance) {
-					//print "Before hook ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
+					$module = preg_replace('/^\d+:/', '', $module);
+					//print "Before hook ".get_class($actionclassinstance)." method=".$method." module=".$module." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 
 					// test to avoid running twice a hook, when a module implements several active contexts
 					if (in_array($module, $modulealreadyexecuted)) {
@@ -265,7 +275,8 @@ class HookManager
 						$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						if ($resaction < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
 							$error++;
-							$this->error = $actionclassinstance->error; $this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
+							$this->error = $actionclassinstance->error;
+							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
 						}
 
@@ -275,9 +286,8 @@ class HookManager
 						if (!empty($actionclassinstance->resprints)) {
 							$this->resPrint .= $actionclassinstance->resprints;
 						}
-					}
-					// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
-					else {
+					} else {
+						// Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
 						// TODO. this test should be done into the method of hook by returning nothing
 						if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) {
 							continue;
@@ -294,14 +304,16 @@ class HookManager
 						}
 						if (is_numeric($resaction) && $resaction < 0) {
 							$error++;
-							$this->error = $actionclassinstance->error; $this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
+							$this->error = $actionclassinstance->error;
+							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);
 							dol_syslog("Error on hook module=".$module.", method ".$method.", class ".get_class($actionclassinstance).", hooktype=".$hooktype.(empty($this->error) ? '' : " ".$this->error).(empty($this->errors) ? '' : " ".join(",", $this->errors)), LOG_ERR);
 						}
 						// TODO dead code to remove (do not enable this, but fix hook instead): result must not be a string but an int. you must use $actionclassinstance->resprints to return a string
 						if (!is_array($resaction) && !is_numeric($resaction)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resaction; $resaction = 0;
+								$this->resPrint .= $resaction;
+								$resaction = 0;
 							}
 						}
 					}

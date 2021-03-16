@@ -441,13 +441,13 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$qty = $supplierorderdispatch->qty;
 		$entrepot = $supplierorderdispatch->fk_entrepot;
 		$product = $supplierorderdispatch->fk_product;
-		$price = GETPOST('price');
+		$price = price2num(GETPOST('price'), '', 2);
 		$comment = $supplierorderdispatch->comment;
 		$eatby = $supplierorderdispatch->fk_product;
 		$sellby = $supplierorderdispatch->sellby;
 		$batch = $supplierorderdispatch->batch;
 
-		$supplierorderdispatch->qty = GETPOST('qty', 'int');
+		$supplierorderdispatch->qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 		$supplierorderdispatch->fk_entrepot = GETPOST('fk_entrepot');
 		$result = $supplierorderdispatch->update($user);
 	}
@@ -855,7 +855,7 @@ if ($id > 0 || !empty($ref)) {
 						// Already dispatched
 						print '<td class="right">'.$products_dispatched[$objp->rowid].'</td>';
 
-						if (!empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
+						if (!empty($conf->productbatch->enabled) && $objp->tobatch > 0) {
 							$type = 'batch';
 							print '<td class="right">';
 							print '</td>'; // Qty to dispatch
@@ -967,7 +967,7 @@ if ($id > 0 || !empty($ref)) {
 						print '</td>';
 
 						print '<td>';
-						if (!empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
+						if (!empty($conf->productbatch->enabled) && $objp->tobatch > 0) {
 							$type = 'batch';
 							print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						} else {
