@@ -2485,9 +2485,8 @@ if ($action == 'create') {
 }
 
 /*
- * Barre d'actions
+ * Action bar
  */
-
 print '<div class="tabsAction">';
 
 if ($action != 'create' && $action != 'edit') {

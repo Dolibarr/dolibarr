@@ -354,7 +354,7 @@ print '</form>'."\n";
 
 
 /*
- * Barre d'actions
+ * Action bar
  */
 print '<div class="tabsAction">';
 
