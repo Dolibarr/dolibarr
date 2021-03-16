@@ -470,7 +470,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 
 if ($action != 'presend') {

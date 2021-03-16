@@ -373,7 +373,7 @@ if ($rowid && $action != 'edit') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 
-	// Documents generes
+	// Generated documents
 	/*
 	$filename = dol_sanitizeFileName($object->ref);
 	$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);

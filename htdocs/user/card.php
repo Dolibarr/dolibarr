@@ -2673,7 +2673,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);

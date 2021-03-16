@@ -2103,8 +2103,8 @@ if ($action == 'create') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			/*
-			 * Documents generes
-			*/
+			 * Generated documents
+			 */
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->contrat->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

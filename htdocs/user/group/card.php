@@ -470,7 +470,7 @@ if ($action == 'create') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 
 			$filename = dol_sanitizeFileName($object->ref);

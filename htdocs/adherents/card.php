@@ -1818,7 +1818,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			// Documents generes
+			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
 			//$filename =  'tmp_cards.php';
 			//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);
