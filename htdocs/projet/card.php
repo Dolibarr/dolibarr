@@ -215,7 +215,7 @@ if (empty($reshook))
 				}
 			} else {
 				$db->rollback();
-
+				unset($_POST["ref"]);
 				$action = 'create';
 			}
 		} else {
