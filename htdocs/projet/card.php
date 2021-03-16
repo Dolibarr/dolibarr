@@ -1325,7 +1325,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<a name="builddoc"></a>'; // ancre
 
 		/*
-		 * Documents generes
+		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($object->ref);
