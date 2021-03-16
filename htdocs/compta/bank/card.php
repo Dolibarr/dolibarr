@@ -904,7 +904,7 @@ if ($action == 'create') {
 		} elseif ($conciliate == -3) {
 			print $langs->trans("No").' ('.$langs->trans("Closed").')';
 		} else {
-			print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> '.$langs->trans("DisableConciliation");
+			print '<input type="checkbox" class="flat" id="norappro" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> <label for="norappro">'.$langs->trans("DisableConciliation").'</label>';
 		}
 		print '</td></tr>';
 
