@@ -759,7 +759,10 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-llxHeader('', $langs->trans("Intervention"));
+
+$help_url = 'EN:Module_Interventions';
+
+llxHeader('', $langs->trans("Intervention"), $help_url);
 
 if ($action == 'create') {
 	// Create new intervention
