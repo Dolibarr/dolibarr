@@ -31,3 +31,5 @@ BatchSerialNumberingModules=Options for automatic generation of batch products m
 WrongCountOfSerialsForQty=Number of serial numbers different from quantity for stock movement on %s
 ProductLotOtherConf=Other parameters
 SerialNumbersSeparator=Serial numbers separator
+LotNumber=Lot number
+SerialNumbers=Serial numbers

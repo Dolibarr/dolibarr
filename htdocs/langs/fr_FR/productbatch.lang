@@ -31,3 +31,6 @@ BatchSerialNumberingModules=Modèle de génération et contrôle des numéros de
 WrongCountOfSerialsForQty=Nombre de numéros de série différent de la quantité renseignée pour le mouvement de stock sur %s
 ProductLotOtherConf=Autres paramètres
 SerialNumbersSeparator=Séparateur pour les numéros de série
+LotNumber=Numéro de lot
+SerialNumbers=Numéros de série
+

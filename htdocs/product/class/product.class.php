@@ -4909,30 +4909,60 @@ class Product extends CommonObject
 	 * @param  int	    $disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
 	 * @return int                      <0 if KO, >0 if OK
 	 */
-	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
+	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $batch = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
 	{
+		global $conf;
+
 		// phpcs:enable
 		if ($id_entrepot) {
 			$this->db->begin();
 
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
-			$op[0] = "+".trim($nbpiece);
-			$op[1] = "-".trim($nbpiece);
+			if ($this->status_batch == 1) {
+				$op[0] = "+".trim($nbpiece);
+				$op[1] = "-".trim($nbpiece);
+				$movementstock = new MouvementStock($this->db);
+				$movementstock->setOrigin($origin_element, $origin_id);
+				$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $batch, false, 0, $disablestockchangeforsubproduct);
 
-			$movementstock = new MouvementStock($this->db);
-			$movementstock->setOrigin($origin_element, $origin_id);
-			$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $lot, false, 0, $disablestockchangeforsubproduct);
+				if ($result >= 0) {
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->error = $movementstock->error;
+					$this->errors = $movementstock->errors;
 
-			if ($result >= 0) {
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->error = $movementstock->error;
-				$this->errors = $movementstock->errors;
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else {
+				$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
+				if (count($serials != $qty)) {
+					$error++;
+					$this->errors[] = $langs->trans("WrongCountOfSerialsForQty");
+				}
+				if ($error == 0) {
+					$op[0] = "+1";
+					$op[1] = "-1";
+					foreach ($serials as $sn) {
+						$movementstock = new MouvementStock($this->db);
+						$movementstock->setOrigin($origin_element, $origin_id);
+						$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $sn, false, 0, $disablestockchangeforsubproduct);
 
-				$this->db->rollback();
-				return -1;
+						if ($result >= 0) {
+							$this->db->commit();
+							return 1;
+						} else {
+							$this->error = $movementstock->error;
+							$this->errors = $movementstock->errors;
+
+							$this->db->rollback();
+							return -1;
+						}
+					}
+				}
 			}
 		}
 	}

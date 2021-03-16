@@ -115,9 +115,19 @@ if (!empty($conf->productbatch->enabled) &&
 || ($object->element == 'stock'))
 ) {
 	print '<tr>';
-	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
-	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
-	print '</td>';
+	if ($object->element == 'product' && $object->status_batch == 2) {
+		print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("SerialNumbers").'</td>';
+		print '<td>';
+		print '<textarea name="batch_number" style="width:50%">'.GETPOST("batch_number").'</textarea>';
+		print '</td>';
+		print '<td colspan="2"></td>';
+	}
+	else {
+		print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("LotNumber").'</td>';
+		print '<td colspan="3">';
+		print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
+		print '</td>';
+	}
 	print '</tr>';
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {

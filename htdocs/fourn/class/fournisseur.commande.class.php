@@ -1991,7 +1991,7 @@ class CommandeFournisseur extends CommonOrder
 			if (!$error && $entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 				$product = new Product($this->db);
 				if ($product->fetch($fk_product) > 0) {
-					if ($product->tobatch == 1) {
+					if ($product->status_batch == 1) {
 						$mouv = new MouvementStock($this->db);
 						// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 						$mouv->origin = &$this;
@@ -2002,7 +2002,7 @@ class CommandeFournisseur extends CommonOrder
 							dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',', $this->errors), LOG_ERR);
 							$error++;
 						}
-					} elseif ($product->tobatch == 2) {
+					} elseif ($product->status_batch == 2) {
 						$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
 						if (count($serials != $qty)) {
 							$error++;

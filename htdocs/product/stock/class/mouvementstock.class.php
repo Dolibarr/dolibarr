@@ -272,7 +272,7 @@ class MouvementStock extends CommonObject
 				$i = 0;
 				if ($num > 0)
 				{
-					if ( $product->tobatch == 2 && ($type == 0 || $type == 3) ) {
+					if ( $product->status_batch == 2 && ($type == 0 || $type == 3) ) {
 						$langs->load("errors");
 						$this->errors[] = $langs->transnoentitiesnoconv("SerialNumberAlreadyInUse", $batch, $product->ref);
 						dol_syslog("Try to make a movement of a product with serial number already existing");
