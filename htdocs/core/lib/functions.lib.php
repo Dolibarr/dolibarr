@@ -9198,6 +9198,11 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-audio-o';
 	}
 	// Video
+	if (preg_match('/\.mp4$/i', $tmpfile)) {
+		$mime = 'video/mp4';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
+	}
 	if (preg_match('/\.ogv$/i', $tmpfile)) {
 		$mime = 'video/ogg';
 		$imgmime = 'video.png';
@@ -9229,7 +9234,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-video-o';
 	}
 	// Archive
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i', $tmpfile)) {
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh|zst)$/i', $tmpfile)) {
 		$mime = 'archive';
 		$imgmime = 'archive.png';
 		$famime = 'file-archive-o';
