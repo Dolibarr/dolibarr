@@ -329,7 +329,9 @@ if ($action == 'builddoc')
  * View
  */
 
-llxHeader('', $langs->trans("Donation"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
+
+llxHeader('', $langs->trans("Donation"), $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
