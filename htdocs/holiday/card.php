@@ -51,6 +51,8 @@ $fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails"));
 
+$error = 0;
+
 $now = dol_now();
 
 $childids = $user->getAllChildIds(1);
@@ -59,8 +61,6 @@ $morefilter = '';
 if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
 	$morefilter = 'AND employee = 1';
 }
-
-$error = 0;
 
 $object = new Holiday($db);
 
