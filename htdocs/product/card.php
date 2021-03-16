@@ -2261,11 +2261,9 @@ if (empty($reshook)) {
 // Print form confirm
 print $formconfirm;
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Action bar
+ */
 if ($action != 'create' && $action != 'edit') {
 	print "\n".'<div class="tabsAction">'."\n";
 

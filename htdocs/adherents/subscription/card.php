@@ -349,8 +349,7 @@ if ($rowid && $action != 'edit') {
 	print dol_get_fiche_end();
 
 	/*
-	 * Barre d'actions
-	 *
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 

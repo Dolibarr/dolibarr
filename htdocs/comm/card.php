@@ -1334,9 +1334,8 @@ if ($object->id > 0) {
 
 
 	/*
-	 * Barre d'actions
+	 * Action bar
 	 */
-
 	print '<div class="tabsAction">';
 
 	$parameters = array();

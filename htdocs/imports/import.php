@@ -1203,7 +1203,7 @@ if ($step == 4 && $datatoimport) {
 	}
 
 	/*
-	 * Barre d'action
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 

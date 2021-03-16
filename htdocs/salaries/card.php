@@ -882,8 +882,9 @@ if ($id) {
 	print dol_get_fiche_end();
 
 
-	// Action buttons
-
+	/*
+	 * Action bar
+	 */
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
 		// Reopen
