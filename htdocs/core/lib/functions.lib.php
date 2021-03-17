@@ -3391,7 +3391,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 {
 	global $conf;
 
-	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
+	if (empty($size) || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
 		return $string;
 	}
 
