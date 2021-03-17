@@ -1190,7 +1190,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			$obj = $db->fetch_object($result);
 
 			$contactstatic->id = $obj->rowid;
-			$contactstatic->ref = $obj->ref;
+			$contactstatic->ref = $obj->rowid;
 			$contactstatic->statut = $obj->statut;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
@@ -1204,7 +1204,6 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 			$contactstatic->phone_mobile = $obj->phone_mobile;
 			$contactstatic->phone_perso = $obj->phone_perso;
 			$contactstatic->email = $obj->email;
-			$contactstatic->web = $obj->web;
 			$contactstatic->socialnetworks = $obj->socialnetworks;
 			$contactstatic->photo = $obj->photo;
 
