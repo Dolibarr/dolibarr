@@ -670,6 +670,8 @@ function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $n
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
+	global $conf;
+
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
@@ -738,6 +740,12 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+
+			// We should also exclude non expected attributes
+			if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				$out = dol_string_onlythesehtmlattributes($out);
+			}
+
 			break;
 		case 'custom':
 			if (empty($filter)) {
@@ -6232,7 +6240,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	int		$removeclassattribute	Remove the class attribute from tags
+ *  @param	int		$removeclassattribute	1=Remove the class attribute from tags
  *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
  *	@return string	    					String cleaned
  *
@@ -6243,6 +6251,10 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+	);
+
+	$allowed_attributes = array(
+		"class", "href", "src", "style", "id", "name", "data-html"
 	);
 
 	$allowed_tags_string = join("><", $allowed_tags);
@@ -6278,6 +6290,39 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	return $temp;
 }
 
+
+/**
+ *	Clean a string from some undesirable HTML tags.
+ *  Note. Not as secured as dol_string_onlythesehtmltags().
+ *
+ *	@param	string	$stringtoclean			String to clean
+ *  @param	array	$allowed_attributes		Array of tags not allowed
+ *	@return string	    					String cleaned
+ *
+ * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
+ */
+function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("class", "href", "src", "style", "id", "name", "data-html"))
+{
+	if (class_exists('DOMDocument')) {
+		$dom = new DOMDocument();
+		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+		if (is_object($dom)) {
+			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
+				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
+					// Delete attribute if not into allowed_attributes
+					if (! empty($attrs->item($ii)->name) && ! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+						$els->item($i)->removeAttribute($attrs->item($ii)->name);
+					}
+				}
+			}
+		}
+
+		return $dom->saveHTML();
+	} else {
+		return $stringtoclean;
+	}
+}
+
 /**
  *	Clean a string from some undesirable HTML tags.
  *  Note. Not as secured as dol_string_onlythesehtmltags().
@@ -6287,7 +6332,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  @param	string	$cleanalsosomestyles	Clean also some tags
  *	@return string	    					String cleaned
  *
- * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags()
+ * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_onlythesehtmlattributes()
  */
 function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array('textarea'), $cleanalsosomestyles = 0)
 {
