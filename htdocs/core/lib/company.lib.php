@@ -1783,31 +1783,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= '</td>';
 
 			// Type
-			$out .= '<td>';
-			// TODO Code common with code into showactions
-			$imgpicto = '';
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-				if ($actionstatic->type_picto) {
-					$imgpicto .= img_picto('', $actionstatic->type_picto);
-				} else {
-					if ($actionstatic->type_code == 'AC_RDV') {
-						$imgpicto .= img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-					} elseif ($actionstatic->type_code == 'AC_TEL') {
-						$imgpicto .= img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-					} elseif ($actionstatic->type_code == 'AC_FAX') {
-						$imgpicto .= img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-					} elseif ($actionstatic->type_code == 'AC_EMAIL' || $actionstatic->type_code == 'AC_EMAIL_IN') {
-						$imgpicto .= img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-					} elseif ($actionstatic->type_code == 'AC_INT') {
-						$imgpicto .= img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-					} elseif ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
-						$imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
-					} elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) {
-						$imgpicto .= img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
-					}
-				}
-			}
-			$out .= $imgpicto;
 			$labeltype = $actionstatic->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 				$labeltype = 'AC_OTH';
@@ -1822,7 +1797,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 				}
 			}
-			$out .= dol_trunc($labeltype, 28);
+			$out .= '<td class="tdoverflowmax200" title="'.$labeltype.'">';
+			$out .= $actionstatic->getTypePicto();
+			$out .= $labeltype;
 			$out .= '</td>';
 
 			// Title
