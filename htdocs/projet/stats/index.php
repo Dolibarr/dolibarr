@@ -99,7 +99,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$data1 = array(array(0=>$langs->trans("None"), 1=>1));
 	}
 
-	$filenamenb = $conf->project->dir_output."/stats/projectbystatus.png";
+	$filenamenb = $conf->projet->dir_output."/stats/projectbystatus.png";
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=projectstats&amp;file=projectbystatus.png';
 	$px = new DolGraph();
 	$mesg = $px->isGraphKo();
@@ -150,7 +150,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 $data = $stats_project->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
-$filenamenb = $conf->project->dir_output."/stats/projectnbprevyear-".$year.".png";
+$filenamenb = $conf->projet->dir_output."/stats/projectnbprevyear-".$year.".png";
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=projectstats&amp;file=projectnbprevyear-'.$year.'.png';
 
 $px1 = new DolGraph();
@@ -182,7 +182,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
-	$filenamenb = $conf->project->dir_output."/stats/projectamountprevyear-".$year.".png";
+	$filenamenb = $conf->projet->dir_output."/stats/projectamountprevyear-".$year.".png";
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=projectstats&amp;file=projectamountprevyear-'.$year.'.png';
 
 	$px2 = new DolGraph();
@@ -217,14 +217,15 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	//var_dump($data);
 	// $data = array(array('Lib',val1,val2,val3),...)
 
-	$filenamenb = $conf->project->dir_output."/stats/projecttransrateprevyear-".$year.".png";
+	$filenamenb = $conf->projet->dir_output."/stats/projecttransrateprevyear-".$year.".png";
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=projectstats&amp;file=projecttransrateprevyear-'.$year.'.png';
 
 	$px3 = new DolGraph();
 	$mesg = $px3->isGraphKo();
 	if (!$mesg) {
 		$px3->SetData($data);
-		$i = $startyear; $legend = array();
+		$i = $startyear;
+		$legend = array();
 		while ($i <= $endyear) {
 			$legend[] = $i;
 			$i++;
@@ -268,7 +269,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+complete_head_from_modules($conf, $langs, null, $head, $h, 'projet_stats');
 
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
@@ -337,9 +338,9 @@ foreach ($data_all_year as $val) {
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<td class="right">'.($val['total'] ?price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['avg'] ?price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['weighted'] ?price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
 	}
 	print '</tr>';
 	$oldyear = $year;
@@ -350,7 +351,7 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
+$stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) {
 	print $mesg;
 } else {

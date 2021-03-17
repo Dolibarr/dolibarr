@@ -90,7 +90,7 @@ if (!empty($year)) {
 $data = $stats_tasks->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
-$filenamenb = $conf->project->dir_output."/stats/tasknbprevyear-".$year.".png";
+$filenamenb = $conf->projet->dir_output."/stats/tasknbprevyear-".$year.".png";
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=taskstats&amp;file=tasknbprevyear-'.$year.'.png';
 
 $px1 = new DolGraph();
@@ -134,12 +134,12 @@ if (!count($arrayyears)) {
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/stats/index.php?';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+complete_head_from_modules($conf, $langs, null, $head, $h, 'projet_tasks_stats');
 
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
@@ -191,13 +191,13 @@ foreach ($data_all_year as $val) {
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '</tr>';
 	}
 
 	print '<tr class="oddeven" height="24">';
-	print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '</tr>';
 	$oldyear = $year;
@@ -208,7 +208,7 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
+$stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) {
 	print $mesg;
 } else {
