@@ -1036,7 +1036,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('CommRequests'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+
+llxHeader('', $langs->trans('CommRequests'), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
