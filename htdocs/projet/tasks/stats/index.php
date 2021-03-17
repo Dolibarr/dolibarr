@@ -134,7 +134,7 @@ if (!count($arrayyears)) {
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/stats/index.php?';
+$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
