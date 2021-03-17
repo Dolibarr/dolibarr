@@ -1868,7 +1868,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				}
 			}
 
-			if (!$phototoshow) {      // Show No photo link (picto of object)
+			if (empty($phototoshow)) {      // Show No photo link (picto of object)
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action') {
 					$width = 80;
@@ -2061,33 +2061,33 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : $object->address);
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
 		// US: title firstname name \n address lines \n town, state, zip \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($ret ? $sep : '').$town;
 		if (!empty($object->state))	{
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
-		if ($object->zip) {
+		if (!empty($object->zip)) {
 			$ret .= ($ret ? ", " : '').$object->zip;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) {
 		// UK: title firstname name \n address lines \n town state \n zip \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($ret ? $sep : '').$town;
 		if (!empty($object->state)) {
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
-		if ($object->zip) {
+		if (!empty($object->zip)) {
 			$ret .= ($ret ? $sep : '').$object->zip;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('ES', 'TR'))) {
 		// ES: title firstname name \n address lines \n zip town \n state \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
 			$ret .= "\n".$object->state;
@@ -2095,12 +2095,12 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) {
 		// IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= (empty($object->state_code) ? '' : (' '.$object->state_code));
 	} else { // Other: title firstname name \n address lines \n zip town \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
-		$ret .= $object->zip ? (($ret ? $sep : '').$object->zip) : '';
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
+		$ret .= !empty($object->zip) ? (($ret ? $sep : '').$object->zip) : '';
 		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
 		if (!empty($object->state) && in_array($object->country_code, $countriesusingstate)) {
 			$ret .= ($ret ? ", " : '').$object->state;
