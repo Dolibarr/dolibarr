@@ -916,7 +916,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			$checked = (GETPOST('superadmin', 'int') ? ' checked' : '');
 			$disabled = (GETPOST('superadmin', 'int') ? '' : ' disabled');
-			print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+			print '<input type="checkbox" name="superadmin" id="superadmin" value="1"'.$checked.$disabled.' /> <label for="superadmin">'.$langs->trans("SuperAdministrator").'</span>';
 		}
 		print "</td></tr>\n";
 	}
@@ -993,6 +993,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Country
 	print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+	print img_picto('', 'country', 'class="paddingrightonly"');
 	print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id));
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -2107,7 +2108,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						}
 
 						$checked = (($object->admin && !$object->entity) ? ' checked' : '');
-						print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
+						print '<input type="checkbox" name="superadmin" id="superadmin" value="1"'.$checked.' /> <label for="superadmin">'.$langs->trans("SuperAdministrator").'</span>';
 					}
 				} else {
 					$yn = yn($object->admin);
