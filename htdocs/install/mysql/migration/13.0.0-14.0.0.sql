@@ -141,7 +141,8 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 -- VMYSQL4.3 ALTER TABLE llx_societe MODIFY COLUMN fk_typent integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe ALTER COLUMN fk_typent DROP NOT NULL;
-UPDATE llx_societe SET fk_typent=NULL WHERE fk_typent=0;
+UPDATE llx_societe SET fk_typent=NULL, tms=tms WHERE fk_typent=0;
+
 DELETE FROM llx_c_typent WHERE code='TE_UNKNOWN';
 
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);
