@@ -128,6 +128,11 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 			}
 			$dataseries = array();
 			$data = array();
+			$data['COM'] = 0;
+			$data['HELP'] = 0;
+			$data['ISSUE'] = 0;
+			$data['REQUEST'] = 0;
+			$data['OTHER'] = 0;
 			$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 			$sql .= " WHERE t.fk_statut <> 8";
