@@ -256,6 +256,42 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
+			// check unicity for serial numbered equipments ( different for lots managed products)
+			if ( $product->status_batch == 2 && $type == 3 )
+			{
+				if ( $this->getBatchCount($fk_product, $batch) > 0 )
+				{
+					$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
+					$this->db->rollback();
+					return -2;
+				}
+				elseif ( $qty > 1 )
+				{
+					$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+			// check if batch is in warehouse before removing it
+			if ($type == 1 || $type == 2)
+			{
+				$batchcount = $this->getBatchCount($fk_product, $batch, $entrepot_id);
+				if ( $batchcount <= 0 )
+				{
+					$this->errors[] = $langs->trans("BatchNotFoundInWareHouse", $batch, $entrepot_id, $product->ref);
+					$this->db->rollback();
+					return -2;
+				}
+				elseif ( $batchcount < $qty )
+				{
+					$this->errors[] = $langs->trans("NotEnoughBatchInWareHouse", $product->ref, $batch, $entrepot_id);
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -272,7 +308,7 @@ class MouvementStock extends CommonObject
 				$i = 0;
 				if ($num > 0)
 				{
-					if ( $product->status_batch == 2 && ($type == 0 || $type == 3) ) {
+					if ( $product->status_batch == 2 && $type == 3 ) {
 						$langs->load("errors");
 						$this->errors[] = $langs->transnoentitiesnoconv("SerialNumberAlreadyInUse", $batch, $product->ref);
 						dol_syslog("Try to make a movement of a product with serial number already existing");
@@ -357,7 +393,7 @@ class MouvementStock extends CommonObject
 						$i++;
 					}
 				}
-				else   // If not found, we add record
+				elseif ($type == 0 || $type == 3)   // If not found, we add record
 				{
 					$productlot = new Productlot($this->db);
 					$productlot->entity = $conf->entity;
@@ -374,6 +410,10 @@ class MouvementStock extends CommonObject
 						$this->db->rollback();
 						return -4;
 					}
+				} else {
+					$this->error = $langs->trans("BatchNotFound", $batch);
+					$this->errors[] = $this->error;
+					return -2;
 				}
 			}
 			else
@@ -470,7 +510,7 @@ class MouvementStock extends CommonObject
 			$sql .= " ".$fk_origin.",";
 			$sql .= " '".$this->db->escape($origintype)."',";
 			$sql .= " ".$fk_project;
-			$sql .= ")";
+			$sql .= ")";print $sql;
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -577,32 +617,14 @@ class MouvementStock extends CommonObject
 			// Update detail stock for batch product
 			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch)
 			{
-				// check unicity for serial numbered equipments ( different for lots managed products)
-				if ( $product->status_batch == 2 && $qty > 0 )
+				if ($id_product_batch > 0)
 				{
-					if ( $this->getBatchCount($fk_product, $batch) > 0 )
-					{
-						$error++;
-						$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
-					}
-					elseif ( $qty > 1 )
-					{
-						$error++;
-						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
-					}
+					$result = $this->createBatch($id_product_batch, $qty);
+				} else {
+					$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+					$result = $this->createBatch($param_batch, $qty);
 				}
-
-				if ( ! $error )
-				{
-					if ($id_product_batch > 0)
-					{
-						$result = $this->createBatch($id_product_batch, $qty);
-					} else {
-						$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
-						$result = $this->createBatch($param_batch, $qty);
-					}
-					if ($result < 0) $error++;
-				}
+				if ($result < 0) $error++;
 			}
 
 			// Update PMP and denormalized value of stock qty at product level
@@ -1239,11 +1261,12 @@ class MouvementStock extends CommonObject
 	/**
 	 * Retrieve number of equipments for a product batch
 	 *
-	 * @param int $fk_product Product id
-	 * @param varchar $batch  batch number
+	 * @param int $fk_product 	Product id
+	 * @param varchar $batch  	batch number
+	 * @param int $fk_warehouse Warehouse id or null for all
 	 * @return int            <0 if KO, number of equipments if OK
 	 */
-	private function getBatchCount($fk_product, $batch)
+	private function getBatchCount($fk_product, $batch, $fk_warehouse=null)
 	{
 		global $conf;
 
@@ -1254,6 +1277,8 @@ class MouvementStock extends CommonObject
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE ps.fk_product = " . $fk_product;
 		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
+
+		if ( ! empty($fk_warehouse) ) $sql.= " AND ps.fk_entrepot = ".$fk_warehouse;
 
 		$result = $this->db->query($sql);
 		if ($result) {

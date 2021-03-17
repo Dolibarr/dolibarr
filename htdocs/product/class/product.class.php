@@ -4911,7 +4911,7 @@ class Product extends CommonObject
 	 */
 	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $batch = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// phpcs:enable
 		if ($id_entrepot) {
@@ -4920,8 +4920,8 @@ class Product extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			if ($this->status_batch == 1) {
-				$op[0] = "+".trim($nbpiece);
-				$op[1] = "-".trim($nbpiece);
+				$op[0] = $op[3] = "+".trim($nbpiece);
+				$op[1] = $op[2] = "-".trim($nbpiece);
 				$movementstock = new MouvementStock($this->db);
 				$movementstock->setOrigin($origin_element, $origin_id);
 				$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $batch, false, 0, $disablestockchangeforsubproduct);
@@ -4939,22 +4939,20 @@ class Product extends CommonObject
 			}
 			else {
 				$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
-				if (count($serials != $qty)) {
+				if (count($serials) != abs($nbpiece)) {
 					$error++;
 					$this->errors[] = $langs->trans("WrongCountOfSerialsForQty");
+					return -1;
 				}
 				if ($error == 0) {
-					$op[0] = "+1";
-					$op[1] = "-1";
+					$op[0] = $op[3] = "+1";
+					$op[1] = $op[2] = "-1";
 					foreach ($serials as $sn) {
 						$movementstock = new MouvementStock($this->db);
 						$movementstock->setOrigin($origin_element, $origin_id);
 						$result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode, '', $dlc, $dluo, $sn, false, 0, $disablestockchangeforsubproduct);
 
-						if ($result >= 0) {
-							$this->db->commit();
-							return 1;
-						} else {
+						if ($result < 0) {
 							$this->error = $movementstock->error;
 							$this->errors = $movementstock->errors;
 
@@ -4962,6 +4960,8 @@ class Product extends CommonObject
 							return -1;
 						}
 					}
+					$this->db->commit();
+					return 1;
 				}
 			}
 		}

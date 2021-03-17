@@ -33,4 +33,5 @@ ProductLotOtherConf=Autres paramètres
 SerialNumbersSeparator=Séparateur pour les numéros de série
 LotNumber=Numéro de lot
 SerialNumbers=Numéros de série
-
+BatchNotFoundInWareHouse=Le numéro de lot/série %s n'a pas été trouvé dans l'entrepôt %s pour le produit %s
+NotEnoughBatchInWareHouse=La quantité demandée pour %s n'est pas en stock dans l'entrepôt %s pour le produit %s

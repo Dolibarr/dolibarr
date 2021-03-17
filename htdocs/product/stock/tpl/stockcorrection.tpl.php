@@ -78,8 +78,8 @@ if ($object->element == 'product') {
 	}
 	print img_picto('', 'stock').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
-	print '<option value="0">'.$langs->trans("Add").'</option>';
-	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
+	print '<option value="3">'.$langs->trans("Add").'</option>';
+	print '<option value="2"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';
 	print '</td>';
 }

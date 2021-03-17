@@ -33,3 +33,5 @@ ProductLotOtherConf=Other parameters
 SerialNumbersSeparator=Serial numbers separator
 LotNumber=Lot number
 SerialNumbers=Serial numbers
+BatchNotFoundInWareHouse=Batch %s not found in warehouse %s for product %s
+NotEnoughBatchInWareHouse=Not enough batch %s found in warehouse for product %s
