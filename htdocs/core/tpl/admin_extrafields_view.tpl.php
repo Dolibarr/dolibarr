@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2017	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2021	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -71,7 +71,7 @@ if ($conf->multicompany->enabled) {
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
+if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
 	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value) {
 		/*if (! dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1)) {
 			// TODO Uncomment this to exclude extrafields of modules not enabled. Add a link to "Show extrafields disabled"
