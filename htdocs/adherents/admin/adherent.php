@@ -254,7 +254,8 @@ if ($conf->facture->enabled) {
 	if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
-		$form->select_produits($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
+		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';
 	}
 	print "</tr>\n";
