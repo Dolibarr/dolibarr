@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -656,7 +656,7 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
