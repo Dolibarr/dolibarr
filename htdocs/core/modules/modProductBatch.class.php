@@ -127,7 +127,7 @@ class modProductBatch extends DolibarrModules
 		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_BILL', 0);
 		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 0);
 
-        if (empty($this->reception->enabled)) {
+        if (empty($conf->reception->enabled)) {
             dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', 1);
         }
         else {
