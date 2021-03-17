@@ -120,18 +120,19 @@ class modProductBatch extends DolibarrModules
 
 		$sql = array();
 
-        $this->global->STOCK_CALCULATE_ON_BILL = 0;
-        $this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-        $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
-        $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 0;
-        $this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
-        $this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
+		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_BILL', 0);
+		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 0);
+		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SHIPMENT', 1);
+		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE', 0);
+		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_BILL', 0);
+		dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 0);
+
         if (empty($this->reception->enabled)) {
-            $this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
+            dolibarr_set_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', 1);
         }
         else {
-            $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
-            $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 0;
+            dolibarr_set_const($db, 'STOCK_CALCULATE_ON_RECEPTION', 1);
+            dolibarr_set_const($db, 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 0);
         }
 		if (!empty($conf->cashdesk->enabled)) {
 			if (empty($conf->global->CASHDESK_NO_DECREASE_STOCK)) {
