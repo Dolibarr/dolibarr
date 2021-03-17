@@ -2038,7 +2038,7 @@ class ExtraFields
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
 
-		if (is_array($this->attributes[$object->table_element]['label'])) {
+		if (isset($this->attributes[$object->table_element]['label']) && is_array($this->attributes[$object->table_element]['label'])) {
 			$extralabels = $this->attributes[$object->table_element]['label'];
 		}
 
