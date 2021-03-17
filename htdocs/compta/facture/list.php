@@ -187,7 +187,7 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	'f.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
-	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>1, 'position'=>10),
+	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1, 'position'=>10),
 	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
 	'f.date'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
 	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
