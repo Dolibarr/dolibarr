@@ -1691,6 +1691,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 */
 
 		print '<div class="tabsAction">';
+		$isinspip = 0;
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		if (empty($reshook)) {
