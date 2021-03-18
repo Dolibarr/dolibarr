@@ -4941,7 +4941,7 @@ class Product extends CommonObject
 				$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
 				if (count($serials) != abs($nbpiece)) {
 					$error++;
-					$this->errors[] = $langs->trans("WrongCountOfSerialsForQty");
+					$this->errors[] = $langs->trans("WrongCountOfSerialsForQty", $this->ref);
 					return -1;
 				}
 				if ($error == 0) {
