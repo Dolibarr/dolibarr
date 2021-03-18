@@ -122,7 +122,7 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_titre"',
+					'td' => 'class=""',
 					'text' => $langs->trans("Year"),
 				);
 				$this->info_box_contents[$line][] = array(
