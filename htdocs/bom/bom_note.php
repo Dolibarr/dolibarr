@@ -57,9 +57,13 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bom->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = 1;
-//$permissionnote=$user->rights->bom->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
 
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
