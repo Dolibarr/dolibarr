@@ -71,6 +71,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
+
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
 
