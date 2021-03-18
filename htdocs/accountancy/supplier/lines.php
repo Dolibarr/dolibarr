@@ -80,15 +80,18 @@ if (!$sortorder) {
 	}
 }
 
+$formaccounting = new FormAccounting($db);
+
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->bind->write) {
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
-
-$formaccounting = new FormAccounting($db);
 
 
 /*
