@@ -1644,7 +1644,7 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price2num($product_static->stock_reel, 'MS');
+				print price(price2num($product_static->stock_reel, 'MS'));
 			}
 			print '</td>';
 			if (!$i) {
@@ -1658,7 +1658,7 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price2num($product_static->stock_theorique, 'MS');
+				print price(price2num($product_static->stock_theorique, 'MS'));
 			}
 			print '</td>';
 			if (!$i) {
