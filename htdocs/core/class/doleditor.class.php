@@ -170,7 +170,8 @@ class DolEditor
             						readOnly : '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',
-            						extraAllowedContent : \'\',
+            						extraAllowedContent : \'a[target];div{float,display}\',						/* Add the style float and display into div to default other allowed tags */
+									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',
             						fullPage : '.($fullpage ? 'true' : 'false').',
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
