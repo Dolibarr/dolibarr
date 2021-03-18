@@ -442,7 +442,7 @@ foreach ($configfileparameters as $key => $value) {
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
 				}
 			} else {
-				print ${$newkey};
+				print (empty(${$newkey}) ? '' : ${$newkey});
 			}
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) {
 				print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';

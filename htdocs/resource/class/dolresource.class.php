@@ -493,6 +493,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
+		$sql .= " t.fk_country,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms,";
 		// Add fields from extrafields
