@@ -89,8 +89,8 @@ if ($object->element == 'stock') {
 	print img_picto('', 'product');
 	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES) ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
 	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
-	print '<option value="0">'.$langs->trans("Add").'</option>';
-	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
+	print '<option value="3">'.$langs->trans("Add").'</option>';
+	print '<option value="2"'.(GETPOST('mouvement') == 2 ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '</select>';
 	print '</td>';
 }
