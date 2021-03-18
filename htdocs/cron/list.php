@@ -62,7 +62,7 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'DESC,ASC';
 }
-
+$optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
 //Search criteria
 $search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
@@ -71,7 +71,11 @@ $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alpha");
 $securitykey = GETPOST('securitykey', 'alpha');
 
-$diroutputmassaction = $conf->cronjob->dir_output.'/temp/massgeneration/'.$user->id;
+$outputdir = $conf->cron->dir_output;
+if (empty($outputdir)) {
+	$outputdir = $conf->cronjob->dir_output;
+}
+$diroutputmassaction = $outputdir.'/temp/massgeneration/'.$user->id;
 
 $object = new Cronjob($db);
 
@@ -360,7 +364,7 @@ $arrayofmassactions = array(
 	'enable'=>$langs->trans("CronStatusActiveBtn"),
 	'disable'=>$langs->trans("CronStatusInactiveBtn"),
 );
-if ($user->rights->mymodule->delete) {
+if ($user->rights->cron->delete) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
