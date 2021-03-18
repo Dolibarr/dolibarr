@@ -1509,7 +1509,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Presend form
 		$modelmail = 'contact';
 		$defaulttopic = 'Information';
-		$diroutput = $conf->contact->dir_output;
+		$diroutput = $conf->societe->dir_output.'/contact/';
 		$trackid = 'ctc'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
