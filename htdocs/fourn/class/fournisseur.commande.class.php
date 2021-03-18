@@ -1995,7 +1995,7 @@ class CommandeFournisseur extends CommonOrder
 						$mouv = new MouvementStock($this->db);
 						// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 						$mouv->origin = &$this;
-						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+						$result = $mouv->reception($user, $fk_product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
 						if ($result < 0) {
 							$this->error = $mouv->error;
 							$this->errors = $mouv->errors;
@@ -2004,7 +2004,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 					} elseif ($product->status_batch == 2) {
 						$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
-						if (count($serials != $qty)) {
+						if (count($serials) != $qty) {
 							$error++;
 							$this->errors[] = $langs->trans("WrongCountOfSerialsForQty");
 						}
@@ -2013,7 +2013,7 @@ class CommandeFournisseur extends CommonOrder
 								$mouv = new MouvementStock($this->db);
 								// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 								$mouv->origin = &$this;
-								$result = $mouv->reception($user, $product, $entrepot, 1, $price, $comment, $eatby, $sellby, $sn);
+								$result = $mouv->reception($user, $fk_product, $entrepot, 1, $price, $comment, $eatby, $sellby, $sn);
 								if ($result < 0) {
 									$this->error = $mouv->error;
 									$this->errors = $mouv->errors;
