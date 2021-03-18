@@ -279,13 +279,13 @@ class MouvementStock extends CommonObject
 				$batchcount = $this->getBatchCount($fk_product, $batch, $entrepot_id);
 				if ( $batchcount <= 0 )
 				{
-					$this->errors[] = $langs->trans("BatchNotFoundInWareHouse", $batch, $entrepot_id, $product->ref);
+					$this->errors[] = $langs->trans("BatchNotFoundInWareHouse", $batch, $product->ref);
 					$this->db->rollback();
 					return -2;
 				}
 				elseif ( $batchcount < $qty )
 				{
-					$this->errors[] = $langs->trans("NotEnoughBatchInWareHouse", $product->ref, $batch, $entrepot_id);
+					$this->errors[] = $langs->trans("NotEnoughBatchInWareHouse", $product->ref, $batch);
 					$this->db->rollback();
 					return -2;
 				}
@@ -510,7 +510,7 @@ class MouvementStock extends CommonObject
 			$sql .= " ".$fk_origin.",";
 			$sql .= " '".$this->db->escape($origintype)."',";
 			$sql .= " ".$fk_project;
-			$sql .= ")";print $sql;
+			$sql .= ")";
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);
 			$resql = $this->db->query($sql);

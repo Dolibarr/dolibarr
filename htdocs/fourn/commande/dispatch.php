@@ -492,6 +492,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 					$errors = $mouv->errors;
 					$error++;
 				} else {
+					// if serial number manaement, delete before recreate ?
 					$mouv->origin = &$object;
 					$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
 					if ($result < 0) {
