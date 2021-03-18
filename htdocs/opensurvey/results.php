@@ -29,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
-
 // Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
-
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
