@@ -709,7 +709,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			}
 		} elseif (!in_array($feature, $nocheck)) {		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 			// If external user: Check permission for external users
-			if ($user->socid > 0 && empty($conf->global->MAIN_EXTERNAL_USERS_CAN_SEE_SUBSIDIARY_COMPANIES)) {
+			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
 					dol_print_error('', 'Param dbt_keyfield is required but not defined');
 				}
