@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -59,8 +60,7 @@ print load_fiche_titre($langs->trans("StocksArea"), '', 'stock');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-{
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
 	print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -83,8 +83,7 @@ $sql .= $db->plimit($max + 1, 0);
 
 $result = $db->query($sql);
 
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<div class="div-table-responsive-no-min">';
@@ -101,10 +100,8 @@ if ($result)
 	print '</tr>';
 
 	$i = 0;
-	if ($num)
-	{
-		while ($i < min($max, $num))
-		{
+	if ($num) {
+		while ($i < min($max, $num)) {
 			$objp = $db->fetch_object($result);
 
 			$warehouse->id = $objp->rowid;
@@ -152,14 +149,15 @@ $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE m.fk_product = p.rowid";
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
+if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+	$sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
+}
 $sql .= $db->order("datem", "DESC");
 $sql .= $db->plimit($max, 0);
 
 dol_syslog("Index:list stock movements", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	print '<div class="div-table-responsive-no-min">';
@@ -167,23 +165,23 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
-	if (!empty($conf->productbatch->enabled))
-	{
+	if (!empty($conf->productbatch->enabled)) {
 		print '<th>'.$langs->trans("Batch").'</th>';
-		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			print '<th>'.$langs->trans("SellByDate").'</th>';
 		}
 		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 			print '<th>'.$langs->trans("EatByDate").'</th>';
-		}
+		}*/
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
 	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
+	$tmplotstatic = new Productlot($db);
+
 	$i = 0;
-	while ($i < min($num, $max))
-	{
+	while ($i < min($num, $max)) {
 		$objp = $db->fetch_object($resql);
 
 		$producttmp->id = $objp->rowid;
@@ -198,26 +196,33 @@ if ($resql)
 		$warehouse->label = $objp->warehouse_label;
 		$warehouse->lieu = $objp->lieu;
 
+		$tmplotstatic->batch = $objp->batch;
+		$tmplotstatic->sellby = $objp->sellby;
+		$tmplotstatic->eatby = $objp->eatby;
+
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
-		if (!empty($conf->productbatch->enabled))
-		{
-			print '<td>'.$objp->batch.'</td>';
-			if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		if (!empty($conf->productbatch->enabled)) {
+			print '<td>';
+			print $tmplotstatic->getNomUrl(0, 'nolink');
+			print '</td>';
+			/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 				print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 			}
 			if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 				print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-			}
+			}*/
 		}
 		print '<td class="tdoverflowmax200">';
 		print $warehouse->getNomUrl(1);
 		print "</td>\n";
 		print '<td class="right">';
-		if ($objp->qty > 0) print '+';
+		if ($objp->qty > 0) {
+			print '+';
+		}
 		print $objp->qty.'</td>';
 		print "</tr>\n";
 		$i++;

@@ -48,26 +48,25 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 	$login = '';
 
 	// Get identity from user and redirect browser to Google OAuth Server
-	if (GETPOSTISSET('username'))
-	{
+	if (GETPOSTISSET('username')) {
 		/*$openid = new SimpleOpenID();
-        $openid->SetIdentity($_POST['username']);
-        $protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
-        $openid->SetTrustRoot($protocol . $_SERVER["HTTP_HOST"]);
-        $openid->SetRequiredFields(array('email','fullname'));
-        $_SESSION['dol_entity'] = $_POST["entity"];
-        //$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
-        if ($openid->sendDiscoveryRequestToGetXRDS())
-        {
-            $openid->SetApprovedURL($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["SCRIPT_NAME"]);      // Send Response from OpenID server to this script
-            $openid->Redirect();     // This will redirect user to OpenID Server
-        }
-        else
-        {
-            $error = $openid->GetError();
-            return false;
-        }
-        return false;*/
+		$openid->SetIdentity($_POST['username']);
+		$protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
+		$openid->SetTrustRoot($protocol . $_SERVER["HTTP_HOST"]);
+		$openid->SetRequiredFields(array('email','fullname'));
+		$_SESSION['dol_entity'] = $_POST["entity"];
+		//$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
+		if ($openid->sendDiscoveryRequestToGetXRDS())
+		{
+			$openid->SetApprovedURL($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["SCRIPT_NAME"]);      // Send Response from OpenID server to this script
+			$openid->Redirect();     // This will redirect user to OpenID Server
+		}
+		else
+		{
+			$error = $openid->GetError();
+			return false;
+		}
+		return false;*/
 	}
 
 

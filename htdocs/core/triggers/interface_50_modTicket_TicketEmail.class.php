@@ -61,7 +61,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	{
 		$ok = 0;
 
-		if (empty($conf->ticket->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->ticket) || empty($conf->ticket->enabled)) {
+			return 0; // Module not active, we do nothing
+		}
 
 		switch ($action) {
 			case 'TICKET_ASSIGNED':
@@ -240,10 +242,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							}
 
 							$qualified = true;
-							if (empty($enabled)) $qualified = false;
-							if (empty($perms)) $qualified = false;
+							if (empty($enabled)) {
+								$qualified = false;
+							}
+							if (empty($perms)) {
+								$qualified = false;
+							}
 
-							if ($qualified) $message_customer .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+							if ($qualified) {
+								$message_customer .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+							}
 						}
 
 						$message_customer .= '</ul>';
@@ -286,13 +294,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				break;
 
-		   	case 'TICKET_MODIFY':
-		   		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		   		break;
+			case 'TICKET_MODIFY':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				break;
 
-		   	case 'TICKET_CLOSE':
-		   		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		   		break;
+			case 'TICKET_CLOSE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				break;
 		}
 
 

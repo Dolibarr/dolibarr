@@ -5,6 +5,7 @@
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-if (!$user->rights->categorie->lire) accessforbidden();
+if (!$user->rights->categorie->lire) {
+	accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
@@ -42,7 +45,9 @@ $catname = GETPOST('catname', 'alpha');
 $nosearch = GETPOST('nosearch', 'int');
 
 $categstatic = new Categorie($db);
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 
 /*
@@ -54,11 +59,15 @@ $form = new Form($db);
 $moreparam = ($nosearch ? '&nosearch=1' : '');
 
 $typetext = $type;
-if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategoriesArea');
-elseif ($type == Categorie::TYPE_WAREHOUSE) 	$title = $langs->trans('StocksCategoriesArea');
-elseif ($type == Categorie::TYPE_ACTIONCOMM)	$title = $langs->trans('ActionCommCategoriesArea');
-elseif ($type == Categorie::TYPE_WEBSITE_PAGE)	$title = $langs->trans('WebsitePagesCategoriesArea');
-else {
+if ($type == Categorie::TYPE_ACCOUNT) {
+	$title = $langs->trans('AccountsCategoriesArea');
+} elseif ($type == Categorie::TYPE_WAREHOUSE) {
+	$title = $langs->trans('StocksCategoriesArea');
+} elseif ($type == Categorie::TYPE_ACTIONCOMM) {
+	$title = $langs->trans('ActionCommCategoriesArea');
+} elseif ($type == Categorie::TYPE_WEBSITE_PAGE) {
+	$title = $langs->trans('WebsitePagesCategoriesArea');
+} else {
 	$title = $langs->trans(ucfirst($type).'sCategoriesArea');
 }
 
@@ -100,15 +109,13 @@ if (empty($nosearch)) {
 	/*
 	 * Categories found
 	 */
-	if ($catname || $id > 0)
-	{
+	if ($catname || $id > 0) {
 		$cats = $categstatic->rechercher($id, $catname, $typetext);
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-		foreach ($cats as $cat)
-		{
+		foreach ($cats as $cat) {
 			$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
 
 			print "\t".'<tr class="oddeven">'."\n";
@@ -128,7 +135,9 @@ if (empty($nosearch)) {
 			print "\t</tr>\n";
 		}
 		print "</table>";
-	} else print '&nbsp;';
+	} else {
+		print '&nbsp;';
+	}
 
 	print '</div></div>';
 }
@@ -143,19 +152,25 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 $fulltree = $cate_arbo;
 
 // Load possible missing includes
-if ($conf->global->CATEGORY_SHOW_COUNTS)
-{
-	if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-	if ($type == Categorie::TYPE_PROJECT)	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	if ($type == Categorie::TYPE_USER)		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
+	if ($type == Categorie::TYPE_MEMBER) {
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	}
+	if ($type == Categorie::TYPE_ACCOUNT) {
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	}
+	if ($type == Categorie::TYPE_PROJECT) {
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	}
+	if ($type == Categorie::TYPE_USER) {
+		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+	}
 }
 
 // Define data (format for treeview)
 $data = array();
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-foreach ($fulltree as $key => $val)
-{
+foreach ($fulltree as $key => $val) {
 	$categstatic->id = $val['id'];
 	$categstatic->ref = $val['label'];
 	$categstatic->color = $val['color'];
@@ -163,8 +178,7 @@ foreach ($fulltree as $key => $val)
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$counter = '';
-	if ($conf->global->CATEGORY_SHOW_COUNTS)
-	{
+	if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
 		$elements = $type == Categorie::TYPE_ACCOUNT
 			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
@@ -206,15 +220,13 @@ foreach ($fulltree as $key => $val)
 
 print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
-if (!empty($conf->use_javascript_ajax))
-{
+if (!empty($conf->use_javascript_ajax)) {
 	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 
 $nbofentries = (count($data) - 1);
-if ($nbofentries > 0)
-{
+if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data, $data[0], 0);
 	print '</td></tr>';

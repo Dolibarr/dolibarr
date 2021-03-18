@@ -163,10 +163,21 @@ if ($search_date_end && empty($search_date_endyear)) {
 	$search_date_endday = $tmparray['mday'];
 }
 
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Action
  */
+
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
@@ -503,8 +514,7 @@ print '<table class="tagtable liste centpercent">';
 print '<tr class="liste_titre_filter">';
 
 // Movement number
-if (!empty($arrayfields['t.piece_num']['checked']))
-{
+if (!empty($arrayfields['t.piece_num']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Code journal
@@ -631,11 +641,15 @@ while ($i < min($num, $limit)) {
 		$colnumber = 5;
 		$colnumberend = 7;
 
-		if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) $colnumber--;
-		if (empty($arrayfields['t.date_export']['checked'])) $colnumber--;
+		if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING) || empty($arrayfields['t.lettering_code']['checked'])) {
+			$colnumber--;
+		}
+		if (empty($arrayfields['t.date_export']['checked'])) {
+			$colnumber--;
+		}
 
-        $colspan = $totalarray['nbfield'] - $colnumber;
-        $colspanend = $totalarray['nbfield'] - $colnumberend;
+		$colspan = $totalarray['nbfield'] - $colnumber;
+		$colspanend = $totalarray['nbfield'] - $colnumberend;
 
 		// Show a subtotal by accounting account
 		if (isset($displayed_account_number)) {
@@ -838,10 +852,11 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Exported operation date
-	if (!empty($arrayfields['t.date_export']['checked']))
-	{
+	if (!empty($arrayfields['t.date_export']['checked'])) {
 		print '<td class="center">'.dol_print_date($line->date_export, 'dayhour').'</td>';
-		if (!$i) $totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Fields from hook

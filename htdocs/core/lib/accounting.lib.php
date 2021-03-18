@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2019      Eric Seigne         <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,9 +95,13 @@ function length_accountg($account)
 {
 	global $conf;
 
-	if ($account < 0 || is_empty($account)) return '';
+	if ($account < 0 || is_empty($account)) {
+		return '';
+	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+		return $account;
+	}
 
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
 	if (!is_empty($g)) {
@@ -129,9 +134,13 @@ function length_accounta($accounta)
 {
 	global $conf;
 
-	if ($accounta < 0 || is_empty($accounta)) return '';
+	if ($accounta < 0 || is_empty($accounta)) {
+		return '';
+	}
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+		return $accounta;
+	}
 
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
 	if (!is_empty($a)) {
@@ -177,7 +186,9 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print "\n\n<!-- start banner journal -->\n";
 
-	if (!is_empty($varlink)) $varlink = '?'.$varlink;
+	if (!is_empty($varlink)) {
+		$varlink = '?'.$varlink;
+	}
 
 	$head = array();
 	$h = 0;
@@ -190,29 +201,32 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
 	print dol_get_fiche_head($head, 'journal');
 
-	foreach ($moreparam as $key => $value)
-	{
+	foreach ($moreparam as $key => $value) {
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
-	print '<table width="100%" class="border">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("Name").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("Name").'</td>';
 	print '<td colspan="3">';
 	print $nom;
 	print '</td>';
 	print '</tr>';
 
 	// Calculation mode
-	if ($calcmode)
-	{
+	if ($calcmode) {
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-		if (!$variante) print '<td colspan="3">';
-		else print '<td>';
+		print '<td>'.$langs->trans("CalculationMode").'</td>';
+		if (!$variante) {
+			print '<td colspan="3">';
+		} else {
+			print '<td>';
+		}
 		print $calcmode;
-		if ($variante) print '</td><td colspan="2">'.$variante;
+		if ($variante) {
+			print '</td><td colspan="2">'.$variante;
+		}
 		print '</td>';
 		print '</tr>';
 	}
@@ -220,10 +234,17 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	// Ligne de la periode d'analyse du rapport
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
-	if (!$periodlink) print '<td colspan="3">';
-	else print '<td>';
-	if ($period) print $period;
-	if ($periodlink) print '</td><td colspan="2">'.$periodlink;
+	if (!$periodlink) {
+		print '<td colspan="3">';
+	} else {
+		print '<td>';
+	}
+	if ($period) {
+		print $period;
+	}
+	if ($periodlink) {
+		print '</td><td colspan="2">'.$periodlink;
+	}
 	print '</td>';
 	print '</tr>';
 
@@ -254,8 +275,7 @@ function getDefaultDatesForTransfer()
 	global $db, $conf;
 
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
-	$periodbydefaultontransfer = $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER;
-	isset($periodbydefaultontransfer) ? $periodbydefaultontransfer : 0;
+	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
 	if ($periodbydefaultontransfer == 2) {
 		$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
@@ -270,8 +290,7 @@ function getDefaultDatesForTransfer()
 			$year_start = dol_print_date(dol_now(), '%Y');
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
-			if ($month_end < 1)
-			{
+			if ($month_end < 1) {
 				$month_end = 12;
 				$year_end--;
 			}

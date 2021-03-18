@@ -135,6 +135,7 @@ class BookKeeping extends CommonObject
 
 	/**
 	 * @var float FEC:Amount (Not necessary)
+	 * @deprecated No more used
 	 */
 	public $amount;
 
@@ -239,6 +240,9 @@ class BookKeeping extends CommonObject
 		if (isset($this->montant)) {
 			$this->montant = (float) $this->montant;
 		}
+		if (isset($this->amount)) {
+			$this->amount = (float) $this->amount;
+		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -254,21 +258,22 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
-		if (empty($this->debit)) $this->debit = 0.0;
-		if (empty($this->credit)) $this->credit = 0.0;
+		if (empty($this->debit)) {
+			$this->debit = 0.0;
+		}
+		if (empty($this->credit)) {
+			$this->credit = 0.0;
+		}
 
 		// Check parameters
-		if (($this->numero_compte == "") || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
-		{
+		if (($this->numero_compte == "") || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined') {
 			$langs->loadLangs(array("errors"));
-			if (in_array($this->doc_type, array('bank', 'expense_report')))
-			{
+			if (in_array($this->doc_type, array('bank', 'expense_report'))) {
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
 			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
 				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
-				if ($this->subledger_account && $this->subledger_account != $this->numero_compte)
-				{
+				if ($this->subledger_account && $this->subledger_account != $this->numero_compte) {
 					$mesg .= ', '.$langs->trans("SubledgerAccount").': '.$this->subledger_account;
 				}
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForLine', $mesg);
@@ -299,8 +304,7 @@ class BookKeeping extends CommonObject
 
 		if ($resql) {
 			$row = $this->db->fetch_object($resql);
-			if ($row->nb == 0)
-			{
+			if ($row->nb == 0) {
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";
 				$sqlnum .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -452,7 +456,9 @@ class BookKeeping extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$companylink = '';
@@ -463,33 +469,40 @@ class BookKeeping extends CommonObject
 
 		$url = DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$this->piece_num;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowTransaction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->piece_num;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->piece_num;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -554,6 +567,9 @@ class BookKeeping extends CommonObject
 		if (isset($this->montant)) {
 			$this->montant = trim($this->montant);
 		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
 		}
@@ -569,8 +585,12 @@ class BookKeeping extends CommonObject
 		if (isset($this->piece_num)) {
 			$this->piece_num = trim($this->piece_num);
 		}
-		if (empty($this->debit)) $this->debit = 0;
-		if (empty($this->credit)) $this->credit = 0;
+		if (empty($this->debit)) {
+			$this->debit = 0;
+		}
+		if (empty($this->credit)) {
+			$this->credit = 0;
+		}
 
 		$this->debit = price2num($this->debit, 'MT');
 		$this->credit = price2num($this->credit, 'MT');
@@ -695,7 +715,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.label_operation,";
 		$sql .= " t.debit,";
 		$sql .= " t.credit,";
-		$sql .= " t.montant,";
+		$sql .= " t.montant as amount,";
 		$sql .= " t.sens,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.import_key,";
@@ -709,7 +729,7 @@ class BookKeeping extends CommonObject
 		if (null !== $ref) {
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -734,7 +754,8 @@ class BookKeeping extends CommonObject
 				$this->label_operation = $obj->label_operation;
 				$this->debit = $obj->debit;
 				$this->credit = $obj->credit;
-				$this->montant = $obj->montant;
+				$this->montant = $obj->amount;
+				$this->amount = $obj->amount;
 				$this->sens = $obj->sens;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->import_key = $obj->import_key;
@@ -828,14 +849,14 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
-                } elseif ($key == 't.reconciled_option') {
-                    $sqlwhere[] = 't.lettering_code IS NULL';
-                } elseif ($key == 't.code_journal' && !empty($value)) {
-                	if (is_array($value)) {
-                		$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
-                	} else {
-                    	$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
-                	}
+				} elseif ($key == 't.reconciled_option') {
+					$sqlwhere[] = 't.lettering_code IS NULL';
+				} elseif ($key == 't.code_journal' && !empty($value)) {
+					if (is_array($value)) {
+						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+					} else {
+						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+					}
 				} else {
 					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
@@ -1009,8 +1030,7 @@ class BookKeeping extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num)))
-			{
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -1118,13 +1138,11 @@ class BookKeeping extends CommonObject
 		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			$i = 0;
-			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num)))
-			{
+			while (($obj = $this->db->fetch_object($resql)) && (empty($limit) || $i < min($limit, $num))) {
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
@@ -1197,8 +1215,8 @@ class BookKeeping extends CommonObject
 		if (isset($this->credit)) {
 			$this->credit = trim($this->credit);
 		}
-		if (isset($this->montant)) {
-			$this->montant = trim($this->montant);
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
 		}
 		if (isset($this->sens)) {
 			$this->sens = trim($this->sens);
@@ -1244,7 +1262,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' code_journal = '.(isset($this->code_journal) ? "'".$this->db->escape($this->code_journal)."'" : "null").',';
 		$sql .= ' journal_label = '.(isset($this->journal_label) ? "'".$this->db->escape($this->journal_label)."'" : "null").',';
 		$sql .= ' piece_num = '.(isset($this->piece_num) ? $this->piece_num : "null");
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -1341,7 +1359,7 @@ class BookKeeping extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element.$mode;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1404,13 +1422,11 @@ class BookKeeping extends CommonObject
 	{
 		global $langs;
 
-		if (empty($delyear) && empty($journal))
-		{
+		if (empty($delyear) && empty($journal)) {
 			$this->error = 'ErrorOneFieldRequired';
 			return -1;
 		}
-		if (!empty($delmonth) && empty($delyear))
-		{
+		if (!empty($delmonth) && empty($delyear)) {
 			$this->error = 'YearRequiredIfMonthDefined';
 			return -2;
 		}
@@ -1422,7 +1438,9 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE 1 = 1";
 		$sql .= dolSqlDateFilter('doc_date', 0, $delmonth, $delyear);
-		if (!empty($journal)) $sql .= " AND code_journal = '".$this->db->escape($journal)."'";
+		if (!empty($journal)) {
+			$sql .= " AND code_journal = '".$this->db->escape($journal)."'";
+		}
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 
 		// TODO: In a future we must forbid deletion if record is inside a closed fiscal period.
@@ -1617,8 +1635,12 @@ class BookKeeping extends CommonObject
 
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			if ($obj) $result = $obj->max;
-			if (empty($result)) $result = 1;
+			if ($obj) {
+				$result = $obj->max;
+			}
+			if (empty($result)) {
+				$result = 1;
+			}
 			return $result;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -1641,7 +1663,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation";
+		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -1667,7 +1689,8 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
+				$line->montant = $obj->amount;
+				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->journal_label = $obj->journal_label;
@@ -1700,7 +1723,7 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
+		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 
@@ -1730,7 +1753,8 @@ class BookKeeping extends CommonObject
 				$line->label_operation = $obj->label_operation;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
-				$line->montant = $obj->montant;
+				$line->montant = $obj->amount;
+				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
@@ -1760,8 +1784,7 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		if ($direction == 0)
-		{
+		if ($direction == 0) {
 			$next_piecenum = $this->getNextNumMvt();
 			$now = dol_now();
 

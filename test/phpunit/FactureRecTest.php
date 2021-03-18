@@ -127,13 +127,14 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testFactureCreate
+	 * testFactureRecCreate
 	 *
 	 * @return int
 	 */
 	public function testFactureRecCreate()
 	{
 		global $conf,$user,$langs,$db;
+
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -141,21 +142,51 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 
 		$localobjectinv=new Facture($this->savdb);
 		$localobjectinv->initAsSpecimen();
-		$localobjectinv->create($user);
+		$result = $localobjectinv->create($user);
+
+		print __METHOD__." result=".$result."\n";
 
 		$localobject=new FactureRec($this->savdb);
 		$localobject->initAsSpecimen();
-		$result=$localobject->create($user, $localobjectinv->id);
+		$result = $localobject->create($user, $localobjectinv->id);
 
-		$this->assertLessThan($result, 0);
 		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice');
+
 		return $result;
 	}
 
 	/**
+	 * testFactureRecFetch
+	 *
+	 * @param  int 	$id  	Id of created recuriing invoice
+	 * @return int
+	 *
+	 * @depends testFactureRecCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureRecFetch($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new FactureRec($this->savdb);
+		$result = $localobject->fetch($id);
+
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		return $result;
+	}
+
+
+
+	/**
 	 * Edit an object to test updates
 	 *
-	 * @param 	Facture	$localobject		Object Facture
+	 * @param 	FactureRec	$localobject		Object Facture rec
 	 * @return	void
 	 */
 	public function changeProperties(&$localobject)

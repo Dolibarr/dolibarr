@@ -34,8 +34,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -46,7 +45,9 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	print '<td class="linecolnum center">&nbsp;</td>';
+}
 
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -54,8 +55,7 @@ print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS))
-{
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }
 
@@ -77,8 +77,7 @@ print '<td class="linecoldelete" style="width: 10px"></td>';
 
 print '<td class="linecolmove" style="width: 10px"></td>';
 
-if ($action == 'selectlines')
-{
+if ($action == 'selectlines') {
 	print '<td class="linecolcheckall center">';
 	print '<input type="checkbox" class="linecheckboxtoggle" />';
 	print '<script>$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';

@@ -35,67 +35,90 @@ $langs->load("accountancy");
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->socid > 0) $socid = $user->socid;
-if (!empty($conf->comptabilite->enabled)) $result = restrictedArea($user, 'compta', '', '', 'resultat');
-if (!empty($conf->accounting->enabled)) $result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (GETPOST("modecompta")) $modecompta = GETPOST("modecompta");
+if (GETPOST("modecompta")) {
+	$modecompta = GETPOST("modecompta");
+}
 
-$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
-$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
-if (!$sortorder) $sortorder = "asc";
-if (!$sortfield) $sortfield = "name";
+$sortorder = GETPOST("sortorder", 'aZ09');
+$sortfield = GETPOST("sortfield", 'aZ09');
+if (!$sortorder) {
+	$sortorder = "asc";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 // Date range
-$year = GETPOST("year");
-$month = GETPOST("month");
-$date_startyear = GETPOST("date_startyear");
-$date_startmonth = GETPOST("date_startmonth");
-$date_startday = GETPOST("date_startday");
-$date_endyear = GETPOST("date_endyear");
-$date_endmonth = GETPOST("date_endmonth");
-$date_endday = GETPOST("date_endday");
-if (empty($year))
-{
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+$year = GETPOST("year", 'int');
+$month = GETPOST("month", 'int');
+$date_startyear = GETPOST("date_startyear", 'int');
+$date_startmonth = GETPOST("date_startmonth", 'int');
+$date_startday = GETPOST("date_startday", 'int');
+$date_endyear = GETPOST("date_endyear", 'int');
+$date_endmonth = GETPOST("date_endmonth", 'int');
+$date_endday = GETPOST("date_endday", 'int');
+if (empty($year)) {
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, $_REQUEST["date_startmonth"], $_REQUEST["date_startday"], $_REQUEST["date_startyear"]);
-$date_end = dol_mktime(23, 59, 59, $_REQUEST["date_endmonth"], $_REQUEST["date_endday"], $_REQUEST["date_endyear"]);
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzuserrel');
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzuserrel');
 // Quarter
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q") ?GETPOST("q") : 0;
-	if ($q == 0)
-	{
+	if ($q == 0) {
 		// We define date_start and date_end
 		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
-		if (!GETPOST("month"))	// If month not forced
-		{
-			if (!GETPOST('year') && $month_start > $month_current)
-			{
+		if (!GETPOST("month")) {	// If month not forced
+			if (!GETPOST('year') && $month_start > $month_current) {
 				$year_start--;
 				$year_end--;
 			}
 			$month_end = $month_start - 1;
-			if ($month_end < 1) $month_end = 12;
-			else $year_end++;
+			if ($month_end < 1) {
+				$month_end = 12;
+			} else {
+				$year_end++;
+			}
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
-	if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
-	if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
-	if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
-	if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
+	if ($q == 1) {
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
+	}
+	if ($q == 2) {
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
+	}
+	if ($q == 3) {
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
+	}
+	if ($q == 4) {
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
+	}
 } else {
 	// TODO We define q
 }
@@ -142,8 +165,12 @@ llxHeader();
 $form = new Form($db);
 
 // TODO Report from bookkeeping not yet available, so we switch on report on business events
-if ($modecompta == "BOOKKEEPING") $modecompta = "CREANCES-DETTES";
-if ($modecompta == "BOOKKEEPINGCOLLECTED") $modecompta = "RECETTES-DEPENSES";
+if ($modecompta == "BOOKKEEPING") {
+	$modecompta = "CREANCES-DETTES";
+}
+if ($modecompta == "BOOKKEEPINGCOLLECTED") {
+	$modecompta = "RECETTES-DEPENSES";
+}
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -151,12 +178,14 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else $description .= $langs->trans("DepositsAreIncluded");
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("DepositsAreNotIncluded");
+	} else {
+		$description .= $langs->trans("DepositsAreIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-} elseif ($modecompta == "RECETTES-DEPENSES")
-{
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByUserAuthorOfInvoice");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -164,24 +193,26 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-} elseif ($modecompta == "BOOKKEEPING")
-{
+} elseif ($modecompta == "BOOKKEEPING") {
 	// TODO
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
-{
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	// TODO
 }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
-else $periodlink = '';
+if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
+	$periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+} else {
+	$periodlink = '';
+}
 
 $moreparam = array();
-if (!empty($modecompta)) $moreparam['modecompta'] = $modecompta;
+if (!empty($modecompta)) {
+	$moreparam['modecompta'] = $modecompta;
+}
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
-{
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -192,8 +223,7 @@ $name = array();
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
-foreach ($headerparams as $key => $value)
-{
+foreach ($headerparams as $key => $value) {
 	 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 }
 
@@ -213,9 +243,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 } else {
 	/*
-     * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
-     */
+	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+	 */
 	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid ";
@@ -227,7 +257,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) $sql .= " AND f.fk_soc = ".$socid;
+if ($socid) {
+	$sql .= " AND f.fk_soc = ".$socid;
+}
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";
 
@@ -302,14 +334,14 @@ print_liste_field_titre(
 );
 if ($modecompta == 'CREANCES-DETTES') {
 	print_liste_field_titre(
-		   $langs->trans('AmountHT'),
-		   $_SERVER["PHP_SELF"],
-		   "amount_ht",
-		   "",
-		   $paramslink,
-		   'class="right"',
-		   $sortfield,
-		   $sortorder
+		$langs->trans('AmountHT'),
+		$_SERVER["PHP_SELF"],
+		"amount_ht",
+		"",
+		$paramslink,
+		'class="right"',
+		$sortfield,
+		$sortorder
 	);
 } else {
 	print_liste_field_titre('');
@@ -326,7 +358,8 @@ print_liste_field_titre(
 );
 print_liste_field_titre(
 	$langs->trans("Percentage"),
-	$_SERVER["PHP_SELF"], "amount_ttc",
+	$_SERVER["PHP_SELF"],
+	"amount_ttc",
 	"",
 	$paramslink,
 	'class="right"',
@@ -401,7 +434,9 @@ if (count($amount)) {
 				//print '<a href="#">';
 			}
 			print price($amount_ht[$key]);
-			if ($key > 0) print '</a>';
+			if ($key > 0) {
+				print '</a>';
+			}
 		}
 		print '</td>';
 

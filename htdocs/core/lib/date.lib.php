@@ -82,13 +82,19 @@ function getServerTimeZoneString()
  */
 function getServerTimeZoneInt($refgmtdate = 'now')
 {
-	if (method_exists('DateTimeZone', 'getOffset'))
-	{
+	if (method_exists('DateTimeZone', 'getOffset')) {
 		// Method 1 (include daylight)
-		$gmtnow = dol_now('gmt'); $yearref = dol_print_date($gmtnow, '%Y'); $monthref = dol_print_date($gmtnow, '%m'); $dayref = dol_print_date($gmtnow, '%d');
-		if ($refgmtdate == 'now') $newrefgmtdate = $yearref.'-'.$monthref.'-'.$dayref;
-		elseif ($refgmtdate == 'summer') $newrefgmtdate = $yearref.'-08-01';
-		else $newrefgmtdate = $yearref.'-01-01';
+		$gmtnow = dol_now('gmt');
+		$yearref = dol_print_date($gmtnow, '%Y');
+		$monthref = dol_print_date($gmtnow, '%m');
+		$dayref = dol_print_date($gmtnow, '%d');
+		if ($refgmtdate == 'now') {
+			$newrefgmtdate = $yearref.'-'.$monthref.'-'.$dayref;
+		} elseif ($refgmtdate == 'summer') {
+			$newrefgmtdate = $yearref.'-08-01';
+		} else {
+			$newrefgmtdate = $yearref.'-01-01';
+		}
 		$newrefgmtdate .= 'T00:00:00+00:00';
 		$localtz = new DateTimeZone(getServerTimeZoneString());
 		$localdt = new DateTime($newrefgmtdate, $localtz);
@@ -115,26 +121,51 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 {
 	global $conf;
 
-	if ($duration_value == 0)  return $time;
-	if ($duration_unit == 'i') return $time + (60 * $duration_value);
-	if ($duration_unit == 'h') return $time + (3600 * $duration_value);
-	if ($duration_unit == 'w') return $time + (3600 * 24 * 7 * $duration_value);
+	if ($duration_value == 0) {
+		return $time;
+	}
+	if ($duration_unit == 'i') {
+		return $time + (60 * $duration_value);
+	}
+	if ($duration_unit == 'h') {
+		return $time + (3600 * $duration_value);
+	}
+	if ($duration_unit == 'w') {
+		return $time + (3600 * 24 * 7 * $duration_value);
+	}
 
 	$deltastring = 'P';
 
-	if ($duration_value > 0) { $deltastring .= abs($duration_value); $sub = false; }
-	if ($duration_value < 0) { $deltastring .= abs($duration_value); $sub = true; }
-	if ($duration_unit == 'd') { $deltastring .= "D"; }
-	if ($duration_unit == 'm') { $deltastring .= "M"; }
-	if ($duration_unit == 'y') { $deltastring .= "Y"; }
+	if ($duration_value > 0) {
+		$deltastring .= abs($duration_value);
+		$sub = false;
+	}
+	if ($duration_value < 0) {
+		$deltastring .= abs($duration_value);
+		$sub = true;
+	}
+	if ($duration_unit == 'd') {
+		$deltastring .= "D";
+	}
+	if ($duration_unit == 'm') {
+		$deltastring .= "M";
+	}
+	if ($duration_unit == 'y') {
+		$deltastring .= "Y";
+	}
 
 	$date = new DateTime();
-	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) $date->setTimezone(new DateTimeZone('UTC'));
+	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) {
+		$date->setTimezone(new DateTimeZone('UTC'));
+	}
 	$date->setTimestamp($time);
 	$interval = new DateInterval($deltastring);
 
-	if ($sub) $date->sub($interval);
-	else $date->add($interval);
+	if ($sub) {
+		$date->sub($interval);
+	} else {
+		$date->add($interval);
+	}
 
 	return $date->getTimestamp();
 }
@@ -181,87 +212,81 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 {
 	global $langs;
 
-	if (empty($lengthOfDay))  $lengthOfDay = 86400; // 1 day = 24 hours
-	if (empty($lengthOfWeek)) $lengthOfWeek = 7; // 1 week = 7 days
+	if (empty($lengthOfDay)) {
+		$lengthOfDay = 86400; // 1 day = 24 hours
+	}
+	if (empty($lengthOfWeek)) {
+		$lengthOfWeek = 7; // 1 week = 7 days
+	}
 
-	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec')
-	{
-		if ((int) $iSecond === 0) return '0'; // This is to avoid having 0 return a 12:00 AM for en_US
+	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec') {
+		if ((int) $iSecond === 0) {
+			return '0'; // This is to avoid having 0 return a 12:00 AM for en_US
+		}
 
 		$sTime = '';
 		$sDay = 0;
 		$sWeek = 0;
 
-		if ($iSecond >= $lengthOfDay)
-		{
-			for ($i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay)
-			{
+		if ($iSecond >= $lengthOfDay) {
+			for ($i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay) {
 				$sDay++;
 				$iSecond -= $lengthOfDay;
 			}
 			$dayTranslate = $langs->trans("Day");
-			if ($iSecond >= ($lengthOfDay * 2)) $dayTranslate = $langs->trans("Days");
+			if ($iSecond >= ($lengthOfDay * 2)) {
+				$dayTranslate = $langs->trans("Days");
+			}
 		}
 
-		if ($lengthOfWeek < 7)
-		{
-			if ($sDay)
-			{
-				if ($sDay >= $lengthOfWeek)
-				{
+		if ($lengthOfWeek < 7) {
+			if ($sDay) {
+				if ($sDay >= $lengthOfWeek) {
 					$sWeek = (int) (($sDay - $sDay % $lengthOfWeek) / $lengthOfWeek);
 					$sDay = $sDay % $lengthOfWeek;
 					$weekTranslate = $langs->trans("DurationWeek");
-					if ($sWeek >= 2) $weekTranslate = $langs->trans("DurationWeeks");
+					if ($sWeek >= 2) {
+						$weekTranslate = $langs->trans("DurationWeeks");
+					}
 					$sTime .= $sWeek.' '.$weekTranslate.' ';
 				}
 			}
 		}
-		if ($sDay > 0)
-		{
+		if ($sDay > 0) {
 			$dayTranslate = $langs->trans("Day");
-			if ($sDay > 1) $dayTranslate = $langs->trans("Days");
-			$sTime .= $sDay.' '.$dayTranslate.' ';
+			if ($sDay > 1) {
+				$dayTranslate = $langs->trans("Days");
+			}
+			$sTime .= $sDay.' '.strtolower(dol_substr($dayTranslate, 0, 1)).'. ';
 		}
 
-		if ($format == 'all')
-		{
-			if ($iSecond || empty($sDay))
-			{
+		if ($format == 'all') {
+			if ($iSecond || empty($sDay)) {
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
-		} elseif ($format == 'allhourminsec')
-		{
+		} elseif ($format == 'allhourminsec') {
 			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
-		} elseif ($format == 'allhourmin')
-		{
+		} elseif ($format == 'allhourmin') {
 			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60)));
-		} elseif ($format == 'allhour')
-		{
+		} elseif ($format == 'allhour') {
 			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600)));
 		}
-	} elseif ($format == 'hour')	// only hour part
-	{
+	} elseif ($format == 'hour') {	// only hour part
 		$sTime = dol_print_date($iSecond, '%H', true);
-	} elseif ($format == 'fullhour')
-	{
+	} elseif ($format == 'fullhour') {
 		if (!empty($iSecond)) {
 			$iSecond = $iSecond / 3600;
 		} else {
 			$iSecond = 0;
 		}
 		$sTime = $iSecond;
-	} elseif ($format == 'min')	// only min part
-	{
+	} elseif ($format == 'min') {	// only min part
 		$sTime = dol_print_date($iSecond, '%M', true);
-	} elseif ($format == 'sec')	// only sec part
-	{
+	} elseif ($format == 'sec') {	// only sec part
 		$sTime = dol_print_date($iSecond, '%S', true);
-	} elseif ($format == 'month')	// only month part
-	{
+	} elseif ($format == 'month') {	// only month part
 		$sTime = dol_print_date($iSecond, '%m', true);
-	} elseif ($format == 'year')	// only year part
-	{
+	} elseif ($format == 'year') {	// only year part
 		$sTime = dol_print_date($iSecond, '%Y', true);
 	}
 	return trim($sTime);
@@ -289,7 +314,9 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 		} elseif ($year_date > 0 && !empty($day_date)) {
 			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
 			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
-		} else $sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
+		} else {
+			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
+		}
 	} elseif ($year_date > 0) {
 		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
 		$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
@@ -320,8 +347,7 @@ function dol_stringtotime($string, $gm = 1)
 {
 	$reg = array();
 	// Convert date with format DD/MM/YYY HH:MM:SS. This part of code should not be used.
-	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg))
-	{
+	if (preg_match('/^([0-9]+)\/([0-9]+)\/([0-9]+)\s?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $string, $reg)) {
 		dol_syslog("dol_stringtotime call to function with deprecated parameter format", LOG_WARNING);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
@@ -331,15 +357,17 @@ function dol_stringtotime($string, $gm = 1)
 		$shour = $reg[4];
 		$smin = $reg[5];
 		$ssec = $reg[6];
-		if ($syear < 50) $syear += 1900;
-		if ($syear >= 50 && $syear < 100) $syear += 2000;
+		if ($syear < 50) {
+			$syear += 1900;
+		}
+		if ($syear >= 50 && $syear < 100) {
+			$syear += 2000;
+		}
 		$string = sprintf("%04d%02d%02d%02d%02d%02d", $syear, $smonth, $sday, $shour, $smin, $ssec);
-	} elseif (
-		   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i', $string, $reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+	} elseif (preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i', $string, $reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
 		|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i', $string, $reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
-   		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i', $string, $reg)		// Convert date with format YYYYMMDDTHHMMSSZ
-	)
-	{
+		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i', $string, $reg)		// Convert date with format YYYYMMDDTHHMMSSZ
+	) {
 		$syear = $reg[1];
 		$smonth = $reg[2];
 		$sday = $reg[3];
@@ -397,8 +425,7 @@ function dol_get_next_day($day, $month, $year)
  */
 function dol_get_prev_month($month, $year)
 {
-	if ($month == 1)
-	{
+	if ($month == 1) {
 		$prev_month = 12;
 		$prev_year  = $year - 1;
 	} else {
@@ -417,8 +444,7 @@ function dol_get_prev_month($month, $year)
  */
 function dol_get_next_month($month, $year)
 {
-	if ($month == 12)
-	{
+	if ($month == 12) {
 		$next_month = 1;
 		$next_year  = $year + 1;
 	} else {
@@ -480,7 +506,9 @@ function dol_get_next_week($day, $week, $month, $year)
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
 {
-	if ($year > 9999) return '';
+	if ($year > 9999) {
+		return '';
+	}
 	return dol_mktime(0, 0, 0, $month, 1, $year, $gm);
 }
 
@@ -497,9 +525,10 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
 {
-	if ($year > 9999) return '';
-	if ($month == 12)
-	{
+	if ($year > 9999) {
+		return '';
+	}
+	if ($month == 12) {
 		$month = 1;
 		$year += 1;
 	} else {
@@ -517,24 +546,28 @@ function dol_get_last_day($year, $month = 12, $gm = false)
  *  Return GMT time for last hour of a given GMT date (it replaces hours, min and second part to 23:59:59)
  *
  *	@param		int			$date		Date GMT
+ * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 										True or 1 or 'gmt' to compare with GMT date.
  *  @return		int						Date for last hour of a given date
  */
-function dol_get_last_hour($date)
+function dol_get_last_hour($date, $gm = 'tzserver')
 {
 	$tmparray = dol_getdate($date);
-	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
+	return dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], $gm);
 }
 
 /**
  *  Return GMT time for first hour of a given GMT date (it removes hours, min and second part)
  *
- *	@param		int			$date		Date
+ *	@param		int			$date		Date GMT
+ * 	@param		mixed		$gm			False or 0 or 'tzserver' = Return date to compare with server TZ,
+ * 										True or 1 or 'gmt' to compare with GMT date.
  *  @return		int						Date for last hour of a given date
  */
-function dol_get_first_hour($date)
+function dol_get_first_hour($date, $gm = 'tzserver')
 {
 	$tmparray = dol_getdate($date);
-	return dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], false);
+	return dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], $gm);
 }
 
 /**	Return first day of week for a date. First day of week may be monday if option MAIN_START_WEEK is 1.
@@ -560,8 +593,10 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 
 	//Calculate days = offset from current day
 	$days = $start_week - $tmparray['wday'];
- 	if ($days >= 1) $days = 7 - $days;
- 	$days = abs($days);
+	if ($days >= 1) {
+		$days = 7 - $days;
+	}
+	$days = abs($days);
 	$seconds = $days * 24 * 60 * 60;
 	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
@@ -570,13 +605,11 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	$tmpday = date("d", $tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
-	if ($tmpday > $day)
-	{
+	if ($tmpday > $day) {
 		$prev_month = $month - 1;
 		$prev_year = $year;
 
-		if ($prev_month == 0)
-		{
+		if ($prev_month == 0) {
 			$prev_month = 12;
 			$prev_year  = $year - 1;
 		}
@@ -594,13 +627,11 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	$prev_day = $tmparray['mday'];
 
 	//Check prev day of week is in same month than first day or not
-	if ($prev_day > $tmpday)
-	{
+	if ($prev_day > $tmpday) {
 		$prev_month = $month - 1;
 		$prev_year = $year;
 
-		if ($prev_month == 0)
-		{
+		if ($prev_month == 0) {
 			$prev_month = 12;
 			$prev_year  = $year - 1;
 		}
@@ -620,7 +651,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
  */
 function getGMTEasterDatetime($year)
 {
-	$base = new DateTime("$year-03-21");
+	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
 	$days = easter_days($year);	// Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
@@ -628,11 +659,11 @@ function getGMTEasterDatetime($year)
 
 /**
  *	Return the number of non working days including saturday and sunday (or not) between 2 dates in timestamp.
- *  Dates must be UTC with hour, day, min to 0.
+ *  Dates must be UTC with hour, min, sec to 0.
  *	Called by function num_open_day()
  *
- *	@param	    int			$timestampStart     Timestamp de debut
- *	@param	    int			$timestampEnd       Timestamp de fin
+ *	@param	    int			$timestampStart     Timestamp start (UTC with hour, min, sec = 0)
+ *	@param	    int			$timestampEnd       Timestamp end (UTC with hour, min, sec = 0)
  *  @param      string		$country_code       Country code
  *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *  @param		int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
@@ -647,19 +678,26 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'Error Dates must use same hours and must be GMT dates';
+	if ((($timestampEnd - $timestampStart) % 86400) != 0) {
+		return 'Error Dates must use same hours and must be GMT dates';
+	}
 
-	if (empty($country_code)) $country_code = $mysoc->country_code;
+	if (empty($country_code)) {
+		$country_code = $mysoc->country_code;
+	}
 
-	if ($includesaturday < 0) $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
-	if ($includesunday < 0)   $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+	if ($includesaturday < 0) {
+		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+	}
+	if ($includesunday < 0) {
+		$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+	}
 
 	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
 
 	$i = 0;
 	while ((($lastday == 0 && $timestampStart < $timestampEnd) || ($lastday && $timestampStart <= $timestampEnd))
-		&& ($i < 50000))		// Loop end when equals (Test on i is a security loop to avoid infinite loop)
-	{
+		&& ($i < 50000)) {		// Loop end when equals (Test on i is a security loop to avoid infinite loop)
 		$ferie = false;
 		$specialdayrule = array();
 
@@ -676,24 +714,29 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$sql .= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num_rows = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num_rows)
-			{
+			while ($i < $num_rows) {
 				$obj = $db->fetch_object($resql);
 
-				if (!empty($obj->dayrule) && $obj->dayrule != 'date')		// For example 'easter', '...'
-				{
+				if (!empty($obj->dayrule) && $obj->dayrule != 'date') {		// For example 'easter', '...'
 					$specialdayrule[$obj->dayrule] = $obj->dayrule;
 				} else {
 					$match = 1;
-					if (!empty($obj->year) && $obj->year != $annee) $match = 0;
-					if ($obj->month != $mois) $match = 0;
-					if ($obj->day != $jour) $match = 0;
+					if (!empty($obj->year) && $obj->year != $annee) {
+						$match = 0;
+					}
+					if ($obj->month != $mois) {
+						$match = 0;
+					}
+					if ($obj->day != $jour) {
+						$match = 0;
+					}
 
-					if ($match) $ferie = true;
+					if ($match) {
+						$ferie = true;
+					}
 				}
 
 				$i++;
@@ -707,120 +750,87 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 		if (!$ferie) {
 			// Special dayrules
-			if (in_array('easter', $specialdayrule))
-			{
+			if (in_array('easter', $specialdayrule)) {
 				// Calculation for easter date
 				$date_paques = getGMTEasterDatetime($annee);
 				$jour_paques = gmdate("d", $date_paques);
 				$mois_paques = gmdate("m", $date_paques);
-				if ($jour_paques == $jour && $mois_paques == $mois) $ferie = true;
+				if ($jour_paques == $jour && $mois_paques == $mois) {
+					$ferie = true;
+				}
 				// Easter (sunday)
 			}
 
-			if (in_array('eastermonday', $specialdayrule))
-			{
+			if (in_array('eastermonday', $specialdayrule)) {
 				// Calculation for the monday of easter date
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_lundi_paques = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 1,
-					gmdate("Y", $date_paques)
-				);
+				//print 'PPP'.$date_paques.' '.dol_print_date($date_paques, 'dayhour', 'gmt')." ";
+				$date_lundi_paques = $date_paques + (3600 * 24);
 				$jour_lundi_paques = gmdate("d", $date_lundi_paques);
 				$mois_lundi_paques = gmdate("m", $date_lundi_paques);
-				if ($jour_lundi_paques == $jour && $mois_lundi_paques == $mois) $ferie = true;
+				if ($jour_lundi_paques == $jour && $mois_lundi_paques == $mois) {
+					$ferie = true;
+				}
 				// Easter (monday)
+				//print 'annee='.$annee.' $jour='.$jour.' $mois='.$mois.' $jour_lundi_paques='.$jour_lundi_paques.' $mois_lundi_paques='.$mois_lundi_paques."\n";
 			}
 
-			if (in_array('ascension', $specialdayrule))
-			{
+			if (in_array('ascension', $specialdayrule)) {
 				// Calcul du jour de l'ascension (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_ascension = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 39,
-					gmdate("Y", $date_paques)
-				);
+				$date_ascension = $date_paques + (3600 * 24 * 39);
 				$jour_ascension = gmdate("d", $date_ascension);
 				$mois_ascension = gmdate("m", $date_ascension);
-				if ($jour_ascension == $jour && $mois_ascension == $mois) $ferie = true;
+				if ($jour_ascension == $jour && $mois_ascension == $mois) {
+					$ferie = true;
+				}
 				// Ascension (thursday)
 			}
 
-			if (in_array('pentecote', $specialdayrule))
-			{
+			if (in_array('pentecote', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_pentecote = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 49,
-					gmdate("Y", $date_paques)
-				);
+				$date_pentecote = $date_paques + (3600 * 24 * 49);
 				$jour_pentecote = gmdate("d", $date_pentecote);
 				$mois_pentecote = gmdate("m", $date_pentecote);
-				if ($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie = true;
+				if ($jour_pentecote == $jour && $mois_pentecote == $mois) {
+					$ferie = true;
+				}
 				// "Pentecote" (sunday)
 			}
-			if (in_array('pentecotemonday', $specialdayrule))
-			{
+			if (in_array('pentecotemonday', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_pentecote = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 50,
-					gmdate("Y", $date_paques)
-					);
+				$date_pentecote = $date_paques + (3600 * 24 * 50);
 				$jour_pentecote = gmdate("d", $date_pentecote);
 				$mois_pentecote = gmdate("m", $date_pentecote);
-				if ($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie = true;
+				if ($jour_pentecote == $jour && $mois_pentecote == $mois) {
+					$ferie = true;
+				}
 				// "Pentecote" (monday)
 			}
 
-			if (in_array('viernessanto', $specialdayrule))
-			{
+			if (in_array('viernessanto', $specialdayrule)) {
 				// Viernes Santo
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_viernes = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) - 2,
-					gmdate("Y", $date_paques)
-				);
+				$date_viernes = $date_paques - (3600 * 24 * 2);
 				$jour_viernes = gmdate("d", $date_viernes);
 				$mois_viernes = gmdate("m", $date_viernes);
-				if ($jour_viernes == $jour && $mois_viernes == $mois) $ferie = true;
+				if ($jour_viernes == $jour && $mois_viernes == $mois) {
+					$ferie = true;
+				}
 				//Viernes Santo
 			}
 
-			if (in_array('fronleichnam', $specialdayrule))
-			{
+			if (in_array('fronleichnam', $specialdayrule)) {
 				// Fronleichnam (60 days after easter sunday)
 				$date_paques = getGMTEasterDatetime($annee);
-				$date_fronleichnam = mktime(
-					gmdate("H", $date_paques),
-					gmdate("i", $date_paques),
-					gmdate("s", $date_paques),
-					gmdate("m", $date_paques),
-					gmdate("d", $date_paques) + 60,
-					gmdate("Y", $date_paques)
-					);
+				$date_fronleichnam = $date_paques + (3600 * 24 * 60);
 				$jour_fronleichnam = gmdate("d", $date_fronleichnam);
 				$mois_fronleichnam = gmdate("m", $date_fronleichnam);
-				if ($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) $ferie = true;
+				if ($jour_fronleichnam == $jour && $mois_fronleichnam == $mois) {
+					$ferie = true;
+				}
 				// Fronleichnam
 			}
 		}
@@ -828,24 +838,27 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 		// If we have to include saturday and sunday
 		if (!$ferie) {
-			if ($includesaturday || $includesunday)
-			{
+			if ($includesaturday || $includesunday) {
 				$jour_julien = unixtojd($timestampStart);
 				$jour_semaine = jddayofweek($jour_julien, 0);
-				if ($includesaturday)					//Saturday (6) and Sunday (0)
-				{
-					if ($jour_semaine == 6) $ferie = true;
+				if ($includesaturday) {					//Saturday (6) and Sunday (0)
+					if ($jour_semaine == 6) {
+						$ferie = true;
+					}
 				}
-				if ($includesunday)						//Saturday (6) and Sunday (0)
-				{
-					if ($jour_semaine == 0) $ferie = true;
+				if ($includesunday) {						//Saturday (6) and Sunday (0)
+					if ($jour_semaine == 0) {
+						$ferie = true;
+					}
 				}
 			}
 		}
 		//print "ferie=".$ferie."\n";
 
 		// We increase the counter of non working day
-		if ($ferie) $nbFerie++;
+		if ($ferie) {
+			$nbFerie++;
+		}
 
 		// Increase number of days (on go up into loop)
 		$timestampStart = dol_time_plus_duree($timestampStart, 1, 'd');
@@ -870,10 +883,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
-	if ($timestampStart < $timestampEnd)
-	{
-		if ($lastday == 1)
-		{
+	if ($timestampStart < $timestampEnd) {
+		if ($lastday == 1) {
 			$bit = 0;
 		} else {
 			$bit = 1;
@@ -900,34 +911,44 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 {
 	global $langs, $mysoc;
 
-	if (empty($country_code)) $country_code = $mysoc->country_code;
+	if (empty($country_code)) {
+		$country_code = $mysoc->country_code;
+	}
 
 	dol_syslog('num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday.' country_code='.$country_code);
 
 	// Check parameters
-	if (!is_int($timestampStart) && !is_float($timestampStart)) return 'ErrorBadParameter_num_open_day';
-	if (!is_int($timestampEnd) && !is_float($timestampEnd)) return 'ErrorBadParameter_num_open_day';
+	if (!is_int($timestampStart) && !is_float($timestampStart)) {
+		return 'ErrorBadParameter_num_open_day';
+	}
+	if (!is_int($timestampEnd) && !is_float($timestampEnd)) {
+		return 'ErrorBadParameter_num_open_day';
+	}
 
 	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
-	if ($timestampStart < $timestampEnd)
-	{
+	if ($timestampStart < $timestampEnd) {
 		$numdays = num_between_day($timestampStart, $timestampEnd, $lastday);
 
 		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = ($numdays - $numholidays);
-		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = ($nbOpenDay * 24);
+		if ($inhour == 1 && $nbOpenDay <= 3) {
+			$nbOpenDay = ($nbOpenDay * 24);
+		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
-	} elseif ($timestampStart == $timestampEnd)
-	{
+	} elseif ($timestampStart == $timestampEnd) {
 		$numholidays = 0;
 		if ($lastday) {
 			$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
-			if ($numholidays == 1) return 0;
+			if ($numholidays == 1) {
+				return 0;
+			}
 		}
 
 		$nbOpenDay = $lastday;
 
-		if ($inhour == 1) $nbOpenDay = ($nbOpenDay * 24);
+		if ($inhour == 1) {
+			$nbOpenDay = ($nbOpenDay * 24);
+		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} else {
 		return $langs->trans("Error");
@@ -961,8 +982,7 @@ function monthArray($outputlangs, $short = 0)
 		12 => $outputlangs->trans("Month12")
 	);
 
-	if (!empty($short))
-	{
+	if (!empty($short)) {
 		$montharray = array(
 			1  => $outputlangs->trans("MonthShort01"),
 			2  => $outputlangs->trans("MonthShort02"),
@@ -1009,7 +1029,9 @@ function getFirstDayOfEachWeek($TWeek, $year)
 {
 	$TFirstDayOfWeek = array();
 	foreach ($TWeek as $weekNb) {
-		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') $year++; //Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+		if (in_array('01', $TWeek) && in_array('52', $TWeek) && $weekNb == '01') {
+			$year++; //Si on a la 1re semaine et la semaine 52 c'est qu'on change d'année
+		}
 		$TFirstDayOfWeek[$weekNb] = date('d', strtotime($year.'W'.$weekNb));
 	}
 	return $TFirstDayOfWeek;

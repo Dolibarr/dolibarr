@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,16 +53,26 @@ $date_endmonth = GETPOST('date_endmonth');
 $date_endday = GETPOST('date_endday');
 $date_endyear = GETPOST('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
-if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
+if ($in_bookkeeping == '') {
+	$in_bookkeeping = 'notyet';
+}
 
 $now = dol_now();
 
-// Security check
-if ($user->socid > 0)
-	accessforbidden();
-
 $hookmanager->initHooks(array('sellsjournal'));
 $parameters = array();
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -81,8 +91,7 @@ $journal_label = $accountingjournalstatic->label;
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth))
-{
+if (empty($date_startmonth) || empty($date_endmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
@@ -91,8 +100,7 @@ if (empty($date_startmonth) || empty($date_endmonth))
 	$pastmonth = $dates['pastmonth'];
 }
 
-if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
-{
+if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
@@ -115,20 +123,19 @@ if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Non common s
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
 }
 $sql .= " AND fd.product_type IN (0,1)";
-if ($date_start && $date_end)
+if ($date_start && $date_end) {
 	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+}
 // Define begin binding date
 if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
 // Already in bookkeeping or not
-if ($in_bookkeeping == 'already')
-{
+if ($in_bookkeeping == 'already') {
 	$sql .= " AND f.rowid IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	//	$sql .= " AND fd.rowid IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
-if ($in_bookkeeping == 'notyet')
-{
+if ($in_bookkeeping == 'notyet') {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
 	// $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
@@ -162,9 +169,9 @@ if ($result) {
 
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
-			if ($obj->product_type == 0)
+			if ($obj->product_type == 0) {
 				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : 'NotDefined';
-			else {
+			} else {
 				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : 'NotDefined';
 			}
 		}
@@ -175,8 +182,7 @@ if ($result) {
 		$compta_localtax2 = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
 
 		// Define array to display all VAT rates that use this accounting account $compta_tva
-		if (price2num($obj->tva_tx) || !empty($obj->vat_src_code))
-		{
+		if (price2num($obj->tva_tx) || !empty($obj->vat_src_code)) {
 			$def_tva[$obj->rowid][$compta_tva][vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : '')] = (vatrate($obj->tva_tx).($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''));
 		}
 
@@ -207,15 +213,27 @@ if ($result) {
 		//$tabfac[$obj->rowid]["fk_facturedet"] = $obj->fdid;
 
 		// Avoid warnings
-		if (!isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc] = 0;
-		if (!isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod] = 0;
-		if (!isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva] = 0;
-		if (!isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
-		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		if (!isset($tabttc[$obj->rowid][$compta_soc])) {
+			$tabttc[$obj->rowid][$compta_soc] = 0;
+		}
+		if (!isset($tabht[$obj->rowid][$compta_prod])) {
+			$tabht[$obj->rowid][$compta_prod] = 0;
+		}
+		if (!isset($tabtva[$obj->rowid][$compta_tva])) {
+			$tabtva[$obj->rowid][$compta_tva] = 0;
+		}
+		if (!isset($tablocaltax1[$obj->rowid][$compta_localtax1])) {
+			$tablocaltax1[$obj->rowid][$compta_localtax1] = 0;
+		}
+		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
+			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc * $situation_ratio;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
-		if (empty($line->tva_npr)) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio; // We ignore line if VAT is a NPR
+		if (empty($line->tva_npr)) {
+			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio; // We ignore line if VAT is a NPR
+		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1 * $situation_ratio;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2 * $situation_ratio;
 		$tabcompany[$obj->rowid] = array(
@@ -240,14 +258,14 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	$sql .= " WHERE fd.product_type <= 2 AND fd.fk_code_ventilation <= 0";
 	$sql .= " AND fd.total_ttc <> 0 AND fk_facture = ".$key;
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		if ($obj->nb > 0)
-		{
+		if ($obj->nb > 0) {
 			$errorforinvoice[$key] = 'somelinesarenotbound';
 		}
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 }
 //var_dump($errorforinvoice);exit;
 
@@ -285,31 +303,29 @@ if ($action == 'writebookkeeping') {
 
 		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED)
-		{
+		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
-			if ($alreadydispatched) $replacedinvoice = 2;
+			if ($alreadydispatched) {
+				$replacedinvoice = 2;
+			}
 		}
 
 		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
-		if ($replacedinvoice == 1)
-		{
+		if ($replacedinvoice == 1) {
 			$db->rollback();
 			continue;
 		}
 
 		// Error if some lines are not binded/ready to be journalized
-		if ($errorforinvoice[$key] == 'somelinesarenotbound')
-		{
+		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
 			$error++;
 			$errorforline++;
 			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
 		}
 
 		// Thirdparty
-		if (!$errorforline)
-		{
+		if (!$errorforline) {
 			foreach ($tabttc[$key] as $k => $mt) {
 				$bookkeeping = new BookKeeping($db);
 				$bookkeeping->doc_date = $val["date"];
@@ -342,8 +358,7 @@ if ($action == 'writebookkeeping') {
 
 				$result = $bookkeeping->create($user);
 				if ($result < 0) {
-					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-					{
+					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 						$error++;
 						$errorforline++;
 						$errorforinvoice[$key] = 'alreadyjournalized';
@@ -359,8 +374,7 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Product / Service
-		if (!$errorforline)
-		{
+		if (!$errorforline) {
 			foreach ($tabht[$key] as $k => $mt) {
 				// get compte id and label
 				if ($accountingaccount->fetch(null, $k, true)) {
@@ -392,8 +406,7 @@ if ($action == 'writebookkeeping') {
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
-						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-						{
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'alreadyjournalized';
@@ -410,14 +423,16 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// VAT
-		if (!$errorforline)
-		{
+		if (!$errorforline) {
 			$listoftax = array(0, 1, 2);
-			foreach ($listoftax as $numtax)
-			{
+			foreach ($listoftax as $numtax) {
 				$arrayofvat = $tabtva;
-				if ($numtax == 1) $arrayofvat = $tablocaltax1;
-				if ($numtax == 2) $arrayofvat = $tablocaltax2;
+				if ($numtax == 1) {
+					$arrayofvat = $tablocaltax1;
+				}
+				if ($numtax == 2) {
+					$arrayofvat = $tablocaltax2;
+				}
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
@@ -452,8 +467,7 @@ if ($action == 'writebookkeeping') {
 
 						$result = $bookkeeping->create($user);
 						if ($result < 0) {
-			   				if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-							{
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
 								$error++;
 								$errorforline++;
 								$errorforinvoice[$key] = 'alreadyjournalized';
@@ -471,22 +485,19 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Protection against a bug on lines before
-		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')))
-		{
+		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT'))) {
 			$error++;
 			$errorforline++;
 			$errorforinvoice[$key] = 'amountsnotbalanced';
 			setEventMessages('Try to insert a non balanced transaction in book for '.$invoicestatic->ref.'. Canceled. Surely a bug.', null, 'errors');
 		}
 
-		if (!$errorforline)
-		{
+		if (!$errorforline) {
 			$db->commit();
 		} else {
 			$db->rollback();
 
-			if ($error >= 10)
-			{
+			if ($error >= 10) {
 				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped"), null, 'errors');
 				break; // Break in the foreach
 			}
@@ -506,8 +517,7 @@ if ($action == 'writebookkeeping') {
 	$action = '';
 
 	// Must reload data, so we make a redirect
-	if (count($tabpay) != $error)
-	{
+	if (count($tabpay) != $error) {
 		$param = 'id_journal='.$id_journal;
 		$param .= '&date_startday='.$date_startday;
 		$param .= '&date_startmonth='.$date_startmonth;
@@ -540,8 +550,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
 
-	foreach ($tabfac as $key => $val)
-	{
+	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
@@ -559,16 +568,16 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED)
-		{
+		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
-			if ($alreadydispatched) $replacedinvoice = 2;
+			if ($alreadydispatched) {
+				$replacedinvoice = 2;
+			}
 		}
 
 		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
-		if ($replacedinvoice == 1)
-		{
+		if ($replacedinvoice == 1) {
 			continue;
 		}
 
@@ -616,8 +625,12 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		$listoftax = array(0, 1, 2);
 		foreach ($listoftax as $numtax) {
 			$arrayofvat = $tabtva;
-			if ($numtax == 1) $arrayofvat = $tablocaltax1;
-			if ($numtax == 2) $arrayofvat = $tablocaltax2;
+			if ($numtax == 1) {
+				$arrayofvat = $tablocaltax1;
+			}
+			if ($numtax == 2) {
+				$arrayofvat = $tablocaltax2;
+			}
 
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
@@ -650,10 +663,10 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
-	else {
+	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
 
@@ -672,12 +685,17 @@ if (empty($action) || $action == 'view') {
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
+	}
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
 	} else {
-		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
-		else print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
+		if ($in_bookkeeping == 'notyet') {
+			print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
+		} else {
+			print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
+		}
 	}
 	print '</div>';
 
@@ -720,8 +738,7 @@ if (empty($action) || $action == 'view') {
 	$companystatic = new Client($db);
 	$invoicestatic = new Facture($db);
 
-	foreach ($tabfac as $key => $val)
-	{
+	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
@@ -739,16 +756,16 @@ if (empty($action) || $action == 'view') {
 
 		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
-		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED)
-		{
+		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
 			$alreadydispatched = $invoicestatic->getVentilExportCompta(); // Test if replaced invoice already into bookkeeping.
-			if ($alreadydispatched) $replacedinvoice = 2;
+			if ($alreadydispatched) {
+				$replacedinvoice = 2;
+			}
 		}
 
 		// If not already into bookkeeping, we won't add it, if yes, add the counterpart ???.
-		if ($replacedinvoice == 1)
-		{
+		if ($replacedinvoice == 1) {
 			print '<tr class="oddeven">';
 			print "<!-- Replaced invoice -->";
 			print "<td>".$date."</td>";
@@ -768,8 +785,7 @@ if (empty($action) || $action == 'view') {
 
 			continue;
 		}
-		if ($errorforinvoice[$key] == 'somelinesarenotbound')
-		{
+		if ($errorforinvoice[$key] == 'somelinesarenotbound') {
 			print '<tr class="oddeven">';
 			print "<!-- Some lines are not bound -->";
 			print "<td>".$date."</td>";
@@ -789,8 +805,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Third party
-		foreach ($tabttc[$key] as $k => $mt)
-		{
+		foreach ($tabttc[$key] as $k => $mt) {
 			print '<tr class="oddeven">';
 			print "<!-- Thirdparty -->";
 			print "<td>".$date."</td>";
@@ -798,18 +813,20 @@ if (empty($action) || $action == 'view') {
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined')
-			{
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
-			} else print $accountoshow;
+			} else {
+				print $accountoshow;
+			}
 			print '</td>';
 			// Subledger account
 			print "<td>";
 			$accountoshow = length_accounta($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined')
-			{
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			} else print $accountoshow;
+			} else {
+				print $accountoshow;
+			}
 			print '</td>';
 			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("SubledgerAccount")."</td>";
 			print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
@@ -818,8 +835,7 @@ if (empty($action) || $action == 'view') {
 		}
 
 		// Product / Service
-		foreach ($tabht[$key] as $k => $mt)
-		{
+		foreach ($tabht[$key] as $k => $mt) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
@@ -830,10 +846,11 @@ if (empty($action) || $action == 'view') {
 			// Account
 			print "<td>";
 			$accountoshow = length_accountg($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined')
-			{
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("ProductNotDefined").'</span>';
-			} else print $accountoshow;
+			} else {
+				print $accountoshow;
+			}
 			print "</td>";
 			// Subledger account
 			print "<td>";
@@ -848,11 +865,14 @@ if (empty($action) || $action == 'view') {
 
 		// VAT
 		$listoftax = array(0, 1, 2);
-		foreach ($listoftax as $numtax)
-		{
+		foreach ($listoftax as $numtax) {
 			$arrayofvat = $tabtva;
-			if ($numtax == 1) $arrayofvat = $tablocaltax1;
-			if ($numtax == 2) $arrayofvat = $tablocaltax2;
+			if ($numtax == 1) {
+				$arrayofvat = $tablocaltax1;
+			}
+			if ($numtax == 2) {
+				$arrayofvat = $tablocaltax2;
+			}
 
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
@@ -863,10 +883,11 @@ if (empty($action) || $action == 'view') {
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
-					if (($accountoshow == "") || $accountoshow == 'NotDefined')
-					{
+					if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Sale").')</span>';
-					} else print $accountoshow;
+					} else {
+						print $accountoshow;
+					}
 					print "</td>";
 					// Subledger account
 					print "<td>";

@@ -172,9 +172,13 @@ class Ctyperesource
 
 
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if ($id)   $sql .= " WHERE t.id = ".$id;
-		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-		elseif ($label) $sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		if ($id) {
+			$sql .= " WHERE t.id = ".$id;
+		} elseif ($code) {
+			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+		} elseif ($label) {
+			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		}
 
 
 		$resql = $this->db->query($sql);
@@ -316,7 +320,7 @@ class Ctyperesource
 		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
 
 
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -379,7 +383,7 @@ class Ctyperesource
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

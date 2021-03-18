@@ -138,16 +138,16 @@ class mailing_fraise extends MailingTargets
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$sql .= " ORDER BY rowid";
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			$s .= '<option value="0">&nbsp;</option>';
-			if (!$num) $s .= '<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+			if (!$num) {
+				$s .= '<option value="0" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+			}
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				$s .= '<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
@@ -175,16 +175,16 @@ class mailing_fraise extends MailingTargets
 
 		//print $sql;
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			$s .= '<option value="0">&nbsp;</option>';
-			if (!$num) $s .= '<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
+			if (!$num) {
+				$s .= '<option value="0" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
+			}
 
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
 				$s .= '<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
@@ -246,8 +246,7 @@ class mailing_fraise extends MailingTargets
 		$sql .= " a.lastname, a.firstname,";
 		$sql .= " a.datefin, a.civility as civility_id, a.login, a.societe"; // Other fields
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		if (GETPOST('filter_category'))
-		{
+		if (GETPOST('filter_category')) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_member as cm ON cm.fk_member = a.rowid";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as c ON c.rowid = cm.fk_categorie AND c.rowid = ".((int) GETPOST('filter_category', 'int'));
 		}
@@ -258,23 +257,34 @@ class mailing_fraise extends MailingTargets
 		if (GETPOST("filter") == '-1') {
 			$sql .= " AND a.statut=-1";
 		}
-		if (GETPOST("filter", 'aZ09') == '1a') $sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
-		if (GETPOST("filter", 'aZ09') == '1b') $sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
-		if (GETPOST("filter", 'aZ09') === '0')  $sql .= " AND a.statut=0";
+		if (GETPOST("filter", 'aZ09') == '1a') {
+			$sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+		}
+		if (GETPOST("filter", 'aZ09') == '1b') {
+			$sql .= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
+		}
+		if (GETPOST("filter", 'aZ09') === '0') {
+			$sql .= " AND a.statut=0";
+		}
 		// Filter on date
-		if ($dateendsubscriptionafter > 0)  $sql .= " AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
-		if ($dateendsubscriptionbefore > 0) $sql .= " AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
+		if ($dateendsubscriptionafter > 0) {
+			$sql .= " AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
+		}
+		if ($dateendsubscriptionbefore > 0) {
+			$sql .= " AND datefin < '".$this->db->idate($dateendsubscriptionbefore)."'";
+		}
 		$sql .= " AND a.fk_adherent_type = ta.rowid";
 		// Filter on type
-		if (GETPOST('filter_type', 'int') > 0) $sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type', 'int'))."'";
+		if (GETPOST('filter_type', 'int') > 0) {
+			$sql .= " AND ta.rowid='".$this->db->escape(GETPOST('filter_type', 'int'))."'";
+		}
 		$sql .= " ORDER BY a.email";
 		//print $sql;
 
 		// Add targets into table
 		dol_syslog(get_class($this)."::add_to_target", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$j = 0;
@@ -282,11 +292,9 @@ class mailing_fraise extends MailingTargets
 			dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
 			$old = '';
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email)
-				{
+				if ($old <> $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
 								'fk_contact' => $obj->fk_contact,

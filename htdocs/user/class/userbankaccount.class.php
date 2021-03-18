@@ -96,10 +96,8 @@ class UserBankAccount extends Account
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rib (fk_user, datec)";
 		$sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->affected_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->affected_rows($resql)) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user_rib");
 
 				return $this->update($user);
@@ -121,8 +119,7 @@ class UserBankAccount extends Account
 	{
 		global $conf;
 
-		if (!$this->id)
-		{
+		if (!$this->id) {
 			$this->create();
 		}
 
@@ -138,14 +135,15 @@ class UserBankAccount extends Account
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 
-		if (trim($this->label) != '')
+		if (trim($this->label) != '') {
 			$sql .= ",label = '".$this->db->escape($this->label)."'";
-		else $sql .= ",label = NULL";
+		} else {
+			$sql .= ",label = NULL";
+		}
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -163,20 +161,26 @@ class UserBankAccount extends Account
 	 */
 	public function fetch($id, $ref = '', $userid = 0)
 	{
-		if (empty($id) && empty($ref) && empty($userid)) return -1;
+		if (empty($id) && empty($ref) && empty($userid)) {
+			return -1;
+		}
 
 		$sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql .= " owner_address, label, datec, tms as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user_rib";
-		if ($id) $sql .= " WHERE rowid = ".$id;
-		if ($ref) $sql .= " WHERE label = '".$this->db->escape($ref)."'";
-		if ($userid) $sql .= " WHERE fk_user = ".((int) $userid);
+		if ($id) {
+			$sql .= " WHERE rowid = ".((int) $id);
+		}
+		if ($ref) {
+			$sql .= " WHERE label = '".$this->db->escape($ref)."'";
+		}
+		if ($userid) {
+			$sql .= " WHERE fk_user = ".((int) $userid);
+		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;

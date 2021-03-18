@@ -36,7 +36,7 @@ class Members extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'morphy',
 		'typeid'
 	);
@@ -325,7 +325,9 @@ class Members extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate() and resiliate() methods of the class Adherent.
 			if ($field == 'statut') {
@@ -399,8 +401,9 @@ class Members extends DolibarrApi
 	{
 		$member = array();
 		foreach (Members::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$member[$field] = $data[$field];
 		}
 		return $member;

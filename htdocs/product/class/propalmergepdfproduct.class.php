@@ -79,12 +79,24 @@ class Propalmergepdfproduct extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
-		if (isset($this->file_name)) $this->file_name = trim($this->file_name);
-		if (isset($this->fk_user_author)) $this->fk_user_author = trim($this->fk_user_author);
-		if (isset($this->fk_user_mod)) $this->fk_user_mod = trim($this->fk_user_mod);
-		if (isset($this->lang)) $this->lang = trim($this->lang);
-		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
+		if (isset($this->fk_product)) {
+			$this->fk_product = trim($this->fk_product);
+		}
+		if (isset($this->file_name)) {
+			$this->file_name = trim($this->file_name);
+		}
+		if (isset($this->fk_user_author)) {
+			$this->fk_user_author = trim($this->fk_user_author);
+		}
+		if (isset($this->fk_user_mod)) {
+			$this->fk_user_mod = trim($this->fk_user_mod);
+		}
+		if (isset($this->lang)) {
+			$this->lang = trim($this->lang);
+		}
+		if (isset($this->import_key)) {
+			$this->import_key = trim($this->import_key);
+		}
 
 
 
@@ -120,20 +132,19 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal_merge_pdf_product");
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -170,14 +181,12 @@ class Propalmergepdfproduct extends CommonObject
 
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -197,7 +206,7 @@ class Propalmergepdfproduct extends CommonObject
 
 			return 1;
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -237,10 +246,8 @@ class Propalmergepdfproduct extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$line = new PropalmergepdfproductLine();
 
@@ -290,10 +297,18 @@ class Propalmergepdfproduct extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
-		if (isset($this->file_name)) $this->file_name = trim($this->file_name);
-		if (isset($this->fk_user_mod)) $this->fk_user_mod = trim($this->fk_user_mod);
-		if (isset($this->lang)) $this->lang = trim($this->lang);
+		if (isset($this->fk_product)) {
+			$this->fk_product = trim($this->fk_product);
+		}
+		if (isset($this->file_name)) {
+			$this->file_name = trim($this->file_name);
+		}
+		if (isset($this->fk_user_mod)) {
+			$this->fk_user_mod = trim($this->fk_user_mod);
+		}
+		if (isset($this->lang)) {
+			$this->lang = trim($this->lang);
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -309,19 +324,19 @@ class Propalmergepdfproduct extends CommonObject
 		$sql .= " fk_user_mod=".$user->id;
 
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -334,13 +349,13 @@ class Propalmergepdfproduct extends CommonObject
 	}
 
 
- 	/**
- 	 *  Delete object in database
- 	 *
- 	 *	@param  User	$user        User that deletes
- 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
- 	 *  @return	int					 <0 if KO, >0 if OK
- 	 */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that deletes
+	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
@@ -348,21 +363,20 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -392,8 +406,7 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
 			$sql .= " WHERE fk_product=".$product_id;
 
@@ -403,14 +416,14 @@ class Propalmergepdfproduct extends CommonObject
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -437,21 +450,20 @@ class Propalmergepdfproduct extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product";
 			$sql .= " WHERE fk_product=".$this->fk_product." AND file_name='".$this->db->escape($this->file_name)."'";
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -493,22 +505,19 @@ class Propalmergepdfproduct extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$this->errors = array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
 		} else {

@@ -33,14 +33,18 @@ function checkElementExist($id, $table)
 	global $db;
 
 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$table;
-	$sql .= ' WHERE rowid = '.$id;
+	$sql .= ' WHERE rowid = '.((int) $id);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
-		if ($num > 0) return true;
-		else return false;
-	} else return true; // for security
+		if ($num > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return true; // for security
+	}
 }
 
 /**
@@ -60,28 +64,37 @@ function checkLinkedElements($sourcetype, $targettype)
 	$sourcetable = $sourcetype;
 	$targettable = $targettype;
 
-	if ($sourcetype == 'shipping') $sourcetable = 'expedition';
-	elseif ($targettype == 'shipping') $targettable = 'expedition';
-	if ($sourcetype == 'delivery') $sourcetable = 'livraison';
-	elseif ($targettype == 'delivery') $targettable = 'livraison';
-	if ($sourcetype == 'order_supplier') $sourcetable = 'commande_fournisseur';
-	elseif ($targettype == 'order_supplier') $targettable = 'commande_fournisseur';
-	if ($sourcetype == 'invoice_supplier') $sourcetable = 'facture_fourn';
-	elseif ($targettype == 'invoice_supplier') $targettable = 'facture_fourn';
+	if ($sourcetype == 'shipping') {
+		$sourcetable = 'expedition';
+	} elseif ($targettype == 'shipping') {
+		$targettable = 'expedition';
+	}
+	if ($sourcetype == 'delivery') {
+		$sourcetable = 'livraison';
+	} elseif ($targettype == 'delivery') {
+		$targettable = 'livraison';
+	}
+	if ($sourcetype == 'order_supplier') {
+		$sourcetable = 'commande_fournisseur';
+	} elseif ($targettype == 'order_supplier') {
+		$targettable = 'commande_fournisseur';
+	}
+	if ($sourcetype == 'invoice_supplier') {
+		$sourcetable = 'facture_fourn';
+	} elseif ($targettype == 'invoice_supplier') {
+		$targettable = 'facture_fourn';
+	}
 
 	$out = $langs->trans('SourceType').': '.$sourcetype.' => '.$langs->trans('TargetType').': '.$targettype.' ';
 
 	$sql = 'SELECT rowid, fk_source, fk_target FROM '.MAIN_DB_PREFIX.'element_element';
 	$sql .= ' WHERE sourcetype="'.$sourcetype.'" AND targettype="'.$targettype.'"';
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
-		if ($num)
-		{
+		if ($num) {
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$elements[$obj->rowid] = array($sourcetype => $obj->fk_source, $targettype => $obj->fk_target);
 				$i++;
@@ -89,12 +102,9 @@ function checkLinkedElements($sourcetype, $targettype)
 		}
 	}
 
-	if (!empty($elements))
-	{
-		foreach ($elements as $key => $element)
-		{
-			if (!checkElementExist($element[$sourcetype], $sourcetable) || !checkElementExist($element[$targettype], $targettable))
-			{
+	if (!empty($elements)) {
+		foreach ($elements as $key => $element) {
+			if (!checkElementExist($element[$sourcetype], $sourcetable) || !checkElementExist($element[$targettype], $targettable)) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
 				$sql .= ' WHERE rowid = '.$key;
 				$resql = $db->query($sql);
@@ -103,8 +113,11 @@ function checkLinkedElements($sourcetype, $targettype)
 		}
 	}
 
-	if ($deleted) $out .= '('.$langs->trans('LinkedElementsInvalidDeleted', $deleted).')<br>';
-	else $out .= '('.$langs->trans('NothingToDelete').')<br>';
+	if ($deleted) {
+		$out .= '('.$langs->trans('LinkedElementsInvalidDeleted', $deleted).')<br>';
+	} else {
+		$out .= '('.$langs->trans('NothingToDelete').')<br>';
+	}
 
 	return $out;
 }
@@ -121,22 +134,23 @@ function clean_data_ecm_directories()
 	// Clean data from ecm_directories
 	$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."ecm_directories";
 	$resql = $db->query($sql);
-	if ($resql)
-	{
-		while ($obj = $db->fetch_object($resql))
-		{
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
 			$id = $obj->rowid;
 			$label = $obj->label;
 			$newlabel = dol_sanitizeFileName($label);
-			if ($label != $newlabel)
-			{
+			if ($label != $newlabel) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set label='".$db->escape($newlabel)."' WHERE rowid=".$id;
 				print '<tr><td>'.$sqlupdate."</td></tr>\n";
 				$resqlupdate = $db->query($sqlupdate);
-				if (!$resqlupdate) dol_print_error($db, 'Failed to update');
+				if (!$resqlupdate) {
+					dol_print_error($db, 'Failed to update');
+				}
 			}
 		}
-	} else dol_print_error($db, 'Failed to run request');
+	} else {
+		dol_print_error($db, 'Failed to run request');
+	}
 
 	return;
 }

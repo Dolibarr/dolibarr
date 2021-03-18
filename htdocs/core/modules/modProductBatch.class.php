@@ -64,7 +64,7 @@ class modProductBatch extends DolibarrModules
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 
-		// Config pages. Put here list of php page, stored into productdluo/admin directory, to use to setup module.
+		// Config pages. Put here list of php page, stored into /product/admin/ directory, to setup the module.
 		$this->config_page_url = array("product_lot_extrafields.php@product");
 
 		// Dependencies
@@ -82,8 +82,7 @@ class modProductBatch extends DolibarrModules
 		$this->tabs = array();
 
 		// Dictionaries
-		if (!isset($conf->productbatch->enabled))
-		{
+		if (!isset($conf->productbatch->enabled)) {
 			$conf->productbatch = new stdClass();
 			$conf->productbatch->enabled = 0;
 		}

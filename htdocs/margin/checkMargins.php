@@ -44,12 +44,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = 'f.ref';
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = 'f.ref';
+}
 
 $startdate = $enddate = '';
 
@@ -73,15 +79,20 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list'; $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -108,23 +119,22 @@ if (empty($reshook))
 	}
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_ref = '';
 		$search_array_options = array();
 	}
 
 	// Mass actions
 	/*
-    $objectclass='Product';
-    if ((string) $type == '1') { $objectlabel='Services'; }
-    if ((string) $type == '0') { $objectlabel='Products'; }
+	$objectclass='Product';
+	if ((string) $type == '1') { $objectlabel='Services'; }
+	if ((string) $type == '0') { $objectlabel='Products'; }
 
-    $permissiontoread = $user->rights->produit->lire;
-    $permissiontodelete = $user->rights->produit->supprimer;
-    $uploaddir = $conf->product->dir_output;
-    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-    */
+	$permissiontoread = $user->rights->produit->lire;
+	$permissiontodelete = $user->rights->produit->supprimer;
+	$uploaddir = $conf->product->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	*/
 }
 
 
@@ -146,12 +156,24 @@ llxHeader('', $title);
 // print load_fiche_titre($text);
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-if ($search_ref != '')   $param .= '&search_ref='.urlencode($search_ref);
-if (!empty($startdate)) $param .= '&startdatemonth='.GETPOST('startdatemonth', 'int').'&startdateday='.GETPOST('startdateday', 'int').'&startdateyear='.GETPOST('startdateyear', 'int');
-if (!empty($enddate))   $param .= '&enddatemonth='.GETPOST('enddatemonth', 'int').'&enddateday='.GETPOST('enddateday', 'int').'&enddateyear='.GETPOST('enddateyear', 'int');
-if ($optioncss != '')    $param .= '&optioncss='.$optioncss;
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.$contextpage;
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.$limit;
+}
+if ($search_ref != '') {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if (!empty($startdate)) {
+	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int').'&startdateday='.GETPOST('startdateday', 'int').'&startdateyear='.GETPOST('startdateyear', 'int');
+}
+if (!empty($enddate)) {
+	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int').'&enddateday='.GETPOST('enddateday', 'int').'&enddateyear='.GETPOST('enddateyear', 'int');
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.$optioncss;
+}
 
 // Show tabs
 $head = marges_prepare_head($user);
@@ -194,9 +216,15 @@ $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d  ON d.fk_facture = f.rowi
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
 $sql .= " AND f.entity IN (".getEntity('invoice').") ";
-if (!empty($startdate)) $sql .= " AND f.datef >= '".$db->idate($startdate)."'";
-if (!empty($enddate))   $sql .= " AND f.datef <= '".$db->idate($enddate)."'";
-if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
+if (!empty($startdate)) {
+	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
+}
+if (!empty($enddate)) {
+	$sql .= " AND f.datef <= '".$db->idate($enddate)."'";
+}
+if ($search_ref) {
+	$sql .= natural_search('f.ref', $search_ref);
+}
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -205,8 +233,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -221,10 +248,11 @@ if ($result) {
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
-	if ($conf->global->MARGIN_TYPE == "1")
+	if ($conf->global->MARGIN_TYPE == "1") {
 		$labelcostprice = 'BuyingPrice';
-	else // value is 'costprice' or 'pmp'
+	} else { // value is 'costprice' or 'pmp'
 		$labelcostprice = 'CostPrice';
+	}
 
 	$moreforfilter = '';
 
@@ -260,8 +288,7 @@ if ($result) {
 	print "</tr>\n";
 
 	$i = 0;
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';

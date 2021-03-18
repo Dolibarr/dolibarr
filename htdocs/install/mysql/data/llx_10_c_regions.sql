@@ -32,7 +32,15 @@
 --
 
 --
--- Regions
+-- Regions 
+-- ID Country 
+-- 1 France
+-- 2 Belgium
+-- 3 Italy
+-- 4 Spain
+-- 5 Germany -> use departments
+-- 6 Switzerland
+-- 7 United Kingdom (NOT England)
 --
 
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 0,   0,    '0',0,'-');
@@ -131,7 +139,7 @@ INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) v
 -- Regions Switzerland (id country=6) 
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  6, 601, '', 1, 'Cantons', 1); 
 
--- Regions England (id_country=7)
+-- Regions UK United Kingdom (id_country=7)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  7, 701, '', 0, 'England', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  7, 702, '', 0, 'Wales', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  7, 703, '', 0, 'Scotland', 1);
@@ -163,7 +171,7 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,102
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1023, '',0,'Tunis');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1024, '',0,'Zaghouan');
 
--- Region US (id country=11)
+-- Region USA (id country=11)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 11, 1101, '', 0, 'United-States', 1);
 
 -- Regions Algeria (id country=13)
@@ -346,41 +354,44 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ('2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ('202', '20204', 'SI04', NULL, 'West Slovenia');
 
 -- Regions China (rowid country=9)
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,901, '京',0,'北京市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,902, '津',0,'天津市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,903, '沪',0,'上海市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,904, '渝',0,'重庆市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,905, '冀',0,'河北省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,906, '晋',0,'山西省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,907, '辽',0,'辽宁省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,908, '吉',0,'吉林省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,909, '黑',0,'黑龙江省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,910, '苏',0,'江苏省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,911, '浙',0,'浙江省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,912, '皖',0,'安徽省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,913, '闽',0,'福建省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,914, '赣',0,'江西省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,915, '鲁',0,'山东省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,916, '豫',0,'河南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,917, '鄂',0,'湖北省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,918, '湘',0,'湖南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,919, '粤',0,'广东省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,920, '琼',0,'海南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,921, '川',0,'四川省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,922, '贵',0,'贵州省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,923, '云',0,'云南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,924, '陕',0,'陕西省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,925, '甘',0,'甘肃省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,926, '青',0,'青海省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,927, '台',0,'台湾省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,928, '蒙',0,'内蒙古自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,929, '桂',0,'广西壮族自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,930, '藏',0,'西藏自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,931, '宁',0,'宁夏回族自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,932, '新',0,'新疆维吾尔自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,933, '港',0,'香港特别行政区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,934, '澳',0,'澳门特别行政区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 901, '京',0,'北京市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 902, '津',0,'天津市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 903, '沪',0,'上海市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 904, '渝',0,'重庆市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 905, '冀',0,'河北省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 906, '晋',0,'山西省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 907, '辽',0,'辽宁省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 908, '吉',0,'吉林省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 909, '黑',0,'黑龙江省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 910, '苏',0,'江苏省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 911, '浙',0,'浙江省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 912, '皖',0,'安徽省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 913, '闽',0,'福建省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 914, '赣',0,'江西省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 915, '鲁',0,'山东省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 916, '豫',0,'河南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 917, '鄂',0,'湖北省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 918, '湘',0,'湖南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 919, '粤',0,'广东省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 920, '琼',0,'海南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 921, '川',0,'四川省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 922, '贵',0,'贵州省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 923, '云',0,'云南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 924, '陕',0,'陕西省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 925, '甘',0,'甘肃省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 926, '青',0,'青海省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 927, '台',0,'台湾省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 928, '蒙',0,'内蒙古自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 929, '桂',0,'广西壮族自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 930, '藏',0,'西藏自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 931, '宁',0,'宁夏回族自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 932, '新',0,'新疆维吾尔自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 933, '港',0,'香港特别行政区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 934, '澳',0,'澳门特别行政区');
 
 -- Regions Angola (rowid country=35)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (35, 35001, 'AO', NULL, 'Angola');
+
+-- Regions Taiwan (rowid country=213)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (213, 21301, 'TW', NULL, 'Taiwan');
 

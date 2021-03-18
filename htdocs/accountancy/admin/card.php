@@ -46,8 +46,12 @@ $account_number = GETPOST('account_number', 'string');
 $label = GETPOST('label', 'alpha');
 
 // Security check
-if ($user->socid > 0) accessforbidden();
-if (!$user->rights->accounting->chartofaccount) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!$user->rights->accounting->chartofaccount) {
+	accessforbidden();
+}
 
 
 $object = new AccountingAccount($db);
@@ -57,22 +61,18 @@ $object = new AccountingAccount($db);
  * Action
  */
 
-if (GETPOST('cancel', 'alpha'))
-{
+if (GETPOST('cancel', 'alpha')) {
 	$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
 	header("Location: ".$urltogo);
 	exit;
 }
 
-if ($action == 'add' && $user->rights->accounting->chartofaccount)
-{
+if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 	if (!$cancel) {
-		if (!$account_number)
-		{
+		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
 			$action = 'create';
-		} elseif (!$label)
-		{
+		} elseif (!$label) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 		} else {
@@ -130,12 +130,10 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 	}
 } elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
 	if (!$cancel) {
-		if (!$account_number)
-		{
+		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
 			$action = 'update';
-		} elseif (!$label)
-		{
+		} elseif (!$label) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'update';
 		} else {
@@ -214,8 +212,10 @@ $accountsystem = new AccountancySystem($db);
 $accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
 
 $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
-$helpurl = '';
-llxheader('', $title, $helpurl);
+
+$help_url = 'EN:Category:Accounting';
+
+llxheader('', $title, $help_url);
 
 
 // Create mode
@@ -286,8 +286,7 @@ if ($action == 'create') {
 		$head = accounting_prepare_head($object);
 
 		// Edit mode
-		if ($action == 'update')
-		{
+		if ($action == 'update') {
 			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";

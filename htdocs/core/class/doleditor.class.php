@@ -70,8 +70,12 @@ class DolEditor
 
 		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
 
-		if (!$rows) $rows = round($height / 20);
-		if (!$cols) $cols = ($width ?round($width / 6) : 80);
+		if (!$rows) {
+			$rows = round($height / 20);
+		}
+		if (!$cols) {
+			$cols = ($width ?round($width / 6) : 80);
+		}
 		$shorttoolbarname = preg_replace('/_encoded$/', '', $toolbarname);
 
 		// Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
@@ -81,17 +85,19 @@ class DolEditor
 		$this->readonly = $readonly;
 
 		// Check if extended editor is ok. If not we force textarea
-		if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) $this->tool = 'textarea';
-		if ($okforextendededitor === 'ace') $this->tool = 'ace';
+		if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
+			$this->tool = 'textarea';
+		}
+		if ($okforextendededitor === 'ace') {
+			$this->tool = 'ace';
+		}
 		//if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
 
 		// Define some properties
-		if (in_array($this->tool, array('textarea', 'ckeditor', 'ace')))
-		{
+		if (in_array($this->tool, array('textarea', 'ckeditor', 'ace'))) {
 			if ($this->tool == 'ckeditor' && !dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
 				$this->content = dol_nl2br($content);
-			}
-			else {
+			} else {
 				$this->content = $content;
 			}
 			$this->htmlname 			= $htmlname;
@@ -122,16 +128,14 @@ class DolEditor
 		global $conf, $langs;
 
 		$fullpage = false;
-		if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
-		{
+		if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)) {
 			$disallowAnyContent = empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed or all
 		}
 
 		$found = 0;
 		$out = '';
 
-		if (in_array($this->tool, array('textarea', 'ckeditor')))
-		{
+		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
 			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
 			// TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
@@ -140,9 +144,10 @@ class DolEditor
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
-			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled))
-			{
-				if (!defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR', '1');
+			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled)) {
+				if (!defined('REQUIRE_CKEDITOR')) {
+					define('REQUIRE_CKEDITOR', '1');
+				}
 
 				if (!empty($conf->global->FCKEDITOR_SKIN)) {
 					$skin = $conf->global->FCKEDITOR_SKIN;
@@ -165,7 +170,8 @@ class DolEditor
             						readOnly : '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',
-            						extraAllowedContent : \'\',
+            						extraAllowedContent : \'a[target];div{float,display}\',						/* Add the style float and display into div to default other allowed tags */
+									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',
             						fullPage : '.($fullpage ? 'true' : 'false').',
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
@@ -191,8 +197,7 @@ class DolEditor
                                             },
 											disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
 
-				if ($this->uselocalbrowser)
-				{
+				if ($this->uselocalbrowser) {
 					$out .= ','."\n";
 					// To use filemanager with old fckeditor (GPL)
 					$out .= '    filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,';
@@ -202,11 +207,11 @@ class DolEditor
 					$out .= "\n";
 					// To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
 					/* $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
-                               filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
-                               filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
-                               filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
-                               filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
-                               filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
+							   filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
+							   filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
+							   filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
+							   filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
+							   filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
 					*/
 					$out .= '    filebrowserWindowWidth : \'900\',
                                filebrowserWindowHeight : \'500\',
@@ -221,15 +226,13 @@ class DolEditor
 
 		// Output editor ACE
 		// Warning: ace.js and ext-statusbar.js must be loaded by the parent page.
-		if (preg_match('/^ace/', $this->tool))
-		{
+		if (preg_match('/^ace/', $this->tool)) {
 			$found = 1;
 			$format = $option;
 
 			$out .= "\n".'<!-- Output Ace editor -->'."\n";
 
-			if ($titlecontent)
-			{
+			if ($titlecontent) {
 				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
 				$out .= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
 				$out .= '</div>';
@@ -304,12 +307,14 @@ class DolEditor
 			$out .= '</script>'."\n";
 		}
 
-		if (empty($found))
-		{
+		if (empty($found)) {
 			$out .= 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
 		}
 
-		if ($noprint) return $out;
-		else print $out;
+		if ($noprint) {
+			return $out;
+		} else {
+			print $out;
+		}
 	}
 }

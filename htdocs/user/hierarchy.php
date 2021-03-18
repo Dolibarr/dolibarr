@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,19 +29,22 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
-if (!$user->rights->user->user->lire && !$user->admin)
+if (!$user->rights->user->user->lire && !$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies'));
 
 // Security check (for external users)
 $socid = 0;
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	$socid = $user->socid;
+}
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 // Load mode employee
 $mode = GETPOST("mode", 'alpha');
@@ -49,10 +52,11 @@ $mode = GETPOST("mode", 'alpha');
 $userstatic = new User($db);
 $search_statut = GETPOST('search_statut', 'int');
 
-if ($search_statut == '') $search_statut = '1';
+if ($search_statut == '') {
+	$search_statut = '1';
+}
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_statut = "";
 }
 
@@ -79,8 +83,7 @@ llxHeader('', $langs->trans("ListOfUsers").' - '.$langs->trans("HierarchicView")
 // Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
 
-if (!is_array($user_arbo) && $user_arbo < 0)
-{
+if (!is_array($user_arbo) && $user_arbo < 0) {
 	setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
 } else {
 	// Define fulltree array
@@ -89,8 +92,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	// Define data (format for treeview)
 	$data = array();
 	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-	foreach ($fulltree as $key => $val)
-	{
+	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
 		$userstatic->ref = $val['label'];
 		$userstatic->login = $val['login'];
@@ -108,10 +110,8 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc))
-		{
-			if (empty($entity))
-			{
+		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
 				$mc->getInfo($entity);
@@ -120,11 +120,9 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 		}
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
-		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
-		{
+		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
 			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
-		} elseif ($userstatic->admin)
-		{
+		} elseif ($userstatic->admin) {
 			$li .= img_picto($langs->trans("Administrator"), 'star');
 		}
 		$li .= ' ('.$val['login'].($entitystring ? ' - '.$entitystring : '').')';
@@ -155,7 +153,9 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton, 'user');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -188,8 +188,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 
 	$nbofentries = (count($data) - 1);
 
-	if ($nbofentries > 0)
-	{
+	if ($nbofentries > 0) {
 		print '<tr><td colspan="3">';
 		tree_recur($data, $data[0], 0);
 		print '</td>';

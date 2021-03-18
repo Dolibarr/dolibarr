@@ -40,8 +40,7 @@ if ($action == 'add') {
 		$resid = $prodattr->create($user);
 		if ($resid > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			if ($backtopage)
-			{
+			if ($backtopage) {
 				header('Location: '.$backtopage);
 			} else {
 				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
@@ -60,9 +59,12 @@ $langs->load('products');
  * View
  */
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('NewProductAttribute');
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
+
 
 print load_fiche_titre($title);
 

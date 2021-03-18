@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -32,8 +31,12 @@ $head = societe_prepare_head($object);
 
 print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-if ($this->control->tpl['error']) echo $this->control->tpl['error'];
-if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+if ($this->control->tpl['error']) {
+	echo $this->control->tpl['error'];
+}
+if ($this->control->tpl['action_delete']) {
+	echo $this->control->tpl['action_delete'];
+} ?>
 
 <table class="border allwidth">
 
@@ -119,7 +122,9 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td colspan="3"><?php echo $this->control->tpl['tva_assuj']; ?></td>
 </tr>
 
-<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) {
+	echo $this->control->tpl['localtax'];
+} ?>
 
 <tr>
 	<td><?php echo $langs->trans("Type"); ?></td>
@@ -200,7 +205,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 <div id="builddoc"></div>
 <?php
 /*
- * Documents generes
+ * Generated documents
  */
 $filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;

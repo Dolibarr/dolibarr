@@ -192,8 +192,12 @@ class modAdherent extends DolibarrModules
 		// Boxes
 		//-------
 		$this->boxes = array(
-			0=>array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
-			2=>array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home')
+			0 => array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
+			2 => array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
+			3 => array('file'=>'box_members_last_modified', 'enabledbydefaulton'=>'membersindex'),
+			4 => array('file'=>'box_members_last_subscriptions', 'enabledbydefaulton'=>'membersindex'),
+			5 => array('file'=>'box_members_subscriptions_by_year', 'enabledbydefaulton'=>'membersindex'),
+			6 => array('file'=>'box_members_by_type', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
@@ -305,7 +309,9 @@ class modAdherent extends DolibarrModules
 			'c.rowid'=>'subscription', 'c.dateadh'=>'subscription', 'c.datef'=>'subscription', 'c.subscription'=>'subscription'
 		);
 		// Add extra fields
-		$keyforselect = 'adherent'; $keyforelement = 'member'; $keyforaliasextra = 'extra';
+		$keyforselect = 'adherent';
+		$keyforelement = 'member';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add axtra fields
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -341,10 +347,8 @@ class modAdherent extends DolibarrModules
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'adherent' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
 				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
@@ -399,24 +403,22 @@ class modAdherent extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		//ODT template
+		// ODT template
 		/*
-        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
-        $dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
-        $dest=$dirodt.'/template_order.odt';
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+		$dest=$dirodt.'/template_order.odt';
 
-        if (file_exists($src) && ! file_exists($dest))
-        {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-            dol_mkdir($dirodt);
-            $result=dol_copy($src,$dest,0,0);
-            if ($result < 0)
-            {
-                $langs->load("errors");
-                $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
-                return 0;
-            }
-        }*/
+		if (file_exists($src) && ! file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
+		}*/
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".$conf->entity,

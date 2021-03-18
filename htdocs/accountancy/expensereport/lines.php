@@ -58,12 +58,15 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0) $page = 0;
+if (empty($page) || $page < 0) {
+	$page = 0;
+}
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $offset = $limit * $page;
-if (!$sortfield)
+if (!$sortfield) {
 	$sortfield = "erd.date, erd.rowid";
+}
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = "DESC";
@@ -71,10 +74,16 @@ if (!$sortorder) {
 }
 
 // Security check
-if ($user->socid > 0)
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
-if (!$user->rights->accounting->bind->write)
+}
+if ($user->socid > 0) {
 	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 $formaccounting = new FormAccounting($db);
 
@@ -84,8 +93,7 @@ $formaccounting = new FormAccounting($db);
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_login = '';
 	$search_expensereport = '';
 	$search_label = '';
@@ -98,17 +106,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_year = '';
 }
 
-if (is_array($changeaccount) && count($changeaccount) > 0) {
+if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->accounting->bind->write) {
 	$error = 0;
 
-	if (!(GETPOST('account_parent', 'int') >= 0))
-	{
+	if (!(GETPOST('account_parent', 'int') >= 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->begin();
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -205,12 +211,10 @@ $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -226,21 +230,45 @@ if ($result) {
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($search_login)       $param .= '&search_login='.urlencode($search_login);
-	if ($search_expensereport) $param .= "&search_expensereport=".urlencode($search_expensereport);
-	if ($search_label)		$param .= "&search_label=".urlencode($search_label);
-	if ($search_desc)		$param .= "&search_desc=".urlencode($search_desc);
-	if ($search_account)	$param .= "&search_account=".urlencode($search_account);
-	if ($search_vat)		$param .= "&search_vat=".urlencode($search_vat);
-	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
-	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
-	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($search_login) {
+		$param .= '&search_login='.urlencode($search_login);
+	}
+	if ($search_expensereport) {
+		$param .= "&search_expensereport=".urlencode($search_expensereport);
+	}
+	if ($search_label) {
+		$param .= "&search_label=".urlencode($search_label);
+	}
+	if ($search_desc) {
+		$param .= "&search_desc=".urlencode($search_desc);
+	}
+	if ($search_account) {
+		$param .= "&search_account=".urlencode($search_account);
+	}
+	if ($search_vat) {
+		$param .= "&search_vat=".urlencode($search_vat);
+	}
+	if ($search_day) {
+		$param .= '&search_day='.urlencode($search_day);
+	}
+	if ($search_month) {
+		$param .= '&search_month='.urlencode($search_month);
+	}
+	if ($search_year) {
+		$param .= '&search_year='.urlencode($search_year);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -268,9 +296,11 @@ if ($result) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre center">';
-   	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
-   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
-   	$formother->select_year($search_year, 'search_year', 1, 20, 5);
+	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
+		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
+	}
+	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
+	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';

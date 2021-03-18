@@ -116,14 +116,14 @@ class PriceGlobalVariableUpdater
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			if (!$notrigger)
-			{
+			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -135,10 +135,8 @@ class PriceGlobalVariableUpdater
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -161,15 +159,13 @@ class PriceGlobalVariableUpdater
 	{
 		$sql = "SELECT type, description, parameters, fk_variable, update_interval, next_update, last_status";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj)
-			{
+			if ($obj) {
 				$this->id = $id;
 				$this->type = $obj->type;
 				$this->description		= $obj->description;
@@ -217,7 +213,9 @@ class PriceGlobalVariableUpdater
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// if (! $error)
 		// {
@@ -234,10 +232,8 @@ class PriceGlobalVariableUpdater
 		// }
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -277,21 +273,20 @@ class PriceGlobalVariableUpdater
 		//    }
 		//}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE rowid = ".$rowid;
 
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -345,15 +340,28 @@ class PriceGlobalVariableUpdater
 	public function checkParameters()
 	{
 		// Clean parameters
-		if (isset($this->description)) $this->description = trim($this->description);
-		if (isset($this->parameters)) $this->parameters = trim($this->parameters);
-		else $this->parameters = "";
-		if (isset($this->last_status)) $this->last_status = trim($this->last_status);
+		if (isset($this->description)) {
+			$this->description = trim($this->description);
+		}
+		if (isset($this->parameters)) {
+			$this->parameters = trim($this->parameters);
+		} else {
+			$this->parameters = "";
+		}
+		if (isset($this->last_status)) {
+			$this->last_status = trim($this->last_status);
+		}
 
 		// Check parameters
-		if (empty($this->type) || !is_numeric($this->type) || !in_array($this->type, $this->types)) $this->type = 0;
-		if (empty($this->update_interval) || !is_numeric($this->update_interval) || $this->update_interval < 1) $this->update_interval = $this->update_min;
-		if (empty($this->next_update) || !is_numeric($this->next_update) || $this->next_update < 0) $this->next_update = 0;
+		if (empty($this->type) || !is_numeric($this->type) || !in_array($this->type, $this->types)) {
+			$this->type = 0;
+		}
+		if (empty($this->update_interval) || !is_numeric($this->update_interval) || $this->update_interval < 1) {
+			$this->update_interval = $this->update_min;
+		}
+		if (empty($this->next_update) || !is_numeric($this->next_update) || $this->next_update < 0) {
+			$this->next_update = 0;
+		}
 	}
 
 	/**
@@ -368,12 +376,10 @@ class PriceGlobalVariableUpdater
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$retarray = array();
 
-			while ($record = $this->db->fetch_array($resql))
-			{
+			while ($record = $this->db->fetch_array($resql)) {
 				$updater_obj = new PriceGlobalVariableUpdater($this->db);
 				$updater_obj->id = $record["rowid"];
 				$updater_obj->type = $record["type"];
@@ -408,12 +414,10 @@ class PriceGlobalVariableUpdater
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$retarray = array();
 
-			while ($record = $this->db->fetch_array($resql))
-			{
+			while ($record = $this->db->fetch_array($resql)) {
 				$updater_obj = new PriceGlobalVariableUpdater($this->db);
 				$updater_obj->id = $record["rowid"];
 				$updater_obj->type = $record["type"];
@@ -572,13 +576,13 @@ class PriceGlobalVariableUpdater
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -616,13 +620,13 @@ class PriceGlobalVariableUpdater
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}

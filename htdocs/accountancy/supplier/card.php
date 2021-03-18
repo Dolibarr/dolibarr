@@ -42,31 +42,37 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write)
-{
-	if (!$cancel)
-	{
-		if ($codeventil < 0) $codeventil = 0;
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+	if (!$cancel) {
+		if ($codeventil < 0) {
+			$codeventil = 0;
+		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 		$sql .= " SET fk_code_ventilation = ".$codeventil;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
 		} else {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-			if ($backtopage)
-			{
+			if ($backtopage) {
 				header("Location: ".$backtopage);
 				exit();
 			}
@@ -101,7 +107,7 @@ if (!empty($id)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
-	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".$id;
+	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".((int) $id);
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 
 	dol_syslog("/accounting/supplier/card.php sql=".$sql, LOG_DEBUG);

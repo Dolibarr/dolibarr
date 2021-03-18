@@ -96,15 +96,27 @@ class modPhpbarcode extends ModeleBarCode
 		//print 'genbarcode_loc='.$genbarcode_loc.' encoding='.$encoding;exit;
 
 		$supported = 0;
-		if ($encoding == 'EAN13') $supported = 1;
-		if ($encoding == 'ISBN')  $supported = 1;
+		if ($encoding == 'EAN13') {
+			$supported = 1;
+		}
+		if ($encoding == 'ISBN') {
+			$supported = 1;
+		}
+		if ($encoding == 'UPC') {
+			$supported = 1;
+		}
 		// Formats that hangs on Windows (when genbarcode.exe for Windows is called, so they are not
 		// activated on Windows)
 		if (file_exists($genbarcode_loc) && empty($_SERVER["WINDIR"])) {
-			if ($encoding == 'EAN8')  $supported = 1;
-			if ($encoding == 'UPC')   $supported = 1;
-			if ($encoding == 'C39')   $supported = 1;
-			if ($encoding == 'C128')  $supported = 1;
+			if ($encoding == 'EAN8') {
+				$supported = 1;
+			}
+			if ($encoding == 'C39') {
+				$supported = 1;
+			}
+			if ($encoding == 'C128') {
+				$supported = 1;
+			}
 		}
 		return $supported;
 	}
@@ -125,10 +137,16 @@ class modPhpbarcode extends ModeleBarCode
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
 
-		if (!$this->encodingIsSupported($encoding)) return -1;
+		if (!$this->encodingIsSupported($encoding)) {
+			return -1;
+		}
 
-		if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
-		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding, 1);
+		if ($encoding == 'EAN8' || $encoding == 'EAN13') {
+			$encoding = 'EAN';
+		}
+		if ($encoding == 'C39' || $encoding == 'C128') {
+			$encoding = substr($encoding, 1);
+		}
 
 		$mode = 'png';
 
@@ -138,12 +156,15 @@ class modPhpbarcode extends ModeleBarCode
 		$_GET["mode"] = $mode;
 
 		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode");
-		if ($code) $result = barcode_print($code, $encoding, $scale, $mode);
+		if ($code) {
+			$result = barcode_print($code, $encoding, $scale, $mode);
+		}
 
-		if (!is_array($result))
-		{
+		if (!is_array($result)) {
 			$this->error = $result;
-			if (empty($nooutputiferror)) print $this->error;
+			if (empty($nooutputiferror)) {
+				print $this->error;
+			}
 			return -1;
 		}
 

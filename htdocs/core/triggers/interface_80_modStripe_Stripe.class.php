@@ -69,10 +69,12 @@ class InterfaceStripe extends DolibarrTriggers
 		// Data and type of action are stored into $object and $action
 		global $langs, $db, $conf;
 
+		if (empty($conf->stripe) || empty($conf->stripe->enabled)) {
+			return 0;
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
-
-		if (empty($conf->stripe->enabled)) return 0;
 
 		$ok = 1;
 
@@ -107,7 +109,9 @@ class InterfaceStripe extends DolibarrTriggers
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
-					if (!empty($object->email) && $object->email != $customer->email) $changerequested++;
+					if (!empty($object->email) && $object->email != $customer->email) {
+						$changerequested++;
+					}
 					/* if ($namecleaned != $customer->description) $changerequested++;
 					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
 					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
@@ -115,14 +119,25 @@ class InterfaceStripe extends DolibarrTriggers
 					{
 						if ($vatcleaned != $customer->tax_info['tax_id']) $changerequested++;
 					} */
-					if ($namecleaned != $customer->name) $changerequested++;
-					if ($desccleaned != $customer->description) $changerequested++;
-					if (($customer->tax_exempt == 'exempt' && !$object->tva_assuj) || (!$customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) $changerequested++;
-					if (!isset($customer->tax_ids['data']) && !is_null($vatcleaned)) $changerequested++;
-					elseif (isset($customer->tax_ids['data'])) {
+					if ($namecleaned != $customer->name) {
+						$changerequested++;
+					}
+					if ($desccleaned != $customer->description) {
+						$changerequested++;
+					}
+					if (($customer->tax_exempt == 'exempt' && !$object->tva_assuj) || (!$customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) {
+						$changerequested++;
+					}
+					if (!isset($customer->tax_ids['data']) && !is_null($vatcleaned)) {
+						$changerequested++;
+					} elseif (isset($customer->tax_ids['data'])) {
 						$taxinfo = reset($customer->tax_ids['data']);
-						if (empty($taxinfo) && !empty($vatcleaned)) $changerequested++;
-						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) $changerequested++;
+						if (empty($taxinfo) && !empty($vatcleaned)) {
+							$changerequested++;
+						}
+						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) {
+							$changerequested++;
+						}
 					}
 
 					if ($changerequested) {
@@ -239,8 +254,11 @@ class InterfaceStripe extends DolibarrTriggers
 					if ($customer) {
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
-							if (method_exists($card, 'detach')) $card->detach();
-							else $card->delete();
+							if (method_exists($card, 'detach')) {
+								$card->detach();
+							} else {
+								$card->delete();
+							}
 						}
 					}
 				}

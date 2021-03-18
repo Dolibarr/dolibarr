@@ -55,7 +55,7 @@ class modCollab extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'website';
+		$this->picto = 'collab';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/collab/temp");
@@ -90,22 +90,22 @@ class modCollab extends DolibarrModules
 		$r = 0;
 
 		/*$this->rights[$r][0] = 30001;
-        $this->rights[$r][1] = 'Read website content';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'read';
-        $r++;
+		$this->rights[$r][1] = 'Read website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'read';
+		$r++;
 
-        $this->rights[$r][0] = 30002;
-        $this->rights[$r][1] = 'Create/modify website content';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'write';
-        $r++;
+		$this->rights[$r][0] = 30002;
+		$this->rights[$r][1] = 'Create/modify website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'write';
+		$r++;
 
-        $this->rights[$r][0] = 30003;
-        $this->rights[$r][1] = 'Delete website content';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'delete';
-        $r++;*/
+		$this->rights[$r][0] = 30003;
+		$this->rights[$r][1] = 'Delete website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'delete';
+		$r++;*/
 
 		// Main menu entries
 		$r = 0;
@@ -113,6 +113,7 @@ class modCollab extends DolibarrModules
 			'fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Left menu entry
 			'titre'=>'Collab',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu'=>'collab',
 			'url'=>'/collab/index.php',
 			'langs'=>'collab', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

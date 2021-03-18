@@ -79,8 +79,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
-		if ($user->rights->accounting->mouvements->lire)
-		{
+		if ($user->rights->accounting->mouvements->lire) {
 			$sql = "SELECT DISTINCT b.piece_num";
 			$sql .= ", b.doc_date as date_movement";
 			$sql .= ", b.label_operation";
@@ -103,9 +102,11 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					$date		= $this->db->jdate($objp->date_movement);
 					$journal	= $objp->code_journal;
 					$label = $objp->label_operation;
-					$amount		= $objp->amount;
+					$amount = $objp->amount;
 
-					$bookkeepingstatic->id = $objp->id;
+					// adding id (rowid) will give two lines (debit and credit)
+					// so rowid isn't in sql request
+					// $bookkeepingstatic->id = $objp->id;
 					$bookkeepingstatic->piece_num = $objp->piece_num;
 
 					$this->info_box_contents[$line][] = array(
@@ -140,10 +141,12 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center"',
 					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedManualEntries").'</span>'
-				);
+					);
+				}
 
 				$this->db->free($result);
 			} else {

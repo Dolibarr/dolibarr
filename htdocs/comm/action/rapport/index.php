@@ -38,18 +38,27 @@ $action = GETPOST('action', 'aZ09');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
+$optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if ($page == -1 || $page == null) { $page = 0; }
+if ($page == -1 || $page == null) {
+	$page = 0;
+}
 $offset = $limit * $page;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "a.datep";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "a.datep";
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
 
@@ -57,12 +66,10 @@ $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
  * Actions
  */
 
-if ($action == 'builddoc')
-{
+if ($action == 'builddoc') {
 	$cat = new CommActionRapport($db, $month, $year);
 	$result = $cat->write_file(GETPOST('id', 'int'));
-	if ($result < 0)
-	{
+	if ($result < 0) {
 		setEventMessages($cat->error, $cat->errors, 'errors');
 	}
 }
@@ -89,12 +96,10 @@ $sql .= " GROUP BY year, month, df";
 $sql .= " ORDER BY year DESC, month DESC, df DESC";
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -105,15 +110,18 @@ $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
 dol_syslog("select", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$param = '';
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.$limit;
+	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -137,12 +145,10 @@ if ($resql)
 	print '<td class="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
 
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
-		if ($obj)
-		{
+		if ($obj) {
 			print '<tr class="oddeven">';
 
 			// Date
@@ -161,10 +167,11 @@ if ($resql)
 			$file = $conf->agenda->dir_temp."/".$name;
 			$modulepart = 'actionsreport';
 			$documenturl = DOL_URL_ROOT.'/document.php';
-			if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP; // To use another wrapper
+			if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
+				$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP; // To use another wrapper
+			}
 
-			if (file_exists($file))
-			{
+			if (file_exists($file)) {
 				print '<td class="tdoverflowmax300">';
 				//print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a>';
 
@@ -174,7 +181,9 @@ if ($resql)
 				// Show file name with link to download
 				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 				$mime = dol_mimetype($relativepath, '', 0);
-				if (preg_match('/text/', $mime)) $out .= ' target="_blank"';
+				if (preg_match('/text/', $mime)) {
+					$out .= ' target="_blank"';
+				}
 				$out .= ' target="_blank">';
 				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
 				$out .= $filearray["name"];

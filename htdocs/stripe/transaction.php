@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,18 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -41,11 +45,13 @@ $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 
 /*
@@ -60,8 +66,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
-{
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -77,7 +82,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -106,15 +113,13 @@ if (!$rowid) {
 	print "</tr>\n";
 
 	try {
-		if ($stripeacc)
-		{
+		if ($stripeacc) {
 			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
 			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 		}
 
-		foreach ($txn->data as $txn)
-		{
+		foreach ($txn->data as $txn) {
 			//$charge = $txn;
 			//var_dump($txn);
 
@@ -153,7 +158,9 @@ if (!$rowid) {
 			print '<tr class="oddeven">';
 
 			// Ref
-			if (!empty($stripeacc)) $connect = $stripeacc.'/';
+			if (!empty($stripeacc)) {
+				$connect = $stripeacc.'/';
+			}
 
 			// Ref
 			if (preg_match('/po_/i', $txn->source)) {
@@ -178,12 +185,10 @@ if (!$rowid) {
 			//print "<td>".$charge->customer."</td>\n";
 			// Link
 			/*print "<td>";
-			if ($societestatic->id > 0)
-			{
+			if ($societestatic->id > 0) {
 				print $societestatic->getNomUrl(1);
 			}
-			if ($memberstatic->id > 0)
-			{
+			if ($memberstatic->id > 0) {
 				print $memberstatic->getNomUrl(1);
 			}
 			print "</td>\n";*/

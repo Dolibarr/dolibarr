@@ -80,8 +80,12 @@ class PriceExpression
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->title)) $this->title = trim($this->title);
-		if (isset($this->expression)) $this->expression = trim($this->expression);
+		if (isset($this->title)) {
+			$this->title = trim($this->title);
+		}
+		if (isset($this->expression)) {
+			$this->expression = trim($this->expression);
+		}
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
@@ -95,10 +99,11 @@ class PriceExpression
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			//if (! $notrigger)
@@ -114,10 +119,8 @@ class PriceExpression
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -139,23 +142,20 @@ class PriceExpression
 	public function fetch($id)
 	{
 		// Check parameters
-		if (empty($id))
-		{
+		if (empty($id)) {
 			$this->error = 'ErrorWrongParameters';
 			return -1;
 		}
 
 		$sql = "SELECT title, expression";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj)
-			{
+			if ($obj) {
 				$this->id = $id;
 				$this->title = $obj->title;
 				$this->expression = $obj->expression;
@@ -184,12 +184,10 @@ class PriceExpression
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$retarray = array();
 
-			while ($record = $this->db->fetch_array($resql))
-			{
+			while ($record = $this->db->fetch_array($resql)) {
 				$price_expression_obj = new PriceExpression($this->db);
 				$price_expression_obj->id = $record["rowid"];
 				$price_expression_obj->title = $record["title"];
@@ -222,11 +220,9 @@ class PriceExpression
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($obj)
-			{
+			if ($obj) {
 				return (int) $obj->rowid;
 			} else {
 				return 0;
@@ -250,8 +246,12 @@ class PriceExpression
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->title)) $this->title = trim($this->title);
-		if (isset($this->expression)) $this->expression = trim($this->expression);
+		if (isset($this->title)) {
+			$this->title = trim($this->title);
+		}
+		if (isset($this->expression)) {
+			$this->expression = trim($this->expression);
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
@@ -263,7 +263,9 @@ class PriceExpression
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// if (! $error)
 		// {
@@ -280,10 +282,8 @@ class PriceExpression
 		// }
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -325,21 +325,20 @@ class PriceExpression
 		//    }
 		//}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " WHERE rowid = ".$rowid;
 
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}

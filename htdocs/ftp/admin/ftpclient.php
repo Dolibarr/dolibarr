@@ -28,7 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array("admin", "ftp"));
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $def = array();
 $lastftpentry = 0;
@@ -45,36 +47,33 @@ $entry = GETPOST('numero_entry', 'alpha');
 $sql = "select MAX(name) as name from ".MAIN_DB_PREFIX."const";
 $sql .= " WHERE name like 'FTP_SERVER_%'";
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$obj = $db->fetch_object($result);
 	preg_match('/([0-9]+)$/i', $obj->name, $reg);
-	if ($reg[1]) $lastftpentry = $reg[1];
+	if ($reg[1]) {
+		$lastftpentry = $reg[1];
+	}
 } else {
 	dol_print_error($db);
 }
 
-if ($action == 'add' || GETPOST('modify', 'alpha'))
-{
+if ($action == 'add' || GETPOST('modify', 'alpha')) {
 	$ftp_name = "FTP_NAME_".$entry; // $_POST["numero_entry"];
 	$ftp_server = "FTP_SERVER_".$entry; //$_POST["numero_entry"];
 
 	$error = 0;
 
-	if (!GETPOST("$ftp_name", 'alpha'))
-	{
+	if (!GETPOST("$ftp_name", 'alpha')) {
 		$error = 1;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 	}
 
-	if (!GETPOST("$ftp_server", 'alpha'))
-	{
+	if (!GETPOST("$ftp_server", 'alpha')) {
 		$error = 1;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Server")), null, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$ftp_port = "FTP_PORT_".$entry;
 		$ftp_user = "FTP_USER_".$entry;
 		$ftp_password = "FTP_PASSWORD_".$entry;
@@ -83,14 +82,23 @@ if ($action == 'add' || GETPOST('modify', 'alpha'))
 		$db->begin();
 
 		$result1 = dolibarr_set_const($db, "FTP_PORT_".$entry, GETPOST($ftp_port, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result1) $result2 = dolibarr_set_const($db, "FTP_SERVER_".$entry, GETPOST($ftp_server, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result2) $result3 = dolibarr_set_const($db, "FTP_USER_".$entry, GETPOST($ftp_user, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result3) $result4 = dolibarr_set_const($db, "FTP_PASSWORD_".$entry, GETPOST($ftp_password, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result4) $result5 = dolibarr_set_const($db, "FTP_NAME_".$entry, GETPOST($ftp_name, 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($result5) $result6 = dolibarr_set_const($db, "FTP_PASSIVE_".$entry, GETPOST($ftp_passive, 'alpha'), 'chaine', 0, '', $conf->entity);
+		if ($result1) {
+			$result2 = dolibarr_set_const($db, "FTP_SERVER_".$entry, GETPOST($ftp_server, 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
+		if ($result2) {
+			$result3 = dolibarr_set_const($db, "FTP_USER_".$entry, GETPOST($ftp_user, 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
+		if ($result3) {
+			$result4 = dolibarr_set_const($db, "FTP_PASSWORD_".$entry, GETPOST($ftp_password, 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
+		if ($result4) {
+			$result5 = dolibarr_set_const($db, "FTP_NAME_".$entry, GETPOST($ftp_name, 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
+		if ($result5) {
+			$result6 = dolibarr_set_const($db, "FTP_PASSIVE_".$entry, GETPOST($ftp_passive, 'alpha'), 'chaine', 0, '', $conf->entity);
+		}
 
-		if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
-		{
+		if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
@@ -101,21 +109,28 @@ if ($action == 'add' || GETPOST('modify', 'alpha'))
 	}
 }
 
-if (GETPOST('delete', 'alpha'))
-{
-	if ($entry)
-	{
+if (GETPOST('delete', 'alpha')) {
+	if ($entry) {
 		$db->begin();
 
 		$result1 = dolibarr_del_const($db, "FTP_PORT_".$entry, $conf->entity);
-		if ($result1) $result2 = dolibarr_del_const($db, "FTP_SERVER_".$entry, $conf->entity);
-		if ($result2) $result3 = dolibarr_del_const($db, "FTP_USER_".$entry, $conf->entity);
-		if ($result3) $result4 = dolibarr_del_const($db, "FTP_PASSWORD_".$entry, $conf->entity);
-		if ($result4) $result5 = dolibarr_del_const($db, "FTP_NAME_".$entry, $conf->entity);
-		if ($result4) $result6 = dolibarr_del_const($db, "FTP_PASSIVE_".$entry, $conf->entity);
+		if ($result1) {
+			$result2 = dolibarr_del_const($db, "FTP_SERVER_".$entry, $conf->entity);
+		}
+		if ($result2) {
+			$result3 = dolibarr_del_const($db, "FTP_USER_".$entry, $conf->entity);
+		}
+		if ($result3) {
+			$result4 = dolibarr_del_const($db, "FTP_PASSWORD_".$entry, $conf->entity);
+		}
+		if ($result4) {
+			$result5 = dolibarr_del_const($db, "FTP_NAME_".$entry, $conf->entity);
+		}
+		if ($result4) {
+			$result6 = dolibarr_del_const($db, "FTP_PASSIVE_".$entry, $conf->entity);
+		}
 
-		if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
-		{
+		if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
@@ -133,14 +148,16 @@ if (GETPOST('delete', 'alpha'))
 
 $form = new Form($db);
 
-llxHeader();
+
+$help_url = 'EN:Module_FTP_En|FR:Module_FTP|ES:Módulo_FTP';
+
+llxHeader('', 'FTP', $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("FTPClientSetup"), $linkback, 'title_setup');
 print '<br>';
 
-if (!function_exists('ftp_connect'))
-{
+if (!function_exists('ftp_connect')) {
 	print $langs->trans("FTPFeatureNotSupportedByYourPHP");
 } else {
 	// Formulaire ajout
@@ -186,7 +203,9 @@ if (!function_exists('ftp_connect'))
 	print '<tr class="impair">';
 	print '<td>'.$langs->trans("FTPPassiveMode").'</td>';
 	$defaultpassive = GETPOST("FTP_PASSIVE_".($lastftpentry + 1));
-	if (!isset($_POST["FTP_PASSIVE_".($lastftpentry + 1)])) $defaultpassive = empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT) ? 0 : 1;
+	if (!isset($_POST["FTP_PASSIVE_".($lastftpentry + 1)])) {
+		$defaultpassive = empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT) ? 0 : 1;
+	}
 	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry + 1), $defaultpassive, 2).'</td>';
 	print '<td>'.$langs->trans("No").'</td>';
 	print '</tr>';
@@ -211,13 +230,11 @@ if (!function_exists('ftp_connect'))
 
 	dol_syslog("ftpclient select ftp setup", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			preg_match('/([0-9]+)$/i', $obj->name, $reg);

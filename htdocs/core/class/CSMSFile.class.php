@@ -70,12 +70,15 @@ class CSMSFile
 
 		// On definit fin de ligne
 		$this->eol = "\n";
-		if (preg_match('/^win/i', PHP_OS)) $this->eol = "\r\n";
-		if (preg_match('/^mac/i', PHP_OS)) $this->eol = "\r";
+		if (preg_match('/^win/i', PHP_OS)) {
+			$this->eol = "\r\n";
+		}
+		if (preg_match('/^mac/i', PHP_OS)) {
+			$this->eol = "\r";
+		}
 
 		// If ending method not defined
-		if (empty($conf->global->MAIN_SMS_SENDMODE))
-		{
+		if (empty($conf->global->MAIN_SMS_SENDMODE)) {
 			$this->error = 'No SMS Engine defined';
 			return -1;
 		}
@@ -113,13 +116,13 @@ class CSMSFile
 
 		$this->message = stripslashes($this->message);
 
-		if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms();
+		if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+			$this->dump_sms();
+		}
 
-		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
-		{
+		if (empty($conf->global->MAIN_DISABLE_ALL_SMS)) {
 			// Action according to choosed sending method
-			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
-			{
+			if ($conf->global->MAIN_SMS_SENDMODE == 'ovh') {    // Backward compatibility    @deprecated
 				dol_include_once('/ovh/class/ovhsms.class.php');
 				$sms = new OvhSms($this->db);
 				$sms->expe = $this->addr_from;
@@ -136,19 +139,20 @@ class CSMSFile
 
 				$res = $sms->SmsSend();
 
-				if ($res <= 0)
-				{
+				if ($res <= 0) {
 					$this->error = $sms->error;
 					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
 				} else {
 					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 					//var_dump($res);        // 1973128
-					if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
+					if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+						$this->dump_sms_result($res);
+					}
 				}
-			} elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
-			{
+			} elseif (!empty($conf->global->MAIN_SMS_SENDMODE)) {    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 				$tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
-				$classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
+				$classfile = $tmp[0];
+				$module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
 				dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
 				try {
 					$classname = ucfirst($classfile);
@@ -169,16 +173,16 @@ class CSMSFile
 
 					$this->error = $sms->error;
 					$this->errors = $sms->errors;
-					if ($res <= 0)
-					{
+					if ($res <= 0) {
 						dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
 					} else {
 						dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 						//var_dump($res);        // 1973128
-						if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
+						if (!empty($conf->global->MAIN_SMS_DEBUG)) {
+							$this->dump_sms_result($res);
+						}
 					}
-				} catch (Exception $e)
-				{
+				} catch (Exception $e) {
 					dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
 				}
 			} else {
@@ -210,8 +214,7 @@ class CSMSFile
 		// phpcs:enable
 		global $conf, $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
-		{
+		if (@is_writeable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
 			$fp = fopen($outputfile, "w");
 
@@ -224,8 +227,9 @@ class CSMSFile
 			fputs($fp, "Message:\n".$this->message);
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK))
-			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			if (!empty($conf->global->MAIN_UMASK)) {
+				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			}
 		}
 	}
 
@@ -242,16 +246,16 @@ class CSMSFile
 		// phpcs:enable
 		global $conf, $dolibarr_main_data_root;
 
-		if (@is_writeable($dolibarr_main_data_root))    // Avoid fatal error on fopen with open_basedir
-		{
+		if (@is_writeable($dolibarr_main_data_root)) {    // Avoid fatal error on fopen with open_basedir
 			$outputfile = $dolibarr_main_data_root."/dolibarr_sms.log";
 			$fp = fopen($outputfile, "a+");
 
 			fputs($fp, "\nResult id=".$result);
 
 			fclose($fp);
-			if (!empty($conf->global->MAIN_UMASK))
-			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			if (!empty($conf->global->MAIN_UMASK)) {
+				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			}
 		}
 	}
 }

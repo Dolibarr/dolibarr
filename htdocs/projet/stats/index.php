@@ -28,8 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/projectstats.class.php';
 
 // Security check
-if (!$user->rights->projet->lire)
+if (!$user->rights->projet->lire) {
 	accessforbidden();
+}
 
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
@@ -38,8 +39,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 // Security check
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
@@ -65,7 +65,7 @@ $includeuserlist = array();
 llxHeader('', $langs->trans('Projects'));
 
 $title = $langs->trans("ProjectsStatistics");
-$dir = $conf->projet->dir_output.'/temp';
+$dir = $conf->project->dir_output.'/temp';
 
 print load_fiche_titre($title, '', 'project');
 
@@ -73,9 +73,15 @@ dol_mkdir($dir);
 
 
 $stats_project = new ProjectStats($db);
-if (!empty($userid) && $userid != -1) $stats_project->userid = $userid;
-if (!empty($socid) && $socid != -1) $stats_project->socid = $socid;
-if (!empty($year)) $stats_project->year = $year;
+if (!empty($userid) && $userid != -1) {
+	$stats_project->userid = $userid;
+}
+if (!empty($socid) && $socid != -1) {
+	$stats_project->socid = $socid;
+}
+if (!empty($year)) {
+	$stats_project->year = $year;
+}
 
 /*
 if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -149,12 +155,10 @@ $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=projectstats&amp;file=proje
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (!$mesg)
-{
+if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
-	while ($i <= $endyear)
-	{
+	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
 	}
@@ -172,8 +176,7 @@ if (!$mesg)
 }
 
 
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	// Build graphic amount of object
 	$data = $stats_project->getAmountByMonthWithPrevYear($endyear, $startyear);
 	//var_dump($data);
@@ -184,11 +187,9 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 	$px2 = new DolGraph();
 	$mesg = $px2->isGraphKo();
-	if (!$mesg)
-	{
+	if (!$mesg) {
 		$i = $startyear; $legend = array();
-		while ($i <= $endyear)
-		{
+		while ($i <= $endyear) {
 			$legend[] = $i;
 			$i++;
 		}
@@ -210,8 +211,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	}
 }
 
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	// Build graphic with transformation rate
 	$data = $stats_project->getWeightedAmountByMonthWithPrevYear($endyear, $startyear, 0, 0);
 	//var_dump($data);
@@ -222,12 +222,11 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 	$px3 = new DolGraph();
 	$mesg = $px3->isGraphKo();
-	if (!$mesg)
-	{
+	if (!$mesg) {
 		$px3->SetData($data);
-		$i = $startyear; $legend = array();
-		while ($i <= $endyear)
-		{
+		$i = $startyear;
+		$legend = array();
+		while ($i <= $endyear) {
 			$legend[] = $i;
 			$i++;
 		}
@@ -251,12 +250,16 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 $stats_project->year = 0;
 $data_all_year = $stats_project->getAllByYear();
 
-if (!empty($year)) $stats_project->year = $year;
+if (!empty($year)) {
+	$stats_project->year = $year;
+}
 $arrayyears = array();
 foreach ($data_all_year as $val) {
 	$arrayyears[$val['year']] = $val['year'];
 }
-if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!count($arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 
 
 $h = 0;
@@ -266,7 +269,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
 
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
@@ -288,8 +291,12 @@ print $form->select_dolusers($userid, 'userid', 1, array(),0,$includeuserlist);
 print '</td></tr>';*/
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
-if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
-if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
+if (!in_array($year, $arrayyears)) {
+	$arrayyears[$year] = $year;
+}
+if (!in_array($nowyear, $arrayyears)) {
+	$arrayyears[$nowyear] = $nowyear;
+}
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0);
 print '</td></tr>';
@@ -303,8 +310,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfProjects").'</td>';
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-{
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
 	print '<td class="right">'.$langs->trans("OpportunityAmountAverageShort").'</td>';
 	print '<td class="right">'.$langs->trans("OpportunityAmountWeigthedShort").'</td>';
@@ -312,17 +318,14 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 print '</tr>';
 
 $oldyear = 0;
-foreach ($data_all_year as $val)
-{
+foreach ($data_all_year as $val) {
 	$year = $val['year'];
-	while ($year && $oldyear > $year + 1)
-	{	// If we have empty year
+	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			print '<td class="right">0</td>';
 			print '<td class="right">0</td>';
 			print '<td class="right">0</td>';
@@ -334,11 +337,10 @@ foreach ($data_all_year as $val)
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
-		print '<td class="right">'.($val['total'] ?price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['avg'] ?price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['weighted'] ?price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		print '<td class="right">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
 	}
 	print '</tr>';
 	$oldyear = $year;
@@ -349,12 +351,13 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; } else {
+$stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
+if ($mesg) {
+	print $mesg;
+} else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		//$stringtoshow .= $px->show();
 		//$stringtoshow .= "<br>\n";
 		$stringtoshow .= $px2->show();

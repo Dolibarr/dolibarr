@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/categories/info.php
  *      \ingroup    categories
- *		\brief      Category info page
+ *      \brief      Category info page
  */
 
 require '../main.inc.php';
@@ -40,7 +40,9 @@ $id = GETPOST('id', 'int');
 $label = GETPOST('label', 'alpha');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
@@ -50,7 +52,9 @@ if ($result <= 0) {
 }
 
 $type = $object->type;
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 /*
  * View
@@ -67,11 +71,11 @@ $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 $head = categories_prepare_head($object, $type);
 print dol_get_fiche_head($head, 'info', $langs->trans($title), -1, 'category');
 
-$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
-$linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
+$linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
-$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type).'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way) {
 	$morehtmlref .= $way."<br>\n";

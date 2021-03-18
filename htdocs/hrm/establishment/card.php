@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $error = 0;
 
@@ -44,7 +46,9 @@ static $tmpstatus2label = array(
 		'1'=>'OpenEtablishment'
 );
 $status2label = array('');
-foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
+foreach ($tmpstatus2label as $key => $val) {
+	$status2label[$key] = $langs->trans($val);
+}
 
 $object = new Establishment($db);
 
@@ -56,31 +60,25 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
  * Actions
  */
 
-if ($action == 'confirm_delete' && $confirm == "yes")
-{
+if ($action == 'confirm_delete' && $confirm == "yes") {
 	$result = $object->delete($id);
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
 		exit;
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add')
-{
-	if (!$cancel)
-	{
+} elseif ($action == 'add') {
+	if (!$cancel) {
 		$error = 0;
 
 		$object->label = GETPOST('label', 'alpha');
-		if (empty($object->label))
-		{
+		if (empty($object->label)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			$error++;
 		}
 
-		if (empty($error))
-		{
+		if (empty($error)) {
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
@@ -92,8 +90,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
 
 			$id = $object->create($user);
 
-			if ($id > 0)
-			{
+			if ($id > 0) {
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
 			} else {
@@ -106,11 +103,8 @@ if ($action == 'confirm_delete' && $confirm == "yes")
 		header("Location: ../admin/admin_establishment.php");
 		exit;
 	}
-}
-
-// Update record
-elseif ($action == 'update')
-{
+} elseif ($action == 'update') {
+	// Update record
 	$error = 0;
 
 	if (!$cancel) {
@@ -120,8 +114,7 @@ elseif ($action == 'update')
 			$error++;
 		}
 
-		if (empty($error))
-		{
+		if (empty($error)) {
 			$object->label = GETPOST('label', 'alphanohtml');
 			$object->address = GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
@@ -133,8 +126,7 @@ elseif ($action == 'update')
 
 			$result = $object->update($user);
 
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
 				exit;
 			} else {
@@ -159,8 +151,7 @@ $formcompany = new FormCompany($db);
 /*
  * Action create
  */
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEstablishment"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -228,7 +219,9 @@ if ($action == 'create')
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
 	print $form->select_country(GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
 	print '</td>';
 	print '</tr>';
 
@@ -253,15 +246,12 @@ if ($action == 'create')
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
+if (($id || $ref) && $action == 'edit') {
 	$result = $object->fetch($id);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$head = establishment_prepare_head($object);
 
-		if ($action == 'edit')
-		{
+		if ($action == 'edit') {
 			print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
@@ -284,12 +274,12 @@ if (($id || $ref) && $action == 'edit')
 
 			// Entity
 			/*
-            if (! empty($conf->multicompany->enabled)) {
-	            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+			if (! empty($conf->multicompany->enabled)) {
+				print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 				print '<td class="maxwidthonsmartphone">';
 				print $object->entity > 0 ? $object->entity : $conf->entity;
-	            print '</td></tr>';
-            }*/
+				print '</td></tr>';
+			}*/
 
 			// Address
 			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -313,7 +303,9 @@ if (($id || $ref) && $action == 'edit')
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
 			print $form->select_country($object->country_id, 'country_id');
-				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if ($user->admin) {
+				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
 			print '</td>';
 			print '</tr>';
 
@@ -334,19 +326,19 @@ if (($id || $ref) && $action == 'edit')
 
 			print '</form>';
 		}
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 }
 
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
 	$head = establishment_prepare_head($object);
 	print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
 
 	// Confirmation to delete
-	if ($action == 'delete')
-	{
+	if ($action == 'delete') {
 		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteEstablishment"), $langs->trans("ConfirmDeleteEstablishment"), "confirm_delete");
 	}
 
@@ -404,8 +396,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr>';
 	print '<td>'.$langs->trans("Country").'</td>';
 	print '<td>';
-	if ($object->country_id > 0)
-	{
+	if ($object->country_id > 0) {
 		$img = picto_from_langcode($object->country_code);
 		print $img ? $img.' ' : '';
 		print getCountry($object->getCountryCode(), 0, $db);
@@ -421,9 +412,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 	/*
-     * Barre d'actions
-    */
-
+	 * Action bar
+	 */
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
