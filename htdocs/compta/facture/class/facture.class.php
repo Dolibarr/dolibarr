@@ -1504,7 +1504,7 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		global $action;
+		global $action, $hookmanager;
 		$hookmanager->initHooks(array('invoicedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result, 'notooltip' => $notooltip, 'addlinktonotes' => $addlinktonotes, 'save_lastsearch_value'=> $save_lastsearch_value, 'target' => $target);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
