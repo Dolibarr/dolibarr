@@ -1035,7 +1035,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1) {
+				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
 
 					print '
