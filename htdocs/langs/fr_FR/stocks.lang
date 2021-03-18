@@ -24,6 +24,7 @@ StockAtDateInFuture=Date future
 StocksByLotSerial=Stocks par lot/série
 LotSerial=Lots/séries
 LotSerialList=Liste des numéros de lots/séries
+AddSerial=Ajouter Lots/Séries
 Movements=Mouvements
 ErrorWarehouseRefRequired=Le nom de référence de l'entrepôt est obligatoire
 ListOfWarehouses=Liste des entrepôts

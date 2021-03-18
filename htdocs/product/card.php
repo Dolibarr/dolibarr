@@ -2282,6 +2282,10 @@ if ($action != 'create' && $action != 'edit') {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 				}
 			}
+
+			if ( ! empty($conf->productbatch->enabled) && $object->hasBatch() ) {
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?action=correction&amp;id='.$object->id.'">'.$langs->trans("AddSerial").'</a>';
+			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
 
