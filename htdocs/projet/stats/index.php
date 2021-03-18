@@ -65,7 +65,7 @@ $includeuserlist = array();
 llxHeader('', $langs->trans('Projects'));
 
 $title = $langs->trans("ProjectsStatistics");
-$dir = $conf->projet->dir_output.'/temp';
+$dir = $conf->project->dir_output.'/temp';
 
 print load_fiche_titre($title, '', 'project');
 
@@ -269,7 +269,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, 'projet_stats');
+complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
 
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
