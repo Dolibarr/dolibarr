@@ -65,7 +65,7 @@ $includeuserlist = array();
 llxHeader('', $langs->trans('Tasks'));
 
 $title = $langs->trans("TasksStatistics");
-$dir = $conf->projet->dir_output.'/temp';
+$dir = $conf->project->dir_output.'/temp';
 
 print load_fiche_titre($title, '', 'projecttask');
 
@@ -90,7 +90,7 @@ if (!empty($year)) {
 $data = $stats_tasks->getNbByMonthWithPrevYear($endyear, $startyear);
 //var_dump($data);
 
-$filenamenb = $conf->projet->dir_output."/stats/tasknbprevyear-".$year.".png";
+$filenamenb = $conf->project->dir_output."/stats/tasknbprevyear-".$year.".png";
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=taskstats&amp;file=tasknbprevyear-'.$year.'.png';
 
 $px1 = new DolGraph();

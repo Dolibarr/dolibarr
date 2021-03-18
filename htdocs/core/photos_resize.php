@@ -142,7 +142,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->projet->multidir_output[$object->entity]; // By default
+		$dir = $conf->project->multidir_output[$object->entity]; // By default
 	}
 } elseif ($modulepart == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';

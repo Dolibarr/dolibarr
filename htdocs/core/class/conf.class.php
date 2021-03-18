@@ -842,7 +842,7 @@ class Conf
 		if (isset($this->categorie)) {
 			$this->category = $this->categorie;
 		}
-		if (isset($this->project)) {
+		if (isset($this->projet) && !isset($this->project)) {
 			$this->project = $this->projet;
 		}
 
