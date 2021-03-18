@@ -75,8 +75,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
