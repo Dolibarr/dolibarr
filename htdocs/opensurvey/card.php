@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Security check
-if (!$user->rights->opensurvey->read) {
+if (empty($user->rights->opensurvey->read)) {
 	accessforbidden();
 }
 

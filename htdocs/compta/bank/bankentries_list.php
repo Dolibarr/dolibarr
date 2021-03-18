@@ -10,7 +10,6 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
-
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -644,11 +643,12 @@ if ($search_description) {
 	}
 	$sql .= natural_search("b.label", $search_description_to_use); // Warning some text are just translation keys, not translated strings
 }
+
 if ($search_bid > 0) {
-	$sql .= " AND b.rowid=l.lineid AND l.fk_categ=".$search_bid;
+	$sql .= " AND b.rowid = l.lineid AND l.fk_categ = ".((int) $search_bid);
 }
 if (!empty($search_type)) {
-	$sql .= " AND b.fk_type = '".$db->escape($search_type)."' ";
+	$sql .= " AND b.fk_type = '".$db->escape($search_type)."'";
 }
 // Search criteria amount
 if ($search_debit) {
