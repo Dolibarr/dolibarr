@@ -1553,7 +1553,7 @@ class Facture extends CommonInvoice
 	 * 	@param		string	$ref				Reference of invoice
 	 * 	@param		string	$ref_ext			External reference of invoice
 	 * 	@param		int		$notused			Not used
-	 *  @param		bool	$fetch_situation	Fetch the previous and next situation in $tab_previous_situation_invoice and $tab_next_situation_invoice
+	 *  @param		bool	$fetch_situation	Load also the previous and next situation invoice into $tab_previous_situation_invoice and $tab_next_situation_invoice
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $fetch_situation = false)
