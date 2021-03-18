@@ -492,12 +492,36 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 					$errors = $mouv->errors;
 					$error++;
 				} else {
-					// if serial number manaement, delete before recreate ?
-					$mouv->origin = &$object;
-					$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
-					if ($result < 0) {
-						$errors = $mouv->errors;
+					// if serial number management, delete before recreate (to avoid problem of already existing product_lot)
+					$prod = new Product($db);
+					if ($prod->fetch($product) < 0)
+					{
+						$errors = $prod->errors;
 						$error++;
+					} else {
+						if ($prod->status_batch == 2)
+						{
+							// delete product_lot
+							$lot = new ProductLot($db);
+							if ($lot->fetch(null, $product, $batch) > 0) {
+								if ($lot->delete($user) < 0) {
+									$errors = $lot->errors;
+									$error++;
+								}
+							} else {
+								$errors = $lot->errors;
+								$error++;
+							}
+						}
+						if ($error == 0)
+						{
+							$mouv->origin = &$object;
+							$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
+							if ($result < 0) {
+								$errors = $mouv->errors;
+								$error++;
+							}
+						}
 					}
 				}
 			}
