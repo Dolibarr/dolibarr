@@ -186,8 +186,8 @@ $form = new Form($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
-$help_url = '';
+$help_url = 'EN:Module_Lot_/_Serial|FR:Module_Lot_/_Série';
+
 $title = $langs->trans('LotSerialList');
 
 

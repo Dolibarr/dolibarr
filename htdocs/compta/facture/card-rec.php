@@ -65,7 +65,6 @@ $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
-$result = restrictedArea($user, 'facture', $id, $objecttype);
 $projectid = GETPOST('projectid', 'int');
 
 $year_date_when = GETPOST('year_date_when');
@@ -126,6 +125,8 @@ $usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 $now = dol_now();
 
 $error = 0;
+
+$result = restrictedArea($user, 'facture', $object->id, $objecttype);
 
 
 /*
@@ -1634,8 +1635,8 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 
-		/**
-		 * Barre d'actions
+		/*
+		 * Action bar
 		 */
 		print '<div class="tabsAction">';
 

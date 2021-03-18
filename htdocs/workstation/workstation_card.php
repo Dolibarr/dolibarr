@@ -160,7 +160,9 @@ $formfile = new FormFile($db);
 $formresource = new FormResource($db);
 
 $title = $langs->trans("Workstation");
-$help_url = '';
+
+$help_url = 'EN:Module_Workstation';
+
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code

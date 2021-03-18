@@ -46,6 +46,7 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }

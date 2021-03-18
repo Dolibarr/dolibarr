@@ -189,7 +189,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 
-	$thirdpartycateggraph .= '<div class="div-table-responsive-no-min">';
+	$thirdpartycateggraph = '<div class="div-table-responsive-no-min">';
 	$thirdpartycateggraph .= '<table class="noborder nohover centpercent">';
 	$thirdpartycateggraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	$thirdpartycateggraph .= '<tr><td class="center" colspan="2">';

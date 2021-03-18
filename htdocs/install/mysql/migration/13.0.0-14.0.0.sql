@@ -48,6 +48,13 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
+ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_events ADD COLUMN authentication_method varchar(64) NULL;
+ALTER TABLE llx_events ADD COLUMN fk_oauth_token integer NULL;
+
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN tag varchar(64) NULL;
 ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
 
@@ -136,7 +143,8 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 -- VMYSQL4.3 ALTER TABLE llx_societe MODIFY COLUMN fk_typent integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe ALTER COLUMN fk_typent DROP NOT NULL;
-UPDATE llx_societe SET fk_typent=NULL WHERE fk_typent=0;
+UPDATE llx_societe SET fk_typent=NULL, tms=tms WHERE fk_typent=0;
+
 DELETE FROM llx_c_typent WHERE code='TE_UNKNOWN';
 
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);

@@ -7,7 +7,7 @@
  * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -616,6 +616,12 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val'] = array();
+		$totalarray['val']['d.total_ht'] = 0;
+		$totalarray['val']['d.total_tva'] = 0;
+		$totalarray['val']['d.total_ttc'] = 0;
+		$totalarray['totalizable'] = array();
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 

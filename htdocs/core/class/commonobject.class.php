@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL   	<gauthier.verdol@atm-consulting.fr>
  *
@@ -738,11 +738,11 @@ abstract class CommonObject
 		}
 		if ($this->element == 'contact') {
 			$contactid = $this->id;
-			$thirdpartyid = $object->fk_soc;
+			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
 		}
 		if ($this->element == 'user') {
 			$contactid = $this->contact_id;
-			$thirdpartyid = $object->fk_soc;
+			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
 		}
 
 		$out = '';
@@ -869,23 +869,23 @@ abstract class CommonObject
 					$outdone++;
 				}
 			} else {	// Old code to remove
-				if ($this->skype) {
+				if (!empty($this->skype)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
 				}
 				$outdone++;
-				if ($this->jabberid) {
+				if (!empty($this->jabberid)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
 				}
 				$outdone++;
-				if ($this->twitter) {
+				if (!empty($this->twitter)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
 				}
 				$outdone++;
-				if ($this->facebook) {
+				if (!empty($this->facebook)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
 				}
 				$outdone++;
-				if ($this->linkedin) {
+				if (!empty($this->linkedin)) {
 					$outsocialnetwork .= dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
 				}
 				$outdone++;
@@ -2000,7 +2000,7 @@ abstract class CommonObject
 		if ($this->element == 'societe') {
 			$aliastablesociete = 'te'; // te as table_element
 		}
-
+		$restrictiononfksoc = empty($this->restrictiononfksoc) ? 0 : $this->restrictiononfksoc;
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
@@ -2009,19 +2009,19 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".MAIN_DB_PREFIX.$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
-		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
-		} elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
+		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		}
-		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) {
+		if ($restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
 		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
-		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) {
+		if ($restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND sc.fk_user = ".$user->id;
 		}
-		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) {
+		if ($restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
 		}
 		if (!empty($filter)) {
@@ -2033,7 +2033,7 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ' AND te.'.$tmparray[0].' = '.($tmparray[1] == 'societe' ? 's' : 'parenttable').'.rowid'; // If we need to link to this table to limit select to entity
-		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
@@ -2052,16 +2052,16 @@ abstract class CommonObject
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
-		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') {
+		if ($restrictiononfksoc == 1 && $socid && $this->element != 'societe') {
 			$sql .= ' AND te.fk_soc = '.$socid;
 		}
-		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') {
+		if ($restrictiononfksoc == 2 && $socid && $this->element != 'societe') {
 			$sql .= ' AND (te.fk_soc = '.$socid.' OR te.fk_soc IS NULL)';
 		}
-		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') {
+		if ($restrictiononfksoc && $socid && $this->element == 'societe') {
 			$sql .= ' AND te.rowid = '.$socid;
 		}
-		//print 'socid='.$socid.' restrictiononfksoc='.$this->restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
+		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -2079,19 +2079,19 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ", ".MAIN_DB_PREFIX.$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
-		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
-		} elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
+		} elseif ($restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		}
-		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) {
+		if ($restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		}
 		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid == 'rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
-		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) {
+		if ($restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND sc.fk_user = ".$user->id;
 		}
-		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) {
+		if ($restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
 		}
 		if (!empty($filter)) {
@@ -2103,7 +2103,7 @@ abstract class CommonObject
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ' AND te.'.$tmparray[0].' = '.($tmparray[1] == 'societe' ? 's' : 'parenttable').'.rowid'; // If we need to link to this table to limit select to entity
-		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
+		} elseif ($restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) {
 			$sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
@@ -2122,16 +2122,16 @@ abstract class CommonObject
 			$tmparray = explode('@', $this->ismultientitymanaged);
 			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
-		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') {
+		if ($restrictiononfksoc == 1 && $socid && $this->element != 'societe') {
 			$sql .= ' AND te.fk_soc = '.$socid;
 		}
-		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') {
+		if ($restrictiononfksoc == 2 && $socid && $this->element != 'societe') {
 			$sql .= ' AND (te.fk_soc = '.$socid.' OR te.fk_soc IS NULL)';
 		}
-		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') {
+		if ($restrictiononfksoc && $socid && $this->element == 'societe') {
 			$sql .= ' AND te.rowid = '.$socid;
 		}
-		//print 'socid='.$socid.' restrictiononfksoc='.$this->restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
+		//print 'socid='.$socid.' restrictiononfksoc='.$restrictiononfksoc.' ismultientitymanaged = '.$this->ismultientitymanaged.' filter = '.$filter.' -> '.$sql."<br>";
 		// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
 		$result = $this->db->query($sql);
@@ -6528,7 +6528,7 @@ abstract class CommonObject
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -6550,7 +6550,7 @@ abstract class CommonObject
 			$out .= '</select>';
 		} elseif ($type == 'sellist') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2)) {
+			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_EXTRAFIELDS_DISABLE_SELECT2)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
 			}
@@ -7232,12 +7232,13 @@ abstract class CommonObject
 				$classname = $InfoFieldList[0];
 				$classpath = $InfoFieldList[1];
 				$getnomurlparam = (empty($InfoFieldList[2]) ? 3 : $InfoFieldList[2]);
+				$getnomurlparam2 = (empty($InfoFieldList[4]) ? '' : $InfoFieldList[4]);
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						$object->fetch($value);
-						$value = $object->getNomUrl($getnomurlparam);
+						$value = $object->getNomUrl($getnomurlparam, $getnomurlparam2);
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);

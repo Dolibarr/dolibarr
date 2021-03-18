@@ -639,7 +639,7 @@ if ($rowid > 0) {
 
 
 	/*
-	 * Action buttons
+	 * Action bar
 	 */
 
 	// Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)

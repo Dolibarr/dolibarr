@@ -17,14 +17,12 @@
 -- ===========================================================================
 
 --
--- Stockage des informations relatives au click to dial
+-- Table to store each different IP / devices / puclib key used for login
 --
-create table llx_user_clicktodial
+create table llx_user_ipdevices
 (
-  fk_user       integer PRIMARY KEY,
-  url           varchar(255),
-  login         varchar(32),
-  pass          varchar(64),
-  poste         varchar(20)
-
+  rowid         integer PRIMARY KEY,
+  fk_user       integer NOT NULL,		-- ID llx_user
+  ip            varchar(64),
+  user_agent    varchar(255) NULL,      -- user agent
 )ENGINE=innodb;

@@ -1479,7 +1479,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<a name="builddoc"></a>'; // ancre
 
 		/*
-		 * Documents generes
+		 * Generated documents
 		 */
 		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;

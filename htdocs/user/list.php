@@ -308,8 +308,8 @@ if (empty($reshook)) {
 
 $formother = new FormOther($db);
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
-$help_url = '';
+$help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
+
 if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$text = $langs->trans("ListOfEmployees");
 } else {

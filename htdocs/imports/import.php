@@ -361,6 +361,9 @@ if ($action == 'saveorder') {
  */
 
 
+$help_url = 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones';
+
+
 // STEP 1: Page to select dataset to import
 if ($step == 1 || !$datatoimport) {
 	// Clean saved file-database matching
@@ -382,7 +385,7 @@ if ($step == 1 || !$datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 1);
 
@@ -449,7 +452,7 @@ if ($step == 2 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 2);
 
@@ -543,7 +546,7 @@ if ($step == 3 && $datatoimport) {
 
 	$list = $objmodelimport->liste_modeles($db);
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 3);
 
@@ -853,7 +856,7 @@ if ($step == 4 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 4);
 
@@ -1203,7 +1206,7 @@ if ($step == 4 && $datatoimport) {
 	}
 
 	/*
-	 * Barre d'action
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 

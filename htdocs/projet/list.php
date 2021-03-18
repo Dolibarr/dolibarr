@@ -987,7 +987,7 @@ while ($i < min($num, $limit)) {
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall">';
-			print $object->getNomUrl(1);
+			print $object->getNomUrl(1, (!empty(GETPOST('search_usage_event_organization', 'int'))?'eventorganization':''));
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
@@ -1198,8 +1198,8 @@ while ($i < min($num, $limit)) {
 		// Event Organization
 		if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
 			print '<td class="right">';
-			if ($obj->usage_event_organization) {
-				print yn($obj->usage_event_organization);
+			if ($obj->usage_organize_event) {
+				print yn($obj->usage_organize_event);
 			}
 			print '</td>';
 			if (!$i) {

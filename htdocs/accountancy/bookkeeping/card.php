@@ -44,13 +44,6 @@ $id = GETPOST('id', 'int'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
-$mesg = '';
-
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
@@ -82,6 +75,17 @@ if (!empty($update)) {
 }
 
 $object = new BookKeeping($db);
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*

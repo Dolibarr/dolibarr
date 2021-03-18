@@ -619,7 +619,7 @@ if ($step == 2 && $datatoexport) {
 	print '</div>';
 
 	/*
-	 * Barre d'action
+	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
 
@@ -793,7 +793,7 @@ if ($step == 3 && $datatoexport) {
 	print '</div>';
 
 	/*
-	 * Barre d'action
+	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
 	// il n'est pas obligatoire de filtrer les champs
@@ -974,8 +974,7 @@ if ($step == 4 && $datatoexport) {
 	print '</div>';
 
 	/*
-	 * Barre d'action
-	 *
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 

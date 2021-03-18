@@ -29,12 +29,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
-
 // Security check
-if (!$user->rights->opensurvey->read) {
+if (empty($user->rights->opensurvey->read)) {
 	accessforbidden();
 }
-
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -594,7 +592,10 @@ if (GETPOST('ajoutsujet')) {
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<span class="opacitymedium">'.$langs->trans("PollAdminDesc", img_picto('', 'delete'), $langs->trans("Add")).'</span><br>';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("PollAdminDesc", '{s1}', $langs->trans("Add"));
+	print str_replace('{s1}', img_picto('', 'delete'), $s);
+	print '</span><br>';
 }
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;

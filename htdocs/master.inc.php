@@ -32,7 +32,8 @@
  * 				This script reads the conf file, init $lang, $db and and empty $user
  */
 
-require_once 'filefunc.inc.php'; // May have been already require by main.inc.php. But may not by scripts.
+// Declaration of variables. May have been already require by main.inc.php. But may not by scripts. So, here the require_once must be kept.
+require_once 'filefunc.inc.php';
 
 
 if (!function_exists('is_countable')) {

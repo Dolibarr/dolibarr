@@ -54,12 +54,6 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
-// Security check
-$id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
-$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
-
-$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
-
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
 
@@ -68,6 +62,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('bankcard', 'globalcard'));
+
+// Security check
+$id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
+$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
+
 
 /*
  * Actions
@@ -305,7 +305,7 @@ if (!empty($conf->accounting->enabled)) {
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
-$helpurl = "";
+$helpurl = "EN:Module_Banks_and_Cash";
 llxHeader("", $title, $helpurl);
 
 
@@ -777,7 +777,7 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 		/*
-		 * Barre d'actions
+		 * Action bar
 		 */
 		print '<div class="tabsAction">';
 
@@ -904,7 +904,7 @@ if ($action == 'create') {
 		} elseif ($conciliate == -3) {
 			print $langs->trans("No").' ('.$langs->trans("Closed").')';
 		} else {
-			print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> '.$langs->trans("DisableConciliation");
+			print '<input type="checkbox" class="flat" id="norappro" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> <label for="norappro">'.$langs->trans("DisableConciliation").'</label>';
 		}
 		print '</td></tr>';
 

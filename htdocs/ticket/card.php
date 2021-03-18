@@ -669,7 +669,8 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$help_url = 'FR:DocumentationModuleTicket';
+$help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
+
 $page_title = $actionobject->getTitle($action);
 
 llxHeader('', $page_title, $help_url);

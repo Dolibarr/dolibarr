@@ -617,7 +617,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 			$filename = dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);
 			$filedir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref)."/".dol_sanitizeFileName($object->ref);

@@ -335,7 +335,7 @@ if ($refresh === true) {
 	$tmp = dol_getdate($date_end);
 	$yend = $tmp['year'];
 	$mend = $tmp['mon'];
-//var_dump($m);
+	//var_dump($m);
 	$total = 0;
 	$subtotalcoll = 0;
 	$subtotalpaye = 0;
