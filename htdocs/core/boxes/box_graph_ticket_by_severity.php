@@ -138,10 +138,6 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 
 			$dataseries = array();
 			$data = array();
-			$data['LOW'] = 0;
-			$data['NORMAL'] = 0;
-			$data['HIGH'] = 0;
-			$data['BLOCKING'] = 0;
 			$sql = "SELECT t.severity_code, COUNT(t.severity_code) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 			$sql .= " WHERE t.fk_statut <> 8";
@@ -156,7 +152,10 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 					$i++;
 				}
 				foreach ($listofoppcode as $rowid => $code) {
-					$dataseries[] = array('label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+					$dataseries[] = array(
+						'label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code),
+						'data' => (empty($data[$code]) ? 0 : $data[$code])
+					);
 				}
 			} else {
 				dol_print_error($this->db);

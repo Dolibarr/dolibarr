@@ -128,11 +128,6 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 			}
 			$dataseries = array();
 			$data = array();
-			$data['COM'] = 0;
-			$data['HELP'] = 0;
-			$data['ISSUE'] = 0;
-			$data['REQUEST'] = 0;
-			$data['OTHER'] = 0;
 			$sql = "SELECT t.type_code, COUNT(t.type_code) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 			$sql .= " WHERE t.fk_statut <> 8";
@@ -147,7 +142,10 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 					$i++;
 				}
 				foreach ($listofoppcode as $rowid => $code) {
-					$dataseries[] = array('label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code), 'data' => $data[$code]);
+					$dataseries[] = array(
+						'label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code),
+						'data' => (empty($data[$code]) ? 0 : $data[$code])
+					);
 				}
 			} else {
 				dol_print_error($this->db);
