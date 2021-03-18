@@ -52,6 +52,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
 ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_events ADD COLUMN authentication_method varchar(64) NULL;
+ALTER TABLE llx_events ADD COLUMN fk_oauth_token integer NULL;
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN tag varchar(64) NULL;
 ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
