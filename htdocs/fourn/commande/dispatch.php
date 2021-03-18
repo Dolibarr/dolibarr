@@ -328,9 +328,35 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 				}
 
 				if (!$error) {
-					$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
+					$product = new Product($this->db);
+					if ($product->fetch($fk_product) > 0) {
+						if ($product->status_batch == 2) {
+							$serials = explode($conf->global->SERIALS_SEPARATOR, GETPOST($lot, 'alpha'));
+							if (count($serials) != $qty) {
+								setEventMessages($langs->trans("WrongCountOfSerialsForQty", 'errors');
+								$error++;
+							}
+							if ($error == 0) {
+								foreach ($serials as $sn) {
+									$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, $sn, GETPOST($fk_commandefourndet, 'int'), $notrigger);
+									if ($result < 0) {
+										setEventMessages($object->error, $object->errors, 'errors');
+										$error++;
+										break;
+									}
+								}
+							}
+						}
+						else {
+							$result = $object->dispatchProduct($user, GETPOST($prod, 'int'), GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
+							if ($result < 0) {
+								setEventMessages($object->error, $object->errors, 'errors');
+								$error++;
+							}
+						}
+					}
+					else {
+						setEventMessages($product->error, $product->errors, 'errors');
 						$error++;
 					}
 
