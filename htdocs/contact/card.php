@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
  *
@@ -1076,7 +1076,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if (!empty($value['icon'])) {
 							print '<span class="fa '.$value['icon'].'"></span>';
 						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
+						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
 						print '</td>';
 						print '</tr>';
 					} elseif (!empty($object->socialnetworks[$key])) {
