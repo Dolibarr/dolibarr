@@ -72,6 +72,15 @@ $sday   = $cashcontrol->day_close;
 $posmodule = $cashcontrol->posmodule;
 $terminalid = $cashcontrol->posnumber;
 
+// Security check
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+	accessforbidden();
+}
+
 
 /*
  * View
