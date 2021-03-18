@@ -288,7 +288,7 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 			print '<td class="center">';
 			$userstatic->id = $val['fk_user_c'];
 			$userstatic->lastname = $val['login_c'];
-			$userstatic->lastname = $val['statut_c'];
+			$userstatic->statut = $val['statut_c'];
 			$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 			$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
