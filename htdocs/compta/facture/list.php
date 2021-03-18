@@ -697,6 +697,16 @@ if (!$sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
+// Add GroupBy from hooks
+$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' ORDER BY ';
 $listfield = explode(',', $sortfield);
 $listorder = explode(',', $sortorder);
