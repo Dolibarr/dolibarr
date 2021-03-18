@@ -826,22 +826,28 @@ class Conf
 			unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
 		}
 
-		// For backward compatibility
+		// product is new use
 		if (isset($this->product)) {
+			// For backward compatibility
 			$this->produit = $this->product;
 		}
+		// invoice is new use, facture is old use still initialised
 		if (isset($this->facture)) {
 			$this->invoice = $this->facture;
 		}
+		// order is new use, commande is old use still initialised
 		if (isset($this->commande)) {
 			$this->order = $this->commande;
 		}
+		// contract is new use, contrat is old use still initialised
 		if (isset($this->contrat)) {
 			$this->contract = $this->contrat;
 		}
+		// category is new use, categorie is old use still initialised
 		if (isset($this->categorie)) {
 			$this->category = $this->categorie;
 		}
+		// project is new use, projet is old use still initialised
 		if (isset($this->projet) && !isset($this->project)) {
 			$this->project = $this->projet;
 		}
