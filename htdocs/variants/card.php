@@ -122,9 +122,11 @@ if ($confirm == 'yes') {
 
 $langs->load('products');
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 //print load_fiche_titre($title);
 
