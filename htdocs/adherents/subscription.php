@@ -121,6 +121,7 @@ $paymentdate = -1;
  * 	Actions
  */
 
+$parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
