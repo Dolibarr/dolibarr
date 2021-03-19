@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
@@ -1420,7 +1420,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
-		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.$conf->global->MAIN_IHM_PARAMS_REV;
+		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.(empty($conf->global->MAIN_IHM_PARAMS_REV) ? '0' : $conf->global->MAIN_IHM_PARAMS_REV);
 		if (!empty($_SESSION['dol_resetcache'])) {
 			$themeparam .= '&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
 		}
@@ -3090,7 +3090,7 @@ if (!function_exists("llxFooter")) {
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' MAIN_LAST_PING_KO_DATE='.$conf->global->MAIN_LAST_PING_KO_DATE.' -->'."\n";
+						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.(empty($conf->global->MAIN_FIRST_PING_OK_DATE) ? '' : $conf->global->MAIN_FIRST_PING_OK_DATE).' MAIN_FIRST_PING_OK_ID='.(empty($conf->global->MAIN_FIRST_PING_OK_ID) ? '' : $conf->global->MAIN_FIRST_PING_OK_ID).' MAIN_LAST_PING_KO_DATE='.(empty($conf->global->MAIN_LAST_PING_KO_DATE) ? '' : $conf->global->MAIN_LAST_PING_KO_DATE).' -->'."\n";
 						print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 						$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 						// Try to guess the distrib used

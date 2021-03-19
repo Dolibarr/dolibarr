@@ -60,7 +60,7 @@ class box_services_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->service->lire && $user->rights->contrat->lire);
+		$this->hidden = !(!empty($user->rights->service->lire) && !empty($user->rights->contrat->lire));
 	}
 
 	/**
