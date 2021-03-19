@@ -81,8 +81,8 @@ class Notify
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
-    'HOLIDAY_VALIDATE',
-    'HOLIDAY_APPROVE',
+	'HOLIDAY_VALIDATE',
+	'HOLIDAY_APPROVE',
 		'ACTION_CREATE'
 	);
 
@@ -440,41 +440,41 @@ class Notify
 						}
 
 						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
-            
+
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
-                $labeltouse = $conf->global->BILL_VALIDATE_TEMPLATE;
+								$labeltouse = $conf->global->BILL_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $link);
 								break;
 							case 'BILL_PAYED':
 								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
-                $labeltouse = $conf->global->BILL_PAYED_TEMPLATE;
+								$labeltouse = $conf->global->BILL_PAYED_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 								break;
 							case 'ORDER_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 								$object_type = 'order';
-                $labeltouse = $conf->global->ORDER_VALIDATE_TEMPLATE;
+								$labeltouse = $conf->global->ORDER_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
 							case 'PROPAL_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
-                $labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
+								$labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
-                $labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
+								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
 								break;
 							case 'FICHINTER_ADD_CONTACT':
@@ -517,62 +517,62 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
 								$object_type = 'expedition';
-                $labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
+								$labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
-                $labeltouse = $conf->global->EXPENSE_REPORT_VALIDATE_TEMPLATE;
+								$labeltouse = $conf->global->EXPENSE_REPORT_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_APPROVE':
 								$link = '<a href="'.$urlwithroot.'/expensereport/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
-                $labeltouse = $conf->global->EXPENSE_REPORT_APPROVE_TEMPLATE;
+								$labeltouse = $conf->global->EXPENSE_REPORT_APPROVE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $link);
 								break;
 							case 'HOLIDAY_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
-                $labeltouse = $conf->global->HOLIDAY_VALIDATE_TEMPLATE;
+								$labeltouse = $conf->global->HOLIDAY_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated", $link);
 								break;
 							case 'HOLIDAY_APPROVE':
 								$link = '<a href="'.$urlwithroot.'/holiday/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
-                $labeltouse = $conf->global->HOLIDAY_APPROVE_TEMPLATE;
+								$labeltouse = $conf->global->HOLIDAY_APPROVE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-                break;
+				break;
 							case 'ACTION_CREATE':
 								$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->agenda->dir_output;
 								$object_type = 'action';
-                $labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
+								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
 						}
 
-            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-            $formmail = new FormMail($this->db);
-            $arraydefaultmessage = null;
-            
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+						$formmail = new FormMail($this->db);
+						$arraydefaultmessage = null;
+
 						if (!empty($labeltouse)) $arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
-            if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-            $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-            complete_substitutions_array($substitutionarray, $outputlangs, $object);
-            $subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
-            $message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-            } else {
-						$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
-						$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-						$message .= "\n";
-						$message .= $mesg;
-            }
+						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+							complete_substitutions_array($substitutionarray, $outputlangs, $object);
+							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+						} else {
+									$message = $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification", $application, $mysoc->name)."\n";
+									$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+									$message .= "\n";
+									$message .= $mesg;
+						}
 
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref.".pdf";
@@ -581,9 +581,9 @@ class Notify
 							$filepdf = '';
 						} else {
 							$filepdf = $pdf_path;
-              $filename_list[] = $filepdf;
-              $mimetype_list[] = mime_content_type($filepdf);
-              $mimefilename_list[] = $ref.".pdf";
+							$filename_list[] = $filepdf;
+							$mimetype_list[] = mime_content_type($filepdf);
+							$mimefilename_list[] = $ref.".pdf";
 						}
 
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
@@ -783,14 +783,14 @@ class Notify
 						$dir_output = $conf->holiday->dir_output;
 						$object_type = 'holiday';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-            break;
+			break;
 					case 'ACTION_CREATE':
 						$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->agenda->dir_output;
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
-					}
+				}
 				$ref = dol_sanitizeFileName($newref);
 				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
 				if (!dol_is_file($pdf_path)) {
@@ -798,9 +798,9 @@ class Notify
 					$filepdf = '';
 				} else {
 					$filepdf = $pdf_path;
-          $filename_list[] = $pdf_path;
-          $mimetype_list[] = mime_content_type($filepdf);
-          $mimefilename_list[] = $ref.".pdf";
+					$filename_list[] = $pdf_path;
+					$mimetype_list[] = mime_content_type($filepdf);
+					$mimefilename_list[] = $ref.".pdf";
 				}
 
 				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
