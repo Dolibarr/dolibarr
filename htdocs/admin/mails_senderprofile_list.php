@@ -133,7 +133,7 @@ if ($user->socid > 0) {	// Protection if external user
 }
 // A non admin user can see profiles but limited to its own user
 if (!$user->admin) {
-	if ($object->private != $user->id) {
+	if ($object->id > 0 && $object->private != $user->id) {
 		accessforbidden();
 	}
 }
