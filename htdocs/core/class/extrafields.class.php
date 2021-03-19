@@ -1666,7 +1666,7 @@ class ExtraFields
 				$value = price($value, 0, $langs, 0, 0, -1);
 			}
 		} elseif ($type == 'select') {
-		    $valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
+			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
 			if (($pos = strpos($valstr, "|")) !== false) {
 				$valstr = substr($valstr, 0, $pos);
 			}
