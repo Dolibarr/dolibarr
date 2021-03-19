@@ -134,6 +134,7 @@ class ProductFournisseur extends Product
 
 	public $packaging;
 
+
 	/**
 	 *	Constructor
 	 *

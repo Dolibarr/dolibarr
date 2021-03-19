@@ -18,7 +18,7 @@
 
 /**
  * \file        class/productfournisseurprice.class.php
- * \ingroup     buypricehistory
+ * \ingroup     product
  * \brief       This file is a CRUD class file for ProductFournisseurPrice (Create/Read/Update/Delete)
  */
 
