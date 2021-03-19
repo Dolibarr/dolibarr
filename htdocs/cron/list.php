@@ -465,7 +465,7 @@ if ($num > 0)
 		print $object->priority;
 		print '</td>';
 
-		print '<td>';
+		print '<td class="nowraponall">';
 		if ($obj->jobtype == 'method')
 		{
 			$text = $langs->trans("CronClass");

@@ -515,13 +515,17 @@ if ($search_description)
 	}
 	$sql .= natural_search("b.label", $search_description_to_use); // Warning some text are just translation keys, not translated strings
 }
-if ($search_bid > 0) $sql .= " AND b.rowid=l.lineid AND l.fk_categ=".$search_bid;
-if (!empty($search_type)) $sql .= " AND b.fk_type = '".$db->escape($search_type)."' ";
+if ($search_bid > 0) $sql .= " AND b.rowid=l.lineid AND l.fk_categ=".((int) $search_bid);
+if (!empty($search_type)) $sql .= " AND b.fk_type = '".$db->escape($search_type)."'";
 // Search criteria amount
-$search_debit = price2num(str_replace('-', '', $search_debit));
-$search_credit = price2num(str_replace('-', '', $search_credit));
-if ($search_debit) $sql .= natural_search('- b.amount', $search_debit, 1);
-if ($search_credit) $sql .= natural_search('b.amount', $search_credit, 1);
+if ($search_debit) {
+	$sql .= natural_search('ABS(b.amount)', $search_debit, 1);
+	$sql .= ' AND b.amount <= 0';
+}
+if ($search_credit) {
+	$sql .= natural_search('b.amount', $search_credit, 1);
+	$sql .= ' AND b.amount >= 0';
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 

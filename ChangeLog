@@ -3,6 +3,53 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 13.0.2 compared to 13.0.1 *****
+
+FIX: 11.0 - $this->socid injected in query without checking for empty value
+FIX: #16096 #16085 Any call of ajax pages must provide the token
+FIX: #16296
+FIX: #16325
+FIX: #16341 : Fetch the Product ExtraFields in Shippment lines
+FIX: #16366
+FIX: #16393 Do not sanitize <!DOCTYPE html>
+FIX: #16420 #16423 #16488 #16477
+FIX: #16431
+FIX: #16465
+FIX: #16480
+FIX: #16485
+FIX: #16487
+FIX: #16503
+FIX: #16530
+FIX: #16533
+FIX: #16629
+FIX: #16671 Can not generate zip file of documents in backup tool
+FIX: Add "Now" link on social charges creation card
+FIX: avoid undefined url and missing token
+FIX: Bad project filter in ticket list
+FIX: Buttons to disable bindings not working
+FIX: class not found when creating recuring invoice from invoice+discount
+FIX: File attachment on lots
+FIX: handling $heightforinfotot when he's superior to a page height on Supplier Invoice
+FIX: hourglass and hide button to pay
+FIX: massaction validate invoice do not regenerate pdf
+FIX: missing mp4 video mime
+FIX: picto on shipment to reset qty to 0. Some quantities were not reset.
+FIX: Protection to avoid #16504
+FIX: rounding amount on card updating
+FIX: Rounding amount on social charges card updating
+FIX: select list dependencies now work for ModuleBuilder sellist field
+FIX: Status in popup of member in widget
+FIX: status on tooltip on widgets
+FIX: Timezone management for datetime on list of events
+FIX: Timezone management for datetime with modulebuilder and extrafields
+FIX: Total_ht not show in contract link element
+FIX: use post instead get
+FIX: use var "saved_url" instead global var "$url"
+FIX: Various payment - Missing fields for check transmitter & bank name
+FIX: warning if setup of chart of account is not yet done.
+FIX: wrong extension
+
+
 ***** ChangeLog for 13.0.1 compared to 13.0.0 *****
 
 FIX: 10.0 before crediting a withdrawal receipt, check whether it has been credited already.

@@ -907,9 +907,9 @@ class pdf_cyan extends ModelePDFPropales
 											}
 										} else {
 											if (!empty($conf->product->enabled)) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product').dol_sanitizeFileName($product->ref);
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											} elseif (!empty($conf->service->enabled)) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product').dol_sanitizeFileName($product->ref);
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}
 

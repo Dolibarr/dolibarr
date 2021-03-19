@@ -411,7 +411,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$product = $supplierorderdispatch->fk_product;
 		$price = GETPOST('price');
 		$comment = $supplierorderdispatch->comment;
-		$eatby = $supplierorderdispatch->fk_product;
+		$eatby = $supplierorderdispatch->eatby;
 		$sellby = $supplierorderdispatch->sellby;
 		$batch = $supplierorderdispatch->batch;
 
