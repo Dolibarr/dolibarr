@@ -50,6 +50,9 @@ $extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+// Security check
+$result = restrictedArea($user, 'adherent');
+
 
 /*
  * Actions
