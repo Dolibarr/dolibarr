@@ -1020,7 +1020,6 @@ elseif ($object->id > 0)
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
@@ -1034,6 +1033,7 @@ elseif ($object->id > 0)
 			print $langs->trans("Usage");
 			print '</td>';
 			print '<td>';
+
 			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 			{
 				print '<input type="checkbox" disabled name="usage_opportunity"' . (GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')) . '"> ';
