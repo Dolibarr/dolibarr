@@ -146,15 +146,6 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
-// Security check
-if ($search_type == '0') {
-	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
-} elseif ($search_type == '1') {
-	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
-} else {
-	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
-}
-
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
 if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
@@ -267,6 +258,14 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Security check
+if ($search_type == '0') {
+	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
+} elseif ($search_type == '1') {
+	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
+} else {
+	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
+}
 
 
 /*

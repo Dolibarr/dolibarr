@@ -85,14 +85,11 @@ $permissionnote = $user->rights->eventorganization->write; // Used by the includ
 $permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
+// Security check
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+$isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$permissiontoread) {
