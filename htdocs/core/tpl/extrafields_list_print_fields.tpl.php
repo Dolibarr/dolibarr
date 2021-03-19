@@ -35,7 +35,7 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 					}
 					$value = $datenotinstring;
 				} else {
-					$value = $obj->$tmpkey;
+				    $value = (!empty($obj->$tmpkey) ? $obj->$tmpkey : '');
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
