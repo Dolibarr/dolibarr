@@ -436,6 +436,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		'activate', 'add', 'addtimespent', 'update', 'install',
 		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check',
 		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'doprev', 'donext', 'dvprev', 'dvnext',
 		'enable'
 	);
 	$sensitiveget = false;
