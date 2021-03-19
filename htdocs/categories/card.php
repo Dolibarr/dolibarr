@@ -208,8 +208,9 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$helpurl = 'EN:Module_Categories|FR:Module_Catégories';
-llxHeader("", $langs->trans("Categories"), $helpurl);
+$help_url = 'EN:Module_Categories|FR:Module_Catégories|DE:Modul_Kategorien';
+
+llxHeader("", $langs->trans("Categories"), $help_url);
 
 if ($user->rights->categorie->creer) {
 	// Create or add
