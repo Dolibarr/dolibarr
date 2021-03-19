@@ -479,7 +479,7 @@ class AdherentType extends CommonObject
 				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					$this->getMultiLangs();
 				}
-				
+
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}
