@@ -89,8 +89,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("Member")." - ".$langs->trans("Documents");
-$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
+	
+llxHeader("", $title, $help_url);
 
 if ($id > 0) {
 	$result = $membert->fetch($object->typeid);
