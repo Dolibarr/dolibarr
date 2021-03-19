@@ -2098,12 +2098,12 @@ class AccountLine extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
-		$sql .= " rappro = ".$conciliated;
+		$sql .= " rappro = ".((int) $conciliated);
 		$sql .= ", num_releve = '".$this->db->escape($this->num_releve)."'";
 		if ($conciliated) {
 			$sql .= ", fk_user_rappro = ".$user->id;
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2145,7 +2145,7 @@ class AccountLine extends CommonObject
 	public function datev_change($rowid, $sign = 1)
 	{
 		// phpcs:enable
-		$sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+		$sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2153,7 +2153,7 @@ class AccountLine extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " datev = '".$this->db->idate($newdate)."'";
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2208,7 +2208,7 @@ class AccountLine extends CommonObject
 	public function dateo_change($rowid, $sign = 1)
 	{
 		// phpcs:enable
-		$sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+		$sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2216,7 +2216,7 @@ class AccountLine extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " dateo = '".$this->db->idate($newdate)."'";
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
