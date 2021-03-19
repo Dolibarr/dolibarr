@@ -431,11 +431,26 @@ if (!defined('NOTOKENRENEWAL')) {
 
 // Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
-	// Check all cases that need a token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
+	$arrayofactiontoforcetokencheck = array(
+		'activate', 'add', 'addtimespent', 'update', 'install',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'enable'
+	);
+	$sensitiveget = false;
+	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+		$sensitiveget = true;
+	}
+	if (preg_match('/^(disable_|enable_)/', GETPOST('action', 'aZ09'))) {
+		$sensitiveget = true;
+	}
+
+	// Check all cases that need a mandatory token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
-		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check'))
+		$sensitiveget ||
+		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
 	) {
 		if (!GETPOST('token', 'alpha')) {		// If token is not provided or empty
 			if (GETPOST('uploadform', 'int')) {
