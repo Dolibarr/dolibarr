@@ -6,6 +6,7 @@
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -408,7 +409,7 @@ if (empty($reshook)) {
 
 			$verif = $object->validate($user);
 
-			// Si pas d'erreur SQL on redirige vers la fiche de la demande
+			// If no SQL error, we redirect to the request form
 			if ($verif > 0) {
 				// To
 				$destinataire = new User($db);
@@ -446,7 +447,7 @@ if (empty($reshook)) {
 
 				$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
-				// Si l'option pour avertir le valideur en cas de délai trop court
+				// option to warn the validator in case of too short delay
 				if ($object->getConfCP('AlertValidatorDelay')) {
 					if ($object->date_debut < $nextMonth) {
 						$message .= "\n";
@@ -454,7 +455,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				// Si l'option pour avertir le valideur en cas de solde inférieur à la demande
+				// option to notify the validator if the balance is less than the request
 				if ($object->getConfCP('AlertValidatorSolde')) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
@@ -473,7 +474,7 @@ if (empty($reshook)) {
 
 				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
-				// Envoi du mail
+				// Sending the email
 				$result = $mail->sendfile();
 
 				if (!$result) {
@@ -533,21 +534,21 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			// Si pas d'erreur SQL on redirige vers la fiche de la demande
+			// If no SQL error, we redirect to the request form
 			if (!$error) {
 				// Calculcate number of days consummed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
 
-				// On ajoute la modification dans le LOG
+				// The modification is added to the LOG
 				$result = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
 				if ($result < 0) {
 					$error++;
 					setEventMessages(null, $object->errors, 'errors');
 				}
 
-				//Update balance
+				// Update balance
 				$result = $object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
 				if ($result < 0) {
 					$error++;
@@ -593,7 +594,7 @@ if (empty($reshook)) {
 
 					$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
-					// Envoi du mail
+					// Sending email
 					$result = $mail->sendfile();
 
 					if (!$result) {
@@ -619,7 +620,7 @@ if (empty($reshook)) {
 		if (!empty($_POST['detail_refuse'])) {
 			$object->fetch($id);
 
-			// Si statut en attente de validation et valideur = utilisateur
+			// If status pending validation and validator = user
 			if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
 				$object->date_refuse = dol_print_date('dayhour', dol_now());
 				$object->fk_user_refuse = $user->id;
@@ -634,7 +635,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 
-				// Si pas d'erreur SQL on redirige vers la fiche de la demande
+				// If no SQL error, we redirect to the request form
 				if (!$error) {
 					// To
 					$destinataire = new User($db);
@@ -674,7 +675,7 @@ if (empty($reshook)) {
 
 						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
-						// Envoi du mail
+						// sending email
 						$result = $mail->sendfile();
 
 						if (!$result) {
@@ -703,7 +704,7 @@ if (empty($reshook)) {
 	}
 
 
-	// Si Validation de la demande
+	// If the request is validated
 	if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes') {
 		$error = 0;
 
@@ -728,13 +729,13 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Si confirmation of cancellation
+	// If confirmation of cancellation
 	if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes') {
 		$error = 0;
 
 		$object->fetch($id);
 
-		// Si statut en attente de validation et valideur = valideur ou utilisateur, ou droits de faire pour les autres
+		// If status pending validation and validator = validator or user, or rights to do for others
 		if (($object->statut == Holiday::STATUS_VALIDATED || $object->statut == Holiday::STATUS_APPROVED) && ($user->id == $object->fk_validator || in_array($object->fk_user, $childids)
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)))) {
 			$db->begin();
@@ -753,10 +754,10 @@ if (empty($reshook)) {
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel + $nbopenedday);
 
-				// On ajoute la modification dans le LOG
+				// The modification is added to the LOG
 				$result1 = $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde, $object->fk_type);
 
-				// Mise à jour du solde
+				// Update of the balance
 				$result2 = $object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
 
 				if ($result1 < 0 || $result2 < 0) {
@@ -771,7 +772,7 @@ if (empty($reshook)) {
 				$db->rollback();
 			}
 
-			// Si pas d'erreur SQL on redirige vers la fiche de la demande
+			// If no SQL error, we redirect to the request form
 			if (!$error && $result > 0) {
 				// To
 				$destinataire = new User($db);
@@ -811,7 +812,7 @@ if (empty($reshook)) {
 
 				$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
-				// Envoi du mail
+				// sending email
 				$result = $mail->sendfile();
 
 				if (!$result) {
@@ -853,7 +854,9 @@ $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$help_url = 'EN:Module_Holiday';
+
+llxHeader('', $langs->trans('CPTitreMenu'), $help_url);
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave

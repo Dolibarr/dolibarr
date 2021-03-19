@@ -30,10 +30,33 @@
 -- Do not concatenate the values in a single query, for the same reason.
 
 --
--- Departements/Cantons/Provinces
+-- Departements/Cantons/Provinces/States
 --
 
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 0, '0',    '0',0,'-','-');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 0, '0',    '0',0,'-','-');
+
+
+-- Andorra Parròquies (id country=34)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-002', 'AD100', NULL, NULL, 'Canillo');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-003', 'AD200', NULL, NULL, 'Encamp');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-004', 'AD400', NULL, NULL, 'La Massana');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-005', 'AD300', NULL, NULL, 'Ordino');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-006', 'AD600', NULL, NULL, 'Sant Julià de Lòria');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-007', 'AD500', NULL, NULL, 'Andorra la Vella');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-008', 'AD700', NULL, NULL, 'Escaldes-Engordany');
+
+
+-- Austria States (Bundesländer) (id country=41)
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'B','BURGENLAND','Burgenland',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'K','KAERNTEN','Kärnten',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'N','NIEDEROESTERREICH','Niederösterreich',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'O','OBEROESTERREICH','Oberösterreich',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'S','SALZBURG','Salzburg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'ST','STEIERMARK','Steiermark',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'T','TIROL','Tirol',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'V','VORARLBERG','Vorarlberg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'W','WIEN','Wien',1);
+
 
 -- Departements France (id country=1)
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 1,'971','97105',3,'GUADELOUPE','Guadeloupe');
@@ -139,16 +162,6 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'94','94028',2,'VAL-DE-MARNE','Val-de-Marne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'95','95500',2,'VAL-D OISE','Val-d Oise');
 
--- Provinces Austria (id country=41)
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'B','BURGENLAND','Burgenland',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'K','KAERNTEN','Kärnten',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'N','NIEDEROESTERREICH','Niederösterreich',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'O','OBEROESTERREICH','Oberösterreich',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'S','SALZBURG','Salzburg',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'ST','STEIERMARK','Steiermark',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'T','TIROL','Tirol',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'V','VORARLBERG','Vorarlberg',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'W','WIEN','Wien',1);
 
 -- Provinces Belgium (id country=2)
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
@@ -1538,15 +1551,6 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AE-5', 22701, '', 0, '', 'Ras al-Khaimah', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AE-6', 22701, '', 0, '', 'Sharjah', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AE-7', 22701, '', 0, '', 'Umm al-Quwain', 1);
-
--- Provinces Andorra (rowid country=34)
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-002', 34000, 'AD100', NULL, NULL, 'Canillo');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-003', 34000, 'AD200', NULL, NULL, 'Encamp');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-004', 34000, 'AD400', NULL, NULL, 'La Massana');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-005', 34000, 'AD300', NULL, NULL, 'Ordino');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-006', 34000, 'AD600', NULL, NULL, 'Sant Julià de Lòria');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-007', 34000, 'AD500', NULL, NULL, 'Andorra la Vella');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES  ('AD-008', 34000, 'AD700', NULL, NULL, 'Escaldes-Engordany');
 
 -- Provinces Hungary (rowid country=18)
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-BK', 183300, 'HU331', NULL, NULL, 'Bács-Kiskun');

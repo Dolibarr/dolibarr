@@ -75,8 +75,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
@@ -656,11 +656,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			{
 				if ($object->status == 1)
 				 {
-					 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=disable">'.$langs->trans("Disable").'</a>'."\n";
+					 print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
 				 }
 				 else
 				 {
-					 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Enable").'</a>'."\n";
+					 print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
 				 }
 			}
 			*/

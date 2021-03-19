@@ -108,6 +108,14 @@ $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
+$modecompta = $conf->global->ACCOUNTING_MODE;
+if (!empty($conf->accounting->enabled)) {
+	$modecompta = 'BOOKKEEPING';
+}
+if (GETPOST("modecompta", 'alpha')) {
+	$modecompta = GETPOST("modecompta", 'alpha');
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -119,15 +127,6 @@ if (!empty($conf->comptabilite->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
-
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
-	$modecompta = 'BOOKKEEPING';
-}
-if (GETPOST("modecompta", 'alpha')) {
-	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
 

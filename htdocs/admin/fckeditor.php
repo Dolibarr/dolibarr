@@ -89,7 +89,7 @@ $picto = array(
  */
 
 foreach ($modules as $const => $desc) {
-	if ($action == 'activate_'.strtolower($const)) {
+	if ($action == 'enable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
 		// If fckeditor is active in the product/service description, it is activated in the forms
 		if ($const == 'PRODUCTDESC' && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
@@ -166,9 +166,9 @@ if (empty($conf->use_javascript_ajax)) {
 		$constante = 'FCKEDITOR_ENABLE_'.$const;
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		} elseif ($value == 1) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 		}
 
 		print "</td>";

@@ -31,10 +31,6 @@ if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
-}
-
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
@@ -184,6 +180,10 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 }
 
 $error = 0;
+
+if (!$user->rights->user->user->lire && !$user->admin) {
+	accessforbidden();
+}
 
 $childids = $user->getAllChildIds(1);
 

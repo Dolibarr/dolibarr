@@ -82,18 +82,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Security check
-if (empty($conf->mrp->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'mrp', $id, '');
-
-
 // Initialize array of search criterias
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
@@ -138,6 +126,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->mrp->read;
 $permissiontoadd = $user->rights->mrp->write;
 $permissiontodelete = $user->rights->mrp->delete;
+
+// Security check
+if ($user->socid > 0) {
+	// Protection if external user
+	accessforbidden();
+}
+$result = restrictedArea($user, 'mrp');
 
 
 /*

@@ -33,6 +33,8 @@ create table llx_events
   description    varchar(250) NOT NULL,       -- full description of action
   ip             varchar(250) NOT NULL,       -- ip (must contains ip v4 and v6 or dns names)
   user_agent     varchar(255) NULL,           -- user agent
-  fk_object      integer                      -- id of related object
+  fk_object      integer NULL                 -- id of related object
+  authentication_method varchar(64) NULL,     -- type of authentication mode used if internal login event
+  fk_oauth_token integer NULL                 -- id in oauth_token if internal login event done using an oauth_token
 ) ENGINE=innodb;
 

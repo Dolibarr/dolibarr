@@ -81,7 +81,7 @@ $langs->loadLangs(array('propal', 'other', 'companies'));
 if ($mode == 'customer') {
 	$picto = 'propal';
 	$title = $langs->trans("ProposalsStatistics");
-	$dir = $conf->propale->dir_temp;
+	$dir = $conf->propal->dir_temp;
 	$cat_type = Categorie::TYPE_CUSTOMER;
 	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 }

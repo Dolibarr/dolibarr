@@ -233,6 +233,7 @@ $account_from = '';
 $account_to = '';
 $label = '';
 $amount = '';
+$amountto = '';
 
 if ($error) {
 	$account_from = GETPOST('account_from', 'int');

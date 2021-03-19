@@ -187,7 +187,7 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	'f.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
-	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>1, 'position'=>10),
+	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1, 'position'=>10),
 	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
 	'f.date'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
 	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
@@ -204,8 +204,8 @@ $arrayfields = array(
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"Module", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>($conf->cashdesk->enabled || $conf->takepos->enabled || $conf->global->INVOICE_SHOW_POS), 'position'=>90),
-	'f.pos_source'=>array('label'=>"Terminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>($conf->cashdesk->enabled || $conf->takepos->enabled || $conf->global->INVOICE_SHOW_POS), 'position'=>91),
+	'f.module_source'=>array('label'=>"Module", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
+	'f.pos_source'=>array('label'=>"Terminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
 	'f.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
@@ -493,6 +493,10 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
@@ -689,9 +693,18 @@ if (!$sall) {
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 		}
 	}
+	// Add GroupBy from hooks
+	$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 } else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= !empty($hookmanager->resPrint) ? (' HAVING 1=1 ' . $hookmanager->resPrint) : '';
 
 $sql .= ' ORDER BY ';
 $listfield = explode(',', $sortfield);
@@ -865,6 +878,10 @@ if ($resql) {
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	$arrayofmassactions = array(
 		'validate'=>$langs->trans("Validate"),

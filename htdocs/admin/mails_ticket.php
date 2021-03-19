@@ -32,10 +32,6 @@ $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'err
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
 if ($action == 'test' || $action == 'send') {
@@ -53,6 +49,10 @@ $substitutionarrayfortest = array(
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
+// Security check
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*

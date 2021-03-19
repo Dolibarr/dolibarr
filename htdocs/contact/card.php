@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
  *
@@ -1035,7 +1035,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
-				if ($conf->use_javascript_ajax && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1) {
+				if ($conf->use_javascript_ajax && isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1) {
 					print "\n".'<script type="text/javascript" language="javascript">'."\n";
 
 					print '
@@ -1062,7 +1062,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
-				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS==-1)).'</td>';
+				$useempty = (isset($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS) && ($conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS == -1));
+				print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOST("no_email", 'int') : $object->no_email), 1, false, $useempty).'</td>';
 				print '</tr>';
 			}
 
@@ -1075,7 +1076,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if (!empty($value['icon'])) {
 							print '<span class="fa '.$value['icon'].'"></span>';
 						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
+						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
 						print '</td>';
 						print '</tr>';
 					} elseif (!empty($object->socialnetworks[$key])) {
@@ -1469,11 +1470,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Activer
 			if ($object->statut == 0 && $user->rights->societe->contact->creer) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable">'.$langs->trans("Reactivate").'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
 			if ($object->statut == 1 && $user->rights->societe->contact->creer) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
 			}
 
 			// Delete
@@ -1509,7 +1510,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Presend form
 		$modelmail = 'contact';
 		$defaulttopic = 'Information';
-		$diroutput = $conf->contact->dir_output;
+		$diroutput = $conf->societe->dir_output.'/contact/';
 		$trackid = 'ctc'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
