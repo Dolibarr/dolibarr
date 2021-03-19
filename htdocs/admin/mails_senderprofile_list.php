@@ -76,14 +76,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Security check
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'mymodule', $id, '');
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
@@ -131,6 +123,19 @@ $permissiontodelete = $user->admin;
 
 if ($id > 0) {
 	$object->fetch($id);
+}
+
+// Security check
+$socid = 0;
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+// A non admin user can see profiles but limited to its own user
+if (!$user->admin) {
+	if ($object->private != $user->id) {
+		accessforbidden();
+	}
 }
 
 
@@ -261,6 +266,10 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// If non admin, restrict list to itself
+if (empty($user->admin)) {
+	$sql .= " AND private = ".((int) $user->id);
+}
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -315,13 +324,6 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 	$num = $db->num_rows($resql);
 }
 
-// Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
-	$obj = $db->fetch_object($resql);
-	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/monmodule/emailsenderprofile_card.php?id='.$id);
-	exit;
-}
 
 // Output page
 // --------------------------------------------------------------------
