@@ -1510,7 +1510,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Description").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("Description").'</td>';
 	print '<td>';
 	$text = $langs->trans("Value");
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
