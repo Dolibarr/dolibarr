@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file        htdocs/compta/stats/supplier_ca_by_thirdparty.php
+ *       \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
  *       \brief       Page reporting purchase turnover by thirdparty
  */
 
