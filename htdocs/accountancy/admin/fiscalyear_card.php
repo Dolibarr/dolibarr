@@ -149,8 +149,10 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Card");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));

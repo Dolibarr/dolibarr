@@ -58,8 +58,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	if ($selecteddir != '/') {
 		$selecteddir = preg_replace('/\/$/', '', $selecteddir); // We removed last '/' except if it is '/'
 	}
-} else // For no ajax call
-{
+} else {
+	// For no ajax call
 	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
 
 	$openeddir = GETPOST('openeddir');
@@ -75,6 +75,9 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 		$url = DOL_URL_ROOT.'/ecm/index.php';
 	}
 }
+
+$websitekey = GETPOST('websitekey', 'alpha');
+$pageid = GETPOST('pageid', 'int');
 
 // Load translation files required by the page
 $langs->load("ecm");
