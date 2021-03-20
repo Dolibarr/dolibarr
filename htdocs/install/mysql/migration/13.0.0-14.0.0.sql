@@ -273,3 +273,33 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_ticket_by_severity.php', 'box_nb_t
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_ticket_last_x_days.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_ticket_last_x_days.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_tickets_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_tickets_type.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_new_vs_close_ticket.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_new_vs_close_ticket.php' AND entity = 1);
+
+create table llx_product_accountancy
+(
+    rowid         				integer AUTO_INCREMENT PRIMARY KEY,
+    fk_product	   				integer,
+    entity             			integer DEFAULT 1 NOT NULL,      	-- multi company id
+    accountancy_code_sell         varchar(32),                        -- Selling accountancy code
+    accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity
+    accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
+    accountancy_code_buy          varchar(32),                        -- Buying accountancy code
+    accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
+    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_accountancy ADD INDEX idx_product_accountancy_fk_product (fk_product);
+ALTER TABLE llx_product_accountancy ADD UNIQUE INDEX uk_product_accountancy (fk_product, entity);
+
+create table llx_societe_accountancy
+(
+    rowid         			integer AUTO_INCREMENT PRIMARY KEY,
+    fk_soc        			integer,
+    entity             		integer DEFAULT 1 NOT NULL,             -- multi company id
+--  code_compta            	varchar(24),                         	-- code compta client
+--  code_compta_fournisseur varchar(24),                         	-- code compta founisseur
+    accountancy_code_sell		varchar(32),                            -- Selling accountancy code
+    accountancy_code_buy		varchar(32)                             -- Buying accountancy code
+)ENGINE=innodb;
+
+ALTER TABLE llx_societe_accountancy ADD INDEX idx_societe_accountancy_fk_soc (fk_soc);
+ALTER TABLE llx_societe_accountancy ADD UNIQUE INDEX uk_societe_accountancy (fk_soc, entity);

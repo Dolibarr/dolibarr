@@ -179,7 +179,7 @@ $sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label,";
-if (empty($conf->global->ACCOUNTANCY_PRODUCT_SHARED)) {
+if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
 	$sql .= " pa.accountancy_code_sell,";
 } else {
 	$sql .= " p.accountancy_code_sell,";
@@ -193,7 +193,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
-if (!empty($conf->global->ACCOUNTANCY_PRODUCT_SHARED)) {
+if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
 }
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";

@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2011-2020	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2021	Open-DSI				<support@open-dsi.fr>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
@@ -660,12 +660,14 @@ class Product extends CommonObject
 					$sql .= ", price_base_type";
 					$sql .= ", tobuy";
 					$sql .= ", tosell";
-					$sql .= ", accountancy_code_buy";
-					$sql .= ", accountancy_code_buy_intra";
-					$sql .= ", accountancy_code_buy_export";
-					$sql .= ", accountancy_code_sell";
-					$sql .= ", accountancy_code_sell_intra";
-					$sql .= ", accountancy_code_sell_export";
+					if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+						$sql .= ", accountancy_code_buy";
+						$sql .= ", accountancy_code_buy_intra";
+						$sql .= ", accountancy_code_buy_export";
+						$sql .= ", accountancy_code_sell";
+						$sql .= ", accountancy_code_sell_intra";
+						$sql .= ", accountancy_code_sell_export";
+					}
 					$sql .= ", canvas";
 					$sql .= ", finished";
 					$sql .= ", tobatch";
@@ -685,12 +687,14 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
 					$sql .= ", ".$this->status;
 					$sql .= ", ".$this->status_buy;
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_buy_export)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell_intra)."'";
-					$sql .= ", '".$this->db->escape($this->accountancy_code_sell_export)."'";
+					if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
+						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_export)."'";
+						$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+						$sql .= ", '".$this->db->escape($this->accountancy_code_sell_intra)."'";
+						$sql .= ", '".$this->db->escape($this->accountancy_code_sell_export)."'";
+					}
 					$sql .= ", '".$this->db->escape($this->canvas)."'";
 					$sql .= ", ".((!isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql .= ", ".((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
@@ -718,6 +722,35 @@ class Product extends CommonObject
 								$error++;
 								$this->error = $this->db->lasterror();
 							}
+
+							// update accountancy for this entity
+							if (!$error && !empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accounting (";
+								$sql .= " fk_product";
+								$sql .= ", entity";
+								$sql .= ", accountancy_code_buy";
+								$sql .= ", accountancy_code_buy_intra";
+								$sql .= ", accountancy_code_buy_export";
+								$sql .= ", accountancy_code_sell";
+								$sql .= ", accountancy_code_sell_intra";
+								$sql .= ", accountancy_code_sell_export";
+								$sql .= ") VALUES (";
+								$sql .= $this->id;
+								$sql .= ", " . $conf->entity;
+								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
+								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
+								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
+								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
+								$sql .= ")";
+								$result = $this->db->query($sql);
+								if (!$result) {
+									$error++;
+									$this->error = 'ErrorFailedToInsertAccountancyForEntity';
+								}
+							}
+
 						} else {
 							$error++;
 							$this->error = 'ErrorFailedToGetInsertedId';
@@ -1051,12 +1084,14 @@ class Product extends CommonObject
 			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
 			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
-			$sql .= ", accountancy_code_buy = '".$this->db->escape($this->accountancy_code_buy)."'";
-			$sql .= ", accountancy_code_buy_intra = '".$this->db->escape($this->accountancy_code_buy_intra)."'";
-			$sql .= ", accountancy_code_buy_export = '".$this->db->escape($this->accountancy_code_buy_export)."'";
-			$sql .= ", accountancy_code_sell= '".$this->db->escape($this->accountancy_code_sell)."'";
-			$sql .= ", accountancy_code_sell_intra= '".$this->db->escape($this->accountancy_code_sell_intra)."'";
-			$sql .= ", accountancy_code_sell_export= '".$this->db->escape($this->accountancy_code_sell_export)."'";
+			if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
+				$sql .= ", accountancy_code_buy_intra = '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
+				$sql .= ", accountancy_code_buy_export = '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
+				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
+				$sql .= ", accountancy_code_sell_intra= '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
+				$sql .= ", accountancy_code_sell_export= '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
+			}
 			$sql .= ", desiredstock = ".((isset($this->desiredstock) && is_numeric($this->desiredstock)) ? (float) $this->desiredstock : "null");
 			$sql .= ", cost_price = ".($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
 			$sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
@@ -1082,6 +1117,36 @@ class Product extends CommonObject
 				}
 
 				$action = 'update';
+
+				// update accountancy for this entity
+				if (!$error && !empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_accounting WHERE fk_product = " . $this->id . " AND entity = " . $conf->entity);
+
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accounting (";
+					$sql .= " fk_product";
+					$sql .= ", entity";
+					$sql .= ", accountancy_code_buy";
+					$sql .= ", accountancy_code_buy_intra";
+					$sql .= ", accountancy_code_buy_export";
+					$sql .= ", accountancy_code_sell";
+					$sql .= ", accountancy_code_sell_intra";
+					$sql .= ", accountancy_code_sell_export";
+					$sql .= ") VALUES (";
+					$sql .= $this->id;
+					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
+					$sql .= ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
+					}
+				}
 
 				// Actions on extra fields
 				if (!$error) {
@@ -2096,16 +2161,22 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note_public, note as note_private, customcode, fk_country, fk_state, price, price_ttc,";
-		$sql .= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
-		$sql .= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
-		$sql .= " length, length_units, width, width_units, height, height_units,";
-		$sql .= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
-		$sql .= " accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export,";
-		$sql .= " accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
-		$sql .= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
-		$sql .= " fk_price_expression, price_autogen, model_pdf";
+		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.price, p.price_ttc,";
+		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
+		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
+		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
+		if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+		} else {
+			$sql .= " pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export, pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export,";
+		}
+		$sql .= " p.stock,p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.fk_unit,";
+		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
+		if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
+		}
 		if ($id) {
 			$sql .= " WHERE rowid = ".(int) $id;
 		} else {

@@ -207,7 +207,7 @@ class modFacture extends DolibarrModules
 		//--------
 		$r = 1;
 
-		$alias_product_accounting = empty($conf->global->ACCOUNTANCY_PRODUCT_SHARED) ? "pa" : "p";
+		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED) ? "pa" : "p";
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'CustomersInvoicesAndInvoiceLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'invoice';
@@ -295,7 +295,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' , '.MAIN_DB_PREFIX.'facturedet as fd';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet_extrafields as extra2 on fd.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
-		if (!empty($conf->global->ACCOUNTANCY_PRODUCT_SHARED)) {
+		if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';

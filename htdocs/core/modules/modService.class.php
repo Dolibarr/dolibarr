@@ -143,7 +143,7 @@ class modService extends DolibarrModules
 		//--------
 		$r = 0;
 
-		$alias_product_accounting = empty($conf->global->ACCOUNTANCY_PRODUCT_SHARED) ? "pa" : "p";
+		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED) ? "pa" : "p";
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "Services"; // Translation key (used only if key ExportDataset_xxx_z not found)
@@ -257,7 +257,7 @@ class modService extends DolibarrModules
 		}
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
-		if (!empty($conf->global->ACCOUNTANCY_PRODUCT_SHARED)) {
+		if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
 		}
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
