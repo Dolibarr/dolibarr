@@ -154,6 +154,9 @@ $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 //$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
 $usefilters = 1;
 
+// Security check
+$result = restrictedArea($user, 'export');
+
 
 /*
  * Actions
