@@ -521,50 +521,50 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("ProjectLabel").'</span></td><td><input class="minwidth500" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
-	print '<tr><td class="tdtop">';
-	print $langs->trans("Usage");
-	print '</td>';
-	print '<td>';
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
-		$htmltext = $langs->trans("ProjectFollowOpportunity");
-		print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
-		print '<script>';
-		print '$( document ).ready(function() {
-				jQuery("#usage_opportunity").change(function() {
-					if (jQuery("#usage_opportunity").prop("checked")) {
-						console.log("Show opportunities fields");
-						jQuery(".classuseopportunity").show();
-					} else {
-						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
-						jQuery(".classuseopportunity").hide();
-					}
-				});
-			});';
-		print '</script>';
-		print '<br>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
+			print '<script>';
+			print '$( document ).ready(function() {
+					jQuery("#usage_opportunity").change(function() {
+						if (jQuery("#usage_opportunity").prop("checked")) {
+							console.log("Show opportunities fields");
+							jQuery(".classuseopportunity").show();
+						} else {
+							console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+							jQuery(".classuseopportunity").hide();
+						}
+					});
+				});';
+			print '</script>';
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
+			print '<br>';
+		}
+		if (!empty($conf->eventorganization->enabled)) {
+			print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
+		print '</td>';
+		print '</tr>';
 	}
-	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-		print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
-		$htmltext = $langs->trans("ProjectFollowTasks");
-		print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
-		print '<br>';
-	}
-	if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-		print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectBillTimeDescription");
-		print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
-		print '<br>';
-	}
-
-	if (!empty($conf->eventorganization->enabled)) {
-		print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
-		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
-	}
-
-	print '</td>';
-	print '</tr>';
 
 	// Thirdparty
 	if ($conf->societe->enabled) {
@@ -805,45 +805,48 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Usage
-		print '<tr><td class="tdtop">';
-		print $langs->trans("Usage");
-		print '</td>';
-		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("ProjectFollowOpportunity");
-			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-			print '<script>';
-			print '$( document ).ready(function() {
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+			print '<tr><td class="tdtop">';
+			print $langs->trans("Usage");
+			print '</td>';
+			print '<td>';
+			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+				print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+				$htmltext = $langs->trans("ProjectFollowOpportunity");
+				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+				print '<script>';
+				print '$( document ).ready(function() {
 				jQuery("#usage_opportunity").change(function() {
-					if (jQuery("#usage_opportunity").prop("checked")) {
-						console.log("Show opportunities fields");
-						jQuery(".classuseopportunity").show();
-					} else {
-						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
-						jQuery(".classuseopportunity").hide();
-					}
-				});
-			});';
-			print '</script>';
-			print '<br>';
-		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-			print '<input type="checkbox" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("ProjectFollowTasks");
-			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-			print '<br>';
-		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-			print '<input type="checkbox" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '<br>';
-		}
-		if (!empty($conf->eventorganization->enabled)) {
-			print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
-			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+						if (jQuery("#usage_opportunity").prop("checked")) {
+							console.log("Show opportunities fields");
+							jQuery(".classuseopportunity").show();
+						} else {
+							console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+							jQuery(".classuseopportunity").hide();
+						}
+					});
+				});';
+				print '</script>';
+				print '<br>';
+			}
+			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+				print '<input type="checkbox" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '"> ';
+				$htmltext = $langs->trans("ProjectFollowTasks");
+				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+				print '<br>';
+			}
+			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+				print '<input type="checkbox" name="usage_bill_time"' . (GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')) . '"> ';
+				$htmltext = $langs->trans("ProjectBillTimeDescription");
+				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+				print '<br>';
+			}
+			if (!empty($conf->eventorganization->enabled)) {
+				print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+			}
+			print '</td></tr>';
 		}
 		print '</td></tr>';
 
@@ -980,7 +983,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
@@ -988,35 +990,37 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Usage
-		print '<tr><td class="tdtop">';
-		print $langs->trans("Usage");
-		print '</td>';
-		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("ProjectFollowOpportunity");
-			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-			print '<br>';
-		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("ProjectFollowTasks");
-			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-			print '<br>';
-		}
-		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '<br>';
-		}
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+			print '<tr><td class="tdtop">';
+			print $langs->trans("Usage");
+			print '</td>';
+			print '<td>';
+			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+				print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+				$htmltext = $langs->trans("ProjectFollowOpportunity");
+				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+				print '<br>';
+			}
+			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+				$htmltext = $langs->trans("ProjectFollowTasks");
+				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+				print '<br>';
+			}
+			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+				print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+				$htmltext = $langs->trans("ProjectBillTimeDescription");
+				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+				print '<br>';
+			}
 
-		if (!empty($conf->eventorganization->enabled)) {
-			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
-			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+			if (!empty($conf->eventorganization->enabled)) {
+				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';

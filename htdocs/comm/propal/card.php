@@ -300,6 +300,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setecheance' && $usercancreate) {
 		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
+		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
