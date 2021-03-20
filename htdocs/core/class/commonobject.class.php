@@ -1293,10 +1293,24 @@ abstract class CommonObject
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
-					$tab[$i] = array('source'=>$obj->source, 'socid'=>$obj->socid, 'id'=>$obj->id,
-								   'nom'=>$obj->lastname, // For backward compatibility
-								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
-								   'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
+					$tab[$i] = array(
+						'source' => $obj->source,
+						'socid' => $obj->socid,
+						'id' => $obj->id,
+						'nom' => $obj->lastname, // For backward compatibility
+						'civility' => $obj->civility,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'email'=>$obj->email,
+						'login'=> (empty($obj->login) ? '' : $obj->login),
+						'photo' => (empty($obj->photo) ? '' : $obj->photo),
+						'statuscontact' => $obj->statuscontact,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'libelle' => $libelle_type,
+						'status' => $obj->statuslink,
+						'fk_c_type_contact' => $obj->fk_c_type_contact
+					);
 				} else {
 					$tab[$i] = $obj->id;
 				}
