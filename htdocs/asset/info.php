@@ -57,8 +57,10 @@ $object->fetch($id);
 $form = new Form($db);
 
 $title = $langs->trans('Asset')." - ".$langs->trans('Info');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = "";
+
+llxHeader('', $title, $help_url);
 
 $object->info($id);
 
