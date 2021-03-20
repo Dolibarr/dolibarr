@@ -23,7 +23,7 @@
  *
  *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
- *  \brief      Description and activation file for module DATAPOLICY
+ *  \brief      Description and activation file for the module datapolicy
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

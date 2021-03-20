@@ -22,8 +22,8 @@
  *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
  *	\file       htdocs/core/modules/modBarcode.class.php
- *	\ingroup    barcode,produit
- *	\brief      Fichier de description et activation du module Barcode
+ *	\ingroup    barcode, product
+ *	\brief      Description and activation file for the module barcode
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

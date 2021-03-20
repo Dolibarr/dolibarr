@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modZapier.class.php
  *  \ingroup    zapier
- *  \brief      Description and activation file for module Zapier
+ *  \brief      Description and activation file for the module Zapier
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

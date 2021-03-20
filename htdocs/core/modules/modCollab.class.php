@@ -20,7 +20,7 @@
  *  \brief      Collab module descriptor.
  *  \file       htdocs/core/modules/modCollab.class.php
  *  \ingroup    collab
- *  \brief      Description and activation file for module Collab
+ *  \brief      Description and activation file for the module Collab
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

@@ -27,7 +27,7 @@
  *      \brief      Module to manage members of a foundation
  *		\file       htdocs/core/modules/modAdherent.class.php
  *      \ingroup    member
- *      \brief      File descriptor or module Member
+ *      \brief      Description and activation file for the module member
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

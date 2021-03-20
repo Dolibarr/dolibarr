@@ -22,7 +22,7 @@
  *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
- *     \brief       Description and activation file for module Ticket
+ *     \brief       Description and activation file for the module Ticket
  */
 require_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
