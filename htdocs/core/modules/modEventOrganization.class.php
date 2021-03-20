@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/eventorganization/core/modules/modEventOrganization.class.php
  *  \ingroup    eventorganization
- *  \brief      Description and activation file for module EventOrganization
+ *  \brief      Description and activation file for the EventOrganization
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

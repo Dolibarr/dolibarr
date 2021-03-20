@@ -23,7 +23,7 @@
  *
  *  \file       htdocs/core/modules/modBom.class.php
  *  \ingroup    bom
- *  \brief      Description and activation file for module Bom
+ *  \brief      Description and activation file for the module Bom
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

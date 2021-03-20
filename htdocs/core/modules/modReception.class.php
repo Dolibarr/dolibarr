@@ -20,7 +20,7 @@
  *	\brief      Module pour gerer les réceptions de produits
  *	\file       htdocs/core/modules/modReception.class.php
  *	\ingroup    reception
- *	\brief      Fichier de description et activation du module Reception
+ *	\brief      Description and activation file for the module Reception
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

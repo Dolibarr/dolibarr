@@ -21,7 +21,7 @@
  *  \brief      cron module descriptor.
  *  \file       htdocs/core/modules/modCron.class.php
  *  \ingroup    cron
- *  \brief      Description and activation file for module Jobs
+ *  \brief      Description and activation file for the module Jobs
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

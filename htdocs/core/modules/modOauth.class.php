@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/modOauth.class.php
  *  \ingroup    oauth
- *  \brief      File of class to describe and activate module Oauth
+ *  \brief      Description and activation file for the module Oauth
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

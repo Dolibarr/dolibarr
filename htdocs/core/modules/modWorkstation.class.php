@@ -24,7 +24,7 @@
  *
  *  \file       htdocs/workstation/core/modules/modWorkstation.class.php
  *  \ingroup    workstation
- *  \brief      Description and activation file for module Workstation
+ *  \brief      Description and activation file for the module Workstation
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

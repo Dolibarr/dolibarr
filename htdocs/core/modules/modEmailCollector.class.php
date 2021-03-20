@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modEmailCollector.class.php
  *  \ingroup    emailcollector
- *  \brief      Description and activation file for module emailcollector
+ *  \brief      Description and activation file for the module emailcollector
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

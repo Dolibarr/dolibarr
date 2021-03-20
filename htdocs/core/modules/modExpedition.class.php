@@ -24,7 +24,7 @@
  *	\brief      Module pour gerer les expeditions de produits
  *	\file       htdocs/core/modules/modExpedition.class.php
  *	\ingroup    expedition
- *	\brief      Fichier de description et activation du module Expedition
+ *	\brief      Description and activation file for the module Expedition
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
