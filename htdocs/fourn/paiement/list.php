@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@
  */
 
 /**
- *	\file		htdocs/fourn/paiment/list.php
+ *	\file		htdocs/fourn/paiement/list.php
 *	\ingroup	fournisseur,facture
  *	\brief		Payment list for supplier invoices
  */
@@ -59,9 +59,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
 $action = GETPOST('action', 'alpha');
-$massaction				= GETPOST('massaction', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage			= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
 
 $socid = GETPOST('socid', 'int');
 
