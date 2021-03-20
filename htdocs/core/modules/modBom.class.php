@@ -286,6 +286,7 @@ class modBom extends DolibarrModules
 		$langs->load("mrp");
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'BomAndBomLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("bom", "read"));
 		$this->export_icon[$r] = 'bom';
 		$keyforclass = 'BOM';
 		$keyforclassfile = '/bom/class/bom.class.php';
