@@ -17,12 +17,13 @@
 -- ===========================================================================
 
 --
--- Table to store each different IP / devices / public key used for login
+-- Save data relative to click to dial
 --
 create table llx_user_clicktodial
 (
-  rowid         integer PRIMARY KEY,
-  fk_user       integer NOT NULL,		-- ID llx_user
-  ip            varchar(64),
-  user_agent    varchar(255) NULL       -- user agent
+  fk_user       integer PRIMARY KEY,
+  url           varchar(255),
+  login         varchar(32),
+  pass          varchar(64),
+  poste         varchar(20)
 )ENGINE=innodb;
