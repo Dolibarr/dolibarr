@@ -21,7 +21,7 @@
  *	\brief      Module to manage mailman and spip
  *	\file       htdocs/core/modules/modMailmanSpip.class.php
  *	\ingroup    mailmanspip
- *	\brief      Fichier de description et activation du module de click to Dial
+ *	\brief      Description and activation file for the module mailmanspip
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

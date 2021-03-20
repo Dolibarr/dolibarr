@@ -20,7 +20,7 @@
  *  \brief      website module descriptor.
  *  \file       htdocs/core/modules/modWebsite.class.php
  *  \ingroup    websites
- *  \brief      Description and activation file for module Website
+ *  \brief      Description and activation file for the module Website
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

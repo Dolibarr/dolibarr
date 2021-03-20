@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les deplacements et notes de frais
  *	\file       htdocs/core/modules/modDeplacement.class.php
  *	\ingroup    deplacement
- *	\brief      Fichier de description et activation du module Deplacement et notes de frais
+ *	\brief      Description and activation file for the module trips (deprecated)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

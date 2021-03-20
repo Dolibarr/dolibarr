@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modDebugBar.class.php
  *  \ingroup    debugbar
- *  \brief      Description and activation file for module debugbar
+ *  \brief     Description and activation file for the module debugbar
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
