@@ -936,7 +936,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<td>'.$langs->trans('Employee').'</td><td>';
 	print $form->selectyesno("employee", (GETPOST('employee') != '' ?GETPOST('employee') : $defaultemployee), 1);
 	print '</td></tr>';
-	
+
 	// POS cashier
 	if ($conf->takepos->enabled) {
 		$defaulcashier = 0;
@@ -1488,7 +1488,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>'."\n";
 
 			// TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
-			
+
 			// POS cashier
 			if ($conf->takepos->enabled) {
 				print '<tr><td>'.$langs->trans("CashierOrWaiter").'</td><td colspan="2">';
@@ -2165,7 +2165,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 			print '</td></tr>';
-			
+
 			// POS cashier
 			if ($conf->takepos->enabled) {
 				print '<tr>';
@@ -2177,9 +2177,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 						print $langs->trans("Yes");
 					} else {
 						print $langs->trans("No");
+					}
 				}
-			}
-			print '</td></tr>';
+				print '</td></tr>';
 			}
 
 			// Hierarchy
