@@ -165,6 +165,11 @@ if ($socid > 0) {
 	}
 }
 
+$objecttype = 'facture_rec';
+
+$result = restrictedArea($user, 'facture', $object->id, $objecttype);
+
+
 /*
  * Actions
  */

@@ -163,7 +163,9 @@ $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
 $title = $langs->trans("Inventory");
-$help_url = '';
+
+$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Bestände';
+
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code

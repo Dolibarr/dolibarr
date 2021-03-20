@@ -427,18 +427,33 @@ if (!defined('NOTOKENRENEWAL')) {
 	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
 }
 
-//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
-//$dolibarr_nocsrfcheck=1;
-// Check token
-if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
-	|| defined('CSRFCHECK_WITH_TOKEN')) {	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
-	// Check all cases that need a token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
+
+// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
+if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
+	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
+	$arrayofactiontoforcetokencheck = array(
+		'activate', 'add', 'addtimespent', 'update', 'install',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'doprev', 'donext', 'dvprev', 'dvnext',
+		'enable'
+	);
+	$sensitiveget = false;
+	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+		$sensitiveget = true;
+	}
+	if (preg_match('/^(disable_|enable_)/', GETPOST('action', 'aZ09'))) {
+		$sensitiveget = true;
+	}
+
+	// Check all cases that need a mandatory token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
-		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check'))
+		$sensitiveget ||
+		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
 	) {
-		if (!GETPOSTISSET('token')) {
+		if (!GETPOST('token', 'alpha')) {		// If token is not provided or empty
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused. File size too large.");
 				$langs->loadLangs(array("errors", "install"));
@@ -458,7 +473,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		}
 	}
 
-	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token']) {
+	$sessiontokenforthisurl = $_SESSION['token'];
+	// TODO Get the sessiontokenforthisurl into the array of session token
+	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -1095,7 +1112,7 @@ if (!defined('NOLOGIN')) {
 
 dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.(defined('NOTOKENRENEWAL') ?constant('NOTOKENRENEWAL') : ''));
 //Another call for easy debugg
-//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
+//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' '.$_SERVER["HTTP_REFERER"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
 // Load main languages files
 if (!defined('NOREQUIRETRAN')) {
@@ -1238,7 +1255,7 @@ if (!function_exists("llxHeader")) {
 
 
 /**
- *  Show HTTP header
+ *  Show HTTP header. Called by top_htmlhead().
  *
  *  @param  string  $contenttype    Content type. For example, 'text/html'
  *  @param	int		$forcenocache	Force disabling of cache for the page
@@ -1304,7 +1321,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 }
 
 /**
- * Ouput html header of a page.
+ * Ouput html header of a page. It calls also top_httphead()
  * This code is also duplicated into security2.lib.php::dol_loginfunction
  *
  * @param 	string 	$head			 Optionnal head lines

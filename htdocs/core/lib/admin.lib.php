@@ -1886,7 +1886,8 @@ function email_admin_prepare_head()
 		}
 	}
 
-	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	// admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
+	if (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates') {
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");
 		$head[$h][2] = 'senderprofiles';

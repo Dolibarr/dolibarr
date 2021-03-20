@@ -34,7 +34,7 @@ class box_members_by_type extends ModeleBoxes
 {
 	public $boxcode = "box_members_by_type";
 	public $boximg = "object_user";
-	public $boxlabel = "BoxMembersByType";
+	public $boxlabel = "BoxTitleMembersByType";
 	public $depends = array("adherent");
 
 	/**

@@ -94,6 +94,16 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Action

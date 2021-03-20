@@ -76,18 +76,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Security check
-if (empty($conf->bom->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
-if ($user->socid > 0) {
-	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'bom', $id, '');
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
@@ -132,6 +120,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->bom->read;
 $permissiontoadd = $user->rights->bom->write;
 $permissiontodelete = $user->rights->bom->delete;
+
+// Security check
+if ($user->socid > 0) {
+	// Protection if external user
+	accessforbidden();
+}
+$result = restrictedArea($user, 'bom');
 
 
 /*

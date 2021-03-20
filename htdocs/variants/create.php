@@ -59,9 +59,12 @@ $langs->load('products');
  * View
  */
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('NewProductAttribute');
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
+
 
 print load_fiche_titre($title);
 

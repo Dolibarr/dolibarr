@@ -148,7 +148,10 @@ if (GETPOST('delete', 'alpha')) {
 
 $form = new Form($db);
 
-llxHeader();
+
+$help_url = 'EN:Module_FTP_En|FR:Module_FTP|ES:Módulo_FTP';
+
+llxHeader('', 'FTP', $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("FTPClientSetup"), $linkback, 'title_setup');

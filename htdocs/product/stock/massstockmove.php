@@ -302,9 +302,11 @@ $productstatic = new Product($db);
 $warehousestatics = new Entrepot($db);
 $warehousestatict = new Entrepot($db);
 
+$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Bestände';
+
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
