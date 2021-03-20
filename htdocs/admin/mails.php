@@ -677,17 +677,17 @@ if ($action == 'edit') {
 
 			// Domain
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
-			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
+			print '<td>'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_DOMAIN');
 			print '</td></tr>';
 
 			// Selector
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
-			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+			print '<td>'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_SELECTOR');
 			print '</td></tr>';
 
 			// PRIVATE KEY
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
-			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
+			print '<td>'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY');
 			print '</td></tr>';
 		}
 
