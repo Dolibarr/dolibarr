@@ -74,7 +74,7 @@ if ($action == 'firstpingok') {
 } elseif ($action == 'firstpingko') {
 	// If ko
 	// Note: pings are by installation, done on entity 1.
-    dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', 0); // erase last value
+	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', 0); // erase last value
 	print 'First ping KO saved for entity '.$conf->entity;
 } else {
 	print 'Error action='.$action.' not supported';
