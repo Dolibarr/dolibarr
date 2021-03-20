@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
@@ -427,15 +427,31 @@ if (!defined('NOTOKENRENEWAL')) {
 	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
 }
 
-//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
+//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
 
 // Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
-	// Check all cases that need a token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
+	$arrayofactiontoforcetokencheck = array(
+		'activate', 'add', 'addtimespent', 'update', 'install',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'doprev', 'donext', 'dvprev', 'dvnext',
+		'enable'
+	);
+	$sensitiveget = false;
+	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+		$sensitiveget = true;
+	}
+	if (preg_match('/^(disable_|enable_)/', GETPOST('action', 'aZ09'))) {
+		$sensitiveget = true;
+	}
+
+	// Check all cases that need a mandatory token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
 		$_SERVER['REQUEST_METHOD'] == 'POST' ||
-		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check'))
+		$sensitiveget ||
+		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
 	) {
 		if (!GETPOST('token', 'alpha')) {		// If token is not provided or empty
 			if (GETPOST('uploadform', 'int')) {
@@ -457,7 +473,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		}
 	}
 
-	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token']) {
+	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
+	// TODO Get the sessiontokenforthisurl into the array of session token
+	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -1094,7 +1112,7 @@ if (!defined('NOLOGIN')) {
 
 dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.(defined('NOTOKENRENEWAL') ?constant('NOTOKENRENEWAL') : ''));
 //Another call for easy debugg
-//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
+//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' '.$_SERVER["HTTP_REFERER"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
 // Load main languages files
 if (!defined('NOREQUIRETRAN')) {
@@ -1237,7 +1255,7 @@ if (!function_exists("llxHeader")) {
 
 
 /**
- *  Show HTTP header
+ *  Show HTTP header. Called by top_htmlhead().
  *
  *  @param  string  $contenttype    Content type. For example, 'text/html'
  *  @param	int		$forcenocache	Force disabling of cache for the page
@@ -1303,7 +1321,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 }
 
 /**
- * Ouput html header of a page.
+ * Ouput html header of a page. It calls also top_httphead()
  * This code is also duplicated into security2.lib.php::dol_loginfunction
  *
  * @param 	string 	$head			 Optionnal head lines
@@ -1420,7 +1438,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
-		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.$conf->global->MAIN_IHM_PARAMS_REV;
+		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV");
 		if (!empty($_SESSION['dol_resetcache'])) {
 			$themeparam .= '&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
 		}
@@ -3090,7 +3108,7 @@ if (!function_exists("llxFooter")) {
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' MAIN_LAST_PING_KO_DATE='.$conf->global->MAIN_LAST_PING_KO_DATE.' -->'."\n";
+						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.getDolGlobalString("MAIN_FIRST_PING_OK_DATE").' MAIN_FIRST_PING_OK_ID='.getDolGlobalString("MAIN_FIRST_PING_OK_ID").' MAIN_LAST_PING_KO_DATE='.getDolGlobalString("MAIN_LAST_PING_KO_DATE").' -->'."\n";
 						print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 						$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 						// Try to guess the distrib used
@@ -3150,8 +3168,8 @@ if (!function_exists("llxFooter")) {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled', 'chaine', 0, '', $conf->entity);
 				}
 			}
 		}

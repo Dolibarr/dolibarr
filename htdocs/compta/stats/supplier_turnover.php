@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file        htdocs/compta/stats/supplier_ca.php
+ *	\file        htdocs/compta/stats/supplier_turnover.php
  *	\brief       Page reporting purchase turnover
  */
 

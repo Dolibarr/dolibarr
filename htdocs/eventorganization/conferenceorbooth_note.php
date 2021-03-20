@@ -109,6 +109,12 @@ if ($id > 0 || !empty($ref)) {
 $permissionnote = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_addupdatedelete.inc.php
 
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+$isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*

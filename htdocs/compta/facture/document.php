@@ -91,8 +91,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Documents');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
+
+$help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

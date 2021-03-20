@@ -543,11 +543,11 @@ if ($action == 'create') {
 		print '<td class="titlefield">' . $langs->trans("Status") . '</td>';
 		print '<td>';
 			if (empty($object->validated)) {
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=enable">';
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=enable&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=disable">';
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=disable&token='.newToken().'">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}

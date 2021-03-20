@@ -41,9 +41,6 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 
-// Security check
-$result = restrictedArea($user, 'adherent');
-
 $search = GETPOST("search", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -161,6 +158,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Security check
+$result = restrictedArea($user, 'adherent');
 
 
 /*
