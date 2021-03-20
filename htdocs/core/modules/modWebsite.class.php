@@ -109,6 +109,12 @@ class modWebsite extends DolibarrModules
 		$this->rights[$r][4] = 'delete';
 		$r++;
 
+		$this->rights[$r][0] = 10008;
+		$this->rights[$r][1] = 'Export website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
+		$r++;
+
 		// Main menu entries
 		$r = 0;
 		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -130,6 +136,7 @@ class modWebsite extends DolibarrModules
 
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'MyWebsitePages'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("website", "export"));
 		$this->export_icon[$r] = 'globe';
 		$keyforclass = 'WebsitePage';
 		$keyforclassfile = '/website/class/websitepage.class.php';
