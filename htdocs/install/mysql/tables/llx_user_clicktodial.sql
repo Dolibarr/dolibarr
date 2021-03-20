@@ -17,12 +17,12 @@
 -- ===========================================================================
 
 --
--- Table to store each different IP / devices / puclib key used for login
+-- Table to store each different IP / devices / public key used for login
 --
-create table llx_user_ipdevices
+create table llx_user_clicktodial
 (
   rowid         integer PRIMARY KEY,
   fk_user       integer NOT NULL,		-- ID llx_user
   ip            varchar(64),
-  user_agent    varchar(255) NULL,      -- user agent
+  user_agent    varchar(255) NULL       -- user agent
 )ENGINE=innodb;
