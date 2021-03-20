@@ -56,6 +56,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
+$setcashier = GETPOST('setcashier', 'int');
 
 if ($_SESSION["takeposterminal"] == "") {
 	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
@@ -72,6 +73,11 @@ if ($setterminal > 0) {
 
 if ($setcurrency != "") {
 	$_SESSION["takeposcustomercurrency"] = $setcurrency;
+}
+
+if ($setcashier != "") {
+	$_SESSION["takeposcashier"] = $setcashier;
+	$_SESSION["takeposcashiername"] = GETPOST('cashiername', 'alpha');
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
@@ -919,6 +925,31 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	</div>
 </div>
 </div>
+
+<!-- Modal Cashier box -->
+<?php if (!empty($conf->global->TAKEPOS_WAITERS_MANAGEMENT)) { ?>
+<div id="ModalCashier" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+			<span class="close" href="#" onclick="document.getElementById('ModalCashier').style.display = 'none';">&times;</span>
+			<h3><?php print $langs->trans("SelectCashierOrWaiter"); ?></h3>
+		</div>
+		<div class="modal-body">
+			<?php
+			$sql = 'SELECT rowid, lastname FROM '.MAIN_DB_PREFIX.'user';
+			$sql .= " WHERE entity IN ('".getEntity('multicurrency')."')";
+			$sql .= " AND pos_cashier=1";
+			$resql = $db->query($sql);
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					print '<button type="button" class="block" onclick="location.href=\'index.php?setcashier='.$obj->rowid.'&cashiername='.$obj->lastname.'\'">'.$obj->lastname.'</button>';
+				}
+			}
+			?>
+		</div>
+	</div>
+</div>
+<?php } ?>
 
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		print 'withhead';

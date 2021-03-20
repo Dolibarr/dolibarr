@@ -74,6 +74,7 @@ class User extends CommonObject
 	public $ldap_sid;
 	public $search_sid;
 	public $employee;
+	public $pos_cashier;
 	public $civility_code;
 
 	/**
@@ -373,6 +374,7 @@ class User extends CommonObject
 		// Force some default values
 		$this->admin = 0;
 		$this->employee = 1;
+		$this->pos_cashier = 0;
 
 		$this->conf = new stdClass();
 		$this->rights = new stdClass();
@@ -401,7 +403,7 @@ class User extends CommonObject
 		$login = trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.email, u.personal_email, u.job,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.pos_cashier, u.gender, u.civility as civility_code, u.birth, u.email, u.personal_email, u.job,";
 		$sql .= " u.socialnetworks,";
 		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
@@ -476,6 +478,7 @@ class User extends CommonObject
 				$this->firstname = $obj->firstname;
 
 				$this->employee = $obj->employee;
+				$this->pos_cashier = $obj->pos_cashier;
 
 				$this->login = $obj->login;
 				$this->gender       = $obj->gender;
@@ -1401,6 +1404,7 @@ class User extends CommonObject
 		$this->state_id = $contact->state_id;
 		$this->country_id = $contact->country_id;
 		$this->employee = 0;
+		$this->pos_cashier = 0;
 
 		if (empty($login)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -1608,6 +1612,7 @@ class User extends CommonObject
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->employee    	= $this->employee ? $this->employee : 0;
+		$this->pos_cashier  = $this->pos_cashier ? $this->pos_cashier : 0;
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
 		$this->pass         = trim($this->pass);
@@ -1664,6 +1669,7 @@ class User extends CommonObject
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
 		$sql .= ", employee = ".(int) $this->employee;
+		$sql .= ", pos_cashier = ".(int) $this->pos_cashier;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
 		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'

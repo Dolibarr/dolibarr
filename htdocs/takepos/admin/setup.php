@@ -388,6 +388,13 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_SHOW_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Cashiers and Waiters management
+print '<tr class="oddeven"><td>';
+print $langs->trans('UseCashiersWaiters');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_WAITERS_MANAGEMENT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Numbering module
 //print '<tr class="oddeven"><td>';
 //print $langs->trans("BillsNumberingModule");

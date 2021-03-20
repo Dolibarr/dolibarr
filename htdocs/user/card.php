@@ -251,6 +251,7 @@ if (empty($reshook)) {
 			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
 			$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 			$object->employee = GETPOST('employee', 'alphanohtml');
+			$object->pos_cashier = GETPOST('pos_cashier', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 			$object->thm = price2num($object->thm);
@@ -408,6 +409,7 @@ if (empty($reshook)) {
 				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
 				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 				$object->employee = GETPOST('employee', 'int');
+				$object->pos_cashier = GETPOST('pos_cashier', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 				$object->thm = price2num($object->thm);
@@ -934,6 +936,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<td>'.$langs->trans('Employee').'</td><td>';
 	print $form->selectyesno("employee", (GETPOST('employee') != '' ?GETPOST('employee') : $defaultemployee), 1);
 	print '</td></tr>';
+	
+	// POS cashier
+	if ($conf->takepos->enabled) {
+		$defaulcashier = 0;
+		print '<tr>';
+		print '<td>'.$langs->trans('CashierOrWaiter').'</td><td>';
+		print $form->selectyesno("pos_cashier", (GETPOST('pos_cashier') != '' ?GETPOST('pos_cashier') : $defaultcashier), 1);
+		print '</td></tr>';
+	}
 
 	// Hierarchy
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
@@ -1477,6 +1488,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>'."\n";
 
 			// TODO Move this into tab RH, visible when salarie or RH is visible (HierarchicalResponsible must be on both tab)
+			
+			// POS cashier
+			if ($conf->takepos->enabled) {
+				print '<tr><td>'.$langs->trans("CashierOrWaiter").'</td><td colspan="2">';
+				print yn($object->pos_cashier);
+				print '</td></tr>'."\n";
+			}
 
 			// Hierarchy
 			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
@@ -2147,6 +2165,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 			print '</td></tr>';
+			
+			// POS cashier
+			if ($conf->takepos->enabled) {
+				print '<tr>';
+				print '<td>'.$form->editfieldkey('CashierOrWaiter', 'pos_cashier', '', $object, 0).'</td><td>';
+				if ($caneditfield) {
+					print $form->selectyesno("pos_cashier", $object->pos_cashier, 1);
+				} else {
+					if ($object->pos_cashier) {
+						print $langs->trans("Yes");
+					} else {
+						print $langs->trans("No");
+				}
+			}
+			print '</td></tr>';
+			}
 
 			// Hierarchy
 			print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';

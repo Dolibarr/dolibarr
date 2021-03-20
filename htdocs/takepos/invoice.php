@@ -1031,6 +1031,19 @@ $( document ).ready(function() {
 	?>
 
 	$("#customerandsales").html('');
+	
+	<?php
+	if ($conf->global->TAKEPOS_WAITERS_MANAGEMENT) {
+		if (!$_SESSION["takeposcashier"]) {
+			if ($conf->global->TAKEPOS_BAR_RESTAURANT) $c=$langs->trans("Waiter");
+			else $c=$langs->trans("Cashier");
+		}
+		else $c=$_SESSION["takeposcashiername"];
+		?>
+		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="cashier" onclick="ModalBox(\'ModalCashier\');" title="<?php print dol_escape_js($c); ?>"><span class="fas fa-user paddingrightonly"></span><?php print dol_escape_js($c); ?></a>');
+		<?php
+	}
+	?>
 
 	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 

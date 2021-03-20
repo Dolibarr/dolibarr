@@ -127,3 +127,7 @@ PrintPaymentMethodOnReceipts=Print payment method on tickets|receipts
 WeighingScale=Weighing scale
 ShowPriceHT = Display the price excluding tax column
 ShowPriceHTOnReceipt = Display the price excluding tax column on receipt
+UseCashiersWaiters=Use cashiers and waiters
+Cashier=Cashier
+Waiter=Waiter
+SelectCashierOrWaiter=Select cashier or waiter
