@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *     \file        core/boxes/box_nb_ticket_last_x_days.php
+ *     \file        htdocs/core/boxes/box_graph_nb_tickets_type.php
  *     \ingroup     ticket
- *     \brief       This box shows the number of new daily tickets the last X days
+ *     \brief       This box shows the number of tickets types
  */
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
