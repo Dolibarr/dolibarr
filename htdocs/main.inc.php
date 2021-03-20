@@ -3168,8 +3168,8 @@ if (!function_exists("llxFooter")) {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', 0);
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled', 'chaine', 0, '', 0);
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled', 'chaine', 0, '', $conf->entity);
 				}
 			}
 		}
