@@ -132,17 +132,12 @@ $permissiontoadd = $user->rights->eventorganization->write;
 $permissiontodelete = $user->rights->eventorganization->delete;
 
 // Security check
-if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
+//$socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'eventorganization', $id, '');
-//if (!$permissiontoread) accessforbidden();
-
+$result = restrictedArea($user, 'eventorganization');
 
 
 /*

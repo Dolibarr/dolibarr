@@ -194,10 +194,10 @@ class modAdherent extends DolibarrModules
 		$this->boxes = array(
 			0 => array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
 			2 => array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
-			3 => array('file'=>'box_members_last_modified', 'enabledbydefaulton'=>'membersindex'),
-			4 => array('file'=>'box_members_last_subscriptions', 'enabledbydefaulton'=>'membersindex'),
-			5 => array('file'=>'box_members_subscriptions_by_year', 'enabledbydefaulton'=>'membersindex'),
-			6 => array('file'=>'box_members_by_type', 'enabledbydefaulton'=>'membersindex'),
+			3 => array('file'=>'box_members_last_modified.php', 'enabledbydefaulton'=>'membersindex'),
+			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
+			5 => array('file'=>'box_members_subscriptions_by_year.php', 'enabledbydefaulton'=>'membersindex'),
+			6 => array('file'=>'box_members_by_type.php', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
