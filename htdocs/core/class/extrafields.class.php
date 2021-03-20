@@ -1597,7 +1597,7 @@ class ExtraFields
 		if (!empty($extrafieldsobjectkey)) {
 			$label = $this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
-			$size = $this->attributes[$extrafieldsobjectkey]['size'][$key];
+			$size = (int) $this->attributes[$extrafieldsobjectkey]['size'][$key];
 			$default = $this->attributes[$extrafieldsobjectkey]['default'][$key];
 			$computed = $this->attributes[$extrafieldsobjectkey]['computed'][$key];
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
@@ -1666,7 +1666,7 @@ class ExtraFields
 				$value = price($value, 0, $langs, 0, 0, -1);
 			}
 		} elseif ($type == 'select') {
-			$valstr = $param['options'][$value];
+			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
 			if (($pos = strpos($valstr, "|")) !== false) {
 				$valstr = substr($valstr, 0, $pos);
 			}
@@ -2038,7 +2038,7 @@ class ExtraFields
 		$nofillrequired = 0; // For error when required field left blank
 		$error_field_required = array();
 
-		if (is_array($this->attributes[$object->table_element]['label'])) {
+		if (isset($this->attributes[$object->table_element]['label']) && is_array($this->attributes[$object->table_element]['label'])) {
 			$extralabels = $this->attributes[$object->table_element]['label'];
 		}
 

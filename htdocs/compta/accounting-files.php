@@ -34,6 +34,7 @@ if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
@@ -56,13 +57,12 @@ $date_start = GETPOST('date_start', 'alpha');
 $date_startDay = GETPOST('date_startday', 'int');
 $date_startMonth = GETPOST('date_startmonth', 'int');
 $date_startYear = GETPOST('date_startyear', 'int');
-$date_start = ($date_startDay) ?dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear) : strtotime($date_start);
+$date_start = ($date_startDay ? dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel') : dol_stringtotime($date_start));
 $date_stop = GETPOST('date_stop', 'alpha');
 $date_stopDay = GETPOST('date_stopday', 'int');
 $date_stopMonth = GETPOST('date_stopmonth', 'int');
 $date_stopYear = GETPOST('date_stopyear', 'int');
-//FIXME doldate
-$date_stop = ($date_stopDay) ?dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear) : strtotime($date_stop);
+$date_stop = ($date_stopDay ? dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel') : dol_stringtotime($date_stop));
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -126,6 +126,17 @@ if (empty($entity)) {
 
 $error = 0;
 
+$listofchoices = array(
+	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled), 'perms' => !empty($user->rights->facture->lire)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled), 'perms' => !empty($user->rights->expensereport->lire)),
+	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled), 'perms' => !empty($user->rights->tax->charges->lire)),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled), 'perms' => !empty($user->rights->salaries->read)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled), 'perms' => !empty($user->rights->banque->lire)),
+	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled), 'perms' => !empty($user->rights->loan->read)),
+);
+
 
 
 /*
@@ -155,7 +166,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		$wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
 		// Customer invoices
-		if (GETPOST('selectinvoices')) {
+		if (GETPOST('selectinvoices') && !empty($listofchoices['selectinvoices']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -166,7 +177,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
 		}
 		// Vendor invoices
-		if (GETPOST('selectsupplierinvoices')) {
+		if (GETPOST('selectsupplierinvoices') && !empty($listofchoices['selectsupplierinvoices']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -177,7 +188,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
 		}
 		// Expense reports
-		if (GETPOST('selectexpensereports')) {
+		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -188,7 +199,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
 		}
 		// Donations
-		if (GETPOST('selectdonations')) {
+		if (GETPOST('selectdonations') && !empty($listofchoices['selectdonations']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -199,7 +210,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 		}
 		// Payments of salaries
-		if (GETPOST('selectpaymentsofsalaries')) {
+		if (GETPOST('selectpaymentsofsalaries') && !empty($listofchoices['selectpaymentsofsalaries']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -210,7 +221,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 		}
 		// Social contributions
-		if (GETPOST('selectsocialcontributions')) {
+		if (GETPOST('selectsocialcontributions') && !empty($listofchoices['selectsocialcontributions']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -221,7 +232,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
 		}
 		// Various payments
-		if (GETPOST('selectvariouspayment')) {
+		if (GETPOST('selectvariouspayment') && !empty($listofchoices['selectvariouspayment']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -231,7 +242,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
 		}
 		// Loan payments
-		if (GETPOST('selectloanspayment')) {
+		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
@@ -539,8 +550,11 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals")).'</span><br>';
 print '<br>';
 
-print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
-print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n";
+print $langs->trans("ReportPeriod").': ';
+print $form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+print ' - ';
+print $form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+print "\n";
 
 // Export is for current company only
 if (!empty($conf->multicompany->enabled) && is_object($mc)) {
@@ -558,22 +572,16 @@ if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 
 print '<br>';
 
-$listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled)),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled)),
-	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled)),
-);
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
 		continue;		// list not qualified
 	}
+	$disabled = '';
+	if (empty($val['perms'])) {
+		$disabled = ' disabled';
+	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
+	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
 print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';

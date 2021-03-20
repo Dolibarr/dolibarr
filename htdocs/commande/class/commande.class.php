@@ -2265,6 +2265,7 @@ class Commande extends CommonOrder
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
 		$sql .= ' WHERE el.fk_source = '.$this->id;
+		$sql .= " AND el.sourcetype = 'commande'";
 		$sql .= " AND el.fk_target = e.rowid";
 		$sql .= " AND el.targettype = 'shipping'";
 
@@ -3686,7 +3687,7 @@ class Commande extends CommonOrder
 				$label .= ' '.$this->getLibStatut(5);
 			}
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this-ref_client) : $this->ref_customer);
+			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}

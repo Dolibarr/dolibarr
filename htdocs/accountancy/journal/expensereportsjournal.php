@@ -58,13 +58,21 @@ if ($in_bookkeeping == '') {
 $now = dol_now();
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
+
 $accountingaccount = new AccountingAccount($db);
 
 // Get informations of journal

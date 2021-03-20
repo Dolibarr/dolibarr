@@ -3241,7 +3241,7 @@ if ($action == 'create') {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 
 					/*
-					 * Documents generes
+					 * Generated documents
 					 */
 					$ref = dol_sanitizeFileName($object->ref);
 					$subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;

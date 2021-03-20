@@ -159,7 +159,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$keyforperm = 'ficheinter';
 			}
 			if (isset($user->rights->$keyforperm)) {
-				$permok = $user->rights->$keyforperm->creer || $user->rights->$keyforperm->create || $user->rights->$keyforperm->write;
+				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);
 			}
 			if ($object->element == 'order_supplier') {
 				$permok = $user->rights->fournisseur->commande->creer;

@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file		htdocs/forun/facture/index.php
+ *	\file		htdocs/fourn/facture/index.php
 *	\ingroup	facture
  *	\brief		Home page of customer invoices area
  */

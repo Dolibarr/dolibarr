@@ -54,7 +54,7 @@ class EmailSenderProfile extends CommonObject
 	/**
 	 * @var string String with name of icon for emailsenderprofile
 	 */
-	public $picto = 'emailsenderprofile@monmodule';
+	public $picto = 'emailsenderprofile';
 
 
 	const STATUS_DISABLED = 0;

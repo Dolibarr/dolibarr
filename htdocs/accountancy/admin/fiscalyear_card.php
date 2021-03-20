@@ -149,8 +149,10 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Card");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
@@ -298,10 +300,10 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
+			/*
+			 * Action bar
+			 */
 			if (!empty($user->rights->accounting->fiscalyear->write)) {
-				/*
-				 * Barre d'actions
-				 */
 				print '<div class="tabsAction">';
 
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';

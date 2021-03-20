@@ -38,9 +38,16 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 
 /*

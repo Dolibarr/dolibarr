@@ -2261,11 +2261,9 @@ if (empty($reshook)) {
 // Print form confirm
 print $formconfirm;
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Action bar
+ */
 if ($action != 'create' && $action != 'edit') {
 	print "\n".'<div class="tabsAction">'."\n";
 
@@ -2407,7 +2405,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete') {

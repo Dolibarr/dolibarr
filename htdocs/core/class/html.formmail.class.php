@@ -659,61 +659,7 @@ class FormMail extends Form
 
 			// To
 			if (!empty($this->withto) || is_array($this->withto)) {
-				$out .= '<tr><td class="fieldrequired">';
-				if ($this->withtofree) {
-					$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-				} else {
-					$out .= $langs->trans("MailTo");
-				}
-				$out .= '</td><td>';
-				if ($this->withtoreadonly) {
-					if (!empty($this->toname) && !empty($this->tomail)) {
-						$out .= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
-						$out .= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
-						if ($this->totype == 'thirdparty') {
-							$soc = new Societe($this->db);
-							$soc->fetch($this->toid);
-							$out .= $soc->getNomUrl(1);
-						} elseif ($this->totype == 'contact') {
-							$contact = new Contact($this->db);
-							$contact->fetch($this->toid);
-							$out .= $contact->getNomUrl(1);
-						} else {
-							$out .= $this->toname;
-						}
-						$out .= ' &lt;'.$this->tomail.'&gt;';
-						if ($this->withtofree) {
-							$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
-						}
-					} else {
-						// Note withto may be a text like 'AllRecipientSelected'
-						$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
-					}
-				} else {
-					// The free input of email
-					if (!empty($this->withtofree)) {
-						$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
-					}
-					// The select combo
-					if (!empty($this->withto) && is_array($this->withto)) {
-						if (!empty($this->withtofree)) {
-							$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-						}
-						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-						$tmparray = $this->withto;
-						foreach ($tmparray as $key => $val) {
-							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-						}
-
-						$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
-
-						if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
-							$withtoselected = array_keys($tmparray);
-						}
-						$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
-					}
-				}
-				$out .= "</td></tr>\n";
+				$out .= $this->getHtmlForTo();
 			}
 
 			// To User
@@ -751,25 +697,7 @@ class FormMail extends Form
 
 			// CC
 			if (!empty($this->withtocc) || is_array($this->withtocc)) {
-				$out .= '<tr><td>';
-				$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
-				$out .= '</td><td>';
-				if ($this->withtoccreadonly) {
-					$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
-				} else {
-					$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
-					if (!empty($this->withtocc) && is_array($this->withtocc)) {
-						$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
-						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
-						$tmparray = $this->withtocc;
-						foreach ($tmparray as $key => $val) {
-							$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
-						}
-						$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
-						$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
-					}
-				}
-				$out .= "</td></tr>\n";
+				$out .= $this->getHtmlForCc();
 			}
 
 			// To User cc
@@ -828,7 +756,7 @@ class FormMail extends Form
 
 				$out .= '<td>';
 
-				if ($this->withmaindocfile)	{
+				if ($this->withmaindocfile) {
 					// withmaindocfile is set to 1 or -1 to show the checkbox (-1 = checked or 1 = not checked)
 					if (GETPOSTISSET('sendmail')) {
 						$this->withmaindocfile = (GETPOST('addmaindocfile', 'alpha') ? -1 : 1);
@@ -1063,6 +991,102 @@ class FormMail extends Form
 
 			return $out;
 		}
+	}
+
+	/**
+	 * get html For To
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForTo()
+	{
+		global $langs, $form;
+		$out = '<tr><td class="fieldrequired">';
+		if ($this->withtofree) {
+			$out .= $form->textwithpicto($langs->trans("MailTo"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		} else {
+			$out .= $langs->trans("MailTo");
+		}
+		$out .= '</td><td>';
+		if ($this->withtoreadonly) {
+			if (!empty($this->toname) && !empty($this->tomail)) {
+				$out .= '<input type="hidden" id="toname" name="toname" value="'.$this->toname.'" />';
+				$out .= '<input type="hidden" id="tomail" name="tomail" value="'.$this->tomail.'" />';
+				if ($this->totype == 'thirdparty') {
+					$soc = new Societe($this->db);
+					$soc->fetch($this->toid);
+					$out .= $soc->getNomUrl(1);
+				} elseif ($this->totype == 'contact') {
+					$contact = new Contact($this->db);
+					$contact->fetch($this->toid);
+					$out .= $contact->getNomUrl(1);
+				} else {
+					$out .= $this->toname;
+				}
+				$out .= ' &lt;'.$this->tomail.'&gt;';
+				if ($this->withtofree) {
+					$out .= '<br>'.$langs->trans("and").' <input class="minwidth200" id="sendto" name="sendto" value="'.(!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "").'" />';
+				}
+			} else {
+				// Note withto may be a text like 'AllRecipientSelected'
+				$out .= (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
+			}
+		} else {
+			// The free input of email
+			if (!empty($this->withtofree)) {
+				$out .= '<input class="minwidth200" id="sendto" name="sendto" value="'.(($this->withtofree && !is_numeric($this->withtofree)) ? $this->withtofree : (!is_array($this->withto) && !is_numeric($this->withto) ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "")).'" />';
+			}
+			// The select combo
+			if (!empty($this->withto) && is_array($this->withto)) {
+				if (!empty($this->withtofree)) {
+					$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				}
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withto;
+				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+
+				$withtoselected = GETPOST("receiver", 'array'); // Array of selected value
+
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
+					$withtoselected = array_keys($tmparray);
+				}
+				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+			}
+		}
+		$out .= "</td></tr>\n";
+		return $out;
+	}
+
+	/**
+	 * get html For CC
+	 *
+	 * @return string html
+	 */
+	public function getHtmlForCc()
+	{
+		global $langs, $form;
+		$out = '<tr><td>';
+		$out .= $form->textwithpicto($langs->trans("MailCC"), $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+		$out .= '</td><td>';
+		if ($this->withtoccreadonly) {
+			$out .= (!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : "";
+		} else {
+			$out .= '<input class="minwidth200" id="sendtocc" name="sendtocc" value="'.(GETPOST("sendtocc", "alpha") ? GETPOST("sendtocc", "alpha") : ((!is_array($this->withtocc) && !is_numeric($this->withtocc)) ? $this->withtocc : '')).'" />';
+			if (!empty($this->withtocc) && is_array($this->withtocc)) {
+				$out .= " ".$langs->trans("and")."/".$langs->trans("or")." ";
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtocc;
+				foreach ($tmparray as $key => $val) {
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtoccselected = GETPOST("receivercc", 'array'); // Array of selected value
+				$out .= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500', null, "");
+			}
+		}
+		$out .= "</td></tr>\n";
+		return $out;
 	}
 
 	/**
@@ -1617,7 +1641,14 @@ class ModelMail
 	 */
 	public $label;
 
+	/**
+	 * @var string Model mail topic
+	 */
 	public $topic;
+
+	/**
+	 * @var string Model mail content
+	 */
 	public $content;
 	public $content_lines;
 	public $lang;

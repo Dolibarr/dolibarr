@@ -31,10 +31,6 @@ if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
-}
-
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
@@ -185,6 +181,10 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 $error = 0;
 
+if (!$user->rights->user->user->lire && !$user->admin) {
+	accessforbidden();
+}
+
 $childids = $user->getAllChildIds(1);
 
 
@@ -308,8 +308,8 @@ if (empty($reshook)) {
 
 $formother = new FormOther($db);
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
-$help_url = '';
+$help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
+
 if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$text = $langs->trans("ListOfEmployees");
 } else {

@@ -272,7 +272,7 @@ if ($sall || $search_product_category > 0 || $search_user > 0) {
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' sp.rowid, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
+$sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_update,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
@@ -822,6 +822,11 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val'] = array();
+	$totalarray['val']['sp.total_ht'] = 0;
+	$totalarray['val']['sp.total_tva'] = 0;
+	$totalarray['val']['sp.total_ttc'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -956,7 +961,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'sp.total_ht';
 			}
-			  $totalarray['val']['sp.total_ht'] += $obj->total_ht;
+			$totalarray['val']['sp.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['sp.total_tva']['checked'])) {

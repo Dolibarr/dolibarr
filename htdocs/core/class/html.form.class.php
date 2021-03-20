@@ -6684,7 +6684,7 @@ class Form
 				if (!dol_eval($val['enabled'], 1, 1)) {
 					continue;
 				}
-				if ($val['showoncombobox']) {
+				if (!empty($val['showoncombobox'])) {
 					$tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '').'t.'.$key;
 				}
 			}
@@ -6817,7 +6817,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+				$out .= ajax_combobox($htmlname, null, (!empty($conf->global->$confkeyforautocompletemode) ? $conf->global->$confkeyforautocompletemode : 0));
 			}
 		} else {
 			dol_print_error($this->db);
@@ -7897,7 +7897,7 @@ class Form
 
 		// Preparing gender's display if there is one
 		$addgendertxt = '';
-		if ($object->gender) {
+		if (!empty($object->gender)) {
 			$addgendertxt = ' ';
 			switch ($object->gender) {
 				case 'man':

@@ -92,16 +92,16 @@ if ($cancel) {
 
 if ($user->rights->banque->consolidate && $action == 'donext') {
 	$al = new AccountLine($db);
-	$al->dateo_next($_GET["rowid"]);
+	$al->dateo_next(GETPOST("rowid", 'int'));
 } elseif ($user->rights->banque->consolidate && $action == 'doprev') {
 	$al = new AccountLine($db);
-	$al->dateo_previous($_GET["rowid"]);
+	$al->dateo_previous(GETPOST("rowid", 'int'));
 } elseif ($user->rights->banque->consolidate && $action == 'dvnext') {
 	$al = new AccountLine($db);
-	$al->datev_next($_GET["rowid"]);
+	$al->datev_next(GETPOST("rowid", 'int'));
 } elseif ($user->rights->banque->consolidate && $action == 'dvprev') {
 	$al = new AccountLine($db);
-	$al->datev_previous($_GET["rowid"]);
+	$al->datev_previous(GETPOST("rowid", 'int'));
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier) {
@@ -489,9 +489,9 @@ if ($result) {
 			print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_remove()."</a> ";
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_add()."</a>";
 			}
 			print '</td>';
@@ -509,9 +509,9 @@ if ($result) {
 			print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_remove()."</a> ";
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_add()."</a>";
 			}
 			print '</td>';
@@ -573,6 +573,30 @@ if ($result) {
 
 		print "</table>";
 
+		// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
+		/* Not yet ready. We must manage inline replacemet of input date field
+		$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
+		print '
+			<script type="text/javascript">
+			$(function() {
+				$("a.ajaxforbankoperationchange").each(function(){
+					var current = $(this);
+					current.click(function()
+					{
+						var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+						$.get(url, function(data)
+						{
+							console.log(url)
+							console.log(data)
+							current.parent().prev().replaceWith(data);
+						});
+						return false;
+					});
+				});
+			});
+			</script>
+			';
+		*/
 		print '</div>';
 
 		print dol_get_fiche_end();

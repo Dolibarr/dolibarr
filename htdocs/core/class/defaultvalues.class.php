@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Florian HENRY <florian.henry@scopen.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file        htdocs/code/class/defaultvalues.class.php
+ * \file        htdocs/core/class/defaultvalues.class.php
  * \brief       This file is a CRUD class file for DefaultValues (Create/Read/Update/Delete)
  */
 
@@ -264,7 +265,7 @@ class DefaultValues extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || ($key == 't.entity' && !is_array($value)) || ($key == 't.user_id' && !is_array($value))) {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (isset($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type') {
 					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';

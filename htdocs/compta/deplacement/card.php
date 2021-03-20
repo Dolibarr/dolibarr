@@ -463,9 +463,8 @@ if ($action == 'create') {
 			print '</div>';
 
 			/*
-			 * Barre d'actions
+			 * Action bar
 			 */
-
 			print '<div class="tabsAction">';
 
 			if ($object->statut < Deplacement::STATUS_REFUNDED) { 	// if not refunded

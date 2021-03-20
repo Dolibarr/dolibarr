@@ -527,12 +527,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	} else {
 		// View mode
 
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* Barre d'action                                                             */
-		/*                                                                            */
-		/* ************************************************************************** */
-
+		/*
+		 * Action bar
+		 */
 		print "\n".'<div class="tabsAction">'."\n";
 
 		if ($user->rights->produit->creer || $user->rights->service->creer) {

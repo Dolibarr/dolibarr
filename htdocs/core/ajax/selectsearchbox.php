@@ -79,6 +79,10 @@ if (!empty($conf->societe->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONT
 if (((!empty($conf->product->enabled) && $user->rights->produit->lire) || (!empty($conf->service->enabled) && $user->rights->service->lire))
 && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
 	$arrayresult['searchintoproduct'] = array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'text'=>img_picto('', 'object_product').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	// search on lot/serial numbers
+	if ( ! empty($conf->productbatch->enabled) ) {
+		$arrayresult['searchintobatch'] = array('position'=>32, 'shortcut'=>'B', 'img'=>'object_plot', 'label'=>$langs->trans("SearchIntoBatch", $search_boxvalue), 'text'=>img_picto('', 'object_lot').' '.$langs->trans("SearchIntoBatch", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/stock/productlot_list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	}
 }
 
 if (!empty($conf->mrp->enabled) && $user->rights->mrp->read && empty($conf->global->MAIN_SEARCHFORM_MRP_DISABLED)) {
