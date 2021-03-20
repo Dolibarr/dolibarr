@@ -24,7 +24,7 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/adherent.php
+ *   	\file       htdocs/adherents/admin/member_emails.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
  */

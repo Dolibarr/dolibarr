@@ -66,7 +66,7 @@ class modAdherent extends DolibarrModules
 		);
 
 		// Config pages
-		$this->config_page_url = array("adherent.php@adherents");
+		$this->config_page_url = array("member.php@adherents");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
