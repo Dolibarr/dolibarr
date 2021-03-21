@@ -566,6 +566,8 @@ if ($rowid > 0) {
 					$titre = $langs->trans("MembersListNotUpToDate");
 				} elseif ($status == '0') {
 					$titre = $langs->trans("MembersListResiliated");
+				} elseif ($status == '-2') {
+					$titre = $langs->trans("MembersListExcluded");
 				}
 			} elseif ($action == 'search') {
 				$titre = $langs->trans("MembersListQualified");

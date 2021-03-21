@@ -24,7 +24,7 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/adherent.php
+ *   	\file       htdocs/adherents/admin/member_emails.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
  */
@@ -55,6 +55,7 @@ $constantes = array(
 	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'	=>'emailtemplate:member', /* old was ADHERENT_MAIL_VALID */
 	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'		=>'emailtemplate:member', /* old was ADHERENT_MAIL_COTIS */
 	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'		=>'emailtemplate:member', /* old was ADHERENT_MAIL_RESIL */
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'		=>'emailtemplate:member',
 	'ADHERENT_MAIL_FROM'=>'string',
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'=>'string',
 	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'=>'html',
@@ -69,9 +70,24 @@ $constantes = array(
 //
 if ($action == 'updateall') {
 	$db->begin();
-	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = 0;
-	$res1 = dolibarr_set_const($db, 'XXXX', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
+
+	$res = 0;
+	foreach ($constantes as $constname => $value) {
+		$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alphanohtml') : GETPOST('constvalue'));
+		$consttype = (GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
+		$constnote = (GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'restricthtml') : GETPOST('constnote'));
+
+		$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+		$constvalue = preg_replace('/:member$/', '', $constvalue);
+
+		$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
+		if ($res <= 0) {
+			$error++;
+			$action = 'list';
+		}
+	}
+
+	if ($error > 0) {
 		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
 		$db->rollback();
 	} else {
@@ -126,19 +142,19 @@ $head = member_admin_prepare_head();
 print dol_get_fiche_head($head, 'emails', $langs->trans("Members"), -1, 'user');
 
 // TODO Use global form
-//print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-//print '<input type="hidden" name="token" value="'.newToken().'">';
-//print '<input type="hidden" name="action" value="updateall">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateall">';
 
 $helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
 $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
 //$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
 
-form_constantes($constantes, 0, $helptext);
+form_constantes($constantes, 3, $helptext);
 
-//print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
-//print '</form>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+print '</form>';
 
 print dol_get_fiche_end();
 

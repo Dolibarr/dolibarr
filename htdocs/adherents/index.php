@@ -82,6 +82,7 @@ print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist
 $MembersValidated = array();
 $MembersToValidate = array();
 $MembersUpToDate = array();
+$MembersExcluded = array();
 $MembersResiliated = array();
 
 $AdherentType = array();
@@ -115,6 +116,9 @@ if ($result) {
 		}
 		if ($objp->statut == 1) {
 			$MembersValidated[$objp->rowid] = $objp->somme;
+		}
+		if ($objp->statut == -2) {
+			$MembersExcluded[$objp->rowid] = $objp->somme;
 		}
 		if ($objp->statut == 0) {
 			$MembersResiliated[$objp->rowid] = $objp->somme;
@@ -195,9 +199,10 @@ if ($conf->use_javascript_ajax) {
 
 	$SumToValidate = 0;
 	$SumValidated = 0;
-
 	$SumUpToDate = 0;
 	$SumResiliated = 0;
+	$SumExcluded = 0;
+
 	$total = 0;
 	$dataval = array();
 	$i = 0;
@@ -205,17 +210,21 @@ if ($conf->use_javascript_ajax) {
 		$dataval['draft'][] = array($i, isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0);
 		$dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : 0);
 		$dataval['uptodate'][] = array($i, isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0);
+		$dataval['excluded'][] = array($i, isset($MembersExcluded[$key]) ? $MembersExcluded[$key] : 0);
 		$dataval['resiliated'][] = array($i, isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0);
+
 		$SumToValidate += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
 		$SumValidated += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : 0;
 		$SumUpToDate += isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0;
+		$SumExcluded += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
 		$SumResiliated += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
 		$i++;
 	}
-	$total = $SumToValidate + $SumValidated + $SumUpToDate + $SumResiliated;
+	$total = $SumToValidate + $SumValidated + $SumUpToDate + $SumExcluded + $SumResiliated;
 	$dataseries = array();
 	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SumValidated));
 	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SumUpToDate));
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), round($SumExcluded));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SumResiliated));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SumToValidate));
 
@@ -224,7 +233,7 @@ if ($conf->use_javascript_ajax) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus6, '-'.$badgeStatus0));
+	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus8, $badgeStatus6, '-'.$badgeStatus0));
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
@@ -234,7 +243,7 @@ if ($conf->use_javascript_ajax) {
 
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	$boxgraph .= $SumToValidate + $SumValidated + $SumUpToDate + $SumResiliated;
+	$boxgraph .= $SumToValidate + $SumValidated + $SumUpToDate + $SumExcluded + $SumResiliated;
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '</table>';
 	$boxgraph .= '</div>';

@@ -26,7 +26,7 @@
  *	\brief      Module pour gerer la tenue de propositions commerciales
  *	\file       htdocs/core/modules/modPropale.class.php
  *	\ingroup    propale
- *	\brief      Fichier de description et activation du module Propale
+ *	\brief      Description and activation file for the module customer proposal
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

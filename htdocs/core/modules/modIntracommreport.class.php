@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/core/modules/modIntracommreport.class.php
  * 	\ingroup    Intracomm report
- *	\brief      Module to activate intracomm report module
+ *	\brief      Description and activation file for the module intracomm report
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

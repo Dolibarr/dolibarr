@@ -2577,7 +2577,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="0" selected>'.$textifempty.'</option>';
+				$out .= '<option value="0" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
 			}
 
 			$i = 0;
