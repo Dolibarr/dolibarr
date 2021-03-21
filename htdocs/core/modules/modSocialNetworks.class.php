@@ -21,7 +21,7 @@
  *  \brief      Add a SocialNetworks button.
  *  \file       htdocs/core/modules/modSocialNetworks.class.php
  *  \ingroup    socialnetworks
- *  \brief      Description and activation file for module SocialNetworks
+ *  \brief      Description and activation file for the module SocialNetworks
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

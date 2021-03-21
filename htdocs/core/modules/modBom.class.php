@@ -23,7 +23,7 @@
  *
  *  \file       htdocs/core/modules/modBom.class.php
  *  \ingroup    bom
- *  \brief      Description and activation file for module Bom
+ *  \brief      Description and activation file for the module Bom
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -286,6 +286,7 @@ class modBom extends DolibarrModules
 		$langs->load("mrp");
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'BomAndBomLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("bom", "read"));
 		$this->export_icon[$r] = 'bom';
 		$keyforclass = 'BOM';
 		$keyforclassfile = '/bom/class/bom.class.php';

@@ -24,7 +24,7 @@
  * 	\brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
  *	\file       htdocs/core/modules/modBanque.class.php
  *	\ingroup    banque
- *	\brief      Fichier de description et activation du module Banque
+ *	\brief      Description and activation file for the module bank
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

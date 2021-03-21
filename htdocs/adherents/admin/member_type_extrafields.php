@@ -3,6 +3,8 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +18,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
- *      \file       htdocs/adherents/admin/adherent_extrafields.php
+ *      \file       htdocs/adherents/admin/member_type_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of members
  */
@@ -43,7 +46,7 @@ foreach ($tmptype2label as $key => $val) {
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
-$elementtype = 'adherent'; //Must be the $table_element of the class that manage extrafield
+$elementtype = 'adherent_type'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) {
 	accessforbidden();
@@ -62,7 +65,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Members");
+$textobject = $langs->transnoentitiesnoconv("MembersTypes");
 
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('', $langs->trans("MembersSetup"), $help_url);
@@ -74,7 +77,7 @@ print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 $head = member_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'attributes', $langs->trans("Members"), -1, 'user');
+print dol_get_fiche_head($head, 'attributes_type', $langs->trans("Members"), -1, 'user');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -91,7 +94,7 @@ if ($action != 'create' && $action != 'edit') {
 
 // Creation of an optional field
 if ($action == 'create') {
-	print '<div name="topofform"></div><br>';
+	print "<br>";
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
@@ -99,7 +102,7 @@ if ($action == 'create') {
 
 // Edition of an optional field
 if ($action == 'edit' && !empty($attrname)) {
-	print '<div name="topofform"></div><br>';
+	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
 	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';

@@ -20,7 +20,7 @@
  *      \brief      Module to enable the Dolibarr server of web services
  *       \file       htdocs/core/modules/modWebServices.class.php
  *       \ingroup    webservices
- *       \brief      File to describe webservices module
+ *       \brief      Description and activation file for the module webservices
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

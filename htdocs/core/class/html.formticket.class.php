@@ -124,7 +124,7 @@ class FormTicket
 	/**
 	 * Show the form to input ticket
 	 *
-	 * @param  	int	 		$withdolfichehead		With dol_fiche_head
+	 * @param  	int	 		$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
 	 * @param	string		$mode					Mode ('create' or 'edit')
 	 * @return 	void
 	 */

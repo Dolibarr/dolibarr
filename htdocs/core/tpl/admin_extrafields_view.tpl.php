@@ -65,8 +65,8 @@ print '<td class="center">'.$langs->trans("AlwaysEditable").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
-if (empty($conf->multicompany->enabled)) {
-	print '<td class="center">'.$langs->trans("Entities").'</td>';
+if (!empty($conf->multicompany->enabled)) {
+	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
