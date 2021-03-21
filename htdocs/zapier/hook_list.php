@@ -123,6 +123,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+if (empty($conf->zapier->enabled)) accessforbidden();
+if (empty($user->admin)) accessforbidden();
 
 
 /*
@@ -278,7 +280,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/zapierfordolibarr/hook_card.php', 1).'?id='.$id);
+	header("Location: ".dol_buildpath('/zapier/hook_card.php', 1).'?id='.$id);
 	exit;
 }
 

@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("zapier@zapier"));
+$langs->loadLangs(array("zapier"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -46,6 +46,9 @@ if (isset($user->socid) && $user->socid > 0) {
 
 $max = 5;
 $now = dol_now();
+
+if (empty($conf->zapier->enabled)) accessforbidden();
+if (empty($user->admin)) accessforbidden();
 
 
 /*
