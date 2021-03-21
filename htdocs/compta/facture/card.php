@@ -638,33 +638,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->validate($user, '', $idwarehouse);
-			if ($result >= 0) {
-				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-						$newlang = GETPOST('lang_id', 'aZ09');
-					}
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-						$outputlangs->load('products');
-					}
-					$model = $object->model_pdf;
-
-					$ret = $object->fetch($id); // Reload to get new records
-
-					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
-				}
-			} else {
+			$result = $object->validate($user, '', $idwarehouse, 0, 0, array('lang_id' => GETPOST('lang_id', 'aZ09'), 'hidedetails' => $hidedetails, 'hidedesc' => $hidedesc, 'hideref' => $hideref));
+			if ($result < 0) {
 				if (count($object->errors)) {
 					setEventMessages(null, $object->errors, 'errors');
 				} else {
