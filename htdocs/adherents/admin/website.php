@@ -178,7 +178,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '</td><td class="right">';
 	$listofval = array();
 	$listofval += $adht->liste_array();
-	$forcetype = !empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? $conf->global->MEMBER_NEWFORM_FORCETYPE : -1;
+	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
 	print "</td></tr>\n";
 
