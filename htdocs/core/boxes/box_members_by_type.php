@@ -198,22 +198,22 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersToValidate[$key]) && $MembersToValidate[$key] > 0 ? $MembersToValidate[$key] : '') . ' ' . $staticmember->LibStatut(-1, $adhtype->subscription, 0, 3),
+						'text' => (isset($MembersToValidate[$key]) && $MembersToValidate[$key] > 0 ? $MembersToValidate[$key] : '') . ' ' . $staticmember->LibStatut(-1, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(1, $adhtype->subscription, 0, 3),
+						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(1, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(1, $adhtype->subscription, $now, 3),
+						'text' => (isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(1, 1, $now, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '') . ' ' . $staticmember->LibStatut(0, $adhtype->subscription, 0, 3),
+						'text' => (isset($MembersResiliated[$key]) && $MembersResiliated[$key] > 0 ? $MembersResiliated[$key] : '') . ' ' . $staticmember->LibStatut(0, 1, 0, 3),
 						'asis' => 1,
 					);
 
@@ -223,35 +223,39 @@ class box_members_by_type extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text' => $langs->trans("NoRecordedMembersByType"),
+						'text' => $langs->trans("NoRecordedMembersByType")
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total"',
-						'text' => $langs->trans("Total"),
+						'text' => $langs->trans("Total")
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeA.' '.$staticmember->LibStatut(-1, $adhtype->subscription, 0, 3),
+						'text' => $SommeA.' '.$staticmember->LibStatut(-1, 1, 0, 3),
+						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeB.' '.$staticmember->LibStatut(1, $adhtype->subscription, 0, 3),
+						'text' => $SommeB.' '.$staticmember->LibStatut(1, 1, 0, 3),
+						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeC.' '.$staticmember->LibStatut(1, $adhtype->subscription, $now, 3),
+						'text' => $SommeC.' '.$staticmember->LibStatut(1, 1, $now, 3),
+						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeD.' '.$staticmember->LibStatut(0, $adhtype->subscription, 0, 3),
+						'text' => $SommeD.' '.$staticmember->LibStatut(0, 1, 0, 3),
+						'asis' => 1
 					);
 				}
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength' => 500,
-					'text' => ($this->db->error() . ' sql=' . $sql),
+					'text' => ($this->db->error() . ' sql=' . $sql)
 				);
 			}
 		} else {
