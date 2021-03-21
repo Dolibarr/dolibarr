@@ -2809,27 +2809,27 @@ class Facture extends CommonInvoice
 				}
 			}
 
-    // Generate PDF
-		if (!$error && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$outputlangs = $langs;
-      $newlang = '';
-      if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($pdf['lang_id'])) {
-			   $newlang = $pdf['lang_id'];
-			}
-      if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
-			  $newlang = $this->thirdparty->default_lang;
-			}
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-			  $outputlangs->setDefaultLang($newlang);
-			}
-			 $modelpdf = !empty($this->modelpdf)?$this->modelpdf:$conf->global->FACTURE_ADDON_PDF;
-			 $ret = $this->fetch($this->id); // Reload to get new records
+			// Generate PDF
+			if (!$error && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($pdf['lang_id'])) {
+					 $newlang = $pdf['lang_id'];
+				}
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						  $newlang = $this->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$modelpdf = !empty($this->modelpdf)?$this->modelpdf:$conf->global->FACTURE_ADDON_PDF;
+				$ret = $this->fetch($this->id); // Reload to get new records
 
-			$this->generateDocument($modelpdf, $outputlangs, $pdf['hidedetails'], $pdf['$hidedesc'], $pdf['$hideref']);
-		}
-    
-    // Trigger calls
+				$this->generateDocument($modelpdf, $outputlangs, $pdf['hidedetails'], $pdf['$hidedesc'], $pdf['$hideref']);
+			}
+
+			// Trigger calls
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('BILL_VALIDATE', $user);
