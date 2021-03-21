@@ -76,9 +76,6 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier');
 $head = zapierAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', '', -1, "zapier");
 
-// Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("ZapierSetupPage").'</span><br><br>';
-
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -118,7 +115,9 @@ if ($action == 'edit') {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 		print '</div>';
 	} else {
-		print '<br>'.$langs->trans("NothingToSetup");
+		// Setup page goes here
+		echo '<br><br><span class="opacitymediumdisabled">'.$langs->trans("ZapierSetupPage").'</span><br><br>';
+		//print '<br>'.$langs->trans("NothingToSetup");
 	}
 }
 
