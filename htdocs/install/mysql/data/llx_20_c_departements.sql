@@ -10,6 +10,8 @@
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2015	   Ferran Marcet	    <fmarcet@2byte.es>
 --
+
+-- LICENSE -------------------------------------------------------------------
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -24,16 +26,20 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
---
+
+-- WARNING -------------------------------------------------------------------
 -- Do not put comments at the end of the lines, this file is parsed during
 -- the install and all '-' prefixed texts are removed.
 -- Do not concatenate the values in a single query, for the same reason.
 
---
+
+-- NOTES ----------------------------------
 -- Departements/Cantons/Provinces/States
 --
 
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 0, '0',    '0',0,'-','-');
+
+-- TEMPLATE -------------------------------------------------------------------------------------------------------------
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 0, '0',  '0',0,'-','-');
 
 
 -- Algeria Provinces  (id country=13)
@@ -97,6 +103,17 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES  (34000, 'AD-008', 'AD700', NULL, NULL, 'Escaldes-Engordany');
 
 
+-- Australia States & Territories (id country=28)
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'NSW','',1,'','New South Wales');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'VIC','',1,'','Victoria');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'QLD','',1,'','Queensland');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'SA' ,'',1,'','South Australia');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'ACT','',1,'','Australia Capital Territory');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'TAS','',1,'','Tasmania');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'WA' ,'',1,'','Western Australia');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801,'NT' ,'',1,'','Northern Territory');
+
+
 -- Austria States / Österreich Bundesländer (id country=41)
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'B','BURGENLAND','Burgenland',1);
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'K','KAERNTEN','Kärnten',1);
@@ -107,6 +124,20 @@ INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) V
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'T','TIROL','Tirol',1);
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'V','VORARLBERG','Vorarlberg',1);
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101,'W','WIEN','Wien',1);
+
+
+-- Belgium Provinces (id country=2)
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201,'01','',1,'ANVERS','Anvers');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202,'03','',2,'BRABANT-WALLON','Brabant-Wallon');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201,'04','',1,'BRABANT-FLAMAND','Brabant-Flamand');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201,'05','',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201,'06','',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202,'07','',2,'HAINAUT','Hainaut');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201,'08','',2,'LIEGE','Liège');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202,'09','',1,'LIMBOURG','Limbourg');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202,'10','',2,'LUXEMBOURG','Luxembourg');
+insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201,'11','',2,'NAMUR','Namur');
 
 
 -- Departements France (id country=1)
@@ -213,19 +244,6 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'94','94028',2,'VAL-DE-MARNE','Val-de-Marne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'95','95500',2,'VAL-D OISE','Val-d Oise');
 
-
--- Provinces Belgium (id country=2)
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','',2,'BRABANT-WALLON','Brabant-Wallon');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','',1,'BRABANT-FLAMAND','Brabant-Flamand');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'07','',2,'HAINAUT','Hainaut');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','',2,'LIEGE','Liège');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBOURG','Limbourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'10','',2,'LUXEMBOURG','Luxembourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
 
 -- Provinces Italy (id=3)
 insert into llx_c_departements (code_departement,fk_region,cheflieu,tncc,ncc,nom) values ('AG',315,NULL,NULL,NULL,'AGRIGENTO');
@@ -564,15 +582,6 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('111', 5209, '', 0, '', 'Nicolás Suárez', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('112', 5209, '', 0, '', 'General Federico Román', 1);
 
--- Provinces Australia (id country=28)
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'NSW','',1,'','New South Wales');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'VIC','',1,'','Victoria');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'QLD','',1,'','Queensland');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'SA' ,'',1,'','South Australia');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'ACT','',1,'','Australia Capital Territory');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'TAS','',1,'','Tasmania');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'WA' ,'',1,'','Western Australia');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'NT' ,'',1,'','Northern Territory');
 
 -- Provinces Canada (id country=14)
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'ON','',1,'','Ontario');
@@ -1665,4 +1674,5 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-KYD', 'KYD', NULL, '蘭嶼');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-KMN', 'KMN', NULL, '金門縣');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, nom) VALUES (21301, 'TW-LNN', 'LNN', NULL, '連江縣');
+
 

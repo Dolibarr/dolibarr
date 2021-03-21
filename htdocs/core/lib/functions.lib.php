@@ -6322,7 +6322,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  */
 function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("alt", "class", "contenteditable", "data-html", "href", "id", "name", "src", "style", "target", "title"))
 {
-	if (class_exists('DOMDocument')) {
+	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
 		$dom = new DOMDocument();
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 		if (is_object($dom)) {

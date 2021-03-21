@@ -41,12 +41,6 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expedition', $id, '');
-
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -68,6 +62,12 @@ if ($id > 0 || !empty($ref)) {
 		$objectsrc->fetch($object->$typeobject->id);
 	}
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 
 /*
