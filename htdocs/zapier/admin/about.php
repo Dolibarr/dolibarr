@@ -60,7 +60,8 @@ if (empty($user->admin)) accessforbidden();
 $form = new Form($db);
 
 $page_name = "ZapierAbout";
-llxHeader('', $langs->trans($page_name));
+$help_url = 'EN:Module_Zapier';
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
