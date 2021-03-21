@@ -25,7 +25,7 @@
  *	\brief      Module to manage third parties (customers, prospects)
  *	\file       htdocs/core/modules/modSociete.class.php
  *	\ingroup    societe
- *	\brief      Fichier de description et activation du module Societe
+ *	\brief      Description and activation file for the module societe (thirdparty)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

@@ -25,7 +25,7 @@
  *	\brief      Module pour gerer le suivi de services predefinis
  *	\file       htdocs/core/modules/modService.class.php
  *	\ingroup    service
- *	\brief      Fichier de description et activation du module Service
+ *	\brief      Description and activation file for the module Service
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

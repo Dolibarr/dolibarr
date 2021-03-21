@@ -768,6 +768,19 @@ i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
 }
+.stockmovemententry {
+	color: #080;
+	transform: rotate(0.25turn);
+	font-size: 1.2em;
+}
+.stockmovementexit {
+	color: #968822;
+	transform: rotate(0.3turn);
+	font-size: 1.2em;
+}
+.stockmovement {
+	font-size: 1.4em;
+}
 
 body[class*="colorblind-"] .text-warning{
 	color : <?php print $colorblind_deuteranopes_textWarning; ?>

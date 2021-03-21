@@ -59,6 +59,7 @@ $toselect = GETPOST('toselect', 'array');
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
+$search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
@@ -300,6 +301,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$sall = "";
 		$search_ref = "";
+		$search_ref_supplier = "";
 		$search_label = "";
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
@@ -579,6 +581,7 @@ if ($resql) {
 		}
 	}
 
+	$paramsCat = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		$paramsCat .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 	}

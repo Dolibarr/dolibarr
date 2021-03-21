@@ -21,7 +21,7 @@
  *  \brief      Add a log into a block chain for some actions.
  *  \file       htdocs/core/modules/modBlockedLog.class.php
  *  \ingroup    blockedlog
- *  \brief      Description and activation file for module ModuleBuilder
+ *  \brief      Description and activation file for the module ModuleBuilder
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

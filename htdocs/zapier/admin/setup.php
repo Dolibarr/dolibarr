@@ -27,10 +27,10 @@ require '../../main.inc.php';
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/zapier.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/zapier/lib/zapier.lib.php';
 
 // Translations
-$langs->loadLangs(array("admin", "zapier@zapier"));
+$langs->loadLangs(array("admin", "zapier"));
 
 // Access control
 if (!$user->admin) {
@@ -42,14 +42,18 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array(
-	'ZAPIERFORDOLIBARR_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+//	'ZAPIERFORDOLIBARR_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
+//	'ZAPIERFORDOLIBARR_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
 );
+
+if (empty($conf->zapier->enabled)) accessforbidden();
+if (empty($user->admin)) accessforbidden();
 
 
 /*
  * Actions
  */
+
 if ((float) DOL_VERSION >= 6) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
@@ -59,20 +63,18 @@ if ((float) DOL_VERSION >= 6) {
  * View
  */
 
-$page_name = "ZapierSetup";
-llxHeader('', $langs->trans($page_name));
+$page_name = "ZapierForDolibarrSetup";
+$help_url = 'EN:Module_Zapier';
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier@zapier');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'object_zapier');
 
 // Configuration header
 $head = zapierAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "zapier@zapier");
-
-// Setup page goes here
-echo $langs->trans("ZapierSetupPage").'<br><br>';
+print dol_get_fiche_head($head, 'settings', '', -1, "zapier");
 
 
 if ($action == 'edit') {
@@ -113,7 +115,9 @@ if ($action == 'edit') {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 		print '</div>';
 	} else {
-		print '<br>'.$langs->trans("NothingToSetup");
+		// Setup page goes here
+		echo '<br><br><span class="opacitymediumdisabled">'.$langs->trans("ZapierSetupPage").'</span><br><br>';
+		//print '<br>'.$langs->trans("NothingToSetup");
 	}
 }
 

@@ -23,7 +23,7 @@
  *      \brief      Module to manage categories
  *      \file       htdocs/core/modules/modCategorie.class.php
  *      \ingroup    category
- *      \brief      Fichier de description et activation du module Categorie
+ *      \brief      Description and activation file for the module Category
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

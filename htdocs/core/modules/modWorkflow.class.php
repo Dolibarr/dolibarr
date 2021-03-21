@@ -21,7 +21,7 @@
  *      \brief		Workflow management
  *      \file       htdocs/core/modules/modWorkflow.class.php
  *      \ingroup    workflow
- *      \brief      File to describe and activate module Workflow
+ *      \brief      Description and activation file for the module Workflow
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

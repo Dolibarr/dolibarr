@@ -76,7 +76,7 @@ if ($statut != '') {
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-if ($search_status < -1) {
+if ($search_status < -2) {
 	$search_status = '';
 }
 
@@ -452,6 +452,9 @@ if (GETPOSTISSET("search_status")) {
 	if ($search_status == '0') {
 		$titre = $langs->trans("MembersListResiliated");
 	}
+	if ($search_status == '-2') {
+		$titre = $langs->trans("MembersListExcluded");
+	}
 } elseif ($action == 'search') {
 	$titre = $langs->trans("MembersListQualified");
 }
@@ -750,9 +753,10 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 	$liststatus = array(
 		'-1'=>$langs->trans("Draft"),
 		'1'=>$langs->trans("Validated"),
-		'0'=>$langs->trans("Resiliated")
+		'0'=>$langs->trans("Resiliated"),
+		'-2'=>$langs->trans("Excluded")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -2);
+	print $form->selectarray('search_status', $liststatus, $search_status, -3);
 	print '</td>';
 }
 // Action column

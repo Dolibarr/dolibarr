@@ -2577,7 +2577,7 @@ class Form
 				}
 			}
 			if ($showempty) {
-				$out .= '<option value="0" selected>'.$textifempty.'</option>';
+				$out .= '<option value="0" selected>'.($textifempty ? $textifempty : '&nbsp;').'</option>';
 			}
 
 			$i = 0;
@@ -6684,7 +6684,7 @@ class Form
 				if (!dol_eval($val['enabled'], 1, 1)) {
 					continue;
 				}
-				if ($val['showoncombobox']) {
+				if (!empty($val['showoncombobox'])) {
 					$tmpfieldstoshow .= ($tmpfieldstoshow ? ',' : '').'t.'.$key;
 				}
 			}
@@ -6817,7 +6817,7 @@ class Form
 
 			if (!$forcecombo) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($htmlname, null, $conf->global->$confkeyforautocompletemode);
+				$out .= ajax_combobox($htmlname, null, (!empty($conf->global->$confkeyforautocompletemode) ? $conf->global->$confkeyforautocompletemode : 0));
 			}
 		} else {
 			dol_print_error($this->db);

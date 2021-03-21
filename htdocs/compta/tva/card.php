@@ -405,7 +405,7 @@ if ($action == 'create') {
 	print '</div>';
 	print "<br>\n";
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -468,7 +468,7 @@ if ($action == 'create') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
@@ -512,7 +512,7 @@ if ($id) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 	}
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -710,7 +710,7 @@ if ($id) {
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
 		print '<div align="center">';

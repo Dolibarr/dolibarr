@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       event.php
+ *   	\file       htdocs/eventorganization/conferenceorbooth_card.php
  *		\ingroup    eventorganization
  *		\brief      Page to create/edit/view conferenceorbooth
  */
