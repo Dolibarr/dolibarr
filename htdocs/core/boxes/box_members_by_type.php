@@ -166,7 +166,7 @@ class box_members_by_type extends ModeleBoxes
 
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_titre"',
+					'td' => 'class=""',
 					'text' => $langs->trans("MembersTypes"),
 				);
 				$this->info_box_contents[$line][] = array(
