@@ -1918,7 +1918,10 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *		Fonction qui exclu un adherent
+	 *		Functiun to exlude (set adherent.status to -2) a member
+	 *		TODO
+	 *		A private note should be added to know why the member has been excluded
+	 *		For historical purpose it add an "extra-subscription" type excluded
 	 *
 	 *		@param	User	$user		User making change
 	 *		@return	int					<0 if KO, >0 if OK

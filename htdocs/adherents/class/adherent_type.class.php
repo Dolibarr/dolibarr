@@ -103,8 +103,8 @@ class AdherentType extends CommonObject
 	/** @var string Email sent after resiliation */
 	public $mail_resiliate = '';
 
-	/** @var string Email sent after exclusion */
-	public $mail_exclusion = '';
+	/** @var string Email sent after exclude */
+	public $mail_exclude = '';
 
 	/** @var array Array of members */
 	public $members = array();
@@ -825,15 +825,15 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *     getMailOnExclusion
+	 *     getMailOnExclude
 	 *
 	 *     @return string     Return mail model content of type or empty
 	 */
-	public function getMailOnExclusion()
+	public function getMailOnExclude()
 	{
-		// NOTE mail_exclusion not defined so never used
-		if (!empty($this->mail_exclusion) && trim(dol_htmlentitiesbr_decode($this->mail_exclusion))) {  // Property not yet defined
-			return $this->mail_exclusion;
+		// NOTE mail_exclude not defined so never used
+		if (!empty($this->mail_exclude) && trim(dol_htmlentitiesbr_decode($this->mail_exclude))) {  // Property not yet defined
+			return $this->mail_exclude;
 		}
 
 		return '';
