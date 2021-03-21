@@ -25,7 +25,6 @@
  *      \brief      File of class to manage notifications
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 /**
  *      Class to manage notifications
