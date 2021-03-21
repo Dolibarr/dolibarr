@@ -2571,13 +2571,14 @@ class Facture extends CommonInvoice
 	 * Object must have lines loaded with fetch_lines
 	 *
 	 * @param	User	$user           Object user that validate
-	 * @param   string	$force_number	Reference to force on invoice
+	 * @param string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use, 1=take in batches ordered by sellby and eatby dates
+	 * @param	array		$pdf		array of values to generate pdf
 	 * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
-	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
+	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0, $pdf = array())
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -2808,7 +2809,27 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// Trigger calls
+    // Generate PDF
+		if (!$error && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			$outputlangs = $langs;
+      $newlang = '';
+      if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($pdf['lang_id'])) {
+			   $newlang = $pdf['lang_id'];
+			}
+      if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			  $newlang = $this->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+			  $outputlangs->setDefaultLang($newlang);
+			}
+			 $modelpdf = !empty($this->modelpdf)?$this->modelpdf:$conf->global->FACTURE_ADDON_PDF;
+			 $ret = $this->fetch($this->id); // Reload to get new records
+
+			$this->generateDocument($modelpdf, $outputlangs, $pdf['hidedetails'], $pdf['$hidedesc'], $pdf['$hideref']);
+		}
+    
+    // Trigger calls
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('BILL_VALIDATE', $user);
