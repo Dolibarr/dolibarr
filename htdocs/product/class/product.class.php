@@ -750,7 +750,6 @@ class Product extends CommonObject
 									$this->error = 'ErrorFailedToInsertAccountancyForEntity';
 								}
 							}
-
 						} else {
 							$error++;
 							$this->error = 'ErrorFailedToGetInsertedId';
@@ -2175,7 +2174,7 @@ class Product extends CommonObject
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 		}
 		if ($id) {
 			$sql .= " WHERE rowid = ".(int) $id;

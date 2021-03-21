@@ -280,7 +280,7 @@ $sql .= " p.tms, p.fk_product_type as product_type,";
 $sql .= " aa.rowid as aaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = pa." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 } else {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";

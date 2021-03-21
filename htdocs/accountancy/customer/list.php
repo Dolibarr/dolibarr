@@ -240,13 +240,13 @@ $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 if (!empty($conf->global->ACCOUNTANCY_COMPANY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_accounting as sa ON sa.fk_soc = s.rowid AND sa.entity = " . ((int)$conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_accounting as sa ON sa.fk_soc = s.rowid AND sa.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int)$conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 }
 $alias_company_accounting = empty($conf->global->MAIN_COMPANY_ACCOUNTANCY_SHARED) ? "s" : "sa";
 $alias_product_accounting = empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED) ? "p" : "pa";
