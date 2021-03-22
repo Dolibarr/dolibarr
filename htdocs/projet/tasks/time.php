@@ -175,10 +175,10 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 				$action = 'createtime';
 				$error++;
 			} else {
-				$object->timespent_note = GETPOST('timespent_note','alpha');
+				$object->timespent_note = GETPOST('timespent_note', 'alpha');
 				if (GETPOST('progress', 'int') > 0) $object->progress = GETPOST('progress', 'int'); // If progress is -1 (not defined), we do not change value
-				$object->timespent_duration = (int) GETPOST("timespent_durationhour",'int') * 60 * 60; // We store duration in seconds
-				$object->timespent_duration += (GETPOST('timespent_durationmin','int') ? (int) GETPOST('timespent_durationmin','int') : 0) * 60; // We store duration in seconds
+				$object->timespent_duration = (int) GETPOST("timespent_durationhour", 'int') * 60 * 60; // We store duration in seconds
+				$object->timespent_duration += (GETPOST('timespent_durationmin', 'int') ? (int) GETPOST('timespent_durationmin', 'int') : 0) * 60; // We store duration in seconds
 				if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0)	// If hour was entered
 				{
 					$object->timespent_date = dol_mktime(GETPOST("timehour"), GETPOST("timemin"), 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
@@ -224,7 +224,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$result = $object->delTimeSpent($user);
 
 			$object->fetch($id, $ref);
-			$object->timespent_note = GETPOST('timespent_note_line','alpha');
+			$object->timespent_note = GETPOST('timespent_note_line', 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
 			$object->timespent_duration = (int) GETPOST("new_durationhour", 'int') * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOST("new_durationmin", 'int') ? (int) GETPOST('new_durationmin', 'int') : 0) * 60; // We store duration in seconds
@@ -248,8 +248,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetch($id, $ref);
 			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 
-			$object->timespent_id = GETPOST("lineid" , 'int');
-			$object->timespent_note = GETPOST('timespent_note_line','alpha');
+			$object->timespent_id = GETPOST("lineid", 'int');
+			$object->timespent_note = GETPOST('timespent_note_line', 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
 			$object->timespent_duration = (int) GETPOST("new_durationhour", 'int') * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOST("new_durationmin", 'int') ? (int) GETPOST('new_durationmin', 'int') : 0) * 60; // We store duration in seconds
@@ -260,7 +260,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			} else {
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 			}
-			$object->timespent_fk_user = GETPOST("userid_line" , 'int');
+			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 
 			$result = $object->updateTimeSpent($user);
 			if ($result >= 0)
