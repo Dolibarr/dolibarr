@@ -2,6 +2,7 @@
 /* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
