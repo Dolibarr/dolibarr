@@ -243,6 +243,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME))
 				{
 				    $newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+				    $newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
