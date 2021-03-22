@@ -143,7 +143,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -184,7 +188,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep";
@@ -265,8 +273,20 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
 				$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
+
 				$list[$assoc['company_id']]['company_name'][] = $assoc['company_name'];
 				$list[$assoc['company_id']]['company_id'][] = $assoc['company_id'];
+				$list[$assoc['company_id']]['company_alias'][] = $assoc['company_alias'];
+				$list[$assoc['company_id']]['company_email'][] = $assoc['company_email'];
+				$list[$assoc['company_id']]['company_tva_intra'][] = $assoc['company_tva_intra'];
+				$list[$assoc['company_id']]['company_client'][] = $assoc['company_client'];
+				$list[$assoc['company_id']]['company_fournisseur'][] = $assoc['company_fournisseur'];
+				$list[$assoc['company_id']]['company_customer_code'][] = $assoc['company_customer_code'];
+				$list[$assoc['company_id']]['company_supplier_code'][] = $assoc['company_supplier_code'];
+				$list[$assoc['company_id']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
+				$list[$assoc['company_id']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
+				$list[$assoc['company_id']]['company_status'][] = $assoc['company_status'];
+
 				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
@@ -308,7 +328,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -349,7 +373,11 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep";
@@ -430,8 +458,20 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['dtype'][] = $assoc['dtype'];
 				$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
+
 				$list[$assoc['company_id']]['company_name'][] = $assoc['company_name'];
 				$list[$assoc['company_id']]['company_id'][] = $assoc['company_id'];
+				$list[$assoc['company_id']]['company_alias'][] = $assoc['company_alias'];
+				$list[$assoc['company_id']]['company_email'][] = $assoc['company_email'];
+				$list[$assoc['company_id']]['company_tva_intra'][] = $assoc['company_tva_intra'];
+				$list[$assoc['company_id']]['company_client'][] = $assoc['company_client'];
+				$list[$assoc['company_id']]['company_fournisseur'][] = $assoc['company_fournisseur'];
+				$list[$assoc['company_id']]['company_customer_code'][] = $assoc['company_customer_code'];
+				$list[$assoc['company_id']]['company_supplier_code'][] = $assoc['company_supplier_code'];
+				$list[$assoc['company_id']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
+				$list[$assoc['company_id']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
+				$list[$assoc['company_id']]['company_status'][] = $assoc['company_status'];
+
 				$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
 				$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['company_id']]['ddate_end'][] = $db->jdate($assoc['date_end']);
@@ -539,8 +579,20 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 					$list[$assoc['company_id']]['dtotal_ttc'][] = $assoc['total_ttc'];
 					$list[$assoc['company_id']]['dtype'][] = 'ExpenseReportPayment';
 					$list[$assoc['company_id']]['datef'][] = $assoc['datef'];
+
 					$list[$assoc['company_id']]['company_name'][] = '';
 					$list[$assoc['company_id']]['company_id'][] = '';
+					$list[$assoc['company_id']]['company_alias'][] = '';
+					$list[$assoc['company_id']]['company_email'][] = '';
+					$list[$assoc['company_id']]['company_tva_intra'][] = '';
+					$list[$assoc['company_id']]['company_client'][] = '';
+					$list[$assoc['company_id']]['company_fournisseur'][] = '';
+					$list[$assoc['company_id']]['company_customer_code'][] = '';
+					$list[$assoc['company_id']]['company_supplier_code'][] = '';
+					$list[$assoc['company_id']]['company_customer_accounting_code'][] = '';
+					$list[$assoc['company_id']]['company_supplier_accounting_code'][] = '';
+					$list[$assoc['company_id']]['company_status'][] = '';
+
 					$list[$assoc['company_id']]['user_id'][] = $assoc['fk_user_author'];
 					$list[$assoc['company_id']]['drate'][] = $assoc['rate'];
 					$list[$assoc['company_id']]['ddate_start'][] = $db->jdate($assoc['date_start']);
@@ -635,7 +687,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	$total_localtax2 = 'total_localtax2';
 
 
-	// CAS DES BIENS/PRODUITS
+	// CASE OF PRODUCTS/GOODS
 
 	// Define sql request
 	$sql = '';
@@ -645,7 +697,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
@@ -684,7 +740,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep";
@@ -722,7 +782,6 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 	}
-	//print $sql;
 
 	if (!$sql) {
 		return -1;
@@ -763,8 +822,20 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
 				$list[$assoc['rate']]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$assoc['rate']]['datep'][] = $db->jdate($assoc['datep']);
+
 				$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
 				$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
+				$list[$assoc['rate']]['company_alias'][] = $assoc['company_alias'];
+				$list[$assoc['rate']]['company_email'][] = $assoc['company_email'];
+				$list[$assoc['rate']]['company_tva_intra'][] = $assoc['company_tva_intra'];
+				$list[$assoc['rate']]['company_client'][] = $assoc['company_client'];
+				$list[$assoc['rate']]['company_fournisseur'][] = $assoc['company_fournisseur'];
+				$list[$assoc['rate']]['company_customer_code'][] = $assoc['company_customer_code'];
+				$list[$assoc['rate']]['company_supplier_code'][] = $assoc['company_supplier_code'];
+				$list[$assoc['rate']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
+				$list[$assoc['rate']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
+				$list[$assoc['rate']]['company_status'][] = $assoc['company_status'];
+
 				$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -795,7 +866,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	}
 
 
-	// CAS DES SERVICES
+	// CASE OF SERVICES
 
 	// Define sql request
 	$sql = '';
@@ -805,7 +876,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " 0 as payment_id, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
@@ -844,7 +919,11 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 		$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
 		$sql .= " d.date_start as date_start, d.date_end as date_end,";
-		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef, s.nom as company_name, s.rowid as company_id,";
+		$sql .= " f.".$invoicefieldref." as facnum, f.type, f.total_ttc as ftotal_ttc, f.datef,";
+		$sql .= " s.nom as company_name, s.name_alias as company_alias, s.rowid as company_id, s.client as company_client, s.fournisseur as company_fournisseur, s.email as company_email,";
+		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
+		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
+		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep";
@@ -922,10 +1001,22 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$list[$assoc['rate']]['dtype'][] = $assoc['dtype'];
 				$list[$assoc['rate']]['datef'][] = $db->jdate($assoc['datef']);
 				$list[$assoc['rate']]['datep'][] = $db->jdate($assoc['datep']);
-				$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
-				$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
+
 				$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
+
+				$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
+				$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
+				$list[$assoc['rate']]['company_alias'][] = $assoc['company_alias'];
+				$list[$assoc['rate']]['company_email'][] = $assoc['company_email'];
+				$list[$assoc['rate']]['company_tva_intra'][] = $assoc['company_tva_intra'];
+				$list[$assoc['rate']]['company_client'][] = $assoc['company_client'];
+				$list[$assoc['rate']]['company_fournisseur'][] = $assoc['company_fournisseur'];
+				$list[$assoc['rate']]['company_customer_code'][] = $assoc['company_customer_code'];
+				$list[$assoc['rate']]['company_supplier_code'][] = $assoc['company_supplier_code'];
+				$list[$assoc['rate']]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
+				$list[$assoc['rate']]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
+				$list[$assoc['rate']]['company_status'][] = $assoc['company_status'];
 
 				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
 				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];

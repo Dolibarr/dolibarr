@@ -52,16 +52,16 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = (empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE);
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -120,7 +120,7 @@ if ($modetax == 2) {
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $year_start;
+$prevyear = $date_start_year;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -128,7 +128,7 @@ if ($prevquarter > 1) {
 	$prevquarter = 4;
 	$prevyear--;
 }
-$nextyear = $year_start;
+$nextyear = $date_start_year;
 $nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
@@ -198,6 +198,10 @@ $y = $year_current;
 $total = 0;
 $i = 0;
 $columns = 5;
+$span = $columns;
+if ($modetax != 1) {
+	$span += 2;
+}
 
 // Load arrays of datas
 $x_coll = tax_by_thirdparty('vat', $db, 0, $date_start, $date_end, $modetax, 'sell');
@@ -226,7 +230,21 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$invoice_customer->id = $x_coll[$my_coll_thirdpartyid]['facid'][$id];
 			$invoice_customer->ref = $x_coll[$my_coll_thirdpartyid]['facnum'][$id];
 			$invoice_customer->type = $x_coll[$my_coll_thirdpartyid]['type'][$id];
-			$company_static->fetch($x_coll[$my_coll_thirdpartyid]['company_id'][$id]);
+
+			//$company_static->fetch($x_coll[$my_coll_thirdpartyid]['company_id'][$id]);
+			$company_static->id = $x_coll[$my_coll_thirdpartyid]['company_id'][$id];
+			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
+			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
+			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
+			$company_static->tva_intra = $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id];
+			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
+			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
+			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
+			$company_static->code_client = $x_coll[$my_coll_thirdpartyid]['company_customer_code'][$id];
+			$company_static->code_compta_client = $x_coll[$my_coll_thirdpartyid]['company_customer_accounting_code'][$id];
+			$company_static->code_fournisseur = $x_coll[$my_coll_thirdpartyid]['company_supplier_code'][$id];
+			$company_static->code_compta_fournisseur = $x_coll[$my_coll_thirdpartyid]['company_supplier_accounting_code'][$id];
+
 			$x_both[$my_coll_thirdpartyid]['coll']['detail'][] = array(
 				'id'        =>$x_coll[$my_coll_thirdpartyid]['facid'][$id],
 				'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
@@ -241,7 +259,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'drate'     =>$x_coll[$my_coll_thirdpartyid]['drate'][$id],
 				'datef'     =>$x_coll[$my_coll_thirdpartyid]['datef'][$id],
 				'datep'     =>$x_coll[$my_coll_thirdpartyid]['datep'][$id],
+
 				'company_link'=>$company_static->getNomUrl(1, '', 20),
+
 				'ddate_start'=>$x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
 				'ddate_end'  =>$x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
 				'totalht'   =>$x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
@@ -290,7 +310,21 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$invoice_supplier->id = $x_paye[$my_paye_thirdpartyid]['facid'][$id];
 				$invoice_supplier->ref = $x_paye[$my_paye_thirdpartyid]['facnum'][$id];
 				$invoice_supplier->type = $x_paye[$my_paye_thirdpartyid]['type'][$id];
-				$company_static->fetch($x_paye[$my_paye_thirdpartyid]['company_id'][$id]);
+
+				//$company_static->fetch($x_paye[$my_paye_thirdpartyid]['company_id'][$id]);
+				$company_static->id = $x_paye[$my_paye_thirdpartyid]['company_id'][$id];
+				$company_static->name = $x_paye[$my_paye_thirdpartyid]['company_name'][$id];
+				$company_static->name_alias = $x_paye[$my_paye_thirdpartyid]['company_alias'][$id];
+				$company_static->email = $x_paye[$my_paye_thirdpartyid]['company_email'][$id];
+				$company_static->tva_intra = $x_paye[$my_paye_thirdpartyid]['tva_intra'][$id];
+				$company_static->client = $x_paye[$my_paye_thirdpartyid]['company_client'][$id];
+				$company_static->fournisseur = $x_paye[$my_paye_thirdpartyid]['company_fournisseur'][$id];
+				$company_static->status = $x_paye[$my_paye_thirdpartyid]['company_status'][$id];
+				$company_static->code_client = $x_paye[$my_paye_thirdpartyid]['company_customer_code'][$id];
+				$company_static->code_compta_client = $x_paye[$my_paye_thirdpartyid]['company_customer_accounting_code'][$id];
+				$company_static->code_fournisseur = $x_paye[$my_paye_thirdpartyid]['company_supplier_code'][$id];
+				$company_static->code_compta_fournisseur = $x_paye[$my_paye_thirdpartyid]['company_supplier_accounting_code'][$id];
+
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
 					'id'        =>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
 					'descr'     =>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
@@ -305,7 +339,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					'drate'     =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
 					'datef'     =>$x_paye[$my_paye_thirdpartyid]['datef'][$id],
 					'datep'     =>$x_paye[$my_paye_thirdpartyid]['datep'][$id],
+
 					'company_link'=>$company_static->getNomUrl(1, '', 20),
+
 					'ddate_start'=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
 					'ddate_end'  =>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
 					'totalht'   =>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
@@ -324,11 +360,6 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_coll_ht = 0;
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
-
-	$span = $columns;
-	if ($modetax != 1) {
-		$span += 2;
-	}
 
 	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
 
@@ -514,7 +545,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		}
 	}
 
-	if (count($x_coll) == 0) {   // Show a total ine if nothing shown
+	if (count($x_coll) == 0) {   // Show a total line if nothing shown
 		print '<tr class="liste_total">';
 		print '<td colspan="4"></td>';
 		print '<td class="right">'.$langs->trans("Total").':</td>';
@@ -598,7 +629,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="left">'.$fields['company_link'].'</td>';
+					print '<td class="tdmaxoverflow150">';
+					print $fields['company_link'];
+					print '</td>';
 
 					// Description
 					print '<td class="left">';

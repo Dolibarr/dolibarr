@@ -235,7 +235,21 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$invoice_customer->id = $x_coll[$my_coll_rate]['facid'][$id];
 			$invoice_customer->ref = $x_coll[$my_coll_rate]['facnum'][$id];
 			$invoice_customer->type = $x_coll[$my_coll_rate]['type'][$id];
-			$company_static->fetch($x_coll[$my_coll_rate]['company_id'][$id]);
+
+			//$company_static->fetch($x_coll[$my_coll_rate]['company_id'][$id]);
+			$company_static->id = $x_coll[$my_coll_rate]['company_id'][$id];
+			$company_static->name = $x_coll[$my_coll_rate]['company_name'][$id];
+			$company_static->name_alias = $x_coll[$my_coll_rate]['company_alias'][$id];
+			$company_static->email = $x_coll[$my_coll_rate]['company_email'][$id];
+			$company_static->tva_intra = $x_coll[$my_coll_rate]['tva_intra'][$id];
+			$company_static->client = $x_coll[$my_coll_rate]['company_client'][$id];
+			$company_static->fournisseur = $x_coll[$my_coll_rate]['company_fournisseur'][$id];
+			$company_static->status = $x_coll[$my_coll_rate]['company_status'][$id];
+			$company_static->code_client = $x_coll[$my_coll_rate]['company_customer_code'][$id];
+			$company_static->code_compta_client = $x_coll[$my_coll_rate]['company_customer_accounting_code'][$id];
+			$company_static->code_fournisseur = $x_coll[$my_coll_rate]['company_supplier_code'][$id];
+			$company_static->code_compta_fournisseur = $x_coll[$my_coll_rate]['company_supplier_accounting_code'][$id];
+
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
 				'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
 				'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
@@ -249,7 +263,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'dtype'     =>$x_coll[$my_coll_rate]['dtype'][$id],
 				'datef'     =>$x_coll[$my_coll_rate]['datef'][$id],
 				'datep'     =>$x_coll[$my_coll_rate]['datep'][$id],
+
 				'company_link'=>$company_static->getNomUrl(1, '', 20),
+
 				'ddate_start'=>$x_coll[$my_coll_rate]['ddate_start'][$id],
 				'ddate_end'  =>$x_coll[$my_coll_rate]['ddate_end'][$id],
 				'totalht'   =>$x_coll[$my_coll_rate]['totalht_list'][$id],
@@ -297,7 +313,20 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$invoice_supplier->id = $x_paye[$my_paye_rate]['facid'][$id];
 				$invoice_supplier->ref = $x_paye[$my_paye_rate]['facnum'][$id];
 				$invoice_supplier->type = $x_paye[$my_paye_rate]['type'][$id];
-				$company_static->fetch($x_paye[$my_paye_rate]['company_id'][$id]);
+
+				$company_static->id = $x_paye[$my_paye_rate]['company_id'][$id];
+				$company_static->name = $x_paye[$my_paye_rate]['company_name'][$id];
+				$company_static->name_alias = $x_paye[$my_paye_rate]['company_alias'][$id];
+				$company_static->email = $x_paye[$my_paye_rate]['company_email'][$id];
+				$company_static->tva_intra = $x_paye[$my_paye_rate]['tva_intra'][$id];
+				$company_static->client = $x_paye[$my_paye_rate]['company_client'][$id];
+				$company_static->fournisseur = $x_paye[$my_paye_rate]['company_fournisseur'][$id];
+				$company_static->status = $x_paye[$my_paye_rate]['company_status'][$id];
+				$company_static->code_client = $x_paye[$my_paye_rate]['company_customer_code'][$id];
+				$company_static->code_compta_client = $x_paye[$my_paye_rate]['company_customer_accounting_code'][$id];
+				$company_static->code_fournisseur = $x_paye[$my_paye_rate]['company_supplier_code'][$id];
+				$company_static->code_compta_fournisseur = $x_paye[$my_paye_rate]['company_supplier_accounting_code'][$id];
+
 				$x_both[$my_paye_rate]['paye']['detail'][] = array(
 				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
 				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
@@ -311,7 +340,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
 				'datef'     =>$x_paye[$my_paye_rate]['datef'][$id],
 				'datep'     =>$x_paye[$my_paye_rate]['datep'][$id],
+
 				'company_link'=>$company_static->getNomUrl(1, '', 20),
+
 				'ddate_start'=>$x_paye[$my_paye_rate]['ddate_start'][$id],
 				'ddate_end'  =>$x_paye[$my_paye_rate]['ddate_end'][$id],
 				'totalht'   =>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
@@ -420,6 +451,19 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		if ($invoice_type == 'customer' && $vat_rate_show == $rate) {
 			if (is_array($x_both[$rate]['coll']['detail'])) {
 				foreach ($x_both[$rate]['coll']['detail'] as $index => $fields) {
+					/*$company_static->id = $fields['company_id'];
+					$company_static->name = $fields['company_name'];
+					$company_static->name_alias = $fields['company_alias'];
+					$company_static->email = $fields['company_email'];
+					$company_static->tva_intra = $fields['tva_intra'];
+					$company_static->client = $fields['company_client'];
+					$company_static->fournisseur = $fields['company_fournisseur'];
+					$company_static->status = $fields['company_status'];
+					$company_static->code_client = $fields['company_client'];
+					$company_static->code_compta_client = $fields['company_customer_code'];
+					$company_static->code_fournisseur = $fields['company_customer_accounting_code'];
+					$company_static->code_compta_fournisseur = $fields['company_supplier_accounting_code'];*/
+
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -446,7 +490,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					else print '<td></td>';
 
 					// Company name
-					print '<td class="left">' . $fields['company_link'] . '</td>';
+					print '<td class="tdmaxoverflow150">';
+					//print $company_static->getNomUrl(1);
+					print $fields['company_link'];
+					print '</td>';
 
 					// Description
 					print '<td class="left">';
@@ -635,6 +682,19 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 			if ($invoice_type == 'supplier' && $vat_rate_show == $rate) {
 				foreach ($x_both[$rate]['paye']['detail'] as $index => $fields) {
+					/*$company_static->id = $fields['company_id'];
+					$company_static->name = $fields['company_name'];
+					$company_static->name_alias = $fields['company_alias'];
+					$company_static->email = $fields['company_email'];
+					$company_static->tva_intra = $fields['tva_intra'];
+					$company_static->client = $fields['company_client'];
+					$company_static->fournisseur = $fields['company_fournisseur'];
+					$company_static->status = $fields['company_status'];
+					$company_static->code_client = $fields['company_client'];
+					$company_static->code_compta_client = $fields['company_customer_code'];
+					$company_static->code_fournisseur = $fields['company_customer_accounting_code'];
+					$company_static->code_compta_fournisseur = $fields['company_supplier_accounting_code'];*/
+
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -664,7 +724,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="left">' . $fields['company_link'] . '</td>';
+					print '<td class="tdmaxoverflow150">';
+					//print $company_static->getNomUrl(1);
+					print $fields['company_link'];
+					print '</td>';
 
 					// Description
 					print '<td class="left">';
