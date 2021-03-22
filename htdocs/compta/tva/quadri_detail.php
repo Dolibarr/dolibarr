@@ -546,7 +546,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$payment_static->id = $fields['payment_id'];
-							print $payment_static->getNomUrl(2);
+							print $payment_static->getNomUrl(2, '', '', 0).' ';
 						}
 						if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
 							|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
@@ -612,7 +612,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	// Blank line
 	print '<tr><td colspan="'.($span+2).'">&nbsp;</td></tr>';
 
-	// Print table headers for this quadri - expenses now
+	// Print table headers for this quadri - expenses
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td class="left">'.$elementsup.'</td>';
 	print '<td class="left">'.$langs->trans("DateInvoice").'</td>';
@@ -779,7 +779,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print '<td class="nowrap right">';
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$paymentfourn_static->id = $fields['payment_id'];
-							print $paymentfourn_static->getNomUrl(2);
+							print $paymentfourn_static->getNomUrl(2, '', '', 0).' ';
 						}
 
 						if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
