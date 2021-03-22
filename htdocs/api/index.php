@@ -310,9 +310,24 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
 
-//Luracast\Restler\Defaults::$returnResponse = true;
+Luracast\Restler\Defaults::$returnResponse = true;
 //print $api->r->handle();
 
-$api->r->handle();
+$result = $api->r->handle();
+if(isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
+    if(strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+        header('Content-Encoding: br');
+        $result = brotli_compress($result, 11, BROTLI_TEXT);
+    }
+    elseif(strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+        header('Content-Encoding: bz');
+        $result = bzcompress($result, 9);
+    }
+    elseif(strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+        header('Content-Encoding: gzip');
+        $result = gzencode($result, 9);
+    }
+}
+echo $result;
 
 //session_destroy();
