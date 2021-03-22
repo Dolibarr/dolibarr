@@ -149,7 +149,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
-		$sql .= " 0 as payment_id, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
 		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
@@ -195,7 +195,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
-		$sql .= " pa.datep as datep";
+		$sql .= " pa.datep as datep, pa.ref as payment_ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
 		$sql .= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
@@ -334,7 +334,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
-		$sql .= " 0 as payment_id, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
 		$sql .= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
@@ -380,7 +380,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
-		$sql .= " pa.datep as datep";
+		$sql .= " pa.datep as datep, pa.ref as payment_ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
 		$sql .= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
@@ -492,6 +492,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$list[$assoc['company_id']]['ptype'][] = $assoc['ptype'];
 
 				$list[$assoc['company_id']]['payment_id'][] = $assoc['payment_id'];
+				$list[$assoc['company_id']]['payment_ref'][] = $assoc['payment_ref'];
 				$list[$assoc['company_id']]['payment_amount'][] = $assoc['payment_amount'];
 
 				$company_id = $assoc['company_id'];
@@ -614,6 +615,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 					$list[$assoc['company_id']]['ptype'][] = 'ExpenseReportPayment';
 
 					$list[$assoc['company_id']]['payment_id'][] = $assoc['payment_id'];
+					$list[$assoc['company_id']]['payment_ref'][] = $assoc['payment_ref'];
 					$list[$assoc['company_id']]['payment_amount'][] = $assoc['payment_amount'];
 
 					$company_id = $assoc['company_id'];
@@ -703,7 +705,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-		$sql .= " 0 as payment_id, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture."=f.rowid";
@@ -747,7 +749,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
-		$sql .= " pa.datep as datep";
+		$sql .= " pa.datep as datep, pa.ref as payment_ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymentfacturetable." as pf ON pf.".$fk_facture2." = f.rowid";;
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymenttable." as pa ON pa.rowid = pf.".$fk_payment;
@@ -855,6 +857,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$list[$assoc['rate']]['ptype'][] = $assoc['ptype'];
 
 				$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
+				$list[$assoc['rate']]['payment_ref'][] = $assoc['payment_ref'];
 				$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
 
 				$rate = $assoc['rate'];
@@ -882,7 +885,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-		$sql .= " 0 as payment_id, 0 as payment_amount";
+		$sql .= " 0 as payment_id, '' as payment_ref, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$invoicedettable." as d ON d.".$fk_facture." = f.rowid";
@@ -926,7 +929,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
 		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
-		$sql .= " pa.datep as datep";
+		$sql .= " pa.datep as datep, pa.ref as payment_ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymentfacturetable." as pf ON pf.".$fk_facture2." = f.rowid";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX.$paymenttable." as pa ON pa.rowid = pf.".$fk_payment;
@@ -1034,6 +1037,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$list[$assoc['rate']]['ptype'][] = $assoc['ptype'];
 
 				$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
+				$list[$assoc['rate']]['payment_ref'][] = $assoc['payment_ref'];
 				$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
 
 				$rate = $assoc['rate'];
@@ -1144,6 +1148,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 					$list[$assoc['rate']]['ptype'][] = 'ExpenseReportPayment';
 
 					$list[$assoc['rate']]['payment_id'][] = $assoc['payment_id'];
+					$list[$assoc['rate']]['payment_ref'][] = $assoc['payment_ref'];
 					$list[$assoc['rate']]['payment_amount'][] = $assoc['payment_amount'];
 
 					$rate = $assoc['rate'];

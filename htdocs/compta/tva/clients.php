@@ -256,6 +256,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'pstatusbuy'=>$x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id],
 
 				'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
+				'payment_ref'=>$x_coll[$my_coll_thirdpartyid]['payment_ref'][$id],
 				'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
 				'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
 				'dtotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
@@ -303,6 +304,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					'pstatusbuy'        =>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
 					'payment_id'		=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+					'payment_ref'		=>$x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
 					'payment_amount'	=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
 					'ftotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
 					'dtotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
@@ -344,6 +346,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					'pstatusbuy'=>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
 					'payment_id'=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+					'payment_ref'=>$x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
 					'payment_amount'=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
 					'ftotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
 					'dtotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
@@ -510,6 +513,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$payment_static->id = $fields['payment_id'];
+							$payment_static->ref = $fields['payment_ref'];
 							print $payment_static->getNomUrl(2, '', '', 0).' ';
 						}
 						if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
@@ -698,6 +702,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print '<td class="nowrap right">';
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$paymentfourn_static->id = $fields['payment_id'];
+							$paymentfourn_static->ref = $fields['payment_ref'];
 							print $paymentfourn_static->getNomUrl(2, '', '', 0);
 						}
 

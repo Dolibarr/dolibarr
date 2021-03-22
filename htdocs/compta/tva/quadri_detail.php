@@ -546,6 +546,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$payment_static->id = $fields['payment_id'];
+							$payment_static->ref = $fields['payment_ref'];
 							print $payment_static->getNomUrl(2, '', '', 0).' ';
 						}
 						if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
@@ -779,6 +780,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print '<td class="nowrap right">';
 						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$paymentfourn_static->id = $fields['payment_id'];
+							$paymentfourn_static->ref = $fields['payment_ref'];
 							print $paymentfourn_static->getNomUrl(2, '', '', 0).' ';
 						}
 
