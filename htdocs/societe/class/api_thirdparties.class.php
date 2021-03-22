@@ -1435,7 +1435,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
 		$sql .= " WHERE fk_soc = ".((int) $id);
 		if ($site) {
-			$sql .= " AND site ='".$this->db-escape($site)."'";
+			$sql .= " AND site ='".$this->db->escape($site)."'";
 		}
 
 		$result = $this->db->query($sql);
