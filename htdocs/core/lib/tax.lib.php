@@ -148,7 +148,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
-		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " 0 as payment_id, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
@@ -193,7 +193,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
-		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
@@ -333,7 +333,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
-		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " 0 as payment_id, 0 as payment_amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
 		$sql .= " ".MAIN_DB_PREFIX."societe as s,";
@@ -378,7 +378,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " s.code_client as company_customer_code, s.code_fournisseur as company_supplier_code,";
 		$sql .= " s.code_compta as company_customer_accounting_code, s.code_compta_fournisseur as company_supplier_accounting_code,";
 		$sql .= " s.status as company_status, s.tva_intra as company_tva_intra,";
-		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
+		$sql .= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype, p.tosell as pstatus, p.tobuy as pstatusbuy,";
 		$sql .= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount,";
 		$sql .= " pa.datep as datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";

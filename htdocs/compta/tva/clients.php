@@ -248,9 +248,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$x_both[$my_coll_thirdpartyid]['coll']['detail'][] = array(
 				'id'        =>$x_coll[$my_coll_thirdpartyid]['facid'][$id],
 				'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
+
 				'pid'       =>$x_coll[$my_coll_thirdpartyid]['pid'][$id],
 				'pref'      =>$x_coll[$my_coll_thirdpartyid]['pref'][$id],
 				'ptype'     =>$x_coll[$my_coll_thirdpartyid]['ptype'][$id],
+				'pstatus'   =>$x_paye[$my_coll_thirdpartyid]['pstatus'][$id],
+				'pstatusbuy'=>$x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id],
+
 				'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
 				'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
 				'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
@@ -291,9 +295,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
 					'id'				=>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
 					'descr'				=>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+
 					'pid'				=>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
 					'pref'				=>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
 					'ptype'				=>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+					'pstatus'           =>$x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy'        =>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+
 					'payment_id'		=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
 					'payment_amount'	=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
 					'ftotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
@@ -328,9 +336,13 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
 					'id'        =>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
 					'descr'     =>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+
 					'pid'       =>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
 					'pref'      =>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
 					'ptype'     =>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+					'pstatus'   =>$x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy'=>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+
 					'payment_id'=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
 					'payment_amount'=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
 					'ftotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
@@ -450,6 +462,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						$product_static->id = $fields['pid'];
 						$product_static->ref = $fields['pref'];
 						$product_static->type = $fields['dtype']; // We force with the type of line to have type how line is registered
+						$product_static->status = $fields['pstatus'];
+						$product_static->status_buy = $fields['pstatusbuy'];
+
 						print $product_static->getNomUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) {
 							print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 24);
