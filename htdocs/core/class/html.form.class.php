@@ -8502,7 +8502,7 @@ class Form
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) {
-			$sql .= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
+			$sql .= ' AND rowid NOT IN ('.$this->db->sanitize(implode(',', $excludeid)).')';
 		}
 		$sql .= ' ORDER BY label';
 

@@ -166,7 +166,7 @@ if ($result < 0) {
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 
 		$resql = $db->query($sql);

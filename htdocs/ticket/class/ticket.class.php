@@ -717,7 +717,7 @@ class Ticket extends CommonObject
 					$sql .= " AND ".$key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= 'AND '.$key.' IN ('.implode(',', $value).')';
+						$sql .= 'AND '.$key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
 					} else {
 						$sql .= ' AND '.$key.' = '.$this->db->escape($value);
 					}

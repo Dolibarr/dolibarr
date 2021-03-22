@@ -337,7 +337,7 @@ if ($result || empty($id)) {
 						$categ = new Categorie($db);
 						$categ->fetch($search_categ);
 						$listofprodids = $categ->getObjectsInCateg('product', 1);
-						$morefilters = ' AND d.fk_product IN ('.((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
+						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
 						$morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';

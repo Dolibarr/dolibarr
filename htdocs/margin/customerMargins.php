@@ -245,10 +245,10 @@ $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql .= " AND d.fk_facture = f.rowid";
 $sql .= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (!empty($TSelectedProducts)) {
-	$sql .= ' AND d.fk_product IN ('.implode(',', $TSelectedProducts).')';
+	$sql .= ' AND d.fk_product IN ('.$db->sanitize(implode(',', $TSelectedProducts)).')';
 }
 if (!empty($TSelectedCats)) {
-	$sql .= ' AND cp.fk_categorie IN ('.implode(',', $TSelectedCats).')';
+	$sql .= ' AND cp.fk_categorie IN ('.$db->sanitize(implode(',', $TSelectedCats)).')';
 }
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
