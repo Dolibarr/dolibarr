@@ -868,13 +868,13 @@ class Task extends CommonObject
 			$sql .= " AND p.fk_soc = ".$socid;
 		}
 		if ($projectid) {
-			$sql .= " AND p.rowid in (".$projectid.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
 		}
 		if ($filteronproj) {
 			$sql .= natural_search(array("p.ref", "p.title"), $filteronproj);
 		}
 		if ($filteronprojstatus && $filteronprojstatus != '-1') {
-			$sql .= " AND p.fk_statut IN (".$filteronprojstatus.")";
+			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($filteronprojstatus).")";
 		}
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
@@ -1062,10 +1062,10 @@ class Task extends CommonObject
 		$sql .= " AND ctc.source = 'internal'";
 		if ($projectid) {
 			if ($userp) {
-				$sql .= " AND pt.rowid in (".$projectid.")";
+				$sql .= " AND pt.rowid IN (".$this->db->sanitize($projectid).")";
 			}
 			if ($usert) {
-				$sql .= " AND pt.fk_projet in (".$projectid.")";
+				$sql .= " AND pt.fk_projet IN (".$this->db->sanitize($projectid).")";
 			}
 		}
 		if ($taskid) {
@@ -1073,7 +1073,7 @@ class Task extends CommonObject
 				$sql .= " ERROR SHOULD NOT HAPPENS";
 			}
 			if ($usert) {
-				$sql .= " AND pt.rowid = ".$taskid;
+				$sql .= " AND pt.rowid = ".((int) $taskid);
 			}
 		}
 		//print $sql;

@@ -175,7 +175,7 @@ class FormProjets
 			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
 				$sql .= " AND (p.fk_soc=".((int) $socid)." OR p.fk_soc IS NULL)";
 			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-				$sql .= " AND (p.fk_soc IN (".((int) $socid).", ".((int) $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc IN (".$this->db->sanitize(((int) $socid).", ".$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") OR p.fk_soc IS NULL)";
 			}
 		}
 		if (!empty($filterkey)) {

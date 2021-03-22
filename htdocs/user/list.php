@@ -411,7 +411,7 @@ if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
-	$sql .= " AND u.fk_user IN (".join(',', $childids).")";
+	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

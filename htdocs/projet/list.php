@@ -414,7 +414,7 @@ if ($search_opp_status) {
 		$sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1 AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
 	}
 	if ($search_opp_status == 'notopenedopp') {
-		$sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1 OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
+		$sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1 OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code = 'WON'))";
 	}
 	if ($search_opp_status == 'none') {
 		$sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1)";
@@ -431,7 +431,7 @@ if ($search_sale > 0) {
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 }
 if ($search_opp_amount != '') {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);

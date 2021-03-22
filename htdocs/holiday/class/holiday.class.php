@@ -479,7 +479,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
-		$sql .= " AND cp.fk_user IN (".$user_id.")";
+		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
 		if (!empty($filter)) {

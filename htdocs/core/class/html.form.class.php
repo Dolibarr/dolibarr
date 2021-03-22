@@ -1887,7 +1887,7 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=u.entity";
 			if ($force_entity) {
-				$sql .= " WHERE u.entity IN (0,".$force_entity.")";
+				$sql .= " WHERE u.entity IN (0, ".$force_entity.")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
@@ -1897,7 +1897,7 @@ class Form
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
 			} else {
-				$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
+				$sql .= " WHERE u.entity IN (0, ".$conf->entity.")";
 			}
 		}
 		if (!empty($user->socid)) {
@@ -8314,11 +8314,11 @@ class Form
 
 		// Permettre l'exclusion de groupes
 		if (is_array($exclude)) {
-			$excludeGroups = implode("','", $exclude);
+			$excludeGroups = implode(",", $exclude);
 		}
 		// Permettre l'inclusion de groupes
 		if (is_array($include)) {
-			$includeGroups = implode("','", $include);
+			$includeGroups = implode(",", $include);
 		}
 
 		if (!is_array($selected)) {
@@ -8344,10 +8344,10 @@ class Form
 			$sql .= " WHERE ug.entity IN (0, ".$conf->entity.")";
 		}
 		if (is_array($exclude) && $excludeGroups) {
-			$sql .= " AND ug.rowid NOT IN ('".$excludeGroups."')";
+			$sql .= " AND ug.rowid NOT IN (".$this->db->sanitize($excludeGroups).")";
 		}
 		if (is_array($include) && $includeGroups) {
-			$sql .= " AND ug.rowid IN ('".$includeGroups."')";
+			$sql .= " AND ug.rowid IN (".$this->db->sanitize($includeGroups).")";
 		}
 		$sql .= " ORDER BY ug.nom ASC";
 
@@ -8709,7 +8709,7 @@ class Form
 		$sql .= ' '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
-		//if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql .= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";

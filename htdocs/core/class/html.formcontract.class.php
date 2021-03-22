@@ -76,7 +76,7 @@ class FormContract
 		$sql .= ' c.ref_customer, c.ref_supplier';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'contrat as c';
 		$sql .= " WHERE c.entity = ".$conf->entity;
-		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
+		//if ($contratListId) $sql.= " AND c.rowid IN (".$this->db->sanitize($contratListId).")";
 		if ($socid > 0) {
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
 			if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
