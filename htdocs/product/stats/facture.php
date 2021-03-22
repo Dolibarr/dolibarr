@@ -179,7 +179,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 			}
 			if ($socid) {
-				$sql .= " AND f.fk_soc = ".$socid;
+				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 			$sql .= $db->order($sortfield, $sortorder);
 

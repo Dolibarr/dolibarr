@@ -4129,7 +4129,7 @@ class Form
 	 *
 	 *  @param	string	$selected          Id shipping mode pre-selected
 	 *  @param  string	$htmlname          Name of select zone
-	 *  @param  string	$filtre            To filter list
+	 *  @param  string	$filtre            To filter list. This parameter must not come from input of users
 	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib        To add more attribute on select
 	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
@@ -4324,7 +4324,7 @@ class Form
 	 *  @param	string	$selected           Id account pre-selected
 	 *  @param  string	$htmlname           Name of select zone
 	 *  @param  int		$status             Status of searched accounts (0=open, 1=closed, 2=both)
-	 *  @param  string	$filtre             To filter list
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
@@ -4410,7 +4410,7 @@ class Form
 	 *  @param	string	$selected           Id establishment pre-selected
 	 *  @param  string	$htmlname           Name of select zone
 	 *  @param  int		$status             Status of searched establishment (0=open, 1=closed, 2=both)
-	 *  @param  string	$filtre             To filter list
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)

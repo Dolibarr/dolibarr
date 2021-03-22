@@ -1266,10 +1266,10 @@ class Task extends CommonObject
 			$sql .= $morewherefilter;
 		}
 		if ($id > 0) {
-			$sql .= " AND t.fk_task = ".$id;
+			$sql .= " AND t.fk_task = ".((int) $id);
 		}
 		if ($userid > 0) {
-			$sql .= " AND t.fk_user = ".$userid;
+			$sql .= " AND t.fk_user = ".((int) $userid);
 		}
 
 		dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);

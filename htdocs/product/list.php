@@ -475,13 +475,13 @@ if ($fourn_id > 0) {
 	$sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 }
 if ($search_country) {
-	$sql .= " AND p.fk_country = ".$search_country;
+	$sql .= " AND p.fk_country = ".((int) $search_country);
 }
 if ($search_state) {
-	$sql .= " AND p.fk_state = ".$search_state;
+	$sql .= " AND p.fk_state = ".((int) $search_state);
 }
 if ($search_finished >= 0 && $search_finished !== '') {
-	$sql .= " AND p.finished = ".$search_finished;
+	$sql .= " AND p.finished = ".((int) $search_finished);
 }
 if ($search_accountancy_code_sell) {
 	$sql .= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);

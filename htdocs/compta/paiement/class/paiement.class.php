@@ -171,9 +171,9 @@ class Paiement extends CommonObject
 		if ($id > 0) {
 			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
-			$sql .= " AND p.ref = '".$ref."'";
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
 		} elseif ($fk_bank) {
-			$sql .= ' AND p.fk_bank = '.$fk_bank;
+			$sql .= ' AND p.fk_bank = '.((int) $fk_bank);
 		}
 
 		$resql = $this->db->query($sql);

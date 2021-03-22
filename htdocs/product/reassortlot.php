@@ -165,19 +165,19 @@ if ($snom) {
 	$sql .= natural_search("p.label", $snom);
 }
 if (!empty($tosell)) {
-	$sql .= " AND p.tosell = ".$tosell;
+	$sql .= " AND p.tosell = ".((int) $tosell);
 }
 if (!empty($tobuy)) {
-	$sql .= " AND p.tobuy = ".$tobuy;
+	$sql .= " AND p.tobuy = ".((int) $tobuy);
 }
 if (!empty($canvas)) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
-if ($catid) {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+if ($catid > 0) {
+	$sql .= " AND cp.fk_categorie = ".((int) $catid);
 }
 if ($fourn_id > 0) {
-	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
 if ($search_categ) {

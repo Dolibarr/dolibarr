@@ -132,7 +132,7 @@ print '</tr>'."\n";
 $sql = "SELECT r.id, r.libelle as label, r.module, r.module_position, r.perms, r.subperms, r.bydefault";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
-$sql .= " AND r.entity = ".$entity;
+$sql .= " AND r.entity = ".((int) $entity);
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }

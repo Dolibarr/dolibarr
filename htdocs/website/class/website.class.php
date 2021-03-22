@@ -1415,7 +1415,7 @@ class Website extends CommonObject
 			$sql = "SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
 			$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";
 			$sql .= " WHERE wp.fk_website = ".$website->id;
-			$sql .= " AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+			$sql .= " AND (wp.fk_page = ".((int) $pageid)." OR wp.rowid  = ".((int) $pageid);
 			if ($tmppage->fk_page > 0) {
 				$sql .= " OR wp.fk_page = ".$tmppage->fk_page." OR wp.rowid = ".$tmppage->fk_page;
 			}

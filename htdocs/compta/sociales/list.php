@@ -209,10 +209,6 @@ if ($year > 0) {
 	$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
 	$sql .= ")";
 }
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
-}
 if ($search_typeid) {
 	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }

@@ -426,7 +426,7 @@ if ($search_public != '') {
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
 //if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".$search_sale;
+	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";

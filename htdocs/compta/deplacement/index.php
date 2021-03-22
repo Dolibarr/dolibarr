@@ -162,7 +162,7 @@ if (!$user->rights->societe->client->voir && !$user->socid) {
 	$sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND d.fk_soc = ".$socid;
+	$sql .= " AND d.fk_soc = ".((int) $socid);
 }
 $sql .= $db->order("d.tms", "DESC");
 $sql .= $db->plimit($max, 0);

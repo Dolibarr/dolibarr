@@ -346,7 +346,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
 $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 if ($socid > 0) {
-	$sql .= " AND t.fk_soc = ".$socid;
+	$sql .= " AND t.fk_soc = ".((int) $socid);
 }
 
 foreach ($search as $key => $val) {

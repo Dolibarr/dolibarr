@@ -275,10 +275,6 @@ if ($search_account > 0) {
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND s.paye = ".$db->escape($search_status);
 }
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
-}
 if ($search_type_id) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;
 }

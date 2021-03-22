@@ -353,7 +353,7 @@ if ($reshook > 0) {
 	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) {
-	$sql .= " AND u.fk_soc = ".$socid;
+	$sql .= " AND u.fk_soc = ".((int) $socid);
 }
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0) {
