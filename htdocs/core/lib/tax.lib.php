@@ -167,7 +167,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+			$sql .= " AND f.datef > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -212,7 +213,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+			$sql .= " AND pa.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -330,7 +332,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+			$sql .= " AND f.datef > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -375,7 +378,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+			$sql .= " AND pa.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -484,7 +488,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(p.datep,'%m') > ".(($q - 1) * 3)." AND date_format(p.datep,'%m') <= ".($q * 3).")";
+			$sql .= " AND p.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
@@ -662,7 +667,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+			$sql .= " AND f.datef > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -703,7 +709,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+			$sql .= " AND pa.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -715,6 +722,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		$sql .= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
 	}
+	//print $sql;
 
 	if (!$sql) {
 		return -1;
@@ -819,7 +827,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(f.datef,'%m') > ".(($q - 1) * 3)." AND date_format(f.datef,'%m') <= ".($q * 3).")";
+			$sql .= " AND f.datef > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -860,7 +869,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(pa.datep,'%m') > ".(($q - 1) * 3)." AND date_format(pa.datep,'%m') <= ".($q * 3).")";
+			$sql .= " AND pa.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
@@ -969,7 +979,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
 		}
 		if ($q) {
-			$sql .= " AND (date_format(p.datep,'%m') > ".(($q - 1) * 3)." AND date_format(p.datep,'%m') <= ".($q * 3).")";
+			$sql .= " AND p.datep > '".$db->idate(dol_get_first_day($y, (($q - 1) * 3) + 1, false))."'";
+			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, ($q * 3), false))."'";
 		}
 		if ($date_start && $date_end) {
 			$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";

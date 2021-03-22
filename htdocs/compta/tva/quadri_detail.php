@@ -45,68 +45,11 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$now = dol_now();
-$refresh = GETPOSTISSET('submit') ? true : false;
+$refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTISSET('invoice_type')) ? true : false;
 $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') : '';
 $vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'int') : -1;
-$year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : intval(strftime('%Y', $now));
-$year_start = $year_current;
-$month_current = GETPOSTISSET('month') ? GETPOST('month', 'int') : intval(strftime('%m', $now));
-$month_start = $month_current;
-if ($refresh === false) {
-	$date_start = dol_get_first_day($year_start, $month_start);
-	$date_end = dol_get_last_day($year_start, $month_start);
-} else {
-	// Date range
-	//$year=GETPOST("year", "int");
-	//if (empty($year))
-	//{
-	//    $year_current = strftime("%Y", dol_now());
-	//    $year_start = $year_current;
-	//} else {
-	//    $year_current = $year;
-	//    $year_start = $year;
-	//}
 
-	$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-	$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
-	// Quarter
-	if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-		$q=GETPOST("q", "int");
-		if (empty($q)) {
-			if (GETPOST("month", "int")) {
-				$date_start=dol_get_first_day($year_start, GETPOST("month", "int"), false);
-				$date_end=dol_get_last_day($year_start, GETPOST("month", "int"), false);
-			} else {
-				$date_start=dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START, false);
-				if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) {
-					$date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
-				} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) {
-					$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-				} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {
-					$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
-				}
-			}
-		} else {
-			if ($q == 1) {
-				$date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false);
-			}
-			if ($q == 2) {
-				$date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false);
-			}
-			if ($q == 3) {
-				$date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false);
-			}
-			if ($q == 4) {
-				$date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false);
-			}
-		}
-	}
-}
-
-$month_start = strftime('%m', $date_start);
-$year_start  = strftime('%Y', $date_start);
-
+include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 
 $min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) {
@@ -131,7 +74,6 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
-
 /*
  * View
  */
@@ -154,7 +96,7 @@ foreach ($listofparams as $param) {
 	}
 }
 
-$title = $langs->trans("VATReport")." ".dol_print_date($date_start)." -> ".dol_print_date($date_end);
+$title = $langs->trans("VATReport")." ".dol_print_date($date_start, '', 'tzserver')." -> ".dol_print_date($date_end, '', 'tzserver');
 llxHeader('', $title, '', '', 0, 0, '', '', $morequerystring);
 
 
@@ -182,8 +124,10 @@ if ($modetax == 2) {
 }
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
-$prevyear = $year_start;
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$prevyear = $date_start_year;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -191,7 +135,7 @@ if ($prevquarter > 1) {
 	$prevquarter = 4;
 	$prevyear--;
 }
-$nextyear = $year_start;
+$nextyear = $date_start_year;
 $nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
@@ -256,9 +200,13 @@ print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 $y = $year_current;
-$total = 0;
 $i = 0;
-$columns = 5;
+
+$columns = 7;
+$span = $columns;
+if ($modetax != 1) {
+	$span += 2;
+}
 
 // Load arrays of datas
 $x_coll = tax_by_rate('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
@@ -383,11 +331,6 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
 
-	$span = $columns;
-	if ($modetax != 1) {
-		$span += 2;
-	}
-
 	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
 
 	// Customers invoices
@@ -429,7 +372,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span+1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
-			print ' - <a href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?invoice_type=customer&amp;vat_rate_show=' . urlencode($rate) . '&amp;year=' . urlencode($year_start) . '&amp;month=' . urlencode($month_start) . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
+			print ' - <a href="'.DOL_URL_ROOT.'/compta/tva/quadri_detail.php?invoice_type=customer';
+			if (!GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
+				print '&amp;vat_rate_show='.urlencode($rate);
+			}
+			print '&amp;date_startyear='.urlencode($date_start_year).'&amp;date_startmonth='.urlencode($date_start_month).'&amp;date_startday='.urlencode($date_start_day).'&amp;date_endyear='.urlencode($date_end_year).'&amp;date_endmonth='.urlencode($date_end_month).'&amp;date_endday='.urlencode($date_end_day).'">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
 			print '</td>';
 			print '</tr>'."\n";
 
@@ -642,7 +589,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print "<tr>";
 			print '<td class="tax_rate" colspan="' . ($span+1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
-			print ' - <a href="' . dol_buildpath('/compta/tva/quadri_detail.php', 1) . '?invoice_type=supplier&amp;vat_rate_show=' . $rate . '&amp;year=' . $year_start . '&amp;month=' . $month_start . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
+			print ' - <a href="'.DOL_URL_ROOT.'/compta/tva/quadri_detail.php?invoice_type=supplier';
+			if (!GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
+				print '&amp;vat_rate_show='.urlencode($rate);
+			}
+			print '&amp;date_startyear='.urlencode($date_start_year).'&amp;date_startmonth='.urlencode($date_start_month).'&amp;date_startday='.urlencode($date_start_day).'&amp;date_endyear='.urlencode($date_end_year).'&amp;date_endmonth='.urlencode($date_end_month).'&amp;date_endday='.urlencode($date_end_day).'">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
 			print '</td>';
 			print '</tr>'."\n";
 
