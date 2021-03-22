@@ -1609,9 +1609,9 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
-			// If CUSTOMER contact defined, we use it
+			// If BILLING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+			$arrayidcontact = $object->getIdContact('external', 'BILLING');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact = true;
