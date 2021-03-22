@@ -1122,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
 		if ($status != '-1') {
-			$sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
+			$sql .= " AND cp.statut IN (".$this->db->sanitize($status).")";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2209,8 +2209,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (empty($user->rights->expensereport->readall)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2251,8 +2251,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (empty($user->rights->expensereport->read_all)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

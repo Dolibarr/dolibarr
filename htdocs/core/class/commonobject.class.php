@@ -1218,7 +1218,7 @@ abstract class CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql .= " WHERE element_id = ".$this->id;
 		if ($listId) {
-			$sql .= " AND fk_c_type_contact IN (".$listId.")";
+			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 		}
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);

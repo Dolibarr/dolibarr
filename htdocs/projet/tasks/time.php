@@ -1036,7 +1036,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		if (empty($projectidforalltimes)) {
 			$sql .= " AND t.fk_task =".$object->id;
 		} else {
-			$sql .= " AND pt.fk_projet IN (".$projectidforalltimes.")";
+			$sql .= " AND pt.fk_projet IN (".$db->sanitize($projectidforalltimes).")";
 		}
 		if ($search_note) {
 			$sql .= natural_search('t.note', $search_note);

@@ -116,17 +116,8 @@ if ($user->rights->fournisseur->facture->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
-
-	if (GETPOST('filtre')) {
-		$filtrearr = explode(",", GETPOST('filtre'));
-		foreach ($filtrearr as $fil) {
-			$filt = explode(":", $fil);
-			$sql .= " AND ".$filt[0]." = ".$filt[1];
-		}
-	}
-
 	if ($search_ref) {
 		$sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
 	}

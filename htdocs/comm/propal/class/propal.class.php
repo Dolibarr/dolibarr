@@ -2821,7 +2821,7 @@ class Propal extends CommonObject
 		if (count($linkedInvoices) > 0) {
 			$sql = "SELECT rowid as facid, ref, total, datef as df, fk_user_author, fk_statut, paye";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql .= " WHERE rowid IN (".implode(',', $linkedInvoices).")";
+			$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $linkedInvoices)).")";
 
 			dol_syslog(get_class($this)."::InvoiceArrayList", LOG_DEBUG);
 			$resql = $this->db->query($sql);

@@ -187,14 +187,14 @@ class Thirdparties extends DolibarrApi
 		}
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
 		if ($socids) {
-			$sql .= " AND t.rowid IN (".$socids.")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize($socids).")";
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {

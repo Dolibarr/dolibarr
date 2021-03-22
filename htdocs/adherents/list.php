@@ -379,7 +379,7 @@ if ($search_phone_mobile) {
 	$sql .= natural_search("d.phone_mobile", $search_phone_mobile);
 }
 if ($search_country) {
-	$sql .= " AND d.country IN (".$search_country.')';
+	$sql .= " AND d.country IN (".$db->sanitize($search_country).')';
 }
 
 // Add where from extra fields

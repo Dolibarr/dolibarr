@@ -166,16 +166,16 @@ class FormProjets
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		if ($projectsListId !== false) {
-			$sql .= " AND p.rowid IN (".$projectsListId.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		if ($socid == 0) {
 			$sql .= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		}
 		if ($socid > 0) {
 			if (empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
-				$sql .= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc=".((int) $socid)." OR p.fk_soc IS NULL)";
 			} elseif ($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {    // PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-				$sql .= " AND (p.fk_soc IN (".$socid.", ".((int) $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") OR p.fk_soc IS NULL)";
+				$sql .= " AND (p.fk_soc IN (".((int) $socid).", ".((int) $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY).") OR p.fk_soc IS NULL)";
 			}
 		}
 		if (!empty($filterkey)) {
@@ -344,7 +344,7 @@ class FormProjets
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND t.fk_projet = p.rowid";
 		if ($projectsListId) {
-			$sql .= " AND p.rowid IN (".$projectsListId.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		if ($socid == 0) {
 			$sql .= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
@@ -570,9 +570,9 @@ class FormProjets
 		$sql .= " WHERE ".$projectkey." is null";
 		if (!empty($socid) && $linkedtothirdparty) {
 			if (is_numeric($socid)) {
-				$sql .= " AND t.fk_soc=".$socid;
+				$sql .= " AND t.fk_soc = ".((int) $socid);
 			} else {
-				$sql .= " AND t.fk_soc IN (".$socid.")";
+				$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socid).")";
 			}
 		}
 		if (!in_array($table_element, array('expensereport_det', 'stock_mouvement'))) {

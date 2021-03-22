@@ -125,10 +125,10 @@ class mailing_advthirdparties extends MailingTargets
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
 				$sql .= " WHERE socp.entity IN (".getEntity('socpeople').")";
 				if (count($contactid) > 0) {
-					$sql .= " AND socp.rowid IN (".implode(',', $contactid).")";
+					$sql .= " AND socp.rowid IN (".$this->db->sanitize(implode(',', $contactid)).")";
 				}
 				if (count($socid) > 0) {
-					$sql .= " AND socp.fk_soc IN (".implode(',', $socid).")";
+					$sql .= " AND socp.fk_soc IN (".$this->db->sanitize(implode(',', $socid)).")";
 				}
 				$sql .= " ORDER BY email";
 

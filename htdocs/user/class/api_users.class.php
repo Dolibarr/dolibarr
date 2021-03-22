@@ -87,7 +87,7 @@ class Users extends DolibarrApi
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($user_ids) {
-			$sql .= " AND t.rowid IN (".$user_ids.")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize($user_ids).")";
 		}
 
 		// Select products of given category
@@ -473,7 +473,7 @@ class Users extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('user').')';
 		if ($group_ids) {
-			$sql .= " AND t.rowid IN (".$group_ids.")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize($group_ids).")";
 		}
 		// Add sql filters
 		if ($sqlfilters) {

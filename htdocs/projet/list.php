@@ -370,11 +370,11 @@ if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
 }
 if (!$user->rights->projet->all->lire) {
-	$sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid > 0) {
-	$sql .= " AND (p.fk_soc = ".$socid.")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
+	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);

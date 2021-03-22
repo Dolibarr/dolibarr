@@ -133,7 +133,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot";
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
+		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
 		$sql .= " AND ps.fk_product = ".$productid;
@@ -183,7 +183,7 @@ if ($date && $dateIsValid) {
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot";
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
+		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($mode == 'future') {
 		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";
@@ -191,10 +191,10 @@ if ($date && $dateIsValid) {
 		$sql .= " AND sm.datem >= '".$db->idate($date)."'";
 	}
 	if ($productid > 0) {
-		$sql .= " AND sm.fk_product = ".$productid;
+		$sql .= " AND sm.fk_product = ".((int) $productid);
 	}
 	if ($fk_warehouse > 0) {
-		$sql .= " AND sm.fk_entrepot = ".$fk_warehouse;
+		$sql .= " AND sm.fk_entrepot = ".((int) $fk_warehouse);
 	}
 	$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
 	$resql = $db->query($sql);

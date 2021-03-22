@@ -166,7 +166,7 @@ if (!empty($conf->global->AGENT_CONTACT_TYPE)) {
 } else {
 	$sql .= " AND sc.fk_user = u.rowid";
 }
-$sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
+$sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= ' AND s.entity IN ('.getEntity('societe').')';
 $sql .= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {

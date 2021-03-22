@@ -344,7 +344,7 @@ if (empty($user->rights->holiday->readall)) {
 	$sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
 }
 if ($id > 0) {
-	$sql .= " AND cp.fk_user IN (".$id.")";
+	$sql .= " AND cp.fk_user IN (".$db->sanitize($id).")";
 }
 
 // Add where from extra fields

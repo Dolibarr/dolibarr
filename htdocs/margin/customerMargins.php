@@ -239,7 +239,7 @@ if ($socid > 0) {
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-$sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
+$sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= ' AND s.entity IN ('.getEntity('societe').')';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql .= " AND d.fk_facture = f.rowid";
