@@ -552,8 +552,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 	global $db, $conf;
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
-	//print "user_id=".$user->id.", features=".join(',', $featuresarray).", feature2=".$feature2.", objectid=".$objectid;
-	//print ", tableandshare=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select."<br>";
+	print "user_id=".$user->id.", features=".join(',', $featuresarray).", feature2=".$feature2.", objectid=".$objectid;
+	print ", tableandshare=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select."<br>";
 
 	// More parameters
 	$params = explode('&', $tableandshare);
@@ -747,6 +747,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
+		print $sql;
 
 		if ($sql) {
 			$resql = $db->query($sql);
@@ -756,6 +757,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					return false;
 				}
 			} else {
+				dol_syslog("Bad forged sql in checkUserAccessToObject", LOG_WARNING);
 				return false;
 			}
 		}
