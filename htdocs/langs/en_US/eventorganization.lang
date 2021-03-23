@@ -78,7 +78,7 @@ PriceOfBooth=Price of subscription
 PriceOfBoothHelp=Price of subscription
 EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
-
+Attendees = Attendee(s)
 #
 # Status
 #

@@ -31,7 +31,7 @@ function conferenceorboothPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("eventorganization@eventorganization");
+	$langs->load("eventorganization");
 
 	$h = 0;
 	$head = array();
@@ -39,6 +39,32 @@ function conferenceorboothPrepareHead($object)
 	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_card.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Attendees");
+	$head[$h][2] = 'attendees';
+	$nbAttendees = 0;
+	// Enable caching of project count Contacts
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'count_attendees_conferenceorbooth_'.$object->id;
+	$dataretrieved = dol_getcache($cachekey);
+	if (!is_null($dataretrieved)) {
+		$nbAttendees = $dataretrieved;
+	} else {
+		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+		$attendees=new ConferenceOrBoothAttendee($db);
+		$result = $attendees->fetchAll('', '', 0, 0, array('fk_actioncomm'=>$object->id));
+		if (!is_array($result) && $result<1) {
+			setEventMessages($attendees->error, $attendees->errors, 'errors');
+		} else {
+			$nbAttendees = count($result);
+		}
+		dol_setcache($cachekey, $nbAttendees, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+	}
+	if ($nbAttendees > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbAttendees.'</span>';
+	}
 	$h++;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
