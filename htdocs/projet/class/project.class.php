@@ -550,7 +550,7 @@ class Project extends CommonObject
 		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id)) {
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE entity IN (".getEntity('project').")";
 			if (!empty($ref)) {
@@ -621,6 +621,7 @@ class Project extends CommonObject
 			return 0;
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -832,7 +833,7 @@ class Project extends CommonObject
 		// Delete project
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -2104,7 +2105,7 @@ class Project extends CommonObject
 		$sql .= ' date_close as datecloture,';
 		$sql .= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

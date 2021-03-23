@@ -572,6 +572,7 @@ class Translate
 		}
 
 		$newstr = $key;
+		$reg = array();
 		if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
 		} elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg)) {
@@ -734,6 +735,7 @@ class Translate
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return	string         			translated string
+	 *  @see transcountrynoentities()
 	 */
 	public function transcountry($str, $countrycode)
 	{
@@ -751,6 +753,7 @@ class Translate
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return string         			translated string
+	 *  @see transcountry()
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{

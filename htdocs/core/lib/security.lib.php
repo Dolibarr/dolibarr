@@ -620,8 +620,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				}
 			}
 		} elseif (in_array($feature, $checksoc)) {	// We check feature = checksoc
-			if ($user->socid > 0) {
-				// If external user: Check permission for external users
+			// If external user: Check permission for external users
+			if ($user->socid > 0 && empty($conf->global->MAIN_EXTERNAL_USERS_CAN_SEE_SUBSIDIARY_COMPANIES)) {
 				if ($user->socid <> $objectid) {
 					return false;
 				}

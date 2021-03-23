@@ -712,7 +712,7 @@ class MouvementStock extends CommonObject
 		//if (null !== $ref) {
 			//$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
 		//} else {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		//}
 
 		$resql = $this->db->query($sql);

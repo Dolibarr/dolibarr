@@ -169,7 +169,7 @@ class Paiement extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' WHERE p.entity IN ('.getEntity('invoice').')';
 		if ($id > 0) {
-			$sql .= ' AND p.rowid = '.$id;
+			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
 			$sql .= " AND p.ref = '".$ref."'";
 		} elseif ($fk_bank) {
@@ -899,7 +899,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT p.rowid, p.datec, p.fk_user_creat, p.fk_user_modif, p.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as p';
-		$sql .= ' WHERE p.rowid = '.$id;
+		$sql .= ' WHERE p.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

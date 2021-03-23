@@ -37,7 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('projects', 'bills', 'orders'));
+$langsLoad=array('projects', 'bills', 'orders');
+if (!empty($conf->eventorganization->enabled)) {
+	$langsLoad[]='eventorganization';
+}
+
+$langs->loadLangs($langsLoad);
 
 $action		= GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -628,6 +633,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				$htmltext = $langs->trans("ProjectBillTimeDescription");
 				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 				print '<br>';
+			}
+			if (!empty($conf->eventorganization->enabled)) {
+				print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 			}
 			print '</td></tr>';
 

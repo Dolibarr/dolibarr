@@ -169,7 +169,7 @@ class UserBankAccount extends Account
 		$sql .= " owner_address, label, datec, tms as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user_rib";
 		if ($id) {
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " WHERE label = '".$this->db->escape($ref)."'";

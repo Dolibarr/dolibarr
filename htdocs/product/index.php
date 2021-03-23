@@ -125,7 +125,13 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
+	$prodser[0]['sell'] = 0;
+	$prodser[0]['buy'] = 0;
+	$prodser[0]['none'] = 0;
 	$prodser[1][0] = $prodser[1][1] = $prodser[1][2] = $prodser[1][3] = 0;
+	$prodser[1]['sell'] = 0;
+	$prodser[1]['buy'] = 0;
+	$prodser[1]['none'] = 0;
 
 	$sql = "SELECT COUNT(p.rowid) as total, p.fk_product_type, p.tosell, p.tobuy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p";

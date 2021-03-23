@@ -208,11 +208,13 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
+	 * @param  string	$ref_ext		Ref ext to get
+	 * @param	string	$email_msgid	Email msgid
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
 	{
-		$result = parent::fetch($id, $ref);
+		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 		return $result;
 	}
 
@@ -238,7 +240,7 @@ class ConferenceOrBooth extends ActionComm
 		$records = array();
 
 		$sql = 'SELECT ';
-		$sql .= $this->getFieldList();
+		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
@@ -314,11 +316,10 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete($notrigger = false)
 	{
 		//TODO delete attendees and subscription
 		return parent::delete($notrigger);
@@ -496,13 +497,16 @@ class ConferenceOrBooth extends ActionComm
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	int		$maxlength					Not use here just for declaration method compatibility with parent classes
+	 *  @param	string	$classname					Not use here just for declaration method compatibility with parent classes
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
+	 *  @param	int		$overwritepicto				Not use here just for declaration method compatibility with parent classes
 	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  string  $morecss                    Add more css on link
 	 *  @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -603,11 +607,12 @@ class ConferenceOrBooth extends ActionComm
 	 *  Return the label of the status
 	 *
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param  int		$hidenastatus   Not use here just for declaration method compatibility with parent classes
 	 *  @return	string 			       Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0, $hidenastatus = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatutEvent($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -618,7 +623,7 @@ class ConferenceOrBooth extends ActionComm
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
-	public function LibStatut($status, $mode = 0)
+	public function LibStatutEvent($status, $mode = 0)
 	{
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
@@ -627,13 +632,13 @@ class ConferenceOrBooth extends ActionComm
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
 			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatus[self::STATUS_NOTSELECTED] = $langs->trans('NotSelected');
+			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
 			$this->labelStatus[self::STATUS_DONE] = $langs->trans('Done');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
 			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatusShort[self::STATUS_NOTSELECTED] = $langs->trans('NotSelected');
+			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
 			$this->labelStatusShort[self::STATUS_DONE] = $langs->trans('Done');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
