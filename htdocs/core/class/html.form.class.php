@@ -4375,9 +4375,9 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
 					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-						$out .= '<option value="'.$obj->rowid.'" selected>';
+						$out .= '<option value="'.$obj->rowid.'" data-currency-code="'.$obj->currency_code.'" selected>';
 					} else {
-						$out .= '<option value="'.$obj->rowid.'">';
+						$out .= '<option value="'.$obj->rowid.'" data-currency-code="'.$obj->currency_code.'">';
 					}
 					$out .= trim($obj->label);
 					if ($showcurrency) {
