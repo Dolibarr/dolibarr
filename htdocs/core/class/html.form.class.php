@@ -4381,9 +4381,9 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
 					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-						$out .= '<option value="'.$obj->rowid.'" selected>';
+						$out .= '<option value="'.$obj->rowid.'" data-currency-code="'.$obj->currency_code.'" selected>';
 					} else {
-						$out .= '<option value="'.$obj->rowid.'">';
+						$out .= '<option value="'.$obj->rowid.'" data-currency-code="'.$obj->currency_code.'">';
 					}
 					$out .= trim($obj->label);
 					if ($showcurrency) {
@@ -5676,7 +5676,7 @@ class Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
-		$sql .= " AND c.code IN (".$this->db->sanitize($country_code).")";
+		$sql .= " AND c.code IN (".$this->db->sanitize($country_code, 1).")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
 		$resql = $this->db->query($sql);
@@ -5759,6 +5759,7 @@ class Form
 		$defaultnpr = (preg_match('/\*/', $selectedrate) ? 1 : $defaultnpr);
 		$defaulttx = str_replace('*', '', $selectedrate);
 		$defaultcode = '';
+		$reg = array();
 		if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 			$defaultcode = $reg[1];
 			$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);

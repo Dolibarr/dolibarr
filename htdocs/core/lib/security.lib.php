@@ -747,6 +747,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
+		//print $sql;
 
 		if ($sql) {
 			$resql = $db->query($sql);
@@ -756,6 +757,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					return false;
 				}
 			} else {
+				dol_syslog("Bad forged sql in checkUserAccessToObject", LOG_WARNING);
 				return false;
 			}
 		}
