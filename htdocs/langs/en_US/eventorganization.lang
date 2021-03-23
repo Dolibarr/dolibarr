@@ -50,6 +50,8 @@ EventOrganizationConfOrBooth= Conference Or Booth
 ManageOrganizeEvent = Manage event organisation
 ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
+AmountOfSubscriptionPaid = Amount of subscription paid
+DateSubscription = Date of subscription
 
 #
 # Template Mail
