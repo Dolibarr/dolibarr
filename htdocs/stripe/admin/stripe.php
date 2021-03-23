@@ -37,7 +37,10 @@ $servicename = 'Stripe';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
-if (!$user->admin) {
+if (empty($user->admin)) {
+	accessforbidden();
+}
+if (empty($conf->stripe->enabled)) {
 	accessforbidden();
 }
 
@@ -254,7 +257,7 @@ if (empty($conf->stripeconnect->enabled)) {
 			}
 			//print $endpoint;
 		} else {
-			print img_picto($langs->trans("inactive"), 'statut5');
+			print img_picto($langs->trans("Inactive"), 'statut5');
 		}
 	}
 	print'</td></tr>';
@@ -319,7 +322,7 @@ if (empty($conf->stripeconnect->enabled)) {
 			}
 			//print $endpoint;
 		} else {
-			print img_picto($langs->trans("inactive"), 'statut5');
+			print img_picto($langs->trans("Inactive"), 'statut5');
 		}
 	}
 	print '</td></tr>';
