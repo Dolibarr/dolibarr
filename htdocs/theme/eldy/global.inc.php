@@ -574,7 +574,9 @@ button[name='button_removefilter_x'] span.fa.fa-remove {
 button:focus {
 	outline: none;
 }
-
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
