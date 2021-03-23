@@ -943,7 +943,7 @@ class Account extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=ba.fk_accountancy_journal';
 		$sql .= " WHERE ba.entity IN (".getEntity($this->element).")";
 		if ($id) {
-			$sql .= " AND ba.rowid  = ".$id;
+			$sql .= " AND ba.rowid = ".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " AND ba.ref = '".$this->db->escape($ref)."'";

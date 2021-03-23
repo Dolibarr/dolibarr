@@ -106,7 +106,7 @@ $sql .= " p.rowid as pid, p.ref, p.title, p.public";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
 if ($search_status != '' && $search_status != '-4') {
-	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 if (trim($search_ref) != '') {
 	$sql .= natural_search('d.ref', $search_ref);

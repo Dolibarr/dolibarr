@@ -187,7 +187,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'mymodule', $id, '');
+//$result = restrictedArea($user, 'mymodule');
 //if (!$permissiontoread) accessforbidden();
 
 

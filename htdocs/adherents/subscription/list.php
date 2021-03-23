@@ -191,7 +191,7 @@ if ($search_note) {
 	$sql .= natural_search('c.note', $search_note);
 }
 if ($search_account > 0) {
-	$sql .= " AND b.fk_account = ".urldecode($search_account);
+	$sql .= " AND b.fk_account = ".((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search('c.subscription', $search_amount, 1);

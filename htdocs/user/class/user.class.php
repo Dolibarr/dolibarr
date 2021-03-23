@@ -604,7 +604,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Load default value in property ->default_values
+	 *  Load default values from database table into property ->default_values
 	 *
 	 *  @return int						> 0 if OK, < 0 if KO
 	 */
@@ -616,7 +616,7 @@ class User extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 			$defaultValues = new DefaultValues($this->db);
-			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array($this->entity, $conf->entity)));	// User 0 (all) + me (if defined)
+			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
@@ -2229,7 +2229,7 @@ class User extends CommonObject
 	/**
 	 *  Add user into a group
 	 *
-	 *  @param	int	$group      Id of group
+	 *  @param	int		$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
@@ -2245,7 +2245,7 @@ class User extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
@@ -2286,7 +2286,7 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-	 *  @param	int   $group       Id of group
+	 *  @param	int   	$group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
@@ -2302,7 +2302,7 @@ class User extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
@@ -3065,7 +3065,7 @@ class User extends CommonObject
 	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
-	 *  @param		string	$filter				SQL filter on users
+	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user intput.
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')

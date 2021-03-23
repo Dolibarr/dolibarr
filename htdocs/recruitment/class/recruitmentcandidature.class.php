@@ -819,6 +819,9 @@ class RecruitmentCandidature extends CommonObject
 		if ($status == self::STATUS_CANCELED) {
 			$statusType = 'status6';
 		}
+		if ($status == self::STATUS_REFUSED) {
+			$statusType = 'status10';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}

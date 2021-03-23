@@ -101,8 +101,8 @@ $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+if ($socid > 0) {
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if (!$user->rights->fournisseur->lire) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible

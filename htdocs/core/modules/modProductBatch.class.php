@@ -23,7 +23,7 @@
  *	\brief      Management module for batch number, eat-by and sell-by date for product
  *  \file       htdocs/core/modules/modProductBatch.class.php
  *  \ingroup    productbatch
- *  \brief      Description and activation file for module productbatch
+ *  \brief      Description and activation file for the module productbatch
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

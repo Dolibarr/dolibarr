@@ -57,14 +57,6 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $userid = GETPOST('user', 'int');
 
-// Security check
-$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
-
-// Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
-	accessforbidden();
-}
-
 $object = new Usergroup($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
@@ -77,6 +69,13 @@ $object->getrights();
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
 
+// Security check
+$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
+
+// Users/Groups management only in master entity if transverse mode
+if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+	accessforbidden();
+}
 
 
 /**

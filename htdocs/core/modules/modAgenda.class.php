@@ -28,7 +28,7 @@
  *      \brief      Module to manage agenda and events
  *      \file       htdocs/core/modules/modAgenda.class.php
  *      \ingroup    agenda
- *      \brief      File of class to describe and enable/disable module Agenda
+ *      \brief      Description and activation file for the module agenda
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

@@ -1300,7 +1300,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c ";
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
-		$sql .= " AND c.type = ".$type;
+		$sql .= " AND c.type = ".((int) $type);
 		$sql .= " AND c.fk_parent = ".$this->fk_parent;
 		$sql .= " AND c.label = '".$this->db->escape($this->label)."'";
 
@@ -1792,7 +1792,7 @@ class Categorie extends CommonObject
 			$sql = "SELECT rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_lang";
 			$sql .= " WHERE fk_category=".$this->id;
-			$sql .= " AND lang='".$key."'";
+			$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 			$result = $this->db->query($sql);
 

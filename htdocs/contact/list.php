@@ -458,7 +458,7 @@ if ($search_societe) {
 	$sql .= natural_search(empty($conf->global->SOCIETE_DISABLE_CONTACTS) ? 's.nom' : 'p.fk_soc', $search_societe);
 }
 if ($search_country) {
-	$sql .= " AND p.fk_pays IN (".$search_country.')';
+	$sql .= " AND p.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if (strlen($search_poste)) {
 	$sql .= natural_search('p.poste', $search_poste);
@@ -492,9 +492,8 @@ if (strlen($search_town)) {
 	$sql .= natural_search("p.town", $search_town);
 }
 if (count($search_roles) > 0) {
-	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
+	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
-
 if ($search_no_email != '' && $search_no_email >= 0) {
 	$sql .= " AND p.no_email = ".$db->escape($search_no_email);
 }

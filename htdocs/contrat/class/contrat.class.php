@@ -1172,7 +1172,7 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",", $tab_resql).")";
+				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".$this->db->sanitize(implode(",", $tab_resql)).")";
 
 				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 				$resql = $this->db->query($sql);

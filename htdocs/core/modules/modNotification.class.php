@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les notifications (par mail ou autre)
  *	\file       htdocs/core/modules/modNotification.class.php
  *	\ingroup    notification
- *	\brief      Fichier de description et activation du module Notification
+ *	\brief      Description and activation file for the module Notification
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

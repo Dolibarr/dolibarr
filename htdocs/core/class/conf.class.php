@@ -851,6 +851,10 @@ class Conf
 		if (isset($this->projet) && !isset($this->project)) {
 			$this->project = $this->projet;
 		}
+		// member is new use, adherent is old use still initialised
+		if (isset($this->adherent) && !isset($this->member)) {
+			$this->member = $this->adherent;
+		}
 
 		// Object $mc
 		if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {

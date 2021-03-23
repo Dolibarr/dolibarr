@@ -24,7 +24,7 @@
  * 		\defgroup   fournisseur     Module suppliers
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
- *		\brief      Description and activation file for module Supplier
+ *		\brief      Description and activation file for the module Supplier
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

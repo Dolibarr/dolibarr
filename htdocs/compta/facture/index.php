@@ -232,7 +232,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -329,7 +329,7 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -432,7 +432,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY f.rowid DESC";
 	$sql .= $db->plimit($maxCount, 0);

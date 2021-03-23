@@ -329,10 +329,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_ref) {
 	$sql .= natural_search('sp.ref', $search_ref);

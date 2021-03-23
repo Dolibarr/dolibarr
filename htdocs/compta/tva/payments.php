@@ -122,7 +122,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("LabelContrib", $_SERVER["PHP_SELF"], "tva.label", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("VATDeclaration", $_SERVER["PHP_SELF"], "tva.label", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "tva.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "tva.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "tva.amount", "", $param, 'class="right"', $sortfield, $sortorder);

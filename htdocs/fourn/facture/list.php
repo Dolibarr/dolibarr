@@ -475,13 +475,13 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " u.login";
+if ($search_categ_sup && $search_categ_sup != '-1') {
+	$sql .= ", cs.fk_categorie, cs.fk_soc";
+}
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed';
-}
-if ($search_categ_sup) {
-	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -580,10 +580,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_montant_ht != '') {
 	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
@@ -677,6 +677,9 @@ if (!$search_all) {
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
 	$sql .= " u.login";
+	if ($search_categ_sup && $search_categ_sup != '-1') {
+		$sql .= ", cs.fk_categorie, cs.fk_soc";
+	}
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by

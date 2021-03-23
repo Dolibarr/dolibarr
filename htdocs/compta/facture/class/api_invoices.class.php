@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
-/* Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
+ * Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ class Invoices extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 
 		if ($search_sale > 0) {

@@ -1488,7 +1488,7 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all (form is output by caller, recommended)
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
  *  @param  string  $helptext       Help
  *	@return	void
  */
@@ -1510,7 +1510,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Description").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("Description").'</td>';
 	print '<td>';
 	$text = $langs->trans("Value");
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
@@ -1614,24 +1614,24 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 				foreach (array_keys($_Avery_Labels) as $codecards) {
 					$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 				}
-				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : '[]'), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
+				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
 				print '<input type="hidden" name="consttype" value="yesno">';
 				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				print '</td>';
 			} else {
 				print '<td>';
-				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.($obj->type ? $obj->type : 'string').'">';
+				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				if ($obj->type == 'textarea' || in_array($const, array('ADHERENT_CARD_TEXT', 'ADHERENT_CARD_TEXT_RIGHT', 'ADHERENT_ETIQUETTE_TEXT'))) {
-					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" cols="50" rows="5" wrap="soft">'."\n";
+					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" cols="50" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue_'.$const.(empty($strictw3c) ? '' : '[]'), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : '[]'), $obj->value, 1);
+					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
@@ -1654,10 +1654,9 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 					}
 					//var_dump($arraydefaultmessage);
 					//var_dump($arrayofmessagename);
-					print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
-				} else // type = 'string' ou 'chaine'
-				{
-					print '<input type="text" class="flat" size="48" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
+					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				} else { // type = 'string' ou 'chaine'
+					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}

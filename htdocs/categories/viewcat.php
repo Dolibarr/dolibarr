@@ -207,8 +207,10 @@ $formother = new FormOther($db);
 
 $arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
-$helpurl = '';
-llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
+
+$help_url = '';
+
+llxHeader("", $langs->trans("Categories"), $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
 
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 

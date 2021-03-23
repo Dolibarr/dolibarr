@@ -2300,8 +2300,8 @@ class Commande extends CommonOrder
 		if (count($array_of_product)) {
 			$sql = "SELECT fk_product, sum(ps.reel) as total";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-			$sql .= " WHERE ps.fk_product IN (".join(',', $array_of_product).")";
-			$sql .= ' GROUP BY fk_product ';
+			$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize(join(',', $array_of_product)).")";
+			$sql .= ' GROUP BY fk_product';
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);

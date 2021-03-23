@@ -23,7 +23,7 @@
  *
  *  \file       htdocs/recruitment/core/modules/modRecruitment.class.php
  *  \ingroup    recruitment
- *  \brief      Description and activation file for module Recruitment
+ *  \brief      Description and activation file for the module Recruitment
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
