@@ -960,7 +960,7 @@ if (empty($type) || $type == 'f') {
 if ($user->rights->societe->client->voir || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), 'maxwidth300', 1);
+	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
 	$moreforfilter .= '</div>';
 }
 if ($moreforfilter) {
