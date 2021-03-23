@@ -2726,16 +2726,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->bank->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'export' && !empty($conf->export->dir_temp)) {
 		// Wrapping for export module
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
-		$accessallowed = 1;
+		// Note that a test may not be required because we force the dir of download on the directory of the user that export
+		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->export->dir_temp.'/'.$fuser->id.'/'.$original_file;
 	} elseif ($modulepart == 'import' && !empty($conf->import->dir_temp)) {
 		// Wrapping for import module
-		$accessallowed = 1;
+		$accessallowed = $user->rights->import->run;
 		$original_file = $conf->import->dir_temp.'/'.$original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
-		// Wrapping pour l'editeur wysiwyg
+		// Wrapping for wysiwyg editor
 		$accessallowed = 1;
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'systemtools' && !empty($conf->admin->dir_output)) {
