@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,19 +132,20 @@ $permissiontoadd = $user->rights->eventorganization->write;
 $permissiontodelete = $user->rights->eventorganization->delete;
 
 // Security check
-//$socid = 0;
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('Module not enabled');
+}
+$socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
 $result = restrictedArea($user, 'eventorganization');
-
+if (!$permissiontoread) accessforbidden();
 
 /*
  * Actions
  */
-
-
 if (preg_match('/^set/', $action) && $projectid > 0) {
 	$project = new Project($db);
 	//If "set" fields keys is in projects fields
@@ -387,39 +388,6 @@ if ($projectid > 0) {
 		print "</td></tr>";
 	}
 
-	print '<tr><td>';
-	$typeofdata = 'checkbox:'.($project->accept_conference_suggestions ? ' checked="checked"' : '');
-	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
-	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
-	print '</td><td>';
-	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
-	print "</td></tr>";
-
-	print '<tr><td>';
-	$typeofdata = 'checkbox:'.($project->accept_booth_suggestions ? ' checked="checked"' : '');
-	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
-	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
-	print '</td><td>';
-	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
-	print "</td></tr>";
-
-	print '<tr><td>';
-	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
-	print '</td><td>';
-	print $form->editfieldval('PriceOfRegistration', 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
-	print "</td></tr>";
-
-	print '<tr><td>';
-	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
-	print '</td><td>';
-	print $form->editfieldval('PriceOfBooth', 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
-	print "</td></tr>";
-
-	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
-	print '';
-	print "</td></tr>";
-
-
 	print '</table>';
 
 	print '</div>';
@@ -461,10 +429,11 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
-
+if ($projectid > 0) {
+	$sql .= ' AND t.fk_project='.$project->id;
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
-		//var_dump($key,$object->fields);
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
@@ -479,7 +448,6 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
-		//var_dump($key,$object->fields);
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
@@ -504,22 +472,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-/* If a group by is required
-$sql.= " GROUP BY ";
-foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
-}
-// Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-}
-// Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/','', $sql);
-*/
 
 $sql .= $db->order($sortfield, $sortorder);
 

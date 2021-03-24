@@ -41,11 +41,12 @@ function conferenceorboothPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?conforboothid='.$object->id;
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
+
+	// Enable caching of conf or booth count attendees
 	$nbAttendees = 0;
-	// Enable caching of project count Contacts
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_attendees_conferenceorbooth_'.$object->id;
 	$dataretrieved = dol_getcache($cachekey);
@@ -55,7 +56,7 @@ function conferenceorboothPrepareHead($object)
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendees=new ConferenceOrBoothAttendee($db);
 		$result = $attendees->fetchAll('', '', 0, 0, array('fk_actioncomm'=>$object->id));
-		if (!is_array($result) && $result<1) {
+		if (!is_array($result) && $result<0) {
 			setEventMessages($attendees->error, $attendees->errors, 'errors');
 		} else {
 			$nbAttendees = count($result);
