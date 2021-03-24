@@ -5367,9 +5367,11 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		// if buy price not defined, define buyprice as configured in margin admin
+		// if buy price not provided, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			// We call defineBuyPrice only if data was not provided (if input was '0', we will not go here and value will remaine '0')
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -5410,7 +5412,7 @@ class FactureLigne extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql .= ", buy_price_ht=".(($this->pa_ht || $this->pa_ht === 0 || $this->pa_ht === '0') ? price2num($this->pa_ht) : "null");	// $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".$this->rang;
