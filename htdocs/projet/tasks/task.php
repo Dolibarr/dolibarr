@@ -73,7 +73,7 @@ if ($reshook < 0) {
  * Actions
  */
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 	$error = 0;
 
 	if (empty($taskref)) {

@@ -52,7 +52,7 @@ $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
 
-if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !$_POST["cancel"])) {
+if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
 	accessforbidden();
 }
 
