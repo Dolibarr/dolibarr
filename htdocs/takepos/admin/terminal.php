@@ -67,9 +67,6 @@ $terminaltouse = $terminal;
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
-	if (GETPOST('socid', 'int') < 0) {
-		$_POST["socid"] = '';
-	}
 
 	$res = dolibarr_set_const($db, "CASHDESK_ID_THIRDPARTY".$terminaltouse, (GETPOST('socid', 'int') > 0 ? GETPOST('socid', 'int') : ''), 'chaine', 0, '', $conf->entity);
 

@@ -121,8 +121,8 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
-		$object->date_start = empty($_POST["fiscalyear"]) ? '' : $date_start;
-		$object->date_end = empty($_POST["fiscalyearend"]) ? '' : $date_end;
+		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
+		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
 		$object->statut = GETPOST('statut', 'int');
 
