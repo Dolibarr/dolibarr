@@ -6335,6 +6335,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("alt", "class", "contenteditable", "data-html", "href", "id", "name", "src", "style", "target", "title"))
 {
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
+		$stringtoclean = '<html><body>'.$stringtoclean.'</body></html>';
+		var_dump($stringtoclean);
 		$dom = new DOMDocument();
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 		if (is_object($dom)) {
@@ -6348,7 +6350,12 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			}
 		}
 
-		return $dom->saveHTML();
+		$return = $dom->saveHTML();
+
+		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
+		$return = preg_replace('/^<html><body>/', '', $return);
+		$return = preg_replace('/<\/body><\/html>$/', '', $return);
+		return $return;
 	} else {
 		return $stringtoclean;
 	}
