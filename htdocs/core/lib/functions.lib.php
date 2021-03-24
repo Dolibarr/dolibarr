@@ -6336,7 +6336,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 {
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
 		$stringtoclean = '<html><body>'.$stringtoclean.'</body></html>';
-		var_dump($stringtoclean);
+
 		$dom = new DOMDocument();
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 		if (is_object($dom)) {
