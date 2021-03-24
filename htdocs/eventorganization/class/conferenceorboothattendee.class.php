@@ -101,10 +101,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>0, 'index'=>1, 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'comment'=>"Reference of object"),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'Attendee', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>4, 'index'=>1,),
-		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>53, 'notnull'=>1, 'visible'=>4, 'index'=>1,),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>0, 'index'=>1,),
+		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>53, 'notnull'=>1, 'visible'=>0, 'index'=>1,),
 		'email' => array('type'=>'mail', 'label'=>'Email', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>1, 'index'=>1,),
 		'date_subscription' => array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>'1', 'position'=>56, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
 		'amount' => array('type'=>'price', 'label'=>'AmountOfSubscriptionPaid', 'enabled'=>'1', 'position'=>57, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"AmountOfSubscriptionPaid",),
@@ -117,7 +117,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;', '9'=>'Annul&eacute;'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'default'=>0,'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;', '9'=>'Annul&eacute;'),),
 	);
 	public $rowid;
 	public $ref;
@@ -228,7 +228,23 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		global $langs;
+
+		if (!isValidEMail($this->email)) {
+			$langs->load("errors");
+			$this->errors[] = $langs->trans("ErrorBadEMail", $this->email);
+			return -1;
+		}
+
+		$result = $this->createCommon($user, $notrigger);
+		if ($result>0) {
+			$result =$this->fetch($result);
+			if ($result>0) {
+				$this->ref = $this->id;
+				$result = $this->update($user);
+			}
+		}
+		return $result;
 	}
 
 	/**
@@ -382,6 +398,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
 		} else {
@@ -391,7 +408,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
+				if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
 					$sqlwhere[] = $key.'='.$value;
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';

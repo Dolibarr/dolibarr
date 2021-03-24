@@ -279,3 +279,48 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_tickets_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_tickets_type.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_new_vs_close_ticket.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_new_vs_close_ticket.php' AND entity = 1);
 
+
+CREATE TABLE llx_eventorganization_conferenceorboothattendee(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref varchar(128) NOT NULL,
+    fk_soc integer,
+    fk_project integer,
+    fk_actioncomm integer NOT NULL,
+    email varchar(100),
+    date_subscription datetime,
+    amount double DEFAULT NULL,
+    note_public text,
+    note_private text,
+    date_creation datetime NOT NULL,
+    tms timestamp,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    last_main_doc varchar(255),
+    import_key varchar(14),
+    model_pdf varchar(255),
+    status smallint NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_rowid (rowid);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_ref (ref);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_soc (fk_soc);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_project (fk_project);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_project FOREIGN KEY (fk_project) REFERENCES llx_projet(rowid);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_actioncomm (fk_actioncomm);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm(id);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_email (email);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT llx_eventorganization_conferenceorboothattendee_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_status (status);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_soc, fk_project, fk_actioncomm, email);
+
+create table llx_eventorganization_conferenceorboothattendee_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
+

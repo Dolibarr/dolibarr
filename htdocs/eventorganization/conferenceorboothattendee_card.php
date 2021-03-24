@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other"));
@@ -221,6 +221,12 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($confOrBooth->id > 0) {
+		print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
+	}
+	if ($object->fk_actioncomm > 0) {
+		print '<input type="hidden" name="fk_actioncomm" value="'.$object->fk_actioncomm.'">';
+	}
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -254,7 +260,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = conferenceorboothattendeePrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
+	print dol_get_fiche_head(array(), 'card', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
 
 	$formconfirm = '';
 

@@ -55,7 +55,7 @@ function conferenceorboothPrepareHead($object)
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 		$attendees=new ConferenceOrBoothAttendee($db);
-		$result = $attendees->fetchAll('', '', 0, 0, array('fk_actioncomm'=>$object->id));
+		$result = $attendees->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$object->id));
 		if (!is_array($result) && $result<0) {
 			setEventMessages($attendees->error, $attendees->errors, 'errors');
 		} else {
@@ -94,4 +94,26 @@ function conferenceorboothPrepareHead($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorbooth@eventorganization', 'remove');
 
 	return $head;
+}
+
+
+/**
+ * Prepare array of tabs for ConferenceOrBoothAttendees
+ *
+ * @param	ConferenceOrBoothAttendee	$object		ConferenceOrBoothAttendee
+ * @return 	array					Array of tabs
+ */
+function conferenceorboothattendeePrepareHead($object)
+{
+	global $db, $langs, $conf;
+
+	$langs->load("eventorganization");
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_card.php", 1).'?id='.$object->id.'&conforboothid='.$object->fk_actioncomm;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
 }

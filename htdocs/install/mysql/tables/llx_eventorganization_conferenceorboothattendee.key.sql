@@ -28,6 +28,6 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT llx_e
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_status (status);
 -- END MODULEBUILDER INDEXES
 
-ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee_soc_proj_action(fk_soc, fk_project, fk_actioncomm);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_soc, fk_project, fk_actioncomm, email);
 
 
