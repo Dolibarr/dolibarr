@@ -12,7 +12,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (or alternatively send an email to security@dolibarr.org)
+To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
 
 
 ## Hunting vulnerabilities on Dolibarr
