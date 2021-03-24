@@ -309,7 +309,7 @@ if ($resql) {
 	$moreforfilter = '';
 	if (!empty($conf->categorie->enabled)) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('Categories').': ';
+		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ');
 		$moreforfilter .= '</div>';
 	}

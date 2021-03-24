@@ -836,9 +836,9 @@ if ($resql) {
 	}
 
 	if ($id > 0) {
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 	} else {
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 	}
 
 	// Add code for pre mass action (confirmation or email presend form)
@@ -1125,7 +1125,10 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
-			print '<td>'.$objp->mid.'</td>'; // This is primary not movement id
+			print '<td>';
+			print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
+			print $objp->mid;
+			print '</td>'; // This is primary not movement id
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
