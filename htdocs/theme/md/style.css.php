@@ -555,6 +555,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.amount {
+	color: #006666;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -1155,6 +1158,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 400px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax500 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 500px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;

@@ -116,15 +116,15 @@ if (empty($nosearch)) {
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
 		foreach ($cats as $cat) {
-			$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
-
-			print "\t".'<tr class="oddeven">'."\n";
-			print "\t\t<td>";
 			$categstatic->id = $cat->id;
 			$categstatic->ref = $cat->label;
 			$categstatic->label = $cat->label;
 			$categstatic->type = $cat->type;
 			$categstatic->color = $cat->color;
+			$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
+
+			print "\t".'<tr class="oddeven">'."\n";
+			print "\t\t<td>";
 			print '<span class="noborderoncategories"'.$color.'>';
 			print $categstatic->getNomUrl(1, '');
 			print '</span>';
