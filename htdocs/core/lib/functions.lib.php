@@ -747,8 +747,11 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), '', trim($out));
-				$out = str_replace(array('../'), '', $out);
+				$out = trim($out);
+				do {
+					$oldstringtoclean = $out;
+					$out = str_ireplace(array('&quot;', '"', '../'), '', $out);
+				} while ($oldstringtoclean != $out);
 				// keep lines feed
 				$out = dol_string_nohtmltag($out, 0);
 			}
@@ -757,8 +760,11 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), '', trim($out));
-				$out = str_replace(array('../'), '', $out);
+				$out = trim($out);
+				do {
+					$oldstringtoclean = $out;
+					$out = str_ireplace(array('&quot;', '"', '../'), '', $out);
+				} while ($oldstringtoclean != $out);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
