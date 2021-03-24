@@ -752,7 +752,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
-					$out = str_ireplace(array('&quot;', '"', '../'), '', $out);
+					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
 				} while ($oldstringtoclean != $out);
 				// keep lines feed
 			}
@@ -765,7 +766,8 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
-					$out = str_ireplace(array('&quot;', '"', '../'), '', $out);
+					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
 				} while ($oldstringtoclean != $out);
 			}
 			break;
