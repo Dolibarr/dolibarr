@@ -886,6 +886,7 @@ if ($resql) {
 		print '</td>';
 	}
 	if (! empty($arrayfields['m.datem']['checked'])) {
+		// Date
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
@@ -1014,7 +1015,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['m.datem']['checked'])) {
-		print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
@@ -1132,7 +1133,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
 		}
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			// Product ref
