@@ -894,6 +894,9 @@ textarea.centpercent {
 	overflow-y: auto;
 }
 
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
 	color: #888 !important;
 	opacity: 0.4;

@@ -290,12 +290,12 @@ if ($search_user != '' && $search_user >= 0) {
 }
 // Status
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
 	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
-	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

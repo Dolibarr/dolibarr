@@ -247,7 +247,7 @@ $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
 if (empty($user->rights->salaries->readall)) {
-	$sql .= " AND s.fk_user IN (".join(',', $childids).")";
+	$sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 
 // Search criteria
@@ -274,10 +274,6 @@ if ($search_account > 0) {
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND s.paye = ".$db->escape($search_status);
-}
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
 }
 if ($search_type_id) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;

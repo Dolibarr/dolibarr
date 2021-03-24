@@ -141,14 +141,14 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 if (!$status) {
 	$sql .= " AND pfd.traite = 0";
 }
 $sql .= " AND pfd.ext_payment_id IS NULL";
 if ($status) {
-	$sql .= " AND pfd.traite = ".$status;
+	$sql .= " AND pfd.traite = ".((int) $status);
 }
 $sql .= " AND f.total_ttc > 0";
 if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {

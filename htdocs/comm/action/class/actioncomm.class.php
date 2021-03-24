@@ -1227,17 +1227,17 @@ class ActionComm extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!empty($socid)) {
-			$sql .= " AND a.fk_soc = ".$socid;
+			$sql .= " AND a.fk_soc = ".((int) $socid);
 		}
 		if (!empty($elementtype)) {
 			if ($elementtype == 'project') {
-				$sql .= ' AND a.fk_project = '.$fk_element;
+				$sql .= ' AND a.fk_project = '.((int) $fk_element);
 			} elseif ($elementtype == 'contact') {
 				$sql .= ' AND a.id IN';
 				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
-				$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
+				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
 			} else {
-				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$db->escape($elementtype)."'";
+				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) {

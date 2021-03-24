@@ -89,7 +89,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 // Define value to know what current user can do on properties of edited user
 if ($id) {
-	// $user est le user qui edite, $id est l'id de l'utilisateur edite
+	// $user is the current logged user, $id is the user we want to edit
 	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
 	|| (($user->id != $id) && $user->rights->user->user->creer));
 	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
@@ -122,6 +122,7 @@ $socialnetworks = getArrayOfSocialNetworks();
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+$error = 0;
 
 
 /**
@@ -136,11 +137,17 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {
+		if ($id <> $user->id) {		// A user can't disable itself
 			$object->fetch($id);
-			$object->setstatus(0);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
+			if ($object->admin && empty($user->admin)) {
+				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlyAdminUsersCanDisableAdminUsers"), null, 'errors');
+			} else {
+				$object->setstatus(0);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+				exit;
+			}
 		}
 	}
 	if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser) {

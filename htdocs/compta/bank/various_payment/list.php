@@ -264,10 +264,6 @@ if ($search_accountancy_subledger > 0) {
 if ($typeid > 0) {
 	$sql .= " AND v.fk_typepayment=".$typeid;
 }
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
-}
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }

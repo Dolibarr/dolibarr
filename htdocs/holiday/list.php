@@ -341,10 +341,10 @@ if (!empty($search_status) && $search_status != -1) {
 }
 
 if (empty($user->rights->holiday->readall)) {
-	$sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
+	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
 if ($id > 0) {
-	$sql .= " AND cp.fk_user IN (".$id.")";
+	$sql .= " AND cp.fk_user IN (".$db->sanitize($id).")";
 }
 
 // Add where from extra fields

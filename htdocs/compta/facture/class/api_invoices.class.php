@@ -191,7 +191,7 @@ class Invoices extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 
 		if ($search_sale > 0) {

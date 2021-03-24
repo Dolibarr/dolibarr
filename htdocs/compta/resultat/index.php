@@ -347,7 +347,7 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 
 	$sql .= " AND f.entity = ".$conf->entity;
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY dm";
 

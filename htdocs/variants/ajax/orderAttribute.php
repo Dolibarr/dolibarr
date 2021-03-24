@@ -58,7 +58,7 @@ top_httphead();
 
 // Registering the location of boxes
 if (GETPOSTISSET('roworder')) {
-	$roworder = GETPOST('roworder', 'alpha', 2);
+	$roworder = GETPOST('roworder', 'intcomma', 2);
 
 	dol_syslog("AjaxOrderAttribute roworder=".$roworder, LOG_DEBUG);
 

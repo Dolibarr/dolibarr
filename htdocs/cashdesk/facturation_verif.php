@@ -34,6 +34,14 @@ $action = GETPOST('action', 'aZ09');
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset($_SESSION['serObjFacturation']);
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * View
+ */
 
 switch ($action) {
 	default:

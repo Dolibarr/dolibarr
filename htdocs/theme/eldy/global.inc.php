@@ -574,7 +574,9 @@ button[name='button_removefilter_x'] span.fa.fa-remove {
 button:focus {
 	outline: none;
 }
-
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -6258,12 +6260,6 @@ div.tabsElem a.tab {
 /*  POS                                                                           */
 /* ============================================================================== */
 
-.menu_choix1 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png', 1) ?>') top left no-repeat;
-}
-.menu_choix2 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png', 1) ?>') top left no-repeat;
-}
 .menu_choix1,.menu_choix2 {
 	font-size: 1.4em;
 	text-align: left;
@@ -6275,7 +6271,7 @@ div.tabsElem a.tab {
 	color: #fff;
 	text-decoration: none;
 	padding-top: 18px;
-	padding-left: 54px;
+	padding-left: 10px;
 	font-size: 14px;
 	height: 38px;
 }

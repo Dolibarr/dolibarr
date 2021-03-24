@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions"));
+$langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -1139,6 +1139,7 @@ if ($action == 'delete') {
 }
 //var_dump($elementList);
 
+
 /*
  * Show a dictionary
  */
@@ -1396,6 +1397,9 @@ if ($id) {
 			}
 			if ($fieldlist[$field] == 'unit_type') {
 				$valuetoshow = $langs->trans('TypeOfUnit');
+			}
+			if ($fieldlist[$field] == 'public' && $tablib[$id] == 'TicketDictCategory') {
+				$valuetoshow = $langs->trans('TicketGroupIsPublic'); $class = 'center';
 			}
 
 			if ($id == 2) {	// Special case for state page
@@ -1738,6 +1742,9 @@ if ($id) {
 			if ($fieldlist[$field] == 'unit_type') {
 				$valuetoshow = $langs->trans('TypeOfUnit');
 			}
+			if ($fieldlist[$field] == 'public' && $tablib[$id] == 'TicketDictCategory') {
+				$valuetoshow = $langs->trans('TicketGroupIsPublic'); $cssprefix = 'center ';
+			}
 
 			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 				$showfield = 0;
@@ -1982,6 +1989,9 @@ if ($id) {
 								$class .= ' right';
 							}
 							if ($fieldlist[$field] == 'use_default') {
+								$class .= ' center';
+							}
+							if ($fieldlist[$field] == 'public') {
 								$class .= ' center';
 							}
 							// Show value for field
@@ -2343,10 +2353,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
-			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) {
+			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'public', 'sortorder', 'sens', 'category_type'))) {
 				$class = 'maxwidth50 center';
 			}
-			if (in_array($fieldlist[$field], array('use_default'))) {
+			if (in_array($fieldlist[$field], array('use_default', 'public'))) {
 				$classtd = 'center';
 			}
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) {

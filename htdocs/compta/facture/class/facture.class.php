@@ -2248,7 +2248,7 @@ class Facture extends CommonInvoice
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
-				$sql .= ' WHERE fk_facture_line IN ('.join(',', $list_rowid_det).')';
+				$sql .= ' WHERE fk_facture_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
@@ -4033,7 +4033,7 @@ class Facture extends CommonInvoice
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if ($draft) {
 			$sql .= " AND f.fk_statut = ".self::STATUS_DRAFT;
@@ -4158,13 +4158,13 @@ class Facture extends CommonInvoice
 			$sqlSit .= " AND fs.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 			$sqlSit .= " GROUP BY fs.situation_cycle_ref";
 			$sqlSit .= " ORDER BY fs.situation_counter";
-			$sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$sqlSit.") )"; // Type non 5 si facture non avoir
+			$sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$this->db->sanitize($sqlSit).") )"; // Type non 5 si facture non avoir
 		} else {
 			$sql .= " AND f.type != ".self::TYPE_SITUATION; // Type non 5 si facture non avoir
 		}
 
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= " ORDER BY f.ref";
 

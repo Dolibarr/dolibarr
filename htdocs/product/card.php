@@ -1135,6 +1135,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type != 1 && !empty($conf->stock->enabled)) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'pictofixedwidth');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
