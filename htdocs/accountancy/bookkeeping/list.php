@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -53,6 +53,8 @@ $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification
 $search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
 $search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
 $search_date_export_end = dol_mktime(0, 0, 0, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
+$search_date_validation_start = dol_mktime(0, 0, 0, GETPOST('date_validation_startmonth', 'int'), GETPOST('date_validation_startday', 'int'), GETPOST('date_validation_startyear', 'int'));
+$search_date_validation_end = dol_mktime(0, 0, 0, GETPOST('date_validation_endmonth', 'int'), GETPOST('date_validation_endday', 'int'), GETPOST('date_validation_endyear', 'int'));
 
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
@@ -157,6 +159,7 @@ $arrayfields = array(
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
@@ -224,6 +227,8 @@ if (empty($reshook)) {
 		$search_date_modification_end = '';
 		$search_date_export_start = '';
 		$search_date_export_end = '';
+		$search_date_validation_start = '';
+		$search_date_validation_end = '';
 		$search_debit = '';
 		$search_credit = '';
 		$search_lettering_code = '';
@@ -327,6 +332,16 @@ if (empty($reshook)) {
 		$filter['t.date_export<='] = $search_date_export_end;
 		$tmp = dol_getdate($search_date_export_end);
 		$param .= '&date_export_endmonth='.urlencode($tmp['mon']).'&date_export_endday='.urlencode($tmp['mday']).'&date_export_endyear='.urlencode($tmp['year']);
+	}
+	if (!empty($search_date_validation_start)) {
+		$filter['t.date_validated>='] = $search_date_validation_start;
+		$tmp = dol_getdate($search_date_validation_start);
+		$param .= '&date_validation_startmonth='.urlencode($tmp['mon']).'&date_validation_startday='.urlencode($tmp['mday']).'&date_validation_startyear='.urlencode($tmp['year']);
+	}
+	if (!empty($search_date_validation_end)) {
+		$filter['t.date_validated<='] = $search_date_validation_end;
+		$tmp = dol_getdate($search_date_validation_end);
+		$param .= '&date_validation_endmonth='.urlencode($tmp['mon']).'&date_validation_endday='.urlencode($tmp['mday']).'&date_validation_endyear='.urlencode($tmp['year']);
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -447,7 +462,8 @@ $sql .= " t.journal_label,";
 $sql .= " t.piece_num,";
 $sql .= " t.date_creation,";
 $sql .= " t.tms as date_modification,";
-$sql .= " t.date_export";
+$sql .= " t.date_export,";
+$sql .= " t.date_validated as date_validation";
 $sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 // Manage filter
 $sqlwhere = array();
@@ -468,6 +484,8 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
 		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
@@ -846,6 +864,17 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Date validation
+if (!empty($arrayfields['t.date_validated']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_validation_start, 'date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_validation_end, 'date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print '</div>';
+	print '</td>';
+}
 // Action column
 print '<td class="liste_titre center">';
 $searchpicto = $form->showFilterButtons();
@@ -897,6 +926,9 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print_liste_field_titre($arrayfields['t.date_export']['label'], $_SERVER['PHP_SELF'], "t.date_export", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['t.date_validated']['checked'])) {
+	print_liste_field_titre($arrayfields['t.date_validated']['label'], $_SERVER['PHP_SELF'], "t.date_validated", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
@@ -939,6 +971,7 @@ while ($i < min($num, $limit)) {
 	$line->date_creation = $db->jdate($obj->date_creation);
 	$line->date_modification = $db->jdate($obj->date_modification);
 	$line->date_export = $db->jdate($obj->date_export);
+	$line->date_validation = $db->jdate($obj->date_validation);
 
 	$total_debit += $line->debit;
 	$total_credit += $line->credit;
@@ -1131,12 +1164,22 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
+	// Validated operation date
+	if (!empty($arrayfields['t.date_validated']['checked'])) {
+		print '<td class="center">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
 	// Action column
 	print '<td class="nowraponall center">';
-	if (empty($line->date_export)) {
+	if (empty($line->date_export) || empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->creer) {
-			print '<a class="editfielda paddingleft marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_edit().'</a>';
+			print '<a class="editfielda paddingleft marginrightonly" href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
 		}
+	}
+	if (empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->supprimer) {
 			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}

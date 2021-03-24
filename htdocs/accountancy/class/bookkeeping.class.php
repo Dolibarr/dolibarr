@@ -135,7 +135,6 @@ class BookKeeping extends CommonObject
 
 	/**
 	 * @var float FEC:Amount (Not necessary)
-	 * @deprecated No more used
 	 */
 	public $amount;
 
@@ -722,7 +721,9 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
-		$sql .= " t.date_creation";
+		$sql .= " t.date_creation,";
+		$sql .= " t.date_export,";
+		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.$mode.' as t';
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -763,6 +764,9 @@ class BookKeeping extends CommonObject
 				$this->journal_label = $obj->journal_label;
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
+				$this->date_export = $this->db->jdate($obj->date_export);
+				$this->date_validation = $this->db->jdate($obj->date_validated);
+				$this->date_validation = $this->db->jdate($obj->date_validation);
 			}
 			$this->db->free($resql);
 
@@ -828,7 +832,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_export";
+		$sql .= " t.date_export,";
+		$sql .= " t.date_validated as date_validation";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -846,6 +851,8 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
@@ -920,6 +927,8 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_export = $this->db->jdate($obj->date_export);
+				$line->date_validation = $this->db->jdate($obj->date_validated);
+				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
 
@@ -982,6 +991,7 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.tms as date_modification,";
 		$sql .= " t.date_export";
+		$sql .= " t.date_validated as date_validation,";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		// Manage filter
 		$sqlwhere = array();
@@ -1002,6 +1012,8 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
@@ -1062,6 +1074,8 @@ class BookKeeping extends CommonObject
 				$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->date_export = $this->db->jdate($obj->date_export);
+				$line->date_validation = $this->db->jdate($obj->date_validated);
+				$line->date_validation = $this->db->jdate($obj->date_validation);
 
 				$this->lines[] = $line;
 
@@ -1442,6 +1456,8 @@ class BookKeeping extends CommonObject
 			$sql .= " AND code_journal = '".$this->db->escape($journal)."'";
 		}
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
+		// Exclusion of validated entries at the time of deletion
+		$sql .= " AND date_validated IS NULL";
 
 		// TODO: In a future we must forbid deletion if record is inside a closed fiscal period.
 
@@ -1591,7 +1607,8 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num,doc_date,code_journal,journal_label,doc_ref,doc_type,date_creation";
+		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
+		$sql .= " date_creation, tms as date_modification, date_export, date_validated as date_validation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -1608,6 +1625,10 @@ class BookKeeping extends CommonObject
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
 			$this->date_creation = $obj->date_creation;
+			$this->date_modification = $obj->date_modification;
+			$this->date_export = $obj->date_export;
+			$this->date_validation = $obj->date_validated;
+			$this->date_validation = $obj->date_validation;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__.$this->error, LOG_ERR);
@@ -1663,7 +1684,8 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation";
+		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num,";
+		$sql .= " date_creation, tms as date_modification, date_export, date_validated as date_validation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element.$mode;
 		$sql .= " WHERE piece_num = ".$piecenum;
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -1696,6 +1718,10 @@ class BookKeeping extends CommonObject
 				$line->journal_label = $obj->journal_label;
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $obj->date_creation;
+				$line->date_modification = $obj->date_modification;
+				$line->date_export = $obj->date_export;
+				$line->date_validation = $obj->date_validated;
+				$line->date_validation = $obj->date_validation;
 
 				$this->linesmvt[] = $line;
 			}
@@ -1723,7 +1749,8 @@ class BookKeeping extends CommonObject
 		$sql = "SELECT rowid, doc_date, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
-		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, piece_num";
+		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, piece_num,";
+		$sql .= " date_validated as date_validation";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 
@@ -1758,6 +1785,8 @@ class BookKeeping extends CommonObject
 				$line->sens = $obj->sens;
 				$line->code_journal = $obj->code_journal;
 				$line->piece_num = $obj->piece_num;
+				$line->date_validation = $obj->date_validated;
+				$line->date_validation = $obj->date_validation;
 
 				$this->linesexport[] = $line;
 			}
@@ -2091,4 +2120,9 @@ class BookKeepingLine
 	 * @var integer|string $date_export;
 	 */
 	public $date_export;
+
+	/**
+	 * @var integer|string $date_validation;
+	 */
+	public $date_validation;
 }
