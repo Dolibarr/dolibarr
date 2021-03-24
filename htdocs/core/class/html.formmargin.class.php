@@ -91,8 +91,10 @@ class FormMargin
 				if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
 					$line->pa_ht = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			}
-			// si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
-			if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
+
+			// If buy price is not defined (null), we will use the sell price. If defined to 0 (it means it was forced to 0 during insert, for example for a free to get product), we must still use 0.
+			//if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+			if ((!isset($line->pa_ht)) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
