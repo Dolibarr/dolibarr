@@ -1218,7 +1218,7 @@ abstract class CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql .= " WHERE element_id = ".$this->id;
 		if ($listId) {
-			$sql .= " AND fk_c_type_contact IN (".$listId.")";
+			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 		}
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -1293,10 +1293,24 @@ abstract class CommonObject
 				if (!$list) {
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
 					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
-					$tab[$i] = array('source'=>$obj->source, 'socid'=>$obj->socid, 'id'=>$obj->id,
-								   'nom'=>$obj->lastname, // For backward compatibility
-								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
-								   'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
+					$tab[$i] = array(
+						'source' => $obj->source,
+						'socid' => $obj->socid,
+						'id' => $obj->id,
+						'nom' => $obj->lastname, // For backward compatibility
+						'civility' => $obj->civility,
+						'lastname' => $obj->lastname,
+						'firstname' => $obj->firstname,
+						'email'=>$obj->email,
+						'login'=> (empty($obj->login) ? '' : $obj->login),
+						'photo' => (empty($obj->photo) ? '' : $obj->photo),
+						'statuscontact' => $obj->statuscontact,
+						'rowid' => $obj->rowid,
+						'code' => $obj->code,
+						'libelle' => $libelle_type,
+						'status' => $obj->statuslink,
+						'fk_c_type_contact' => $obj->fk_c_type_contact
+					);
 				} else {
 					$tab[$i] = $obj->id;
 				}
@@ -3008,8 +3022,8 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
-		$sql .= ' WHERE rowid = '.$rowid;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
+		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {

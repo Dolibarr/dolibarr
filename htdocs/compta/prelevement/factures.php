@@ -195,10 +195,10 @@ if ($object->type != 'bank-transfer') {
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 }
 if ($object->id > 0) {
-	$sql .= " AND p.rowid=".$object->id;
+	$sql .= " AND p.rowid = ".((int) $object->id);
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= $db->order($sortfield, $sortorder);
 

@@ -21,7 +21,7 @@
  * 		\brief      Module to include loans management
  *      \file       htdocs/core/modules/modLoan.class.php
  *      \ingroup    loan
- *      \brief      File to activate module loan
+ *      \brief      Description and activation file for the module loan
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

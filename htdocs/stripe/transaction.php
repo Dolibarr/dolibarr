@@ -53,6 +53,8 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 $optioncss = GETPOST('optioncss', 'alpha');
 
+$result = restrictedArea($user, 'banque');
+
 
 /*
  * View

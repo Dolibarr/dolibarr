@@ -2571,7 +2571,7 @@ if (empty($reshook)) {
 						$sql .= ' SET situation_cycle_ref='.$newCycle;
 						$sql .= ' , situation_final=0';
 						$sql .= ' , situation_counter='.$object->situation_counter;
-						$sql .= ' WHERE rowid IN ('.implode(',', $linkedCreditNotesList).')';
+						$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $linkedCreditNotesList)).')';
 
 						$resql = $db->query($sql);
 						if (!$resql) {
@@ -2815,9 +2815,10 @@ if (!empty($conf->projet->enabled)) {
 $now = dol_now();
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Card');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
-llxHeader('', $title, $helpurl);
+$help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $help_url);
 
 // Mode creation
 

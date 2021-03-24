@@ -180,6 +180,7 @@ if ($id > 0 || !empty($ref)) {
 
 	//print '<br>';
 
+	$cssclass='fieldtitle';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print dol_get_fiche_end();

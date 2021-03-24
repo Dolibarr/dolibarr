@@ -206,7 +206,7 @@ class Adherent extends CommonObject
 
 	public $public;
 
-	// -1:brouillon, 0:resilie, >=1:valide,paye
+	// -2:exclu, -1:brouillon, 0:resilie, >=1:valide,paye
 	// def in common object
 	//public $status;
 
@@ -326,7 +326,7 @@ class Adherent extends CommonObject
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 195),
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500,
-		'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', -1 => 'MemberStatusResiliatedShort')),
+		'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', -1 => 'MemberStatusResiliatedShort', -2 => 'MemberStatusExcludedShort')),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 800),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805)
 	);
@@ -1917,6 +1917,55 @@ class Adherent extends CommonObject
 		}
 	}
 
+	/**
+	 *		Functiun to exlude (set adherent.status to -2) a member
+	 *		TODO
+	 *		A private note should be added to know why the member has been excluded
+	 *		For historical purpose it add an "extra-subscription" type excluded
+	 *
+	 *		@param	User	$user		User making change
+	 *		@return	int					<0 if KO, >0 if OK
+	 */
+	public function exclude($user)
+	{
+		global $langs, $conf;
+
+		$error = 0;
+
+		// Check parameters
+		if ($this->statut == 0) {
+			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+		$sql .= " statut = -2";
+		$sql .= ", fk_user_valid=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$this->statut = 0;
+
+			// Call trigger
+			$result = $this->call_trigger('MEMBER_EXCLUDE', $user);
+			if ($result < 0) {
+				$error++;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2173,7 +2222,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
+	 *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie, exclu)
 	 *
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string				Label
@@ -2229,6 +2278,10 @@ class Adherent extends CommonObject
 			$statusType = 'status6';
 			$labelStatus = $langs->trans("MemberStatusResiliated");
 			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
+		} elseif ($status == -2) {
+			$statusType = 'status10';
+			$labelStatus = $langs->trans("MemberStatusExcluded");
+			$labelStatusShort = $langs->trans("MemberStatusExcludedShort");
 		}
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);

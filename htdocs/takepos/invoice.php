@@ -1419,7 +1419,7 @@ if ($placeid > 0) {
 						$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
 						$sql .= " WHERE ps.reel != 0";
-						$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
+						$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->$constantforkey);
 						$sql .= " AND e.entity IN (".getEntity('stock').")";
 						$sql .= " AND ps.fk_product = ".$line->fk_product;
 						$resql = $db->query($sql);

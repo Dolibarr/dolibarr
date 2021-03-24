@@ -63,7 +63,7 @@ $permissionnote = $user->rights->bom->write; // Used by the include of actions_s
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
 
 /*

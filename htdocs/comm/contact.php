@@ -101,7 +101,7 @@ if ($type == "f") {
 	$sql .= " AND s.fournisseur = 1";
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 
 if (dol_strlen($stcomm)) {

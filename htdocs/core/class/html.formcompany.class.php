@@ -705,7 +705,7 @@ class FormCompany extends Form
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
-				$sql .= " AND s.rowid IN (".join(',', $limitto).")";
+				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
 			$sql .= " ORDER BY s.nom ASC";
 

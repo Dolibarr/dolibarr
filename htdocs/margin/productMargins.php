@@ -195,13 +195,13 @@ if (!empty($TSelectedCats)) {
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
+$sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= " AND d.fk_facture = f.rowid";
 if ($id > 0) {
 	$sql .= " AND d.fk_product =".$id;
 }
 if (!empty($TSelectedCats)) {
-	$sql .= ' AND cp.fk_categorie IN ('.implode(',', $TSelectedCats).')';
+	$sql .= ' AND cp.fk_categorie IN ('.$db->sanitize(implode(',', $TSelectedCats)).')';
 }
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";

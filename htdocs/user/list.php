@@ -353,11 +353,11 @@ if ($reshook > 0) {
 	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) {
-	$sql .= " AND u.fk_soc = ".$socid;
+	$sql .= " AND u.fk_soc = ".((int) $socid);
 }
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0) {
-	$sql .= " AND u.fk_user IN (".$db->sanitize($db->escape($search_supervisor)).")";
+	$sql .= " AND u.fk_user IN (".$db->sanitize($search_supervisor).")";
 }
 if ($search_thirdparty != '') {
 	$sql .= natural_search(array('s.nom'), $search_thirdparty);
@@ -393,7 +393,7 @@ if ($search_api_key != '') {
 	$sql .= natural_search("u.api_key", $search_api_key);
 }
 if ($search_statut != '' && $search_statut >= 0) {
-	$sql .= " AND u.statut IN (".$db->sanitize($db->escape($search_statut)).")";
+	$sql .= " AND u.statut IN (".$db->sanitize($search_statut).")";
 }
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -411,7 +411,7 @@ if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
-	$sql .= " AND u.fk_user IN (".join(',', $childids).")";
+	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

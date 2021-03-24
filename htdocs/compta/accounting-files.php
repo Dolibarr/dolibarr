@@ -173,7 +173,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
 		}
 		// Vendor invoices
@@ -184,7 +184,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
 		}
 		// Expense reports
@@ -195,7 +195,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 			$sql .= " WHERE date_fin between  ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
 		}
 		// Donations
@@ -206,7 +206,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
 			$sql .= " WHERE datedon between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 		}
 		// Payments of salaries
@@ -217,7 +217,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 			$sql .= " WHERE datep between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 		}
 		// Social contributions
@@ -228,7 +228,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 			$sql .= " WHERE t.date_ech between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
 		}
 		// Various payments
@@ -239,7 +239,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 			$sql .= " WHERE datep between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 		}
 		// Loan payments
 		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms'])) {
@@ -249,7 +249,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " SELECT t.rowid as id, l.entity, l.label as ref, 1 as paid, (t.amount_capital+t.amount_insurance+t.amount_interest) as total_ht, (t.amount_capital+t.amount_insurance+t.amount_interest) as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'LoanPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t LEFT JOIN ".MAIN_DB_PREFIX."loan as l ON l.rowid = t.fk_loan";
 			$sql .= " WHERE datep between ".$wheretail;
-			$sql .= " AND l.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND l.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 		}
 
 		if ($sql) {

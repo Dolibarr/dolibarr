@@ -82,8 +82,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans('Assets')." - ".$langs->trans('Documents');
-$helpurl = '';
-llxHeader('', $title, $helpurl);
+
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

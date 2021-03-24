@@ -91,7 +91,7 @@ if ($action != 'create' && $action != 'edit') {
 
 /*
  *
- * Creation d'un champ optionnel
+ * Creation of an optional field
  *
  */
 
@@ -104,7 +104,7 @@ if ($action == 'create') {
 
 /*
  *
- * Edition d'un champ optionnel
+ * Edition of an optional field
  *
  */
 if ($action == 'edit' && !empty($attrname)) {

@@ -12,7 +12,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (or alternatively send an email to security@dolibarr.org)
+To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
 
 
 ## Hunting vulnerabilities on Dolibarr
@@ -65,7 +65,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 Scope is the web application (back office) and the APIs.
 
 
-## Qualifying vulnerabilities for Bug bounty programs
+## Qualifying vulnerabilities for reporting
 
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
@@ -82,7 +82,7 @@ Scope is the web application (back office) and the APIs.
 * Stack traces or path disclosure (for non admin users only)
 
 
-## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
+## Non-qualifying vulnerabilities for reporting
 
 * "Self" XSS
 * SSL/TLS best practices

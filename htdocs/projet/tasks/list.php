@@ -334,17 +334,17 @@ if ($search_task_user > 0) {
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
 if (!$user->rights->projet->all->lire) {
-	$sql .= " AND p.rowid IN (".($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
-	$sql .= " AND p.rowid = ".$projectstatic->id;
+	$sql .= " AND p.rowid = ".((int) $projectstatic->id);
 }
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) {
-	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cs.fk_categorie IS NULL";
@@ -389,10 +389,10 @@ if ($search_public != '') {
 	$sql .= " AND p.public = ".$db->escape($search_public);
 }
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 }
 if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".join(',', array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

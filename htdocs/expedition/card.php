@@ -126,6 +126,12 @@ $permissiondellink = $user->rights->expedition->delivery->creer; // Used by the 
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
+
 
 /*
  * Actions

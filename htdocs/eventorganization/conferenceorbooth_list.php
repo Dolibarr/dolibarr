@@ -265,7 +265,7 @@ if ($projectid > 0) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->rights->project->all->lire) {
 		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
-		$project->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$project->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($project, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -554,9 +554,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendConferenceOrBoothRef";

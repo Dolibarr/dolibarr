@@ -27,7 +27,7 @@
  *		\brief      Module pour gerer le suivi des commandes
  *		\file       htdocs/core/modules/modCommande.class.php
  *		\ingroup    commande
- *		\brief      Fichier de description et activation du module Commande
+ *		\brief      Description and activation file for the module command
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -368,7 +368,7 @@ class modCommande extends DolibarrModules
 		//Import CPV Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
-		$this->import_label[$r] = 'OrderLine';
+		$this->import_label[$r] = 'SaleOrderLines';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];

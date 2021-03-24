@@ -126,7 +126,7 @@ class Lettering extends BookKeeping
 					if (count($ids_fact)) {
 						$sql = 'SELECT bk.rowid, facf.ref, facf.ref_supplier ';
 						$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn facf ";
-						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (".implode(',', $ids_fact)."))";
+						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = facf.rowid AND facf.rowid IN (".$this->db->sanitize(implode(',', $ids_fact))."))";
 						$sql .= " WHERE bk.code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
 						$sql .= " AND facf.entity = ".$conf->entity;
 						$sql .= " AND ( ";
@@ -185,7 +185,7 @@ class Lettering extends BookKeeping
 					if (count($ids_fact)) {
 						$sql = 'SELECT bk.rowid, fac.ref, fac.ref_supplier ';
 						$sql .= " FROM ".MAIN_DB_PREFIX."facture fac ";
-						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (".implode(',', $ids_fact)."))";
+						$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (".$this->db->sanitize(implode(',', $ids_fact))."))";
 						$sql .= " WHERE code_journal IN (SELECT code FROM ".MAIN_DB_PREFIX."accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
 						$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 						$sql .= " AND ( ";
@@ -255,7 +255,7 @@ class Lettering extends BookKeeping
 		}
 
 		$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM ".MAIN_DB_PREFIX."accounting_bookkeeping WHERE ";
-		$sql .= " rowid IN (".implode(',', $ids).") AND date_validated IS NULL";
+		$sql .= " rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND date_validated IS NULL";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -276,7 +276,7 @@ class Lettering extends BookKeeping
 			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
 			$sql .= " lettering_code='".$this->db->escape($lettre)."'";
 			$sql .= " , date_lettering = '".$this->db->idate($now)."'"; // todo correct date it's false
-			$sql .= "  WHERE rowid IN (".implode(',', $ids).") AND date_validated IS NULL ";
+			$sql .= "  WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).") AND date_validated IS NULL ";
 			$this->db->begin();
 
 			dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);

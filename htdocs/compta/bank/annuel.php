@@ -267,7 +267,7 @@ if ($result < 0) {
 	$sql .= " WHERE b.fk_account = ba.rowid";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($id && $_GET["option"] != 'all') {
-		$sql .= " AND b.fk_account IN (".$id.")";
+		$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 	}
 
 	$resql = $db->query($sql);
@@ -299,7 +299,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
 		if ($id && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$id.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
 
@@ -381,7 +381,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev <= '".($year - $annee)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
 		if ($id && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$id.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($id).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
 

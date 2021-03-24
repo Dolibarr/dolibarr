@@ -43,12 +43,13 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $search_lastname = GETPOST('search_lastname', 'alpha');
-$search_login		= GETPOST('search_login', 'alpha');
-$search_email		= GETPOST('search_email', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
+$search_email = GETPOST('search_email', 'alpha');
 $type = GETPOST('type', 'intcomma');
-$status				= GETPOST('status', 'alpha');
+$status = GETPOST('status', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -565,6 +566,8 @@ if ($rowid > 0) {
 					$titre = $langs->trans("MembersListNotUpToDate");
 				} elseif ($status == '0') {
 					$titre = $langs->trans("MembersListResiliated");
+				} elseif ($status == '-2') {
+					$titre = $langs->trans("MembersListExcluded");
 				}
 			} elseif ($action == 'search') {
 				$titre = $langs->trans("MembersListQualified");

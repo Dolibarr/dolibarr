@@ -61,7 +61,7 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * @var string String with name of icon for conferenceorbooth. Must be the part after the 'object_' into object_conferenceorbooth.png
 	 */
-	public $picto = 'conferenceorbooth@eventorganization';
+	public $picto = 'conferenceorbooth';
 
 
 	const STATUS_DRAFT = 0;

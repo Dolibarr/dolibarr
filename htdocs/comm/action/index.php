@@ -115,8 +115,8 @@ if ($dateselect > 0) {
 }
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('search_actioncode', 'array')) {
-	$actioncode = GETPOST('search_actioncode', 'array', 3);
+if (GETPOST('search_actioncode', 'array:aZ09')) {
+	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -669,18 +669,18 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
-				$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
+	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".$db->escape($pid);
+	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";

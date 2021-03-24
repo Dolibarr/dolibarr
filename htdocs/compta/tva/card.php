@@ -405,7 +405,7 @@ if ($action == 'create') {
 	print '</div>';
 	print "<br>\n";
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -461,16 +461,14 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	// Bouton Save payment
-	print '<tr class="hide_if_no_auto_create_payment"><td>';
-	print $langs->trans("ClosePaidVATAutomatically");
-	print '</td><td><input type="checkbox" checked value="1" name="closepaidtva"></td></tr>';
-
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
+	print '<span class="hide_if_no_auto_create_payment">';
+	print '<input type="checkbox" checked value="1" name="closepaidtva"> <span class="">'.$langs->trans("ClosePaidVATAutomatically").'</span>';
+	print '</span><br>';
 	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -512,7 +510,7 @@ if ($id) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 	}
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -710,7 +708,7 @@ if ($id) {
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
 		print '<div align="center">';
