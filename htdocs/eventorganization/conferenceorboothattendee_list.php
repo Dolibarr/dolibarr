@@ -202,6 +202,13 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $now = dol_now();
+$confOrBooth = new ConferenceOrBooth($db);
+if ($conf_or_booth_id > 0) {
+	$result = $confOrBooth->fetch($conf_or_booth_id);
+	if ($result < 0) {
+		setEventMessages(null, $confOrBooth->errors, 'errors');
+	}
+}
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -219,7 +226,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm AND a.id=".$confOrBooth->id;
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -316,25 +323,18 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 //$help_url="EN:Module_ConferenceOrBoothAttendee|FR:Module_ConferenceOrBoothAttendee_FR|ES:Módulo_ConferenceOrBoothAttendee";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBoothAttendees"));
-//$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBooths"));
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee"));
 $morejs = array();
 $morecss = array();
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
-if ($conf_or_booth_id > 0) {
-	$confOrBooth = new ConferenceOrBooth($db);
-	$result = $confOrBooth->fetch($conf_or_booth_id);
-	if ($result < 0) {
-		setEventMessages(null, $confOrBooth->errors, 'errors');
-	}
-
+if ($confOrBooth->id > 0) {
 	$head = conferenceorboothPrepareHead($confOrBooth);
 	print dol_get_fiche_head($head, 'attendees', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
 
 	//$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-	$title = $langs->trans("ConferenceOrBooths") . ' - ' . $langs->trans("ConferenceOrBoothsAttendees") . ' - ' . $confOrBooth->id;
+	$title = $langs->trans("ConferenceOrBooth") . ' - ' . $langs->trans("Attendees") . ' - ' . $confOrBooth->id;
 
 	$object_evt=$object;
 	$object=$confOrBooth;
@@ -588,6 +588,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
+			} elseif ($key == 'ref') {
+				print $object->getNomUrl(1, 'conforboothid');
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

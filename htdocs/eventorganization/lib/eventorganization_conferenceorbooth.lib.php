@@ -116,4 +116,10 @@ function conferenceorboothattendeePrepareHead($object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothattendee@eventorganization');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothattendee@eventorganization', 'remove');
+
+	return $head;
 }

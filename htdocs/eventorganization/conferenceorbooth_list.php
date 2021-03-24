@@ -735,6 +735,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
+			} elseif ($key == 'ref') {
+				print $object->getNomUrl(1);
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

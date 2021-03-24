@@ -61,7 +61,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	/**
 	 * @var string String with name of icon for conferenceorboothattendee. Must be the part after the 'object_' into object_conferenceorboothattendee.png
 	 */
-	public $picto = 'conferenceorboothattendee@eventorganization';
+	public $picto = 'contact';
 
 
 	const STATUS_DRAFT = 0;
@@ -735,6 +735,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
+			}
+
+			if ($option == 'conforboothid') {
+				$url .= '&conforboothid='.$this->fk_actioncomm;
 			}
 		}
 
