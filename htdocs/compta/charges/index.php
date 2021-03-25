@@ -277,15 +277,15 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as pv";
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON (ptva.fk_tva = pv.rowid)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_vat as ptva ON (ptva.fk_tva = pv.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON (ptva.fk_bank = b.rowid)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON ptva.fk_typepaiement = pct.id";
 	$sql .= " WHERE pv.entity IN (".getEntity("tax").")";
 	if ($year > 0) {
 		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-		$sql .= " AND ptva.datep between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
+		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
 	if (preg_match('/^pv\./', $sortfield) || preg_match('/^ptva\./', $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
