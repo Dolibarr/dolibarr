@@ -81,7 +81,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
 			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1);
 		}
-		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'-'.$tmplabelextra.$_POST["options_" . $tmpkeyextra].'<br>'."\n";
+		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
 		if (empty($enabled)) {
 			continue; // 0 = Never visible field

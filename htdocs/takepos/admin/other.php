@@ -63,9 +63,6 @@ if ($resql) {
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
-	if (GETPOST('socid', 'int') < 0) {
-		$_POST["socid"] = '';
-	}
 
 	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);

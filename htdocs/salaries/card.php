@@ -282,7 +282,7 @@ if ($action == 'confirm_delete') {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write) {
 	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
 	if (empty($amount)) {

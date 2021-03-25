@@ -132,7 +132,7 @@ print "<br>";
 
 if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	// Social contributions only
-	print load_fiche_titre($langs->trans("SocialContributionsPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+	print load_fiche_titre($langs->trans("SocialContributions").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -269,7 +269,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 
 	$tva = new Tva($db);
 
-	print load_fiche_titre($langs->trans("VATPayments").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
+	print load_fiche_titre($langs->trans("VATDeclarations").($year ? ' ('.$langs->trans("Year").' '.$year.')' : ''), '', '');
 
 	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.fk_bank,";
 	$sql .= " pct.code as payment_code,";

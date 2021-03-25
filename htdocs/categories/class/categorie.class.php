@@ -1520,7 +1520,6 @@ class Categorie extends CommonObject
 		return $cats;
 	}
 
-
 	/**
 	 * 	Returns categories whose id or name match
 	 * 	add wildcards in the name unless $exact = true
@@ -1555,7 +1554,7 @@ class Categorie extends CommonObject
 		$sql .= " AND entity IN (".getEntity('category').")";
 		if ($nom) {
 			if (!$exact) {
-				$nom = '%'.str_replace('*', '%', $nom).'%';
+				$nom = '%'.$this->db->escape(str_replace('*', '%', $nom)).'%';
 			}
 			if (!$case) {
 				$sql .= " AND label LIKE '".$this->db->escape($nom)."'";
@@ -1564,7 +1563,7 @@ class Categorie extends CommonObject
 			}
 		}
 		if ($id) {
-			$sql .= " AND rowid = '".$id."'";
+			$sql .= " AND rowid = ".((int) $id);
 		}
 
 		$res = $this->db->query($sql);

@@ -144,13 +144,13 @@ class DiscountAbsolute
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
 		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
 		if ($rowid) {
-			$sql .= " AND sr.rowid=".$rowid;
+			$sql .= " AND sr.rowid=".((int) $rowid);
 		}
 		if ($fk_facture_source) {
-			$sql .= " AND sr.fk_facture_source=".$fk_facture_source;
+			$sql .= " AND sr.fk_facture_source = ".((int) $fk_facture_source);
 		}
 		if ($fk_invoice_supplier_source) {
-			$sql .= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
+			$sql .= " AND sr.fk_invoice_supplier_source = ".((int) $fk_invoice_supplier_source);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
