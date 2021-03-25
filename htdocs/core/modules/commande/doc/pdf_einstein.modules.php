@@ -280,7 +280,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				// Set nblines with the new command lines content after hook
 				$nblines = count($object->lines);
-				
+
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
