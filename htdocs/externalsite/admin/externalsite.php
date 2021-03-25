@@ -41,8 +41,6 @@ if (!$user->admin) {
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'externalsite'));
 
-$def = array();
-
 $action = GETPOST('action', 'aZ09');
 
 // Sauvegardes parametres
@@ -51,8 +49,11 @@ if ($action == 'update') {
 
 	$db->begin();
 
-	$label  = GETPOST('EXTERNALSITE_LABEL', 'alpha');
-	$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
+	$label  = GETPOST('EXTERNALSITE_LABEL', 'alphanohtml');
+
+	$exturl = GETPOST('EXTERNALSITE_URL', 'none');
+	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
+	$exturl = dol_string_onlythesehtmlattributes($exturl);
 
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
@@ -77,7 +78,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ExternalSiteSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print $langs->trans("Module100Desc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("Module100Desc")."</span><br>\n";
 print '<br>';
 
 print '<form name="externalsiteconfig" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
