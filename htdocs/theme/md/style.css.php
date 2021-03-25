@@ -2452,6 +2452,7 @@ div.mainmenu.website {
 	// End of part to add more div class css
 }	// End test if $dol_hide_topmenu ?>
 
+
 .tmenuimage {
 	padding:0 0 0 0 !important;
 	margin:0 0px 0 0 !important;
@@ -2463,6 +2464,9 @@ div.mainmenu.website {
 	<?php if ($disableimages) { ?>
 		display: none;
 	<?php } ?>
+}
+a.tmenuimage:hover {
+	text-decoration: none;
 }
 a.tmenuimage {
 	display: block;
