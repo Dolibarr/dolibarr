@@ -2002,7 +2002,9 @@ class Form
 						if (!$obj->entity) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
 						} else {
-							$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+							if ($obj->entity != $conf->entity) {
+								$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+							}
 						}
 					}
 					$moreinfo .= ($moreinfo ? ')' : '');
