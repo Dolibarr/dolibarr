@@ -562,9 +562,9 @@ if ($action == 'edit') {
 
 	if (empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 		// Force e-mail recipient
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.$conf->global->MAIN_MAIL_FORCE_SENDTO;
-		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
-			if (!isValidEmail($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
+		if (!empty(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
+			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
 				print img_warning($langs->trans("ErrorBadEMail"));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
@@ -677,17 +677,17 @@ if ($action == 'edit') {
 
 			// Domain
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
-			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
+			print '<td>'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_DOMAIN');
 			print '</td></tr>';
 
 			// Selector
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
-			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+			print '<td>'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_SELECTOR');
 			print '</td></tr>';
 
 			// PRIVATE KEY
 			print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
-			print '<td>'.$conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
+			print '<td>'.getDolGlobalString('MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY');
 			print '</td></tr>';
 		}
 

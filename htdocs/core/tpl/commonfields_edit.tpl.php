@@ -77,6 +77,8 @@ foreach ($object->fields as $key => $val) {
 			$check = 'restricthtml';
 		}
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif ($val['type'] == 'price') {
+		$value = price2num(GETPOST($key));
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}

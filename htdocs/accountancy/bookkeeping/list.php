@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,16 @@ if (empty($listofformat[$formatexportset])) {
 }
 
 $error = 0;
+
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -471,7 +481,7 @@ if (count($filter) > 0) {
 	}
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
-if ($conf->global->ACCOUNTING_REEXPORT == 0) {
+if (empty($conf->global->ACCOUNTING_REEXPORT)) {
 	$sql .= " AND t.date_export IS NULL";
 }
 if (count($sqlwhere) > 0) {
@@ -487,7 +497,7 @@ if (!empty($sortfield)) {
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
 	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');

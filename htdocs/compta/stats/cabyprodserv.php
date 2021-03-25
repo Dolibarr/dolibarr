@@ -52,8 +52,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
-$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
+$sortorder = GETPOST("sortorder", 'aZ09');
+$sortfield = GETPOST("sortfield", 'aZ09');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -89,16 +89,16 @@ $date_endyear = GETPOST("date_endyear");
 $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzuserrel');
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzuserrel');
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int");
@@ -323,9 +323,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND (p.rowid IN ";
 		$sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
 		if ($subcat) {
-			$sql .= "cp.fk_categorie IN (".$listofcatsql.")";
+			$sql .= "cp.fk_categorie IN (".$db->sanitize($listofcatsql).")";
 		} else {
-			$sql .= "cp.fk_categorie = ".$selected_cat;
+			$sql .= "cp.fk_categorie = ".((int) $selected_cat);
 		}
 		$sql .= "))";
 	}

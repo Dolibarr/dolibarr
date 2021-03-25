@@ -36,6 +36,15 @@ $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 $action = GETPOST('action', 'aZ09');
 $bankaccountid = GETPOST('cashdeskbank');
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
 switch ($action) {
 	default:
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';

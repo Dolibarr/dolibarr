@@ -10,6 +10,11 @@
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
 -- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
+-- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
+
+
+
+-- LICENSE ---------------------------------------------------------------------
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,17 +30,41 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
+
+-- WARNING ------------------------------------------------------------------
 --
 -- Do not add comments at the end of the lines, this file is parsed during
 -- the install and all '--' prefixed texts are are removed.
 -- Do not concatenate the values in a single query, for the same reason.
 --
 
---
--- Regions
+
+-- NOTES ---------------------------------------------------------------------
+-- Regions 
+-- ID Country 
+-- 1 France
+-- 2 Belgium
+-- 3 Italy
+-- 4 Spain
+-- 5 Germany -> use departments
+-- 6 Switzerland
+-- 7 United Kingdom (NOT England)
 --
 
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 0,   0,    '0',0,'-');
+
+-- TEMPLATE ----------------------------------------------------------------------------------------
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 0,   0,   '0',0,'-');
+
+
+-- Austria Regions (id country=41)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 41, 4101, '', 0, 'Österreich', 1);
+
+
+-- Belgium Regions (id country=2)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2, 201, '',1,'Flandre');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2, 202, '',2,'Wallonie');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2, 203, '',3,'Bruxelles-Capitale');
+
 
 -- Regions France (id country=1)
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   1,'97105',3,'Guadeloupe');
@@ -58,13 +87,6 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  8
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  93,'13055',0,'Provence-Alpes-Côte d''Azur');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  94,'2A004',0,'Corse');
 
--- Regions Austria (id country=41)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  41, 4101, '', 0, 'Österreich', 1);
-
--- Regions Belgium (id country=2)
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 2, 201,     '',1,'Flandre');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 2, 202,     '',2,'Wallonie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 2, 203,     '',3,'Bruxelles-Capitale');
 
 -- Regions Italy (id country=3)
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 3, 301, NULL, 1, 'Abruzzo');
@@ -131,7 +153,7 @@ INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) v
 -- Regions Switzerland (id country=6) 
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  6, 601, '', 1, 'Cantons', 1); 
 
--- Regions England (id_country=7)
+-- Regions UK United Kingdom (id_country=7)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  7, 701, '', 0, 'England', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  7, 702, '', 0, 'Wales', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  7, 703, '', 0, 'Scotland', 1);
@@ -163,7 +185,7 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,102
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1023, '',0,'Tunis');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1024, '',0,'Zaghouan');
 
--- Region US (id country=11)
+-- Region USA (id country=11)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 11, 1101, '', 0, 'United-States', 1);
 
 -- Regions Algeria (id country=13)

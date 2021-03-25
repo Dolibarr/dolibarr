@@ -182,7 +182,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->holiday->readall)) {
-		$sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
+		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
@@ -263,7 +263,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
-		$sql .= ' AND x.fk_user_author IN ('.join(',', $childids).')';
+		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;

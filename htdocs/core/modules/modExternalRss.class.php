@@ -21,7 +21,7 @@
  *	\brief      Module pour inclure des informations externes RSS
  *	\file       htdocs/core/modules/modExternalRss.class.php
  *	\ingroup    externalrss
- *	\brief      Fichier de description et activation du module externalrss
+ *	\brief      Description and activation file for the module externalrss
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

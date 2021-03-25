@@ -92,7 +92,7 @@ if ($action == 'settemplates') {
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "restricthtml"), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "alphawithlgt"), 'chaine', 0, '', $conf->entity);
 	if ($result < 0) {
 		$error++;
 	}
@@ -270,7 +270,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 
 	$helptext = '';
-	form_constantes($constantes, 2, $helptext);
+	form_constantes($constantes, 3, $helptext);
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

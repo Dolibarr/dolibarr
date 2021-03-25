@@ -49,18 +49,6 @@ $date_endday = GETPOST('date_endday', 'int');
 $date_endyear = GETPOST('date_endyear', 'int');
 $showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ?GETPOST('showaccountdetail', 'aZ09') : 'no';
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-if (!empty($conf->comptabilite->enabled)) {
-	$result = restrictedArea($user, 'compta', '', '', 'resultat');
-}
-if (!empty($conf->accounting->enabled)) {
-	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -151,6 +139,17 @@ if (GETPOST("modecompta", 'alpha')) {
 
 $AccCat = new AccountancyCategory($db);
 
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
 
 
 /*

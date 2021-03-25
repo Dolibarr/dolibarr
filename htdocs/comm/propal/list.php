@@ -565,7 +565,7 @@ if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.$socid;
 }
 if ($search_status != '' && $search_status != '-1') {
-	$sql .= ' AND p.fk_statut IN ('.$db->sanitize($db->escape($search_status)).')';
+	$sql .= ' AND p.fk_statut IN ('.$db->sanitize($search_status).')';
 }
 if ($search_date_start) {
 	$sql .= " AND p.datep >= '".$db->idate($search_date_start)."'";

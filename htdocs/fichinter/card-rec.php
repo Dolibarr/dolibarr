@@ -736,8 +736,8 @@ if ($action == 'create') {
 			}
 			print '</table>';
 
-			/**
-			 * Barre d'actions
+			/*
+			 * Action bar
 			 */
 			print '<div class="tabsAction">';
 

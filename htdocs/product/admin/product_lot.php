@@ -37,8 +37,8 @@ $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 
 // Clean param
-if (empty($conf->global->SERIALS_SEPARATOR)) {
-	dolibarr_set_const($db, 'SERIALS_SEPARATOR', ";", 'chaine', 0, '', $conf->entity);
+if (empty($conf->global->PRODUCTBATCH_SERIALS_SEPARATOR)) {
+	dolibarr_set_const($db, 'PRODUCTBATCH_SERIALS_SEPARATOR', ";", 'chaine', 0, '', $conf->entity);
 }
 
 /*
@@ -74,12 +74,12 @@ if ($action == 'updateMaskLot') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'setmodlot') {
-	dolibarr_set_const($db, "LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmodsn') {
-	dolibarr_set_const($db, "SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
-elseif ($action == 'other' && GETPOST('value_SERIALS_SEPARATOR') > 0) {
-	$res = dolibarr_set_const($db, "SERIALS_SEPARATOR", GETPOST('value_SERIALS_SEPARATOR'), 'chaine', 0, '', $conf->entity);
+elseif ($action == 'other' && GETPOST('value_PRODUCTBATCH_SERIALS_SEPARATOR') > 0) {
+	$res = dolibarr_set_const($db, "PRODUCTBATCH_SERIALS_SEPARATOR", GETPOST('value_PRODUCTBATCH_SERIALS_SEPARATOR'), 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -100,7 +100,7 @@ print load_fiche_titre($langs->trans("ProductLotSetup"), $linkback, 'title_setup
 
 $head = product_lot_admin_prepare_head();
 
-dol_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'productbatch');
+dol_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 /*
  * Lot Numbering models
@@ -151,7 +151,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->LOT_ADDON == $file) {
+						if ($conf->global->PRODUCTBATCH_LOT_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&amp;value='.$file.'">';
@@ -243,7 +243,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->SN_ADDON == $file) {
+						if ($conf->global->PRODUCTBATCH_SN_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&amp;value='.$file.'">';
@@ -308,7 +308,7 @@ print '</tr>'."\n";
 // Serial numbers separator
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SerialNumbersSeparator").'</td>';
-print '<td class="right"><input size="3" type="text" class="flat" name="value_SERIALS_SEPARATOR" value="'.$conf->global->SERIALS_SEPARATOR.'"></td>';
+print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUCTBATCH_SERIALS_SEPARATOR" value="'.$conf->global->PRODUCTBATCH_SERIALS_SEPARATOR.'"></td>';
 print '</tr>';
 
 print '</table>';

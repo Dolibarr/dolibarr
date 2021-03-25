@@ -205,7 +205,7 @@ class FormFile
 			$out .= ' ';
 			if ($sectionid) {	// Show overwrite if exists for ECM module only
 				$langs->load('link');
-				$out .= '<input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label>';
+				$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label></span>';
 			}
 			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
@@ -1778,7 +1778,7 @@ class FormFile
 
 				// Share link
 				print '<td class="right">';
-				if ($file['share']) {
+				if (!empty($file['share'])) {
 					// Define $urlwithroot
 					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file

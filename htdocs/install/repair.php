@@ -1175,7 +1175,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 	foreach ($conf->modules as $key => $val) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
+	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods).') AND id > 100000';
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);

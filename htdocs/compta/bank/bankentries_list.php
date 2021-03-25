@@ -10,7 +10,6 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
-
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -582,7 +581,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) {
-	$sql .= " AND b.fk_account = ".$search_account;
+	$sql .= " AND b.fk_account = ".((int) $search_account);
 }
 // Search period criteria
 if (dol_strlen($search_dt_start) > 0) {
@@ -608,7 +607,7 @@ if ($search_num_releve) {
 	$sql .= natural_search("b.num_releve", $search_num_releve);
 }
 if ($search_conciliated != '' && $search_conciliated != '-1') {
-	$sql .= " AND b.rappro = ".urlencode($search_conciliated);
+	$sql .= " AND b.rappro = ".((int) $search_conciliated);
 }
 if ($search_thirdparty_user) {
 	$sql.= " AND (b.rowid IN ";
@@ -644,20 +643,21 @@ if ($search_description) {
 	}
 	$sql .= natural_search("b.label", $search_description_to_use); // Warning some text are just translation keys, not translated strings
 }
+
 if ($search_bid > 0) {
-	$sql .= " AND b.rowid=l.lineid AND l.fk_categ=".$search_bid;
+	$sql .= " AND b.rowid = l.lineid AND l.fk_categ = ".((int) $search_bid);
 }
 if (!empty($search_type)) {
-	$sql .= " AND b.fk_type = '".$db->escape($search_type)."' ";
+	$sql .= " AND b.fk_type = '".$db->escape($search_type)."'";
 }
 // Search criteria amount
-$search_debit = price2num(str_replace('-', '', $search_debit));
-$search_credit = price2num(str_replace('-', '', $search_credit));
 if ($search_debit) {
-	$sql .= natural_search('- b.amount', $search_debit, 1);
+	$sql .= natural_search('ABS(b.amount)', $search_debit, 1);
+	$sql .= ' AND b.amount <= 0';
 }
 if ($search_credit) {
 	$sql .= natural_search('b.amount', $search_credit, 1);
+	$sql .= ' AND b.amount >= 0';
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -898,18 +898,21 @@ if ($resql) {
 		print '<br>';
 	}
 
-	/// ajax to adjust value date with plus and less picto
+	// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
+	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
 	print '
     <script type="text/javascript">
     $(function() {
-    	$("a.ajax").each(function(){
+    	$("a.ajaxforbankoperationchange").each(function(){
     		var current = $(this);
     		current.click(function()
     		{
-    			$.get("'.DOL_URL_ROOT.'/core/ajax/bankconciliate.php?"+current.attr("href").split("?")[1], function(data)
+				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+    			$.get(url, function(data)
     			{
-    			    console.log(data)
-    				current.parent().prev().replaceWith(data);
+    			    console.log(url)
+					console.log(data)
+					current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;
     		});
@@ -1448,12 +1451,12 @@ if ($resql) {
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print '</span>';
 			print "</td>\n";
@@ -1465,12 +1468,12 @@ if ($resql) {
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
+			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print '</span>';
 			print "</td>\n";

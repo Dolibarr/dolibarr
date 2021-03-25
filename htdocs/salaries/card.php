@@ -282,7 +282,7 @@ if ($action == 'confirm_delete') {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write) {
 	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
 	if (empty($amount)) {
@@ -882,8 +882,9 @@ if ($id) {
 	print dol_get_fiche_end();
 
 
-	// Action buttons
-
+	/*
+	 * Action bar
+	 */
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
 		// Reopen

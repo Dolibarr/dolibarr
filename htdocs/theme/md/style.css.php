@@ -555,6 +555,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.amount {
+	color: #006666;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -894,10 +897,26 @@ textarea.centpercent {
 	overflow-y: auto;
 }
 
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
+}
+.stockmovemententry {
+	color: #080;
+	transform: rotate(0.25turn);
+	font-size: 1.2em;
+}
+.stockmovementexit {
+	color: #968822;
+	transform: rotate(0.3turn);
+	font-size: 1.2em;
+}
+.stockmovement {
+	font-size: 1.4em;
 }
 
 .text-warning{
@@ -1139,6 +1158,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 400px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax500 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 500px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -2421,6 +2452,7 @@ div.mainmenu.website {
 	// End of part to add more div class css
 }	// End test if $dol_hide_topmenu ?>
 
+
 .tmenuimage {
 	padding:0 0 0 0 !important;
 	margin:0 0px 0 0 !important;
@@ -2432,6 +2464,9 @@ div.mainmenu.website {
 	<?php if ($disableimages) { ?>
 		display: none;
 	<?php } ?>
+}
+a.tmenuimage:hover {
+	text-decoration: none;
 }
 a.tmenuimage {
 	display: block;

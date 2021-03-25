@@ -48,7 +48,7 @@ $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
@@ -93,7 +93,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 // Link to a project
 if ($action == 'classin' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
-	$object->setProject(GETPOST('projectid'));
+	$object->setProject(GETPOST('fk_project'));
 }
 
 if ($action == 'setfk_user' && $user->rights->tax->charges->creer) {
@@ -180,7 +180,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer) {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
 	$amount = price2num(GETPOST('amount'), 'MT');
 
 	if (!$dateech) {
@@ -360,20 +360,20 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 
 		print '</td></tr>';
 	}
 
 	// Payment Mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
+	$form->select_types_paiements(GETPOST('mode_reglement_id', 'int'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 2, '', 0, '', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOST('fk_account', 'int'), 'fk_account', 0, '', 2, '', 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -445,12 +445,24 @@ if ($id > 0) {
 
 		// Employee
 		if ($action != 'editfk_user') {
-			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-
-			if (!empty($object->fk_user)) {
+			if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
 				$userstatic = new User($db);
-				$userstatic->fetch($object->fk_user);
-				$morehtmlref .= $userstatic->getNomUrl(1);
+				$result = $userstatic->fetch($object->fk_user);
+				if ($result > 0) {
+					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+				}
+			} else {
+				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+				if (!empty($object->fk_user)) {
+					$userstatic = new User($db);
+					$result = $userstatic->fetch($object->fk_user);
+					if ($result > 0) {
+						$morehtmlref .= $userstatic->getNomUrl(1);
+					} else {
+						dol_print_error($db);
+						exit();
+					}
+				}
 			}
 		} else {
 			$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
@@ -475,7 +487,7 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {

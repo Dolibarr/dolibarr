@@ -2750,7 +2750,7 @@ class Product extends CommonObject
 					$sql .= " JOIN ".MAIN_DB_PREFIX."facture f ON fd.fk_facture = f.rowid ";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element el ON el.fk_target = f.rowid and el.targettype = 'facture' and sourcetype = 'commande'";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."commande c ON el.fk_source = c.rowid ";
-					$sql .= " WHERE c.fk_statut IN (".$filtrestatut.") AND c.facture = 0 AND fd.fk_product = ".$this->id;
+					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 
 					$resql = $this->db->query($sql);
@@ -3543,7 +3543,7 @@ class Product extends CommonObject
 			$sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid > 0) {
-			$sql .= " AND p.fk_soc = ".$socid;
+			$sql .= " AND p.fk_soc = ".((int) $socid);
 		}
 		$sql .= $morefilter;
 		$sql .= " GROUP BY date_format(p.date_valid,'%Y%m')";
@@ -4942,7 +4942,7 @@ class Product extends CommonObject
 				}
 			}
 			else {
-				$serials = explode($conf->global->SERIALS_SEPARATOR, $batch);
+				$serials = explode($conf->global->PRODUCTBATCH_SERIALS_SEPARATOR, $batch);
 				if (count($serials) != abs($nbpiece)) {
 					$error++;
 					$this->errors[] = $langs->trans("WrongCountOfSerialsForQty", $this->ref);
@@ -5010,7 +5010,7 @@ class Product extends CommonObject
 		$sql .= " AND w.rowid = ps.fk_entrepot";
 		$sql .= " AND ps.fk_product = ".$this->id;
 		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-			$sql .= " AND w.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
+			$sql .= " AND w.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
 		}
 
 		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);

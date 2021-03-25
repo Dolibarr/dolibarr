@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/recruitement/admin/candidature_extrafields.php
+ *      \file       htdocs/recruitment/admin/candidature_extrafields.php
  *		\ingroup    recruitment
  *		\brief      Page to setup extra fields of Candidature
  */

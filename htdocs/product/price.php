@@ -942,10 +942,10 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					}
 
 					print '</table>';
-					print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level='.$i.'">('.$langs->trans("DisablePriceByQty").')</a>';
+					print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level='.$i.'&token='.newToken().'">('.$langs->trans("DisablePriceByQty").')</a>';
 				} else {
 					print $langs->trans("No");
-					print '&nbsp; <a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level='.$i.'">('.$langs->trans("Activate").')</a>';
+					print '&nbsp; <a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level='.$i.'&token='.newToken().'">('.$langs->trans("Activate").')</a>';
 				}
 				print '</td></tr>';
 			}
@@ -1096,12 +1096,9 @@ print dol_get_fiche_end();
 
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
+/*
+ * Action bar
+ */
 if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $action == 'showlog_default_price' || $action == 'add_customer_price'
 	|| $action == 'activate_price_by_qty' || $action == 'disable_price_by_qty') {
 	print "\n".'<div class="tabsAction">'."\n";

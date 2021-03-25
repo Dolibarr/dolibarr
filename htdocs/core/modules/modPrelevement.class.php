@@ -23,7 +23,7 @@
  *	\brief      	Module to manage Direct debit orders
  *	\file       	htdocs/core/modules/modPrelevement.class.php
  *	\ingroup    	prelevement
- *	\brief      	File to describe and enable the module Prelevement
+ *	\brief      	Description and activation file for the module Prelevement
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

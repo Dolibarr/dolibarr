@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/public/cron/cron_run_jobs.php
+ *  \file       htdocs/public/cron/cron_run_jobs_by_url.php
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */

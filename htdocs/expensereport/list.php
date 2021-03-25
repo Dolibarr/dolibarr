@@ -7,7 +7,7 @@
  * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -290,12 +290,12 @@ if ($search_user != '' && $search_user >= 0) {
 }
 // Status
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
 	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
-	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -616,6 +616,12 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val'] = array();
+		$totalarray['val']['d.total_ht'] = 0;
+		$totalarray['val']['d.total_tva'] = 0;
+		$totalarray['val']['d.total_ttc'] = 0;
+		$totalarray['totalizable'] = array();
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 

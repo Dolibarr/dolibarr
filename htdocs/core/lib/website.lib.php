@@ -859,7 +859,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			foreach ($tmparrayoftype as $tmptype) {
 				$typestring .= ($typestring ? ", " : "")."'".$db->escape(trim($tmptype))."'";
 			}
-			$sql .= " AND wp.type_container IN (".$typestring.")";
+			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
 		$searchalgo = '';

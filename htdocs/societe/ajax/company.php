@@ -48,6 +48,7 @@ $filter = GETPOST('filter', 'alpha');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
+$excludeids = GETPOST('excludeids', 'intcomma');
 $showtype = GETPOST('showtype', 'int');
 
 
@@ -102,6 +103,11 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	if (!is_object($form)) {
 		$form = new Form($db);
 	}
+
+	if (!empty($excludeids)) {
+		$filter .= 'rowid NOT IN ('.$db->sanitize($excludeids).')';
+	}
+
 	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
 
 	$db->close();

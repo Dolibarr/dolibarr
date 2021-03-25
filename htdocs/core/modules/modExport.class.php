@@ -21,7 +21,7 @@
  *  \brief      Module generique pour realiser des exports de donnees en base
  *	\file       htdocs/core/modules/modExport.class.php
  *	\ingroup    export
- *	\brief      Fichier de description et activation du module export
+ *	\brief      Description and activation file for the module export
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

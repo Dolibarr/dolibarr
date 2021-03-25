@@ -1896,7 +1896,8 @@ if ($id > 0) {
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
-			print $langs->trans($object->type).'</td></tr>';
+			print $langs->trans("Action".$object->type_code);
+			print '</td></tr>';
 		}
 
 		// Full day event
@@ -2121,9 +2122,8 @@ if ($id > 0) {
 
 
 	/*
-	 * Barre d'actions
+	 * Action bar
 	 */
-
 	print '<div class="tabsAction">';
 
 	$parameters = array();
@@ -2161,7 +2161,7 @@ if ($id > 0) {
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;

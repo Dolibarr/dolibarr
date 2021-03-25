@@ -17,11 +17,14 @@
 
 CREATE TABLE llx_oauth_token (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
-    service varchar(36),
-    token text,						-- token in serialize() format, of an object StdOAuth2Token of library phpoauth2
-    tokenstring text,				-- token in json format '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
+    service varchar(36),         -- 'Google', 'Stripe', 'auth-public-key', ...
+    token text,					 -- token in serialize() format, of an object StdOAuth2Token of library phpoauth2
+    tokenstring text,			 -- token in text or json format. Value depends on 'service. For example for an OAUTH service: '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
     fk_soc integer,
-    fk_user integer,
+    fk_user integer,             -- Id of user in llx_user
     fk_adherent integer,
+    restricted_ips varchar(200), -- Restrict the authentication mode/token to some IPs
+    datec            datetime DEFAULT NULL,		-- date creation project
+    tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     entity integer DEFAULT 1
 )ENGINE=innodb;

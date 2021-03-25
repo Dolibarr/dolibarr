@@ -115,8 +115,8 @@ if ($dateselect > 0) {
 }
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('search_actioncode', 'array')) {
-	$actioncode = GETPOST('search_actioncode', 'array', 3);
+if (GETPOST('search_actioncode', 'array:aZ09')) {
+	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -669,18 +669,18 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
-				$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
+	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".$db->escape($pid);
+	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
@@ -1138,7 +1138,11 @@ if (count($listofextcals)) {
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
 					// For full day events, date are also GMT but they wont but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
-					$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
+					if (empty($icalevent['DTEND;VALUE=DATE'])) {
+						$dateend = $datestart + 86400 - 1;
+					} else {
+						$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
+					}
 					//print 'x'.$datestart.'-'.$dateend;exit;
 					//print dol_print_date($dateend,'dayhour','gmt');
 					$event->fulldayevent = 1;
@@ -1212,7 +1216,7 @@ if (count($listofextcals)) {
 					// LOW      = 0 to 4
 					// MEDIUM   = 5
 					// HIGH     = 6 to 9
-					if ($icalevent['PRIORITY']) {
+					if (!empty($icalevent['PRIORITY'])) {
 						$event->priority = $icalevent['PRIORITY'];
 					}
 
@@ -1233,7 +1237,7 @@ if (count($listofextcals)) {
 						// X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
 					}
 
-					if ($icalevent['LOCATION']) {
+					if (!empty($icalevent['LOCATION'])) {
 						$event->location = $icalevent['LOCATION'];
 					}
 

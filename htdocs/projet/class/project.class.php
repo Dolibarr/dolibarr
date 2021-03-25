@@ -653,19 +653,19 @@ class Project extends CommonObject
 		$ids = $this->id;
 
 		if ($type == 'agenda') {
-			$sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project IN (".$ids.") AND entity IN (".getEntity('agenda').")";
+			$sql = "SELECT id as rowid FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity('agenda').")";
 		} elseif ($type == 'expensereport') {
-			$sql = "SELECT ed.rowid FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (".$ids.")";
+			$sql = "SELECT ed.rowid FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'project_task') {
-			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$ids.")";
+			$sql = "SELECT DISTINCT pt.rowid FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
-			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (".$ids.")";
+			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (".$this->db->sanitize($ids).")";
 		} elseif ($type == 'stock_mouvement') {
-			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$ids.") AND ms.type_mouvement = 1";
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize($ids).") AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
-			$sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$ids.")";
+			$sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize($ids).")";
 		} else {
-			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$this->db->sanitize($ids).") AND entity IN (".getEntity($type).")";
 		}
 
 		if ($dates > 0 && $type == 'loan') {
@@ -1168,6 +1168,8 @@ class Project extends CommonObject
 				$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
 			} elseif ($option == 'preview') {
 				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
+			} elseif ($option == 'eventorganization') {
+				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
 			} else {
 				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
 			}
@@ -1384,13 +1386,13 @@ class Project extends CommonObject
 
 		if ($mode == 0) {
 			$sql .= " AND ( p.public = 1";
-			$sql .= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+			$sql .= " OR ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".$user->id.")";
 			$sql .= " )";
 		} elseif ($mode == 1) {
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
-			$sql .= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
+			$sql .= "  ( ec.fk_c_type_contact IN (".$this->db->sanitize(join(',', array_keys($listofprojectcontacttype))).")";
 			$sql .= " AND ec.fk_socpeople = ".$user->id.")";
 			$sql .= " )";
 		} elseif ($mode == 2) {
@@ -1972,7 +1974,7 @@ class Project extends CommonObject
 		$sql .= " WHERE p.fk_statut = 1";
 		$sql .= " AND p.entity IN (".getEntity('project').')';
 		if (!empty($projectsListId)) {
-			$sql .= " AND p.rowid IN (".$projectsListId.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -2053,7 +2055,7 @@ class Project extends CommonObject
 		$sql .= " p.entity IN (".getEntity('project').")";
 		if (!$user->rights->projet->all->lire) {
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
-			$sql .= "AND p.rowid IN (".$projectsListId.")";
+			$sql .= "AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 
 		$resql = $this->db->query($sql);

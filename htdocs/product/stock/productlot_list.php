@@ -129,10 +129,27 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->stock->lire;
-$permissiontoadd = $user->rights->stock->mouvement->creer;
-//$permissiontodelete = $user->rights->stock->supprimer;
+$usercanread = $user->rights->produit->lire;
+$usercancreate = $user->rights->produit->creer;
+$usercandelete = $user->rights->produit->supprimer;
 
+$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+
+$permissiontoread = $usercanread;
+$permissiontoadd = $usercancreate;
+//$permissiontodelete = $usercandelete;
+
+// Security check
+if (empty($conf->productbatch->enabled)) {
+	accessforbidden('Module not enabled');
+}
+$socid = 0;
+if ($user->socid > 0) { // Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'productbatch');
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -186,8 +203,8 @@ $form = new Form($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
-$help_url = '';
+$help_url = 'EN:Module_Lot_/_Serial|FR:Module_Lot_/_Série';
+
 $title = $langs->trans('LotSerialList');
 
 

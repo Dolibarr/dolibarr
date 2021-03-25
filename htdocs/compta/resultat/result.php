@@ -144,15 +144,19 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->rights->accounting->comptarapport->lire) {
-	accessforbidden();
-}
-
 $AccCat = new AccountancyCategory($db);
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
 
 
 /*
@@ -277,7 +281,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
 	if (! empty($month)) {
-		$sql .= " AND MONTH(t.doc_date) = " . $month;
+		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);
 	if ($resql)

@@ -89,7 +89,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 // Define value to know what current user can do on properties of edited user
 if ($id) {
-	// $user est le user qui edite, $id est l'id de l'utilisateur edite
+	// $user is the current logged user, $id is the user we want to edit
 	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
 	|| (($user->id != $id) && $user->rights->user->user->creer));
 	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
@@ -122,6 +122,7 @@ $socialnetworks = getArrayOfSocialNetworks();
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+$error = 0;
 
 
 /**
@@ -136,11 +137,17 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {
+		if ($id <> $user->id) {		// A user can't disable itself
 			$object->fetch($id);
-			$object->setstatus(0);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
+			if ($object->admin && empty($user->admin)) {
+				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlyAdminUsersCanDisableAdminUsers"), null, 'errors');
+			} else {
+				$object->setstatus(0);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+				exit;
+			}
 		}
 	}
 	if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser) {
@@ -192,12 +199,12 @@ if (empty($reshook)) {
 	if ($action == 'add' && $canadduser) {
 		$error = 0;
 
-		if (!$_POST["lastname"]) {
+		if (!GETPOST("lastname")) {
 			$error++;
 			setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 			$action = "create"; // Go back to create page
 		}
-		if (!$_POST["login"]) {
+		if (!GETPOST("login")) {
 			$error++;
 			setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 			$action = "create"; // Go back to create page
@@ -434,7 +441,7 @@ if (empty($reshook)) {
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				if (!empty($conf->multicompany->enabled)) {
-					if (!empty($_POST["superadmin"])) {
+					if (GETPOST("superadmin")) {
 						$object->entity = 0;
 					} elseif (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 						$object->entity = 1; // all users in master entity
@@ -916,7 +923,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			$checked = (GETPOST('superadmin', 'int') ? ' checked' : '');
 			$disabled = (GETPOST('superadmin', 'int') ? '' : ' disabled');
-			print '<input type="checkbox" name="superadmin" value="1"'.$checked.$disabled.' /> '.$langs->trans("SuperAdministrator");
+			print '<input type="checkbox" name="superadmin" id="superadmin" value="1"'.$checked.$disabled.' /> <label for="superadmin">'.$langs->trans("SuperAdministrator").'</span>';
 		}
 		print "</td></tr>\n";
 	}
@@ -993,6 +1000,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 	// Country
 	print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
+	print img_picto('', 'country', 'class="paddingrightonly"');
 	print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id));
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -1820,12 +1828,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 				// Enable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a></div>';
 				}
 				// Disable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a></div>';
 				} else {
 					if ($user->id == $id) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CantDisableYourself").'">'.$langs->trans("DisableUser").'</a></div>';
@@ -1835,7 +1843,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if ($user->id <> $id && $candisableuser &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
-						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
 					}
@@ -1955,7 +1963,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Ref/ID
 			if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
-				print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
 				print '<td>';
 				print $object->id;
 				print '</td>';
@@ -1963,13 +1971,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Civility
-			print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
 			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
 			print '</td></tr>';
 
 			// Lastname
 			print "<tr>";
-			print '<td class="titlefield fieldrequired">'.$langs->trans("Lastname").'</td>';
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Lastname").'</td>';
 			print '<td>';
 			if ($caneditfield && !$object->ldap_sid) {
 				print '<input class="minwidth100" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';
@@ -2107,7 +2115,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 						}
 
 						$checked = (($object->admin && !$object->entity) ? ' checked' : '');
-						print '<input type="checkbox" name="superadmin" value="1"'.$checked.' /> '.$langs->trans("SuperAdministrator");
+						print '<input type="checkbox" name="superadmin" id="superadmin" value="1"'.$checked.' /> <label for="superadmin">'.$langs->trans("SuperAdministrator").'</span>';
 					}
 				} else {
 					$yn = yn($object->admin);
@@ -2673,7 +2681,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit' && $action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/".dol_sanitizeFileName($object->ref);

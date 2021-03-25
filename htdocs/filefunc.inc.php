@@ -178,9 +178,9 @@ if (empty($dolibarr_strict_mode)) {
 
 // Security: CSRF protection
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
-// when we post forms (we allow GET to allow direct link to access a particular page).
+// when we post forms (we allow GET and HEAD to accept direct link from a particular page).
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
-// See also option $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN for a stronger CSRF protection.
+// See also CSRF protections done into main.inc.php
 if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck)) {
 	if (!empty($_SERVER['REQUEST_METHOD']) && !in_array($_SERVER['REQUEST_METHOD'], array('GET', 'HEAD')) && !empty($_SERVER['HTTP_HOST'])) {
 		$csrfattack = false;

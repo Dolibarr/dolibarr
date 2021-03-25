@@ -128,7 +128,7 @@ if ($reshook > 0) {
 	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) {
-	$sql .= " AND u.fk_soc = ".$socid;
+	$sql .= " AND u.fk_soc = ".((int) $socid);
 }
 $sql .= $db->order("u.datec", "DESC");
 $sql .= $db->plimit($max);
