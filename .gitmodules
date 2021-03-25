@@ -1,0 +1,18 @@
+[submodule "htdocs/custom/altapdf"]
+	path = htdocs/custom/altapdf
+	url = git@github.com:altairisfr/altapdf.git
+[submodule "htdocs/custom/dolitools"]
+	path = htdocs/custom/dolitools
+	url = git@github.com:altairisfr/dolitools.git
+[submodule "htdocs/custom/equipement"]
+	path = htdocs/custom/equipement
+	url = git@github.com:altairisfr/equipement.git
+[submodule "htdocs/custom/rental"]
+	path = htdocs/custom/rental
+	url = git@github.com:altairisfr/rental.git
+[submodule "htdocs/custom/return"]
+	path = htdocs/custom/return
+	url = git@github.com:altairisfr/return.git
+[submodule "htdocs/custom/subtotal"]
+	path = htdocs/custom/subtotal
+	url = git@github.com:altairisfr/subtotal.git
