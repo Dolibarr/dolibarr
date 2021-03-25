@@ -72,15 +72,15 @@ if ($action == 'add' || GETPOST("modify")) {
 
 	if (!empty($_POST[$external_rss_urlrss])) {
 		$boxlabel = '(ExternalRSSInformations)';
-		//$external_rss_url = "external_rss_url_" . $_POST["norss"];
+		//$external_rss_url = "external_rss_url_" . GETPOST("norss");
 
 		$db->begin();
 
-		if ($_POST["modify"]) {
+		if (GETPOST("modify")) {
 			// Supprime boite box_external_rss de definition des boites
 			/* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$db->escape($boxlabel)."'";
-			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape($_POST["norss"])." %'";
+			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape(GETPOST("norss"))." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)
@@ -115,7 +115,7 @@ if ($action == 'add' || GETPOST("modify")) {
 	}
 }
 
-if ($_POST["delete"]) {
+if (GETPOST("delete")) {
 	if (GETPOST("norss", 'int')) {
 		$db->begin();
 

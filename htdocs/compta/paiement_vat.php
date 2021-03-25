@@ -33,6 +33,8 @@ $langs->loadLangs(array("banks", "bills"));
 
 $chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel');
+
 $amounts = array();
 
 // Security check
@@ -49,7 +51,7 @@ if ($user->socid > 0) {
 if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
-	if ($_POST["cancel"]) {
+	if ($cancel) {
 		$loc = DOL_URL_ROOT.'/compta/tva/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
