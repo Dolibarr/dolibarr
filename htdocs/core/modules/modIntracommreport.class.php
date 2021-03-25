@@ -44,13 +44,13 @@ class modIntracommreport extends DolibarrModules
 		$this->numero = 68000;
 
 		$this->family = "financial";
-		$this->module_position = '100';
+		$this->module_position = '60';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Intracomm report management (Support for French DEB/DES format)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'intracommreport';
