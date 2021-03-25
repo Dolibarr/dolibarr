@@ -657,7 +657,7 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 /*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>';
 print '<span class="nowraponall">';
 print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
 print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
