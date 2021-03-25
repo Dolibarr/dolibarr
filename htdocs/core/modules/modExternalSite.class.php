@@ -67,7 +67,7 @@ class modExternalSite extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array("externalsite.php@externalsite");
+		$this->config_page_url = array("index.php@externalsite");
 
 		// Dependencies
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled

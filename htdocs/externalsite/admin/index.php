@@ -21,9 +21,9 @@
  */
 
 /**
- *    \file       htdocs/externalsite/admin/externalsite.php
+ *    \file       htdocs/externalsite/admin/index.php
  *    \ingroup    externalsite
- *    \brief      Page de configuration du module externalsite
+ *    \brief      Page to setup module external site
  */
 
 if (!defined('NOSCANPOSTFORINJECTION')) {
@@ -42,6 +42,11 @@ if (!$user->admin) {
 $langs->loadLangs(array('admin', 'other', 'externalsite'));
 
 $action = GETPOST('action', 'aZ09');
+
+
+/*
+ * Actions
+ */
 
 // Sauvegardes parametres
 if ($action == 'update') {
