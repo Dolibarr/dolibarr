@@ -177,8 +177,8 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 			} else {
 				$object->timespent_note = GETPOST('timespent_note', 'alpha');
 				if (GETPOST('progress', 'int') > 0) $object->progress = GETPOST('progress', 'int'); // If progress is -1 (not defined), we do not change value
-				$object->timespent_duration = (int) GETPOST("timespent_durationhour", 'int') * 60 * 60; // We store duration in seconds
-				$object->timespent_duration += (GETPOST('timespent_durationmin', 'int') ? (int) GETPOST('timespent_durationmin', 'int') : 0) * 60; // We store duration in seconds
+				$object->timespent_duration = GETPOSTINT("timespent_durationhour") * 60 * 60; // We store duration in seconds
+				$object->timespent_duration += (GETPOSTINT('timespent_durationmin') ? GETPOSTINT('timespent_durationmin') : 0) * 60; // We store duration in seconds
 				if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0)	// If hour was entered
 				{
 					$object->timespent_date = dol_mktime(GETPOST("timehour"), GETPOST("timemin"), 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
@@ -226,8 +226,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetch($id, $ref);
 			$object->timespent_note = GETPOST('timespent_note_line', 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
-			$object->timespent_duration = (int) GETPOST("new_durationhour", 'int') * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += (GETPOST("new_durationmin", 'int') ? (int) GETPOST('new_durationmin', 'int') : 0) * 60; // We store duration in seconds
+			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
 			{
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
@@ -251,8 +251,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_id = GETPOST("lineid", 'int');
 			$object->timespent_note = GETPOST('timespent_note_line', 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
-			$object->timespent_duration = (int) GETPOST("new_durationhour", 'int') * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += (GETPOST("new_durationmin", 'int') ? (int) GETPOST('new_durationmin', 'int') : 0) * 60; // We store duration in seconds
+			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
 			{
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
