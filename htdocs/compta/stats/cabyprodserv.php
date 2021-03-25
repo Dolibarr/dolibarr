@@ -409,6 +409,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListeTitle', $parameters);
+	print $hookmanager->resPrint;
+
 	print '</td></tr>';
 
 	// Array header
