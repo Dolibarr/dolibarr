@@ -405,25 +405,24 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("No_Email")), null, 'errors');
 		}
-		
+
 		if ($action == 'add') {
 			$thirdparty=GETPOST('name');
 			$thirdparty2=$db->escape($thirdparty);
 			$sql = 'SELECT nom FROM '.MAIN_DB_PREFIX.'societe WHERE nom="'.$thirdparty2.'"';
 			$resql = $db->query($sql) or die($db->error);
 			if (!$resql) {
-    			dol_print_error($db);
+				dol_print_error($db);
 			}
 
-  			while($row = $resql->fetch_assoc());
-  			{
-     			if (!$row[$nom] == $thirdparty2)
-     				{
-					setEventMessages($langs->trans("ErrorClientExists"), null, 'errors');
-					$error++;
-     			}
+			while ($row = $resql->fetch_assoc());
+			{
+			if (!$row[$nom] == $thirdparty2) {
+				setEventMessages($langs->trans("ErrorClientExists"), null, 'errors');
+				$error++;
 			}
-		}		
+			}
+		}
 
 		if (!$error) {
 			if ($action == 'update') {
