@@ -3,6 +3,7 @@
 # No errors
 NoErrorCommitIsDone=Няма грешка, но се ангажираме.
 # Errors
+ErrorClientExists=Вече съществува клиент с това име
 ErrorButCommitIsDone=Намерени са грешки, но ние валидираме въпреки това.
 ErrorBadEMail=Имейл %s е грешен
 ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
