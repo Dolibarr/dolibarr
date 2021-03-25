@@ -308,14 +308,15 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 //var_dump($api->r->apiVersionMap);
 //exit;
 
-//We do not want that restler return data if we want to compress it
-Luracast\Restler\Defaults::$returnResponse = empty($conf->global->API_DISABLE_COMPRESSION);
+// We do not want that restler output data if we use native compression (default behaviour) but we want to have it returned into a string.
+Luracast\Restler\Defaults::$returnResponse = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
 $result = $api->r->handle();
-if (empty($conf->global->API_DISABLE_COMPRESSION) && isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
-	//We try to compress data
+
+if (Luracast\Restler\Defaults::$returnResponse) {
+	// We try to compress data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
 		header('Content-Encoding: br');
 		$result = brotli_compress($result, 11, BROTLI_TEXT);
@@ -327,10 +328,7 @@ if (empty($conf->global->API_DISABLE_COMPRESSION) && isset($_SERVER['HTTP_ACCEPT
 		$result = gzencode($result, 9);
 	}
 
-}
-
-if(Luracast\Restler\Defaults::$returnResponse) {
-	//Restler did not output data,we return it
+	// Restler did not output data yet, we return it now
 	echo $result;
 }
 
