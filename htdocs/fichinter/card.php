@@ -875,9 +875,9 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Project").'</td><td>';
 			/* Fix: If a project must be linked to any companies (suppliers or not), project must be not be set as limited to customer but must be not linked to any particular thirdparty
 			if ($societe->fournisseur==1)
-				$numprojet=select_projects(-1,$_POST["projectid"],'projectid');
+				$numprojet=select_projects(-1, GETPOST("projectid", 'int'), 'projectid');
 			else
-				$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
+				$numprojet=select_projects($societe->id, GETPOST("projectid", 'int'), 'projectid');
 				*/
 			$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid');
 			if ($numprojet == 0) {

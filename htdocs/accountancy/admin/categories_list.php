@@ -185,7 +185,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 	if (GETPOSTISSET("code")) {
-		if ($_POST["code"] == '0') {
+		if (GETPOST("code") == '0') {
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}

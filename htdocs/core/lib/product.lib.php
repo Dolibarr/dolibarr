@@ -328,6 +328,11 @@ function product_lot_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
+	$head[$h][0] = DOL_URL_ROOT."/product/admin/product_lot.php";
+	$head[$h][1] = $langs->trans('Parameters');
+	$head[$h][2] = 'settings';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

@@ -2257,7 +2257,7 @@ if ($action == 'create') {
 
 							// VAT
 							print '<td class="right">';
-							print $form->load_tva('vatrate', (isset($_POST["vatrate"]) ? $_POST["vatrate"] : $line->vatrate), $mysoc, '', 0, 0, '', false, 1);
+							print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $line->vatrate), $mysoc, '', 0, 0, '', false, 1);
 							print '</td>';
 
 							// Unit price
