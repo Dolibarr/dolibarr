@@ -4940,8 +4940,7 @@ class Product extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else {
+			} else {
 				$serials = explode($conf->global->PRODUCTBATCH_SERIALS_SEPARATOR, $batch);
 				if (count($serials) != abs($nbpiece)) {
 					$error++;

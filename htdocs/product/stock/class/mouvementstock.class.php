@@ -1301,7 +1301,7 @@ class MouvementStock extends CommonObject
 	 * @param int $fk_warehouse Warehouse id or null for all
 	 * @return int            <0 if KO, number of equipments if OK
 	 */
-	private function getBatchCount($fk_product, $batch, $fk_warehouse=null)
+	private function getBatchCount($fk_product, $batch, $fk_warehouse = null)
 	{
 		global $conf;
 

@@ -121,8 +121,7 @@ if (!empty($conf->productbatch->enabled) &&
 		print '<textarea name="batch_number" style="width:50%">'.GETPOST("batch_number").'</textarea>';
 		print '</td>';
 		print '<td colspan="2"></td>';
-	}
-	else {
+	} else {
 		print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("LotNumber").'</td>';
 		print '<td colspan="3">';
 		print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';

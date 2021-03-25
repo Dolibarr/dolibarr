@@ -104,15 +104,14 @@ if (!empty($conf->productbatch->enabled) &&
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '</td>';
-		} else {
+	} else {
 		if ($object->element == 'product' && $object->status_batch == 2) {
 			print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("SerialNumbers").'</td>';
 			print '<td>';
 			print '<textarea name="batch_number" style="width:50%">'.GETPOST("batch_number").'</textarea>';
 			print '</td>';
 			print '<td colspan="2"></td>';
-		}
-		else {
+		} else {
 			print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("LotNumber").'</td>';
 			print '<td colspan="3">';
 			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';

@@ -347,16 +347,14 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 									}
 								}
 							}
-						}
-						else {
+						} else {
 							$result = $object->dispatchProduct($user, $fk_product, GETPOST($qty), GETPOST($ent, 'int'), GETPOST($pu), GETPOST('comment'), $dDLC, $dDLUO, GETPOST($lot, 'alpha'), GETPOST($fk_commandefourndet, 'int'), $notrigger);
 							if ($result < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;
 							}
 						}
-					}
-					else {
+					} else {
 						setEventMessages($product->error, $product->errors, 'errors');
 						$error++;
 					}
@@ -494,13 +492,11 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 				} else {
 					// if serial number management, delete before recreate (to avoid problem of already existing product_lot)
 					$prod = new Product($db);
-					if ($prod->fetch($product) < 0)
-					{
+					if ($prod->fetch($product) < 0)	{
 						$errors = $prod->errors;
 						$error++;
 					} else {
-						if ($prod->status_batch == 2)
-						{
+						if ($prod->status_batch == 2) {
 							// delete product_lot
 							$lot = new ProductLot($db);
 							if ($lot->fetch(null, $product, $batch) > 0) {
@@ -513,8 +509,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 								$error++;
 							}
 						}
-						if ($error == 0)
-						{
+						if ($error == 0) {
 							$mouv->origin = &$object;
 							$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
 							if ($result < 0) {
