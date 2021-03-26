@@ -582,6 +582,10 @@ if ($resql) {
 		$i++;
 	}
 
+	if ($num == 0) {
+		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
+
 	print "</table>";
 	print "</div>";
 	print '</form>';
