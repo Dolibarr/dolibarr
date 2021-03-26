@@ -152,7 +152,7 @@ if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/e
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
 	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print '<div class="opacitymediumxxx"><br><u>'.$langs->trans("SwaggerDescriptionFile").':</u><br>';
-	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=useauserapikey';
+	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
 	print img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a><br>\n";
 	print '</div>';
 } else {
