@@ -409,12 +409,12 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre left">';
 print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 print '</td>';
+// Label
+print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
 // Employee
 print '<td class="liste_titre">';
 print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
 print '</td>';
-// Label
-print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
 
 // Date start
 print '<td class="liste_titre center">';
@@ -475,8 +475,8 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
@@ -541,14 +541,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
-	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	// Label payment
+	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
-	// Label payment
-	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+	// Employee
+	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
