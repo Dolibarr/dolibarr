@@ -62,7 +62,7 @@ EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
 EventOrganizationEmailSubsBooth = Subscription for booth
 EventOrganizationEmailSubsEvent = Subscription for an event
-EventOrganizationMassEmailAttendees = Communication to attendes
+EventOrganizationMassEmailAttendees = Communication to attendees
 EventOrganizationMassEmailSpeakers = Communication to speakers
 
 #
