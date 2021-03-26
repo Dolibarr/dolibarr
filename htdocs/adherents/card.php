@@ -303,7 +303,9 @@ if (empty($reshook)) {
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0) $error++;
+			if ($ret < 0) {
+			    $error++;
+			}
 
 			// Check if we need to also synchronize user information
 			$nosyncuser = 0;
@@ -317,62 +319,66 @@ if (empty($reshook)) {
 				if ($user->id != $object->user_id && empty($user->rights->user->user->password)) $nosyncuserpass = 1; // Disable synchronizing
 			}
 
-			$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
+			if (!$error) {
+			    $result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
 
-			if ($result >= 0 && !count($object->errors)) {
-				$categories = GETPOST('memcats', 'array');
-				$object->setCategories($categories);
+			    if ($result >= 0 && !count($object->errors)) {
+			        $categories = GETPOST('memcats', 'array');
+			        $object->setCategories($categories);
 
-				// Logo/Photo save
-				$dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
-				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if ($file_OK) {
-					if (GETPOST('deletephoto')) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						$fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
-						$dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
-						dol_delete_file($fileimg);
-						dol_delete_dir_recursive($dirthumbs);
-					}
+			        // Logo/Photo save
+			        $dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
+			        $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+			        if ($file_OK) {
+			            if (GETPOST('deletephoto')) {
+			                require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			                $fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
+			                $dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
+			                dol_delete_file($fileimg);
+			                dol_delete_dir_recursive($dirthumbs);
+			            }
 
-					if (image_format_supported($_FILES['photo']['name']) > 0) {
-						dol_mkdir($dir);
+			            if (image_format_supported($_FILES['photo']['name']) > 0) {
+			                dol_mkdir($dir);
 
-						if (@is_dir($dir)) {
-							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
-								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-							} else {
-								// Create thumbs
-								$object->addThumbs($newfile);
-							}
-						}
-					} else {
-						setEventMessages("ErrorBadImageFormat", null, 'errors');
-					}
-				} else {
-					switch ($_FILES['photo']['error']) {
-						case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
-						case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-							$errors[] = "ErrorFileSizeTooLarge";
-							break;
-						case 3: //uploaded file was only partially uploaded
-							$errors[] = "ErrorFilePartiallyUploaded";
-							break;
-					}
-				}
+			                if (@is_dir($dir)) {
+			                    $newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+			                    if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+			                        setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+			                    } else {
+			                        // Create thumbs
+			                        $object->addThumbs($newfile);
+			                    }
+			                }
+			            } else {
+			                setEventMessages("ErrorBadImageFormat", null, 'errors');
+			            }
+			        } else {
+			            switch ($_FILES['photo']['error']) {
+			                case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+			                case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+			                    $errors[] = "ErrorFileSizeTooLarge";
+			                    break;
+			                case 3: //uploaded file was only partially uploaded
+			                    $errors[] = "ErrorFilePartiallyUploaded";
+			                    break;
+			            }
+			        }
 
-				$rowid = $object->id;
-				$id = $object->id;
-				$action = '';
+			        $rowid = $object->id;
+			        $id = $object->id;
+			        $action = '';
 
-				if (!empty($backtopage)) {
-					header("Location: ".$backtopage);
-					exit;
-				}
+			        if (!empty($backtopage)) {
+			            header("Location: ".$backtopage);
+			            exit;
+			        }
+			    } else {
+			        setEventMessages($object->error, $object->errors, 'errors');
+			        $action = '';
+			    }
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
+			    $action = 'edit';
 			}
 		} else {
 			$action = 'edit';
