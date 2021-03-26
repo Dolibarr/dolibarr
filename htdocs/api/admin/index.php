@@ -151,6 +151,10 @@ print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer')) {
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
 	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print '<div class="opacitymediumxxx"><br><u>'.$langs->trans("SwaggerDescriptionFile").':</u><br>';
+	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=useauserapikey';
+	print img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a><br>\n";
+	print '</div>';
 } else {
 	$langs->load("errors");
 	print info_admin($langs->trans("ErrorNotAvailableWithThisDistribution"), 0, 0, 'error');
