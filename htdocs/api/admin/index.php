@@ -141,7 +141,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 $message = '';
 $url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
-$message .= img_picto('', 'globe').' '.$url;
+$message .= '<div class="urllink">'.img_picto('', 'globe').' '.$url.'</div>';
 print $message;
 print '<br>';
 print '<br>';
@@ -150,10 +150,10 @@ print '<br>';
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer')) {
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print '<div class="urllink">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a></div><br>\n";
 	print '<div class="opacitymediumxxx"><br><u>'.$langs->trans("SwaggerDescriptionFile").':</u><br>';
 	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
-	print img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a><br>\n";
+	print '<div class="urllink">'.img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a></div><br>\n";
 	print '</div>';
 } else {
 	$langs->load("errors");
