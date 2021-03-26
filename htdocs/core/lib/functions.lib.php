@@ -8821,8 +8821,8 @@ function showDirectDownloadLink($object)
 	$url = $object->getLastMainDocLink($object->element);
 
 	if ($url) {
-		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
-		$out .= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
+		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' <span class="opacitymedium">'.$langs->trans("DirectDownloadLink").'</span><br>';
+		$out .= '<div class="urllink"><input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'"></div>';
 		$out .= ajax_autoselect("directdownloadlink", 0);
 	}
 	return $out;
