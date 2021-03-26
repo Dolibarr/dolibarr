@@ -89,7 +89,7 @@ print load_fiche_titre($langs->trans("ProductLotSetup"), $linkback, 'title_setup
 
 $head = product_lot_admin_prepare_head();
 
-dol_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
+print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 /*
  * Lot Numbering models
