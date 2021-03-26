@@ -117,6 +117,8 @@ function conferenceorboothattendeePrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	//TODO : Note and docuement
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothattendee@eventorganization');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'conferenceorboothattendee@eventorganization', 'remove');

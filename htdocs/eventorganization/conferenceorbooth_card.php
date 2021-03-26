@@ -72,12 +72,6 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-
-/*$permissiontoread = $user->rights->eventorganization->conferenceorbooth->read;
-$permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->eventorganization->conferenceorbooth->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_dellink.inc.php*/
 $permissiontoread = $user->rights->eventorganization->read;
 $permissiontoadd = $user->rights->eventorganization->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
