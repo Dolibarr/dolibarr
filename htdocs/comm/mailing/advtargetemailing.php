@@ -397,7 +397,7 @@ if ($action == 'delete') {
 	}
 }
 
-if ($_POST["button_removefilter"]) {
+if (GETPOST("button_removefilter")) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';

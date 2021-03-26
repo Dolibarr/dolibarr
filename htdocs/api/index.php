@@ -2,6 +2,7 @@
 /* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -307,12 +308,28 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 //var_dump($api->r->apiVersionMap);
 //exit;
 
+// We do not want that restler output data if we use native compression (default behaviour) but we want to have it returned into a string.
+Luracast\Restler\Defaults::$returnResponse = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
+
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
+$result = $api->r->handle();
 
-//Luracast\Restler\Defaults::$returnResponse = true;
-//print $api->r->handle();
+if (Luracast\Restler\Defaults::$returnResponse) {
+	// We try to compress data
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+		header('Content-Encoding: br');
+		$result = brotli_compress($result, 11, BROTLI_TEXT);
+	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+		header('Content-Encoding: bz');
+		$result = bzcompress($result, 9);
+	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+		header('Content-Encoding: gzip');
+		$result = gzencode($result, 9);
+	}
 
-$api->r->handle();
+	// Restler did not output data yet, we return it now
+	echo $result;
+}
 
 //session_destroy();

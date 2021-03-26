@@ -69,9 +69,9 @@ if ($action == 'updateMaskLot') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'setmodlot') {
-	dolibarr_set_const($db, "LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmodsn') {
-	dolibarr_set_const($db, "SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 /*
@@ -89,7 +89,7 @@ print load_fiche_titre($langs->trans("ProductLotSetup"), $linkback, 'title_setup
 
 $head = product_lot_admin_prepare_head();
 
-dol_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'productbatch');
+print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
 /*
  * Lot Numbering models
@@ -140,7 +140,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->LOT_ADDON == $file) {
+						if ($conf->global->PRODUCTBATCH_LOT_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&amp;value='.$file.'">';
@@ -232,7 +232,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->SN_ADDON == $file) {
+						if ($conf->global->PRODUCTBATCH_SN_ADDON == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&amp;value='.$file.'">';
