@@ -411,10 +411,6 @@ print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->
 print '</td>';
 // Label
 print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
-// Employee
-print '<td class="liste_titre">';
-print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
-print '</td>';
 
 // Date start
 print '<td class="liste_titre center">';
@@ -436,8 +432,13 @@ print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_
 print '</div>';
 print '</td>';
 
+// Employee
+print '<td class="liste_titre">';
+print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
+print '</td>';
+
 // Type
-print '<td class="liste_titre left">';
+/*print '<td class="liste_titre left">';
 $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
 print '</td>';
 
@@ -446,7 +447,7 @@ if (!empty($conf->banque->enabled)) {
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
-}
+}*/
 
 // Amount
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
@@ -476,13 +477,13 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
-print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
+/*print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) {
 	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-}
+}*/
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('Status', $_SERVER["PHP_SELF"], "s.paye", '', $param, 'class="right"', $sortfield, $sortorder);
 // Extra fields
@@ -547,12 +548,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
-	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
 	// Date Start
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datesp), 'day')."</td>\n";
 	if (!$i) {
@@ -565,8 +560,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
+	// Employee
+	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
 	// Type
-	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
+	/*print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -602,7 +603,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-	}
+	}*/
 
 	//  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 

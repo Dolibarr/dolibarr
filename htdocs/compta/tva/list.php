@@ -85,8 +85,8 @@ $arrayfields = array(
 	't.rowid'			=>array('checked'=>1, 'position'=>10, 'label'=>"Ref",),
 	't.label'			=>array('checked'=>1, 'position'=>20, 'label'=>"Label"),
 	't.datev'			=>array('checked'=>1, 'position'=>30, 'label'=>"PeriodEndDate"),
-	't.fk_typepayment'	=>array('checked'=>1, 'position'=>50, 'label'=>"DefaultPaymentMode"),
-	't.fk_account'		=>array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount"),
+	/*'t.fk_typepayment'	=>array('checked'=>1, 'position'=>50, 'label'=>"DefaultPaymentMode"),
+	't.fk_account'		=>array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount"),*/
 	't.amount'			=>array('checked'=>1, 'position'=>90, 'label'=>"Amount"),
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
@@ -351,7 +351,7 @@ if (!empty($arrayfields['t.datev']['checked'])) {
 }*/
 
 // Filter: Type
-if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+/*if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 	print '<td class="liste_titre left">';
 	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16);
 	print '</td>';
@@ -362,7 +362,7 @@ if (!empty($arrayfields['t.fk_account']['checked'])) {
 	print '<td class="liste_titre left">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
-}
+}*/
 
 // Filter: Amount
 if (!empty($arrayfields['t.amount']['checked'])) {
@@ -404,12 +404,12 @@ if (!empty($arrayfields['t.label']['checked'])) {
 if (!empty($arrayfields['t.datev']['checked'])) {
 	print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, 'align="center"', $sortfield, $sortorder);
 }
-if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+/*if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 	print_liste_field_titre($arrayfields['t.fk_typepayment']['label'], $_SERVER['PHP_SELF'], 't.fk_typepayment', '', $param, '', $sortfield, $sortorder, 'left ');
 }
 if (!empty($arrayfields['t.fk_account']['checked'])) {
 	print_liste_field_titre($arrayfields['t.fk_account']['label'], $_SERVER['PHP_SELF'], 't.fk_account', '', $param, '', $sortfield, $sortorder, 'left ');
-}
+}*/
 if (!empty($arrayfields['t.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER['PHP_SELF'], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 }
@@ -475,15 +475,15 @@ while ($i < min($num, $limit)) {
 	}*/
 
 	// Type
-	if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+	/*if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-	}
+	}*/
 
 	// Account
-	if (!empty($arrayfields['t.fk_account']['checked'])) {
+	/*if (!empty($arrayfields['t.fk_account']['checked'])) {
 		print '<td>';
 		if ($obj->fk_account > 0) {
 			$bankstatic->id = $obj->fk_account;
@@ -494,15 +494,15 @@ while ($i < min($num, $limit)) {
 			$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$bankstatic->account_number = $obj->account_number;
 
-			/*$accountingjournal->fetch($obj->fk_accountancy_journal);
-			$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);*/
+			//$accountingjournal->fetch($obj->fk_accountancy_journal);
+			//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 
 			$bankstatic->label = $obj->blabel;
 			print $bankstatic->getNomUrl(1);
 		}
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
-	}
+	}*/
 
 	// Amount
 	if (!empty($arrayfields['t.amount']['checked'])) {

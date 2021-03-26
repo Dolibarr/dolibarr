@@ -103,12 +103,12 @@ $arrayfields = array(
 	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
 	'cs.libelle'	=>array('label'=>"Label", 'checked'=>1, 'position'=>20),
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
-	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>30),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>40, 'enable'=>(!empty($conf->projet->enabled))),
-	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>50),
-	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>60),
-	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>70),
-	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>80),
+	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
+	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->projet->enabled))),
+	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
+	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>80),
+	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>90),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -346,19 +346,6 @@ if (!empty($arrayfields['cs.fk_type']['checked'])) {
 	print '</td>';
 }
 
-if (!empty($arrayfields['cs.fk_user']['checked'])) {
-	// Employee
-	print '<td class="liste_titre" align="left">';
-	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
-}
-
-// Filter: Project ref
-if (!empty($arrayfields['p.ref']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'">';
-	print '</td>';
-}
-
 // Filter: Date (placeholder)
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
 	print '<td class="liste_titre">';
@@ -374,6 +361,19 @@ if (!empty($arrayfields['cs.periode']['checked'])) {
 	print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
 	$formother->select_year($search_year_lim ? $search_year_lim : -1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 	print '</td>';
+}
+
+// Filter: Project ref
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="6" name="search_project_ref" value="'.$search_project_ref.'">';
+	print '</td>';
+}
+
+if (!empty($arrayfields['cs.fk_user']['checked'])) {
+	// Employee
+	print '<td class="liste_titre" align="left">';
+	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
 }
 
 // Filter: Amount
@@ -416,17 +416,17 @@ if (!empty($arrayfields['cs.libelle']['checked'])) {
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type", '', $param, 'class="left"', $sortfield, $sortorder);
 }
-if (!empty($arrayfields['cs.fk_user']['checked'])) {
-	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
-}
-if (!empty($arrayfields['p.ref']['checked'])) {
-	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
-}
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech", '', $param, 'align="center"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, 'align="center"', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cs.fk_user']['checked'])) {
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount", '', $param, 'class="right"', $sortfield, $sortorder);
@@ -492,37 +492,6 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	if (!empty($arrayfields['cs.fk_user']['checked'])) {
-		// Employee
-		print "<td>";
-		if (!empty($obj->fk_user)) {
-			if (!empty($TLoadedUsers[$obj->fk_user])) {
-				$ustatic = $TLoadedUsers[$obj->fk_user];
-			} else {
-				$ustatic = new User($db);
-				$ustatic->fetch($obj->fk_user);
-				$TLoadedUsers[$obj->fk_user] = $ustatic;
-			}
-			print $ustatic->getNomUrl(-1);
-		}
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Project ref
-	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowrap">';
-		if ($obj->project_id > 0) {
-			print $projectstatic->getNomUrl(1);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
 	// Date
 	if (!empty($arrayfields['cs.date_ech']['checked'])) {
 		print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
@@ -540,6 +509,37 @@ while ($i < min($num, $limit)) {
 			print '</a>';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Project ref
+	if (!empty($arrayfields['p.ref']['checked'])) {
+		print '<td class="nowrap">';
+		if ($obj->project_id > 0) {
+			print $projectstatic->getNomUrl(1);
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['cs.fk_user']['checked'])) {
+		// Employee
+		print "<td>";
+		if (!empty($obj->fk_user)) {
+			if (!empty($TLoadedUsers[$obj->fk_user])) {
+				$ustatic = $TLoadedUsers[$obj->fk_user];
+			} else {
+				$ustatic = new User($db);
+				$ustatic->fetch($obj->fk_user);
+				$TLoadedUsers[$obj->fk_user] = $ustatic;
+			}
+			print $ustatic->getNomUrl(-1);
+		}
+		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
