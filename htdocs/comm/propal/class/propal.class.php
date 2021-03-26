@@ -2508,7 +2508,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	function signature($user, $statut, $note = '', $notrigger = 0)
+	public function signature($user, $statut, $note = '', $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -2549,7 +2549,7 @@ class Propal extends CommonObject
 				$outputlangs = $langs;
 				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					$outputlangs = new Translate("", $conf);
-					$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $this->thirdparty->default_lang);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
 
