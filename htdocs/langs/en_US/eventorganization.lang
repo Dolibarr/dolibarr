@@ -54,6 +54,7 @@ ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
 AmountOfSubscriptionPaid = Amount of subscription paid
 DateSubscription = Date of subscription
+ConferenceOrBoothAttendee = Conference Or Booth Attendee
 
 #
 # Template Mail
