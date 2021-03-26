@@ -433,6 +433,19 @@ abstract class CommonDocGenerator
 		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
 		// Dates
 		$array_key.'_hour'=>dol_print_date($date, 'hour'),
+
+		// Modification by GME 25/03/2021
+		$array_key.'_date'=>dol_print_date($date, 'day', 'tzserver', $outputlangs),
+		$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc', 'tzserver', $outputlangs),
+		$array_key.'_date_limit'=>(!empty($object->date_lim_reglement) ?dol_print_date($object->date_lim_reglement, 'day', 'tzserver', $outputlangs) : ''),
+		$array_key.'_date_end'=>(!empty($object->fin_validite) ?dol_print_date($object->fin_validite, 'day', 'tzserver', $outputlangs) : ''),
+		$array_key.'_date_creation'=>dol_print_date($object->date_creation, 'day', 'tzserver', $outputlangs),
+		$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day', 'tzserver', $outputlangs) : ''),
+		$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour', 'tzserver', $outputlangs) : ''),
+		$array_key.'_date_delivery_planed'=>(!empty($object->date_livraison) ?dol_print_date($object->date_livraison, 'day', 'tzserver', $outputlangs) : ''),
+		$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour', 'tzserver', $outputlangs) : ''),
+
+		/*
 		$array_key.'_date'=>dol_print_date($date, 'day'),
 		$array_key.'_date_rfc'=>dol_print_date($date, 'dayrfc'),
 		$array_key.'_date_limit'=>(!empty($object->date_lim_reglement) ?dol_print_date($object->date_lim_reglement, 'day') : ''),
@@ -441,7 +454,7 @@ abstract class CommonDocGenerator
 		$array_key.'_date_modification'=>(!empty($object->date_modification) ?dol_print_date($object->date_modification, 'day') : ''),
 		$array_key.'_date_validation'=>(!empty($object->date_validation) ?dol_print_date($object->date_validation, 'dayhour') : ''),
 		$array_key.'_date_delivery_planed'=>(!empty($object->date_livraison) ?dol_print_date($object->date_livraison, 'day') : ''),
-		$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour') : ''),
+		$array_key.'_date_close'=>(!empty($object->date_cloture) ?dol_print_date($object->date_cloture, 'dayhour') : ''),*/
 
 		$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
 		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
@@ -463,7 +476,11 @@ abstract class CommonDocGenerator
 		$array_key.'_total_vat'=>(!empty($object->total_vat) ?price2num($object->total_vat) : price2num($object->total_tva)),
 		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
-		$array_key.'_total_ttc'=>price2num($object->total_ttc),
+
+		// modification by GME 07/02/2020
+		// Verified by GME 25/03/2021
+		$array_key.'_total_ttc'=>price($object->total_ttc, 0, $outputlangs, 1, 2),
+		//$array_key.'_total_ttc'=>price2num($object->total_ttc),
 
 		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
@@ -855,6 +872,10 @@ abstract class CommonDocGenerator
 	{
 		// phpcs:enable
 		global $conf;
+
+		// Added by GME 15/01/2021 because label is not all the time present
+		// Verified on 25/03/2021
+		if(!isset($extrafields->attributes[$object->table_element]['label'])) return  $array_to_fill;
 
 		if (is_array($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key=>$label)

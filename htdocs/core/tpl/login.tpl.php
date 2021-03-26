@@ -117,6 +117,8 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
+<!-- Added by GME 25/03/2021 -->
+<input name="live-key" type="hidden" value="eo48r5hdd789441aWdeEA68z9e23f2" />
 
 
 <!-- Title with version -->
