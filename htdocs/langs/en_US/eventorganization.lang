@@ -42,6 +42,8 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  aft
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
+EVENTORGANIZATION_FILTERATTENDEES_CAT=Categories to filter thirdpartie's select list in attendees creation card/form
+EVENTORGANIZATION_FILTERATTENDEES_TYPE=Thirdparty type to filter thirdpartie's select list in attendees creation card/form
 
 #
 # Object
