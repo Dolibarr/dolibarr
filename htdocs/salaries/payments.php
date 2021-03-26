@@ -206,8 +206,8 @@ if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_
 if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
 if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0)	$sql .= " AND b.fk_account=".((int) $search_account);
-if($search_fk_bank)			$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
-if($search_chq_number)		$sql .= natural_search(array('s.num_payment'), $search_chq_number);
+if ($search_fk_bank)			$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
+if ($search_chq_number)		$sql .= natural_search(array('s.num_payment'), $search_chq_number);
 
 if ($search_type_id > 0) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;
@@ -454,7 +454,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Account
 	if (!empty($conf->banque->enabled)) {
-
 		// Bank transaction
 		print '<td>';
 		$accountlinestatic->id = $obj->fk_bank;

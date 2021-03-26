@@ -285,7 +285,7 @@ while ($i < min($num, $limit)) {
 
 	// Employee
 	print "<td>";
-	if(!empty($obj->uid)) {
+	if (!empty($obj->uid)) {
 		$userstatic->id = $obj->uid;
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->firstname = $obj->firstname;
@@ -309,7 +309,6 @@ while ($i < min($num, $limit)) {
 
 	// Account
 	if (!empty($conf->banque->enabled)) {
-
 		// Bank transaction
 		print '<td>';
 		$accountlinestatic->id = $obj->fk_bank;
