@@ -43,6 +43,10 @@ htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
 
+
+cyberoffice/
+mycyberoffice/
+
 # Node Modules
 build/yarn-error.log
 build/node_modules/
