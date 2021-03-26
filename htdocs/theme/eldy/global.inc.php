@@ -767,6 +767,19 @@ textarea.centpercent {
 	max-width: 100%;
 	overflow-y: auto;
 }
+div.urllink {
+	padding: 10px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	//border: 1px solid #ccc;
+	border-radius: 5px;
+	width: fit-content;
+	background-color: #eee;
+	opacity: 0.8;
+}
+div.urllink, div.urllink a {
+	color: #339 !important;
+}
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
 	color: #888 !important;

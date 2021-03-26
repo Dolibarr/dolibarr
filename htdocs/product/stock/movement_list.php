@@ -247,7 +247,7 @@ if ($action == "correct_stock") {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'correction';
 	}
-	if (!is_numeric($_POST["nbpiece"])) {
+	if (!is_numeric(GETPOST("nbpiece"))) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action = 'correction';

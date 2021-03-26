@@ -40,12 +40,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $actionid = GETPOST('actionid');
 
-// Security check
-if ($user->socid) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -73,6 +67,12 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+
+// Security check
+if ($user->socid) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'user', '', '');
 
 
 /*

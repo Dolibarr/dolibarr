@@ -303,14 +303,17 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 		if ($offsetforchartofaccount > 0) {
 			// Replace lines
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400,...'
 			// with
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
-			// Note: string with 1234 instead of '1234' is also supported
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000,...'
+			// Note: string with 'PCG99-ABREGE','CAPIT', 1234  instead of  'PCG99-ABREGE','CAPIT', '1234' is also supported
 			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
 			$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
 			//var_dump($newsql);
 			$arraysql[$i] = $newsql;
+
+			// FIXME Because we force the rowid during insert, we must also update the sequence with postgresql by running
+			// SELECT dol_util_rebuild_sequences();
 		}
 	}
 
@@ -568,7 +571,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constante (chaine par defaut)
+ *	@param	    string		$type		Type of constant ('chaine by default)
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)

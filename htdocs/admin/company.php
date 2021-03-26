@@ -211,7 +211,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 
-	if ($_POST["optionlocaltax1"] == "localtax1on") {
+	if (GETPOST("optionlocaltax1") == "localtax1on") {
 		if (!GETPOSTISSET('lt1')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0, 'chaine', 0, '', $conf->entity);
 		} else {
@@ -219,7 +219,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC1", GETPOST("clt1", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
-	if ($_POST["optionlocaltax2"] == "localtax2on") {
+	if (GETPOST("optionlocaltax2") == "localtax2on") {
 		if (!GETPOSTISSET('lt2')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0, 'chaine', 0, '', $conf->entity);
 		} else {

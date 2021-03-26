@@ -77,7 +77,23 @@ class modProductBatch extends DolibarrModules
 		$this->langfiles = array("productbatch");
 
 		// Constants
+		// Constants
 		$this->const = array();
+		$r = 0;
+
+		$this->const[$r][0] = "PRODUCTBATCH_LOT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_lot_free";
+		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PRODUCTBATCH_SN_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_sn_free";
+		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		$this->tabs = array();
 
