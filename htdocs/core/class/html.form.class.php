@@ -96,7 +96,7 @@ class Form
 	 * @param   string	$preselected    Value to show/edit (not used in this function)
 	 * @param	object	$object			Object
 	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), '+:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param	string	$moreparam		More param to add on a href URL.
 	 * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '

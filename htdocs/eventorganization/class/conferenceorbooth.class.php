@@ -109,7 +109,7 @@ class ConferenceOrBooth extends ActionComm
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1::eventorganization', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
-		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'default'=>'', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
+		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'default'=>'', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>	1, 'visible'=>1,),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
 		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
