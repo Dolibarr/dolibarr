@@ -114,6 +114,7 @@ DemoCompanyAll=Société avec de multiples activités (tous les modules principa
 CreatedBy=Créé par %s
 ModifiedBy=Modifié par %s
 ValidatedBy=Validé par %s
+SignedBy=Signé par %s
 ClosedBy=Clôturé par %s
 CreatedById=Id utilisateur créateur
 ModifiedById=Id utilisateur du dernier changement
