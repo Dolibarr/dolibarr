@@ -307,7 +307,7 @@ if ($resql) {
 	$moreforfilter = '';
 	if (!empty($conf->categorie->enabled)) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('Categories').': ';
+		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ');
 		$moreforfilter .= '</div>';
 	}
@@ -493,7 +493,10 @@ if ($resql) {
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 			print '<td class="left">'.$objp->unit_short.'</td>';
 		}
-		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
+		print '<td class="center">';
+		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a>';
+		print '</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Fields from hook

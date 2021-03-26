@@ -67,7 +67,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
+	if ($action == 'update' && $user->rights->user->user->creer && !GETPOST("cancel")) {
 		$db->begin();
 
 		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5));

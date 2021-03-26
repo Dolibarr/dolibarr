@@ -73,14 +73,14 @@ if ($reshook < 0) {
  * Actions
  */
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 	$error = 0;
 
 	if (empty($taskref)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	}
-	if (empty($_POST["label"])) {
+	if (!GETPOST("label")) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}

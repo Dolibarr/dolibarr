@@ -1786,6 +1786,7 @@ ApiSetup=Configuration du module API REST
 ApiDesc=En activant ce module, Dolibarr devient aussi serveur de services API de type REST
 ApiProductionMode=Activer le mode « production » (ceci activera l'utilisation du cache pour la gestion des services)
 ApiExporerIs=Vous pouvez explorer et tester les API par l'URL
+SwaggerDescriptionFile=Swagger JSON description file of APIs
 OnlyActiveElementsAreExposed=Seuls les éléments en rapport avec un module actif sont présentés.
 ApiKey=Clé pour l'API
 WarningAPIExplorerDisabled=L'explorateur d'API est désactivé. L'explorateur d'API n'est pas nécessaire pour le fonctionnement des API. il s'agit d'un outil pour les développeurs pour en tester les services. Si cet outil vous est nécessaire, activez le module API REST dans la liste des modules.

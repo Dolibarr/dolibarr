@@ -99,7 +99,8 @@ $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 					var roworder = cleanSerialize(decodeURI($("#tablelines").tableDnDSerialize()));
 					$.post("<?php echo DOL_URL_ROOT; ?>/variants/ajax/orderAttribute.php",
 						{
-							roworder: roworder
+							roworder: roworder,
+							token: "<?php echo currentToken(); ?>"
 						},
 						function() {
 							if (reloadpage == 1) {

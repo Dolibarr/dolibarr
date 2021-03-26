@@ -324,3 +324,7 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
+ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+
+
+

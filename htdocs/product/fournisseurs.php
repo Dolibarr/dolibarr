@@ -217,7 +217,7 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
-		if (price2num($_POST["price"]) < 0 || $_POST["price"] == '') {
+		if (price2num(GETPOST("price")) < 0 || GETPOST("price") == '') {
 			if ($price_expression === '') {	// Return error of missing price only if price_expression not set
 				$error++;
 				$langs->load("errors");

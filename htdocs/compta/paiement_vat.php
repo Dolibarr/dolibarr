@@ -33,6 +33,8 @@ $langs->loadLangs(array("banks", "bills"));
 
 $chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel');
+
 $amounts = array();
 
 // Security check
@@ -49,7 +51,7 @@ if ($user->socid > 0) {
 if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
-	if ($_POST["cancel"]) {
+	if ($cancel) {
 		$loc = DOL_URL_ROOT.'/compta/tva/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
@@ -73,22 +75,22 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$action = 'create';
 	}
 
+	// Read possible payments
+	foreach ($_POST as $key => $value) {
+		if (substr($key, 0, 7) == 'amount_') {
+			$other_chid = substr($key, 7);
+			$amounts[$other_chid] = price2num(GETPOST($key));
+		}
+	}
+
+	if ($amounts[key($amounts)] <= 0) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
+		$action = 'create';
+	}
+
 	if (!$error) {
 		$paymentid = 0;
-
-		// Read possible payments
-		foreach ($_POST as $key => $value) {
-			if (substr($key, 0, 7) == 'amount_') {
-				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num(GETPOST($key));
-			}
-		}
-
-		if (count($amounts) <= 0) {
-			$error++;
-			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-			$action = 'create';
-		}
 
 		if (!$error) {
 			$db->begin();

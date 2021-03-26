@@ -912,8 +912,8 @@ class FormMail extends Form
 					}
 				}
 
-				if (GETPOSTISSET("message") && !$_POST['modelselected']) {
-					$defaultmessage = $_POST["message"];
+				if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
+					$defaultmessage = GETPOST("message", "restricthtml");
 				} else {
 					$defaultmessage = make_substitutions($defaultmessage, $this->substit);
 					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)

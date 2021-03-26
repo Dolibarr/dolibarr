@@ -245,7 +245,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 			foreach ($rowids as $row) {
 				if ($row > 0) {
 					$result = $bankline->fetch($row);
-					$bankline->num_releve = $num_releve; //$_POST["num_releve"];
+					$bankline->num_releve = $num_releve; // GETPOST("num_releve");
 					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
 					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');

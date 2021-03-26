@@ -12,7 +12,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 ## Reporting a Vulnerability
 
-To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (or alternatively send an email to security@dolibarr.org)
+To report a vulnerability, please use GitHub security advisory at https://github.com/Dolibarr/dolibarr/security/advisories/new (if you have permissions) or alternatively send an email to security@dolibarr.org (for everybody)
 
 
 ## Hunting vulnerabilities on Dolibarr
@@ -55,7 +55,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 * $dolibarr_nocsrfcheck must be kept to the value 0 into conf.php (this is the default value)
 * $dolibarr_main_force_https must be set to something else than 0.
 * The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this protection should be set to 1 soon by default)
-* The module DebugBar and ModuleBuilder must NOT be enabled (by default, this module is not enabled. This is a developer tool)
+* The module DebugBar and ModuleBuilder must NOT be enabled (by default, these modules are not enabled. They are developer tools)
 * ONLY security reports on modules provided by default and with the "stable" status are valid (troubles into "experimental", "developement" or external modules are not valid vulnerabilities).
 * The root of web server must link to htdocs and the documents directory must be outside of the web server root (this is the default when using the default installer but may differs with external installer).
 * The web server setup must be done so only the documents directory is in write mode. The root directory called htdocs must be readonly.
@@ -65,12 +65,12 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 Scope is the web application (back office) and the APIs.
 
 
-## Qualifying vulnerabilities for Bug bounty programs
+## Qualifying vulnerabilities for reporting
 
 * Remote code execution (RCE)
 * Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
 * Code injections (HTML, JS, SQL, PHP, ...)
-* Cross-Site Scripting (XSS)
+* Cross-Site Scripting (XSS), except from setup page of module "External web site" (allowing any content here, editable by admin user only, is accepted on purpose or into module "Web site" when permission to edit website content is allowed).
 * Cross-Site Requests Forgery (CSRF) with real security impact (when using GET URLs, CSRF are qualified only for creating, updating or deleting data from pages restricted to admin users)
 * Open redirect
 * Broken authentication & session management
@@ -82,7 +82,7 @@ Scope is the web application (back office) and the APIs.
 * Stack traces or path disclosure (for non admin users only)
 
 
-## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
+## Non-qualifying vulnerabilities for reporting
 
 * "Self" XSS
 * SSL/TLS best practices

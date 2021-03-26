@@ -80,9 +80,9 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 
 		if (empty($error)) {
 			$object->address = GETPOST('address', 'alpha');
-			$object->zip 			= GETPOST('zipcode', 'alpha');
-			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = $_POST["country_id"];
+			$object->zip = GETPOST('zipcode', 'alpha');
+			$object->town = GETPOST('town', 'alpha');
+			$object->country_id = GETPOST("country_id", 'int');
 			$object->status = GETPOST('status', 'int');
 			$object->fk_user_author	= $user->id;
 			$object->datec = dol_now();

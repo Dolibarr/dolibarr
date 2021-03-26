@@ -434,7 +434,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
 	$arrayofactiontoforcetokencheck = array(
 		'activate', 'add', 'addtimespent', 'update', 'install',
-		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check',
 		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
 		'enable'
@@ -2073,8 +2073,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.'
-	            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	            '.$userImage.'<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->

@@ -33,6 +33,7 @@ $langs->load("bills");
 
 $chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $amounts = array();
 
 // Security check
@@ -49,7 +50,7 @@ if ($user->socid > 0) {
 if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
-	if ($_POST["cancel"]) {
+	if ($cancel) {
 		$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
@@ -73,22 +74,22 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$action = 'create';
 	}
 
+	// Read possible payments
+	foreach ($_POST as $key => $value) {
+		if (substr($key, 0, 7) == 'amount_') {
+			$other_chid = substr($key, 7);
+			$amounts[$other_chid] = price2num($_POST[$key]);
+		}
+	}
+
+	if ($amounts[key($amounts)] <= 0) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
+		$action = 'create';
+	}
+
 	if (!$error) {
 		$paymentid = 0;
-
-		// Read possible payments
-		foreach ($_POST as $key => $value) {
-			if (substr($key, 0, 7) == 'amount_') {
-				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
-			}
-		}
-
-		if (count($amounts) <= 0) {
-			$error++;
-			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-			$action = 'create';
-		}
 
 		if (!$error) {
 			$db->begin();
@@ -174,7 +175,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_end();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -198,21 +199,21 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : '';
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(isset($_POST["paiementtype"]) ? $_POST["paiementtype"] : $salary->type_payment, "paiementtype");
+	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype") : $salary->type_payment, "paiementtype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -270,12 +271,13 @@ if ($action == 'create') {
 		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
+			/* Disabled, we autofil the amount with remain to pay by default
 			if (!empty($conf->use_javascript_ajax)) {
 				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
-			}
+			} */
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
 		} else {
 			print '-';
 		}

@@ -608,30 +608,50 @@ if ($optioncss != '') {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-if ($socid) {
+if ($socid > 0) {
 	$param .= '&socid='.urlencode($socid);
 }
-if ($projectid) {
+if ($search_societe) {
+	$param .= '&search_societe='.urlencode($search_societe);
+}
+if ($projectid > 0) {
 	$param .= '&projectid='.urlencode($projectid);
 }
-
 if ($search_date_start) {
-	$param .= '&search_date_start='.urlencode($search_date_start);
+	$tmparray = dol_getdate($search_date_start);
+	$param .= '&search_date_startday='.urlencode($tmparray['mday']);
+	$param .= '&search_date_startmonth='.urlencode($tmparray['mon']);
+	$param .= '&search_date_startyear='.urlencode($tmparray['year']);
 }
 if ($search_date_end) {
-	$param .= '&search_date_end='.urlencode($search_date_end);
+	$tmparray = dol_getdate($search_date_end);
+	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
+	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
+	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
 }
 if ($search_dateread_start) {
-	$param .= '&search_dateread_start='.urlencode($search_dateread_start);
+	$tmparray = dol_getdate($search_dateread_start);
+	$param .= '&search_dateread_startday='.urlencode($tmparray['mday']);
+	$param .= '&search_dateread_startmonth='.urlencode($tmparray['mon']);
+	$param .= '&search_dateread_startyear='.urlencode($tmparray['year']);
 }
 if ($search_dateread_end) {
-	$param .= '&search_dateread_end='.urlencode($search_dateread_end);
+	$tmparray = dol_getdate($search_dateread_end);
+	$param .= '&search_dateread_endday='.urlencode($tmparray['mday']);
+	$param .= '&search_dateread_endmonth='.urlencode($tmparray['mon']);
+	$param .= '&search_dateread_endyear='.urlencode($tmparray['year']);
 }
 if ($search_dateclose_start) {
-	$param .= '&search_dateclose_start='.urlencode($search_dateclose_start);
+	$tmparray = dol_getdate($search_dateclose_start);
+	$param .= '&search_dateclose_startday='.urlencode($tmparray['mday']);
+	$param .= '&search_dateclose_startmonth='.urlencode($tmparray['mon']);
+	$param .= '&search_dateclose_startyear='.urlencode($tmparray['year']);
 }
 if ($search_dateclose_end) {
-	$param .= '&search_dateclose_end='.urlencode($search_dateclose_end);
+	$tmparray = dol_getdate($search_dateclose_end);
+	$param .= '&search_date_endday='.urlencode($tmparray['mday']);
+	$param .= '&search_date_endmonth='.urlencode($tmparray['mon']);
+	$param .= '&search_date_endyear='.urlencode($tmparray['year']);
 }
 
 // List of mass actions available

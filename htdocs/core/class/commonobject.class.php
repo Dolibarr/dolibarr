@@ -1072,9 +1072,9 @@ abstract class CommonObject
 			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-			$sql .= " VALUES (".$this->id.", ".$fk_socpeople." , ";
+			$sql .= " VALUES (".$this->id.", ".((int) $fk_socpeople)." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
-			$sql .= ", 4, ".$id_type_contact;
+			$sql .= ", 4, ".((int) $id_type_contact);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -7688,7 +7688,8 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) { // In most cases, test here is false
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+			 // When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation

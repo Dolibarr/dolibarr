@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -59,7 +60,7 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"])) {
+if ($action == 'update' && !$cancel) {
 	// Send mode parameters
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE_EMAILING", GETPOST("MAIN_MAIL_SENDMODE_EMAILING"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT_EMAILING", GETPOST("MAIN_MAIL_SMTP_PORT_EMAILING"), 'chaine', 0, '', $conf->entity);

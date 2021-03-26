@@ -41,6 +41,7 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
+$cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
 $refund = GETPOST("refund", "int");
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
@@ -74,7 +75,7 @@ $hookmanager->initHooks(array('taxvatcard', 'globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && !$id) {
+if ($cancel && !$id) {
 	header("Location: list.php");
 	exit;
 }
@@ -135,7 +136,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 	}
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel")) {
+if ($action == 'add' && $cancel) {
 	$error = 0;
 
 	$object->fk_account = GETPOST("accountid", 'int');
@@ -260,7 +261,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {
 	}
 }
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
 	$amount = price2num(GETPOST('amount'));
 
 	if (empty($amount)) {

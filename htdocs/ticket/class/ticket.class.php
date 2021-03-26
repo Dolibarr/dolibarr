@@ -1177,7 +1177,7 @@ class Ticket extends CommonObject
 		}
 		// Cache deja charge
 
-		$sql = "SELECT rowid, code, label, use_default, pos, description";
+		$sql = "SELECT rowid, code, label, use_default, pos, description, public, active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY pos";
@@ -1194,6 +1194,8 @@ class Ticket extends CommonObject
 				$this->cache_category_tickets[$obj->rowid]['label'] = $label;
 				$this->cache_category_tickets[$obj->rowid]['use_default'] = $obj->use_default;
 				$this->cache_category_tickets[$obj->rowid]['pos'] = $obj->pos;
+				$this->cache_category_tickets[$obj->rowid]['public'] = $obj->public;
+				$this->cache_category_tickets[$obj->rowid]['active'] = $obj->active;
 				$i++;
 			}
 			return $num;
