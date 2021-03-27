@@ -21,7 +21,7 @@
 
 -- type_phones
 
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONE', 'PhoneStd', 1, 10);
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONEMOBILE', 'PhoneMobile', 1, 20);
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONEFAX', 'PhoneFax', 1, 30);
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONEPAGER', 'PhonePager', 1, 40);
+INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONE', 'PhoneStd', 1, 10);
+INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONEMOBILE', 'PhoneMobile', 1, 20);
+INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONEFAX', 'PhoneFax', 1, 30);
+INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONEPAGER', 'PhonePager', 1, 40);
