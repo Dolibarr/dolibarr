@@ -13,6 +13,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
-ALTER TABLE llx_member_phones ADD CONSTRAINT fk_member FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
+ALTER TABLE llx_socpeople_emails ADD CONSTRAINT fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
 
-ALTER TABLE llx_member_phones ADD INDEX idx_member_phones_fk_member (fk_member);
+ALTER TABLE llx_socpeople_emails ADD INDEX idx_socpeople_emails_fk_socpeople (fk_socpeople);

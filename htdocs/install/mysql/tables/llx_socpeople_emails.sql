@@ -13,6 +13,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
-ALTER TABLE llx_member_phones ADD CONSTRAINT fk_member FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
 
-ALTER TABLE llx_member_phones ADD INDEX idx_member_phones_fk_member (fk_member);
+CREATE TABLE llx_socpeople_emails(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_socpeople integer NOT NULL,
+    email varchar(255) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
