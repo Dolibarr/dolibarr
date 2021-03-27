@@ -27,10 +27,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $action = GETPOST('action', 'aZ09');
 
 // Other parameters HRM_*
@@ -38,9 +34,15 @@ $list = array(
 //		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
+if (!$user->admin) {
+	accessforbidden();
+}
+
+
 /*
  * Actions
  */
+
 if ($action == 'update') {
 	$error = 0;
 

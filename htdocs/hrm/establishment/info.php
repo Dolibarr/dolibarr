@@ -76,12 +76,18 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
 }
 
+$permissiontoadd = $user->rights->hrm->write; // Used by the include of actions_addupdatedelete.inc.php
+$upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $object->id);
 
-$permissiontoadd = $user->rights->hrm->write; // Used by the include of actions_addupdatedelete.inc.php
+// Security check
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -128,7 +134,7 @@ if ($object->id > 0) {
 	$head = establishment_prepare_head($object);
 
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Establishment"), -1, 'building');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Establishment"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
