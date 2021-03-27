@@ -19,7 +19,7 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
--- type_emails
+-- type_contacting_object
 
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('business', 'BusinessEmail', 1, 10);
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('personal', 'PersonalEmail', 1, 20);
+INSERT INTO llx_c_type_contacting_object (code, label, active, position) VALUES ('BUSINESS', 'BusinessContactingObject', 1, 10);
+INSERT INTO llx_c_type_contacting_object (code, label, active, position) VALUES ('PRIVATE', 'PrivateContactingObject', 1, 20);
