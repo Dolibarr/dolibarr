@@ -60,7 +60,6 @@ if ($action == 'addcontact' && $permissiontoedit) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source"));
-		
 	}
 
 	if ($result >= 0) {
