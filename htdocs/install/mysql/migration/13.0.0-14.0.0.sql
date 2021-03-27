@@ -352,3 +352,24 @@ CREATE TABLE llx_socpeople_emails(
 
 ALTER TABLE llx_socpeople_emails ADD CONSTRAINT fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
 ALTER TABLE llx_socpeople_emails ADD INDEX idx_socpeople_emails_fk_socpeople (fk_socpeople);
+
+CREATE TABLE llx_company_phones(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_soc integer NOT NULL,
+    number varchar(30) NOT NULL,
+    fk_type_code varchar(12) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_company_phones ADD CONSTRAINT fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_company_phones ADD INDEX idx_company_phones_fk_soc (fk_soc);
+
+CREATE TABLE llx_company_emails(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_soc integer NOT NULL,
+    email varchar(255) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_company_emails ADD CONSTRAINT fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_company_emails ADD INDEX idx_company_emails_fk_soc (fk_soc);

@@ -14,9 +14,10 @@
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_member_emails(
+CREATE TABLE llx_company_emails(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    fk_member integer NOT NULL,
+    fk_soc integer NOT NULL,
     email varchar(256) NOT NULL,
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
+
