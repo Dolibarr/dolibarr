@@ -99,11 +99,6 @@ class Entrepot extends CommonObject
 	public $phone;
 
 	/**
-	 * @var string Fax
-	 */
-	public $fax;
-
-	/**
 	 * @var int ID of parent
 	 */
 	public $fk_parent;
@@ -298,7 +293,6 @@ class Entrepot extends CommonObject
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
 		$sql .= ", fk_pays = ".$this->country_id;
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
-		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
@@ -463,7 +457,6 @@ class Entrepot extends CommonObject
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
 				$this->phone          = $obj->phone;
-				$this->fax            = $obj->fax;
 
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;

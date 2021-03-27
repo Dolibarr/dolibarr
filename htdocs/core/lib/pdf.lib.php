@@ -418,10 +418,6 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				if ($sourcecompany->phone) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("PhoneShort").": ".$outputlangs->convToOutputCharset($sourcecompany->phone);
 				}
-				// Fax
-				if ($sourcecompany->fax) {
-					$stringaddress .= ($stringaddress ? ($sourcecompany->phone ? " - " : "\n") : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($sourcecompany->fax);
-				}
 				// EMail
 				if ($sourcecompany->email) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($sourcecompany->email);
@@ -526,12 +522,6 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 							$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
 						}
 					}
-					// Fax
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
-						if ($targetcontact->fax) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
-						}
-					}
 					// EMail
 					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
 						if ($targetcontact->email) {
@@ -566,12 +556,6 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 						}
 						if (!empty($targetcompany->phone_mobile)) {
 							$stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
-						}
-					}
-					// Fax
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
-						if ($targetcompany->fax) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
 						}
 					}
 					// EMail
@@ -993,10 +977,6 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		// Phone
 		if ($fromcompany->phone) {
 			$line2 .= ($line2 ? " - " : "").$outputlangs->transnoentities("Phone").": ".$fromcompany->phone;
-		}
-		// Fax
-		if ($fromcompany->fax) {
-			$line2 .= ($line2 ? " - " : "").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
 		}
 
 		// URL

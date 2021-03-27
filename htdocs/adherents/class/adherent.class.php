@@ -190,11 +190,6 @@ class Adherent extends CommonObject
 	public $phone_mobile;
 
 	/**
-	 * @var string Fax number
-	 */
-	public $fax;
-
-	/**
 	 * @var string Function
 	 */
 	public $poste;
@@ -2615,9 +2610,6 @@ class Adherent extends CommonObject
 		}
 		if ($this->phone_mobile && !empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) {
 			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
-		}
-		if ($this->fax && !empty($conf->global->LDAP_MEMBER_FIELD_FAX)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
 		}
 		if ($this->note_private && !empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) {
 			$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);

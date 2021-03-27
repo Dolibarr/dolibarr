@@ -47,7 +47,6 @@ create table llx_societe
   fk_pays                  integer        DEFAULT 0,            		--
   fk_account               integer        DEFAULT 0,            		--
   phone                    varchar(20),                         		-- phone number
-  fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
 

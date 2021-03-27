@@ -445,7 +445,6 @@ if (empty($reshook)) {
 				}
 			}
 			$object->phone = GETPOST('phone', 'alpha');
-			$object->fax					= GETPOST('fax', 'alpha');
 			$object->email = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
 			$object->url					= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->idprof1				= trim(GETPOST('idprof1', 'alphanohtml'));
@@ -1015,7 +1014,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 		}
 		$object->phone				= GETPOST('phone', 'alpha');
-		$object->fax				= GETPOST('fax', 'alpha');
 		$object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 		$object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
 		$object->capital			= GETPOST('capital', 'alphanohtml');
@@ -1380,14 +1378,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		// Phone / Fax
+		// Phone
 		print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
 		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
-		if ($conf->browser->layout == 'phone') {
-			print '</tr><tr>';
-		}
-		print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-		print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+		print '</tr>';
 
 		// Email / Web
 		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', empty($conf->global->SOCIETE_EMAIL_MANDATORY) ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
@@ -1744,7 +1738,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 				$object->phone					= GETPOST('phone', 'alpha');
-				$object->fax					= GETPOST('fax', 'alpha');
 				$object->email					= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
 				$object->url					= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
 				$object->capital				= GETPOST('capital', 'alphanohtml');
@@ -2060,11 +2053,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
 			print '<td>'.img_picto('', 'object_phoning').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ?GETPOST('phone', 'alpha') : $object->phone).'"></td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-			print '<td>'.img_picto('', 'object_phoning_fax').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ?GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+			print '</tr>';
 
 			// EMail / Web
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';

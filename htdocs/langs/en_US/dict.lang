@@ -300,7 +300,6 @@ DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campaign
 DemandReasonTypeSRC_CAMP_EMAIL=EMailing campaign
 DemandReasonTypeSRC_CAMP_PHO=Phone campaign
-DemandReasonTypeSRC_CAMP_FAX=Fax campaign
 DemandReasonTypeSRC_COMM=Commercial contact
 DemandReasonTypeSRC_SHOP=Shop contact
 DemandReasonTypeSRC_WOM=Word of mouth

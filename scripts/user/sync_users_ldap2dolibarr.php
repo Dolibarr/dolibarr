@@ -71,7 +71,6 @@ $required_fields = array(
 	$conf->global->LDAP_FIELD_PASSWORD,
 	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 	$conf->global->LDAP_FIELD_PHONE,
-	$conf->global->LDAP_FIELD_FAX,
 	$conf->global->LDAP_FIELD_MOBILE,
 	// $conf->global->LDAP_FIELD_ADDRESS,
 	// $conf->global->LDAP_FIELD_ZIP,
@@ -216,7 +215,6 @@ if ($result >= 0) {
 
 			$fuser->office_phone = $ldapuser[$conf->global->LDAP_FIELD_PHONE];
 			$fuser->user_mobile = $ldapuser[$conf->global->LDAP_FIELD_MOBILE];
-			$fuser->office_fax = $ldapuser[$conf->global->LDAP_FIELD_FAX];
 			$fuser->email = $ldapuser[$conf->global->LDAP_FIELD_MAIL];
 			$fuser->ldap_sid = $ldapuser[$conf->global->LDAP_FIELD_SID];
 

@@ -206,7 +206,6 @@ class HolidayTest extends PHPUnit\Framework\TestCase
 		$localobject->phone_pro='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
-		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
 		$localobject->jabberid='New im id';
 		$localobject->default_lang='es_ES';

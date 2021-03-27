@@ -49,7 +49,6 @@ LastProspectContactDone=Contact done
 ActionAffectedTo=Event assigned to
 ActionDoneBy=Event done by
 ActionAC_TEL=Phone call
-ActionAC_FAX=Send fax
 ActionAC_PROP=Send proposal by mail
 ActionAC_EMAIL=Send Email
 ActionAC_EMAIL_IN=Reception of Email

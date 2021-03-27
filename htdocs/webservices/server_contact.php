@@ -294,7 +294,6 @@ function getContact($authentication, $id, $ref_ext)
 					'socid' => $contact->socid,
 					'status' => $contact->statut,
 					'phone_pro' => $contact->phone_pro,
-					'fax' => $contact->fax,
 					'phone_perso' => $contact->phone_perso,
 					'phone_mobile' => $contact->phone_mobile,
 					'code' => $contact->code,
@@ -399,7 +398,6 @@ function createContact($authentication, $contact)
 		$newobject->socid = $contact['socid'];
 		$newobject->statut = $contact['status'];
 		$newobject->phone_pro = $contact['phone_pro'];
-		$newobject->fax = $contact['fax'];
 		$newobject->phone_perso = $contact['phone_perso'];
 		$newobject->phone_mobile = $contact['phone_mobile'];
 		$newobject->code = $contact['code'];
@@ -540,7 +538,6 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 					'poste' => $contact->poste ? $contact->poste : '',
 
 					'phone_pro' => $contact->phone_pro ? $contact->phone_pro : '',
-					'fax' => $contact->fax ? $contact->fax : '',
 					'phone_perso' => $contact->phone_perso ? $contact->phone_perso : '',
 					'phone_mobile' => $contact->phone_mobile ? $contact->phone_mobile : '',
 
@@ -646,7 +643,6 @@ function updateContact($authentication, $contact)
 			$object->phone_pro = $contact['phone_pro'];
 			$object->phone_perso = $contact['phone_perso'];
 			$object->phone_mobile = $contact['phone_mobile'];
-			$object->fax = $contact['fax'];
 			$object->email = $contact['email'];
 
 			$object->civility_id = $contact['civility_id'];

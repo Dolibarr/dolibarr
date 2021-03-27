@@ -297,13 +297,6 @@ print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SKYPE) ? ' checked' : '')."></td>";
 print '</tr>';
 
-// Fax
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
-print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_FIELD_FAX.'">';
-print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_FAX"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_FAX) ? ' checked' : '')."></td>";
-print '</tr>';
-
 // Company
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
 print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_FIELD_COMPANY.'">';
@@ -485,7 +478,6 @@ if (function_exists("ldap_connect")) {
 				$conf->global->LDAP_FIELD_PASSWORD,
 				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 				$conf->global->LDAP_FIELD_PHONE,
-				$conf->global->LDAP_FIELD_FAX,
 				$conf->global->LDAP_FIELD_SKYPE,
 				$conf->global->LDAP_FIELD_MOBILE,
 				$conf->global->LDAP_FIELD_MAIL,

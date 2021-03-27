@@ -73,7 +73,6 @@ $search_poste = GETPOST("search_poste", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_pro = GETPOST("search_phone_pro", 'alpha');
 $search_phone_mobile = GETPOST("search_phone_mobile", 'alpha');
-$search_fax = GETPOST("search_fax", 'alpha');
 $search_email = GETPOST("search_email", 'alpha');
 $search_no_email = GETPOST("search_no_email", 'int');
 if (!empty($conf->socialnetworks->enabled)) {
@@ -267,7 +266,6 @@ if (empty($reshook)) {
 		$search_phone_perso = "";
 		$search_phone_pro = "";
 		$search_phone_mobile = "";
-		$search_fax = "";
 		$search_email = "";
 		$search_no_email = -1;
 		if (!empty($conf->socialnetworks->enabled)) {
@@ -472,9 +470,6 @@ if (strlen($search_phone_pro)) {
 if (strlen($search_phone_mobile)) {
 	$sql .= natural_search('p.phone_mobile', $search_phone_mobile);
 }
-if (strlen($search_fax)) {
-	$sql .= natural_search('p.fax', $search_fax);
-}
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
@@ -614,9 +609,6 @@ if ($search_phone_perso != '') {
 }
 if ($search_phone_mobile != '') {
 	$param .= '&amp;search_phone_mobile='.urlencode($search_phone_mobile);
-}
-if ($search_fax != '') {
-	$param .= '&amp;search_fax='.urlencode($search_fax);
 }
 if ($search_email != '') {
 	$param .= '&amp;search_email='.urlencode($search_email);
@@ -813,11 +805,6 @@ if (!empty($arrayfields['p.phone_perso']['checked'])) {
 if (!empty($arrayfields['p.phone_mobile']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="search_phone_mobile" size="6" value="'.dol_escape_htmltag($search_phone_mobile).'">';
-	print '</td>';
-}
-if (!empty($arrayfields['p.fax']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_fax" size="6" value="'.dol_escape_htmltag($search_fax).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.email']['checked'])) {
@@ -1107,13 +1094,6 @@ while ($i < min($num, $limit)) {
 	// Phone mobile
 	if (!empty($arrayfields['p.phone_mobile']['checked'])) {
 		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Fax
-	if (!empty($arrayfields['p.fax']['checked'])) {
-		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

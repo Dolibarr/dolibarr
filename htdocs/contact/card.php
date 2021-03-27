@@ -202,7 +202,6 @@ if (empty($reshook)) {
 		$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
 		$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 		$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
-		$object->fax = (string) GETPOST("fax", 'alpha');
 		$object->priv = GETPOST("priv", 'int');
 		$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
@@ -408,7 +407,6 @@ if (empty($reshook)) {
 			$object->phone_pro = (string) GETPOST("phone_pro", 'alpha');
 			$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
-			$object->fax = (string) GETPOST("fax", 'alpha');
 			$object->priv = (string) GETPOST("priv", 'int');
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
@@ -709,9 +707,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) {
 				$object->phone_pro = $objsoc->phone; // Predefined with third party
 			}
-			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) {
-				$object->fax = $objsoc->fax; // Predefined with third party
-			}
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
@@ -730,13 +725,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td>';
 			print img_picto('', 'object_phoning_mobile');
 			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
-			if ($conf->browser->layout == 'phone') {
-				print '</tr><tr>';
-			}
-			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-			print '<td>';
-			print img_picto('', 'object_phoning_fax');
-			print '<input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
 			print '</tr>';
 
 			if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) {
@@ -1014,10 +1002,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td>';
 			print img_picto('', 'object_phoning_mobile');
 			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
-			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-			print '<td>';
-			print img_picto('', 'object_phoning_fax');
-			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ?GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
+			print '</tr>';
 
 			// EMail
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';

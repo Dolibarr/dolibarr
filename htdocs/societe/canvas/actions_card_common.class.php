@@ -296,7 +296,6 @@ abstract class ActionsCardCommon
 			$this->tpl['country'] = ($img ? $img.' ' : '').$this->object->country;
 
 			$this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
-			$this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
 			$this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
 			$this->tpl['url'] 		= dol_print_url($this->object->url);
 
@@ -400,7 +399,6 @@ abstract class ActionsCardCommon
 		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
 		$this->object->state_id = GETPOST("state_id");
 		$this->object->phone				= GETPOST("tel");
-		$this->object->fax					= GETPOST("fax");
 		$this->object->email				= GETPOST("email", 'alphawithlgt');
 		$this->object->url					= GETPOST("url");
 		$this->object->capital				= GETPOST("capital");

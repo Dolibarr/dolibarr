@@ -138,7 +138,6 @@ Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_OrderNotChecked=No orders to invoice selected
 # Order modes (how we receive order). Not the "why" are keys stored into dict.lang
 OrderByMail=Mail
-OrderByFax=Fax
 OrderByEMail=Email
 OrderByWWW=Online
 OrderByPhone=Phone

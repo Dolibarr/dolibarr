@@ -233,7 +233,6 @@ if (empty($reshook)) {
 			$object->country_id = GETPOST('country_id', 'int');
 			$object->state_id = GETPOST('state_id', 'int');
 			$object->office_phone = GETPOST("office_phone", 'alphanohtml');
-			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
 			//$object->skype = GETPOST("skype", 'alphanohtml');
@@ -394,7 +393,6 @@ if (empty($reshook)) {
 				$object->country_id = GETPOST('country_id', 'int');
 				$object->state_id = GETPOST('state_id', 'int');
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
-				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 				//$object->skype = GETPOST("skype", 'alphanohtml');
 				//$object->twitter = GETPOST("twitter", 'alphanohtml');
@@ -623,7 +621,6 @@ if (empty($reshook)) {
 			$conf->global->LDAP_FIELD_PASSWORD,
 			$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 			$conf->global->LDAP_FIELD_PHONE,
-			$conf->global->LDAP_FIELD_FAX,
 			$conf->global->LDAP_FIELD_MOBILE,
 			$conf->global->LDAP_FIELD_SKYPE,
 			$conf->global->LDAP_FIELD_MAIL,
@@ -650,7 +647,6 @@ if (empty($reshook)) {
 					$ldap_pass = $attribute[$conf->global->LDAP_FIELD_PASSWORD];
 					$ldap_pass_crypted = $attribute[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
 					$ldap_phone = $attribute[$conf->global->LDAP_FIELD_PHONE];
-					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
 					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
 					$ldap_social['skype'] = $attribute[$conf->global->LDAP_FIELD_SKYPE];
 					$ldap_social['twitter'] = $attribute[$conf->global->LDAP_FIELD_TWITTER];
@@ -716,7 +712,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$conf->global->LDAP_FIELD_PASSWORD,
 				$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 				$conf->global->LDAP_FIELD_PHONE,
-				$conf->global->LDAP_FIELD_FAX,
 				$conf->global->LDAP_FIELD_MOBILE,
 				$conf->global->LDAP_FIELD_SKYPE,
 				$conf->global->LDAP_FIELD_MAIL,
@@ -1035,18 +1030,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 		print $ldap_mobile;
 	} else {
 		print '<input type="text" name="user_mobile" value="'.dol_escape_htmltag(GETPOST('user_mobile', 'alphanohtml')).'">';
-	}
-	print '</td></tr>';
-
-	// Fax
-	print '<tr><td>'.$langs->trans("Fax").'</td>';
-	print '<td>';
-	print img_picto('', 'object_phoning_fax');
-	if (!empty($ldap_fax)) {
-		print '<input type="hidden" name="office_fax" value="'.dol_escape_htmltag($ldap_fax).'">';
-		print $ldap_fax;
-	} else {
-		print '<input type="text" name="office_fax" value="'.dol_escape_htmltag(GETPOST('office_fax', 'alphanohtml')).'">';
 	}
 	print '</td></tr>';
 
@@ -2324,18 +2307,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			} else {
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
-			}
-			print '</td></tr>';
-
-			// Fax
-			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
-			print '<td>';
-			print img_picto('', 'object_phoning_fax');
-			if ($caneditfield && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_fax" class="flat maxwidth200" value="'.$object->office_fax.'">';
-			} else {
-				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
-				print $object->office_fax;
 			}
 			print '</td></tr>';
 

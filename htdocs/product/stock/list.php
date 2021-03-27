@@ -600,8 +600,6 @@ if ($num) {
 				}
 				if ($key == 'phone') {
 					print dol_print_phone($obj->phone, '', 0, $obj->rowid, 'AC_TEL');
-				} elseif ($key == 'fax') {
-					print dol_print_phone($obj->fax, '', 0, $obj->rowid, 'AC_FAX');
 				} else {
 					print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
 				}

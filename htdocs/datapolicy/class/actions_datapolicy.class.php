@@ -111,7 +111,6 @@ class ActionsDatapolicy
 				$object->phone = '';
 				$object->email = '';
 				$object->url = '';
-				$object->fax = '';
 				$object->state = '';
 				$object->country = '';
 				$object->state_id = '';

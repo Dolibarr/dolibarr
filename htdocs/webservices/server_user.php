@@ -352,7 +352,6 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'email' => $user->email,
 						'signature' => $user->signature,
 						'office_phone' => $user->office_phone,
-						'office_fax' => $user->office_fax,
 						'user_mobile' => $user->user_mobile,
 						'admin' => $user->admin,
 						'login' => $user->login,
@@ -540,7 +539,6 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						}
 					}
 					$thirdparty->phone = $thirdpartywithuser['phone'];
-					$thirdparty->fax = $thirdpartywithuser['fax'];
 					$thirdparty->email = $thirdpartywithuser['email'];
 					$thirdparty->url = $thirdpartywithuser['url'];
 					$thirdparty->ape = $thirdpartywithuser['ape'];
@@ -574,7 +572,6 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$contact->email = $thirdparty->email;
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
-						$contact->fax = $thirdparty->fax;
 						$contact->statut = 1;
 						$contact->country_id = $thirdparty->country_id;
 						$contact->country_code = $thirdparty->country_code;

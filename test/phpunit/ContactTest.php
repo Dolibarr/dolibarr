@@ -211,7 +211,6 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobject->phone_pro='New tel pro';
 		$localobject->phone_perso='New tel perso';
 		$localobject->phone_mobile='New tel mobile';
-		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
 		$localobject->socialnetworks['jabber']='New im id';
 		$localobject->default_lang='es_ES';
@@ -259,8 +258,6 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($localobject->phone_perso, $newobject->phone_perso);
 		print __METHOD__." old=".$localobject->phone_mobile." new=".$newobject->phone_mobile."\n";
 		$this->assertEquals($localobject->phone_mobile, $newobject->phone_mobile);
-		print __METHOD__." old=".$localobject->fax." new=".$newobject->fax."\n";
-		$this->assertEquals($localobject->fax, $newobject->fax);
 		print __METHOD__." old=".$localobject->email." new=".$newobject->email."\n";
 		$this->assertEquals($localobject->email, $newobject->email);
 		print __METHOD__." old=".$localobject->socialnetworks['jabber']." new=".$newobject->socialnetworks['jabber']."\n";

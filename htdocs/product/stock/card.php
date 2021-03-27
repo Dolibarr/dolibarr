@@ -108,7 +108,6 @@ if (empty($reshook)) {
 		$object->town = (string) GETPOST("town", "alpha");
 		$object->country_id = GETPOST("country_id");
 		$object->phone = (string) GETPOST("phone", "alpha");
-		$object->fax = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -170,7 +169,6 @@ if (empty($reshook)) {
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
 			$object->phone = GETPOST("phone");
-			$object->fax = GETPOST("fax");
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -300,10 +298,6 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 	print img_picto('', 'object_phoning', 'class="paddingright"');
 	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	print '<td>';
-	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
-	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
@@ -740,9 +734,6 @@ if ($action == 'create') {
 			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning', 'class="paddingright"');
 			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
-			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
-			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';

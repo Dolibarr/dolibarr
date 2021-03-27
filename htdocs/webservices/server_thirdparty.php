@@ -343,7 +343,6 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 						'country_code' => $thirdparty->country_code,
 						'country' => $thirdparty->country,
 						'phone' => $thirdparty->phone,
-						'fax' => $thirdparty->fax,
 						'email' => $thirdparty->email,
 						'url' => $thirdparty->url,
 						'profid1' => $thirdparty->idprof1,
@@ -458,7 +457,6 @@ function createThirdParty($authentication, $thirdparty)
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];
-		$newobject->fax = $thirdparty['fax'];
 		$newobject->email = $thirdparty['email'];
 		$newobject->url = $thirdparty['url'];
 		$newobject->idprof1 = $thirdparty['profid1'];
@@ -593,7 +591,6 @@ function updateThirdParty($authentication, $thirdparty)
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 			$object->phone = $thirdparty['phone'];
-			$object->fax = $thirdparty['fax'];
 			$object->email = $thirdparty['email'];
 			$object->url = $thirdparty['url'];
 			$object->idprof1 = $thirdparty['profid1'];
@@ -741,7 +738,6 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 					'town'=>$obj->town,
 					'country'=>$obj->country,
 					'phone'=>$obj->phone,
-					'fax'=>$obj->fax,
 					'url'=>$obj->url
 				);
 				$arraythirdparties[$i] = array_merge($arraythirdparties[$i], $extrafieldsOptions);

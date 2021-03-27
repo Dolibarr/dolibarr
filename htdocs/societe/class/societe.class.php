@@ -342,11 +342,7 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $phone;
-	/**
-	 * Fax number
-	 * @var string
-	 */
-	public $fax;
+
 	/**
 	 * Email
 	 * @var string
@@ -1185,9 +1181,6 @@ class Societe extends CommonObject
 		$this->phone		= trim($this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
-		$this->fax			= trim($this->fax);
-		$this->fax			= preg_replace("/\s/", "", $this->fax);
-		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->email = trim($this->email);
 		$this->url			= $this->url ?clean_url($this->url, 0) : '';
 		$this->note_private = trim($this->note_private);
@@ -1338,9 +1331,8 @@ class Societe extends CommonObject
 			$sql .= ",fk_pays = '".(!empty($this->country_id) ? $this->country_id : '0')."'";
 
 			$sql .= ",phone = ".(!empty($this->phone) ? "'".$this->db->escape($this->phone)."'" : "null");
-			$sql .= ",fax = ".(!empty($this->fax) ? "'".$this->db->escape($this->fax)."'" : "null");
 			$sql .= ",email = ".(!empty($this->email) ? "'".$this->db->escape($this->email)."'" : "null");
-			$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
+			$sql .= ",socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 
 			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
@@ -1705,7 +1697,6 @@ class Societe extends CommonObject
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
-				$this->fax = $obj->fax;
 
 				$this->parent = $obj->parent;
 
@@ -3907,7 +3898,6 @@ class Societe extends CommonObject
 		}
 
 		$this->phone = empty($conf->global->MAIN_INFO_SOCIETE_TEL) ? '' : $conf->global->MAIN_INFO_SOCIETE_TEL;
-		$this->fax = empty($conf->global->MAIN_INFO_SOCIETE_FAX) ? '' : $conf->global->MAIN_INFO_SOCIETE_FAX;
 		$this->url = empty($conf->global->MAIN_INFO_SOCIETE_WEB) ? '' : $conf->global->MAIN_INFO_SOCIETE_WEB;
 
 		// Social networks
@@ -4001,7 +3991,6 @@ class Societe extends CommonObject
 		$this->url = 'http://www.specimen.com';
 
 		$this->phone = '0909090901';
-		$this->fax = '0909090909';
 
 		$this->code_client = 'CC-'.dol_print_date($now, 'dayhourlog');
 		$this->code_fournisseur = 'SC-'.dol_print_date($now, 'dayhourlog');

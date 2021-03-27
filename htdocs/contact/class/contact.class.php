@@ -247,11 +247,6 @@ class Contact extends CommonObject
 	public $phone_mobile;
 
 	/**
-	 * @var string fax
-	 */
-	public $fax;
-
-	/**
 	 * Private or public
 	 * @var int
 	 */
@@ -548,7 +543,6 @@ class Contact extends CommonObject
 		$this->jabberid = trim($this->jabberid);
 		$this->skype = trim($this->skype);
 		$this->photo = trim($this->photo);
-		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
 		$this->setUpperOrLowerCase();
@@ -576,7 +570,6 @@ class Contact extends CommonObject
 		$sql .= ", fk_pays=".($this->country_id > 0 ? $this->country_id : 'NULL');
 		$sql .= ", fk_departement=".($this->state_id > 0 ? $this->state_id : 'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
-		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
@@ -629,10 +622,6 @@ class Contact extends CommonObject
 				$usermustbemodified = 0;
 				if ($tmpobj->office_phone != $this->phone_pro) {
 					$tmpobj->office_phone = $this->phone_pro;
-					$usermustbemodified++;
-				}
-				if ($tmpobj->office_fax != $this->fax) {
-					$tmpobj->office_fax = $this->fax;
 					$usermustbemodified++;
 				}
 				if ($tmpobj->address != $this->address) {
@@ -807,9 +796,6 @@ class Contact extends CommonObject
 		}
 		if ($this->phone_mobile && !empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
-		}
-		if ($this->fax && !empty($conf->global->LDAP_CONTACT_FIELD_FAX)) {
-			$info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
 		}
 		if ($this->skype && !empty($conf->global->LDAP_CONTACT_FIELD_SKYPE)) {
 			$info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
@@ -1039,7 +1025,6 @@ class Contact extends CommonObject
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
 				$this->phone_pro = trim($obj->phone);
-				$this->fax = trim($obj->fax);
 				$this->phone_perso = trim($obj->phone_perso);
 				$this->phone_mobile = trim($obj->phone_mobile);
 
@@ -1618,7 +1603,6 @@ class Contact extends CommonObject
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
 		$this->phone_mobile = '0909090903';
-		$this->fax = '0909090909';
 
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';

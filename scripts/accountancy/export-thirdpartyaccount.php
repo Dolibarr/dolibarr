@@ -181,7 +181,6 @@ if ($resql) {
 		print '"'.$obj->town.'",';
 		print '"'.$obj->country.'",';
 		print '"'.$obj->phone.'",';
-		print '"'.$obj->fax.'",';
 		print "\n";
 		$i++;
 	}
@@ -228,7 +227,6 @@ if ($resql) {
 		print '<td class="left">'.$obj->country.'</td>';
 		print '<td class="left"></td>';
 		print '<td class="left">'.$obj->phone.'</td>';
-		print '<td class="left">'.$obj->fax.'</td>';
 		print "</tr>\n";
 
 		$i++;

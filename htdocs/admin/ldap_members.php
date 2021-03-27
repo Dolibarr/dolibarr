@@ -317,13 +317,6 @@ print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 
-// Fax
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
-print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_MEMBER_FIELD_FAX.'">';
-print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td class="right">&nbsp;</td>';
-print '</tr>';
-
 // Company
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
 print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_MEMBER_FIELD_COMPANY.'">';

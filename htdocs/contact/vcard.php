@@ -62,7 +62,6 @@ $v->setFormattedName($contact->getFullName($langs, 1));
 $v->setPhoneNumber($contact->phone_pro, "TYPE=WORK;VOICE");
 //$v->setPhoneNumber($contact->phone_perso,"TYPE=HOME;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "TYPE=CELL;VOICE");
-$v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 
 $country = $contact->country_code ? $contact->country : '';
 
@@ -78,9 +77,6 @@ if ($company->id) {
 	$v->setURL($company->url, "TYPE=WORK");
 	if (!$contact->phone_pro) {
 		$v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	}
-	if (!$contact->fax) {
-		$v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
 	}
 	if (!$contact->zip) {
 		$v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");

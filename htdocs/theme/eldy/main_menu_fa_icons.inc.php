@@ -152,7 +152,7 @@ div.mainmenu.generic4::before {
 
 /* Define color of some picto */
 
-.fa-phone, .fa-mobile-alt, .fa-fax {
+.fa-phone, .fa-mobile-alt {
 	opacity: 0.7;
 	color: #440;
 }

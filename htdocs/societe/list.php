@@ -80,7 +80,6 @@ $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
 $search_phone = trim(GETPOST('search_phone', 'alpha'));
-$search_fax = trim(GETPOST('search_fax', 'alpha'));
 $search_url = trim(GETPOST('search_url', 'alpha'));
 $search_idprof1 = trim(GETPOST('search_idprof1', 'alpha'));
 $search_idprof2 = trim(GETPOST('search_idprof2', 'alpha'));
@@ -346,7 +345,6 @@ if (empty($reshook)) {
 		$search_country = '';
 		$search_email = '';
 		$search_phone = '';
-		$search_fax = '';
 		$search_url = '';
 		$search_idprof1 = '';
 		$search_idprof2 = '';
@@ -592,9 +590,6 @@ if ($search_email) {
 if (strlen($search_phone)) {
 	$sql .= natural_search("s.phone", $search_phone);
 }
-if (strlen($search_fax)) {
-	$sql .= natural_search("s.fax", $search_fax);
-}
 if ($search_url) {
 	$sql .= natural_search("s.url", $search_url);
 }
@@ -753,9 +748,6 @@ if ($search_zip != '') {
 }
 if ($search_phone != '') {
 	$param .= "&search_phone=".urlencode($search_phone);
-}
-if ($search_fax != '') {
-	$param .= "&search_fax=".urlencode($search_fax);
 }
 if ($search_email != '') {
 	$param .= "&search_email=".urlencode($search_email);
@@ -1101,12 +1093,6 @@ if (!empty($arrayfields['s.phone']['checked'])) {
 	// Phone
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
-	print '</td>';
-}
-if (!empty($arrayfields['s.fax']['checked'])) {
-	// Fax
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring maxwidth50imp" type="text" name="search_fax" value="'.dol_escape_htmltag($search_fax).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.url']['checked'])) {
@@ -1526,12 +1512,6 @@ while ($i < min($num, $limit)) {
 	}
 	if (!empty($arrayfields['s.phone']['checked'])) {
 		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['s.fax']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

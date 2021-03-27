@@ -63,7 +63,6 @@ $v->setFormattedName($adherent->getFullName($langs, 1));
 $v->setPhoneNumber($adherent->phone_pro, "TYPE=WORK;VOICE");
 //$v->setPhoneNumber($adherent->phone_perso,"TYPE=HOME;VOICE");
 $v->setPhoneNumber($adherent->phone_mobile, "TYPE=CELL;VOICE");
-$v->setPhoneNumber($adherent->fax, "TYPE=WORK;FAX");
 
 $country = $adherent->country_code ? $adherent->country : '';
 
@@ -79,9 +78,6 @@ if ($company->id) {
 	$v->setURL($company->url, "TYPE=WORK");
 	if (!$adherent->phone_pro) {
 		$v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	}
-	if (!$adherent->fax) {
-		$v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
 	}
 	if (!$adherent->zip) {
 		$v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");

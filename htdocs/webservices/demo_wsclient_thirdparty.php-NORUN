@@ -112,7 +112,6 @@ if ($action=='create')
 	'customer_code'=>'-1',//Generate code regarding module configuration 
 	'supplier_code'=>'0',
 	'phone'=>'0141414141',
-	'fax'=>'0121212121',
 	'email'=>'webtest1@test.fr',
 	'url'=>' www.test.fr',
 	'profid1'=>'1111111',
@@ -161,7 +160,6 @@ if ($action=='update')
 	'customer_code'=>'-1',//Generate code regarding module configuration
 	'supplier_code'=>'0',
 	'phone'=>'0141414141',
-	'fax'=>'0121212121',
 	'email'=>'webtest1@test.fr',
 	'url'=>' www.test.fr',
 	'profid1'=>'1111111',

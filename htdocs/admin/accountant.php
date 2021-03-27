@@ -142,11 +142,6 @@ print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'<
 $formcompany->select_departement((GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_STATE) ? $conf->global->MAIN_INFO_ACCOUNTANT_STATE : '')), (GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'state_id');
 print '</td></tr>'."\n";
 
-print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-print '<input name="tel" id="phone" value="'.(GETPOSTISSET('tel') ? GETPOST('tel', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_PHONE) ? $conf->global->MAIN_INFO_ACCOUNTANT_PHONE : '')).'"></td></tr>';
-print '</td></tr>'."\n";
-
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
 print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
 print '<input name="fax" id="fax" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_FAX) ? $conf->global->MAIN_INFO_ACCOUNTANT_FAX : '')).'"></td></tr>';

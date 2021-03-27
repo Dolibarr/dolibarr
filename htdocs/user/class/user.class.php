@@ -155,11 +155,6 @@ class User extends CommonObject
 	public $office_phone;
 
 	/**
-	 * @var string office fax
-	 */
-	public $office_fax;
-
-	/**
 	 * @var string phone mobile
 	 */
 	public $user_mobile;
@@ -403,7 +398,7 @@ class User extends CommonObject
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.civility as civility_code, u.birth, u.email, u.personal_email, u.job,";
 		$sql .= " u.socialnetworks,";
-		$sql .= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
+		$sql .= " u.signature, u.office_phone, u.user_mobile, u.personal_mobile,";
 		$sql .= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql .= " u.admin, u.login, u.note as note_private, u.note_public,";
 		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
@@ -499,7 +494,6 @@ class User extends CommonObject
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
 				$this->office_phone	= $obj->office_phone;
-				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
@@ -1392,7 +1386,6 @@ class User extends CommonObject
 		$this->email = $contact->email;
 		$this->socialnetworks = $contact->socialnetworks;
 		$this->office_phone = $contact->phone_pro;
-		$this->office_fax = $contact->fax;
 		$this->user_mobile = $contact->phone_mobile;
 		$this->address = $contact->address;
 		$this->zip = $contact->zip;
@@ -1619,7 +1612,6 @@ class User extends CommonObject
 		$this->state_id = trim($this->state_id);
 		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
 		$this->office_phone = trim($this->office_phone);
-		$this->office_fax   = trim($this->office_fax);
 		$this->user_mobile  = trim($this->user_mobile);
 		$this->personal_mobile = trim($this->personal_mobile);
 		$this->email        = trim($this->email);
@@ -1677,7 +1669,6 @@ class User extends CommonObject
 		$sql .= ", fk_state = ".((!empty($this->state_id) && $this->state_id > 0) ? "'".$this->db->escape($this->state_id)."'" : "null");
 		$sql .= ", fk_country = ".((!empty($this->country_id) && $this->country_id > 0) ? "'".$this->db->escape($this->country_id)."'" : "null");
 		$sql .= ", office_phone = '".$this->db->escape($this->office_phone)."'";
-		$sql .= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql .= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
 		$sql .= ", personal_mobile = '".$this->db->escape($this->personal_mobile)."'";
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
@@ -1831,7 +1822,6 @@ class User extends CommonObject
 
 						$tmpobj->phone_pro = $this->office_phone;
 						$tmpobj->phone_mobile = $this->user_mobile;
-						$tmpobj->fax = $this->office_fax;
 
 						$tmpobj->address = $this->address;
 						$tmpobj->town = $this->town;
@@ -2675,7 +2665,6 @@ class User extends CommonObject
 			'LDAP_FIELD_LOGIN_SAMBA'=> 'login',
 			'LDAP_FIELD_PHONE'		=> 'office_phone',
 			'LDAP_FIELD_MOBILE'		=> 'user_mobile',
-			'LDAP_FIELD_FAX'		=> 'office_fax',
 			'LDAP_FIELD_MAIL'		=> 'email',
 			'LDAP_FIELD_SID'		=> 'ldap_sid',
 		);
@@ -2836,7 +2825,6 @@ class User extends CommonObject
 			'linkedin' => 'linkedinpseudo',
 		);
 		$this->office_phone = '0999999999';
-		$this->office_fax = '0999999998';
 		$this->user_mobile = '0999999997';
 		$this->personal_mobile = '0999999996';
 		$this->admin = 0;
@@ -2975,7 +2963,6 @@ class User extends CommonObject
 
 		$this->office_phone = $ldapuser->{$conf->global->LDAP_FIELD_PHONE};
 		$this->user_mobile = $ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
-		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
 		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
 		foreach ($socialnetworks as $key => $value) {
 			$tmpkey = 'LDAP_FIELD_'.strtoupper($value['label']);

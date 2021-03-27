@@ -30,7 +30,6 @@ create table llx_societe_address
   town               varchar(50),                         -- town
   fk_pays            integer        DEFAULT 0,            --
   phone              varchar(20),                         -- phone number
-  fax                varchar(20),                         -- fax number
   note               text,                                --
   fk_user_creat      integer,
   fk_user_modif      integer

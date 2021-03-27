@@ -241,13 +241,6 @@ print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_SKYPE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_SKYPE ? ' checked' : '')."></td>";
 print '</tr>';
 
-// Fax
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
-print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_CONTACT_FIELD_FAX.'">';
-print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FAX"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FAX ? ' checked' : '')."></td>";
-print '</tr>';
-
 // Address
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldAddress").'</td><td>';
 print '<input size="25" type="text" name="fieldaddress" value="'.$conf->global->LDAP_CONTACT_FIELD_ADDRESS.'">';

@@ -140,9 +140,6 @@ abstract class ActionsContactCardCommon
 				if (dol_strlen(trim($this->object->phone_pro)) == 0) {
 					$this->object->phone_pro = $objsoc->phone;
 				}
-				if (dol_strlen(trim($this->object->fax)) == 0) {
-					$this->object->fax = $objsoc->fax;
-				}
 				if (dol_strlen(trim($this->object->email)) == 0) {
 					$this->object->email = $objsoc->email;
 				}
@@ -246,7 +243,6 @@ abstract class ActionsContactCardCommon
 			$this->tpl['phone_pro'] = dol_print_phone($this->object->phone_pro, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_perso'] = dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_mobile'] = dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
-			$this->tpl['fax'] = dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
 			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
@@ -299,7 +295,6 @@ abstract class ActionsContactCardCommon
 		$this->object->phone_pro = GETPOST("phone_pro");
 		$this->object->phone_perso = GETPOST("phone_perso");
 		$this->object->phone_mobile = GETPOST("phone_mobile");
-		$this->object->fax = GETPOST("fax");
 		$this->object->email			= GETPOST("email");
 		$this->object->jabberid = GETPOST("jabberid");
 		$this->object->priv				= GETPOST("priv");

@@ -217,7 +217,6 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$localobject->country_id=2;
 		$localobject->status=0;
 		$localobject->phone='New tel';
-		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
 		$localobject->url='New url';
 		$localobject->idprof1='new idprof1';
@@ -252,7 +251,6 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('BE', $newobject->country_code);
 		$this->assertEquals($localobject->status, $newobject->status);
 		$this->assertEquals($localobject->phone, $newobject->phone);
-		$this->assertEquals($localobject->fax, $newobject->fax);
 		$this->assertEquals($localobject->email, $newobject->email);
 		$this->assertEquals($localobject->url, $newobject->url);
 		$this->assertEquals($localobject->idprof1, $newobject->idprof1);

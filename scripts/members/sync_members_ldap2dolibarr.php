@@ -74,7 +74,6 @@ $required_fields = array(
 	$conf->global->LDAP_FIELD_PHONE,
 	$conf->global->LDAP_FIELD_PHONE_PERSO,
 	$conf->global->LDAP_FIELD_MOBILE,
-	$conf->global->LDAP_FIELD_FAX,
 	$conf->global->LDAP_FIELD_ADDRESS,
 	$conf->global->LDAP_FIELD_ZIP,
 	$conf->global->LDAP_FIELD_TOWN,

@@ -67,7 +67,6 @@ $v->setFormattedName($user2->getFullName($langs, 1));
 $v->setPhoneNumber($user2->phone_pro, "TYPE=WORK;VOICE");
 //$v->setPhoneNumber($user2->phone_perso,"TYPE=HOME;VOICE");
 $v->setPhoneNumber($user2->phone_mobile, "TYPE=CELL;VOICE");
-$v->setPhoneNumber($user2->fax, "TYPE=WORK;FAX");
 
 $country = $user2->country_code ? $user2->country : '';
 
@@ -83,9 +82,6 @@ if ($company->id) {
 	$v->setURL($company->url, "TYPE=WORK");
 	if (!$user2->phone_pro) {
 		$v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
-	}
-	if (!$user2->fax) {
-		$v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
 	}
 	if (!$user2->zip) {
 		$v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");

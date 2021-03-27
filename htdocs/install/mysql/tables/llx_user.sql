@@ -52,7 +52,6 @@ create table llx_user
   birth             date,						-- birthday
   job		        varchar(128),
   office_phone      varchar(20),
-  office_fax        varchar(20),
   user_mobile       varchar(20),
   personal_mobile   varchar(20),
   email             varchar(255),

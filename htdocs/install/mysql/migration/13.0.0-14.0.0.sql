@@ -282,5 +282,9 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
 
-
+ALTER TABLE llx_entrepot DROP COLUMN fax;
+ALTER TABLE llx_societe DROP COLUMN fax;
+ALTER TABLE llx_societe_address DROP COLUMN fax;
+ALTER TABLE llx_socpeople DROP COLUMN fax;
+ALTER TABLE llx_user DROP COLUMN office_fax;
 

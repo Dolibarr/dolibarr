@@ -758,9 +758,6 @@ class pdf_standard extends ModeleExpenseReport
 			if ($this->emetteur->phone) {
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
 			}
-			if ($this->emetteur->fax) {
-				$carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '').$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
-			}
 			if ($this->emetteur->email) {
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
 			}

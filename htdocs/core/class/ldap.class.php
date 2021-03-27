@@ -94,7 +94,6 @@ class Ldap
 	public $login;
 	public $phone;
 	public $skype;
-	public $fax;
 	public $mail;
 	public $mobile;
 
@@ -150,7 +149,6 @@ class Ldap
 		$this->attr_mail       = $conf->global->LDAP_FIELD_MAIL;
 		$this->attr_phone      = $conf->global->LDAP_FIELD_PHONE;
 		$this->attr_skype      = $conf->global->LDAP_FIELD_SKYPE;
-		$this->attr_fax        = $conf->global->LDAP_FIELD_FAX;
 		$this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
 	}
 
@@ -1205,7 +1203,6 @@ class Ldap
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0], $this->ldapcharset);
 			$this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0], $this->ldapcharset);
-			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0], $this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0], $this->ldapcharset);
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);
 

@@ -457,7 +457,6 @@ CheckBank=Check
 NetToBePaid=Net to be paid
 PhoneNumber=Tel
 FullPhoneNumber=Telephone
-TeleFax=Fax
 PrettyLittleSentence=Accept the amount of payments due by checks issued in my name as a Member of an accounting association approved by the Fiscal Administration.
 IntracommunityVATNumber=Intra-Community VAT ID
 PaymentByChequeOrderedTo=Check payments (including tax) are payable to %s, send to
