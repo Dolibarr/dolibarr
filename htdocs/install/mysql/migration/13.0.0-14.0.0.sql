@@ -310,3 +310,25 @@ INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONE', '
 INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONEMOBILE', 'PhoneMobile', 1, 20);
 INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONEFAX', 'PhoneFax', 1, 30);
 INSERT INTO llx_c_type_phones (code, label, active, position) VALUES ('PHONEPAGER', 'PhonePager', 1, 40);
+
+CREATE TABLE llx_member_emails(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_member integer NOT NULL,
+    email varchar(256) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_member_emails ADD CONSTRAINT fk_member FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
+ALTER TABLE llx_member_emails ADD INDEX idx_member_emails_fk_member (fk_member);
+
+CREATE TABLE llx_member_phones(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_member integer NOT NULL,
+    number varchar(30) NOT NULL,
+    fk_type_code varchar(12) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_member_phones ADD CONSTRAINT fk_member FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
+ALTER TABLE llx_member_phones ADD INDEX idx_member_phones_fk_member (fk_member);
+
