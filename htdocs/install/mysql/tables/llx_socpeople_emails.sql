@@ -18,6 +18,6 @@ CREATE TABLE llx_socpeople_emails(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_socpeople integer NOT NULL,
     email varchar(255) NOT NULL,
-    priority int(11),
+    priority integer,
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
