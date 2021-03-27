@@ -1491,9 +1491,9 @@ if ($resql) {
 			print '<td class="right nowraponall">';
 			if ($obj->tosell) {
 				if ($obj->price_base_type == 'TTC') {
-					print price($obj->price_ttc).' '.$langs->trans("TTC");
+					print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
 				} else {
-					print price($obj->price).' '.$langs->trans("HT");
+					print '<span class="amount">'.price($obj->price).' '.$langs->trans("HT").'</span>';
 				}
 			}
 			print '</td>';
@@ -1546,9 +1546,9 @@ if ($resql) {
 					print '<td class="right nowraponall">';
 					if (!empty($productpricescache[$obj->rowid])) {
 						if ($productpricescache[$obj->rowid][$key]['price_base_type'] == 'TTC') {
-							print price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC");
+							print '<span class="amount">'.price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC").'</span>';
 						} else {
-							print price($productpricescache[$obj->rowid][$key]['price']).' '.$langs->trans("HT");
+							print '<span class="amount">'.price($productpricescache[$obj->rowid][$key]['price']).' '.$langs->trans("HT").'</span>';
 						}
 					}
 					print '</td>';
@@ -1568,9 +1568,9 @@ if ($resql) {
 					if ($product_fourn->product_fourn_price_id > 0) {
 						if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-							print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext);
+							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
 						} else {
-							print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+							print '<span class="amount">'.price($product_fourn->fourn_unitprice).' '.$langs->trans("HT").'</span>';
 						}
 					}
 				}
@@ -1606,14 +1606,14 @@ if ($resql) {
 		// WAP
 		if (!empty($arrayfields['p.pmp']['checked'])) {
 			print '<td class="nowrap right">';
-			print price($product_static->pmp, 1, $langs);
+			print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 			print '</td>';
 		}
 		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
 			print '<td class="nowrap right">';
 			//print $obj->cost_price;
-			print price($obj->cost_price).' '.$langs->trans("HT");
+			print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 			print '</td>';
 		}
 
