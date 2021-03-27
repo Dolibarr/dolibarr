@@ -540,24 +540,24 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
-				$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
+	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".$db->escape($pid);
+	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 }
 if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.$socid;
+	$sql .= ' AND a.fk_soc = '.((int) $socid);
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {

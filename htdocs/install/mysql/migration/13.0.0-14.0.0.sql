@@ -279,7 +279,7 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_tickets_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_tickets_type.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_new_vs_close_ticket.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_new_vs_close_ticket.php' AND entity = 1);
 
-create table llx_product_accountancy
+create table llx_product_perentity
 (
     rowid         				integer AUTO_INCREMENT PRIMARY KEY,
     fk_product	   				integer,
@@ -292,10 +292,10 @@ create table llx_product_accountancy
     accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
 )ENGINE=innodb;
 
-ALTER TABLE llx_product_accountancy ADD INDEX idx_product_accountancy_fk_product (fk_product);
-ALTER TABLE llx_product_accountancy ADD UNIQUE INDEX uk_product_accountancy (fk_product, entity);
+ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
+ALTER TABLE llx_product_perentity ADD UNIQUE INDEX uk_product_perentity (fk_product, entity);
 
-create table llx_societe_accountancy
+create table llx_societe_perentity
 (
     rowid         			integer AUTO_INCREMENT PRIMARY KEY,
     fk_soc        			integer,
@@ -306,5 +306,9 @@ create table llx_societe_accountancy
     accountancy_code_buy		varchar(32)                             -- Buying accountancy code
 )ENGINE=innodb;
 
-ALTER TABLE llx_societe_accountancy ADD INDEX idx_societe_accountancy_fk_soc (fk_soc);
-ALTER TABLE llx_societe_accountancy ADD UNIQUE INDEX uk_societe_accountancy (fk_soc, entity);
+ALTER TABLE llx_societe_perentity ADD INDEX idx_societe_perentity_fk_soc (fk_soc);
+ALTER TABLE llx_societe_perentity ADD UNIQUE INDEX uk_societe_perentity (fk_soc, entity);
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+
+

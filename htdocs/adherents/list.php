@@ -302,13 +302,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid ";
 if ($catid > 0) {
-	$sql .= " AND cm.fk_categorie = ".$db->escape($catid);
+	$sql .= " AND cm.fk_categorie = ".((int) $catid);
 }
 if ($catid == -2) {
 	$sql .= " AND cm.fk_categorie IS NULL";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cm.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cm.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cm.fk_categorie IS NULL";
@@ -379,7 +379,7 @@ if ($search_phone_mobile) {
 	$sql .= natural_search("d.phone_mobile", $search_phone_mobile);
 }
 if ($search_country) {
-	$sql .= " AND d.country IN (".$search_country.')';
+	$sql .= " AND d.country IN (".$db->sanitize($search_country).')';
 }
 
 // Add where from extra fields

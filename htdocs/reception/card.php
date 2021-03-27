@@ -317,10 +317,15 @@ if (empty($reshook)) {
 			//var_dump($_POST);exit;
 			for ($i = 1; $i <= $num; $i++) {
 				$lineToTest = '';
+				$lineId = GETPOST($idl, 'int');
 				foreach ($objectsrc->lines as $linesrc) {
-					if ($linesrc->id == GETPOST($idl, 'int')) {
+					if ($linesrc->id == $lineId) {
 						$lineToTest = $linesrc;
+						break;
 					}
+				}
+				if (empty($lineToTest)) {
+					continue;
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
@@ -340,7 +345,7 @@ if (empty($reshook)) {
 					if ($entrepot_id < 0) {
 						$entrepot_id = '';
 					}
-					if (!($linesrc->fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					if (!($lineToTest->fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						$entrepot_id = 0;
 					}
 					$eatby = GETPOST($eatby, 'alpha');

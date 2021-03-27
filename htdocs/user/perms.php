@@ -194,7 +194,7 @@ $permsuser = array();
 $sql = "SELECT DISTINCT ur.fk_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 $sql .= " WHERE ur.entity = ".$entity;
-$sql .= " AND ur.fk_user = ".$object->id;
+$sql .= " AND ur.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result = $db->query($sql);

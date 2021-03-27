@@ -2571,7 +2571,7 @@ if (empty($reshook)) {
 						$sql .= ' SET situation_cycle_ref='.$newCycle;
 						$sql .= ' , situation_final=0';
 						$sql .= ' , situation_counter='.$object->situation_counter;
-						$sql .= ' WHERE rowid IN ('.implode(',', $linkedCreditNotesList).')';
+						$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $linkedCreditNotesList)).')';
 
 						$resql = $db->query($sql);
 						if (!$resql) {

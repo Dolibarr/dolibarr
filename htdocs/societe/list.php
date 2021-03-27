@@ -584,7 +584,7 @@ if ($search_region) {
 	$sql .= natural_search("region.nom", $search_region);
 }
 if ($search_country && $search_country != '-1') {
-	$sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_email) {
 	$sql .= natural_search("s.email", $search_email);
@@ -621,7 +621,7 @@ if (strlen($search_vat)) {
 }
 // Filter on type of thirdparty
 if ($search_type > 0 && in_array($search_type, array('1,3', '1,2,3', '2,3'))) {
-	$sql .= " AND s.client IN (".$db->sanitize($db->escape($search_type)).")";
+	$sql .= " AND s.client IN (".$db->sanitize($search_type).")";
 }
 if ($search_type > 0 && in_array($search_type, array('4'))) {
 	$sql .= " AND s.fournisseur = 1";
@@ -960,7 +960,7 @@ if (empty($type) || $type == 'f') {
 if ($user->rights->societe->client->voir || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), 'maxwidth300', 1);
+	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
 	$moreforfilter .= '</div>';
 }
 if ($moreforfilter) {
@@ -1525,13 +1525,13 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['s.phone']['checked'])) {
-		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.fax']['checked'])) {
-		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
+		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

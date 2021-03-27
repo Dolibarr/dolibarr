@@ -1,7 +1,8 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+?>
 /* <style type="text/css" > */
 /*
  Badge style is based on boostrap framework
@@ -61,6 +62,13 @@ a.badge:focus, a.badge:hover {
 .liste_titre .badge:not(.nochangebackground) {
 	background-color: <?php print $badgeSecondary; ?>;
 	color: #fff;
+}
+
+span.badgeneutral {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
 }
 
 
@@ -188,9 +196,19 @@ a.badge-dark:focus, a.badge-dark:hover {
 }
 
 
+@media only screen and (max-width: 570px)
+{
+	span.badge.badge-status {
+		overflow: hidden;
+		max-width: 130px;
+		text-overflow: ellipsis;
+	}
+}
+
+
 /* STATUS BADGES */
 <?php
-for ($i = 0; $i <= 9; $i++) {
+for ($i = 0; $i <= 10; $i++) {
 	/* Default Status */
 	_createStatusBadgeCss($i, '', "STATUS".$i);
 
@@ -221,7 +239,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
 
-		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7');
+		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7', '10');
 		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix.'badgeStatus'.$statusName}) ? '#212529' : '#ffffff';
 
 		if (!empty(${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName})) {

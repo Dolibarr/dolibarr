@@ -26,3 +26,5 @@ ShowLogOfMovementIfLot=Show log of movements for couple product/lot
 StockDetailPerBatch=Stock detail per lot
 SerialNumberAlreadyInUse=Serial number %s is already used for product %s
 TooManyQtyForSerialNumber=You can only have one product %s for serial number %S
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers

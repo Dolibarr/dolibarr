@@ -158,7 +158,7 @@ if ($action == 'addtimespent' && $user->rights->projet->lire) {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
 	}
-	if (empty($_POST["userid"])) {
+	if (!GETPOST("userid", 'int')) {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorUserNotAssignedToTask'), null, 'errors');
 		$error++;
@@ -185,19 +185,19 @@ if ($action == 'addtimespent' && $user->rights->projet->lire) {
 				$action = 'createtime';
 				$error++;
 			} else {
-				$object->timespent_note = $_POST["timespent_note"];
+				$object->timespent_note = GETPOST("timespent_note");
 				if (GETPOST('progress', 'int') > 0) {
 					$object->progress = GETPOST('progress', 'int'); // If progress is -1 (not defined), we do not change value
 				}
-				$object->timespent_duration = $_POST["timespent_durationhour"] * 60 * 60; // We store duration in seconds
-				$object->timespent_duration += ($_POST["timespent_durationmin"] ? $_POST["timespent_durationmin"] : 0) * 60; // We store duration in seconds
+				$object->timespent_duration = GETPOST("timespent_durationhour") * 60 * 60; // We store duration in seconds
+				$object->timespent_duration += (GETPOST("timespent_durationmin") ? GETPOST("timespent_durationmin") : 0) * 60; // We store duration in seconds
 				if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0) {	// If hour was entered
 					$object->timespent_date = dol_mktime(GETPOST("timehour"), GETPOST("timemin"), 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
 					$object->timespent_withhour = 1;
 				} else {
 					$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
 				}
-				$object->timespent_fk_user = $_POST["userid"];
+				$object->timespent_fk_user = GETPOST("userid", 'int');
 				$result = $object->addTimeSpent($user);
 				if ($result >= 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -233,17 +233,17 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$result = $object->delTimeSpent($user);
 
 			$object->fetch($id, $ref);
-			$object->timespent_note = $_POST["timespent_note_line"];
-			$object->timespent_old_duration = $_POST["old_duration"];
-			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60; // We store duration in seconds
+			$object->timespent_note = GETPOST("timespent_note_line");
+			$object->timespent_old_duration = GETPOST("old_duration");
+			$object->timespent_duration = GETPOST("new_durationhour") * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += (GETPOST("new_durationmin") ? GETPOST("new_durationmin") : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 				$object->timespent_withhour = 1;
 			} else {
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 			}
-			$object->timespent_fk_user = $_POST["userid_line"];
+			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$result = $object->addTimeSpent($user);
 			if ($result >= 0) {
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
@@ -255,18 +255,18 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->fetch($id, $ref);
 			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
 
-			$object->timespent_id = $_POST["lineid"];
-			$object->timespent_note = $_POST["timespent_note_line"];
-			$object->timespent_old_duration = $_POST["old_duration"];
-			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60; // We store duration in seconds
+			$object->timespent_id = GETPOST("lineid", 'int');
+			$object->timespent_note = GETPOST("timespent_note_line");
+			$object->timespent_old_duration = GETPOST("old_duration");
+			$object->timespent_duration = GETPOST("new_durationhour") * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += (GETPOST("new_durationmin") ? GETPOST("new_durationmin") : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 				$object->timespent_withhour = 1;
 			} else {
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 			}
-			$object->timespent_fk_user = $_POST["userid_line"];
+			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 
 			$result = $object->updateTimeSpent($user);
 			if ($result >= 0) {
@@ -429,7 +429,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-					$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -468,7 +468,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-					$sql .= ' WHERE rowid in ('.join(',', $toselect).') AND fk_user = '.$userid;
+					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -504,7 +504,7 @@ if ($action == 'confirm_generateinvoice') {
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
-					$sql .= ' WHERE rowid in ('.join(',', $toselect).')';
+					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).')';
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -600,7 +600,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->rights->projet->all->lire) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -761,7 +761,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = " fk_projet in (".$projectsListId.")";
+			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
 		} else {
 			$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 		}
@@ -1036,7 +1036,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		if (empty($projectidforalltimes)) {
 			$sql .= " AND t.fk_task =".$object->id;
 		} else {
-			$sql .= " AND pt.fk_projet IN (".$projectidforalltimes.")";
+			$sql .= " AND pt.fk_projet IN (".$db->sanitize($projectidforalltimes).")";
 		}
 		if ($search_note) {
 			$sql .= natural_search('t.note', $search_note);
@@ -1141,7 +1141,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 			// Date
 			print '<td class="maxwidthonsmartphone">';
-			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate = '';
 			print $form->selectDate($newdate, 'time', ($conf->browser->layout == 'phone' ? 2 : 1), 1, 2, "timespent_date", 1, 0);
 			print '</td>';

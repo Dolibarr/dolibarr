@@ -1227,9 +1227,10 @@ class Form
 	 *  @param	int		$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
 	 *  @param	array	$ajaxoptions			Options for ajax_autocompleter
 	 * 	@param  bool	$multiple				add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 *  @param	array	$excludeids				Exclude IDs from the select combo
 	 * 	@return	string							HTML string with select box for thirdparty.
 	 */
-	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false)
+	public function select_company($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $limit = 0, $morecss = 'minwidth100', $moreparam = '', $selected_input_value = '', $hidelabel = 1, $ajaxoptions = array(), $multiple = false, $excludeids = array())
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -1237,6 +1238,9 @@ class Form
 		$out = '';
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+			if (is_null($ajaxoptions)) {
+				$ajaxoptions = array();
+			}
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value)) {
@@ -1247,7 +1251,7 @@ class Form
 				unset($societetmp);
 			}
 			// mode 1
-			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).($showtype ? '&showtype='.urlencode($showtype) : '');
+			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if (empty($hidelabel)) {
@@ -1264,7 +1268,7 @@ class Form
 			}
 		} else {
 			// Immediate load of all database
-			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple);
+			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids);
 		}
 
 		return $out;
@@ -1277,7 +1281,7 @@ class Form
 	 *
 	 *	@param	string	$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
-	 *  @param  string	$filter         Optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
+	 *  @param  string	$filter         Optional filters criteras (example: 's.rowid NOT IN (x)', 's.client IN (1,3)'). Do not use a filter coming from input of users.
 	 *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use standard HTML select component without beautification
@@ -1288,9 +1292,10 @@ class Form
 	 *  @param	string	$morecss		Add more css styles to the SELECT component
 	 *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *	@param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
+	 *  @param	array	$excludeids		Exclude IDs from the select combo
 	 * 	@return	string					HTML string with
 	 */
-	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false)
+	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array())
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -1337,6 +1342,9 @@ class Form
 		}
 		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND s.status <> 0";
+		}
+		if (!empty($excludeids)) {
+			$sql .= " AND rowid NOT IN (".$this->db->sanitize(join(',', $excludeids)).")";
 		}
 		// Add criteria
 		if ($filterkey && $filterkey != '') {
@@ -1887,7 +1895,7 @@ class Form
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=u.entity";
 			if ($force_entity) {
-				$sql .= " WHERE u.entity IN (0,".$force_entity.")";
+				$sql .= " WHERE u.entity IN (0, ".$force_entity.")";
 			} else {
 				$sql .= " WHERE u.entity IS NOT NULL";
 			}
@@ -1897,17 +1905,17 @@ class Form
 				$sql .= " ON ug.fk_user = u.rowid";
 				$sql .= " WHERE ug.entity = ".$conf->entity;
 			} else {
-				$sql .= " WHERE u.entity IN (0,".$conf->entity.")";
+				$sql .= " WHERE u.entity IN (0, ".$conf->entity.")";
 			}
 		}
 		if (!empty($user->socid)) {
 			$sql .= " AND u.fk_soc = ".$user->socid;
 		}
 		if (is_array($exclude) && $excludeUsers) {
-			$sql .= " AND u.rowid NOT IN (".$excludeUsers.")";
+			$sql .= " AND u.rowid NOT IN (".$this->db->sanitize($excludeUsers).")";
 		}
 		if ($includeUsers) {
-			$sql .= " AND u.rowid IN (".$includeUsers.")";
+			$sql .= " AND u.rowid IN (".$this->db->sanitize($includeUsers).")";
 		}
 		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) {
 			$sql .= " AND u.statut <> 0";
@@ -1994,7 +2002,9 @@ class Form
 						if (!$obj->entity) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
 						} else {
-							$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+							if ($obj->entity != $conf->entity) {
+								$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+							}
 						}
 					}
 					$moreinfo .= ($moreinfo ? ')' : '');
@@ -4129,7 +4139,7 @@ class Form
 	 *
 	 *  @param	string	$selected          Id shipping mode pre-selected
 	 *  @param  string	$htmlname          Name of select zone
-	 *  @param  string	$filtre            To filter list
+	 *  @param  string	$filtre            To filter list. This parameter must not come from input of users
 	 *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib        To add more attribute on select
 	 *	@param	int		$noinfoadmin		0=Add admin info, 1=Disable admin info
@@ -4324,7 +4334,7 @@ class Form
 	 *  @param	string	$selected           Id account pre-selected
 	 *  @param  string	$htmlname           Name of select zone
 	 *  @param  int		$status             Status of searched accounts (0=open, 1=closed, 2=both)
-	 *  @param  string	$filtre             To filter list
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 *  @param	int		$showcurrency		Show currency in label
@@ -4367,9 +4377,9 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
 					if ($selected == $obj->rowid || ($useempty == 2 && $num == 1 && empty($selected))) {
-						$out .= '<option value="'.$obj->rowid.'" selected>';
+						$out .= '<option value="'.$obj->rowid.'" data-currency-code="'.$obj->currency_code.'" selected>';
 					} else {
-						$out .= '<option value="'.$obj->rowid.'">';
+						$out .= '<option value="'.$obj->rowid.'" data-currency-code="'.$obj->currency_code.'">';
 					}
 					$out .= trim($obj->label);
 					if ($showcurrency) {
@@ -4410,7 +4420,7 @@ class Form
 	 *  @param	string	$selected           Id establishment pre-selected
 	 *  @param  string	$htmlname           Name of select zone
 	 *  @param  int		$status             Status of searched establishment (0=open, 1=closed, 2=both)
-	 *  @param  string	$filtre             To filter list
+	 *  @param  string	$filtre             To filter list. This parameter must not come from input of users
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
@@ -5472,15 +5482,16 @@ class Form
 	 *  @param	string	$page       	Page
 	 *  @param  string	$selected   	Id preselected
 	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         optional filters criteras
+	 *  @param  string	$filter         Optional filters criteras. Do not use a filter coming from input of users.
 	 *	@param	int		$showempty		Add an empty field
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @param	array	$excludeids		Exclude IDs from the select combo
 	 *  @return	void|string
 	 */
-	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0)
+	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array())
 	{
 		// phpcs:enable
 		global $langs;
@@ -5490,7 +5501,7 @@ class Form
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
+			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, 0, 'minwidth100', '', '', 1, array(), false, $excludeids);
 			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
@@ -5661,7 +5672,7 @@ class Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
-		$sql .= " AND c.code IN (".$country_code.")";
+		$sql .= " AND c.code IN (".$this->db->sanitize($country_code, 1).")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
 		$resql = $this->db->query($sql);
@@ -5744,6 +5755,7 @@ class Form
 		$defaultnpr = (preg_match('/\*/', $selectedrate) ? 1 : $defaultnpr);
 		$defaulttx = str_replace('*', '', $selectedrate);
 		$defaultcode = '';
+		$reg = array();
 		if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 			$defaultcode = $reg[1];
 			$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
@@ -7642,17 +7654,17 @@ class Form
 			}
 
 			$possiblelinks = array(
-				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('propal').')'),
-				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande').')'),
-				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('invoice').')'),
-				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('invoice').')'),
+				'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
+				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
+				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
+				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array('enabled'=>$conf->contrat->enabled, 'perms'=>1, 'label'=>'LinkToContract',
-								'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
-				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
-				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
-				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
-				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('facture_fourn').')'),
-				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('ticket').')')
+								'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t, ".MAIN_DB_PREFIX."contratdet as td WHERE t.fk_soc = s.rowid AND td.fk_contrat = t.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('contract').')'),
+				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('intervention').')'),
+				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('supplier_proposal').')'),
+				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
+				'invoice_supplier'=>array('enabled'=>$conf->supplier_invoice->enabled, 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('facture_fourn').')'),
+				'ticket'=>array('enabled'=>$conf->ticket->enabled, 'perms'=>1, 'label'=>'LinkToTicket', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.track_id, '0' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."ticket as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('ticket').')')
 			);
 		}
 
@@ -8314,11 +8326,11 @@ class Form
 
 		// Permettre l'exclusion de groupes
 		if (is_array($exclude)) {
-			$excludeGroups = implode("','", $exclude);
+			$excludeGroups = implode(",", $exclude);
 		}
 		// Permettre l'inclusion de groupes
 		if (is_array($include)) {
-			$includeGroups = implode("','", $include);
+			$includeGroups = implode(",", $include);
 		}
 
 		if (!is_array($selected)) {
@@ -8344,10 +8356,10 @@ class Form
 			$sql .= " WHERE ug.entity IN (0, ".$conf->entity.")";
 		}
 		if (is_array($exclude) && $excludeGroups) {
-			$sql .= " AND ug.rowid NOT IN ('".$excludeGroups."')";
+			$sql .= " AND ug.rowid NOT IN (".$this->db->sanitize($excludeGroups).")";
 		}
 		if (is_array($include) && $includeGroups) {
-			$sql .= " AND ug.rowid IN ('".$includeGroups."')";
+			$sql .= " AND ug.rowid IN (".$this->db->sanitize($includeGroups).")";
 		}
 		$sql .= " ORDER BY ug.nom ASC";
 
@@ -8502,7 +8514,7 @@ class Form
 		$sql = 'SELECT rowid, label FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat WHERE active = 1';
 		$sql .= ' AND entity IN (0,'.getEntity('exp_tax_cat').')';
 		if (!empty($excludeid)) {
-			$sql .= ' AND rowid NOT IN ('.implode(',', $excludeid).')';
+			$sql .= ' AND rowid NOT IN ('.$this->db->sanitize(implode(',', $excludeid)).')';
 		}
 		$sql .= ' ORDER BY label';
 
@@ -8709,7 +8721,7 @@ class Form
 		$sql .= ' '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
-		//if ($projectsListId) $sql.= " AND p.rowid IN (".$projectsListId.")";
+		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		$sql .= " GROUP BY f.ref ORDER BY p.ref, f.ref ASC";

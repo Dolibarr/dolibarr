@@ -1087,7 +1087,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		$sql .= natural_search($searchAddressPhoneDBFields, $search_address);
 	}
 	if (count($search_roles) > 0) {
-		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
+		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 	}
 	// Add where from extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;

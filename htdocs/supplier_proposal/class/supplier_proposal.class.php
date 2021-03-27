@@ -1209,9 +1209,9 @@ class SupplierProposal extends CommonObject
 		$sql .= " WHERE p.fk_statut = c.id";
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		if ($ref) {
-			$sql .= " AND p.ref='".$ref."'";
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " AND p.rowid=".$rowid;
+			$sql .= " AND p.rowid = ".((int) $rowid);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

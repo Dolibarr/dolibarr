@@ -108,7 +108,7 @@ class ExpenseReports extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('expensereport').')';
 		if ($user_ids) {
-			$sql .= " AND t.fk_user_author IN (".$user_ids.")";
+			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";
 		}
 
 		// Add sql filters

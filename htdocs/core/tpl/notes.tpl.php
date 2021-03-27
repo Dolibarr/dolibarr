@@ -24,7 +24,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
-// $cssclass   		must be defined by caller. For example $cssclass='fieldtitle"
+// $cssclass   		must be defined by caller. For example $cssclass='fieldtitle'
 $module       = $object->element;
 $note_public  = 'note_public';
 $note_private = 'note_private';

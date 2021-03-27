@@ -143,7 +143,7 @@ class modDeplacement extends DolibarrModules
 			$childids[] = $user->id;
 
 			if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
-				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.join(',', $childids).')';
+				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(join(',', $childids)).')';
 			}
 		}
 	}

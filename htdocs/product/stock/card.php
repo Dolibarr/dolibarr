@@ -449,8 +449,10 @@ if ($action == 'create') {
 				}
 				print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
-					print dol_print_date($lastmovementdate, 'dayhour').' ';
-					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
+					print dol_print_date($lastmovementdate, 'dayhour');
+					print ' &nbsp; &nbsp; ';
+					print img_picto($langs->trans('LastMovement'), 'movement', 'class="pictofixedwidth"');
+					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>';
 				} else {
 					print $langs->trans("None");
 				}
@@ -515,11 +517,11 @@ if ($action == 'create') {
 			print "<tr class=\"liste_titre\">";
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
 			}
-			print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -628,13 +630,15 @@ if ($action == 'create') {
 
 					if ($user->rights->stock->mouvement->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
+						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
+						print $langs->trans("TransferStock");
 						print "</a></td>";
 					}
 
 					if ($user->rights->stock->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print $langs->trans("StockCorrection");
+						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
+						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {

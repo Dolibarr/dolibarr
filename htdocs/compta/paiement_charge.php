@@ -32,6 +32,8 @@ $langs->load("bills");
 
 $chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel');
+
 $amounts = array();
 
 // Security check
@@ -50,15 +52,15 @@ $charge = new ChargeSociales($db);
 if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
-	if ($_POST["cancel"]) {
+	if ($cancel) {
 		$loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 
-	if (!$_POST["paiementtype"] > 0) {
+	if (!(GETPOST("paiementtype") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -68,7 +70,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (!empty($conf->banque->enabled) && !($_POST["accountid"] > 0)) {
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 		$action = 'create';

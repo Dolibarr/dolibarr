@@ -176,7 +176,7 @@ class AdherentType extends CommonObject
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
 				$sql .= " WHERE fk_type=".$this->id;
-				$sql .= " AND lang='".$key."'";
+				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
 
@@ -202,7 +202,7 @@ class AdherentType extends CommonObject
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
 				$sql .= " WHERE fk_type=".$this->id;
-				$sql .= " AND lang='".$key."'";
+				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
 
@@ -552,7 +552,7 @@ class AdherentType extends CommonObject
 		$sql = "SELECT a.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE a.entity IN (".getEntity('member').")";
-		$sql .= " AND a.fk_adherent_type = ".$this->id;
+		$sql .= " AND a.fk_adherent_type = ".((int) $this->id);
 		if (!empty($excludefilter)) {
 			$sql .= ' AND ('.$excludefilter.')';
 		}

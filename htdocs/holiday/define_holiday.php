@@ -230,7 +230,7 @@ $filters = '';
 $userchilds = array();
 if (empty($user->rights->holiday->readall)) {
 	$userchilds = $user->getAllChildIds(1);
-	$filters .= ' AND u.rowid IN ('.join(', ', $userchilds).')';
+	$filters .= ' AND u.rowid IN ('.$db->sanitize(join(', ', $userchilds)).')';
 }
 if (!empty($search_name)) {
 	$filters .= natural_search(array('u.firstname', 'u.lastname'), $search_name);

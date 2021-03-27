@@ -355,6 +355,7 @@ function GETPOSTISSET($paramname)
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                               'alpha'=Same than alphanohtml since v13
+ *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
@@ -745,20 +746,29 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
+				$out = dol_string_nohtmltag($out, 0);
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), '', trim($out));
-				$out = str_replace(array('../'), '', $out);
+				$out = trim($out);
+				do {
+					$oldstringtoclean = $out;
+					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+				} while ($oldstringtoclean != $out);
 				// keep lines feed
-				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
 		case 'alphawithlgt':		// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email>"
 			if (!is_array($out)) {
+				$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), '', trim($out));
-				$out = str_replace(array('../'), '', $out);
+				$out = trim($out);
+				do {
+					$oldstringtoclean = $out;
+					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+				} while ($oldstringtoclean != $out);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
@@ -3521,14 +3531,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'info', 'intervention', 'inventory', 'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'info', 'intervention', 'inventory', 'intracommreport',
+				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_asset', 'object_barcode', 'object_bill', 'object_billr', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert',
+				'object_category', 'conferenceorbooth', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert',
 				'object_folder', 'object_folder-open','object_generic',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
 				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_cron', 'object_donation', 'object_dynamicprice',
-				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_inventory', 'object_label',
+				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_inventory', 'object_intracommreport', 'object_label',
 				'object_margin', 'object_members', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
 				'object_lot', 'object_mrp', 'object_other',
 				'object_payment', 'object_pdf', 'object_product', 'object_propal',
@@ -3538,7 +3549,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
 				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement',
 				'off', 'on', 'order',
-				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
@@ -3549,7 +3560,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'user-cog', 'website',
-				'eventorganization', 'object_eventorganization'
+				'conferenceorbooth', 'eventorganization', 'object_eventorganization'
 			))) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
@@ -3576,7 +3587,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'email'=>'at',
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach',
-				'info'=>'info-circle', 'inventory'=>'boxes', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
@@ -3597,7 +3608,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas',
-				'eventorganization'=>'id-badge'
+				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';
@@ -3630,7 +3641,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('collab', 'holiday', 'project'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'project'))) {
 				$morecss = 'em088';
 			}
 			if (in_array($pictowithouttext, array('intervention', 'info', 'payment', 'loan', 'stock', 'technic'))) {
@@ -3652,6 +3663,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
+				'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
 				'donation'=>'infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'infobox-action',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
@@ -3661,6 +3673,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
+				'eventorganization'=>'infobox-project',
 				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
@@ -6265,16 +6278,20 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
  *  @param	int		$removeclassattribute	1=Remove the class attribute from tags
  *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
+ *  @param	int		$allowiframe			Allow iframe tags.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0)
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 	);
+	if ($allowiframe) {
+		$allowed_tags[] = "iframe";
+	}
 
 	$allowed_tags_string = join("><", $allowed_tags);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
@@ -6320,9 +6337,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("alt", "class", "contenteditable", "data-html", "href", "id", "name", "src", "style", "target", "title"))
+function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("allow", "allowfullscreen", "alt", "class", "contenteditable", "data-html", "frameborder", "height", "href", "id", "name", "src", "style", "target", "title", "width"))
 {
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
+		$stringtoclean = '<html><body>'.$stringtoclean.'</body></html>';
+
 		$dom = new DOMDocument();
 		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 		if (is_object($dom)) {
@@ -6336,7 +6355,12 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			}
 		}
 
-		return $dom->saveHTML();
+		$return = $dom->saveHTML();
+
+		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
+		$return = preg_replace('/^<html><body>/', '', $return);
+		$return = preg_replace('/<\/body><\/html>$/', '', $return);
+		return $return;
 	} else {
 		return $stringtoclean;
 	}

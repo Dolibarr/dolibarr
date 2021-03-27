@@ -140,9 +140,9 @@ if ($user->rights->banque->modifier && $action == "update") {
 	if (!$error) {
 		$db->begin();
 
-		$amount = price2num($_POST['amount']);
-		$dateop = dol_mktime(12, 0, 0, $_POST["dateomonth"], $_POST["dateoday"], $_POST["dateoyear"]);
-		$dateval = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+		$amount = price2num(GETPOST('amount'));
+		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
@@ -212,8 +212,8 @@ if ($user->rights->banque->modifier && $action == "update") {
 
 // Reconcile
 if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action == 'setreconcile')) {
-	$num_rel = trim($_POST["num_rel"]);
-	$rappro = $_POST['reconciled'] ? 1 : 0;
+	$num_rel = trim(GETPOST("num_rel"));
+	$rappro = GETPOST('reconciled') ? 1 : 0;
 
 	// Check parameters
 	if ($rappro && empty($num_rel)) {

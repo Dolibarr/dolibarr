@@ -281,7 +281,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
 	if (! empty($month)) {
-		$sql .= " AND MONTH(t.doc_date) = " . $month;
+		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);
 	if ($resql)

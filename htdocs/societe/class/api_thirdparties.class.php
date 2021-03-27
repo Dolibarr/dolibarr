@@ -187,14 +187,14 @@ class Thirdparties extends DolibarrApi
 		}
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
 		if ($socids) {
-			$sql .= " AND t.rowid IN (".$socids.")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize($socids).")";
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -1364,10 +1364,10 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
-			$sql .= " WHERE fk_soc  = ".$id." ";
+			$sql .= " WHERE fk_soc = ".((int) $id);
 		}
 		if ($companybankid) {
-			$sql .= " AND rowid = ".$companybankid."";
+			$sql .= " AND rowid = ".((int) $companybankid);
 		}
 
 		$i = 0;
@@ -1433,9 +1433,9 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
-		$sql .= " WHERE fk_soc = $id";
+		$sql .= " WHERE fk_soc = ".((int) $id);
 		if ($site) {
-			$sql .= " AND site ='$site'";
+			$sql .= " AND site ='".$this->db->escape($site)."'";
 		}
 
 		$result = $this->db->query($sql);

@@ -392,7 +392,7 @@ if ($action != "infos_success") {
 		print '<div>';
 	} else {
 		print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm();
+		$formticket->showForm(0, 'edit', 1);
 	}
 }
 

@@ -1072,9 +1072,9 @@ abstract class CommonObject
 			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-			$sql .= " VALUES (".$this->id.", ".$fk_socpeople." , ";
+			$sql .= " VALUES (".$this->id.", ".((int) $fk_socpeople)." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
-			$sql .= ", 4, ".$id_type_contact;
+			$sql .= ", 4, ".((int) $id_type_contact);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -1218,7 +1218,7 @@ abstract class CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql .= " WHERE element_id = ".$this->id;
 		if ($listId) {
-			$sql .= " AND fk_c_type_contact IN (".$listId.")";
+			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 		}
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -3022,8 +3022,8 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
-		$sql .= ' WHERE rowid = '.$rowid;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
+		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -7688,7 +7688,8 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) { // In most cases, test here is false
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+			 // When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation

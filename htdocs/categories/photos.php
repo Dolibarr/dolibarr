@@ -66,7 +66,7 @@ $upload_dir = $conf->categorie->multidir_output[$object->entity];
  * Actions
  */
 
-if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 	if ($object->id) {
 		$file = $_FILES['userfile'];
 		if (is_array($file['name']) && count($file['name']) > 0) {

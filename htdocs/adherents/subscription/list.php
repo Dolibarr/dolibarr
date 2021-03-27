@@ -191,7 +191,7 @@ if ($search_note) {
 	$sql .= natural_search('c.note', $search_note);
 }
 if ($search_account > 0) {
-	$sql .= " AND b.fk_account = ".urldecode($search_account);
+	$sql .= " AND b.fk_account = ".((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search('c.subscription', $search_amount, 1);
@@ -547,8 +547,8 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['t.libelle']['checked'])) {
-		print '<td>';
-		print dol_trunc($obj->note, 128);
+		print '<td class="tdoverflowmax500" title="'.dol_escape_htmltag($obj->note).'">';
+		print $obj->note;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -586,7 +586,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Price
 	if (!empty($arrayfields['d.amount']['checked'])) {
-		print '<td class="right">'.price($obj->subscription).'</td>';
+		print '<td class="right amount">'.price($obj->subscription).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
