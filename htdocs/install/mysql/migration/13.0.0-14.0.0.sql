@@ -281,7 +281,7 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
 
-CREATE TABLE llx_c_type_emails
+CREATE TABLE llx_c_type_contacting_object
 (
     id integer AUTO_INCREMENT PRIMARY KEY,
     code varchar(12) NOT NULL,
@@ -290,10 +290,10 @@ CREATE TABLE llx_c_type_emails
     position integer NOT NULL DEFAULT 0
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_type_emails ADD UNIQUE INDEX uk_c_type_emails(code);
+ALTER TABLE llx_c_type_contacting_object ADD UNIQUE INDEX uk_c_type_contacting_object(code);
 
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('business', 'BusinessEmail', 1, 10);
-INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('personal', 'PersonalEmail', 1, 20);
+INSERT INTO llx_c_type_contacting_object (code, label, active, position) VALUES ('BUSINESS', 'BusinessContactingObject', 1, 10);
+INSERT INTO llx_c_type_contacting_object (code, label, active, position) VALUES ('PRIVATE', 'PrivateContactingObject', 1, 20);
 
 CREATE TABLE llx_c_type_phones
 (

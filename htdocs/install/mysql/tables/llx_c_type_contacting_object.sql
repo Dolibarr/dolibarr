@@ -14,6 +14,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
+-- Dictionary type of contacting_object
 -- ========================================================================
 
-ALTER TABLE llx_c_type_emails ADD UNIQUE INDEX uk_c_type_emails(code);
+CREATE TABLE llx_c_type_contacting_object
+(
+    id integer AUTO_INCREMENT PRIMARY KEY,
+    code varchar(12) NOT NULL,
+    label varchar(30),
+    active tinyint DEFAULT 1 NOT NULL,
+    position integer NOT NULL DEFAULT 0
+) ENGINE=innodb;

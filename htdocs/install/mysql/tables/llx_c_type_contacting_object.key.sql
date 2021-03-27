@@ -14,14 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Dictionary type of emails
 -- ========================================================================
 
-CREATE TABLE llx_c_type_emails
-(
-    id integer AUTO_INCREMENT PRIMARY KEY,
-    code varchar(12) NOT NULL,
-    label varchar(30),
-    active tinyint DEFAULT 1 NOT NULL,
-    position integer NOT NULL DEFAULT 0
-) ENGINE=innodb;
+ALTER TABLE llx_c_type_contacting_object ADD UNIQUE INDEX uk_c_type_contacting_object(code);
