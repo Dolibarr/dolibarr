@@ -1831,7 +1831,7 @@ class Form
 	 *
 	 *  @param	string			$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
 	 *  @param  string			$htmlname       Field name in form
-	 *  @param  int				$show_empty     0=list with no empty value, 1=add also an empty value into list
+	 *  @param  int|string		$show_empty     0=list with no empty value, 1=add also an empty value into list
 	 *  @param  array			$exclude        Array list of users id to exclude
 	 * 	@param	int				$disabled		If select list must be disabled
 	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
@@ -1949,7 +1949,14 @@ class Form
 				// do not use maxwidthonsmartphone by default. Set it by caller so auto size to 100% will work when not defined
 				$out .= '<select class="flat'.($morecss ? ' '.$morecss : ' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 				if ($show_empty && !$multiple) {
-					$out .= '<option value="-1"'.((empty($selected) || in_array(-1, $selected)) ? ' selected' : '').'>&nbsp;</option>'."\n";
+					$textforempty = ' ';
+					if (!empty($conf->use_javascript_ajax)) {
+						$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+					}
+					if (!is_numeric($show_empty)) {
+						$textforempty = $show_empty;
+					}
+					$out .= '<option class="optiongrey" value="'.($show_empty < 0 ? $show_empty : -1).'"'.((empty($selected) || in_array(-1, $selected)) ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
 				}
 				if ($show_every) {
 					$out .= '<option value="-2"'.((in_array(-2, $selected)) ? ' selected' : '').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
@@ -7721,16 +7728,17 @@ class Form
 
 						print '<tr class="oddeven">';
 						print '<td class="left">';
-						print '<input type="radio" name="idtolinkto" value='.$objp->rowid.'>';
+						print '<input type="radio" name="idtolinkto" id="'.$key.'_'.$objp->rowid.'" value="'.$objp->rowid.'">';
 						print '</td>';
-						print '<td class="center">'.$objp->ref.'</td>';
+						print '<td class="center"><label for="'.$key.'_'.$objp->rowid.'">'.$objp->ref.'</label></td>';
 						print '<td>'.$objp->ref_client.'</td>';
 						print '<td class="right">';
 						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($this->db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}
-						print price($objp->total_ht).'</td>';
+						print '<span class="amount">'.price($objp->total_ht).'</span>';
+						print '</td>';
 						print '<td>'.$objp->name.'</td>';
 						print '</tr>';
 						$i++;
@@ -7760,7 +7768,7 @@ class Form
     		<dl class="dropdown" id="linktoobjectname">
     		';
 			if (!empty($conf->use_javascript_ajax)) {
-				$linktoelem .= '<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>';
+				$linktoelem .= '<dt><a href="#linktoobjectname"><span class="fas fa-link paddingrightonly"></span>'.$langs->trans("LinkTo").'...</a></dt>';
 			}
 			$linktoelem .= '<dd>
     		<div class="multiselectlinkto">

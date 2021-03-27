@@ -1532,7 +1532,7 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked'])) {
-			print '<td class="nowrap right">'.price($obj->total_ht)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1543,7 +1543,7 @@ if ($resql) {
 		}
 		// Amount VAT
 		if (!empty($arrayfields['p.total_tva']['checked'])) {
-			print '<td class="nowrap right">'.price($obj->total_tva)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1554,7 +1554,7 @@ if ($resql) {
 		}
 		// Amount TTC
 		if (!empty($arrayfields['p.total_ttc']['checked'])) {
-			print '<td class="nowrap right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1563,9 +1563,9 @@ if ($resql) {
 			}
 			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
 		}
-		// Amount invoiced
+		// Amount invoiced HT
 		if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) {
-			print '<td class="nowrap right">'.price($totalInvoicedHT)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($totalInvoicedHT)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1574,9 +1574,9 @@ if ($resql) {
 			}
 			$totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
 		}
-		// Amount invoiced
+		// Amount invoiced TTC
 		if (!empty($arrayfields['p.total_invoiced']['checked'])) {
-			print '<td class="nowrap right">'.price($totalInvoicedTTC)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($totalInvoicedTTC)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1604,35 +1604,35 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.multicurrency_total_ht']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['p.multicurrency_total_tva']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_tva)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['p.multicurrency_total_ttc']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount invoiced
 		if (!empty($arrayfields['p.multicurrency_total_ht_invoiced']['checked'])) {
-			print '<td class="nowrap right">'.price($multicurrency_totalInvoicedHT)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($multicurrency_totalInvoicedHT)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount invoiced
 		if (!empty($arrayfields['p.multicurrency_total_invoiced']['checked'])) {
-			print '<td class="nowrap right">'.price($multicurrency_totalInvoicedTTC)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($multicurrency_totalInvoicedTTC)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

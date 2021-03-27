@@ -364,7 +364,7 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
-td.amount {
+td.amount, span.amount, div.amount {
 	color: #006666;
 }
 td.actionbuttons a {
@@ -768,13 +768,13 @@ textarea.centpercent {
 	overflow-y: auto;
 }
 div.urllink {
-	padding: 10px;
+	padding: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
-	//border: 1px solid #ccc;
+	/* border: 1px solid #ccc; */
 	border-radius: 5px;
-	width: fit-content;
-	background-color: #eee;
+	/* width: fit-content; */
+	background-color: #f0f0f8;
 	opacity: 0.8;
 }
 div.urllink, div.urllink a {
