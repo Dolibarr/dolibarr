@@ -207,7 +207,7 @@ if (empty($reshook)) {
 	}
 
 	// Create third party from a member
-	if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
+	if (($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) || (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY))) {
 		if ($result > 0) {
 			// User creation
 			$company = new Societe($db);
