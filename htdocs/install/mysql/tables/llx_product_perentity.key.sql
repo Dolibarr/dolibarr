@@ -16,6 +16,6 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_societe_accountancy ADD INDEX idx_societe_accountancy_fk_soc (fk_soc);
+ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
 
-ALTER TABLE llx_societe_accountancy ADD UNIQUE INDEX uk_societe_accountancy (fk_soc, entity);
+ALTER TABLE llx_product_perentity ADD UNIQUE INDEX uk_product_perentity (fk_product, entity);

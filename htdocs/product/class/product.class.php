@@ -660,7 +660,7 @@ class Product extends CommonObject
 					$sql .= ", price_base_type";
 					$sql .= ", tobuy";
 					$sql .= ", tosell";
-					if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+					if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 						$sql .= ", accountancy_code_buy";
 						$sql .= ", accountancy_code_buy_intra";
 						$sql .= ", accountancy_code_buy_export";
@@ -687,7 +687,7 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->price_base_type)."'";
 					$sql .= ", ".$this->status;
 					$sql .= ", ".$this->status_buy;
-					if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+					if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_intra)."'";
 						$sql .= ", '".$this->db->escape($this->accountancy_code_buy_export)."'";
@@ -724,7 +724,7 @@ class Product extends CommonObject
 							}
 
 							// update accountancy for this entity
-							if (!$error && !empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+							if (!$error && !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accounting (";
 								$sql .= " fk_product";
 								$sql .= ", entity";
@@ -1083,7 +1083,7 @@ class Product extends CommonObject
 			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
 			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
-			if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_buy_intra = '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
 				$sql .= ", accountancy_code_buy_export = '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
@@ -1118,7 +1118,7 @@ class Product extends CommonObject
 				$action = 'update';
 
 				// update accountancy for this entity
-				if (!$error && !empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+				if (!$error && !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_accounting WHERE fk_product = " . $this->id . " AND entity = " . $conf->entity);
 
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accounting (";
@@ -2165,7 +2165,7 @@ class Product extends CommonObject
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
 		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished,";
-		if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
 			$sql .= " pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export, pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export,";
@@ -2173,7 +2173,7 @@ class Product extends CommonObject
 		$sql .= " p.stock,p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
-		if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 		}
 		if ($id) {

@@ -191,7 +191,7 @@ if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 $isInEEC = isInEEC($mysoc);
 
-$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED) ? "p" : "pa";
+$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
 
 // Definition of fields for lists
 $arrayfields = array(
@@ -361,7 +361,7 @@ if ($search_type != '' && $search_type != '-1') {
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
 $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch,';
-if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
 	$sql .= " pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export, pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export,";
@@ -386,7 +386,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -520,7 +520,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
-if (empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
 	$sql .= " pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export, pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export,";

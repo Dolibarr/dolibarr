@@ -176,7 +176,7 @@ class modProduct extends DolibarrModules
 		//--------
 		$r = 0;
 
-		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED) ? "pa" : "p";
+		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa" : "p";
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "Products"; // Translation key (used only if key ExportDataset_xxx_z not found)
@@ -294,7 +294,7 @@ class modProduct extends DolibarrModules
 		}
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
-		if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 		}
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
@@ -445,7 +445,7 @@ class modProduct extends DolibarrModules
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p2.rowid'=>"subproduct", 'p2.ref'=>"subproduct", 'p2.label'=>"subproduct", 'p2.description'=>"subproduct"));
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
-			if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_SHARED)) {
+			if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 				$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 			}
 			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object,';

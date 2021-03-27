@@ -16,7 +16,7 @@
 --
 -- ========================================================================
 
-create table llx_societe_accountancy
+create table llx_societe_perentity
 (
   rowid         			integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc        			integer,

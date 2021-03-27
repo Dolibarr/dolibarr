@@ -16,7 +16,7 @@
 --
 -- ========================================================================
 
-create table llx_product_accountancy
+create table llx_product_perentity
 (
   rowid         				integer AUTO_INCREMENT PRIMARY KEY,
   fk_product	   				integer,
