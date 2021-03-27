@@ -18,6 +18,7 @@ CREATE TABLE llx_company_phones(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_soc integer NOT NULL,
     number varchar(30) NOT NULL,
+    priority int(11),
     fk_type_code varchar(12) NOT NULL,
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;

@@ -315,6 +315,7 @@ CREATE TABLE llx_member_emails(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_member integer NOT NULL,
     email varchar(256) NOT NULL,
+    priority int(11),
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
 
@@ -325,6 +326,7 @@ CREATE TABLE llx_member_phones(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_member integer NOT NULL,
     number varchar(30) NOT NULL,
+    priority int(11),
     fk_type_code varchar(12) NOT NULL,
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
@@ -336,6 +338,7 @@ CREATE TABLE llx_socpeople_phones(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_socpeople integer NOT NULL,
     number varchar(30) NOT NULL,
+    priority int(11),
     fk_type_code varchar(12) NOT NULL,
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
@@ -347,6 +350,7 @@ CREATE TABLE llx_socpeople_emails(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_socpeople integer NOT NULL,
     email varchar(255) NOT NULL,
+    priority int(11),
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
 
@@ -357,6 +361,7 @@ CREATE TABLE llx_company_phones(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_soc integer NOT NULL,
     number varchar(30) NOT NULL,
+    priority int(11),
     fk_type_code varchar(12) NOT NULL,
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
@@ -368,6 +373,7 @@ CREATE TABLE llx_company_emails(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_soc integer NOT NULL,
     email varchar(255) NOT NULL,
+    priority int(11),
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
 

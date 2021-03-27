@@ -18,5 +18,6 @@ CREATE TABLE llx_member_emails(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     fk_member integer NOT NULL,
     email varchar(256) NOT NULL,
+    priority int(11),
     fk_type_contacting_code varchar(12) NOT NULL
 ) ENGINE=innodb;
