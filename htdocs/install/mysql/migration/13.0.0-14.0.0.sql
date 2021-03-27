@@ -379,3 +379,26 @@ CREATE TABLE llx_company_emails(
 
 ALTER TABLE llx_company_emails ADD CONSTRAINT fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_company_emails ADD INDEX idx_company_emails_fk_soc (fk_soc);
+
+CREATE TABLE llx_user_emails(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_user integer NOT NULL,
+    email varchar(256) NOT NULL,
+    priority int(11),
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_user_emails ADD CONSTRAINT fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+ALTER TABLE llx_user_emails ADD INDEX idx_user_emails_fk_user (fk_user);
+
+CREATE TABLE llx_user_phones(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_user integer NOT NULL,
+    number varchar(30) NOT NULL,
+    priority int(11),
+    fk_type_code varchar(12) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_user_phones ADD CONSTRAINT fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+ALTER TABLE llx_user_phones ADD INDEX idx_user_phones_fk_user (fk_user);
