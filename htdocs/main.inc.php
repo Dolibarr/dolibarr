@@ -1985,13 +1985,13 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<span id="topmenulogincompanyinfo-btn"><i class="fa fa-caret-right"></i> '.$langs->trans("ShowCompanyInfos").'</span>';
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
-	if (!empty($conf->global->MAIN_INFO_SIREN))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.$conf->global->MAIN_INFO_SIREN.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
-	if (!empty($conf->global->MAIN_INFO_SIRET))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.$conf->global->MAIN_INFO_SIRET.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
-	if (!empty($conf->global->MAIN_INFO_APE))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.$conf->global->MAIN_INFO_APE.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
-	if (!empty($conf->global->MAIN_INFO_RCS))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.$conf->global->MAIN_INFO_RCS.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
-	if (!empty($conf->global->MAIN_INFO_PROFID5))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.$conf->global->MAIN_INFO_PROFID5.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
-	if (!empty($conf->global->MAIN_INFO_PROFID6))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.$conf->global->MAIN_INFO_PROFID6.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
-	if (!empty($conf->global->MAIN_INFO_TVAINTRA))   $dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.$conf->global->MAIN_INFO_TVAINTRA.'</span> <span class="copyToClipboard">'.img_picto($langs->trans("HelpCopyToClipboardShort"), 'copy').'</span></i>';
+	if (!empty($conf->global->MAIN_INFO_SIREN))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIREN).'</span>';
+	if (!empty($conf->global->MAIN_INFO_SIRET))      $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_SIRET).'</span>';
+	if (!empty($conf->global->MAIN_INFO_APE))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_APE).'</span>';
+	if (!empty($conf->global->MAIN_INFO_RCS))        $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_RCS).'</span>';
+	if (!empty($conf->global->MAIN_INFO_PROFID5))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID5).'</span>';
+	if (!empty($conf->global->MAIN_INFO_PROFID6))    $dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6Short", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_PROFID6).'</span>';
+	if (!empty($conf->global->MAIN_INFO_TVAINTRA))   $dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton($conf->global->MAIN_INFO_TVAINTRA).'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2151,13 +2151,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 					event.preventDefault();
 	                $("#topmenu-login-dropdown").toggleClass("open");
 	            });
-
-	            $(".copyToClipboard").on("click", function() {
-					var dummyContent = $(this).prevAll("span:first").text();
-					var dummy = $("<input id = \"dummy\">").val(dummyContent).appendTo("body").select();
-					document.execCommand("copy");
-					document.getElementById("dummy").remove();
-				});
 
 	            $("#topmenulogincompanyinfo-btn").on("click", function() {
 	                $("#topmenulogincompanyinfo").slideToggle();
