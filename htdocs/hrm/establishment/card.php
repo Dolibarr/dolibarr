@@ -51,7 +51,8 @@ $object = new Establishment($db);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
 
-$permissiontoadd = $user->rights->hrm->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->admin;
+$permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -59,13 +60,8 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-//if (empty($conf->mymodule->enabled)) accessforbidden();
-//if (empty($permissiontoread)) accessforbidden();
-
-// Security check
-if (!$user->admin) {
-	accessforbidden();
-}
+if (empty($conf->hrm->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
 
 
 /*

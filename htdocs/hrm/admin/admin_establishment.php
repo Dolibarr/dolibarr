@@ -27,13 +27,18 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
+$error = 0;
+
+$permissiontoread = $user->admin;
 $permissiontoadd = $user->admin;
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
-$error = 0;
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
+if (empty($conf->hrm->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
 
 
 /*

@@ -34,9 +34,16 @@ $list = array(
 //		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
-if (!$user->admin) {
-	accessforbidden();
-}
+$permissiontoread = $user->admin;
+$permissiontoadd = $user->admin;
+
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
+if (empty($conf->hrm->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
 
 
 /*
