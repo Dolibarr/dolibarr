@@ -178,7 +178,6 @@ create table llx_payment_vat
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,            -- creation user
   fk_user_modif   integer             -- last modification user
-
 )ENGINE=innodb;
 
 ALTER TABLE llx_tva ADD COLUMN paye smallint default 1 NOT NULL;
@@ -282,5 +281,32 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
 
+CREATE TABLE llx_c_type_emails
+(
+    id integer AUTO_INCREMENT PRIMARY KEY,
+    code varchar(12) NOT NULL,
+    label varchar(30),
+    active tinyint DEFAULT 1 NOT NULL,
+    position integer NOT NULL DEFAULT 0
+) ENGINE=innodb;
 
+ALTER TABLE llx_c_type_emails ADD UNIQUE INDEX uk_c_type_emails(code);
 
+INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('business', 'BusinessEmail', 1, 10);
+INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('personal', 'PersonalEmail', 1, 20);
+
+CREATE TABLE llx_c_type_phones
+(
+    id integer AUTO_INCREMENT PRIMARY KEY,
+    code varchar(12) NOT NULL,
+    label varchar(30),
+    active tinyint DEFAULT 1 NOT NULL,
+    position integer NOT NULL DEFAULT 0
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_type_phones ADD UNIQUE INDEX uk_c_type_phones(code);
+
+INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONE', 'PhoneStd', 1, 10);
+INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONEMOBILE', 'PhoneMobile', 1, 20);
+INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONEFAX', 'PhoneFax', 1, 30);
+INSERT INTO llx_c_type_emails (code, label, active, position) VALUES ('PHONEPAGER', 'PhonePager', 1, 40);
