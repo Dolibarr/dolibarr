@@ -16,4 +16,3 @@
 ALTER TABLE llx_socpeople_phones ADD CONSTRAINT fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
 
 ALTER TABLE llx_socpeople_phones ADD INDEX idx_socpeople_phones_fk_socpeople (fk_socpeople);
-

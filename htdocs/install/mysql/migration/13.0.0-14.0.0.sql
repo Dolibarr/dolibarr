@@ -332,3 +332,23 @@ CREATE TABLE llx_member_phones(
 ALTER TABLE llx_member_phones ADD CONSTRAINT fk_member FOREIGN KEY (fk_member) REFERENCES llx_adherent (rowid);
 ALTER TABLE llx_member_phones ADD INDEX idx_member_phones_fk_member (fk_member);
 
+CREATE TABLE llx_socpeople_phones(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_socpeople integer NOT NULL,
+    number varchar(30) NOT NULL,
+    fk_type_code varchar(12) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_phones ADD CONSTRAINT fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
+ALTER TABLE llx_socpeople_phones ADD INDEX idx_socpeople_phones_fk_socpeople (fk_socpeople);
+
+CREATE TABLE llx_socpeople_emails(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    fk_socpeople integer NOT NULL,
+    email varchar(255) NOT NULL,
+    fk_type_contacting_code varchar(12) NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_emails ADD CONSTRAINT fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
+ALTER TABLE llx_socpeople_emails ADD INDEX idx_socpeople_emails_fk_socpeople (fk_socpeople);
