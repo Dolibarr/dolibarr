@@ -236,7 +236,7 @@ class box_members_by_type extends ModeleBoxes
 
 					$line++;
 				}
-
+				
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
@@ -249,27 +249,27 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeA.' '.$staticmember->LibStatut(-1, 1, 0, 3),
+					    'text' => $SumToValidate.' '.$staticmember->LibStatut(-1, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeB.' '.$staticmember->LibStatut(1, 1, 0, 3),
+					    'text' => $SumValidated.' '.$staticmember->LibStatut(1, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeC.' '.$staticmember->LibStatut(1, 1, $now, 3),
+					    'text' => $SumUpToDate.' '.$staticmember->LibStatut(1, 1, $now, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 					    'td' => 'class="liste_total right"',
-					    'text' => $SommeD.' '.$staticmember->LibStatut(-2, 1, 0, 3),
+					    'text' => $SumExcluded.' '.$staticmember->LibStatut(-2, 1, 0, 3),
 					    'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeD.' '.$staticmember->LibStatut(0, 1, 0, 3),
+					    'text' => $SumResiliated.' '.$staticmember->LibStatut(0, 1, 0, 3),
 						'asis' => 1
 					);
 				}
