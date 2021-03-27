@@ -189,7 +189,7 @@ if ($action == 'update') {
 					$db->begin();
 
 					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accountancy (fk_product, entity, " . $accountancy_field_name . ")";
+						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $accountancy_field_name . ")";
 						$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", " . $accounting->account_number . ")";
 						$sql .= " ON DUPLICATE KEY UPDATE " . $accountancy_field_name . " = " . $accounting->account_number;
 					} else {

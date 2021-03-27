@@ -144,8 +144,8 @@ if ($action == 'validatehistory') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-	if (!empty($conf->global->MAIN_PRODUCT_ACCOUNTANCY_NOT_SHARED)) {
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 	}
 	$alias_company_accounting = !empty($conf->global->ACCOUNTANCY_COMPANY_SHARED) ? "sa" : "s";
 	$alias_product_accounting = !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa" : "p";
