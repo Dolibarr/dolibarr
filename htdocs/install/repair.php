@@ -94,6 +94,8 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
 print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+// Rebuild sequence
+print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -172,7 +174,8 @@ $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
-	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha'));
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha')
+	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
 	// Show wait message
@@ -1252,6 +1255,25 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
 	}
 }
+
+
+// rebuild sequences for pgsql
+if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Force to rebuild sequences (for postgresql only)</td></tr>';
+
+	if ($db->type == "pgsql") {
+		$rebuild_sequence = GETPOST('rebuild_sequences', 'alpha');
+
+		if ($rebuild_sequence == 'confirmed') {
+			$sql = "SELECT dol_util_rebuild_sequences();";
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+	} else {
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
+}
+
 
 //
 if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {

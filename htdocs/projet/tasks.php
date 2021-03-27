@@ -297,7 +297,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			$taskid = $task->create($user);
 
 			if ($taskid > 0) {
-				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
+				$result = $task->add_contact(GETPOST("userid", 'int'), 'TASKEXECUTIVE', 'internal');
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");

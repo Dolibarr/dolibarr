@@ -788,7 +788,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 		}*/
 	}
-	if (GETPOSTISSET("country") && ($_POST["country"] == '0') && ($id != 2)) {
+	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2)) {
 		if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes'))) {	// Field country is no mandatory for such dictionaries
 			$_POST["country"] = '';
 		} else {
@@ -796,25 +796,25 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 		}
 	}
-	if (($id == 3 || $id == 42) && !is_numeric($_POST["code"])) {
+	if (($id == 3 || $id == 42) && !is_numeric(GETPOST("code"))) {
 		$ok = 0;
 		setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 	}
 
 	// Clean some parameters
-	if ((!empty($_POST["localtax1_type"]) || ($_POST['localtax1_type'] == '0')) && empty($_POST["localtax1"])) {
+	if ((GETPOST("localtax1_type") || (GETPOST('localtax1_type') == '0')) && !GETPOST("localtax1")) {
 		$_POST["localtax1"] = '0'; // If empty, we force to 0
 	}
-	if ((!empty($_POST["localtax2_type"]) || ($_POST['localtax2_type'] == '0')) && empty($_POST["localtax2"])) {
+	if ((GETPOST("localtax2_type") || (GETPOST('localtax2_type') == '0')) && !GETPOST("localtax2")) {
 		$_POST["localtax2"] = '0'; // If empty, we force to 0
 	}
-	if ($_POST["accountancy_code"] <= 0) {
+	if (GETPOST("accountancy_code") <= 0) {
 		$_POST["accountancy_code"] = ''; // If empty, we force to null
 	}
-	if ($_POST["accountancy_code_sell"] <= 0) {
+	if (GETPOST("accountancy_code_sell") <= 0) {
 		$_POST["accountancy_code_sell"] = ''; // If empty, we force to null
 	}
-	if ($_POST["accountancy_code_buy"] <= 0) {
+	if (GETPOST("accountancy_code_buy") <= 0) {
 		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 	}
 	if ($id == 10 && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary

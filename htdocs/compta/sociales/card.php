@@ -180,7 +180,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer) {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
 	$amount = price2num(GETPOST('amount'), 'MT');
 
 	if (!$dateech) {

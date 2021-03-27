@@ -45,12 +45,12 @@ $object = new Contact($db);
  * Action
  */
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact->creer) {
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0, 0, 0, $_POST["birthdaymonth"], $_POST["birthdayday"], $_POST["birthdayyear"]);
-	$object->birthday_alert = $_POST["birthday_alert"];
+	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
+	$object->birthday_alert = GETPOST("birthday_alert");
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
