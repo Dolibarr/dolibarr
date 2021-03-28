@@ -210,7 +210,10 @@ input, select {
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
 }
-
+input.button:hover {
+	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
 input.button:focus {
 	border-bottom: 0;
 }
