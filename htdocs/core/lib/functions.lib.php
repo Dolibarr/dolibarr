@@ -634,8 +634,8 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		$out = checkVal($out, $check, $filter, $options);
 	}
 
-	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
-	if ($paramname == 'backtopage' || $paramname == 'backtolist') {
+	// Sanitizing for special parameters. There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL.
+	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
 		$out = str_replace('\\', '/', $out);
 		$out = str_replace(array(':', ';', '@'), '', $out);
 
