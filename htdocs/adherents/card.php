@@ -549,8 +549,7 @@ if (empty($reshook)) {
 
 				$db->commit();
 				$rowid = $object->id;
-				$id = $object->id;
-				
+				$id = $object->id;				
 			} else {
 				$db->rollback();
 

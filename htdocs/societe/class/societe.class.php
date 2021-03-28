@@ -3798,7 +3798,7 @@ class Societe extends CommonObject
 		$this->typent_id = ($member->morphy == 'phy' ? 8 : 0); // The type of thirdparty is private (individual) if the member is human (phy)
 		
 		$this->db->begin();
-		
+
 		// Cree et positionne $this->id
 		$result = $this->create($user);
 		
