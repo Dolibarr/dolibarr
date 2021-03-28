@@ -3796,23 +3796,23 @@ class Societe extends CommonObject
 		$this->code_client = ($customercode ? $customercode : -1);
 		$this->code_fournisseur = -1;
 		$this->typent_id = ($member->morphy == 'phy' ? 8 : 0); // The type of thirdparty is private (individual) if the member is human (phy)
-		
+
 		$this->db->begin();
 
 		// Cree et positionne $this->id
 		$result = $this->create($user);
-		
+
 		if ($result >= 0) {
 			// Auto-create contact on thirdparty creation
-		    if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT)) {
+			if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT)) {
 				// Fill fields needed by contact
-		        $this->name_bis = $member->lastname;
+				$this->name_bis = $member->lastname;
 				$this->firstname = $member->firstname;
 				$this->civility_id = $member->civility_id;
 
 				dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
 				$result = $this->create_individual($user);
-				
+
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 					$this->db->rollback();
