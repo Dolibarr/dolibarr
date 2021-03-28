@@ -7341,7 +7341,7 @@ class Form
 
 
 	/**
-	 *	Show a multiselect dropbox from an array.
+	 *	Show a multiselect dropbox from an array. If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
 	 *	@param	string	$htmlname		Name of HTML field
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
@@ -7357,8 +7357,9 @@ class Form
 			return '';
 		}
 
-		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage; // To get list of saved seleteced properties
-		if (!empty($user->conf->$tmpvar)) {
+		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage; // To get list of saved selected fields to show
+
+		if (!empty($user->conf->$tmpvar)) {		// A list of fields was already customized for user
 			$tmparray = explode(',', $user->conf->$tmpvar);
 			foreach ($array as $key => $val) {
 				//var_dump($key);
@@ -7366,6 +7367,12 @@ class Form
 				if (in_array($key, $tmparray)) {
 					$array[$key]['checked'] = 1;
 				} else {
+					$array[$key]['checked'] = 0;
+				}
+			}
+		} else {								// There is no list of fields already customized for user
+			foreach ($array as $key => $val) {
+				if ($array[$key]['checked'] < 0) {
 					$array[$key]['checked'] = 0;
 				}
 			}
@@ -7387,7 +7394,8 @@ class Form
 					$langs->load($val['langfile']);
 				}
 
-				$lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked']) ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+				// Note: $val['checked'] <> 0 means we must show the field into the combo list
+				$lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.((empty($val['checked']) && $val['checked'] != '-1') ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 			}
 		}
