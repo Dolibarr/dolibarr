@@ -272,7 +272,7 @@ class DefaultValues extends CommonObject
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (is_array($value)) {
-					$sqlwhere[] = $key.' IN ('.implode(',', $value).')';
+					$sqlwhere[] = $key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}

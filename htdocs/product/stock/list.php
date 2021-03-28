@@ -280,14 +280,14 @@ if ($result) {
 	$line = $total = $totalsell = $totalStock = 0;
 	while ($line < $totalnboflines) {
 		$objp = $db->fetch_object($result);
-		$total += price2num($objp->estimatedvalue, 'MU');
-		$totalsell += price2num($objp->sellvalue, 'MU');
+		$total += $objp->estimatedvalue;
+		$totalsell += $objp->sellvalue;
 		$totalStock += $objp->stockqty;
 		$line++;
 	}
-	$totalarray['val']['stockqty'] = $totalStock;
-	$totalarray['val']['estimatedvalue'] = $total;
-	$totalarray['val']['estimatedstockvaluesell'] = $totalsell;
+	$totalarray['val']['stockqty'] = price2num($totalStock, 'MS');
+	$totalarray['val']['estimatedvalue'] = price2num($total, 'MT');
+	$totalarray['val']['estimatedstockvaluesell'] = price2num($totalsell, 'MT');
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -633,7 +633,7 @@ if ($num) {
 		if (!empty($arrayfields["estimatedvalue"]['checked'])) {
 			print '<td class="right">';
 			if (price2num($obj->estimatedvalue, 'MT')) {
-				print price(price2num($obj->estimatedvalue, 'MT'), 1);
+				print '<span class="amount">'.price(price2num($obj->estimatedvalue, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
@@ -650,7 +650,9 @@ if ($num) {
 		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 			print '<td class="right">';
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($obj->sellvalue, 'MT'), 1);
+				if ($obj->sellvalue) {
+					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
+				}
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
 				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);

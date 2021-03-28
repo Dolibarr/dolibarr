@@ -97,7 +97,7 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("SalaryPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("SalaryPayment"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
@@ -169,7 +169,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*

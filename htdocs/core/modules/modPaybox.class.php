@@ -21,7 +21,7 @@
  * 	\brief      Add integration with Paybox online payment system.
  *  \file       htdocs/core/modules/modPaybox.class.php
  *  \ingroup    paybox
- *  \brief      Description and activation file for module Paybox
+ *  \brief      Description and activation file for the module Paybox
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

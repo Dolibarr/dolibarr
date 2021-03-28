@@ -162,7 +162,7 @@ if (empty($reshook)) {
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = $_POST["customeraccountancycode"];
+		$object->code_compta = GETPOST("customeraccountancycode");
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

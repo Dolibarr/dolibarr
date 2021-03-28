@@ -132,9 +132,9 @@ $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object-
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//if (empty($conf->mymodule->enabled)) accessforbidden();
 //if (empty($permissiontoread)) accessforbidden();
 
 

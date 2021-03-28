@@ -180,11 +180,11 @@ class ProjectStats extends Stats
 		}
 
 		if (!empty($this->status)) {
-			$sqlwhere[] = " t.fk_opp_status IN (".$this->status.")";
+			$sqlwhere[] = " t.fk_opp_status IN (".$this->db->sanitize($this->status).")";
 		}
 
 		if (!$user->rights->projet->all->lire) {
-			$sqlwhere[] = " t.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+			$sqlwhere[] = " t.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 		}
 
 		if (count($sqlwhere) > 0) {

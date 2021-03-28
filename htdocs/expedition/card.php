@@ -126,6 +126,12 @@ $permissiondellink = $user->rights->expedition->delivery->creer; // Used by the 
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
+
 
 /*
  * Actions
@@ -275,8 +281,8 @@ if (empty($reshook)) {
 
 					$totalqty += $subtotalqty;
 				} else {
-					// No detail were provided for lots
-					if (!empty($_POST[$qty])) {
+					// No detail were provided for lots, so if a qty was provided, we can show an error.
+					if (GETPOST($qty)) {
 						// We try to set an amount
 						// Case we dont use the list of available qty for each warehouse/lot
 						// GUI does not allow this yet

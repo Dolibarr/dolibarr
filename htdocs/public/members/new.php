@@ -642,7 +642,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 	print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2").'"></td></tr>'."\n";
 }
 // Birthday
-print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
+print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
 print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
 print '</td></tr>'."\n";
 // Photo

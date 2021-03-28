@@ -245,7 +245,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 			foreach ($rowids as $row) {
 				if ($row > 0) {
 					$result = $bankline->fetch($row);
-					$bankline->num_releve = $num_releve; //$_POST["num_releve"];
+					$bankline->num_releve = $num_releve; // GETPOST("num_releve");
 					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
 					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');
@@ -581,7 +581,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $sql .= " WHERE b.fk_account = ba.rowid";
 $sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 if ($search_account > 0) {
-	$sql .= " AND b.fk_account = ".$search_account;
+	$sql .= " AND b.fk_account = ".((int) $search_account);
 }
 // Search period criteria
 if (dol_strlen($search_dt_start) > 0) {
@@ -607,7 +607,7 @@ if ($search_num_releve) {
 	$sql .= natural_search("b.num_releve", $search_num_releve);
 }
 if ($search_conciliated != '' && $search_conciliated != '-1') {
-	$sql .= " AND b.rappro = ".urlencode($search_conciliated);
+	$sql .= " AND b.rappro = ".((int) $search_conciliated);
 }
 if ($search_thirdparty_user) {
 	$sql.= " AND (b.rowid IN ";

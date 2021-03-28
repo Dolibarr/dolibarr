@@ -364,6 +364,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.amount, span.amount, div.amount {
+	color: #006666;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -574,7 +577,9 @@ button[name='button_removefilter_x'] span.fa.fa-remove {
 button:focus {
 	outline: none;
 }
-
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -762,11 +767,37 @@ textarea.centpercent {
 	max-width: 100%;
 	overflow-y: auto;
 }
+div.urllink {
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	/* border: 1px solid #ccc; */
+	border-radius: 5px;
+	/* width: fit-content; */
+	background-color: #f0f0f8;
+	opacity: 0.8;
+}
+div.urllink, div.urllink a {
+	color: #339 !important;
+}
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
+}
+.stockmovemententry {
+	color: #080;
+	transform: rotate(0.25turn);
+	font-size: 1.2em;
+}
+.stockmovementexit {
+	color: #968822;
+	transform: rotate(0.3turn);
+	font-size: 1.2em;
+}
+.stockmovement {
+	font-size: 1.4em;
 }
 
 body[class*="colorblind-"] .text-warning{
@@ -1069,6 +1100,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 400px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax500 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 500px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -6245,12 +6288,6 @@ div.tabsElem a.tab {
 /*  POS                                                                           */
 /* ============================================================================== */
 
-.menu_choix1 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png', 1) ?>') top left no-repeat;
-}
-.menu_choix2 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png', 1) ?>') top left no-repeat;
-}
 .menu_choix1,.menu_choix2 {
 	font-size: 1.4em;
 	text-align: left;
@@ -6262,7 +6299,7 @@ div.tabsElem a.tab {
 	color: #fff;
 	text-decoration: none;
 	padding-top: 18px;
-	padding-left: 54px;
+	padding-left: 10px;
 	font-size: 14px;
 	height: 38px;
 }

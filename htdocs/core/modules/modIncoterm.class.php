@@ -22,7 +22,7 @@
  *
  *  \file       htdocs/core/modules/modIncoterm.class.php
  *  \ingroup    incoterm
- *  \brief      Description and activation file for module MyModule
+ *  \brief      Description and activation file for the module MyModule
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

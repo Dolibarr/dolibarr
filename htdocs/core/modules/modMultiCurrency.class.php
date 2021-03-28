@@ -23,7 +23,7 @@
  *  \brief      Handle multiple currencies on company/propal/orders ...
  *  \file       htdocs/core/modules/modMultiCurrency.class.php
  *  \ingroup    multicurrency
- *  \brief      Description and activation file for module MultiCurrency
+ *  \brief      Description and activation file for the module MultiCurrency
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

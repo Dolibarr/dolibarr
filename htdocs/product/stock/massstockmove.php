@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2020 Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013-2021 Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -344,14 +344,14 @@ print '</tr>';
 print '<tr class="oddeven">';
 // From warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
+print img_picto($langs->trans("WarehouseSource"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_sw, 'id_sw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // To warehouse
 print '<td>';
-print $formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
+print img_picto($langs->trans("WarehouseTarget"), 'stock', 'class="paddingright"').$formproduct->selectWarehouses($id_tw, 'id_tw', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 print '</td>';
 // Product
-print '<td class="titlefield">';
+print '<td>';
 $filtertype = 0;
 if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$filtertype = '';
@@ -362,11 +362,13 @@ if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
 
-$form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1);
+print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
+print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
 if ($conf->productbatch->enabled) {
 	print '<td>';
+	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
 	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
 	print '</td>';
 }

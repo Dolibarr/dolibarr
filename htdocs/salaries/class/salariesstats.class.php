@@ -67,7 +67,7 @@ class SalariesStats extends Stats
 			$this->where .= " AND fk_soc = ".$this->socid;
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user IN ('.join(',', $this->userid).')';
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= ' AND fk_user = '.$this->userid;
 		}

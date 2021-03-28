@@ -370,11 +370,11 @@ if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
 }
 if (!$user->rights->projet->all->lire) {
-	$sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid > 0) {
-	$sql .= " AND (p.fk_soc = ".$socid.")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
+	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
@@ -414,7 +414,7 @@ if ($search_opp_status) {
 		$sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status <> -1 AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON','LOST'))";
 	}
 	if ($search_opp_status == 'notopenedopp') {
-		$sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1 OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WON')))";
+		$sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1 OR p.fk_opp_status IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code = 'WON'))";
 	}
 	if ($search_opp_status == 'none') {
 		$sql .= " AND (p.fk_opp_status IS NULL OR p.fk_opp_status = -1)";
@@ -426,12 +426,12 @@ if ($search_public != '') {
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
 //if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale > 0) {
-	$sql .= " AND sc.fk_user = ".$search_sale;
+	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 }
 if ($search_opp_amount != '') {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -1107,7 +1107,7 @@ while ($i < min($num, $limit)) {
 			print '<td class="right">';
 			//if ($obj->opp_status_code)
 			if (strcmp($obj->opp_amount, '')) {
-				print price($obj->opp_amount, 1, $langs, 1, -1, -1, '');
+				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
 				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
 			}
 			print '</td>';
@@ -1136,7 +1136,7 @@ while ($i < min($num, $limit)) {
 			}
 			print '<td align="right">';
 			if ($obj->opp_weighted_amount) {
-				print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
+				print '<span class="amount">'.price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '').'</span>';
 				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
 			}
 			print '</td>';
@@ -1151,7 +1151,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['p.budget_amount']['checked'])) {
 			print '<td class="right">';
 			if ($obj->budget_amount != '') {
-				print price($obj->budget_amount, 1, $langs, 1, -1, -1);
+				print '<span class="amount">'.price($obj->budget_amount, 1, $langs, 1, -1, -1).'</span>';
 				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
 			}
 			print '</td>';
@@ -1232,7 +1232,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['p.price_registration']['checked'])) {
 			print '<td class="right">';
 			if ($obj->price_registration != '') {
-				print price($obj->price_registration, 1, $langs, 1, -1, -1);
+				print '<span class="amount">'.price($obj->price_registration, 1, $langs, 1, -1, -1).'</span>';
 				$totalarray['val']['p.price_registration'] += $obj->price_registration;
 			}
 			print '</td>';
@@ -1247,7 +1247,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['p.price_booth']['checked'])) {
 			print '<td class="right">';
 			if ($obj->price_booth != '') {
-				print price($obj->price_booth, 1, $langs, 1, -1, -1);
+				print '<span class="amount">'.price($obj->price_booth, 1, $langs, 1, -1, -1).'</span>';
 				$totalarray['val']['p.price_booth'] += $obj->price_booth;
 			}
 			print '</td>';

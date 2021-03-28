@@ -24,7 +24,7 @@
  *
  *  \file       htdocs/core/modules/modMrp.class.php
  *  \ingroup    mrp
- *  \brief      Description and activation file for module Mrp
+ *  \brief      Description and activation file for the module Mrp
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

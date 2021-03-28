@@ -297,7 +297,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			$taskid = $task->create($user);
 
 			if ($taskid > 0) {
-				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
+				$result = $task->add_contact(GETPOST("userid", 'int'), 'TASKEXECUTIVE', 'internal');
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
@@ -450,7 +450,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->rights->projet->all->lire) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -2248,7 +2248,7 @@ class Facture extends CommonInvoice
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
-				$sql .= ' WHERE fk_facture_line IN ('.join(',', $list_rowid_det).')';
+				$sql .= ' WHERE fk_facture_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
@@ -4033,7 +4033,7 @@ class Facture extends CommonInvoice
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if ($draft) {
 			$sql .= " AND f.fk_statut = ".self::STATUS_DRAFT;
@@ -4158,13 +4158,13 @@ class Facture extends CommonInvoice
 			$sqlSit .= " AND fs.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
 			$sqlSit .= " GROUP BY fs.situation_cycle_ref";
 			$sqlSit .= " ORDER BY fs.situation_counter";
-			$sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$sqlSit.") )"; // Type non 5 si facture non avoir
+			$sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$this->db->sanitize($sqlSit).") )"; // Type non 5 si facture non avoir
 		} else {
 			$sql .= " AND f.type != ".self::TYPE_SITUATION; // Type non 5 si facture non avoir
 		}
 
 		if ($socid > 0) {
-			$sql .= " AND f.fk_soc = ".$socid;
+			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= " ORDER BY f.ref";
 
@@ -5367,9 +5367,11 @@ class FactureLigne extends CommonInvoiceLine
 			return -1;
 		}
 
-		// if buy price not defined, define buyprice as configured in margin admin
+		// if buy price not provided, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring) {
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0) {
+			// We call defineBuyPrice only if data was not provided (if input was '0', we will not go here and value will remaine '0')
+			$result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product);
+			if ($result < 0) {
 				return $result;
 			} else {
 				$this->pa_ht = $result;
@@ -5410,7 +5412,7 @@ class FactureLigne extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql .= ", buy_price_ht=".(($this->pa_ht || $this->pa_ht === 0 || $this->pa_ht === '0') ? price2num($this->pa_ht) : "null");	// $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".$this->rang;

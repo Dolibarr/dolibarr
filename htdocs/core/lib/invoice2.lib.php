@@ -130,7 +130,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc NOT IN ('.join(',', $thirdpartiesid).')';
+		$sqlwhere .= ' f.fk_soc NOT IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
 	}
 	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid)) {
 		if (empty($sqlwhere)) {
@@ -138,7 +138,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc IN ('.join(',', $thirdpartiesid).')';
+		$sqlwhere .= ' f.fk_soc IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
 	}
 	if ($sqlwhere) {
 		$sql .= $sqlwhere;

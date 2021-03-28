@@ -66,7 +66,7 @@ if ($action == 'send' && !$_POST['cancel']) {
 	$error = 0;
 
 	$smsfrom = '';
-	if (!empty($_POST["fromsms"])) {
+	if (GETPOST("fromsms", 'alphanohtml')) {
 		$smsfrom = GETPOST("fromsms", 'alphanohtml');
 	}
 	if (empty($smsfrom)) {

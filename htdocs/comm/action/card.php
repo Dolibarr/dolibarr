@@ -1896,7 +1896,8 @@ if ($id > 0) {
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
-			print $langs->trans($object->type).'</td></tr>';
+			print $langs->trans("Action".$object->type_code);
+			print '</td></tr>';
 		}
 
 		// Full day event

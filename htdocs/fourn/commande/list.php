@@ -1439,7 +1439,7 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['cf.total_ht']['checked'])) {
-			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
+			  print '<td class="right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1450,7 +1450,7 @@ if ($resql) {
 		}
 		// Amount VAT
 		if (!empty($arrayfields['cf.total_tva']['checked'])) {
-			print '<td class="right">'.price($obj->total_tva)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1461,7 +1461,7 @@ if ($resql) {
 		}
 		// Amount TTC
 		if (!empty($arrayfields['cf.total_ttc']['checked'])) {
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1490,21 +1490,21 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['cf.multicurrency_total_ht']['checked'])) {
-			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['cf.multicurrency_total_tva']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_tva)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['cf.multicurrency_total_ttc']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

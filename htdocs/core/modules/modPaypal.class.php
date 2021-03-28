@@ -22,7 +22,7 @@
  * 	\brief      Add integration with Paypal online payment system.
  *  \file       htdocs/core/modules/modPaypal.class.php
  *  \ingroup    paypal
- *  \brief      Description and activation file for module Paypal
+ *  \brief      Description and activation file for the module Paypal
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

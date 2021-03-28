@@ -102,11 +102,18 @@ $arrayfields = array(
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Access control
+// TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
+// One permission to read rates (history) and one to add/edit rates.
+if (!$user->admin || empty($conf->multicurrency->enabled)) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
+
 if ($action == "create") {
 	if (!empty($rateinput)) {
 		$currencyRate_static = new CurrencyRate($db);
@@ -225,6 +232,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+
 /*
  * View
  */
@@ -233,8 +241,9 @@ $htmlother = new FormOther($db);
 
 $title = $langs->trans("CurrencyRate");
 $page_name = "ListCurrencyRate";
+$help_url = '';
 
-llxHeader('', $title, $helpurl, '');
+llxHeader('', $title, $help_url, '');
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans($page_name), $linkback);

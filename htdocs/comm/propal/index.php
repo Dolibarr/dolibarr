@@ -106,7 +106,7 @@ if ($user->socid) {
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-$sql .= " AND p.fk_statut IN (".implode(" ,", $listofstatus).")";
+$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
 $sql .= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
@@ -372,7 +372,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 

@@ -513,14 +513,7 @@ if ($userid) {
 	if ($userid == -1) {
 		$sql .= ' AND f.fk_user_author IS NULL';
 	} else {
-		$sql .= ' AND f.fk_user_author = '.$userid;
-	}
-}
-if ($filtre) {
-	$aFilter = explode(',', $filtre);
-	foreach ($aFilter as $filter) {
-		$filt = explode(':', $filter);
-		$sql .= ' AND '.$db->escape(trim($filt[0])).' = '.$db->escape(trim($filt[1]));
+		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
 }
 if ($search_ref) {

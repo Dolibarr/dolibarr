@@ -20,7 +20,7 @@
  *      \brief      Module to enable client for supplier WebServices
  *       \file       htdocs/core/modules/modWebServicesClient.class.php
  *       \ingroup    webservices
- *       \brief      File to describe client for supplier webservices module
+ *       \brief      Description and activation file for the module supplier webservices module
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

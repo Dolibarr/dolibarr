@@ -111,7 +111,7 @@ if ($action == 'getProducts') {
 	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
-		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.'))';
+		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND tosell = 1';
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);

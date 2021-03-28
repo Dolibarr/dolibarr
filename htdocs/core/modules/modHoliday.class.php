@@ -26,7 +26,7 @@
  *    \brief      Module de gestion des congés
  *    \file       htdocs/core/modules/modHoliday.class.php
  *    \ingroup    holiday
- *    \brief      Description and activation file for module holiday
+ *    \brief      Description and activation file for the module holiday
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 

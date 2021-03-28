@@ -23,7 +23,7 @@
  *	\brief      	Module pour gerer la tenue de stocks produits
  *	\file       htdocs/core/modules/modStock.class.php
  *	\ingroup    stock
- *	\brief      Fichier de description et activation du module Stock
+ *	\brief      Description and activation file for the module Stock
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

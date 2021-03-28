@@ -1208,8 +1208,6 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		print '<th colspan="2">';
 		print $langs->trans("BillsSuppliersUnpaid", $num).' ';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_VALIDATED.'">';
-		// TODO: "impayees.php" looks very outdatetd and should be set to deprecated or directly remove in the next version
-		// <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">
 		print '<span class="badge">'.$num.'</span>';
 		print '</a>';
 		print '</th>';

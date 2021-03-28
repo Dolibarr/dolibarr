@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/eventorganization/core/modules/modEventOrganization.class.php
  *  \ingroup    eventorganization
- *  \brief      Description and activation file for module EventOrganization
+ *  \brief      Description and activation file for the EventOrganization
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -341,6 +341,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=project',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'EventOrganizationMenuLeft',
+			'prefix' => img_picto('', 'eventorganization', 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'project',
 			'leftmenu'=>'eventorganization',
 			'url'=>'',
@@ -355,7 +356,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=eventorganization',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'List',
-			'url'=>'/projet/list.php?search_usage_event_organization=1&mainmenu=project',
+			'url'=>'/projet/list.php?search_usage_event_organization=1&mainmenu=project&contextpage=organizedevents',
 			'langs'=>'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -378,7 +379,8 @@ class modEventOrganization extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=project',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'EventOrganizationMenuLeft',
+			'titre'=>'ConferenceOrBooth',
+			'prefix' => img_picto('', 'conferenceorbooth', 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'project',
 			'leftmenu'=>'eventorganizationconforbooth',
 			'url'=>'',

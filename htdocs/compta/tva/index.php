@@ -37,99 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$form = new Form($db);
-$now = dol_now();
-$current_date = dol_getdate($now);
-if (empty($conf->global->SOCIETE_FISCAL_MONTH_START)) {
-	$conf->global->SOCIETE_FISCAL_MONTH_START = 1;
-}
-
 $refresh = GETPOSTISSET('submit') ? true : false;
+$year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : dol_print_date($now, '%Y', 'tzserver');
+$year_start = $year_current;
+$month_current = GETPOSTISSET('month') ? GETPOST('month', 'int') : dol_print_date($now, '%m', 'tzserver');
+$month_start = $month_current;
 
-if ($refresh === false) {
-	$year_current = dol_print_date('%Y', $now);
-	$month_current = dol_print_date('%m', $now);
+$refresh = true;
 
-	// 1 : Monthly (by default)
-	// 2 : Quarterly
-	// 3 : Annual
-	if ($conf->global->MAIN_INFO_VAT_RETURN == 2) {
-		// quarterly
-		$year = $year_current;
-		if ($month_current >= 7 && $month_current <= 9) {
-			$month_start = 4;
-			$month_end = 6;
-		} elseif ($month_current >= 10 && $month_current <= 12) {
-			$month_start = 7;
-			$month_end = 9;
-		} elseif ($month_current >= 1 && $month_current <= 3) {
-			$month_start = 10;
-			$month_end = 12;
-			$year--;
-		} else {
-			$month_start = 1;
-			$month_end = 3;
-		}
-		$date_start = dol_get_first_day($year, $month_start);
-		$date_end = dol_get_last_day($year, $month_end);
-	} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) {
-		// annual
-		$date_start = dol_get_first_day($year_current, 1);
-		$date_end = dol_get_last_day($year_current, 12);
-	} else {
-		// monthly by default
-		$year = $year_current;
-		$month_last = $month_current - 1;
-		if ($month_last <= 0) {
-			$month_last = $month_last + 12;
-			$year--;
-		}
-		$date_start = dol_get_first_day($year, $month_last);
-		$date_end = dol_get_last_day($year, $month_last);
-	}
-} else {
-	// Date range
-	$year = GETPOST("year", "int");
-	if (empty($year)) {
-		$year_current = dol_print_date(dol_now(), "%Y");
-		if ($conf->global->SOCIETE_FISCAL_MONTH_START > dol_print_date(dol_now(), "%m")) $year_current--;
-		$year_start = $year_current;
-	} else {
-		$year_current = $year;
-		$year_start = $year;
-	}
-	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-	$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
-	if (empty($date_start) || empty($date_end)) {// We define date_start and date_end
-		$q = GETPOST("q", "int");
-		if (empty($q)) {
-			if (GETPOST("month", "int")) {
-				$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false);
-				$date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
-			} else {
-				$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			}
-		} else {
-			if ($q == 1) {
-				$date_start = dol_get_first_day($year_start, 1, false);
-				$date_end = dol_get_last_day($year_start, 3, false);
-			}
-			if ($q == 2) {
-				$date_start = dol_get_first_day($year_start, 4, false);
-				$date_end = dol_get_last_day($year_start, 6, false);
-			}
-			if ($q == 3) {
-				$date_start = dol_get_first_day($year_start, 7, false);
-				$date_end = dol_get_last_day($year_start, 9, false);
-			}
-			if ($q == 4) {
-				$date_start = dol_get_first_day($year_start, 10, false);
-				$date_end = dol_get_last_day($year_start, 12, false);
-			}
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
@@ -255,6 +171,7 @@ function pt($db, $sql, $date)
  * View
  */
 
+$form = new Form($db);
 $company_static = new Societe($db);
 $tva = new Tva($db);
 

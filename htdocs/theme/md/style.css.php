@@ -555,6 +555,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.amount, span.amount, div.amount {
+	color: #006666;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -893,11 +896,40 @@ textarea.centpercent {
 	max-width: 100%;
 	overflow-y: auto;
 }
+div.urllink {
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	/* border: 1px solid #ccc; */
+	border-radius: 5px;
+	/* width: fit-content; */
+	background-color: #e0e0e8;
+	opacity: 0.8;
+}
+div.urllink, div.urllink a {
+	color: #339 !important;
+}
 
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
+}
+.stockmovemententry {
+	color: #080;
+	transform: rotate(0.25turn);
+	font-size: 1.2em;
+}
+.stockmovementexit {
+	color: #968822;
+	transform: rotate(0.3turn);
+	font-size: 1.2em;
+}
+.stockmovement {
+	font-size: 1.4em;
 }
 
 .text-warning{
@@ -1139,6 +1171,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 400px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax500 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 500px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1597,6 +1641,7 @@ td.showDragHandle {
 	min-height: 100%;
 	position: relative;
 	width: 213px;
+	padding-top: 20px;
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
@@ -1709,6 +1754,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 }
 <?php } ?>
 
+
 /* For smartphone (testmenuhider is on) */
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
@@ -1772,6 +1818,7 @@ div.login_block {
 	z-index: 91;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
+	padding-top: 20px;
 	<?php
 	if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
@@ -2421,6 +2468,7 @@ div.mainmenu.website {
 	// End of part to add more div class css
 }	// End test if $dol_hide_topmenu ?>
 
+
 .tmenuimage {
 	padding:0 0 0 0 !important;
 	margin:0 0px 0 0 !important;
@@ -2432,6 +2480,9 @@ div.mainmenu.website {
 	<?php if ($disableimages) { ?>
 		display: none;
 	<?php } ?>
+}
+a.tmenuimage:hover {
+	text-decoration: none;
 }
 a.tmenuimage {
 	display: block;
@@ -2584,7 +2635,7 @@ div.login_block {
 	vertical-align: middle;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	width: 228px;
-	height: 45px;
+	height: 70px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -2605,13 +2656,13 @@ div.login a:hover {
 	text-decoration:underline;
 }
 div.login_block_user, div.login_block_other { clear: both; }
-div.login_block_other { padding-top: 3px; }
+div.login_block_other { padding-top: 15px; }
 
 .topnav div.login_block_user {
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
-	height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	line-height: <?php echo $disableimages ? '25' : '70'; ?>px;
+	height: <?php echo $disableimages ? '25' : '70'; ?>px;
 }
 .topnav div.login_block_other {
 	display: inline-block;
@@ -2733,6 +2784,7 @@ div.vmenu, td.vmenu {
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
+.searchform .bordertransp { border: 0; }
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; white-space: nowrap; }

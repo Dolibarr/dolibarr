@@ -22,7 +22,7 @@
  * \brief      Module to include an external web site/tools into Dolibarr menu and into a frame page.
  * \file       htdocs/core/modules/modExternalSite.class.php
  * \ingroup    externalsite
- * \brief      Description and activation file for module ExternalSite
+ * \brief      Description and activation file for the module ExternalSite
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -67,7 +67,7 @@ class modExternalSite extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array("externalsite.php@externalsite");
+		$this->config_page_url = array("index.php@externalsite");
 
 		// Dependencies
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
