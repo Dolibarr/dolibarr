@@ -207,7 +207,7 @@ if (empty($reshook)) {
 	}
 
 	// Create third party from a member
-	if (($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) || (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY))) {
+	if (($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer)) {
 		if ($result > 0) {
 			// User creation
 			$company = new Societe($db);
@@ -550,7 +550,7 @@ if (empty($reshook)) {
 				$db->commit();
 				$rowid = $object->id;
 				$id = $object->id;
-				$action = '';
+				
 			} else {
 				$db->rollback();
 
@@ -559,12 +559,41 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-
-				$action = 'create';
 			}
-		} else {
-			$action = 'create';
-		}
+			// Auto-create thirdparty on member creation
+			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+			    if ($result > 0) {
+			        // User creation
+			        $company = new Societe($db);
+			        
+			        $companyalias = '';
+			        $fullname = $object->getFullName($langs);
+			        
+			        if ($object->morphy == 'mor') {
+			            $companyname = $object->company;
+			            if (!empty($fullname)) {
+			                $companyalias = $fullname;
+			            }
+			        } else {
+			            $companyname = $fullname;
+			            if (!empty($object->company)) {
+			                $companyalias = $object->company;
+			            }
+			        }
+			        
+			        $result = $company->create_from_member($object, $companyname, $companyalias);
+			        
+			        if ($result < 0) {
+			            $langs->load("errors");
+			            setEventMessages($langs->trans($company->error), null, 'errors');
+			            setEventMessages($company->error, $company->errors, 'errors');
+			        }
+			    } else {
+			        setEventMessages($object->error, $object->errors, 'errors');
+			    }
+			}
+		} 
+		$action = ($result < 0 || !$error) ?  '' : 'create';
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
