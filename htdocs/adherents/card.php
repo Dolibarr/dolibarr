@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Waël Almoman            <wael@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +208,7 @@ if (empty($reshook)) {
 	}
 
 	// Create third party from a member
-	if (($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer)) {
+	if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights->societe->creer) {
 		if ($result > 0) {
 			// User creation
 			$company = new Societe($db);
