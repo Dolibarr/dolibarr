@@ -282,5 +282,4 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
 
-
-
+ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32);
