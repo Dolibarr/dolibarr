@@ -1,4 +1,11 @@
+-- DOLIBARR  htdocs/install/mysql/tables/llx_zapier_hook.key.sql
+
+-- Authors ================================================================
+--
 -- Copyright (C) ---Put here your own copyright and developer email---
+--
+
+-- LICENSE ================================================================
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -11,7 +18,10 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
+--
+-- ========================================================================
+
 
 
 --ALTER TABLE llx_zapier_hook ADD INDEX idx_fieldobject (fieldobject);
