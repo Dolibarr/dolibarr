@@ -150,7 +150,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
 	if ($type == 2) {
-		$inj += preg_match('/[;"<>]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
+		$inj += preg_match('/[:;"\'<>\?]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
 	}
 
 	return $inj;
