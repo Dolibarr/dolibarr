@@ -358,7 +358,7 @@ abstract class CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see model_pdf
+	 * @see $model_pdf
 	 */
 	public $modelpdf;
 
@@ -2201,22 +2201,22 @@ abstract class CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
-				$sql .= ' SET fk_project = '.$projectid;
+				$sql .= ' SET fk_project = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_project = NULL';
 			}
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 		} elseif ($this->table_element == 'actioncomm') {	// Special case for actioncomm
 			if ($projectid) {
-				$sql .= ' SET fk_project = '.$projectid;
+				$sql .= ' SET fk_project = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_project = NULL';
 			}
-			$sql .= ' WHERE id = '.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 		} else // Special case for old architecture objects
 		{
 			if ($projectid) {
-				$sql .= ' SET fk_projet = '.$projectid;
+				$sql .= ' SET fk_projet = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_projet = NULL';
 			}
@@ -2225,7 +2225,7 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->fk_project = $projectid;
+			$this->fk_project = ((int) $projectid);
 			return 1;
 		} else {
 			dol_print_error($this->db);

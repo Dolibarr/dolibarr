@@ -186,7 +186,7 @@ if (empty($reshook)) {
 			$notifyTiers = GETPOST("notify_tiers_at_create", 'alpha');
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
-			$object->fk_project = GETPOST('projectid', 'int');
+			$object->fk_project = $projectid;
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -205,9 +205,9 @@ if (empty($reshook)) {
 					$result = $object->add_contact($contactid, $typeid, 'external');
 				}
 
-				// altairis: link ticket to project
-				if (GETPOST('projectid') > 0) {
-					$object->setProject(GETPOST('projectid'));
+				// Link ticket to project
+				if ($projectid > 0) {
+					$object->setProject($projectid);
 				}
 
 				// Auto assign user
@@ -236,7 +236,7 @@ if (empty($reshook)) {
 				if ($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE) {
 					$fichinter = new Fichinter($db);
 					$fichinter->socid = $object->fk_soc;
-					$fichinter->fk_project = GETPOST('projectid', 'int');
+					$fichinter->fk_project = $projectid;
 					$fichinter->fk_contrat = $contractid;
 					$fichinter->author = $user->id;
 					$fichinter->model_pdf = 'soleil';
@@ -534,7 +534,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'classin' && $user->rights->ticket->write) {
 		// Categorisation dans projet
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
-			$object->setProject(GETPOST('projectid', 'int'));
+			$object->setProject($projectid);
 			$url = 'card.php?action=view&track_id='.$object->track_id;
 			header("Location: ".$url);
 			exit();
@@ -778,7 +778,7 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		// project info
-		if ($projectid) {
+		if ($projectid > 0) {
 			$projectstat = new Project($db);
 			if ($projectstat->fetch($projectid) > 0) {
 				$projectstat->fetch_thirdparty();
