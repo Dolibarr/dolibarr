@@ -415,10 +415,10 @@ if (empty($reshook)) {
 				dol_print_error($db);
 			}
 
-     		if (mysqli_num_rows($resql) > 0) {
+			if (mysqli_num_rows($resql) > 0) {
 				setEventMessages($langs->trans("ErrorClientExists"), null, 'errors');
 				$error++;
-     		}
+			}
 		}
 
 		if (!$error) {
