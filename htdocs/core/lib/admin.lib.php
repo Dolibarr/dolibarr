@@ -635,16 +635,28 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @param	int		$nbofactivatedmodules	Number f oactivated modules
+ * @param	int		$nboftotalmodules		Nb of total modules
+ * @return  array							Array of tabs to show
  */
-function modules_prepare_head()
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $form;
+
+	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+
 	$h = 0;
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	$head[$h][1] = $langs->trans("AvailableModules");
+	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+		$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
+		$head[$h][1] .= img_warning($langs->trans("YouMustEnableOneModule"));
+	} else {
+		//$head[$h][1] = $langs->trans("AvailableModules").$form->textwithpicto('<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>', $desc, 1, 'help', '', 1, 3);
+		$head[$h][1] = $langs->trans("AvailableModules").'<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>';
+	}
 	$head[$h][2] = 'modules';
 	$h++;
 

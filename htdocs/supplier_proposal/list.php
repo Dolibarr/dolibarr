@@ -954,7 +954,7 @@ if ($resql) {
 
 		// Amount HT
 		if (!empty($arrayfields['sp.total_ht']['checked'])) {
-			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
+			  print '<td class="right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -965,7 +965,7 @@ if ($resql) {
 		}
 		// Amount VAT
 		if (!empty($arrayfields['sp.total_tva']['checked'])) {
-			print '<td class="right">'.price($obj->total_tva)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -976,7 +976,7 @@ if ($resql) {
 		}
 		// Amount TTC
 		if (!empty($arrayfields['sp.total_ttc']['checked'])) {
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1005,21 +1005,21 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['sp.multicurrency_total_ht']['checked'])) {
-			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['sp.multicurrency_total_vat']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['sp.multicurrency_total_ttc']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

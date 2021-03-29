@@ -171,9 +171,9 @@ function showOnlinePaymentUrl($type, $ref)
 
 	$servicename = $langs->transnoentitiesnoconv('Online');
 
-	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
-	$out .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
+	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'"></div>';
 	$out .= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
