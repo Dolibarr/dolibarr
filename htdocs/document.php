@@ -207,6 +207,7 @@ if (empty($modulepart)) {
 
 // Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+var_dump($check_access);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
