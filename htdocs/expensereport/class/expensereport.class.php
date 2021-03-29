@@ -2173,7 +2173,7 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.$rowid;
+		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2628,7 +2628,7 @@ class ExpenseReportLine
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id'; // Sometimes type of expense report has been removed, so we use a left join here.
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
-		$sql .= ' WHERE fde.rowid = '.$rowid;
+		$sql .= ' WHERE fde.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 

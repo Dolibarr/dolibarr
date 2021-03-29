@@ -3843,7 +3843,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
-		$sql .= ' WHERE pd.rowid = '.$rowid;
+		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 		if ($result) {

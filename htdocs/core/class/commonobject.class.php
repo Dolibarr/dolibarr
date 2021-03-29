@@ -3067,7 +3067,7 @@ abstract class CommonObject
 			$sql .= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3098,7 +3098,7 @@ abstract class CommonObject
 			$sql .= ' AND rang = '.($rang + 1);
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang + 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
