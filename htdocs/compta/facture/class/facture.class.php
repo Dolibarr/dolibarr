@@ -3735,14 +3735,14 @@ class Facture extends CommonInvoice
 		}
 
 		if ($user->rights->facture->creer) {
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_percent = '.$remise;
+			$sql .= ' SET remise_percent = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.$this->id;
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
