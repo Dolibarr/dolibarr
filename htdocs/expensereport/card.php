@@ -67,14 +67,6 @@ $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$id = GETPOST("id", 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
-
-
 // Hack to use expensereport dir
 $rootfordata = DOL_DATA_ROOT;
 $rootforuser = DOL_DATA_ROOT;
@@ -111,9 +103,7 @@ $permissionnote = $user->rights->expensereport->creer; // Used by the include of
 $permissiondellink = $user->rights->expensereport->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->expensereport->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
-
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
-
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -128,6 +118,13 @@ if ($object->id > 0) {
 		accessforbidden();
 	}
 }
+
+// Security check
+$id = GETPOST("id", 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expensereport', $object->id, 'expensereport');
 
 
 /*

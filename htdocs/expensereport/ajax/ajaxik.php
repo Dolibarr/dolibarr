@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/expensereport/ajax/ajaxprojet.php
+ *       \file       htdocs/expensereport/ajax/ajaxik.php
  *       \ingroup    expensereport
  *       \brief      File to return Ajax response on third parties request
  */
@@ -49,15 +49,18 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'trips'));
 
+$fk_expense = GETPOST('fk_expense', 'int');
+$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
+
+// Security check
+$result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
+
 
 /*
  * View
  */
 
 top_httphead();
-
-$fk_expense = GETPOST('fk_expense', 'int');
-$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
 
 if (empty($fk_expense) || $fk_expense < 0) {
 	echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense')));
