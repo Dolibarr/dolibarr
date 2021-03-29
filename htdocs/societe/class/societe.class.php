@@ -3796,7 +3796,7 @@ class Societe extends CommonObject
 		$this->code_client = ($customercode ? $customercode : -1);
 		$this->code_fournisseur = -1;
 		$this->typent_code = ($member->morphy == 'phy' ? 'TE_PRIVATE' : 0);
-		$this->typent_id = dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code');
+		$this->typent_id = $this->typent_code ? dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code') : 0;
 
 		$this->db->begin();
 
