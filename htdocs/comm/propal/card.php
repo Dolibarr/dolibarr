@@ -1387,7 +1387,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'swapstatut') {
 			// Toggle the status of a contact
 			if ($object->fetch($id) > 0) {
-				$result = $object->swapContactStatus(GETPOST('ligne'));
+				$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 			} else {
 				dol_print_error($db);
 			}
