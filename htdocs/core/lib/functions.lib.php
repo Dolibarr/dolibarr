@@ -746,12 +746,14 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
-				$out = dol_string_nohtmltag($out, 0);
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
+					// Remove html tags
+					$out = dol_string_nohtmltag($out, 0);
+					// Remove also other dangerous string sequences
+					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// '../' is dangerous because it allows dir transversals
 					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
 					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
 				} while ($oldstringtoclean != $out);
@@ -760,12 +762,13 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 			break;
 		case 'alphawithlgt':		// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email>"
 			if (!is_array($out)) {
-				$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
 				$out = trim($out);
 				do {
 					$oldstringtoclean = $out;
+					// Remove html tags
+					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
+					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// '../' is dangerous because it allows dir transversals
 					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
 					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
 				} while ($oldstringtoclean != $out);
