@@ -3795,7 +3795,8 @@ class Societe extends CommonObject
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
 		$this->code_fournisseur = -1;
-		$this->typent_id = ($member->morphy == 'phy' ? 8 : 0); // The type of thirdparty is private (individual) if the member is human (phy)
+		$this->typent_code = ($member->morphy == 'phy' ? 'TE_PRIVATE' : 0);  
+		$this->typent_id = dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code'); 
 
 		$this->db->begin();
 
