@@ -653,7 +653,7 @@ class ProductFournisseur extends Product
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
 		$sql .= " AND s.status=1"; // only enabled company selected
-		$sql .= " AND pfp.fk_product = ".$prodid;
+		$sql .= " AND pfp.fk_product = ".((int) $prodid);
 		if (empty($sortfield)) {
 			$sql .= " ORDER BY s.nom, pfp.quantity, pfp.price";
 		} else {
