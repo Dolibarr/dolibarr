@@ -156,6 +156,10 @@ if ($type == 'f') {
 	}
 }
 
+if ($search_sale==-1) {
+	$search_sale='';
+}
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('thirdpartylist'));
