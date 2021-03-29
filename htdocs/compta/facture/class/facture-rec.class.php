@@ -83,8 +83,6 @@ class FactureRec extends CommonInvoice
 	public $number;
 	public $date;
 	public $remise;
-	public $db_table;
-	public $propalid;
 	public $remise_absolue;
 	public $remise_percent;
 
