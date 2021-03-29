@@ -33,9 +33,15 @@ function showOnlineSignatureUrl($type, $ref)
 
 	$servicename = 'Online';
 
-	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'<br>';
+	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlineSignature", $servicename).'</span><br>';
 	$url = getOnlineSignatureUrl(0, $type, $ref);
-	$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+	$out .= '<div class="urllink">';
+	if ($url == $langs->trans("FeatureOnlineSignDisabled")) {
+		$out .= $url;
+	} else {
+		$out .= '<input type="text" id="onlinesignatureurl" class="quatrevingtpercent" value="'.$url.'">';
+	}
+	$out .= '</div>';
 	$out .= ajax_autoselect("onlinesignatureurl", 0);
 	return $out;
 }

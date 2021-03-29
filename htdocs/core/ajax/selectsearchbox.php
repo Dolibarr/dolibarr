@@ -81,7 +81,7 @@ if (((!empty($conf->product->enabled) && $user->rights->produit->lire) || (!empt
 	$arrayresult['searchintoproduct'] = array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'text'=>img_picto('', 'object_product').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 	// search on lot/serial numbers
 	if ( ! empty($conf->productbatch->enabled) ) {
-		$arrayresult['searchintobatch'] = array('position'=>32, 'shortcut'=>'B', 'img'=>'object_plot', 'label'=>$langs->trans("SearchIntoBatch", $search_boxvalue), 'text'=>img_picto('', 'object_lot').' '.$langs->trans("SearchIntoBatch", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/stock/productlot_list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+		$arrayresult['searchintobatch'] = array('position'=>32, 'shortcut'=>'B', 'img'=>'object_lot', 'label'=>$langs->trans("SearchIntoBatch", $search_boxvalue), 'text'=>img_picto('', 'object_lot').' '.$langs->trans("SearchIntoBatch", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/stock/productlot_list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 	}
 }
 

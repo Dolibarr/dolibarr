@@ -180,11 +180,11 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => price($value),
+						'text' => '<span class="amount">'.price($value).'</span>',
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => price(price2num($value / $Number[$key], 'MT')),
+						'text' => '<span class="amount">'.price(price2num($value / $Number[$key], 'MT')).'</span>',
 					);
 					$line++;
 				}
@@ -205,11 +205,11 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => price($tot),
+						'text' => '<span class="amount">'.price($tot).'</span>',
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')),
+						'text' => '<span class="amount">'.price(price2num($numb > 0 ? ($tot / $numb) : 0, 'MT')).'</span>',
 					);
 				}
 			} else {
