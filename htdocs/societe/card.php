@@ -407,15 +407,14 @@ if (empty($reshook)) {
 		}
 
 		if ($action == 'add') {
-			$thirdparty=GETPOST('name');
-			$thirdparty2=$db->escape($thirdparty);
-			$sql = 'SELECT nom FROM '.MAIN_DB_PREFIX.'societe WHERE nom="'.$thirdparty2.'"';
-			$resql = $db->query($sql) or die($db->error);
+			$thirdparty = GETPOST('name');
+			$sql = 'SELECT nom FROM '.MAIN_DB_PREFIX.'societe WHERE nom="'.$db->escape($thirdparty).'"';
+			$resql = $db->query($sql);
 			if (!$resql) {
 				dol_print_error($db);
 			}
 
-			if (mysqli_num_rows($resql) > 0) {
+			if ($db->fetch_object($resql)) {
 				setEventMessages($langs->trans("ErrorClientExists"), null, 'errors');
 				$error++;
 			}
