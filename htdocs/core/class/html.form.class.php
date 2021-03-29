@@ -1937,9 +1937,9 @@ class Form
 		}
 
 		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
-			$sql .= " ORDER BY u.firstname ASC";
+			$sql .= " ORDER BY u.statut DESC, u.firstname ASC, u.lastname ASC";
 		} else {
-			$sql .= " ORDER BY u.lastname ASC";
+			$sql .= " ORDER BY u.statut DESC, u.lastname ASC, u.firstname ASC";
 		}
 
 		dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
