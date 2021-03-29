@@ -477,7 +477,7 @@ while ($i < min($num, $limit)) {
 	// Type
 	if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 		print '<td>';
-		if(!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
