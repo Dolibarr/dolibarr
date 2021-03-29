@@ -376,6 +376,7 @@ DateLastGeneration=Date of latest generation
 DateLastGenerationShort=Date latest gen.
 MaxPeriodNumber=Max. number of invoice generation
 NbOfGenerationDone=Number of invoice generation already done
+NbOfGenerationOfRecordDone=Number of record generation already done
 NbOfGenerationDoneShort=Number of generation done
 MaxGenerationReached=Maximum number of generations reached
 InvoiceAutoValidate=Validate invoices automatically
