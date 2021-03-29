@@ -304,13 +304,15 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -380,6 +382,9 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'thirdparty'=>$thirdparty_result_fields);
+			} elseif ($result == -2) {
+				$error++;
+				$errorcode = 'DUPLICATE_FOUND'; $errorlabel = 'Object found several times for id='.$id.' or ref='.$ref.' or ref_ext='.$ref_ext;
 			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
