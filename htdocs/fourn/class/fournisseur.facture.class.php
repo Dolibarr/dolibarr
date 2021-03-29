@@ -1208,13 +1208,13 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'facture_fourn_det';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ".((int) $rowid).")";
 			$resqlef = $this->db->query($sqlef);
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resqlef && $resql) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.((int) $rowid);
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				$resql2 = $this->db->query($sql);
 				if (!$resql2) {
@@ -3093,7 +3093,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-		$sql .= ' WHERE f.rowid = '.$rowid;
+		$sql .= ' WHERE f.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY f.rang, f.rowid';
 
 		$query = $this->db->query($sql);

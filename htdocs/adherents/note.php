@@ -33,9 +33,7 @@ $langs->loadLangs(array("companies", "members", "bills"));
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
-
-// Security check
-$result = restrictedArea($user, 'adherent', $id);
+$ref = GETPOST('ref', 'alphanohtml');
 
 $object = new Adherent($db);
 $result = $object->fetch($id);
@@ -45,6 +43,34 @@ if ($result > 0) {
 }
 
 $permissionnote = $user->rights->adherent->creer; // Used by the include of actions_setnotes.inc.php
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+	}
+}
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
+
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
+
 
 /*
  * Actions

@@ -503,7 +503,7 @@ if ($result)
 
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";
 
-		print '<td class="right">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</td>\n";
+		print '<td class="right"><span class="amount">'.price($obj->amount,0,$langs,0,0,-1,$conf->currency)."</span></td>\n";
 
 		print "</tr>\n";
 		$i++;

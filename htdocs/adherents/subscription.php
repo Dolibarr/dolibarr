@@ -42,7 +42,9 @@ $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'othe
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$rowid = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$id = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
+$rowid = $id;
+$ref = GETPOST('ref', 'alphanohtml');
 $typeid = GETPOST('typeid', 'int');
 $cancel = GETPOST('cancel');
 
@@ -66,10 +68,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-
-// Security check
-$result = restrictedArea($user, 'adherent', $rowid, '', 'cotisation');
-
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
@@ -82,29 +80,6 @@ $errmsg = '';
 $defaultdelay = 1;
 $defaultdelayunit = 'y';
 
-if ($rowid) {
-	// Load member
-	$result = $object->fetch($rowid);
-
-	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
-	// Define variables to know what current user can do on properties of user linked to edited member
-	if ($object->user_id) {
-		// $user is the user editing, $object->user_id is the user's id linked to the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-		|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-		|| (($user->id != $object->user_id) && $user->rights->user->user->password));
-	}
-}
-
-// Define variables to know what current user can do on members
-$canaddmember = $user->rights->adherent->creer;
-// Define variables to know what current user can do on properties of a member
-if ($rowid) {
-	$caneditfieldmember = $user->rights->adherent->creer;
-}
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
 
@@ -116,6 +91,33 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 $datefrom = 0;
 $dateto = 0;
 $paymentdate = -1;
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+	}
+}
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
+
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
 /*

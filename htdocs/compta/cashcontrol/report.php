@@ -204,7 +204,7 @@ if ($resql) {
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td class="right">'.price($cashcontrol->opening).'</td>';
+			print '<td></td><td></td><td></td><td class="right"><span class="amount">'.price($cashcontrol->opening).'</span></td>';
 			print '</tr>';
 			$first = "no";
 		}*/

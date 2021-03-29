@@ -2019,7 +2019,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.rowid = '.$rowid;
+		$sql .= ' WHERE l.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY l.rang';
 
 		dol_syslog('FactureRec::fetch', LOG_DEBUG);

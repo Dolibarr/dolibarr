@@ -346,7 +346,7 @@ if (empty($numref)) {
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -359,7 +359,7 @@ if (empty($numref)) {
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {

@@ -54,6 +54,8 @@ $langs->loadLangs(array("contracts", "orders", "companies", "bills", "products",
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -113,7 +115,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->activer) {
-		$result = $object->active_line($user, GETPOST('ligne'), GETPOST('date'), GETPOST('dateend'), GETPOST('comment'));
+		$result = $object->active_line($user, GETPOST('ligne', 'int'), GETPOST('date'), GETPOST('dateend'), GETPOST('comment'));
 
 		if ($result > 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -127,7 +129,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), null, 'errors');
 		}
 		if (!$error) {
-			$result = $object->close_line($user, GETPOST('ligne'), GETPOST('dateend'), urldecode(GETPOST('comment')));
+			$result = $object->close_line($user, GETPOST('ligne', 'int'), GETPOST('dateend'), urldecode(GETPOST('comment')));
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
@@ -931,10 +933,10 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'swapstatut') {
 			// bascule du statut d'un contact
-			$result = $object->swapContactStatus(GETPOST('ligne'));
+			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 		} elseif ($action == 'deletecontact') {
 			// Efface un contact
-			$result = $object->delete_contact(GETPOST('lineid'));
+			$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1747,25 +1749,25 @@ if ($action == 'create') {
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
 				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid', 'int'), $langs->trans("MoveToAnotherContract"), $langs->trans("ConfirmMoveToAnotherContract"), "confirm_move", $formquestion);
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
 			/*
 			 * Confirmation de la validation activation
 			 */
-			if ($action == 'active' && !$_REQUEST["cancel"] && $user->rights->contrat->activer && $object->lines[$cursorline - 1]->id == GETPOST('ligne')) {
+			if ($action == 'active' && !$cancel && $user->rights->contrat->activer && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
 				$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 				$dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 				$comment      = GETPOST('comment', 'alpha');
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("ActivateService"), $langs->trans("ConfirmActivateService", dol_print_date($dateactstart, "%A %d %B %Y")), "confirm_active", '', 0, 1);
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne', 'int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("ActivateService"), $langs->trans("ConfirmActivateService", dol_print_date($dateactstart, "%A %d %B %Y")), "confirm_active", '', 0, 1);
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
 			}
 
 			/*
 			 * Confirmation de la validation fermeture
 			 */
-			if ($action == 'closeline' && !$_REQUEST["cancel"] && $user->rights->contrat->activer && $object->lines[$cursorline - 1]->id == GETPOST('ligne')) {
+			if ($action == 'closeline' && !$cancel && $user->rights->contrat->activer && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
 				$dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 				$dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 				$comment      = GETPOST('comment', 'alpha');
@@ -1843,8 +1845,8 @@ if ($action == 'create') {
 			}
 
 			// Form to activate line
-			if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne')) {
-				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
+			if ($user->rights->contrat->activer && $action == 'activateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
+				print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne', 'int').'&amp;action=active" method="post">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 
 				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ? ' boxtablenobottom' : '').'" width="100%">';
@@ -1893,7 +1895,7 @@ if ($action == 'create') {
 				print '</form>';
 			}
 
-			if ($user->rights->contrat->activer && $action == 'unactivateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne')) {
+			if ($user->rights->contrat->activer && $action == 'unactivateline' && $object->lines[$cursorline - 1]->id == GETPOST('ligne', 'int')) {
 				/**
 				 * Disable a contract line
 				 */

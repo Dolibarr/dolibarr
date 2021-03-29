@@ -286,7 +286,7 @@ if ($id > 0) {
 				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
 
 				// Balance
-				print '<td class="right">'.price($data['balance'])."</td>\n";
+				print '<td class="right"><span class="amount">'.price($data['balance'])."</span></td>\n";
 
 				// Author
 				print '<td class="nowrap right">';

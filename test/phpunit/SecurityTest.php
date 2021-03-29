@@ -316,6 +316,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param4"]='../dir';
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
+		$_POST["param6b"]='<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
 		$_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
 		$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
@@ -385,6 +386,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param6", 'nohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('">', $result);
+
+		$result=GETPOST("param6b");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc', $result);
 
 		// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
 

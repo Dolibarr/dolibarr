@@ -285,7 +285,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 		$result .= '<tr class="oddeven">';
 		$result .= '<td class="nowrap">'.$objectstatic->getNomUrl(1).'</td>';
 		$result .= '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
-		$result .= '<td class="right">'.price($obj->total_ht).'</td>';
+		$result .= '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 		$result .= '</tr>';
 
 		$i++;
@@ -299,7 +299,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	} elseif ($total > 0) {
 		$result .= '<tr class="liste_total">';
 		$result .= '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
-		$result .= '<td class="right">'.price($total).'</td>';
+		$result .= '<td class="right"><span class="amount">'.price($total).'</span></td>';
 		$result .= '</tr>';
 	}
 
@@ -508,7 +508,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 
 		$result .= '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 		$result .= '<td class="right">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
-		$result .= '<td class="right">'.price($obj->total_ttc).'</td>';
+		$result .= '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
 		$result .= '</tr>';
 
