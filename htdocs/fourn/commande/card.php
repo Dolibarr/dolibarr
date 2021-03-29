@@ -290,7 +290,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise($user, $_POST['remise_percent']);
+		$result = $object->set_remise($user, price2num(GETPOST('remise_percent')));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
