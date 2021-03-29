@@ -280,6 +280,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListSelect', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	if ($selected_soc > 0) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
@@ -291,6 +296,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} elseif ($selected_cat) { 	// Into a specific category
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListFrom', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE l.fk_facture = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
 	$sql .= " AND l.product_type in (0,1)";
@@ -333,6 +343,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND soc.rowid=".$selected_soc;
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListWhere', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql .= $db->order($sortfield, $sortorder);
 
@@ -394,6 +409,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListeTitle', $parameters);
+	print $hookmanager->resPrint;
+
 	print '</td></tr>';
 
 	// Array header
