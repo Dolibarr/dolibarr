@@ -44,14 +44,14 @@ $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
-$search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
+$search_date_creation_end = dol_mktime(23, 59, 59, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
-$search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
+$search_date_modification_end = dol_mktime(23, 59, 59, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
 $search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
-$search_date_export_end = dol_mktime(0, 0, 0, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
+$search_date_export_end = dol_mktime(23, 59, 59, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
 
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
