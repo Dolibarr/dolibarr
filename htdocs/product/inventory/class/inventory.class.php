@@ -360,6 +360,27 @@ class Inventory extends CommonObject
 	}
 
 	/**
+	 * Set to Recorded
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function setRecorded(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = $this->setStatut($this::STATUS_RECORDED, null, '', 'INVENTORY_RECORDED');
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
 	 * Clone and object into another one
 	 *
 	 * @param  	User 	$user      	User that creates

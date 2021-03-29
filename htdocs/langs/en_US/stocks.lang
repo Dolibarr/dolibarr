@@ -243,3 +243,4 @@ UpdateByScaning=Update by scaning
 UpdateByScaningProductBarcode=Update by scan (product barcode)
 UpdateByScaningLot=Update by scan (lot|serial barcode)
 DisableStockChangeOfSubProduct=Deactivate the stock change for all the subproducts of this Kit during this movement.
+LabelOfInventoryMovemement=Inventory %s
