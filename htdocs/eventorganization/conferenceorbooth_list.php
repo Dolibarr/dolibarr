@@ -388,6 +388,39 @@ if ($projectid > 0) {
 		print "</td></tr>";
 	}
 
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($project->accept_conference_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($project->accept_booth_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfRegistration', 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfBooth', 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
+	print '';
+	print "</td></tr>";
+
+
 	print '</table>';
 
 	print '</div>';
