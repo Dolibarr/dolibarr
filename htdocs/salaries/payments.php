@@ -332,7 +332,6 @@ print '</td>';
 print '<td class="liste_titre right"><input name="search_chq_number" class="flat" type="text" size="8" value="'.$db->escape($search_chq_number).'"></td>';
 
 if (!empty($conf->banque->enabled)) {
-
 	// Bank transaction
 	print '<td class="liste_titre center">';
 	print '<input class="flat" type="text" size="3" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';

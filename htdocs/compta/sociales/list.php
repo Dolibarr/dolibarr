@@ -115,7 +115,7 @@ $arrayfields = array(
 	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
 );
 
-if(!empty($conf->banque->enabled)) $arrayfields['cs.fk_account'] = array('checked'=>1, 'position'=>90, 'label'=>"DefaultBankAccount");
+if (!empty($conf->banque->enabled)) $arrayfields['cs.fk_account'] = array('checked'=>1, 'position'=>90, 'label'=>"DefaultBankAccount");
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 

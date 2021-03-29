@@ -90,7 +90,7 @@ $arrayfields = array(
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
 
-if(!empty($conf->banque->enabled)) $arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
+if (!empty($conf->banque->enabled)) $arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
