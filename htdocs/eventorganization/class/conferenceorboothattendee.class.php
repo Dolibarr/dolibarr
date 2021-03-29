@@ -103,7 +103,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'index'=>1, 'comment'=>"Reference of object"),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'Attendee', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>0, 'index'=>1,),
 		'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>53, 'notnull'=>1, 'visible'=>0, 'index'=>1,),
 		'email' => array('type'=>'mail', 'label'=>'Email', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>1, 'index'=>1,),
 		'date_subscription' => array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>'1', 'position'=>56, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
@@ -122,7 +121,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public $rowid;
 	public $ref;
 	public $fk_soc;
-	public $fk_project;
 	public $fk_actioncomm;
 	public $email;
 	public $date_subscription;

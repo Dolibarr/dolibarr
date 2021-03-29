@@ -284,7 +284,6 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
     ref varchar(128) NOT NULL,
     fk_soc integer,
-    fk_project integer,
     fk_actioncomm integer NOT NULL,
     email varchar(100),
     date_subscription datetime,
