@@ -547,7 +547,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

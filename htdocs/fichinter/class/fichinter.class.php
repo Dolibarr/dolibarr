@@ -1438,7 +1438,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang,';
 		$sql .= ' ft.date as datei';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-		$sql .= ' WHERE ft.rowid = '.$rowid;
+		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
 		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);

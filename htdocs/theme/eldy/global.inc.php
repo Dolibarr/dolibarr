@@ -210,7 +210,10 @@ input, select {
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
 }
-
+input.button:hover {
+	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
 input.button:focus {
 	border-bottom: 0;
 }
@@ -364,7 +367,7 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
-td.amount {
+td.amount, span.amount, div.amount {
 	color: #006666;
 }
 td.actionbuttons a {
@@ -766,6 +769,19 @@ textarea.centpercent {
 	max-height: 250px;
 	max-width: 100%;
 	overflow-y: auto;
+}
+div.urllink {
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	/* border: 1px solid #ccc; */
+	border-radius: 5px;
+	/* width: fit-content; */
+	background-color: #f0f0f8;
+	opacity: 0.8;
+}
+div.urllink, div.urllink a {
+	color: #339 !important;
 }
 
 i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
@@ -4768,7 +4784,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); border-radius: 3px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
-table.cal_event td.cal_event { padding: 4px 4px !important; }
+table.cal_event td.cal_event { padding: 4px 4px !important; padding-bottom: 2px !important; padding-top: 2px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }

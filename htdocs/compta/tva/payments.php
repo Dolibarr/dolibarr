@@ -222,7 +222,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			// Type
 			//print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
-			print '<td class="right">'.price($obj->total).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Paid
 			print '<td class="right">';
 			if ($obj->totalpaye) {

@@ -96,7 +96,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer) {
 	}
 } elseif ($action == 'swapstatut' && $user->rights->expedition->creer) {
 	// bascule du statut d'un contact
-	$result = $objectsrc->swapContactStatus(GETPOST('ligne'));
+	$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
 } elseif ($action == 'deletecontact' && $user->rights->expedition->creer) {
 	// Efface un contact
 	$result = $objectsrc->delete_contact(GETPOST("lineid"));

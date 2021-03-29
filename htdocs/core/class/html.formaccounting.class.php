@@ -364,7 +364,7 @@ class FormAccounting extends Form
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-			$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+			$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 			$sql .= " AND aa.active = 1";
 			$sql .= " AND aa.entity=".$conf->entity;
 			$sql .= " ORDER BY aa.account_number";
@@ -380,7 +380,7 @@ class FormAccounting extends Form
 
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows == 0) {
+			if ($num_rows == 0 && (empty($conf->global->CHARTOFACCOUNTS) || $conf->global->CHARTOFACCOUNTS < 0)) {
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {

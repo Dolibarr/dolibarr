@@ -677,7 +677,7 @@ if ($id > 0) {
 						}
 						print '</td>';
 					}
-					print '<td class="right">'.price($objp->amount)."</td>\n";
+					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>";
 					$totalpaye += $objp->amount;
 					$i++;

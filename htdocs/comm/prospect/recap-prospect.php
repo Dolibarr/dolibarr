@@ -33,7 +33,7 @@ if (!empty($conf->facture->enabled)) {
 }
 
 // Security check
-$socid = $_GET["socid"];
+$socid = GETPOST("socid", 'int');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;

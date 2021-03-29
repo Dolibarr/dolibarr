@@ -93,7 +93,7 @@ if ($action == 'addcontact' && $user->rights->propale->creer) {
 } elseif ($action == 'swapstatut' && $user->rights->propale->creer) {
 	// Toggle the status of a contact
 	if ($object->id > 0) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	}
 } elseif ($action == 'deletecontact' && $user->rights->propale->creer) {
 	// Deletes a contact

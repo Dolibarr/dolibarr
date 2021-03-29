@@ -292,7 +292,7 @@ if ($resql) {
 			}
 			print "</td>\n";
 		}
-		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 		print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
 		print '<td></td>';
 		print "</tr>";

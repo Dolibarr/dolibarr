@@ -55,6 +55,12 @@ if (!empty($_SERVER['HTTP_DOLAPIENTITY'])) {
 	define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
 }
 
+// When we request url to get the json file, we accept Cross site so we can include the descriptor into an external tool.
+if (preg_match('/\/explorer\/swagger\.json/', $_SERVER["PHP_SELF"])) {
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
+}
 
 $res = 0;
 if (!$res && file_exists("../main.inc.php")) {
@@ -89,7 +95,7 @@ if (!empty($conf->global->MAIN_NGINX_FIX)) {
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API)) {
 	$langs->load("admin");
-	dol_syslog("Call Dolibarr API interfaces with module REST disabled");
+	dol_syslog("Call of Dolibarr API interfaces with module API REST are disabled");
 	print $langs->trans("WarningModuleNotActive", 'Api').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	//session_destroy();

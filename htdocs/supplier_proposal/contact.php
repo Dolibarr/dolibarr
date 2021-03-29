@@ -75,7 +75,7 @@ if ($action == 'addcontact' && $permissiontoedit) {
 } elseif ($action == 'swapstatut' && $permissiontoedit) {
 	// Toggle the status of a contact
 	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}

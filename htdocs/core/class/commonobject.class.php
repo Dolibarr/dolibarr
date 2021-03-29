@@ -1338,7 +1338,7 @@ abstract class CommonObject
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
 		$sql .= " tc.code, tc.libelle";
 		$sql .= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-		$sql .= " WHERE ec.rowid =".$rowid;
+		$sql .= " WHERE ec.rowid =".((int) $rowid);
 		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
 
@@ -3067,7 +3067,7 @@ abstract class CommonObject
 			$sql .= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3098,7 +3098,7 @@ abstract class CommonObject
 			$sql .= ' AND rang = '.($rang + 1);
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang + 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
