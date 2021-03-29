@@ -70,14 +70,14 @@ if ($action == 'builddoc') {
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0) {
+	if ($rap->write_file($dir, GETPOST("remonth", "int"), GETPOST("reyear", "int"), $outputlangs) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
 		dol_print_error($db, $obj->error);
 	}
 
-	$year = $_POST["reyear"];
+	$year = GETPOST("reyear", "int");
 }
 
 

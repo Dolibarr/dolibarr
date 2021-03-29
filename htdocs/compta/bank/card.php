@@ -54,12 +54,6 @@ $langs->loadLangs(array("banks", "bills", "categories", "companies", "compta"));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
-// Security check
-$id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
-$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
-
-$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
-
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
 
@@ -68,6 +62,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('bankcard', 'globalcard'));
+
+// Security check
+$id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
+$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
+
 
 /*
  * Actions
@@ -87,18 +87,18 @@ if ($action == 'add') {
 
 	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 	$object->label           = trim(GETPOST("label", 'alphanohtml'));
-	$object->courant         = $_POST["type"];
-	$object->clos            = $_POST["clos"];
+	$object->courant         = GETPOST("type");
+	$object->clos            = GETPOST("clos");
 	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
 	$object->url             = trim(GETPOST("url", 'alpha'));
 
-	$object->bank            = trim($_POST["bank"]);
-	$object->code_banque     = trim($_POST["code_banque"]);
-	$object->code_guichet    = trim($_POST["code_guichet"]);
-	$object->number          = trim($_POST["number"]);
-	$object->cle_rib         = trim($_POST["cle_rib"]);
-	$object->bic             = trim($_POST["bic"]);
-	$object->iban            = trim($_POST["iban"]);
+	$object->bank            = trim(GETPOST("bank"));
+	$object->code_banque     = trim(GETPOST("code_banque"));
+	$object->code_guichet    = trim(GETPOST("code_guichet"));
+	$object->number          = trim(GETPOST("number"));
+	$object->cle_rib         = trim(GETPOST("cle_rib"));
+	$object->bic             = trim(GETPOST("bic"));
+	$object->iban            = trim(GETPOST("iban"));
 	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
 
 	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
@@ -120,10 +120,10 @@ if ($action == 'add') {
 		$object->fk_accountancy_journal = $fk_accountancy_journal;
 	}
 
-	$object->solde           = $_POST["solde"];
+	$object->solde           = price2num(GETPOST("solde"));
 	$object->date_solde      = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
 
-	$object->currency_code   = trim($_POST["account_currency_code"]);
+	$object->currency_code   = trim(GETPOST("account_currency_code"));
 
 	$object->state_id        = GETPOST("account_state_id", 'int');
 	$object->country_id      = GETPOST("account_country_id", 'int');
@@ -187,18 +187,18 @@ if ($action == 'update') {
 
 	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 	$object->label           = trim(GETPOST("label", 'alphanohtml'));
-	$object->courant         = $_POST["type"];
-	$object->clos            = $_POST["clos"];
+	$object->courant         = GETPOST("type");
+	$object->clos            = GETPOST("clos");
 	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
 	$object->url             = trim(GETPOST("url", 'alpha'));
 
-	$object->bank            = trim($_POST["bank"]);
-	$object->code_banque     = trim($_POST["code_banque"]);
-	$object->code_guichet    = trim($_POST["code_guichet"]);
-	$object->number          = trim($_POST["number"]);
-	$object->cle_rib         = trim($_POST["cle_rib"]);
-	$object->bic             = trim($_POST["bic"]);
-	$object->iban            = trim($_POST["iban"]);
+	$object->bank            = trim(GETPOST("bank"));
+	$object->code_banque     = trim(GETPOST("code_banque"));
+	$object->code_guichet    = trim(GETPOST("code_guichet"));
+	$object->number          = trim(GETPOST("number"));
+	$object->cle_rib         = trim(GETPOST("cle_rib"));
+	$object->bic             = trim(GETPOST("bic"));
+	$object->iban            = trim(GETPOST("iban"));
 	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
 
 	$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
@@ -220,7 +220,7 @@ if ($action == 'update') {
 		$object->fk_accountancy_journal = $fk_accountancy_journal;
 	}
 
-	$object->currency_code   = trim($_POST["account_currency_code"]);
+	$object->currency_code   = trim(GETPOST("account_currency_code"));
 
 	$object->state_id        = GETPOST("account_state_id", 'int');
 	$object->country_id      = GETPOST("account_country_id", 'int');
@@ -274,7 +274,7 @@ if ($action == 'update') {
 	}
 }
 
-if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer) {
+if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->banque->configurer) {
 	// Delete
 	$object = new Account($db);
 	$object->fetch(GETPOST("id", "int"));
@@ -305,8 +305,10 @@ if (!empty($conf->accounting->enabled)) {
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
+
+llxHeader("", $title, $help_url);
 
 
 // Creation
@@ -460,7 +462,8 @@ if ($action == 'create') {
 	print '</table>';
 	print '<br>';
 
-	if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT) {
+	$type = GETPOST('type');
+	if ($type == Account::TYPE_SAVINGS || $type == Account::TYPE_CURRENT) {
 		print '<table class="border centpercent">';
 
 		// If bank account
@@ -777,7 +780,7 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 		/*
-		 * Barre d'actions
+		 * Action bar
 		 */
 		print '<div class="tabsAction">';
 
@@ -904,7 +907,7 @@ if ($action == 'create') {
 		} elseif ($conciliate == -3) {
 			print $langs->trans("No").' ('.$langs->trans("Closed").')';
 		} else {
-			print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> '.$langs->trans("DisableConciliation");
+			print '<input type="checkbox" class="flat" id="norappro" name="norappro"'.(($conciliate > 0) ? '' : ' checked="checked"').'"> <label for="norappro">'.$langs->trans("DisableConciliation").'</label>';
 		}
 		print '</td></tr>';
 
@@ -986,7 +989,7 @@ if ($action == 'create') {
 
 		print '</table>';
 
-		if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT) {
+		if (GETPOST("type") == Account::TYPE_SAVINGS || GETPOST("type") == Account::TYPE_CURRENT) {
 			print '<br>';
 
 			//print '<div class="underbanner clearboth"></div>';

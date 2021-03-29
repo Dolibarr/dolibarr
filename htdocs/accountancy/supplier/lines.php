@@ -80,15 +80,18 @@ if (!$sortorder) {
 	}
 }
 
+$formaccounting = new FormAccounting($db);
+
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->bind->write) {
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
-
-$formaccounting = new FormAccounting($db);
 
 
 /*
@@ -127,7 +130,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as l";
 		$sql1 .= " SET l.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE l.rowid IN ('.implode(',', $changeaccount).')';
+		$sql1 .= ' WHERE l.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/supplier/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);
@@ -235,11 +238,11 @@ if (strlen(trim($search_country))) {
 	if ($search_country == 'special_allnotme') {
 		$sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
 	} elseif ($search_country == 'special_eec') {
-		$sql .= " AND co.code IN (".$country_code_in_EEC.")";
+		$sql .= " AND co.code IN (".$db->sanitize($country_code_in_EEC, 1).")";
 	} elseif ($search_country == 'special_eecnotme') {
-		$sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
+		$sql .= " AND co.code IN (".$db->sanitize($country_code_in_EEC_without_me, 1).")";
 	} elseif ($search_country == 'special_noteec') {
-		$sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
+		$sql .= " AND co.code NOT IN (".$db->sanitize($country_code_in_EEC, 1).")";
 	} else {
 		$sql .= natural_search("co.code", $search_country);
 	}

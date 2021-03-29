@@ -299,7 +299,7 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".$this->country_id;
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
 
@@ -499,7 +499,7 @@ class Entrepot extends CommonObject
 	{
 		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -547,7 +547,7 @@ class Entrepot extends CommonObject
 		$sql = "SELECT rowid, ref as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " WHERE entity IN (".getEntity('stock').")";
-		$sql .= " AND statut = ".$status;
+		$sql .= " AND statut = ".((int) $status);
 
 		$result = $this->db->query($sql);
 		$i = 0;

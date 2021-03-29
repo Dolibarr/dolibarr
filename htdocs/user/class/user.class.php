@@ -457,7 +457,7 @@ class User extends CommonObject
 		} elseif ($email) {
 			$sql .= " AND u.email = '".$this->db->escape($email)."'";
 		} else {
-			$sql .= " AND u.rowid = ".$id;
+			$sql .= " AND u.rowid = ".((int) $id);
 		}
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
 
@@ -604,7 +604,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Load default value in property ->default_values
+	 *  Load default values from database table into property ->default_values
 	 *
 	 *  @return int						> 0 if OK, < 0 if KO
 	 */
@@ -616,7 +616,7 @@ class User extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 			$defaultValues = new DefaultValues($this->db);
-			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array($this->entity, $conf->entity)));	// User 0 (all) + me (if defined)
+			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
@@ -1503,7 +1503,7 @@ class User extends CommonObject
 			} elseif (!empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".$this->db->escape($this->pass_crypted)."'";
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -1514,7 +1514,7 @@ class User extends CommonObject
 			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET fk_soc=".$member->fk_soc;
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2229,7 +2229,7 @@ class User extends CommonObject
 	/**
 	 *  Add user into a group
 	 *
-	 *  @param	int	$group      Id of group
+	 *  @param	int		$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
@@ -2245,7 +2245,7 @@ class User extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
@@ -2286,7 +2286,7 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-	 *  @param	int   $group       Id of group
+	 *  @param	int   	$group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
@@ -2302,7 +2302,7 @@ class User extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
@@ -2866,7 +2866,7 @@ class User extends CommonObject
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
 		$sql .= " u.tms as date_modification, u.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE u.rowid = ".$id;
+		$sql .= " WHERE u.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3065,7 +3065,7 @@ class User extends CommonObject
 	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
-	 *  @param		string	$filter				SQL filter on users
+	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user intput.
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')

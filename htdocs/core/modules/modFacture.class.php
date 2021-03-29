@@ -20,11 +20,11 @@
  */
 
 /**
- * 		\defgroup   facture     Module invoices
- *      \brief      Module pour gerer les factures clients et/ou fournisseurs
+ * 		\defgroup   facture     Module customer invoices
+ *      \brief      Module to manage customer invoices
  *      \file       htdocs/core/modules/modFacture.class.php
  *		\ingroup    facture
- *		\brief      Fichier de la classe de description et activation du module Facture
+ *		\brief      Description and activation file for the module customer invoices
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

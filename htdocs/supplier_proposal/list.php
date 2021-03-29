@@ -90,6 +90,7 @@ $yearvalid = GETPOST("yearvalid");
 $monthvalid = GETPOST("monthvalid");
 $dayvalid = GETPOST("dayvalid");
 
+$optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -271,7 +272,7 @@ if ($sall || $search_product_category > 0 || $search_user > 0) {
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' sp.rowid, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
+$sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, sp.total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_update,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
@@ -328,10 +329,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_ref) {
 	$sql .= natural_search('sp.ref', $search_ref);
@@ -821,6 +822,11 @@ if ($resql) {
 	$total = 0;
 	$subtotal = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val'] = array();
+	$totalarray['val']['sp.total_ht'] = 0;
+	$totalarray['val']['sp.total_tva'] = 0;
+	$totalarray['val']['sp.total_ttc'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -948,18 +954,18 @@ if ($resql) {
 
 		// Amount HT
 		if (!empty($arrayfields['sp.total_ht']['checked'])) {
-			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
+			  print '<td class="right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'sp.total_ht';
 			}
-			  $totalarray['val']['sp.total_ht'] += $obj->total_ht;
+			$totalarray['val']['sp.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
 		if (!empty($arrayfields['sp.total_tva']['checked'])) {
-			print '<td class="right">'.price($obj->total_tva)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -970,7 +976,7 @@ if ($resql) {
 		}
 		// Amount TTC
 		if (!empty($arrayfields['sp.total_ttc']['checked'])) {
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -999,21 +1005,21 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['sp.multicurrency_total_ht']['checked'])) {
-			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['sp.multicurrency_total_vat']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['sp.multicurrency_total_ttc']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

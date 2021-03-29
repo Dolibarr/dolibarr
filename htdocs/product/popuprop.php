@@ -140,7 +140,7 @@ $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 $sql .= " AND p.rowid = pd.fk_product";
 if ($type !== '') {
-	$sql .= " AND fk_product_type = ".$type;
+	$sql .= " AND fk_product_type = ".((int) $type);
 }
 $sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
 

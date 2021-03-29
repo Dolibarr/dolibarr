@@ -319,7 +319,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " AND pfd.fk_facture = f.rowid";
 }
 if ($socid > 0) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 
 $nbtotalofrecords = '';

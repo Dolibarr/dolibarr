@@ -22,7 +22,7 @@
  *	\brief      Module pour gerer les utilisateurs
  *	\file       htdocs/core/modules/modUser.class.php
  *	\ingroup    user
- *	\brief      Fichier de description et activation du module Utilisateur
+ *	\brief      Description and activation file for the module users
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

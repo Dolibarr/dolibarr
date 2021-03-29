@@ -79,7 +79,7 @@ class mailing_advthirdparties extends MailingTargets
 				$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
 				$sql .= " WHERE s.entity IN (".getEntity('societe').")";
-				$sql .= " AND s.rowid IN (".implode(',', $socid).")";
+				$sql .= " AND s.rowid IN (".$this->db->sanitize(implode(',', $socid)).")";
 				$sql .= " ORDER BY email";
 
 				// Stock recipients emails into targets table
@@ -125,10 +125,10 @@ class mailing_advthirdparties extends MailingTargets
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
 				$sql .= " WHERE socp.entity IN (".getEntity('socpeople').")";
 				if (count($contactid) > 0) {
-					$sql .= " AND socp.rowid IN (".implode(',', $contactid).")";
+					$sql .= " AND socp.rowid IN (".$this->db->sanitize(implode(',', $contactid)).")";
 				}
 				if (count($socid) > 0) {
-					$sql .= " AND socp.fk_soc IN (".implode(',', $socid).")";
+					$sql .= " AND socp.fk_soc IN (".$this->db->sanitize(implode(',', $socid)).")";
 				}
 				$sql .= " ORDER BY email";
 

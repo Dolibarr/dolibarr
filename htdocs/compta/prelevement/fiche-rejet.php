@@ -177,7 +177,7 @@ $sql .= " AND pl.fk_soc = s.rowid";
 $sql .= " AND pl.statut = 3 ";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY pl.amount DESC";
 

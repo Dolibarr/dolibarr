@@ -21,7 +21,7 @@
  *	\brief      Module to manage Bookmarks
  *	\file       htdocs/core/modules/modBookmark.class.php
  *	\ingroup    bookmark
- *	\brief      Fichier de description et activation du module Bookmarks
+ *	\brief      Description and activation file for the module Bookmarks
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

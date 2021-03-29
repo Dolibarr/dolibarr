@@ -150,7 +150,7 @@ $sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
 $sql .= ' WHERE pd.fk_donation = d.rowid';
 $sql .= ' AND d.entity = '.$conf->entity;
-$sql .= ' AND pd.rowid = '.$id;
+$sql .= ' AND pd.rowid = '.((int) $id);
 
 dol_syslog("don/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);

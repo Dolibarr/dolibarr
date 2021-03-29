@@ -850,6 +850,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 	}
 }
 
+
 /*
  * View
  */
@@ -1009,7 +1010,7 @@ function DolibarrTakeposPrinting(id) {
 	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
 	$.ajax({
 		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
 	});
 }
 
@@ -1418,7 +1419,7 @@ if ($placeid > 0) {
 						$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
 						$sql .= " WHERE ps.reel != 0";
-						$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
+						$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->$constantforkey);
 						$sql .= " AND e.entity IN (".getEntity('stock').")";
 						$sql .= " AND ps.fk_product = ".$line->fk_product;
 						$resql = $db->query($sql);

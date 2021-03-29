@@ -34,6 +34,7 @@ if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
@@ -56,13 +57,12 @@ $date_start = GETPOST('date_start', 'alpha');
 $date_startDay = GETPOST('date_startday', 'int');
 $date_startMonth = GETPOST('date_startmonth', 'int');
 $date_startYear = GETPOST('date_startyear', 'int');
-$date_start = ($date_startDay) ?dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear) : strtotime($date_start);
+$date_start = ($date_startDay ? dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel') : dol_stringtotime($date_start));
 $date_stop = GETPOST('date_stop', 'alpha');
 $date_stopDay = GETPOST('date_stopday', 'int');
 $date_stopMonth = GETPOST('date_stopmonth', 'int');
 $date_stopYear = GETPOST('date_stopyear', 'int');
-//FIXME doldate
-$date_stop = ($date_stopDay) ?dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear) : strtotime($date_stop);
+$date_stop = ($date_stopDay ? dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel') : dol_stringtotime($date_stop));
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -126,6 +126,17 @@ if (empty($entity)) {
 
 $error = 0;
 
+$listofchoices = array(
+	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled), 'perms' => !empty($user->rights->facture->lire)),
+	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled), 'perms' => !empty($user->rights->fournisseur->facture->lire)),
+	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled), 'perms' => !empty($user->rights->expensereport->lire)),
+	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled), 'perms' => !empty($user->rights->don->lire)),
+	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled), 'perms' => !empty($user->rights->tax->charges->lire)),
+	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled), 'perms' => !empty($user->rights->salaries->read)),
+	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled), 'perms' => !empty($user->rights->banque->lire)),
+	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled), 'perms' => !empty($user->rights->loan->read)),
+);
+
 
 
 /*
@@ -155,90 +166,90 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		$wheretail = " '".$db->idate($date_start)."' AND '".$db->idate($date_stop)."'";
 
 		// Customer invoices
-		if (GETPOST('selectinvoices')) {
+		if (GETPOST('selectinvoices') && !empty($listofchoices['selectinvoices']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total as total_ht, t.total_ttc, t.tva as total_vat, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
 		}
 		// Vendor invoices
-		if (GETPOST('selectsupplierinvoices')) {
+		if (GETPOST('selectsupplierinvoices') && !empty($listofchoices['selectsupplierinvoices']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'SupplierInvoice' as item, s.nom as thirdparty_name, s.code_fournisseur as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
 		}
 		// Expense reports
-		if (GETPOST('selectexpensereports')) {
+		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, t.paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.multicurrency_code as currency, t.fk_user_author as fk_soc, t.date_fin as date, t.date_fin as date_due, 'ExpenseReport' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname) as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user_author LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 			$sql .= " WHERE date_fin between  ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".ExpenseReport::STATUS_DRAFT;
 		}
 		// Donations
-		if (GETPOST('selectdonations')) {
+		if (GETPOST('selectdonations') && !empty($listofchoices['selectdonations']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, paid, amount as total_ht, amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datedon as date, t.datedon as date_due, 'Donation' as item, t.societe as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."don as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = t.fk_country";
 			$sql .= " WHERE datedon between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
 		}
 		// Payments of salaries
-		if (GETPOST('selectpaymentsofsalaries')) {
+		if (GETPOST('selectpaymentsofsalaries') && !empty($listofchoices['selectpaymentsofsalaries']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.label as ref, 1 as paid, amount as total_ht, amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, t.fk_user as fk_soc, t.datep as date, t.dateep as date_due, 'SalaryPayment' as item, CONCAT(CONCAT(u.lastname, ' '), u.firstname)  as thirdparty_name, '' as thirdparty_code, c.code as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as t LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = t.fk_user LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = u.fk_country";
 			$sql .= " WHERE datep between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
 		}
 		// Social contributions
-		if (GETPOST('selectsocialcontributions')) {
+		if (GETPOST('selectsocialcontributions') && !empty($listofchoices['selectsocialcontributions']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.libelle as ref, t.paye as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as t";
 			$sql .= " WHERE t.date_ech between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
 		}
 		// Various payments
-		if (GETPOST('selectvariouspayment')) {
+		if (GETPOST('selectvariouspayment') && !empty($listofchoices['selectvariouspayment']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, t.entity, t.ref, 1 as paid, t.amount as total_ht, t.amount as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'VariousPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 			$sql .= " WHERE datep between ".$wheretail;
-			$sql .= " AND t.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 		}
 		// Loan payments
-		if (GETPOST('selectloanspayment')) {
+		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms'])) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
 			$sql .= " SELECT t.rowid as id, l.entity, l.label as ref, 1 as paid, (t.amount_capital+t.amount_insurance+t.amount_interest) as total_ht, (t.amount_capital+t.amount_insurance+t.amount_interest) as total_ttc, 0 as total_vat, '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.datep as date, t.datep as date_due, 'LoanPayment' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as t LEFT JOIN ".MAIN_DB_PREFIX."loan as l ON l.rowid = t.fk_loan";
 			$sql .= " WHERE datep between ".$wheretail;
-			$sql .= " AND l.entity IN (".($entity == 1 ? '0,1' : $entity).')';
+			$sql .= " AND l.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 		}
 
 		if ($sql) {
@@ -539,8 +550,11 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals")).'</span><br>';
 print '<br>';
 
-print $langs->trans("ReportPeriod").': '.$form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0);
-print ' - '.$form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0)."\n";
+print $langs->trans("ReportPeriod").': ';
+print $form->selectDate($date_start, 'date_start', 0, 0, 0, "", 1, 1, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+print ' - ';
+print $form->selectDate($date_stop, 'date_stop', 0, 0, 0, "", 1, 1, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+print "\n";
 
 // Export is for current company only
 if (!empty($conf->multicompany->enabled) && is_object($mc)) {
@@ -558,22 +572,16 @@ if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 
 print '<br>';
 
-$listofchoices = array(
-	'selectinvoices'=>array('label'=>'Invoices', 'lang'=>'bills', 'enabled' => !empty($conf->facture->enabled)),
-	'selectsupplierinvoices'=>array('label'=>'BillsSuppliers', 'lang'=>'bills', 'enabled' => !empty($conf->supplier_invoice->enabled)),
-	'selectexpensereports'=>array('label'=>'ExpenseReports', 'lang'=>'trips', 'enabled' => !empty($conf->expensereport->enabled)),
-	'selectdonations'=>array('label'=>'Donations', 'lang'=>'donation', 'enabled' => !empty($conf->don->enabled)),
-	'selectsocialcontributions'=>array('label'=>'SocialContributions', 'enabled' => !empty($conf->tax->enabled)),
-	'selectpaymentsofsalaries'=>array('label'=>'SalariesPayments', 'lang'=>'salaries', 'enabled' => !empty($conf->salaries->enabled)),
-	'selectvariouspayment'=>array('label'=>'VariousPayment', 'enabled' => !empty($conf->banque->enabled)),
-	'selectloanspayment'=>array('label'=>'PaymentLoan', 'enabled' => !empty($conf->loan->enabled)),
-);
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
 		continue;		// list not qualified
 	}
+	$disabled = '';
+	if (empty($val['perms'])) {
+		$disabled = ' disabled';
+	}
 	$checked = (((!GETPOSTISSET('search') && $action != 'searchfiles') || GETPOST($choice)) ? ' checked="checked"' : '');
-	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
+	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
 print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
@@ -694,7 +702,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				} elseif ($data['item'] == 'SalaryPayment') {
 					$salary_payment->id = $data['id'];
 					$salary_payment->ref = $data['ref'];
-					print $salary_payment->getNomUrl(1, '', 0, '', 0);
+					print $salary_payment->getNomUrl(1);
 				} elseif ($data['item'] == 'Donation') {
 					$don->id = $data['id'];
 					$don->ref = $data['ref'];

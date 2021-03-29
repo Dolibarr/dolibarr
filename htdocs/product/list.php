@@ -59,6 +59,7 @@ $toselect = GETPOST('toselect', 'array');
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
+$search_ref_supplier = GETPOST("search_ref_supplier", 'alpha');
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
@@ -144,15 +145,6 @@ if (!empty($canvas)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('product', 'list', $canvas);
-}
-
-// Security check
-if ($search_type == '0') {
-	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
-} elseif ($search_type == '1') {
-	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
-} else {
-	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
 // Define virtualdiffersfromphysical
@@ -267,6 +259,14 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Security check
+if ($search_type == '0') {
+	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
+} elseif ($search_type == '1') {
+	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
+} else {
+	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
+}
 
 
 /*
@@ -299,6 +299,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$sall = "";
 		$search_ref = "";
+		$search_ref_supplier = "";
 		$search_label = "";
 		$search_barcode = "";
 		$searchCategoryProductOperator = 0;
@@ -474,13 +475,13 @@ if ($fourn_id > 0) {
 	$sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 }
 if ($search_country) {
-	$sql .= " AND p.fk_country = ".$search_country;
+	$sql .= " AND p.fk_country = ".((int) $search_country);
 }
 if ($search_state) {
-	$sql .= " AND p.fk_state = ".$search_state;
+	$sql .= " AND p.fk_state = ".((int) $search_state);
 }
 if ($search_finished >= 0 && $search_finished !== '') {
-	$sql .= " AND p.finished = ".$search_finished;
+	$sql .= " AND p.finished = ".((int) $search_finished);
 }
 if ($search_accountancy_code_sell) {
 	$sql .= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
@@ -567,6 +568,7 @@ if ($resql) {
 		}
 	}
 
+	$paramsCat = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		$paramsCat .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 	}
@@ -625,7 +627,7 @@ if ($resql) {
 		$param = "&search_vatrate=".urlencode($search_vatrate);
 	}
 	if ($fourn_id > 0) {
-		$param .= ($fourn_id ? "&fourn_id=".$fourn_id : "");
+		$param .= "&fourn_id=".urlencode($fourn_id);
 	}
 	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) {
@@ -754,7 +756,7 @@ if ($resql) {
 	$moreforfilter = '';
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('Categories').': ';
+		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
 		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
@@ -1197,6 +1199,7 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
@@ -1488,9 +1491,9 @@ if ($resql) {
 			print '<td class="right nowraponall">';
 			if ($obj->tosell) {
 				if ($obj->price_base_type == 'TTC') {
-					print price($obj->price_ttc).' '.$langs->trans("TTC");
+					print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
 				} else {
-					print price($obj->price).' '.$langs->trans("HT");
+					print '<span class="amount">'.price($obj->price).' '.$langs->trans("HT").'</span>';
 				}
 			}
 			print '</td>';
@@ -1543,9 +1546,9 @@ if ($resql) {
 					print '<td class="right nowraponall">';
 					if (!empty($productpricescache[$obj->rowid])) {
 						if ($productpricescache[$obj->rowid][$key]['price_base_type'] == 'TTC') {
-							print price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC");
+							print '<span class="amount">'.price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC").'</span>';
 						} else {
-							print price($productpricescache[$obj->rowid][$key]['price']).' '.$langs->trans("HT");
+							print '<span class="amount">'.price($productpricescache[$obj->rowid][$key]['price']).' '.$langs->trans("HT").'</span>';
 						}
 					}
 					print '</td>';
@@ -1565,9 +1568,9 @@ if ($resql) {
 					if ($product_fourn->product_fourn_price_id > 0) {
 						if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-							print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext);
+							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
 						} else {
-							print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+							print '<span class="amount">'.price($product_fourn->fourn_unitprice).' '.$langs->trans("HT").'</span>';
 						}
 					}
 				}
@@ -1603,14 +1606,14 @@ if ($resql) {
 		// WAP
 		if (!empty($arrayfields['p.pmp']['checked'])) {
 			print '<td class="nowrap right">';
-			print price($product_static->pmp, 1, $langs);
+			print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 			print '</td>';
 		}
 		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
 			print '<td class="nowrap right">';
 			//print $obj->cost_price;
-			print price($obj->cost_price).' '.$langs->trans("HT");
+			print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 			print '</td>';
 		}
 
@@ -1643,7 +1646,7 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price2num($product_static->stock_reel, 'MS');
+				print price(price2num($product_static->stock_reel, 'MS'));
 			}
 			print '</td>';
 			if (!$i) {
@@ -1657,7 +1660,7 @@ if ($resql) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				print price2num($product_static->stock_theorique, 'MS');
+				print price(price2num($product_static->stock_theorique, 'MS'));
 			}
 			print '</td>';
 			if (!$i) {

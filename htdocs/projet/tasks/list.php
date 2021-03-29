@@ -128,26 +128,26 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
-	't.fk_task_parent'=>array('label'=>$langs->trans("RefTaskParent"), 'checked'=>0, 'position'=>70),
-	't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>80),
-	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>80),
-	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>80),
-	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
-	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>101),
-	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
-	'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>0),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>0),
-	'p.fk_statut'=>array('label'=>$langs->trans("ProjectStatus"), 'checked'=>1),
-	't.planned_workload'=>array('label'=>$langs->trans("PlannedWorkload"), 'checked'=>1, 'position'=>102),
-	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
-	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
-	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
-	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
-	't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
-	't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
-	't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	//'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	't.fk_task_parent'=>array('label'=>"RefTaskParent", 'checked'=>0, 'position'=>70),
+	't.ref'=>array('label'=>"RefTask", 'checked'=>1, 'position'=>80),
+	't.label'=>array('label'=>"LabelTask", 'checked'=>1, 'position'=>80),
+	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>80),
+	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>100),
+	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0),
+	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1),
+	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>102),
+	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>103),
+	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
+	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
+	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
+	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
+	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
+	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -334,17 +334,17 @@ if ($search_task_user > 0) {
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
 if (!$user->rights->projet->all->lire) {
-	$sql .= " AND p.rowid IN (".($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
-	$sql .= " AND p.rowid = ".$projectstatic->id;
+	$sql .= " AND p.rowid = ".((int) $projectstatic->id);
 }
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) {
-	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cs.fk_categorie IS NULL";
@@ -389,10 +389,10 @@ if ($search_public != '') {
 	$sql .= " AND p.public = ".$db->escape($search_public);
 }
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 }
 if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".join(',', array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

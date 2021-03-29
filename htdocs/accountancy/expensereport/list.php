@@ -83,18 +83,21 @@ if (!$sortorder) {
 	}
 }
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->rights->accounting->bind->write) {
-	accessforbidden();
-}
-
 $formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -130,7 +133,7 @@ $permissiontodelete = $user->rights->expensereport->delete;
 $uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-if ($massaction == 'ventil') {
+if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	$msg = '';
 	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {

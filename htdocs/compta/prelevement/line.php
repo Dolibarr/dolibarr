@@ -225,12 +225,9 @@ if ($id) {
 		print '</form>';
 	}
 
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Barre d'action                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	/*
+	 * Action bar
+	 */
 	print "<div class=\"tabsAction\">";
 
 	if ($action == '') {
@@ -265,9 +262,9 @@ if ($id) {
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	$sql .= " AND pl.rowid=".$id;
+	$sql .= " AND pl.rowid = ".((int) $id);
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY $sortfield $sortorder ";
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);

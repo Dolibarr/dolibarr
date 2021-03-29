@@ -71,12 +71,12 @@ class InterfaceEventOrganization extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->eventorganization->enabled)) {
+		if (empty($conf->eventorganization) || empty($conf->eventorganization->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
-		
+
 		$error=0;
-		
+
 		// Actions
 		if ($action == 'PROJECT_VALIDATE') {
 			if (!empty($conf->global->EVENTORGANIZATION_TASK_LABEL) && !empty($object->usage_organize_event)) {
@@ -84,7 +84,7 @@ class InterfaceEventOrganization extends DolibarrTriggers
 				if (is_array($taskToDo) && count($taskToDo)>0) {
 					// Load translation files required by the page
 					$langs->loadLangs(array("eventorganization"));
-					
+
 					$this->db->begin();
 					foreach ($taskToDo as $taskLabel) {
 						$task = new Task($this->db);

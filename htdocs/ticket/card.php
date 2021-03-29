@@ -669,7 +669,8 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-$help_url = 'FR:DocumentationModuleTicket';
+$help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
+
 $page_title = $actionobject->getTitle($action);
 
 llxHeader('', $page_title, $help_url);
@@ -690,8 +691,8 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->withextrafields = 1;
 	$formticket->param = array('origin' => GETPOST('origin'), 'originid' => GETPOST('originid'));
 
-	$formticket->showForm(1, 'create');
-} elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
+	$formticket->showForm(1, 'create', 0);
+	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
 	$head = ticket_prepare_head($object);
@@ -708,22 +709,22 @@ if ($action == 'create' || $action == 'presend') {
 
 	// Type
 	print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-	$formticket->selectTypesTickets((GETPOST('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
+	$formticket->selectTypesTickets((GETPOSTISSET('type_code') ? GETPOST('type_code') : $object->type_code), 'type_code', '', '2');
 	print '</td></tr>';
 
 	// Severity
 	print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-	$formticket->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
+	$formticket->selectSeveritiesTickets((GETPOSTISSET('severity_code') ? GETPOST('severity_code') : $object->severity_code), 'severity_code', '', '2');
 	print '</td></tr>';
 
 	// Group
 	print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
-	$formticket->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
+	$formticket->selectGroupTickets((GETPOSTISSET('category_code') ? GETPOST('category_code') : $object->category_code), 'category_code', '', '2');
 	print '</td></tr>';
 
 	// Subject
 	print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-	print '<input class="text" size="50" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
+	print '<input class="text" size="50" id="subject" name="subject" value="'.dol_escape_htmltag(GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject).'" />';
 	print '</td></tr>';
 
 	// Other attributes
@@ -745,7 +746,7 @@ if ($action == 'create' || $action == 'presend') {
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
-	print '</form>';
+	print '</form>'; */
 } elseif (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'dellink' || $action == 'presend' || $action == 'presend_addmessage' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 	if ($res > 0) {
@@ -803,7 +804,7 @@ if ($action == 'create' || $action == 'presend') {
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->rights->projet->all->lire) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
-					$projectstat->next_prev_filter = " rowid in (".(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+					$projectstat->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 				}
 				print $form->showrefnav($projectstat, 'ref', $linkback, 1, 'ref', 'ref', '');
 				print '</td></tr>';
@@ -1281,9 +1282,11 @@ if ($action == 'create' || $action == 'presend') {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.dol_buildpath('/fichinter/card.php', 1).'?action=create&socid='.$object->fk_soc.'&origin=ticket_ticket&originid='.$object->id.'">'.$langs->trans('TicketAddIntervention').'</a></div>';
 				}
 
+				/* This is useless. We can already modify each field individually
 				if ($user->rights->ticket->write && $object->fk_statut < Ticket::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?track_id='.$object->track_id.'&action=edit">'.$langs->trans('Modify').'</a></div>';
 				}
+				*/
 
 				// Close ticket if statut is read
 				if ($object->fk_statut > 0 && $object->fk_statut < Ticket::STATUS_CLOSED && $user->rights->ticket->write) {

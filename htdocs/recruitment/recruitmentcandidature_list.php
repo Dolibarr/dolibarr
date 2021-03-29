@@ -180,17 +180,11 @@ $permissiontoread = $user->rights->recruitment->recruitmentjobposition->read;
 $permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write;
 $permissiontodelete = $user->rights->recruitment->recruitmentjobposition->delete;
 
-// Security check
-if (empty($conf->recruitment->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'recruitment', $id, '');
-//if (!$permissiontoread) accessforbidden();
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'recruitment', 0, 'recruitment_recruitmentcandidature', 'recruitmentjobposition');
 
 
 

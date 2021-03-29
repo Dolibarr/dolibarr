@@ -166,7 +166,7 @@ if (!empty($conf->global->AGENT_CONTACT_TYPE)) {
 } else {
 	$sql .= " AND sc.fk_user = u.rowid";
 }
-$sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
+$sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= ' AND s.entity IN ('.getEntity('societe').')';
 $sql .= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
@@ -183,7 +183,9 @@ if (!empty($enddate)) {
 	$sql .= " AND f.datef <= '".$db->idate($enddate)."'";
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) {
+// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 //if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";

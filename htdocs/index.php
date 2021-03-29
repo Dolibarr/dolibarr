@@ -24,7 +24,8 @@
  *	\brief      Dolibarr home page
  */
 
-define('NOCSRFCHECK', 1); // This is main home and login page. We must be able to go on it from another web site.
+
+define('CSRFCHECK_WITH_TOKEN', 1);	// We force need to use a token to login when making a POST
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -464,7 +465,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$globalStatsKey = $groupElement['globalStatsKey'];
 					$groupElement['globalStats'] = array();
 
-					if (is_array($keys) && in_array($globalStatsKey, $keys)) {
+					if (isset($keys) && is_array($keys) && in_array($globalStatsKey, $keys)) {
 						// get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
 						$keyIndex = array_search($globalStatsKey, $keys);
 

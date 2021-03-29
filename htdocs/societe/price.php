@@ -145,7 +145,7 @@ if (empty($reshook)) {
 
 	if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		// Delete price by customer
-		$prodcustprice->id = GETPOST('lineid');
+		$prodcustprice->id = GETPOST('lineid', 'int');
 		$result = $prodcustprice->delete($user);
 
 		if ($result < 0) {
@@ -368,99 +368,101 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		$result = $prodcustprice->fetch(GETPOST('lineid', 'int'));
-		if ($result < 0) {
+
+		if ($result <= 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-		}
-
-		print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
-		print '<input type="hidden" name="lineid" value="'.$prodcustprice->id.'">';
-		print '<table class="border centpercent">';
-		print '<tr>';
-		print '<td>'.$langs->trans('Product').'</td>';
-		$staticprod = new Product($db);
-		$staticprod->fetch($prodcustprice->fk_product);
-		print "<td>".$staticprod->getNomUrl(1)."</td>";
-		print '</tr>';
-
-		// Ref. Customer
-		print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-		print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
-
-		// VAT
-		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $staticprod->id, $prodcustprice->recuperableonly);
-		print '</td></tr>';
-
-		// Price base
-		print '<tr><td width="15%">';
-		print $langs->trans('PriceBase');
-		print '</td>';
-		print '<td>';
-		print $form->selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
-		print '</td>';
-		print '</tr>';
-
-		// Price
-		print '<tr><td width="20%">';
-		$text = $langs->trans('SellingPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		print '</td><td>';
-		if ($prodcustprice->price_base_type == 'TTC') {
-			print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
 		} else {
-			print '<input name="price" size="10" value="'.price($prodcustprice->price).'">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="update_customer_price_confirm">';
+			print '<input type="hidden" name="lineid" value="'.$prodcustprice->id.'">';
+			print '<table class="border centpercent">';
+			print '<tr>';
+			print '<td>'.$langs->trans('Product').'</td>';
+			$staticprod = new Product($db);
+			$staticprod->fetch($prodcustprice->fk_product);
+			print "<td>".$staticprod->getNomUrl(1)."</td>";
+			print '</tr>';
+
+			// Ref. Customer
+			print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+			print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
+
+			// VAT
+			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
+			print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $staticprod->id, $prodcustprice->recuperableonly);
+			print '</td></tr>';
+
+			// Price base
+			print '<tr><td width="15%">';
+			print $langs->trans('PriceBase');
+			print '</td>';
+			print '<td>';
+			print $form->selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
+			print '</td>';
+			print '</tr>';
+
+			// Price
+			print '<tr><td>';
+			$text = $langs->trans('SellingPrice');
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print '</td><td>';
+			if ($prodcustprice->price_base_type == 'TTC') {
+				print '<input name="price" size="10" value="'.price($prodcustprice->price_ttc).'">';
+			} else {
+				print '<input name="price" size="10" value="'.price($prodcustprice->price).'">';
+			}
+			print '</td></tr>';
+
+			// Price minimum
+			print '<tr><td>';
+			$text = $langs->trans('MinPrice');
+			print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print '</td><td>';
+			if ($prodcustprice->price_base_type == 'TTC') {
+				print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';
+			} else {
+				print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min).'">';
+			}
+			print '</td></tr>';
+
+			// Update all child soc
+			print '<tr><td>';
+			print $langs->trans('ForceUpdateChildPriceSoc');
+			print '</td>';
+			print '<td>';
+			print '<input type="checkbox" name="updatechildprice" value="1">';
+			print '</td>';
+			print '</tr>';
+
+			print '</table>';
+
+			print '<br><div class="center">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
+
+			print '<br></form>';
 		}
-		print '</td></tr>';
-
-		// Price minimum
-		print '<tr><td>';
-		$text = $langs->trans('MinPrice');
-		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		print '</td><td>';
-		if ($prodcustprice->price_base_type == 'TTC') {
-			print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min_ttc).'">';
-		} else {
-			print '<input name="price_min" size="10" value="'.price($prodcustprice->price_min).'">';
-		}
-		print '</td></tr>';
-
-		// Update all child soc
-		print '<tr><td width="15%">';
-		print $langs->trans('ForceUpdateChildPriceSoc');
-		print '</td>';
-		print '<td>';
-		print '<input type="checkbox" name="updatechildprice" value="1">';
-		print '</td>';
-		print '</tr>';
-
-		print '</table>';
-
-		print '<br><div class="center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-
-		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {
 		print '<br>';
 		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
-			't.fk_product' => GETPOST('prodid', 'int'), 't.fk_soc' => $socid
+			't.fk_product' => GETPOST('prodid', 'int'),
+			't.fk_soc' => $socid
 		);
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
-		}
-
 		$result = $prodcustprice->fetch_all_log($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+		} else {
+			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+				$nbtotalofrecords = $result;
+			}
 		}
 
 		$option = '&socid='.GETPOST('socid', 'int').'&prodid='.GETPOST('prodid', 'int');
@@ -485,13 +487,17 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
-			print '<td>&nbsp;</td>';
+			print '<td></td>';
 			print '</tr>';
 
 			foreach ($prodcustprice->lines as $line) {
-				print '<tr class="oddeven">';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
+
+				$userstatic = new User($db);
+				$userstatic->fetch($line->fk_user);
+
+				print '<tr class="oddeven">';
 
 				print "<td>".$staticprod->getNomUrl(1)."</td>";
 				print '<td>'.$line->ref_customer.'</td>';
@@ -505,11 +511,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
 
 				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
 				print '<td class="right">';
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(-1);
 				print '</td>';
+				print '<td></td>';
 			}
 			print "</table>";
 		} else {
@@ -522,12 +527,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	} else {
 		// View mode
 
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* Barre d'action                                                             */
-		/*                                                                            */
-		/* ************************************************************************** */
-
+		/*
+		 * Action bar
+		 */
 		print "\n".'<div class="tabsAction">'."\n";
 
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
@@ -571,17 +573,22 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 		print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 		print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td></td>';
 		print '</tr>';
 
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
 			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="'.$search_label.'" size="20"></td>';
-			print '<td class="liste_titre" colspan="4">&nbsp;</td>';
-			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price" value="'.$search_price.'" size="10"></td>';
-			print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_price_ttc" value="'.$search_price_ttc.'" size="10"></td>';
-			print '<td class="liste_titre" colspan="3">&nbsp;</td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price" value="'.$search_price.'" size="10"></td>';
+			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price_ttc" value="'.$search_price_ttc.'" size="10"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
 			// Print the search button
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -592,30 +599,28 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		if (count($prodcustprice->lines) > 0) {
 			foreach ($prodcustprice->lines as $line) {
-				print '<tr class="oddeven">';
-
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
+
+				$userstatic = new User($db);
+				$userstatic->fetch($line->fk_user);
+
+				print '<tr class="oddeven">';
 
 				print "<td>".$staticprod->getNomUrl(1)."</td>";
 				print "<td>".$staticprod->label."</td>";
 				print '<td>'.$line->ref_customer.'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour")."</td>";
-
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
 				print '<td class="right">'.vatrate($line->tva_tx.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), true, $line->recuperableonly)."</td>";
 				print '<td class="right">'.price($line->price)."</td>";
 				print '<td class="right">'.price($line->price_ttc)."</td>";
 				print '<td class="right">'.price($line->price_min).'</td>';
 				print '<td class="right">'.price($line->price_min_ttc).'</td>';
-
 				// User
-				$userstatic = new User($db);
-				$userstatic->fetch($line->fk_user);
 				print '<td class="right">';
-				print $userstatic->getLoginUrl(1);
+				print $userstatic->getNomUrl(-1);
 				print '</td>';
-
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td class="right nowraponall">';

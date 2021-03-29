@@ -1230,7 +1230,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
 	} elseif (!empty($forceentity)) {
-		$sql .= " AND entity IN (".$forceentity.")";
+		$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 	}
 	if ($where) {
 		$sql .= $where;
@@ -1290,7 +1290,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
 		} elseif (!empty($forceentity)) {
-			$sql .= " AND entity IN (".$forceentity.")";
+			$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 		}
 		if ($where) {
 			$sql .= $where;
@@ -1351,7 +1351,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
-				$sql .= " AND entity IN (".$forceentity.")";
+				$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 			}
 			if ($where) {
 				$maskrefclient_sql .= $where; //use the same optional where as general mask
@@ -2254,7 +2254,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE rowid IN (".join(',', $listofidtoclean).")"; // So we update only records detected wrong
+		$sql .= " WHERE rowid IN (".$db->sanitize(join(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
@@ -2271,7 +2271,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".join(',', $listofid).")"; // So we update only records linked to a non existing parent
+		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(join(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);

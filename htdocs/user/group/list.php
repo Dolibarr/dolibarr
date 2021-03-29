@@ -28,17 +28,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	if (!$user->rights->user->group_advance->read && !$user->admin) {
-		accessforbidden();
-	}
-}
-
-// Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
-	accessforbidden();
-}
-
 // Load translation files required by page
 $langs->load("users");
 
@@ -77,6 +66,21 @@ $fieldstosearchall = array(
 	'g.nom'=>"Group",
 	'g.note'=>"Note"
 );
+
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!$user->rights->user->group_advance->read && !$user->admin) {
+		accessforbidden();
+	}
+}
+
+// Users/Groups management only in master entity if transverse mode
+if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+	accessforbidden();
+}
+
+if (!$user->rights->user->user->lire && !$user->admin) {
+	accessforbidden();
+}
 
 
 /*

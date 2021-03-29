@@ -20,7 +20,7 @@
  *      \brief      Module to manage points of sale
  *      \file       htdocs/core/modules/modCashDesk.class.php
  *      \ingroup    pos
- *      \brief      File to enable/disable module Point Of Sales
+ *      \brief      Description and activation file for the module Point Of Sales
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ class FormFile
 			$out .= ' ';
 			if ($sectionid) {	// Show overwrite if exists for ECM module only
 				$langs->load('link');
-				$out .= '<input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label>';
+				$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1"><label for="overwritefile">'.$langs->trans("OverwriteIfExists").'</label></span>';
 			}
 			$out .= '<input type="submit" class="button reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 			$out .= (empty($conf->global->MAIN_UPLOAD_DOC) || empty($perm) ? ' disabled' : '');
@@ -966,6 +966,7 @@ class FormFile
 
 			// Loop on each file found
 			$found = 0;
+			$i = 0;
 			foreach ($file_list as $file) {
 				$i++;
 				if ($filter && !preg_match('/'.$filter.'/i', $file["name"])) {
@@ -1777,7 +1778,7 @@ class FormFile
 
 				// Share link
 				print '<td class="right">';
-				if ($file['share']) {
+				if (!empty($file['share'])) {
 					// Define $urlwithroot
 					$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file

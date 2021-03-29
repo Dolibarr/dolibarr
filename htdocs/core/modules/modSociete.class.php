@@ -25,7 +25,7 @@
  *	\brief      Module to manage third parties (customers, prospects)
  *	\file       htdocs/core/modules/modSociete.class.php
  *	\ingroup    societe
- *	\brief      Fichier de description et activation du module Societe
+ *	\brief      Description and activation file for the module societe (thirdparty)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -343,7 +343,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
 			}
 			$this->export_sql_end[$r] .= ')';
 		}
@@ -413,7 +413,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
 			}
 			$this->export_sql_end[$r] .= ')';
 		}

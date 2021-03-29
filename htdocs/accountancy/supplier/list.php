@@ -88,14 +88,6 @@ if (!$sortorder) {
 	}
 }
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->rights->accounting->bind->write) {
-	accessforbidden();
-}
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('accountancysupplierlist'));
 
@@ -106,6 +98,17 @@ $aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUN
 $aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT, 1);
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -285,11 +288,11 @@ if (strlen(trim($search_country))) {
 	if ($search_country == 'special_allnotme') {
 		$sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
 	} elseif ($search_country == 'special_eec') {
-		$sql .= " AND co.code IN (".$country_code_in_EEC.")";
+		$sql .= " AND co.code IN (".$db->sanitize($country_code_in_EEC, 1).")";
 	} elseif ($search_country == 'special_eecnotme') {
-		$sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
+		$sql .= " AND co.code IN (".$db->sanitize($country_code_in_EEC_without_me, 1).")";
 	} elseif ($search_country == 'special_noteec') {
-		$sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
+		$sql .= " AND co.code NOT IN (".$db->sanitize($country_code_in_EEC, 1).")";
 	} else {
 		$sql .= natural_search("co.code", $search_country);
 	}

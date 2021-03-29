@@ -366,14 +366,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	content: "\f571";
 }
 .fa-dol-project:before {
-	content: "\f0e8";
+	content: "\f542";
 }
 .fa-dol-commande:before,
 .fa-dol-order_supplier:before {
 	content: "\f570";
 }
 .fa-dol-contrat:before {
-	content: "\f1e6";
+	content: "\f0f2";
 }
 .fa-dol-ticket:before {
 	content: "\f3ff";
@@ -382,7 +382,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	content: "\f19c";
 }
 .fa-dol-member:before {
-	content: "\f0c0";
+	content: "\f007";
 }
 .fa-dol-expensereport:before {
 	content: "\f555";

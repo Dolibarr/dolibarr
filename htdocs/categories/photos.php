@@ -66,7 +66,7 @@ $upload_dir = $conf->categorie->multidir_output[$object->entity];
  * Actions
  */
 
-if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 	if ($object->id) {
 		$file = $_FILES['userfile'];
 		if (is_array($file['name']) && count($file['name']) > 0) {
@@ -108,7 +108,8 @@ if ($object->id) {
 	$head = categories_prepare_head($object, $type);
 	print dol_get_fiche_head($head, 'photos', $langs->trans($title), -1, 'category');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+	$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
+	$linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = ' type = '.$object->type;
 	$object->ref = $object->label;
 	$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
@@ -152,12 +153,9 @@ if ($object->id) {
 
 
 
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Barre d'action                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	/*
+	 * Action bar
+	 */
 	print '<div class="tabsAction">'."\n";
 
 	if ($action != 'ajout_photo' && $user->rights->categorie->creer) {

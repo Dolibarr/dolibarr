@@ -253,23 +253,23 @@ abstract class ActionsAdherentCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->old_name = $_POST["old_name"];
-		$this->object->old_firstname = $_POST["old_firstname"];
+		$this->object->old_name = GETPOST("old_name");
+		$this->object->old_firstname = GETPOST("old_firstname");
 
-		$this->object->fk_soc = $_POST["fk_soc"];
-		$this->object->lastname			= $_POST["lastname"];
-		$this->object->firstname		= $_POST["firstname"];
-		$this->object->civility_id = $_POST["civility_id"];
-		$this->object->address = $_POST["address"];
-		$this->object->zip = $_POST["zipcode"];
-		$this->object->town = $_POST["town"];
-		$this->object->country_id = $_POST["country_id"] ? $_POST["country_id"] : $mysoc->country_id;
-		$this->object->state_id = $_POST["state_id"];
-		$this->object->phone_perso = $_POST["phone_perso"];
-		$this->object->phone_mobile = $_POST["phone_mobile"];
-		$this->object->email			= $_POST["email"];
-		$this->object->note				= $_POST["note"];
-		$this->object->canvas = $_POST["canvas"];
+		$this->object->fk_soc = GETPOST("fk_soc");
+		$this->object->lastname			= GETPOST("lastname");
+		$this->object->firstname		= GETPOST("firstname");
+		$this->object->civility_id = GETPOST("civility_id");
+		$this->object->address = GETPOST("address");
+		$this->object->zip = GETPOST("zipcode");
+		$this->object->town = GETPOST("town");
+		$this->object->country_id = GETPOST("country_id", 'int') ? GETPOST("country_id", 'int') : $mysoc->country_id;
+		$this->object->state_id = GETPOST("state_id", 'int');
+		$this->object->phone_perso = GETPOST("phone_perso");
+		$this->object->phone_mobile = GETPOST("phone_mobile");
+		$this->object->email			= GETPOST("email", 'alphawithlgt');
+		$this->object->note				= GETPOST("note", 'restricthtml');
+		$this->object->canvas = GETPOST("canvas");
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {

@@ -21,7 +21,7 @@
  * 	\brief      Module to use Gravatar to show photo of users
  *  \file       htdocs/core/modules/modGravatar.class.php
  *  \ingroup    gravatar
- *  \brief      Description and activation file for module Gravatar
+ *  \brief      Description and activation file for the module Gravatar
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

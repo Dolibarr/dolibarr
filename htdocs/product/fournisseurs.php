@@ -217,7 +217,7 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
-		if (price2num($_POST["price"]) < 0 || $_POST["price"] == '') {
+		if (price2num(GETPOST("price")) < 0 || GETPOST("price") == '') {
 			if ($price_expression === '') {	// Return error of missing price only if price_expression not set
 				$error++;
 				$langs->load("errors");
@@ -227,17 +227,17 @@ if (empty($reshook)) {
 			}
 		}
 		if (!empty($conf->multicurrency->enabled)) {
-			if (empty($_POST["multicurrency_code"])) {
+			if (!GETPOST("multicurrency_code")) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Currency")), null, 'errors');
 			}
-			if (price2num($_POST["multicurrency_tx"]) <= 0 || $_POST["multicurrency_tx"] == '') {
+			if (price2num(GETPOST("multicurrency_tx")) <= 0 || GETPOST("multicurrency_tx") == '') {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CurrencyRate")), null, 'errors');
 			}
-			if (price2num($_POST["multicurrency_price"]) < 0 || $_POST["multicurrency_price"] == '') {
+			if (price2num(GETPOST("multicurrency_price")) < 0 || GETPOST("multicurrency_price") == '') {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PriceCurrency")), null, 'errors');
@@ -1081,7 +1081,7 @@ END;
 
 						// Currency
 						if (!empty($conf->multicurrency->enabled)) {
-							print '<td class="right">';
+							print '<td class="right nowraponall">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
 							print '</td>';
 						}
@@ -1130,9 +1130,9 @@ END;
 							print '</td>';
 						}
 
-						// Date
+						// Date modification
 						if (!empty($arrayfields['pfp.tms']['checked'])) {
-							print '<td align="right">';
+							print '<td class="right nowraponall">';
 							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
 							print '</td>';
 						}

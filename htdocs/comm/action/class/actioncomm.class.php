@@ -743,7 +743,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
-		$sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
+		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
 		$sql .= " num_vote, event_paid, a.status";
@@ -779,8 +779,9 @@ class ActionComm extends CommonObject
 				$this->type_code  = $obj->type_code;
 				$this->type_color = $obj->type_color;
 				$this->type_picto = $obj->type_picto;
-				$transcode = $langs->trans("Action".$obj->type_code);
-				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label);
+				$this->type       = $obj->type_type;
+				/*$transcode = $langs->trans("Action".$obj->type_code);
+				$this->type       = (($transcode != "Action".$obj->type_code) ? $transcode : $obj->type_label); */
 				$transcode = $langs->trans("Action".$obj->type_code.'Short');
 				$this->type_short = (($transcode != "Action".$obj->type_code.'Short') ? $transcode : '');
 
@@ -1038,7 +1039,7 @@ class ActionComm extends CommonObject
 	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
 	 *    @return   int     				<0 if KO, >0 if OK
 	 */
-	public function update($user, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $langs, $conf, $hookmanager;
 
@@ -1226,17 +1227,17 @@ class ActionComm extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!empty($socid)) {
-			$sql .= " AND a.fk_soc = ".$socid;
+			$sql .= " AND a.fk_soc = ".((int) $socid);
 		}
 		if (!empty($elementtype)) {
 			if ($elementtype == 'project') {
-				$sql .= ' AND a.fk_project = '.$fk_element;
+				$sql .= ' AND a.fk_project = '.((int) $fk_element);
 			} elseif ($elementtype == 'contact') {
 				$sql .= ' AND a.id IN';
 				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
-				$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
+				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
 			} else {
-				$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$db->escape($elementtype)."'";
+				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) {

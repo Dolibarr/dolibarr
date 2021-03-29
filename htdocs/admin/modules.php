@@ -463,11 +463,13 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules = count($conf->modules);
-$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
-$moreinfo2 = ($nbofactivatedmodules - 1)." / ".count($modules);
-if ($nbofactivatedmodules <= 1) {
+
+//$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING = 1000;
+/*$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
+$moreinfo2 = '<b class="largenumber">'.($nbofactivatedmodules - 1).'</b> / <b class="largenumber">'.count($modules).'</b>';
+if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {
 	$moreinfo2 .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-}
+}*/
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -476,19 +478,21 @@ $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
-	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$desc."<br><br></span>\n";
+	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
+		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+	}
 }
 if ($mode == 'marketplace') {
-	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br><br></span>\n";
+	//$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
 }
 if ($mode == 'deploy') {
-	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br><br></span>\n";
+	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></div><br>\n";
 }
 if ($mode == 'develop') {
-	$deschelp = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br><br></span>\n";
+	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></div><br>\n";
 }
 
-$head = modules_prepare_head();
+$head = modules_prepare_head($nbofactivatedmodules, count($modules));
 
 
 if ($mode == 'common' || $mode == 'commonkanban') {
@@ -521,11 +525,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
 	$moreforfilter .= '</li></ul></div>';
 
-	$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="">'.$moreinfo.'</span><br><b class="largenumber">'.$moreinfo2.'</b></div>';
+	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacitymedium"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
@@ -745,7 +749,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				} else {
@@ -762,13 +766,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.$search_keyword; // No urlencode here, done later
 				}
 				if ($search_nature > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.$search_nature;
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.$search_nature; // No urlencode here, done later
 				}
 				if ($search_version > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.$search_version;
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.$search_version; // No urlencode here, done later
 				}
 				if ($search_status > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status;
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status; // No urlencode here, done later
 				}
 				$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
@@ -955,7 +959,7 @@ if ($mode == 'marketplace') {
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
 	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-	print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 	print '</tr>';
 

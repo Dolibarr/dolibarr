@@ -21,7 +21,7 @@
  *      \brief      Module to OpenSurvey integration.
  *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
- *      \brief      Description and activation file for module OpenSurvey
+ *      \brief      Description and activation file for the module OpenSurvey
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 

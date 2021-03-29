@@ -70,9 +70,6 @@ $error = 0;
 
 if ($action == 'set') {
 	$db->begin();
-	if (GETPOST('socid', 'int') < 0) {
-		$_POST["socid"] = '';
-	}
 
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -127,7 +124,9 @@ if ($action != '') {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+$help_url = 'EN:Module_Point_of_sale_(TakePOS)';
+
+llxHeader('', $langs->trans("CashDeskSetup"), $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
