@@ -85,8 +85,8 @@ $arrayfields = array(
 	't.rowid'			=>array('checked'=>1, 'position'=>10, 'label'=>"Ref",),
 	't.label'			=>array('checked'=>1, 'position'=>20, 'label'=>"Label"),
 	't.datev'			=>array('checked'=>1, 'position'=>30, 'label'=>"PeriodEndDate"),
-	/*'t.fk_typepayment'	=>array('checked'=>1, 'position'=>50, 'label'=>"DefaultPaymentMode"),
-	't.fk_account'		=>array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount"),*/
+	't.fk_typepayment'	=>array('checked'=>1, 'position'=>50, 'label'=>"DefaultPaymentMode"),
+	't.fk_account'		=>array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount"),
 	't.amount'			=>array('checked'=>1, 'position'=>90, 'label'=>"Amount"),
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
@@ -141,7 +141,7 @@ $bankline = new AccountLine($db);
 llxHeader('', $langs->trans("VATDeclarations"));
 
 $sql = 'SELECT t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment as type, t.fk_account,';
-$sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code,';
+$sql.= ' ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,';
 $sql.= ' t.num_payment, pst.code as payment_code,';
 $sql .= ' SUM(ptva.amount) as alreadypayed';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'tva as t';
@@ -181,7 +181,7 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND t.paye = ".$db->escape($search_status);
 }
 
-$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, t.num_payment, pst.code";
+$sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -351,18 +351,18 @@ if (!empty($arrayfields['t.datev']['checked'])) {
 }*/
 
 // Filter: Type
-/*if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 	print '<td class="liste_titre left">';
 	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16);
 	print '</td>';
 }
 
-// Filter: Type
+// Filter: Bank Account
 if (!empty($arrayfields['t.fk_account']['checked'])) {
 	print '<td class="liste_titre left">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
-}*/
+}
 
 // Filter: Amount
 if (!empty($arrayfields['t.amount']['checked'])) {
@@ -404,12 +404,12 @@ if (!empty($arrayfields['t.label']['checked'])) {
 if (!empty($arrayfields['t.datev']['checked'])) {
 	print_liste_field_titre($arrayfields['t.datev']['label'], $_SERVER['PHP_SELF'], 't.datev', '', $param, 'align="center"', $sortfield, $sortorder);
 }
-/*if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 	print_liste_field_titre($arrayfields['t.fk_typepayment']['label'], $_SERVER['PHP_SELF'], 't.fk_typepayment', '', $param, '', $sortfield, $sortorder, 'left ');
 }
 if (!empty($arrayfields['t.fk_account']['checked'])) {
 	print_liste_field_titre($arrayfields['t.fk_account']['label'], $_SERVER['PHP_SELF'], 't.fk_account', '', $param, '', $sortfield, $sortorder, 'left ');
-}*/
+}
 if (!empty($arrayfields['t.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER['PHP_SELF'], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 }
@@ -475,15 +475,17 @@ while ($i < min($num, $limit)) {
 	}*/
 
 	// Type
-	/*if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
-		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
+	if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
+		print '<td>';
+		if(!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-	}*/
+	}
 
 	// Account
-	/*if (!empty($arrayfields['t.fk_account']['checked'])) {
+	if (!empty($arrayfields['t.fk_account']['checked'])) {
 		print '<td>';
 		if ($obj->fk_account > 0) {
 			$bankstatic->id = $obj->fk_account;
@@ -493,6 +495,7 @@ while ($i < min($num, $limit)) {
 			$bankstatic->bic = $obj->bic;
 			$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$bankstatic->account_number = $obj->account_number;
+			$bankstatic->clos = $obj->clos;
 
 			//$accountingjournal->fetch($obj->fk_accountancy_journal);
 			//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
@@ -502,7 +505,7 @@ while ($i < min($num, $limit)) {
 		}
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
-	}*/
+	}
 
 	// Amount
 	if (!empty($arrayfields['t.amount']['checked'])) {

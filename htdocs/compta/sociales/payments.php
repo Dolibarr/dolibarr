@@ -144,7 +144,7 @@ $sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.
 $sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid uid, u.lastname, u.firstname, u.email, u.login, u.admin,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
@@ -323,6 +323,10 @@ while ($i < min($num, $limit)) {
 			$accountstatic->accountancy_number = $obj->account_number;
 			$accountstatic->accountancy_journal = $obj->accountancy_journal;
 			$accountstatic->label = $obj->blabel;
+			$accountstatic->iban = $obj->iban;
+			$accountstatic->bic = $obj->bic;
+			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+			$accountstatic->clos = $obj->clos;
 			print $accountstatic->getNomUrl(1);
 		} else {
 			print '&nbsp;';

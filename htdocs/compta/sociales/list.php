@@ -37,6 +37,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -63,6 +64,8 @@ $search_year_lim	= GETPOST('search_year_lim', 'int');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_users = GETPOST('search_users');
+$search_type = GETPOST('search_type', 'int');
+$search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
@@ -107,8 +110,10 @@ $arrayfields = array(
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
 	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->projet->enabled))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
-	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>80),
-	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>90),
+	'cs.fk_mode_reglement'	=>array('checked'=>1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
+	'cs.fk_account'		=>array('checked'=>1, 'position'=>90, 'label'=>"DefaultBankAccount"),
+	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
+	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -144,6 +149,8 @@ if (empty($reshook)) {
 		$search_project_ref = '';
 		$search_project = '';
 		$search_users = '';
+		$search_type = '';
+		$search_account = '';
 		$search_array_options = array();
 	}
 }
@@ -154,6 +161,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$bankstatic = new Account($db);
 $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static = new ChargeSociales($db);
 if (!empty($conf->projet->enabled)) {
@@ -167,10 +175,13 @@ $sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
 if (!empty($conf->projet->enabled)) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
-$sql .= " c.libelle as type_label,";
-$sql .= " SUM(pc.amount) as alreadypayed";
+$sql .= " c.libelle as type_label, cs.fk_account,";
+$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " SUM(pc.amount) as alreadypayed, pay.code as payment_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (cs.fk_account = ba.rowid)";
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as pay ON (cs.fk_mode_reglement = pay.id)';
 if (!empty($conf->projet->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cs.fk_projet";
 }
@@ -193,6 +204,12 @@ if (!empty($conf->projet->enabled)) {
 if (!empty($search_users)) {
 	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
 }
+if (!empty($search_type) && $search_type > 0) {
+	$sql .= ' AND cs.fk_mode_reglement='.$search_type;
+}
+if (!empty($search_account) && $search_account > 0) {
+	$sql .= ' AND cs.fk_account='.$search_account;
+}
 if ($search_amount) {
 	$sql .= natural_search("cs.amount", $search_amount, 1);
 }
@@ -212,7 +229,7 @@ if ($year > 0) {
 if ($search_typeid) {
 	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos";
 if (!empty($conf->projet->enabled)) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
@@ -262,6 +279,12 @@ if ($search_users) {
 	foreach ($search_users as $id_user) {
 		$param .= '&search_users[]='.urlencode($id_user);
 	}
+}
+if ($search_type) {
+	$param .= '&search_type='.urlencode($search_type);
+}
+if ($search_account) {
+	$param .= '&search_account='.$search_account;
 }
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
@@ -376,6 +399,20 @@ if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
 }
 
+// Filter: Type
+if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
+	print '<td class="liste_titre left">';
+	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16);
+	print '</td>';
+}
+
+// Filter: Bank Account
+if (!empty($arrayfields['cs.fk_account']['checked'])) {
+	print '<td class="liste_titre left">';
+	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	print '</td>';
+}
+
 // Filter: Amount
 if (!empty($arrayfields['cs.amount']['checked'])) {
 	print '<td class="liste_titre right">';
@@ -427,6 +464,12 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 }
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
+	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement", '', $param, 'class="right"', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cs.fk_account']['checked'])) {
+	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account", '', $param, 'class="right"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount", '', $param, 'class="right"', $sortfield, $sortorder);
@@ -543,6 +586,39 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+	}
+
+	// Type
+	if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
+		print '<td>';
+		if(!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Account
+	if (!empty($arrayfields['cs.fk_account']['checked'])) {
+		print '<td>';
+		if ($obj->fk_account > 0) {
+			$bankstatic->id = $obj->fk_account;
+			$bankstatic->ref = $obj->bref;
+			$bankstatic->number = $obj->bnumber;
+			$bankstatic->iban = $obj->iban;
+			$bankstatic->bic = $obj->bic;
+			$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+			$bankstatic->account_number = $obj->account_number;
+			$bankstatic->clos = $obj->clos;
+
+			//$accountingjournal->fetch($obj->fk_accountancy_journal);
+			//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+
+			$bankstatic->label = $obj->blabel;
+			print $bankstatic->getNomUrl(1);
+		}
+		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Amount

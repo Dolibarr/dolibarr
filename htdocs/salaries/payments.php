@@ -185,7 +185,7 @@ $title = $langs->trans('SalariesPayments');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql .= " s.rowid, s.fk_user, s.amount, s.salary, sal.rowid as id_salary, sal.label, s.datep as datep, b.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code as payment_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as sal ON (sal.rowid = s.fk_salary)";
@@ -466,6 +466,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
 			$accountstatic->number = $obj->bnumber;
+			$accountstatic->iban = $obj->iban;
+			$accountstatic->bic = $obj->bic;
+			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+			$accountstatic->clos = $obj->clos;
 
 			if (!empty($conf->accounting->enabled)) {
 				$accountstatic->account_number = $obj->account_number;
