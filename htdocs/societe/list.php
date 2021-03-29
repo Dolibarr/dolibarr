@@ -156,7 +156,7 @@ if ($type == 'f') {
 	}
 }
 
-if ($search_sale==-1) {
+if ($search_sale == -1) {
 	$search_sale='';
 }
 
