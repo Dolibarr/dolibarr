@@ -51,6 +51,9 @@ $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
 $discard_closed = GETPOST('discardclosed', 'int');
 
+// Security check
+restrictedArea($user, 'projet', 0, 'projet&project');
+
 
 /*
  * View
