@@ -128,7 +128,6 @@ $socid = GETPOST("search_socid", 'int') ?GETPOST("search_socid", 'int') : GETPOS
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) {
 	$socid = '';
 }
@@ -165,7 +164,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-//var_dump($_POST);exit;
+$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
+
 
 /*
  *	Actions

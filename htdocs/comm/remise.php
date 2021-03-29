@@ -74,6 +74,12 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 	}
 }
 
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
 
 /*
  * View
@@ -82,7 +88,6 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 $form = new Form($db);
 
 llxHeader();
-
 
 /*********************************************************************************
  *

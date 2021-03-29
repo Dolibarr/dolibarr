@@ -89,12 +89,6 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES = 4;
 
-// Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'propal', $id);
-
 $object = new Propal($db);
 $extrafields = new ExtraFields($db);
 
@@ -133,6 +127,14 @@ $usercancreatepurchaseorder = $user->rights->fournisseur->commande->creer;
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
+
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	$object->id = $user->socid;
+}
+restrictedArea($user, 'propal', $object->id);
+
 
 /*
  * Actions

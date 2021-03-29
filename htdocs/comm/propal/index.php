@@ -26,15 +26,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-$socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0) {
-	$action = '';
-	$socid = $user->socid;
-}
-restrictedArea($user, 'propal');
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
@@ -48,9 +39,19 @@ $langs->loadLangs(array('propal', 'companies'));
 $now = dol_now();
 $max = 5;
 
+// Security check
+$socid = GETPOST('socid', 'int');
+if (isset($user->socid) && $user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
+}
+restrictedArea($user, 'propal');
+
+
 /*
  * View
  */
+
 $propalstatic = new Propal($db);
 $companystatic = new Societe($db);
 $form = new Form($db);

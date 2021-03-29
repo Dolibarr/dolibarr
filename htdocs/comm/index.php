@@ -29,10 +29,6 @@
 
 require '../main.inc.php';
 
-if (!$user->rights->societe->lire) {
-	accessforbidden();
-}
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -63,9 +59,20 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
 
+// Security check
+$socid = GETPOST("socid", 'int');
+if ($user->socid > 0) {
+	$action = '';
+	$id = $user->socid;
+}
+restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+
 /*
  * Actions
  */
+
+// None
 
 
 /*

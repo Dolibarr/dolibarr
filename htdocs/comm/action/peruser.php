@@ -71,12 +71,10 @@ if (!$sortfield) {
 	$sortfield = "a.datec";
 }
 
-// Security check
 $socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) {
 	$socid = '';
 }
@@ -176,6 +174,11 @@ $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
+
+$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*
