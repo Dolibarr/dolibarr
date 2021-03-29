@@ -111,10 +111,14 @@ $arrayfields = array(
 	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->projet->enabled))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
-	'cs.fk_account'		=>array('checked'=>1, 'position'=>90, 'label'=>"DefaultBankAccount"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
 	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
 );
+
+if (!empty($conf->banque->enabled)) {
+	$arrayfields['cs.fk_account'] = array('checked'=>1, 'position'=>90, 'label'=>"DefaultBankAccount");
+}
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

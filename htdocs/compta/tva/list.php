@@ -86,10 +86,14 @@ $arrayfields = array(
 	't.label'			=>array('checked'=>1, 'position'=>20, 'label'=>"Label"),
 	't.datev'			=>array('checked'=>1, 'position'=>30, 'label'=>"PeriodEndDate"),
 	't.fk_typepayment'	=>array('checked'=>1, 'position'=>50, 'label'=>"DefaultPaymentMode"),
-	't.fk_account'		=>array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount"),
 	't.amount'			=>array('checked'=>1, 'position'=>90, 'label'=>"Amount"),
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
+
+if (!empty($conf->banque->enabled)) {
+	$arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
+}
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
