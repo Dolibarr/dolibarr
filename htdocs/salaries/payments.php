@@ -330,12 +330,15 @@ $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16
 print '</td>';
 // Chq number
 print '<td class="liste_titre right"><input name="search_chq_number" class="flat" type="text" size="8" value="'.$db->escape($search_chq_number).'"></td>';
-// Bank transaction
-print '<td class="liste_titre center">';
-print '<input class="flat" type="text" size="3" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';
-print '</td>';
-// Account
+
 if (!empty($conf->banque->enabled)) {
+
+	// Bank transaction
+	print '<td class="liste_titre center">';
+	print '<input class="flat" type="text" size="3" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';
+	print '</td>';
+
+	// Account
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
@@ -369,8 +372,10 @@ print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "b.datev,s.rowid", ""
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
-if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+if (!empty($conf->banque->enabled)) {
+	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+}
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -459,6 +464,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$accountlinestatic->id = $obj->fk_bank;
 		print $accountlinestatic->getNomUrl(1);
 		print '</td>';
+		if (!$i) $totalarray['nbfield']++;
 
 		print '<td>';
 		if ($obj->fk_bank > 0) {
