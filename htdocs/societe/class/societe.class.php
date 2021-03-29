@@ -2285,8 +2285,8 @@ class Societe extends CommonObject
 			$now = dol_now();
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET price_level = '".$this->db->escape($price_level)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET price_level = ".((int) $price_level);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
@@ -2295,7 +2295,7 @@ class Societe extends CommonObject
 
 			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
 			$sql .= " (datec, fk_soc, price_level, fk_user_author)";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($price_level)."', ".$user->id.")";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", ".((int) $price_level).", ".$user->id.")";
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
