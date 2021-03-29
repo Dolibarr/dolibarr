@@ -57,8 +57,10 @@ if ($action == 'classin' && $user->rights->don->creer) {
  * View
  */
 $title = $langs->trans('Donation')." - ".$langs->trans('Info');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) {
