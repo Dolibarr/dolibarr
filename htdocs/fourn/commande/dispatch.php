@@ -933,21 +933,21 @@ if ($id > 0 || !empty($ref)) {
 
 							print '<tr class="oddeven" name="'.$type.$suffix.'">';
 							print '<td>';
-							print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'" />';
-							print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'" />';
+							print '<input name="fk_commandefourndet'.$suffix.'" type="hidden" value="'.$objp->rowid.'" >';
+							print '<input name="product_batch'.$suffix.'" type="hidden" value="'.$objp->fk_product.'" >';
 
 							print '<!-- This is a up (may include discount or not depending on STOCK_EXCLUDE_DISCOUNT_FOR_PMP. will be used for PMP calculation) -->';
 							if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) { // Not tested !
-								print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'" />';
+								print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'" >';
 							} else {
-								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'" />';
+								print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'" >';
 							}
 
 							print '</td>';
 
 							print '<td>';
 							if ($objp->tobatch == 1) { // lot number
-								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'" />';
+								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'" >';
 							} elseif ($objp->tobatch == 2) { // allow multiple serial numbers
 								print '<textarea class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'">'.GETPOST('lot_number'.$suffix).'</textarea>';
 							}
@@ -1266,11 +1266,11 @@ if ($id > 0 || !empty($ref)) {
 				// Qty
 				print '<td class="right">';
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
-					print '<input style="width: 50px;" type="number" min="1" name="qty" value="'.$objp->qty.'" />';
+					print '<input style="width: 50px;" type="number" min="1" name="qty" value="'.$objp->qty.'" >';
 				} else {
 					print $objp->qty;
 				}
-				print '<input type="hidden" name="price" value="'.$objp->subprice.'" />';
+				print '<input type="hidden" name="price" value="'.$objp->subprice.'" >';
 				print '</td>';
 
 				// Warehouse
@@ -1353,10 +1353,10 @@ if ($id > 0 || !empty($ref)) {
 					print '</td>';
 				} else {
 					print '<td class="center valignmiddle">';
-					print '<input type="submit" class="button button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';
+					print '<input type="submit" class="button button-save" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" >';
 					print '</td>';
 					print '<td class="center valignmiddle">';
-					print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'" />';
+					print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'" >';
 					print '</td>';
 				}
 
