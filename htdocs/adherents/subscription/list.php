@@ -496,10 +496,13 @@ while ($i < min($num, $limit)) {
 	$adherent->morphy = $obj->morphy;
 	$adherent->email = $obj->email;
 	$adherent->typeid = $obj->type;
+	$adherent->datefin = $db->jdate($obj->datef);
 
 	$typeid = ($obj->fk_type > 0 ? $obj->fk_type : $adherent->typeid);
 	$adht = new AdherentType($db);
 	$adht->fetch($typeid);
+
+	$adherent->need_subscription = $adht->subscription;
 
 	print '<tr class="oddeven">';
 

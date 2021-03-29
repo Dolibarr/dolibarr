@@ -2572,7 +2572,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 						$ponderated_opp_amount += price2num($opp_weighted_amount);
 					}
 					if ($objp->opp_amount) {
-						print '<span title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
+						print '<span class="amount" title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
 					}
 					print '</td>';
 				}

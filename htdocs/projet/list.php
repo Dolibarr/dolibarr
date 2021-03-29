@@ -1107,7 +1107,7 @@ while ($i < min($num, $limit)) {
 			print '<td class="right">';
 			//if ($obj->opp_status_code)
 			if (strcmp($obj->opp_amount, '')) {
-				print price($obj->opp_amount, 1, $langs, 1, -1, -1, '');
+				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
 				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
 			}
 			print '</td>';
@@ -1136,7 +1136,7 @@ while ($i < min($num, $limit)) {
 			}
 			print '<td align="right">';
 			if ($obj->opp_weighted_amount) {
-				print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
+				print '<span class="amount">'.price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '').'</span>';
 				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
 			}
 			print '</td>';
@@ -1151,7 +1151,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['p.budget_amount']['checked'])) {
 			print '<td class="right">';
 			if ($obj->budget_amount != '') {
-				print price($obj->budget_amount, 1, $langs, 1, -1, -1);
+				print '<span class="amount">'.price($obj->budget_amount, 1, $langs, 1, -1, -1).'</span>';
 				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
 			}
 			print '</td>';
@@ -1232,7 +1232,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['p.price_registration']['checked'])) {
 			print '<td class="right">';
 			if ($obj->price_registration != '') {
-				print price($obj->price_registration, 1, $langs, 1, -1, -1);
+				print '<span class="amount">'.price($obj->price_registration, 1, $langs, 1, -1, -1).'</span>';
 				$totalarray['val']['p.price_registration'] += $obj->price_registration;
 			}
 			print '</td>';
@@ -1247,7 +1247,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($arrayfields['p.price_booth']['checked'])) {
 			print '<td class="right">';
 			if ($obj->price_booth != '') {
-				print price($obj->price_booth, 1, $langs, 1, -1, -1);
+				print '<span class="amount">'.price($obj->price_booth, 1, $langs, 1, -1, -1).'</span>';
 				$totalarray['val']['p.price_booth'] += $obj->price_booth;
 			}
 			print '</td>';

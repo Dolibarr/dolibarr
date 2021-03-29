@@ -86,25 +86,6 @@ if (empty($origin_id)) {
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
 
-// Security check
-$socid = '';
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-if ($origin == 'reception') {
-	$result = restrictedArea($user, $origin, $id);
-} else {
-	$result = restrictedArea($user, 'reception');
-	if ($origin == 'supplierorder') {
-		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) {
-			accessforbidden();
-		}
-	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
-		accessforbidden();
-	}
-}
-
 $action		= GETPOST('action', 'alpha');
 //Select mail models is same action as presend
 if (GETPOST('modelselected')) {
@@ -135,6 +116,25 @@ $permissiondellink = $user->rights->reception->creer; // Used by the include of 
 //var_dump($object->lines[0]->detail_batch);
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
+
+// Security check
+$socid = '';
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+if ($origin == 'reception') {
+	$result = restrictedArea($user, $origin, $id);
+} else {
+	$result = restrictedArea($user, 'reception');
+	if ($origin == 'supplierorder') {
+		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) {
+			accessforbidden();
+		}
+	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+		accessforbidden();
+	}
+}
 
 
 /*
@@ -784,7 +784,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
 				$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td>';
 				print '</tr>';
 			}
@@ -1122,12 +1122,12 @@ if ($action == 'create') {
 						if (!empty($product->status_batch)) {
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								print '<td>';
+								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-								print '<td>';
+								print '<td class="nowraponall">';
 								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
@@ -1798,7 +1798,7 @@ if ($action == 'create') {
 						print '<td>'.$formproduct->selectWarehouses($lines[$i]->fk_entrepot, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 						// Batch number managment
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch)) {
-							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
+							print '<td class="nowraponall"><input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"></br>';
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								print $langs->trans('EatByDate').' : ';
 								print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
