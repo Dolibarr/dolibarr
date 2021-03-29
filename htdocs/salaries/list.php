@@ -568,7 +568,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Type
 	print '<td>';
-	if(!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+	if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
