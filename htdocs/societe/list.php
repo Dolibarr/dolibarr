@@ -79,7 +79,7 @@ $search_zip = trim(GETPOST("search_zip", 'alpha'));
 $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
-$search_phone = trim(GETPOST('search_phone', 'ahttps://wiki.dolibarr.org/index.php?title=Migrer_mon_Dolibarr_vers_une_offre_Cloudlpha'));
+$search_phone = trim(GETPOST('search_phone', 'alpha'));
 $search_fax = trim(GETPOST('search_fax', 'alpha'));
 $search_url = trim(GETPOST('search_url', 'alpha'));
 $search_idprof1 = trim(GETPOST('search_idprof1', 'alpha'));
@@ -584,7 +584,7 @@ if ($search_region) {
 	$sql .= natural_search("region.nom", $search_region);
 }
 if ($search_country && $search_country != '-1') {
-	$sql .= " AND s.fk_pays IN (".$db->sanitize($db->escape($search_country)).')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_email) {
 	$sql .= natural_search("s.email", $search_email);
@@ -621,7 +621,7 @@ if (strlen($search_vat)) {
 }
 // Filter on type of thirdparty
 if ($search_type > 0 && in_array($search_type, array('1,3', '1,2,3', '2,3'))) {
-	$sql .= " AND s.client IN (".$db->sanitize($db->escape($search_type)).")";
+	$sql .= " AND s.client IN (".$db->sanitize($search_type).")";
 }
 if ($search_type > 0 && in_array($search_type, array('4'))) {
 	$sql .= " AND s.fournisseur = 1";
@@ -941,7 +941,8 @@ if (empty($type) || $type == 'c' || $type == 'p') {
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto('', 'category', 'class="pictofixedwidth"');
+		$tmptitle = $langs->trans('Categories');
+		$moreforfilter .= img_picto($tmptile, 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('CustomersProspectsCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
@@ -950,7 +951,8 @@ if (empty($type) || $type == 'f') {
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto('', 'category', 'class="pictofixedwidth"');
+		$tmptitle = $langs->trans('Categories');
+		$moreforfilter .= img_picto($tmptilte, 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $langs->trans('SuppliersCategoriesShort'));
 		$moreforfilter .= '</div>';
 	}
@@ -959,8 +961,9 @@ if (empty($type) || $type == 'f') {
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), 'maxwidth300', 1);
+	$tmptile = $langs->trans('SalesRepresentatives');
+	$moreforfilter .= img_picto($tmptile, 'user', 'class="pictofixedwidth"');
+	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $langs->trans('SalesRepresentatives'), ($conf->dol_optimize_smallscreen ? 'maxwidth200' : 'maxwidth300'), 1);
 	$moreforfilter .= '</div>';
 }
 if ($moreforfilter) {
@@ -1525,13 +1528,13 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['s.phone']['checked'])) {
-		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.fax']['checked'])) {
-		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
+		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

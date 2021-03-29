@@ -160,7 +160,9 @@ $formfile = new FormFile($db);
 $formresource = new FormResource($db);
 
 $title = $langs->trans("Workstation");
-$help_url = '';
+
+$help_url = 'EN:Module_Workstation';
+
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
@@ -205,9 +207,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -467,16 +466,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
 				}
 			}
 
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			if ($permissiontodelete) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
 			}

@@ -205,7 +205,7 @@ if ($this->control->tpl['action_delete']) {
 <div id="builddoc"></div>
 <?php
 /*
- * Documents generes
+ * Generated documents
  */
 $filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;

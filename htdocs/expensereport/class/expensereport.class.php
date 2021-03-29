@@ -294,7 +294,7 @@ class ExpenseReport extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->ref = '(PROV'.$this->id.')';
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -548,7 +548,7 @@ class ExpenseReport extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE d.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " WHERE d.rowid = ".$id;
+			$sql .= " WHERE d.rowid = ".((int) $id);
 		}
 		//$sql.= $restrict;
 
@@ -751,7 +751,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.fk_user_valid,";
 		$sql .= " f.fk_user_approve";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -993,7 +993,7 @@ class ExpenseReport extends CommonObject
 			$sql .= " total_ht = ".$total_ht;
 			$sql .= " , total_ttc = ".$total_ttc;
 			$sql .= " , total_tva = ".$total_tva;
-			$sql .= " WHERE rowid = ".$id;
+			$sql .= " WHERE rowid = ".((int) $id);
 			$result = $this->db->query($sql);
 			if ($result) :
 				$this->db->free($result);
@@ -2367,8 +2367,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (empty($user->rights->expensereport->readall)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".join(',', $userchildids).")";
-			$sql .= " OR ex.fk_user_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2414,8 +2414,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (empty($user->rights->expensereport->readall)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".join(',', $userchildids).")";
-			$sql .= " OR ex.fk_user_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

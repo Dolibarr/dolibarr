@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Xavier Dutoit           <doli@sydesy.com>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2021  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
  * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
@@ -13,6 +13,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  * Copyright (C) 2020       Charlene Benke         <charlie@patas-monkey.com>
+ * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,12 +60,16 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  */
 function testSqlAndScriptInject($val, $type)
 {
-	// Decode string first
+	// Decode string first bcause a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
-	$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
-
-	// TODO loop to decode until no more thing to decode ?
+	// Loop to decode until no more thing to decode.
+	//print "before decoding $val\n";
+	do {
+		$oldval = $val;
+		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
+	} while ($oldval != $val);
+	//print "after  decoding $val\n";
 
 	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
@@ -117,7 +122,7 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $val); //
 	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $val);
 	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $val);
-	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $val);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|loadend|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 
@@ -129,22 +134,24 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $tmpval); //
 	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $tmpval);
 	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $tmpval);
-	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|loadend|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1) {
-		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure="
+		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure=" for the export/import module
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
 	if ($type == 2) {
 		$inj += preg_match('/[;"]/', $val); // PHP_SELF is a file system path. It can contains spaces.
 	}
+
 	return $inj;
 }
 
@@ -164,7 +171,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			} else {
 				// Get remote IP: PS: We do not use getRemoteIP(), function is not yet loaded and we need a value that can't be spoofed
 				$ip = (empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']);
-				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
+				$errormessage = 'Access refused to '.$ip.' by SQL or Script injection protection in main.inc.php - GETPOST type='.htmlentities($type).' paramkey='.htmlentities($key).' paramvalue='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]);
 				print $errormessage;
 				// Add entry into error log
 				if (function_exists('error_log')) {
@@ -420,16 +427,33 @@ if (!defined('NOTOKENRENEWAL')) {
 	dol_syslog("NEW TOKEN reclaimed by : " . $_SERVER['PHP_SELF'], LOG_DEBUG);
 }
 
-//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha').' '.$_SESSION['token']);
-//$dolibarr_nocsrfcheck=1;
-// Check token
-if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
-	|| defined('CSRFCHECK_WITH_TOKEN')) {	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
-	// Check all cases that need a token (all POST actions, all actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set, all sensitive GET actions)
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' ||
-		((GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN')) ||
-		in_array(GETPOST('action', 'aZ09'), array('add', 'addtimespent', 'update', 'install', 'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'confirm_create_user', 'confirm_create_thirdparty', 'confirm_reject_check'))) {
-		if (!GETPOSTISSET('token')) {
+//dol_syslog("aaaa - ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
+
+// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
+if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)) || defined('CSRFCHECK_WITH_TOKEN')) {
+	// Array of action code where CSRFCHECK with token will be forced (so token must be provided on url request)
+	$arrayofactiontoforcetokencheck = array(
+		'activate', 'add', 'addtimespent', 'update', 'install',
+		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check',
+		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
+		'doprev', 'donext', 'dvprev', 'dvnext',
+		'enable'
+	);
+	$sensitiveget = false;
+	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
+		$sensitiveget = true;
+	}
+	if (preg_match('/^(disable_|enable_)/', GETPOST('action', 'aZ09'))) {
+		$sensitiveget = true;
+	}
+
+	// Check all cases that need a mandatory token (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
+	if (
+		$_SERVER['REQUEST_METHOD'] == 'POST' ||
+		$sensitiveget ||
+		((GETPOSTISSET('actionlogin') || GETPOSTISSET('action') || GETPOSTISSET('massaction')) && defined('CSRFCHECK_WITH_TOKEN'))
+	) {
+		if (!GETPOST('token', 'alpha')) {		// If token is not provided or empty
 			if (GETPOST('uploadform', 'int')) {
 				dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused. File size too large.");
 				$langs->loadLangs(array("errors", "install"));
@@ -449,7 +473,9 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		}
 	}
 
-	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token']) {
+	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
+	// TODO Get the sessiontokenforthisurl into the array of session token
+	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
@@ -464,6 +490,8 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		unset($_GET['massaction']);
 		$_POST['id'] = ((int) $savid);
 	}
+
+	// Note: There is another CSRF protection into the filefunc.inc.php
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -785,7 +813,7 @@ if (!defined('NOLOGIN')) {
 	} else {
 		// We are already into an authenticated session
 		$login = $_SESSION["dol_login"];
-		$entity = $_SESSION["dol_entity"];
+		$entity = isset($_SESSION["dol_entity"]) ? $_SESSION["dol_entity"] : 0;
 		dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
 		$resultFetchUser = $user->fetch('', $login, '', 1, ($entity > 0 ? $entity : -1));
@@ -1084,7 +1112,7 @@ if (!defined('NOLOGIN')) {
 
 dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').' NOTOKENRENEWAL='.(defined('NOTOKENRENEWAL') ?constant('NOTOKENRENEWAL') : ''));
 //Another call for easy debugg
-//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
+//dol_syslog("Access to ".$_SERVER["PHP_SELF"].' '.$_SERVER["HTTP_REFERER"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
 // Load main languages files
 if (!defined('NOREQUIRETRAN')) {
@@ -1227,7 +1255,7 @@ if (!function_exists("llxHeader")) {
 
 
 /**
- *  Show HTTP header
+ *  Show HTTP header. Called by top_htmlhead().
  *
  *  @param  string  $contenttype    Content type. For example, 'text/html'
  *  @param	int		$forcenocache	Force disabling of cache for the page
@@ -1293,7 +1321,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 }
 
 /**
- * Ouput html header of a page.
+ * Ouput html header of a page. It calls also top_httphead()
  * This code is also duplicated into security2.lib.php::dol_loginfunction
  *
  * @param 	string 	$head			 Optionnal head lines
@@ -1410,7 +1438,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 
 		$themeparam = '?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss', 'aZ09') ? '&amp;optioncss='.GETPOST('optioncss', 'aZ09', 1) : '').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
-		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.$conf->global->MAIN_IHM_PARAMS_REV;
+		$themeparam .= ($ext ? '&amp;'.$ext : '').'&amp;revision='.getDolGlobalInt("MAIN_IHM_PARAMS_REV");
 		if (!empty($_SESSION['dol_resetcache'])) {
 			$themeparam .= '&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
 		}
@@ -2045,8 +2073,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.'
-	            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	            '.$userImage.'<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
@@ -3080,7 +3107,7 @@ if (!function_exists("llxFooter")) {
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' MAIN_LAST_PING_KO_DATE='.$conf->global->MAIN_LAST_PING_KO_DATE.' -->'."\n";
+						print "\n".'<!-- Includes JS for Ping of Dolibarr forceping='.$forceping.' MAIN_FIRST_PING_OK_DATE='.getDolGlobalString("MAIN_FIRST_PING_OK_DATE").' MAIN_FIRST_PING_OK_ID='.getDolGlobalString("MAIN_FIRST_PING_OK_ID").' MAIN_LAST_PING_KO_DATE='.getDolGlobalString("MAIN_LAST_PING_KO_DATE").' -->'."\n";
 						print "\n<!-- JS CODE TO ENABLE the anonymous Ping -->\n";
 						$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 						// Try to guess the distrib used
@@ -3140,8 +3167,8 @@ if (!function_exists("llxFooter")) {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
-					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled', 'chaine', 0, '', $conf->entity);
 				}
 			}
 		}

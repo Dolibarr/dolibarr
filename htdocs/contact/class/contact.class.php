@@ -1275,7 +1275,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result) {

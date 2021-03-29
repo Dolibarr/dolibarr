@@ -209,7 +209,7 @@ if (!empty($conf->commande->enabled)) {
 	$sql .= " AND c.entity IN (".getEntity('commande').")";
 	$sql .= " AND c.fk_statut = 0";
 	if ($socid) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;

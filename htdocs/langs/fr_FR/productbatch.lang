@@ -26,3 +26,5 @@ ShowLogOfMovementIfLot=Afficher l'historique des mouvements de couple produit / 
 StockDetailPerBatch=Stock détaillé par lot
 SerialNumberAlreadyInUse=Le numéro de série %s est déjà utilisé pour le produit %s
 TooManyQtyForSerialNumber=Vous ne pouvez avoir qu'un produit %s avec le numéro de série %s
+BatchLotNumberingModules=Modèle de génération et contrôle des numéros de lot
+BatchSerialNumberingModules=Modèle de génération et contrôle des numéros de série

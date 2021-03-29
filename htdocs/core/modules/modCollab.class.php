@@ -20,7 +20,7 @@
  *  \brief      Collab module descriptor.
  *  \file       htdocs/core/modules/modCollab.class.php
  *  \ingroup    collab
- *  \brief      Description and activation file for module Collab
+ *  \brief      Description and activation file for the module Collab
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -55,7 +55,7 @@ class modCollab extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'website';
+		$this->picto = 'collab';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/collab/temp");
@@ -113,6 +113,7 @@ class modCollab extends DolibarrModules
 			'fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Left menu entry
 			'titre'=>'Collab',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu'=>'collab',
 			'url'=>'/collab/index.php',
 			'langs'=>'collab', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

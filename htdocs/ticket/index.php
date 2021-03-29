@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -127,11 +129,13 @@ print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 $tick = array(
 	'unread' => 0,
 	'read' => 0,
+	'needmoreinfo' => 0,
 	'answered' => 0,
 	'assigned' => 0,
 	'inprogress' => 0,
 	'waiting' => 0,
 	'closed' => 0,
+	'canceled' => 0,
 	'deleted' => 0,
 );
 
@@ -144,7 +148,7 @@ $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 // External users restriction
@@ -153,7 +157,7 @@ if ($user->socid > 0) {
 } else {
 	// For internals users,
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign = ".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -322,7 +326,7 @@ if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// Restricted to assigned user only
-	if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
+	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
 		$sql .= " AND t.fk_user_assign=".$user->id;
 	}
 }
@@ -401,7 +405,7 @@ if ($result) {
 
 		$db->free($result);
 	} else {
-		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</span></td></tr>';
 	}
 
 	print "</table>";

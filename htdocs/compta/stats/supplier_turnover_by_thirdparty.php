@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file        htdocs/compta/stats/supplier_ca_by_thirdparty.php
+ *       \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
  *       \brief       Page reporting purchase turnover by thirdparty
  */
 
@@ -38,8 +38,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
-$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
+$sortorder = GETPOST("sortorder", 'aZ09');
+$sortfield = GETPOST("sortfield", 'aZ09');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -59,17 +59,6 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 // Hook
 $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 
-// Security check
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-if (!empty($conf->comptabilite->enabled)) {
-	$result = restrictedArea($user, 'compta', '', '', 'resultat');
-}
-if (!empty($conf->accounting->enabled)) {
-	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
-
 // Date range
 $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
@@ -84,16 +73,16 @@ $date_endyear = GETPOST("date_endyear", 'alpha');
 $date_endmonth = GETPOST("date_endmonth", 'alpha');
 $date_endday = GETPOST("date_endday", 'alpha');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzuserrel');
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzuserrel');
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int") ?GETPOST("q", "int") : 0;
@@ -173,6 +162,17 @@ $tableparams = array_merge($commonparams, $tableparams);
 
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
+}
+
+// Security check
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
 

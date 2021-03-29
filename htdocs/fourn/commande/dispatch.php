@@ -399,7 +399,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$product = $supplierorderdispatch->fk_product;
 		$price = GETPOST('price');
 		$comment = $supplierorderdispatch->comment;
-		$eatby = $supplierorderdispatch->fk_product;
+		$eatby = $supplierorderdispatch->eatby;
 		$sellby = $supplierorderdispatch->sellby;
 		$batch = $supplierorderdispatch->batch;
 
@@ -1046,7 +1046,7 @@ if ($id > 0 || !empty($ref)) {
 				if (empty($conf->reception->enabled)) {
 					print $langs->trans("Comment").' : ';
 					print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
-					print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
+					print GETPOSTISSET("comment") ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
 					// print ' / '.$object->ref_supplier; // Not yet available
 					print '" class="flat"><br>';
 

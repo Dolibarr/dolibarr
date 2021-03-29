@@ -119,7 +119,7 @@ div.mainmenu.mrp::before {
 }
 
 div.mainmenu.project::before {
-	content: "\f0e8";
+	content: "\f542";
 }
 
 div.mainmenu.ticket::before {
@@ -169,7 +169,7 @@ div.mainmenu.generic4::before {
 .fa-play {
 	color: #444;
 }
-.fa-unlink {
+.fa-link, .fa-unlink {
 	color: #555;
 }
 

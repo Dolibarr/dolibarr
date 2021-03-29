@@ -796,7 +796,7 @@ class BlockedLog
 	public function setCertified()
 	{
 
-		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
+		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
 		if ($res === false) {
 			return false;
 		}

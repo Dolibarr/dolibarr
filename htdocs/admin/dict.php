@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions"));
+$langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -788,7 +788,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 		}*/
 	}
-	if (GETPOSTISSET("country") && ($_POST["country"] == '0') && ($id != 2)) {
+	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2)) {
 		if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes'))) {	// Field country is no mandatory for such dictionaries
 			$_POST["country"] = '';
 		} else {
@@ -796,25 +796,25 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 		}
 	}
-	if (($id == 3 || $id == 42) && !is_numeric($_POST["code"])) {
+	if (($id == 3 || $id == 42) && !is_numeric(GETPOST("code"))) {
 		$ok = 0;
 		setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 	}
 
 	// Clean some parameters
-	if ((!empty($_POST["localtax1_type"]) || ($_POST['localtax1_type'] == '0')) && empty($_POST["localtax1"])) {
+	if ((GETPOST("localtax1_type") || (GETPOST('localtax1_type') == '0')) && !GETPOST("localtax1")) {
 		$_POST["localtax1"] = '0'; // If empty, we force to 0
 	}
-	if ((!empty($_POST["localtax2_type"]) || ($_POST['localtax2_type'] == '0')) && empty($_POST["localtax2"])) {
+	if ((GETPOST("localtax2_type") || (GETPOST('localtax2_type') == '0')) && !GETPOST("localtax2")) {
 		$_POST["localtax2"] = '0'; // If empty, we force to 0
 	}
-	if ($_POST["accountancy_code"] <= 0) {
+	if (GETPOST("accountancy_code") <= 0) {
 		$_POST["accountancy_code"] = ''; // If empty, we force to null
 	}
-	if ($_POST["accountancy_code_sell"] <= 0) {
+	if (GETPOST("accountancy_code_sell") <= 0) {
 		$_POST["accountancy_code_sell"] = ''; // If empty, we force to null
 	}
-	if ($_POST["accountancy_code_buy"] <= 0) {
+	if (GETPOST("accountancy_code_buy") <= 0) {
 		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 	}
 	if ($id == 10 && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
@@ -1139,6 +1139,7 @@ if ($action == 'delete') {
 }
 //var_dump($elementList);
 
+
 /*
  * Show a dictionary
  */
@@ -1396,6 +1397,9 @@ if ($id) {
 			}
 			if ($fieldlist[$field] == 'unit_type') {
 				$valuetoshow = $langs->trans('TypeOfUnit');
+			}
+			if ($fieldlist[$field] == 'public' && $tablib[$id] == 'TicketDictCategory') {
+				$valuetoshow = $langs->trans('TicketGroupIsPublic'); $class = 'center';
 			}
 
 			if ($id == 2) {	// Special case for state page
@@ -1738,6 +1742,9 @@ if ($id) {
 			if ($fieldlist[$field] == 'unit_type') {
 				$valuetoshow = $langs->trans('TypeOfUnit');
 			}
+			if ($fieldlist[$field] == 'public' && $tablib[$id] == 'TicketDictCategory') {
+				$valuetoshow = $langs->trans('TicketGroupIsPublic'); $cssprefix = 'center ';
+			}
 
 			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 				$showfield = 0;
@@ -1982,6 +1989,9 @@ if ($id) {
 								$class .= ' right';
 							}
 							if ($fieldlist[$field] == 'use_default') {
+								$class .= ' center';
+							}
+							if ($fieldlist[$field] == 'public') {
 								$class .= ' center';
 							}
 							// Show value for field
@@ -2343,10 +2353,10 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
-			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'sortorder', 'sens', 'category_type'))) {
+			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'pos', 'use_default', 'affect', 'delay', 'position', 'public', 'sortorder', 'sens', 'category_type'))) {
 				$class = 'maxwidth50 center';
 			}
-			if (in_array($fieldlist[$field], array('use_default'))) {
+			if (in_array($fieldlist[$field], array('use_default', 'public'))) {
 				$classtd = 'center';
 			}
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) {

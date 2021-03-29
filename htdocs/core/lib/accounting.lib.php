@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2019      Eric Seigne         <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,8 +275,7 @@ function getDefaultDatesForTransfer()
 	global $db, $conf;
 
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
-	$periodbydefaultontransfer = $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER;
-	isset($periodbydefaultontransfer) ? $periodbydefaultontransfer : 0;
+	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
 	if ($periodbydefaultontransfer == 2) {
 		$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";

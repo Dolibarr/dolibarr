@@ -82,18 +82,6 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Security check
-if (empty($conf->mrp->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'mrp', $id, '');
-
-
 // Initialize array of search criterias
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
@@ -138,6 +126,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->mrp->read;
 $permissiontoadd = $user->rights->mrp->write;
 $permissiontodelete = $user->rights->mrp->delete;
+
+// Security check
+if ($user->socid > 0) {
+	// Protection if external user
+	accessforbidden();
+}
+$result = restrictedArea($user, 'mrp');
 
 
 /*
@@ -463,7 +458,7 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val) {
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -515,7 +510,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Show here line of result
 	print '<tr class="oddeven">';
 	foreach ($object->fields as $key => $val) {
-		$cssforfield = (empty($val['css']) ? '' : $val['css']);
+		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
 		} elseif ($key == 'status') {

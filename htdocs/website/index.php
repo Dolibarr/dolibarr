@@ -394,12 +394,12 @@ if ($cancel) {
 }
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode($pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
 if ($sortfield) {
-	$backtopage .= '&sortfield='.$sortfield;
+	$backtopage .= '&sortfield='.urlencode($sortfield);
 }
 if ($sortorder) {
-	$backtopage .= '&sortorder='.$sortorder;
+	$backtopage .= '&sortorder='.urlencode($sortorder);
 }
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
@@ -477,7 +477,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 }
 
 // Replacement of string into pages
-if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha')) {
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
 	$replacestring = GETPOST('replacestring', 'none');
 
 	if (empty($user->rights->website->writephp)) {
@@ -567,7 +567,7 @@ if ($action == 'adddir' && $permtouploadfile)
 */
 
 // Add site
-if ($action == 'addsite') {
+if ($action == 'addsite' && $usercanedit) {
 	$db->begin();
 
 	if (GETPOST('virtualhost', 'alpha') && !preg_match('/^http/', GETPOST('virtualhost', 'alpha'))) {
@@ -625,7 +625,7 @@ if ($action == 'addsite') {
 }
 
 // Add page/container
-if ($action == 'addcontainer') {
+if ($action == 'addcontainer' && $usercanedit) {
 	dol_mkdir($pathofwebsite);
 
 	$db->begin();
@@ -1148,7 +1148,7 @@ if ($action == 'addcontainer') {
 }
 
 // Delete site
-if ($action == 'confirm_deletesite' && $confirm == 'yes') {
+if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete) {
 	$error = 0;
 
 	$db->begin();
@@ -1276,7 +1276,7 @@ if (!GETPOSTISSET('pageid')) {
 }
 
 // Update css Update site properties
-if ($action == 'updatecss') {
+if ($action == 'updatecss' && $usercanedit) {
 	// If we tried to reload another site/page, we stay on editcss mode.
 	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')) {
 		$action = 'editcss';
@@ -1511,6 +1511,7 @@ if ($action == 'updatecss') {
 			if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
 				$action = 'preview';
 				if ($backtopage) {
+					$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
 					header("Location: ".$backtopage);
 					exit;
 				}
@@ -1522,7 +1523,7 @@ if ($action == 'updatecss') {
 }
 
 // Update page
-if ($action == 'setashome') {
+if ($action == 'setashome' && $usercanedit) {
 	$db->begin();
 	$object->fetch(0, $websitekey);
 	$website = $object;
@@ -1555,7 +1556,7 @@ if ($action == 'setashome') {
 }
 
 // Update page properties (meta)
-if ($action == 'updatemeta') {
+if ($action == 'updatemeta' && $usercanedit) {
 	$db->begin();
 
 	$result = $object->fetch(0, $websitekey);
@@ -1777,8 +1778,8 @@ if ($action == 'updatemeta') {
 }
 
 // Update page
-if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createfromclone' || $action == 'confirm_createpagefromclone')
-	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview')))) {
+if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createfromclone' || $action == 'confirm_createpagefromclone')
+	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))) {
 	$object->fetch(0, $websitekey);
 	$website = $object;
 
@@ -1907,7 +1908,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			// Security analysis
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 			//print dol_escape_htmltag($phpfullcodestring);exit;
-			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open");
+			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open", "eval", "dol_eval");
 			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
 				$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 			}
@@ -2040,7 +2041,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 }
 
 // Export site
-if ($action == 'exportsite') {
+if ($action == 'exportsite' && !empty($user->rights->website->export)) {
 	$fileofzip = $object->exportWebSite();
 
 	if ($fileofzip) {
@@ -2059,7 +2060,7 @@ if ($action == 'exportsite') {
 }
 
 // Regenerate site
-if ($action == 'regeneratesite') {
+if ($action == 'regeneratesite' && $usercanedit) {
 	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
 	$pathtomedias = DOL_DATA_ROOT.'/medias';
 	$pathtomediasinwebsite = $pathofwebsite.'/medias';
@@ -2084,7 +2085,7 @@ if ($action == 'regeneratesite') {
 }
 
 // Import site
-if ($action == 'importsiteconfirm') {
+if ($action == 'importsiteconfirm' && $usercanedit) {
 	if (empty($_FILES) && !GETPOSTISSET('templateuserfile')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		$action = 'importsite';
@@ -2161,7 +2162,7 @@ $domainname = '0.0.0.0:8080';
 $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 
 // Generate web site sitemaps
-if ($action == 'generatesitemaps') {
+if ($action == 'generatesitemaps' && $usercanedit) {
 	$domtree = new DOMDocument('1.0', 'UTF-8');
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
 	$domtree->formatOutput = true;
@@ -2229,9 +2230,10 @@ if ($action == 'generatesitemaps') {
 	$action = 'preview';
 }
 
+
 /*
-* View
-*/
+ * View
+ */
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
@@ -2328,6 +2330,10 @@ if (!GETPOST('hide_websitemenu')) {
 	$disabled = '';
 	if (empty($user->rights->website->write)) {
 		$disabled = ' disabled="disabled"';
+	}
+	$disabledexport = '';
+	if (empty($user->rights->website->export)) {
+		$disabledexport = ' disabled="disabled"';
 	}
 
 	if ($websitekey) {
@@ -2427,7 +2433,8 @@ if (!GETPOST('hide_websitemenu')) {
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			print ' &nbsp; ';
 
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+			//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcss" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("EditCss")).'</a>';
 
 			$importlabel = $langs->trans("ImportSite");
 			$exportlabel = $langs->trans("ExportSite");
@@ -2443,7 +2450,7 @@ if (!GETPOST('hide_websitemenu')) {
 			}
 
 			//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+			print '<input type="submit" class="button bordertransp"'.$disabledexport.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
 
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
@@ -2725,9 +2732,11 @@ if (!GETPOST('hide_websitemenu')) {
 
 				print ' &nbsp; ';
 
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
 
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'</a>';
 
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';

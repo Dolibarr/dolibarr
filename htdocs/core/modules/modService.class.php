@@ -25,7 +25,7 @@
  *	\brief      Module pour gerer le suivi de services predefinis
  *	\file       htdocs/core/modules/modService.class.php
  *	\ingroup    service
- *	\brief      Fichier de description et activation du module Service
+ *	\brief      Description and activation file for the module Service
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -277,7 +277,7 @@ class modService extends DolibarrModules
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
 				$this->export_label[$r] = "ProductsMultiPrice"; // Translation key (used only if key ExportDataset_xxx_z not found)
-				$this->export_permission[$r] = array(array("produit", "export"));
+				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref",
 					'pr.price_base_type'=>"PriceBase", 'pr.price_level'=>"PriceLevel",
 					'pr.price'=>"PriceLevelUnitPriceHT", 'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
@@ -311,7 +311,7 @@ class modService extends DolibarrModules
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
 				$this->export_label[$r] = "ProductsPricePerCustomer"; // Translation key (used only if key ExportDataset_xxx_z not found)
-				$this->export_permission[$r] = array(array("produit", "export"));
+				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array('p.rowid'=>"Id", 'p.ref'=>"Ref",
 					's.nom'=>'ThirdParty',
 					'pr.price_base_type'=>"PriceBase",
@@ -344,7 +344,7 @@ class modService extends DolibarrModules
 				$r++;
 				$this->export_code[$r] = $this->rights_class.'_'.$r;
 				$this->export_label[$r] = "AssociatedProducts"; // Translation key (used only if key ExportDataset_xxx_z not found)
-				$this->export_permission[$r] = array(array("produit", "export"));
+				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array(
 					'p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label", 'p.description'=>"Description", 'p.url'=>"PublicUrl",
 					'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",

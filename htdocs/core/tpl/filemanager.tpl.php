@@ -71,7 +71,8 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
-	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).($websitekey ? '&website='.$websitekey : '').($pageid ? '&pageid='.$pageid : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	$websitekeyandpageid = (!empty($websitekey) ? '&website='.$websitekey : '').(!empty($pageid) ? '&pageid='.$pageid : '');
+	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
 	print '</a>';
 } else {

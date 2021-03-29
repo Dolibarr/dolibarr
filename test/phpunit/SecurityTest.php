@@ -184,9 +184,15 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// Should be OK
 		$expectedresult=0;
 
+		/*
+		$test = '';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual(0, $result, 'Error on testSqlAndScriptInject kkk');
+		*/
+
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
-		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 0a');
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should be ok');
 
 		$test = 'This is a < inside string with < and > also and tag like <a> before the >';
 		$result=testSqlAndScriptInject($test, 0);
@@ -197,7 +203,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
-		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject 1b');
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
+
+		$test = 'javascript&colon&#x3B;alert(1)';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject expected 1a');
 
 		$test="<img src='1.jpg' onerror =javascript:alert('XSS')>";
 		$result=testSqlAndScriptInject($test, 0);
@@ -312,10 +322,13 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST['param8c']='< with space after is ok';
 		$_POST['param8d']='<abc123 is html to clean';
 		$_POST['param8e']='<123abc is not html to clean';
+		$_POST['param8f']='abc<<svg <><<animate onbegin=alert(document.domain) a';
 		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
 		$_POST["param11"]=' Name <email@email.com> ';
 		$_POST["param12"]='<!DOCTYPE html><html>aaa</html>';
+		//$_POST["param13"]='javascript%26colon%26%23x3B%3Balert(1)';
+		//$_POST["param14"]='javascripT&javascript#x3a alert(1)';
 
 		$result=GETPOST('id', 'int');              // Must return nothing
 		print __METHOD__." result=".$result."\n";
@@ -330,6 +343,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result, 333, 'Test on param1 with 3rd param = 2');
 
 		// Test alpha
+
 		$result=GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $_GET["param2"], 'Test on param2');
@@ -343,6 +357,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($result, 'dir');
 
 		// Test aZ09
+
 		$result=GETPOST("param1", 'aZ09');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $_GET["param1"]);
@@ -372,6 +387,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('">', $result);
 
 		// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
+
 		$result=GETPOST("param7", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('"c:\this is a path~1\aaa&#110;" abcdef', $result);
@@ -397,6 +413,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_POST['param8e'], $result, 'Test a string with non closing html tag with alphanohtml');
 
+		$result=GETPOST("param8f", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abcsvg animate onbegin=alert(document.domain) a', $result, 'Test a string with html tag open with several <');
+
 		$result=GETPOST("param9", 'alphanohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($_POST["param9"], $result);
@@ -416,6 +436,47 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param12", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
+
+		/*$result=GETPOST("param13", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(trim($_POST["param13"]), $result, 'Test a string and alphanohtml');
+
+		$result=GETPOST("param14", 'alphanohtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(trim($_POST["param14"]), $result, 'Test a string and alphanohtml');
+		*/
+
+		// Special test for GETPOST of backtopage or backtolist parameter
+
+		$_POST["backtopage"]='//www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='https:https://www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtolist"]='::HTTPS://www.google.com';
+		$result=GETPOST("backtolist");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('www.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='http:www.google.com';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('httpwww.google.com', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='/mydir/mypage.php?aa=a%10a';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('/mydir/mypage.php?aa=a%10a', $result, 'Test for backtopage param');
+
+		$_POST["backtopage"]='javascripT&javascript#javascriptxjavascript3a alert(1)';
+		$result=GETPOST("backtopage");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('x3a alert(1)', $result, 'Test for backtopage param');
 
 		return $result;
 	}
@@ -506,6 +567,21 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$stringtotest = '<a href="javascript&colon;aaa">bbbڴ';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
 		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
+
+		return 0;
+	}
+
+	/**
+	 * testDolStringOnlyTheseHtmlAttributes
+	 *
+	 * @return number
+	 */
+	public function testDolStringOnlyTheseHtmlAttributes()
+	{
+		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
+		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
+		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 1');
 
 		return 0;
 	}
@@ -613,6 +689,32 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		 */
 
 		return 0;
+	}
+
+	/**
+	 * testDolSanitizeUrl
+	 *
+	 * @return void
+	 */
+	public function testDolSanitizeUrl()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$test = 'javascripT&javascript#x3a alert(1)';
+		$result=dol_sanitizeUrl($test);
+		$this->assertEquals('x3a alert(1)', $result, 'Test on dol_sanitizeUrl A');
+
+		$test = 'javajavascriptscript&cjavascriptolon;alert(1)';
+		$result=dol_sanitizeUrl($test);
+		$this->assertEquals('alert(1)', $result, 'Test on dol_sanitizeUrl B');
+
+		$test = '/javas:cript/google.com';
+		$result=dol_sanitizeUrl($test);
+		$this->assertEquals('google.com', $result, 'Test on dol_sanitizeUrl C');
 	}
 
 	/**

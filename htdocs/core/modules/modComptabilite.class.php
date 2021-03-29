@@ -23,7 +23,7 @@
  * \brief      Module pour inclure des fonctions de comptabilite (gestion de comptes comptables et rapports)
  * \file       htdocs/core/modules/modComptabilite.class.php
  * \ingroup    comptabilite
- * \brief      Fichier de description et activation du module Comptabilite
+ * \brief      Description and activation file for the module simple accountancy
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

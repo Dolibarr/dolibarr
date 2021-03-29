@@ -59,7 +59,7 @@ $title = $langs->trans("MembersStatisticsByProperties");
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
-dol_mkdir($dir);
+//dol_mkdir($dir);
 
 $data = array();
 
@@ -134,7 +134,7 @@ if ($resql) {
 }
 
 
-$head = member_stats_prepare_head($adh);
+$head = member_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statsbyproperties', '', -1, '');
 
@@ -169,7 +169,7 @@ if (!$foundmor) {
 
 foreach ($data as $val) {
 	$nb = $val['nb'];
-	$nbsubscriptions = $val['nbsubscriptions'];
+	$nbsubscriptions = isset($val['nbsubscriptions']) ? $val['nbsubscriptions'] : 0;
 	$nbactive = $val['nbactive'];
 
 	print '<tr class="oddeven">';

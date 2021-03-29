@@ -9,6 +9,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021      Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,6 +272,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier, f.fk_statut as status, f.paye";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
+	$sql .= ", s.code_client, s.code_compta";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
@@ -349,7 +351,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '<td class="nowrap tdoverflowmax100">';
 				print $companystatic->getNomUrl(1, 'supplier');
 				print '</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 				print '</tr>';
 				$tot_ttc += $obj->total_ttc;
 				$i++;
@@ -618,7 +620,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print $thirdpartystatic->getNomUrl(1, 'supplier');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-					print '<td class="right">'.price($obj->total_ht).'</td>';
+					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
@@ -949,7 +951,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				print $societestatic->getNomUrl(1, 'customer');
 				print '</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-					print '<td class="right">'.price($obj->total_ht).'</td>';
+					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="nowrap right">'.price($obj->total_ttc - $obj->tot_fttc).'</td>';
@@ -972,10 +974,10 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-				print '<td class="right">'.price($tot_ht).'</td>';
+				print '<td class="right"><span class="amount">'.price($tot_ht).'</span></td>';
 			}
-			print '<td class="nowrap right">'.price($tot_ttc).'</td>';
-			print '<td class="nowrap right">'.price($tot_tobill).'</td>';
+			print '<td class="nowrap right"><span class="amount">'.price($tot_ttc).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price($tot_tobill).'</span></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 			print '</table></div><br>';
@@ -997,6 +999,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
 	$sql .= ", s.code_client, s.code_compta";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= ", cc.rowid as country_id, cc.code as country_code";
 	$sql .= ", sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays,".MAIN_DB_PREFIX."facture as f";
@@ -1019,6 +1022,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 
 	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
+	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 	$sql .= " ORDER BY f.datef ASC, f.ref ASC";
 
 	$resql = $db->query($sql);
@@ -1106,10 +1110,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 				print '</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-					print '<td class="right">'.price($obj->total_ht).'</td>';
+					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
-				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
-				print '<td class="nowrap right">'.price($obj->am).'</td>';
+				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
+				print '<td class="nowrap right"><span class="amount">'.price($obj->am).'</span></td>';
 				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
 				print '</tr>';
 
@@ -1135,10 +1139,10 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc - $totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-				print '<td class="right">'.price($total).'</td>';
+				print '<td class="right"><span class="amount">'.price($total).'</span></td>';
 			}
-			print '<td class="nowrap right">'.price($total_ttc).'</td>';
-			print '<td class="nowrap right">'.price($totalam).'</td>';
+			print '<td class="nowrap right"><span class="amount">'.price($total_ttc).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price($totalam).'</span></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		} else {
@@ -1204,8 +1208,6 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		print '<th colspan="2">';
 		print $langs->trans("BillsSuppliersUnpaid", $num).' ';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_VALIDATED.'">';
-		// TODO: "impayees.php" looks very outdatetd and should be set to deprecated or directly remove in the next version
-		// <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">
 		print '<span class="badge">'.$num.'</span>';
 		print '</a>';
 		print '</th>';
@@ -1258,10 +1260,10 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				print '<td class="nowrap tdoverflowmax100">'.$societestatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
 				if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) {
-					print '<td class="right">'.price($obj->total_ht).'</td>';
+					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
-				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
-				print '<td class="nowrap right">'.price($obj->am).'</td>';
+				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
+				print '<td class="nowrap right"><span class="amount">'.price($obj->am).'</span></td>';
 				print '<td>'.$facstatic->getLibStatut(3, $obj->am).'</td>';
 				print '</tr>';
 				$total += $obj->total_ht;

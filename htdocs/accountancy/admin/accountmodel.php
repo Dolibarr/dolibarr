@@ -180,10 +180,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 	// Other checks
-	if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && GETPOSTISSET("type") && in_array($_POST["type"], array('system', 'systemauto'))) {
-		$ok = 0;
-		setEventMessages($langs->transnoentities('ErrorReservedTypeSystemSystemAuto'), null, 'errors');
-	}
 	if (GETPOSTISSET("pcg_version")) {
 		if (GETPOST("pcg_version") == '0') {
 			$ok = 0;

@@ -69,12 +69,23 @@ $action = GETPOST('action', 'aZ09');
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
-if ($action == 'clean' || $action == 'validatehistory') {
+if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as fd";

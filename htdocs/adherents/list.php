@@ -41,9 +41,6 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'memberslist'; // To manage different context of search
 
-// Security check
-$result = restrictedArea($user, 'adherent');
-
 $search = GETPOST("search", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
@@ -79,7 +76,7 @@ if ($statut != '') {
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-if ($search_status < -1) {
+if ($search_status < -2) {
 	$search_status = '';
 }
 
@@ -161,6 +158,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Security check
+$result = restrictedArea($user, 'adherent');
 
 
 /*
@@ -302,13 +302,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid ";
 if ($catid > 0) {
-	$sql .= " AND cm.fk_categorie = ".$db->escape($catid);
+	$sql .= " AND cm.fk_categorie = ".((int) $catid);
 }
 if ($catid == -2) {
 	$sql .= " AND cm.fk_categorie IS NULL";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cm.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cm.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cm.fk_categorie IS NULL";
@@ -379,7 +379,7 @@ if ($search_phone_mobile) {
 	$sql .= natural_search("d.phone_mobile", $search_phone_mobile);
 }
 if ($search_country) {
-	$sql .= " AND d.country IN (".$search_country.')';
+	$sql .= " AND d.country IN (".$db->sanitize($search_country).')';
 }
 
 // Add where from extra fields
@@ -451,6 +451,9 @@ if (GETPOSTISSET("search_status")) {
 	}
 	if ($search_status == '0') {
 		$titre = $langs->trans("MembersListResiliated");
+	}
+	if ($search_status == '-2') {
+		$titre = $langs->trans("MembersListExcluded");
 	}
 } elseif ($action == 'search') {
 	$titre = $langs->trans("MembersListQualified");
@@ -750,9 +753,10 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 	$liststatus = array(
 		'-1'=>$langs->trans("Draft"),
 		'1'=>$langs->trans("Validated"),
-		'0'=>$langs->trans("Resiliated")
+		'0'=>$langs->trans("Resiliated"),
+		'-2'=>$langs->trans("Excluded")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -2);
+	print $form->selectarray('search_status', $liststatus, $search_status, -3);
 	print '</td>';
 }
 // Action column

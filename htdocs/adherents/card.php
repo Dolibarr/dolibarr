@@ -655,7 +655,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($user->rights->adherent->supprimer && $action == 'confirm_resign') {
+	if ($user->rights->adherent->supprimer && $action == 'confirm_resiliate') {
 		$error = 0;
 
 		if ($confirm == 'yes') {
@@ -726,6 +726,77 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($user->rights->adherent->supprimer && $action == 'confirm_exclude') {
+		$error = 0;
+
+		if ($confirm == 'yes') {
+			$adht = new AdherentType($db);
+			$adht->fetch($object->typeid);
+
+			$result = $object->exclude($user);
+
+			if ($result >= 0 && !count($object->errors)) {
+				if ($object->email && GETPOST("send_mail")) {
+					$subject = '';
+					$msg = '';
+
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_EXCLUSION;
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					if (empty($labeltouse) || (int) $labeltouse === -1) {
+						//fallback on the old configuration.
+						setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
+						$error++;
+					} else {
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
+						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+						$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
+
+						$moreinheader = 'X-Dolibarr-Info: send_an_email by adherents/card.php'."\r\n";
+
+						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+						if ($result < 0) {
+							$error++;
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					}
+				}
+			} else {
+				$error++;
+
+				if ($object->error) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+				$action = '';
+			}
+		}
+		if (!empty($backtopage) && !$error) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+	}
+
 	// SPIP Management
 	if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $confirm == 'yes') {
 		if (!count($object->errors)) {
@@ -769,7 +840,7 @@ $formfile = new FormFile($db);
 $formcompany = new FormCompany($db);
 
 $title = $langs->trans("Member")." - ".$langs->trans("Card");
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
@@ -1434,8 +1505,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
 		}
 
-		// Confirm terminate
-		if ($action == 'resign') {
+		// Confirm resiliate
+		if ($action == 'resiliate') {
 			$langs->load("mails");
 
 			$adht = new AdherentType($db);
@@ -1491,7 +1562,67 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($backtopage) {
 				$formquestion[] = array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
 			}
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resign", $formquestion, 'no', 1, 240);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ResiliateMember"), $langs->trans("ConfirmResiliateMember"), "confirm_resiliate", $formquestion, 'no', 1, 240);
+		}
+
+		// Confirm exclude
+		if ($action == 'exclude') {
+			$langs->load("mails");
+
+			$adht = new AdherentType($db);
+			$adht->fetch($object->typeid);
+
+			$subject = '';
+			$msg = '';
+
+			// Send subscription email
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			// Set output language
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+			// Load traductions files required by page
+			$outputlangs->loadLangs(array("main", "members"));
+			// Get email content from template
+			$arraydefaultmessage = null;
+			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_EXCLUSION;
+
+			if (!empty($labeltouse)) {
+				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+			}
+
+			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+				$subject = $arraydefaultmessage->topic;
+				$msg     = $arraydefaultmessage->content;
+			}
+
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
+
+			$tmp = $langs->trans("SendingAnEMailToMember");
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
+			$helpcontent = '';
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
+			$helpcontent .= $subjecttosend."\n";
+			$helpcontent .= "<br>";
+			$helpcontent .= '<b>'.$langs->trans("Content").'</b>:<br>';
+			$helpcontent .= dol_htmlentitiesbr($texttosend)."\n";
+			$label = $form->textwithpicto($tmp, $helpcontent, 1, 'help');
+
+			// Create an array
+			$formquestion = array();
+			if ($object->email) {
+				$formquestion[] = array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? 'true' : 'false'));
+			}
+			if ($backtopage) {
+				$formquestion[] = array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
+			}
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ExcludeMember"), $langs->trans("ConfirmExcludeMember"), "confirm_exclude", $formquestion, 'no', 1, 240);
 		}
 
 		// Confirm remove member
@@ -1584,12 +1715,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} elseif (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) {
-					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 				}
 			} else {
 				print $langs->trans("SubscriptionNotReceived");
 				if ($object->statut > 0) {
-					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 				}
 			}
 		}
@@ -1691,6 +1822,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 */
 
 		print '<div class="tabsAction">';
+		$isinspip = 0;
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 		if (empty($reshook)) {
@@ -1698,7 +1830,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 					}
 				}
 
@@ -1724,35 +1856,44 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Modify
 				if ($user->rights->adherent->creer) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify")."</a></div>";
+					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 				} else {
-					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>'."\n";
 				}
 
 				// Validate
 				if ($object->statut == -1) {
 					if ($user->rights->adherent->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate").'</a></div>'."\n";
 					} else {
-						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>';
+						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>'."\n";
 					}
 				}
 
 				// Reactivate
-				if ($object->statut == 0) {
+				if ($object->statut == 0 || $object->statut == -2) {
 					if ($user->rights->adherent->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
 					} else {
-						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
+						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable").'</font></div>'."\n";
 					}
 				}
 
-				// Terminate
+				// Resiliate
 				if ($object->statut >= 1) {
 					if ($user->rights->adherent->supprimer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=resign">'.$langs->trans("Resiliate")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=resiliate">'.$langs->trans("Resiliate")."</a></div>\n";
 					} else {
-						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
+						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate").'</font></div>'."\n";
+					}
+				}
+
+				// Exclude
+				if ($object->statut >= 1) {
+					if ($user->rights->adherent->supprimer) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=exclude">'.$langs->trans("Exclude")."</a></div>\n";
+					} else {
+						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Exclude").'</font></div>'."\n";
 					}
 				}
 
@@ -1760,12 +1901,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!empty($conf->societe->enabled) && !$object->socid) {
 					if ($user->rights->societe->creer) {
 						if ($object->statut != -1) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>'."\n";;
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>';
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>'."\n";
 						}
 					} else {
-						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrThirdParty")."</font></div>";
+						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrThirdParty").'</font></div>'."\n";
 					}
 				}
 
@@ -1773,12 +1914,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if (!$user->socid && !$object->user_id) {
 					if ($user->rights->user->user->creer) {
 						if ($object->statut != -1) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>'."\n";
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>'."\n";
 						}
 					} else {
-						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
+						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin").'</font></div>'."\n";
 					}
 				}
 
@@ -1787,18 +1928,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$isinspip = $mailmanspip->is_in_spip($object);
 
 					if ($isinspip == 1) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip").'</a></div>'."\n";
 					}
 					if ($isinspip == 0) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip").'</a></div>'."\n";
 					}
 				}
 
 				// Delete
 				if ($user->rights->adherent->supprimer) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete")."</a></div>\n";
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>'."\n";
 				} else {
-					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</font></div>'."\n";
 				}
 			}
 		}
@@ -1818,7 +1959,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			// Documents generes
+			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
 			//$filename =  'tmp_cards.php';
 			//$filedir = $conf->adherent->dir_output . '/' . get_exdir($object->id, 2, 0, 0, $object, 'member') . dol_sanitizeFileName($object->ref);
@@ -1827,7 +1968,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$genallowed = $user->rights->adherent->lire;
 			$delallowed = $user->rights->adherent->creer;
 
-			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
+			print $formfile->showdocuments('member', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', (empty($object->default_lang) ? '' : $object->default_lang), '', $object);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

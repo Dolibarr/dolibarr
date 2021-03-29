@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,8 @@ if ($page == -1) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
+$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 if ($sortorder == "") {
 	$sortorder = "DESC";
 }
@@ -81,17 +83,17 @@ $extrafields = new ExtraFields($db);
 
 
 $arrayfields = array(
-	'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'f.fk_contrat'=>array('label'=>$langs->trans("Contract"), 'checked'=>1),
-	'f.duree'=>array('label'=>$langs->trans("Duration"), 'checked'=>1),
-	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-	'f.frequency'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDone"), 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGeneration"), 'checked'=>1),
-	'f.date_when'=>array('label'=>$langs->trans("NextDateToExecution"), 'checked'=>1),
-	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'f.fk_contrat'=>array('label'=>"Contract", 'checked'=>1),
+	'f.duree'=>array('label'=>"Duration", 'checked'=>1),
+	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
+	'f.frequency'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
+	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
+	'f.date_last_gen'=>array('label'=>"DateLastGeneration", 'checked'=>1),
+	'f.date_when'=>array('label'=>"NextDateToExecution", 'checked'=>1),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 );
 
 
@@ -578,15 +580,13 @@ if ($action == 'create') {
 			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
-
 			$title = $langs->trans("Recurrence");
 			print load_fiche_titre($title, '', 'calendar');
 
 			print '<table class="border centpercent">';
 
 			// if "frequency" is empty or = 0, the reccurence is disabled
-			print '<tr><td style="width: 50%">';
+			print '<tr><td class="titlefield">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Frequency');
 			print '</td>';
@@ -661,7 +661,7 @@ if ($action == 'create') {
 				print '<table class="border centpercent">';
 
 				// Nb of generation already done
-				print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';
+				print '<tr><td class="titlefield">'.$langs->trans("NbOfGenerationOfRecordDone").'</td>';
 				print '<td>';
 				print $object->nb_gen_done ? $object->nb_gen_done : '0';
 				print '</td>';
@@ -734,8 +734,8 @@ if ($action == 'create') {
 			}
 			print '</table>';
 
-			/**
-			 * Barre d'actions
+			/*
+			 * Action bar
 			 */
 			print '<div class="tabsAction">';
 
@@ -815,7 +815,7 @@ if ($action == 'create') {
 			print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
 			// Recurring or not
 			print_liste_field_titre("Frequency", $_SERVER['PHP_SELF'], "f.frequency", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
-			print_liste_field_titre("NbOfGenerationDone", $_SERVER['PHP_SELF'], "f.nb_gen_done", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("NbOfGenerationDoneShort", $_SERVER['PHP_SELF'], "f.nb_gen_done", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("DateLastGeneration", $_SERVER['PHP_SELF'], "f.date_last_gen", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("NextDateToIntervention", $_SERVER['PHP_SELF'], "f.date_when", "", "", 'width="100px"', $sortfield, $sortorder, 'center ');
 			print '<th width="100px"></th>';
@@ -906,7 +906,7 @@ if ($action == 'create') {
 					}
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="10">'.$langs->trans("NoneF").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="10"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>";

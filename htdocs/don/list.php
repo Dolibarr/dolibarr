@@ -106,7 +106,7 @@ $sql .= " p.rowid as pid, p.ref, p.title, p.public";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
 if ($search_status != '' && $search_status != '-4') {
-	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 if (trim($search_ref) != '') {
 	$sql .= natural_search('d.ref', $search_ref);
@@ -292,7 +292,7 @@ if ($resql) {
 			}
 			print "</td>\n";
 		}
-		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 		print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
 		print '<td></td>';
 		print "</tr>";

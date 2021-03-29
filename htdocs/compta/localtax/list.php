@@ -91,7 +91,7 @@ if ($result) {
 		$i++;
 	}
 	print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
-	print '<td class="right">'.price($total).'</td></tr>';
+	print '<td class="right"><span class="amount">'.price($total).'</span></td></tr>';
 
 	print "</table>";
 	$db->free($result);

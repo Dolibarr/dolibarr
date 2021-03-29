@@ -2,7 +2,7 @@
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +45,12 @@ $object = new Contact($db);
  * Action
  */
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->societe->contact->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact->creer) {
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0, 0, 0, $_POST["birthdaymonth"], $_POST["birthdayday"], $_POST["birthdayyear"]);
-	$object->birthday_alert = $_POST["birthday_alert"];
+	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
+	$object->birthday_alert = GETPOST("birthday_alert");
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
@@ -119,7 +119,7 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $c
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 
@@ -308,7 +308,9 @@ if ($action == 'edit') {
 
 
 if ($action != 'edit') {
-	// Barre d'actions
+	/*
+	 * Action bar
+	 */
 	if ($user->socid == 0) {
 		print '<div class="tabsAction">';
 

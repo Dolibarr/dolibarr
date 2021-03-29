@@ -162,7 +162,7 @@ if (empty($reshook)) {
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = $_POST["customeraccountancycode"];
+		$object->code_compta = GETPOST("customeraccountancycode");
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -305,7 +305,9 @@ $title = $langs->trans("CustomerCard");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name;
 }
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
+
 llxHeader('', $title, $help_url);
 
 
@@ -1334,9 +1336,8 @@ if ($object->id > 0) {
 
 
 	/*
-	 * Barre d'actions
+	 * Action bar
 	 */
-
 	print '<div class="tabsAction">';
 
 	$parameters = array();

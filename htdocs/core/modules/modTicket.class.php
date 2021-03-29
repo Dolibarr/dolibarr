@@ -22,7 +22,7 @@
  *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
- *     \brief       Description and activation file for module Ticket
+ *     \brief       Description and activation file for the module Ticket
  */
 require_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -127,16 +127,21 @@ class modTicket extends DolibarrModules
 			'tabsql' => array(
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
-				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
+				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default, f.public FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
 				'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
 			),
 			'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
-			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default"),
-			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default"),
-			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default"),
+			'tabfield' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
+			'tabfieldvalue' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
+			'tabfieldinsert' => array("code,label,pos,use_default", "code,label,pos,use_default", "code,label,pos,use_default,public", "code,label,pos,use_default"),
 			'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
 			'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
-			'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),
+			'tabhelp' => array(
+				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
+				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")),
+				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"), 'public'=>$langs->trans("Enter0or1").'<br>'.$langs->trans("TicketGroupIsPublicDesc")),
+				array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))
+			),
 		);
 
 		// Boxes
@@ -198,6 +203,7 @@ class modTicket extends DolibarrModules
 		$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
 			'type' => 'top', // This is a Top menu entry
 			'titre' => 'Ticket',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu' => 'ticket',
 			'leftmenu' => '1', // Use 1 if you also want to add left menu entries using this descriptor.
 			'url' => '/ticket/index.php',

@@ -177,12 +177,12 @@ function member_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent.php';
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_emails.php';
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_emails.php';
 	$head[$h][1] = $langs->trans("EMails");
 	$head[$h][2] = 'emails';
 	$h++;
@@ -193,12 +193,12 @@ function member_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_type_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_type_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
 	$head[$h][2] = 'attributes_type';
 	$h++;

@@ -687,7 +687,7 @@ class MouvementStock extends CommonObject
 		//if (null !== $ref) {
 			//$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
 		//} else {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		//}
 
 		$resql = $this->db->query($sql);
@@ -1105,6 +1105,47 @@ class MouvementStock extends CommonObject
 		$this->id = 0;
 
 		// There is no specific properties. All data into insert are provided as method parameter.
+	}
+
+	/**
+	 *  Return html string with picto for type of movement
+	 *
+	 *	@param	int		$withlabel			With label
+	 *	@return	string					    String with URL
+	 */
+	public function getTypeMovement($withlabel = 0)
+	{
+		global $langs;
+
+		$s = '';
+		switch ($this->type) {
+			case "0":
+				$s = '<span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockIncreaseAfterCorrectTransfer');
+				}
+				break;
+			case "1":
+				$s = '<span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockDecreaseAfterCorrectTransfer');
+				}
+				break;
+			case "2":
+				$s = '<span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockDecrease');
+				}
+				break;
+			case "3":
+				$s = '<span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockIncrease');
+				}
+				break;
+		}
+
+		return $s;
 	}
 
 	/**

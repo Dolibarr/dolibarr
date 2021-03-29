@@ -23,7 +23,7 @@
  *	\brief      	Module to manage payment by bank transfer
  *	\file       	htdocs/core/modules/modPaymentByBankTransfer.class.php
  *	\ingroup    	paymentbybanktransfer
- *	\brief      	File to describe and activate the module PaymentByBankTransfer
+ *	\brief      	Description and activation file for the module PaymentByBankTransfer
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

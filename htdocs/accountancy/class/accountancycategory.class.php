@@ -261,7 +261,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
 			if ($code) {
@@ -354,7 +354,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
 		$sql .= " fk_country=".(isset($this->fk_country) ? $this->fk_country : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -392,7 +392,7 @@ class AccountancyCategory // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_accounting_category";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -743,7 +743,7 @@ class AccountancyCategory // extends CommonObject
 				}
 				$listofaccount .= "'".$cptcursor."'";
 			}
-			$sql .= " AND t.numero_compte IN (".$listofaccount.")";
+			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount).")";
 		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
 		}

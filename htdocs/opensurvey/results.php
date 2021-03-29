@@ -29,12 +29,10 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
-
 // Security check
-if (!$user->rights->opensurvey->read) {
+if (empty($user->rights->opensurvey->read)) {
 	accessforbidden();
 }
-
 
 // Init vars
 $action = GETPOST('action', 'aZ09');
@@ -68,9 +66,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
-			if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1') {
+			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
 				$nouveauchoix .= "1";
-			} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2') {
+			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 				$nouveauchoix .= "2";
 			} else { // sinon c'est 0
 				$nouveauchoix .= "0";
@@ -124,17 +122,16 @@ if ($testmodifier) {
 
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++) {
-		//var_dump($_POST["choix$i"]);
-		if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1') {
+		if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
 			$nouveauchoix .= "1";
-		} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2') {
+		} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 			$nouveauchoix .= "2";
 		} else { // sinon c'est 0
 			$nouveauchoix .= "0";
 		}
 	}
 
-	$idtomodify = $_POST["idtomodify".$modifier];
+	$idtomodify = GETPOST("idtomodify".$modifier);
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
 	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql .= " WHERE id_users = '".$db->escape($idtomodify)."'";
@@ -171,7 +168,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 }
 
 // Add column (with format date)
-if (isset($_POST["ajoutercolonne"]) && $object->format == "D") {
+if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 	// Security check
 	if (!$user->rights->opensurvey->write) {
 		accessforbidden();
@@ -179,27 +176,27 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D") {
 
 	$nouveauxsujets = $object->sujet;
 
-	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
-		isset($_POST["nouveaumois"]) && $_POST["nouveaumois"] != "vide" &&
-		isset($_POST["nouvelleannee"]) && $_POST["nouvelleannee"] != "vide") {
-		$nouvelledate = dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
+	if (GETPOSTISSET("nouveaujour") && GETPOST("nouveaujour") != "vide" &&
+		GETPOSTISSET("nouveaumois") && GETPOST("nouveaumois") != "vide" &&
+		GETPOSTISSET("nouvelleannee") && GETPOST("nouvelleannee") != "vide") {
+		$nouvelledate = dol_mktime(0, 0, 0, GETPOST("nouveaumois"), GETPOST("nouveaujour"), GETPOST("nouvelleannee"));
 
-		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"] != "vide") {
+		if (GETPOSTISSET("nouvelleheuredebut") && GETPOST("nouvelleheuredebut") != "vide") {
 			$nouvelledate .= "@";
 			$nouvelledate .= GETPOST("nouvelleheuredebut");
 			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutedebut"] != "vide") {
+			if (GETPOST("nouvelleminutedebut") != "vide") {
 				$nouvelledate .= GETPOST("nouvelleminutedebut");
 			}
 		}
 
-		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"] != "vide") {
+		if (GETPOSTISSET("nouvelleheurefin") && GETPOST("nouvelleheurefin") != "vide") {
 			$nouvelledate .= "-";
 			$nouvelledate .= GETPOST("nouvelleheurefin");
 			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutefin"] != "vide") {
+			if (GETPOST("nouvelleminutefin") != "vide") {
 				$nouvelledate .= GETPOST("nouvelleminutefin");
 			}
 		}
@@ -594,7 +591,10 @@ if (GETPOST('ajoutsujet')) {
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<span class="opacitymedium">'.$langs->trans("PollAdminDesc", img_picto('', 'delete'), $langs->trans("Add")).'</span><br>';
+	print '<span class="opacitymedium">';
+	$s = $langs->trans("PollAdminDesc", '{s1}', $langs->trans("Add"));
+	print str_replace('{s1}', img_picto('', 'delete'), $s);
+	print '</span><br>';
 }
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;

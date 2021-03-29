@@ -417,13 +417,11 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
-		// POST[remise_id] or POST[remise_id_for_payment]
-
 		// We use the credit to reduce amount of invoice
-		if (!empty($_POST["remise_id"])) {
+		if (GETPOST("remise_id", "int")) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount($_POST["remise_id"]);
+				$result = $object->insert_discount(GETPOST("remise_id", "int"));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -432,10 +430,10 @@ if (empty($reshook)) {
 			}
 		}
 		// We use the credit to reduce remain to pay
-		if (!empty($_POST["remise_id_for_payment"])) {
+		if (GETPOST("remise_id_for_payment", "int")) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
-			$discount->fetch($_POST["remise_id_for_payment"]);
+			$discount->fetch(GETPOST("remise_id_for_payment", "int"));
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
@@ -1082,14 +1080,14 @@ if (empty($reshook)) {
 			$prod = new Product($db);
 			$prod->fetch(GETPOST('productid'));
 			$label = $prod->description;
-			if (trim($_POST['product_desc']) != trim($label)) {
-				$label = $_POST['product_desc'];
+			if (trim(GETPOST('product_desc', 'restricthtml')) != trim($label)) {
+				$label = GETPOST('product_desc', 'restricthtml');
 			}
 
 			$type = $prod->type;
 		} else {
-			$label = $_POST['product_desc'];
-			$type = $_POST["type"] ? $_POST["type"] : 0;
+			$label = GETPOST('product_desc', 'restricthtml');
+			$type = GETPOST("type") ? GETPOST("type") : 0;
 		}
 
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -3241,7 +3239,7 @@ if ($action == 'create') {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 
 					/*
-					 * Documents generes
+					 * Generated documents
 					 */
 					$ref = dol_sanitizeFileName($object->ref);
 					$subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;

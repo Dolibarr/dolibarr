@@ -41,6 +41,7 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
+$cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm');
 $refund = GETPOST("refund", "int");
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
@@ -74,7 +75,7 @@ $hookmanager->initHooks(array('taxvatcard', 'globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && !$id) {
+if ($cancel && !$id) {
 	header("Location: list.php");
 	exit;
 }
@@ -135,7 +136,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 	}
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel")) {
+if ($action == 'add' && $cancel) {
 	$error = 0;
 
 	$object->fk_account = GETPOST("accountid", 'int');
@@ -260,7 +261,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {
 	}
 }
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
 	$amount = price2num(GETPOST('amount'));
 
 	if (empty($amount)) {
@@ -405,7 +406,7 @@ if ($action == 'create') {
 	print '</div>';
 	print "<br>\n";
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -461,16 +462,14 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	// Bouton Save payment
-	print '<tr class="hide_if_no_auto_create_payment"><td>';
-	print $langs->trans("ClosePaidVATAutomatically");
-	print '</td><td><input type="checkbox" checked value="1" name="closepaidtva"></td></tr>';
-
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
+	print '<span class="hide_if_no_auto_create_payment">';
+	print '<input type="checkbox" checked value="1" name="closepaidtva"> <span class="">'.$langs->trans("ClosePaidVATAutomatically").'</span>';
+	print '</span><br>';
 	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -512,7 +511,7 @@ if ($id) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 	}
 
-	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
+	print dol_get_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
@@ -676,7 +675,7 @@ if ($id) {
 					}
 					print '</td>';
 				}
-				print '<td class="right">'.price($objp->amount)."</td>\n";
+				print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 				print "</tr>";
 				$totalpaye += $objp->amount;
 				$i++;
@@ -710,7 +709,7 @@ if ($id) {
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit') {
 		print '<div align="center">';
@@ -722,7 +721,7 @@ if ($id) {
 	}
 
 	/*
-	 * Action buttons
+	 * Action bar
 	 */
 	print "<div class=\"tabsAction\">\n";
 	if ($action != 'edit') {

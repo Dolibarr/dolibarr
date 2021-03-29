@@ -43,12 +43,13 @@ $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $search_lastname = GETPOST('search_lastname', 'alpha');
-$search_login		= GETPOST('search_login', 'alpha');
-$search_email		= GETPOST('search_email', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
+$search_email = GETPOST('search_email', 'alpha');
 $type = GETPOST('type', 'intcomma');
-$status				= GETPOST('status', 'alpha');
+$status = GETPOST('status', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -213,7 +214,8 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
 llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 
 // List of members type
@@ -564,6 +566,8 @@ if ($rowid > 0) {
 					$titre = $langs->trans("MembersListNotUpToDate");
 				} elseif ($status == '0') {
 					$titre = $langs->trans("MembersListResiliated");
+				} elseif ($status == '-2') {
+					$titre = $langs->trans("MembersListExcluded");
 				}
 			} elseif ($action == 'search') {
 				$titre = $langs->trans("MembersListQualified");

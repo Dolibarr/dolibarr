@@ -78,11 +78,11 @@ class ExpenseReportStats extends Stats
 		if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
-			$this->where .= " AND e.fk_user_author IN (".(join(',', $childids)).")";
+			$this->where .= " AND e.fk_user_author IN (".$this->db->sanitize(join(',', $childids)).")";
 		}
 
 		if ($this->userid > 0) {
-			$this->where .= ' AND e.fk_user_author = '.$this->userid;
+			$this->where .= ' AND e.fk_user_author = '.((int) $this->userid);
 		}
 	}
 

@@ -362,7 +362,7 @@ class FormOther
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
 			}
-			$moreforfilter .= '<option class="optiongrey" '.($moreparamonempty ? $moreparamonempty.' ' : '').'value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
 			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
 		}
 
@@ -481,7 +481,12 @@ class FormOther
 				$sql_usr .= $hookmanager->resArray[1];
 			}
 		}
-		$sql_usr .= " ORDER BY statut DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+
+		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+			$sql_usr .= " ORDER BY statut DESC, firstname ASC, lastname ASC";	// Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+		} else {
+			$sql_usr .= " ORDER BY statut DESC, lastname ASC, firstname ASC";	// Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+		}
 		//print $sql_usr;exit;
 
 		$resql_usr = $this->db->query($sql_usr);

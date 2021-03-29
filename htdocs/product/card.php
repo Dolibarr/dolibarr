@@ -405,8 +405,8 @@ if (empty($reshook)) {
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if (GETPOSTISSET("price_".$i)) {
-						$object->multiprices["$i"] = price2num($_POST["price_".$i], 'MU');
-						$object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+						$object->multiprices["$i"] = price2num(GETPOST("price_".$i), 'MU');
+						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
 					} else {
 						$object->multiprices["$i"] = "";
 					}
@@ -945,11 +945,11 @@ $helpurl = '';
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
 }
 
 llxHeader('', $title, $helpurl);
@@ -1135,6 +1135,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type != 1 && !empty($conf->stock->enabled)) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'pictofixedwidth');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
@@ -2261,11 +2262,9 @@ if (empty($reshook)) {
 // Print form confirm
 print $formconfirm;
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Action bar
+ */
 if ($action != 'create' && $action != 'edit') {
 	print "\n".'<div class="tabsAction">'."\n";
 
@@ -2407,7 +2406,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete') {

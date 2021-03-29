@@ -44,6 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $rowid = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $typeid = GETPOST('typeid', 'int');
+$cancel = GETPOST('cancel');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -121,6 +122,7 @@ $paymentdate = -1;
  * 	Actions
  */
 
+$parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -147,19 +149,18 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
 	$error = 0;
 	if (empty($user->rights->user->user->creer)) {    // If can edit only itself user, we can link to itself only
-		if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id) {
+		if (GETPOST("userid", 'int') != $user->id && GETPOST("userid", 'int') != $object->user_id) {
 			$error++;
 			setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
 		}
 	}
 
 	if (!$error) {
-		if ($_POST["userid"] != $object->user_id) {  // If link differs from currently in database
-			$result = $object->setUserId($_POST["userid"]);
+		if (GETPOST("userid", 'int') != $object->user_id) {  // If link differs from currently in database
+			$result = $object->setUserId(GETPOST("userid", 'int'));
 			if ($result < 0) {
 				dol_print_error('', $object->error);
 			}
-			$_POST['action'] = '';
 			$action = '';
 		}
 	}
@@ -189,14 +190,13 @@ if (empty($reshook) && $action == 'setsocid') {
 				if ($result < 0) {
 					dol_print_error('', $object->error);
 				}
-				$_POST['action'] = '';
 				$action = '';
 			}
 		}
 	}
 }
 
-if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !$_POST["cancel"]) {
+if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -208,25 +208,25 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	$datesubscription = 0;
 	$datesubend = 0;
 	$paymentdate = 0;
-	if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"]) {
-		$datesubscription = dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
+		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 	}
-	if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"]) {
-		$datesubend = dol_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	if (GETPOST("endyear", 'int') && GETPOST("endmonth", 'int') && GETPOST("endday", 'int')) {
+		$datesubend = dol_mktime(0, 0, 0, GETPOST("endmonth", 'int'), GETPOST("endday", 'int'), GETPOST("endyear", 'int'));
 	}
-	if ($_POST["paymentyear"] && $_POST["paymentmonth"] && $_POST["paymentday"]) {
-		$paymentdate = dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
+	if (GETPOST("paymentyear", 'int') && GETPOST("paymentmonth", 'int') && GETPOST("paymentday", 'int')) {
+		$paymentdate = dol_mktime(0, 0, 0, GETPOST("paymentmonth", 'int'), GETPOST("paymentday", 'int'), GETPOST("paymentyear", 'int'));
 	}
 	$amount = price2num(GETPOST("subscription", 'alpha')); // Amount of subscription
-	$label = $_POST["label"];
+	$label = GETPOST("label");
 
 	// Payment informations
-	$accountid = $_POST["accountid"];
-	$operation = $_POST["operation"]; // Payment mode
+	$accountid = GETPOST("accountid", 'int');
+	$operation = GETPOST("operation", "alphanohtml"); // Payment mode
 	$num_chq = GETPOST("num_chq", "alphanohtml");
-	$emetteur_nom = $_POST["chqemetteur"];
-	$emetteur_banque = $_POST["chqbank"];
-	$option = $_POST["paymentsave"];
+	$emetteur_nom = GETPOST("chqemetteur");
+	$emetteur_banque = GETPOST("chqbank");
+	$option = GETPOST("paymentsave");
 	if (empty($option)) {
 		$option = 'none';
 	}
@@ -266,19 +266,19 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 			$error++;
 			$action = 'addsubscription';
 		} else {
-			if (!empty($conf->banque->enabled) && $_POST["paymentsave"] != 'none') {
-				if ($_POST["subscription"]) {
-					if (!$_POST["label"]) {
+			if (!empty($conf->banque->enabled) && GETPOST("paymentsave") != 'none') {
+				if (GETPOST("subscription")) {
+					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
 					}
-					if ($_POST["paymentsave"] != 'invoiceonly' && !$_POST["operation"]) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !GETPOST("operation")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 					}
-					if ($_POST["paymentsave"] != 'invoiceonly' && !($_POST["accountid"] > 0)) {
+					if (GETPOST("paymentsave") != 'invoiceonly' && !(GETPOST("accountid", 'int') > 0)) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
 					}
 				} else {
-					if ($_POST["accountid"]) {
+					if (GETPOST("accountid")) {
 						$errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
 					}
 				}
@@ -428,8 +428,10 @@ $form = new Form($db);
 $now = dol_now();
 
 $title = $langs->trans("Member")." - ".$langs->trans("Subscriptions");
-$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
+
+llxHeader("", $title, $help_url);
 
 
 $param = '';
@@ -450,7 +452,8 @@ if ($optioncss != '') {
 if ($rowid > 0) {
 	$res = $object->fetch($rowid);
 	if ($res < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 
 	$adht->fetch($object->typeid);
@@ -639,10 +642,10 @@ if ($rowid > 0) {
 
 
 	/*
-	 * Action buttons
+	 * Action bar
 	 */
 
-	// Button to create a new subscription if member no draft neither resiliated
+	// Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)
 	if ($user->rights->adherent->cotisation->creer) {
 		if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<div class="tabsAction">';
@@ -844,7 +847,7 @@ if ($rowid > 0) {
 						});
 						';
 			if (GETPOST('paymentsave')) {
-				print '$("#'.GETPOST('paymentsave').'").prop("checked",true);';
+				print '$("#'.GETPOST('paymentsave', 'aZ09').'").prop("checked", true);';
 			}
 			print '});';
 			print '</script>'."\n";
@@ -1035,6 +1038,7 @@ if ($rowid > 0) {
 
 				// Bank account
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("FinancialAccount").'</td><td>';
+				print img_picto('', 'bank_account');
 				$form->select_comptes(GETPOST('accountid'), 'accountid', 0, '', 2);
 				print "</td></tr>\n";
 

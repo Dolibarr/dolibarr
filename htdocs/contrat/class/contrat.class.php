@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -979,7 +979,7 @@ class Contrat extends CommonObject
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".((int) $this->id);
 					if ($this->db->query($sql)) {
 						if ($this->id) {
 							$this->ref = "(PROV".$this->id.")";
@@ -1172,7 +1172,7 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",", $tab_resql).")";
+				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".$this->db->sanitize(implode(",", $tab_resql)).")";
 
 				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1225,7 +1225,7 @@ class Contrat extends CommonObject
 		// Delete contract
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete contrat", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1353,7 +1353,7 @@ class Contrat extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2001,7 +2001,8 @@ class Contrat extends CommonObject
 				$label .= ' '.$this->getLibStatut(5);
 			}*/
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+			$ref_customer = (!empty($this->ref_customer) ? $this->ref_customer : (empty($this->ref_client) ? '' : $this->ref_client));
+			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$ref_customer;
 			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -2873,7 +2874,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.fk_unit";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " WHERE t.rowid = '".$this->db->escape($ref)."'";
@@ -3098,7 +3099,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_user_cloture=".($this->fk_user_cloture > 0 ? $this->fk_user_cloture : "NULL").",";
 		$sql .= " commentaire='".$this->db->escape($this->commentaire)."',";
 		$sql .= " fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

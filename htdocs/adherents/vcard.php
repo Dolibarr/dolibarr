@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2021	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  */
 
 /**
- *	    \file       htdocs/adherent/vcard.php
+ *	    \file       htdocs/adherents/vcard.php
  *      \ingroup    societe
- *		\brief      Onglet vcard d'un adherent
+ *		\brief      Vcard tab of a member
  */
 
 require '../main.inc.php';

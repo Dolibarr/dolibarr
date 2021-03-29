@@ -64,6 +64,18 @@ if ($id > 0 || $ref) {
 
 $selectedvariant = $_SESSION['addvariant_'.$object->id];
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions

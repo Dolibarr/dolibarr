@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,16 +44,16 @@ $modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') :
 $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzuserrel');
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzuserrel');
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int");
@@ -114,7 +114,7 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = $conf->global->TAX_MODE;
+$modetax = empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE;
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOST("modetax", 'int');
 }

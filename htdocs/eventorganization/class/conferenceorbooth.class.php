@@ -61,7 +61,7 @@ class ConferenceOrBooth extends ActionComm
 	/**
 	 * @var string String with name of icon for conferenceorbooth. Must be the part after the 'object_' into object_conferenceorbooth.png
 	 */
-	public $picto = 'conferenceorbooth@eventorganization';
+	public $picto = 'conferenceorbooth';
 
 
 	const STATUS_DRAFT = 0;
@@ -69,7 +69,7 @@ class ConferenceOrBooth extends ActionComm
 	const STATUS_CONFIRMED = 2;
 	const STATUS_NOT_QUALIFIED = 3;
 	const STATUS_DONE = 4;
-	const STATUS_CANCELED = -1;
+	const STATUS_CANCELED = 9;
 
 
 	/**
@@ -104,18 +104,20 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public $fields=array(
 		'id' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
+		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1::eventorganization', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
-		'fk_action' => array('type'=>'sellist:c_actioncomm:label:rowid::module LIKE (\'conference\',\'booth\'))', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
+		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1,),
+		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
+		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'1',),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_author' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_mod' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Valid&eacute;', '9'=>'Annul&eacute;'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'EvntOrgDraft', '1'=>'EvntOrgSuggested', '2'=> 'EvntOrgConfirmed', '3' =>'EvntOrgNotQualified', '4' =>'EvntOrgDone', '9'=>'EvntOrgCancelled'),),
 	);
 	public $rowid;
 	public $id;
@@ -185,6 +187,7 @@ class ConferenceOrBooth extends ActionComm
 	public function create(User $user, $notrigger = false)
 	{
 		$this->setPercentageFromStatus();
+		$this->setActionCommFields($user);
 		return parent::create($user, $notrigger);
 	}
 
@@ -193,7 +196,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 * @return void
 	 */
-	public function setPercentageFromStatus()
+	protected function setPercentageFromStatus()
 	{
 		if ($this->status==self::STATUS_DONE) {
 			$this->percentage=100;
@@ -204,15 +207,44 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
+	 * Set action comm fields
+	 *
+	 * @param User $user User
+	 * @return void
+	 */
+	protected function setActionCommFields(User $user)
+	{
+		$this->userownerid=$user->id;
+		$this->type_id=$this->fk_action;
+		$this->socid=$this->fk_soc;
+		$this->datef=$this->datep2;
+	}
+
+	/**
+	 * Get action comm fields
+	 *
+	 * @return void
+	 */
+	protected function getActionCommFields()
+	{
+		$this->fk_action=$this->type_id;
+		$this->fk_soc=$this->socid;
+		$this->datep2=$this->datef;
+	}
+
+	/**
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
+	 * @param  string	$ref_ext		Ref ext to get
+	 * @param	string	$email_msgid	Email msgid
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
 	{
-		$result = parent::fetch($id, $ref);
+		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
+		$this->getActionCommFields();
 		return $result;
 	}
 
@@ -238,7 +270,7 @@ class ConferenceOrBooth extends ActionComm
 		$records = array();
 
 		$sql = 'SELECT ';
-		$sql .= $this->getFieldList();
+		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
@@ -308,17 +340,17 @@ class ConferenceOrBooth extends ActionComm
 	public function update(User $user, $notrigger = false)
 	{
 		$this->setPercentageFromStatus();
+		$this->setActionCommFields($user);
 		return parent::update($user, $notrigger);
 	}
 
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete($notrigger = false)
 	{
 		//TODO delete attendees and subscription
 		return parent::delete($notrigger);
@@ -496,13 +528,16 @@ class ConferenceOrBooth extends ActionComm
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	int		$maxlength					Not use here just for declaration method compatibility with parent classes
+	 *  @param	string	$classname					Not use here just for declaration method compatibility with parent classes
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
+	 *  @param	int		$overwritepicto				Not use here just for declaration method compatibility with parent classes
 	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  string  $morecss                    Add more css on link
 	 *  @return	string                              String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -603,11 +638,12 @@ class ConferenceOrBooth extends ActionComm
 	 *  Return the label of the status
 	 *
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param  int		$hidenastatus   Not use here just for declaration method compatibility with parent classes
 	 *  @return	string 			       Label of status
 	 */
-	public function getLibStatut($mode = 0)
+	public function getLibStatut($mode = 0, $hidenastatus = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatutEvent($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -618,7 +654,7 @@ class ConferenceOrBooth extends ActionComm
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
-	public function LibStatut($status, $mode = 0)
+	public function LibStatutEvent($status, $mode = 0)
 	{
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
@@ -627,13 +663,13 @@ class ConferenceOrBooth extends ActionComm
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
 			$this->labelStatus[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatus[self::STATUS_NOTSELECTED] = $langs->trans('NotSelected');
+			$this->labelStatus[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
 			$this->labelStatus[self::STATUS_DONE] = $langs->trans('Done');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_SUGGESTED] = $langs->trans('Suggested');
 			$this->labelStatusShort[self::STATUS_CONFIRMED] = $langs->trans('Confirmed');
-			$this->labelStatusShort[self::STATUS_NOTSELECTED] = $langs->trans('NotSelected');
+			$this->labelStatusShort[self::STATUS_NOT_QUALIFIED] = $langs->trans('NotSelected');
 			$this->labelStatusShort[self::STATUS_DONE] = $langs->trans('Done');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}

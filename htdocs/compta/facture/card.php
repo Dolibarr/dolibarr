@@ -138,19 +138,19 @@ $permissiondellink = $usercancreate; // Used by the include of actions_dellink.i
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdonw.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
+// retained warranty invoice available type
+$retainedWarrantyInvoiceAvailableType = array();
+if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
+}
+
 // Security check
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
-
-// retained warranty invoice available type
-$retainedWarrantyInvoiceAvailableType = array();
-if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
-	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
-}
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
 
 
 /*
@@ -2571,7 +2571,7 @@ if (empty($reshook)) {
 						$sql .= ' SET situation_cycle_ref='.$newCycle;
 						$sql .= ' , situation_final=0';
 						$sql .= ' , situation_counter='.$object->situation_counter;
-						$sql .= ' WHERE rowid IN ('.implode(',', $linkedCreditNotesList).')';
+						$sql .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $linkedCreditNotesList)).')';
 
 						$resql = $db->query($sql);
 						if (!$resql) {
@@ -2815,9 +2815,10 @@ if (!empty($conf->projet->enabled)) {
 $now = dol_now();
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Card');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
-llxHeader('', $title, $helpurl);
+$help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $help_url);
 
 // Mode creation
 
@@ -4732,8 +4733,8 @@ if ($action == 'create') {
 				if (!empty($conf->banque->enabled)) {
 					print '<td class="right"></td>';
 				}
-				print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
-				print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
+				print '<td class="right"><span class="amount">'.price($prev_invoice->total_ht).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($prev_invoice->total_ttc).'</span></td>';
 				print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalpaidforthisinvoice).'</td>';
 				print '</tr>';
 			}
@@ -4752,8 +4753,8 @@ if ($action == 'create') {
 		if (!empty($conf->banque->enabled)) {
 			print '<td class="right"></td>';
 		}
-		print '<td class="right">'.price($object->total_ht).'</td>';
-		print '<td class="right">'.price($object->total_ttc).'</td>';
+		print '<td class="right"><span class="amount">'.price($object->total_ht).'</span></td>';
+		print '<td class="right"><span class="amount">'.price($object->total_ttc).'</span></td>';
 		print '<td class="right">'.$object->getLibStatut(3, $object->getSommePaiement()).'</td>';
 		print '</tr>';
 
@@ -4807,8 +4808,8 @@ if ($action == 'create') {
 				if (!empty($conf->banque->enabled)) {
 					print '<td class="right"></td>';
 				}
-				print '<td class="right">'.price($next_invoice->total_ht).'</td>';
-				print '<td class="right">'.price($next_invoice->total_ttc).'</td>';
+				print '<td class="right"><span class="amount">'.price($next_invoice->total_ht).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($next_invoice->total_ttc).'</span></td>';
 				print '<td class="right">'.$next_invoice->getLibStatut(3, $totalpaye).'</td>';
 				print '</tr>';
 			}
@@ -4913,7 +4914,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 				}
-				print '<td class="right">'.price($sign * $objp->amount).'</td>';
+				print '<td class="right"><span class="amount">'.price($sign * $objp->amount).'</span></td>';
 				print '<td class="center">';
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepayment&token='.newToken().'&paiement_id='.$objp->rowid.'">';
@@ -4971,7 +4972,7 @@ if ($action == 'create') {
 				print $invoice->getNomUrl(0);
 				print '</span>';
 				print '</td>';
-				print '<td class="right">'.price($obj->amount_ttc).'</td>';
+				print '<td class="right"><span class="amount">'.price($obj->amount_ttc).'</span></td>';
 				print '<td class="right">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
 				print '</td></tr>';
@@ -4993,7 +4994,7 @@ if ($action == 'create') {
 			print '<span class="opacitymedium">';
 			print $form->textwithpicto($langs->trans("Discount"), $langs->trans("HelpEscompte"), - 1);
 			print '</span>';
-			print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')).'</td><td>&nbsp;</td></tr>';
+			print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
@@ -5013,7 +5014,7 @@ if ($action == 'create') {
 			print '<span class="opacitymedium">';
 			print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
 			print '</span>';
-			print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')).'</td><td>&nbsp;</td></tr>';
+			print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
@@ -5027,7 +5028,7 @@ if ($action == 'create') {
 			print '<span class="opacitymedium">';
 			print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 			print '</span>';
-			print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')).'</td><td>&nbsp;</td></tr>';
+			print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
@@ -5036,7 +5037,7 @@ if ($action == 'create') {
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
 		print '<span class="opacitymedium">';
 		print $langs->trans("Billed");
-		print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+		print '</td><td class="right"><span class="amount">'.price($object->total_ttc).'</span></td><td>&nbsp;</td></tr>';
 		// Remainder to pay
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
 		print '<span class="opacitymedium">';
@@ -5046,7 +5047,7 @@ if ($action == 'create') {
 		}
 		print '</span>';
 		print '</td>';
-		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.price($resteapayeraffiche).'</td>';
+		print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'"><span class="amount">'.price($resteapayeraffiche).'</span></td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
 		// Retained warranty : usualy use on construction industry
@@ -5075,10 +5076,10 @@ if ($action == 'create') {
 		// Total already paid back
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
 		print $langs->trans('AlreadyPaidBack');
-		print ' :</td><td class="right">'.price($sign * $totalpaye).'</td><td>&nbsp;</td></tr>';
+		print ' :</td><td class="right"><span class="amount">'.price($sign * $totalpaye).'</span></td><td>&nbsp;</td></tr>';
 
 		// Billed
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right"><span class="amount">'.price($sign * $object->total_ttc).'</span></td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay back
 		print '<tr><td colspan="'.$nbcols.'" class="right">';
@@ -5459,7 +5460,7 @@ if ($action == 'create') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		// Documents generes
+		// Generated documents
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?facid='.$object->id;

@@ -45,6 +45,7 @@ $langs->loadLangs(array("admin", "cashdesk"));
 /*
  * Actions
  */
+
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 

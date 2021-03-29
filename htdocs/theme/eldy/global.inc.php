@@ -210,7 +210,10 @@ input, select {
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
 }
-
+input.button:hover {
+	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
 input.button:focus {
 	border-bottom: 0;
 }
@@ -364,6 +367,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.amount, span.amount, div.amount {
+	color: #006666;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -393,7 +399,7 @@ input.pageplusone {
 	opacity: 0.6;
 }
 .opacityhigh {
-	opacity: 0.2;
+	opacity: 0.24;
 }
 .opacitytransp {
 	opacity: 0;
@@ -465,6 +471,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 .formconsumeproduce {
 	background: #f3f3f3;
 	padding: 20px 0px 0px 0px;
+	border-radius: 8px;
 }
 
 div#moretabsList, div#moretabsListaction {
@@ -573,7 +580,9 @@ button[name='button_removefilter_x'] span.fa.fa-remove {
 button:focus {
 	outline: none;
 }
-
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -760,6 +769,38 @@ textarea.centpercent {
 	max-height: 250px;
 	max-width: 100%;
 	overflow-y: auto;
+}
+div.urllink {
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	/* border: 1px solid #ccc; */
+	border-radius: 5px;
+	/* width: fit-content; */
+	background-color: #f0f0f8;
+	opacity: 0.8;
+}
+div.urllink, div.urllink a {
+	color: #339 !important;
+}
+
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+	color: #888 !important;
+	opacity: 0.4;
+	padding-<?php echo $left; ?>: 3px;
+}
+.stockmovemententry {
+	color: #080;
+	transform: rotate(0.25turn);
+	font-size: 1.2em;
+}
+.stockmovementexit {
+	color: #968822;
+	transform: rotate(0.3turn);
+	font-size: 1.2em;
+}
+.stockmovement {
+	font-size: 1.4em;
 }
 
 body[class*="colorblind-"] .text-warning{
@@ -1062,6 +1103,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 400px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax500 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 500px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -2004,7 +2057,7 @@ span.widthpictotitle.pictotitle {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	width: 44px;
+	width: 50px;
 	text-align:center;
 }
 div.attacharea {
@@ -4612,6 +4665,11 @@ span[phptag] {
 	border: none;
 	font-weight: normal;
 }
+.websitebar .button.bordertransp {
+	color: unset;
+	text-decoration: unset !important;
+}
+
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
@@ -4726,7 +4784,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); border-radius: 3px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
-table.cal_event td.cal_event { padding: 4px 4px !important; }
+table.cal_event td.cal_event { padding: 4px 4px !important; padding-bottom: 2px !important; padding-top: 2px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
@@ -6233,12 +6291,6 @@ div.tabsElem a.tab {
 /*  POS                                                                           */
 /* ============================================================================== */
 
-.menu_choix1 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png', 1) ?>') top left no-repeat;
-}
-.menu_choix2 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png', 1) ?>') top left no-repeat;
-}
 .menu_choix1,.menu_choix2 {
 	font-size: 1.4em;
 	text-align: left;
@@ -6250,7 +6302,7 @@ div.tabsElem a.tab {
 	color: #fff;
 	text-decoration: none;
 	padding-top: 18px;
-	padding-left: 54px;
+	padding-left: 10px;
 	font-size: 14px;
 	height: 38px;
 }

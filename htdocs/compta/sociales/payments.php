@@ -262,7 +262,7 @@ while ($i < min($num, $limit)) {
 	// Type
 	print '<td title="'.dol_escape_htmltag($obj->label).'" class="tdmaxoverflow300">'.$obj->label.'</td>';
 	// Expected to pay
-	print '<td class="right">'.price($obj->total).'</td>';
+	print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 	// Ref payment
 	$payment_sc_static->id = $obj->pid;
 	$payment_sc_static->ref = $obj->pid;

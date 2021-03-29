@@ -303,14 +303,17 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 		if ($offsetforchartofaccount > 0) {
 			// Replace lines
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400,...'
 			// with
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
-			// Note: string with 1234 instead of '1234' is also supported
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000,...'
+			// Note: string with 'PCG99-ABREGE','CAPIT', 1234  instead of  'PCG99-ABREGE','CAPIT', '1234' is also supported
 			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
 			$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
 			//var_dump($newsql);
 			$arraysql[$i] = $newsql;
+
+			// FIXME Because we force the rowid during insert, we must also update the sequence with postgresql by running
+			// SELECT dol_util_rebuild_sequences();
 		}
 	}
 
@@ -568,7 +571,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constante (chaine par defaut)
+ *	@param	    string		$type		Type of constant ('chaine by default)
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
@@ -632,16 +635,28 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @param	int		$nbofactivatedmodules	Number f oactivated modules
+ * @param	int		$nboftotalmodules		Nb of total modules
+ * @return  array							Array of tabs to show
  */
-function modules_prepare_head()
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $form;
+
+	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+
 	$h = 0;
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	$head[$h][1] = $langs->trans("AvailableModules");
+	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+		$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
+		$head[$h][1] .= img_warning($langs->trans("YouMustEnableOneModule"));
+	} else {
+		//$head[$h][1] = $langs->trans("AvailableModules").$form->textwithpicto('<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>', $desc, 1, 'help', '', 1, 3);
+		$head[$h][1] = $langs->trans("AvailableModules").'<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>';
+	}
 	$head[$h][2] = 'modules';
 	$h++;
 
@@ -1488,7 +1503,7 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all (form is output by caller, recommended)
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)
  *  @param  string  $helptext       Help
  *	@return	void
  */
@@ -1510,7 +1525,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Description").'</td>';
+	print '<td class="titlefieldcreate">'.$langs->trans("Description").'</td>';
 	print '<td>';
 	$text = $langs->trans("Value");
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
@@ -1614,24 +1629,24 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 				foreach (array_keys($_Avery_Labels) as $codecards) {
 					$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 				}
-				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : '[]'), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
+				print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayoflabels, ($obj->value ? $obj->value : 'CARD'), 1, 0, 0);
 				print '<input type="hidden" name="consttype" value="yesno">';
 				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				print '</td>';
 			} else {
 				print '<td>';
-				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
-				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
+				print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.($obj->type ? $obj->type : 'string').'">';
+				print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 				if ($obj->type == 'textarea' || in_array($const, array('ADHERENT_CARD_TEXT', 'ADHERENT_CARD_TEXT_RIGHT', 'ADHERENT_ETIQUETTE_TEXT'))) {
-					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" cols="50" rows="5" wrap="soft">'."\n";
+					print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" cols="50" rows="5" wrap="soft">'."\n";
 					print $obj->value;
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue_'.$const.(empty($strictw3c) ? '' : '[]'), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : '[]'), $obj->value, 1);
+					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
@@ -1654,10 +1669,9 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 					}
 					//var_dump($arraydefaultmessage);
 					//var_dump($arrayofmessagename);
-					print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
-				} else // type = 'string' ou 'chaine'
-				{
-					print '<input type="text" class="flat" size="48" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
+					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				} else { // type = 'string' ou 'chaine'
+					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}
@@ -1886,7 +1900,8 @@ function email_admin_prepare_head()
 		}
 	}
 
-	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	// admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
+	if (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates') {
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");
 		$head[$h][2] = 'senderprofiles';

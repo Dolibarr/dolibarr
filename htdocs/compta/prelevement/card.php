@@ -351,12 +351,12 @@ if ($id > 0 || $ref) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE pl.fk_prelevement_bons = ".$id;
+	$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
 	$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
 	$sql .= " AND pb.entity = ".$conf->entity;
 	$sql .= " AND pl.fk_soc = s.rowid";
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= $db->order($sortfield, $sortorder);
 
@@ -423,7 +423,7 @@ if ($id > 0 || $ref) {
 			print $thirdparty->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td class="right">';
 
