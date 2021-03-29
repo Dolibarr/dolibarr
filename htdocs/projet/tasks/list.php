@@ -588,29 +588,29 @@ $morehtmlfilter = '';
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('ProjectCategories').': ';
-	$moreforfilter .= $formother->select_categories('project', $search_categ, 'search_categ', 1, 'maxwidth300');
+	$tmptitle = $langs->trans('ProjectCategories');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 0, $tmptitle, 'maxwidth300');
 	$moreforfilter .= '</div>';
 }
 
 // If the user can view users
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').' ';
+$tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 // If the user can view users
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('TasksWithThisUserAsContact').': ';
+$tmptitle = $langs->trans('TasksWithThisUserAsContact');
 $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= $form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 if (!empty($moreforfilter)) {
@@ -658,7 +658,7 @@ if (!empty($arrayfields['t.dateo']['checked'])) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
-	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5);
+	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
 	print '</td>';
 }
 // End date
@@ -668,7 +668,7 @@ if (!empty($arrayfields['t.datee']['checked'])) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
-	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5);
+	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {

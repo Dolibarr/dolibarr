@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       htdocs/modulebuilder/template/myobject_contact.php
- *  \ingroup    mymodule
- *  \brief      Tab for contacts linked to MyObject
+ *  \file       conferenceorbooth_contact.php
+ *  \ingroup    eventorganization
+ *  \brief      Tab for contacts linked to ConferenceOrBooth
  */
 
 // Load Dolibarr environment
@@ -55,11 +55,11 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
+dol_include_once('/eventorganization/class/conferenceorbooth.class.php');
+dol_include_once('/eventorganization/lib/eventorganization_conferenceorbooth.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("mymodule@mymodule", "companies", "other", "mails"));
+$langs->loadLangs(array("eventorganization@eventorganization", "companies", "other", "mails"));
 
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
@@ -68,28 +68,31 @@ $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical objects
-$object = new MyObject($db);
+$object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectcontact', 'globalcard')); // Note that conf->hooks_modules contains array
+$diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('conferenceorboothcontact', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $object->id);
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+$isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permission = $user->rights->mymodule->myobject->write;
+$permission = $user->rights->eventorganization->conferenceorbooth->write;
+
 
 /*
- * Add a new contact
+ * Actions
  */
 
-if ($action == 'addcontact' && $permission) {
+if ($action == 'addcontact' && $permission) {	// Add a new contact
 	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
@@ -125,7 +128,7 @@ if ($action == 'addcontact' && $permission) {
  * View
  */
 
-$title = $langs->trans('MyObject')." - ".$langs->trans('ContactsAddresses');
+$title = $langs->trans('ConferenceOrBooth')." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
@@ -146,11 +149,11 @@ if ($object->id) {
 	/*
 	 * Show tabs
 	 */
-	$head = myobjectPrepareHead($object);
+	$head = conferenceorboothPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'contact', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'contact', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
-	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*

@@ -301,7 +301,7 @@ if ($id) {
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 			print '<td class="right">';
 			$invoicestatic->fetch($obj->facid);

@@ -3495,7 +3495,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
 		}
-		$sql .= ' WHERE cd.rowid = '.$rowid;
+		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);

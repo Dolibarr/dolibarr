@@ -84,12 +84,10 @@ if (!empty($canvas)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('membercard', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
-
-if ($id > 0) {
+// Fetch object
+if ($id > 0 || !empty($ref)) {
 	// Load member
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
 	$canadduser = ($user->admin || $user->rights->user->user->creer);
@@ -97,9 +95,9 @@ if ($id > 0) {
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-				|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
 		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-				|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
 	}
 }
 
@@ -110,6 +108,8 @@ if ($id) {
 	$caneditfieldmember = $user->rights->adherent->creer;
 }
 
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
 /*

@@ -206,7 +206,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			// Type
 			print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
 			// Expected to pay
-			print '<td class="right">'.price($obj->total).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Ref payment
 			$payment_sc_static->id = $obj->pid;
 			$payment_sc_static->ref = $obj->pid;
@@ -323,7 +323,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			$tva_static->ref = $obj->label;
 			print "<td>".$tva_static->getNomUrl(1)."</td>\n";
 
-			print '<td class="right">'.price($obj->amount_tva)."</td>";
+			print '<td class="right"><span class="amount">'.price($obj->amount_tva)."</span></td>";
 
 			// Ref payment
 			$ptva_static->id = $obj->rowid;
@@ -359,7 +359,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			}
 
 			// Paid
-			print '<td class="right">'.price($obj->amount)."</td>";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>";
 			print "</tr>\n";
 
 			$i++;
@@ -442,7 +442,7 @@ while ($j < $numlt) {
 
 			print "<td>".$obj->label."</td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>";
 
 			// Ref payment
 			$ptva_static->id = $obj->rowid;
@@ -450,7 +450,7 @@ while ($j < $numlt) {
 			print '<td class="left">'.$ptva_static->getNomUrl(1)."</td>\n";
 
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'day')."</td>\n";
-			print '<td class="right">'.price($obj->amount)."</td>";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>";
 			print "</tr>\n";
 
 			$i++;

@@ -263,11 +263,11 @@ if ($resql) {
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
-			print '<td class="right">'.price($objp->tva_amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->tva_amount).'</span></td>';
 			// Status
 			print '<td class="center">'.$tva->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
-			print '<td class="right">'.price($objp->amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
