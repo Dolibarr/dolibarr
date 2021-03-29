@@ -1,12 +1,5 @@
--- DOLIBARR  htdocs/install/mysql/tables/llx_zapier_hook.sql
+-- Copyright (C) Laurent Destailleur <eldy@users.sourceforge.net>
 --
--- ============================================================================
--- Authors / Contributors == (see also https://github.com/Dolibarr/dolibarr/ 
---  
--- Copyright (C) ---Put here your own copyright and developer email---
---
-
-
 -- LICENSE ====================================================================
 --
 -- This program is free software: you can redistribute it and/or modify
