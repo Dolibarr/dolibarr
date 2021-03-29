@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2020-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,6 +143,7 @@ class modService extends DolibarrModules
 		//--------
 		$r = 0;
 
+		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa" : "p";
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "Services"; // Translation key (used only if key ExportDataset_xxx_z not found)
@@ -152,9 +153,9 @@ class modService extends DolibarrModules
 			'p.fk_product_type'=>'Type', 'p.tosell'=>"OnSell", 'p.tobuy'=>"OnBuy",
 			'p.description'=>"Description", 'p.url'=>"PublicUrl",
 			'p.customcode'=>'CustomCode', 'p.fk_country'=>'IDCountry',
-			'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
-			'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", 'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",
-			'p.accountancy_code_buy_intra'=>"ProductAccountancyBuyIntraCode", 'p.accountancy_code_buy_export'=>"ProductAccountancyBuyExportCode",
+			$alias_product_accounting . '.accountancy_code_sell'=>"ProductAccountancySellCode", $alias_product_accounting . '.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
+			$alias_product_accounting . '.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", $alias_product_accounting . '.accountancy_code_buy'=>"ProductAccountancyBuyCode",
+			$alias_product_accounting . '.accountancy_code_buy_intra'=>"ProductAccountancyBuyIntraCode", $alias_product_accounting . '.accountancy_code_buy_export'=>"ProductAccountancyBuyExportCode",
 			'p.note'=>"NotePrivate", 'p.note_public'=>'NotePublic',
 			'p.weight'=>"Weight", 'p.length'=>"Length", 'p.width'=>"Width", 'p.height'=>"Height", 'p.surface'=>"Surface", 'p.volume'=>"Volume",
 			'p.duration'=>"Duration",
@@ -194,9 +195,9 @@ class modService extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			'p.ref'=>"Text", 'p.label'=>"Text",
 			'p.fk_product_type'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean",
-			'p.description'=>"Text", 'p.url'=>"Text", 'p.accountancy_code_sell'=>"Text",
-			'p.accountancy_code_sell_intra'=>"Text", 'p.accountancy_code_sell_export'=>"Text", 'p.accountancy_code_buy'=>"Text",
-			'p.accountancy_code_buy_intra'=>"Text", 'p.accountancy_code_buy_export'=>"Text",
+			'p.description'=>"Text", 'p.url'=>"Text",
+			$alias_product_accounting . '.accountancy_code_sell'=>"Text", $alias_product_accounting . '.accountancy_code_sell_intra'=>"Text", $alias_product_accounting . '.accountancy_code_sell_export'=>"Text",
+			$alias_product_accounting . '.accountancy_code_buy'=>"Text", $alias_product_accounting . '.accountancy_code_buy_intra'=>"Text", $alias_product_accounting . '.accountancy_code_buy_export'=>"Text",
 			'p.note'=>"Text", 'p.note_public'=>"Text",
 			'p.weight'=>"Numeric", 'p.length'=>"Numeric", 'p.width'=>"Numeric", 'p.height'=>"Numeric", 'p.surface'=>"Numeric", 'p.volume'=>"Numeric",
 			'p.customcode'=>'Text',
@@ -256,6 +257,9 @@ class modService extends DolibarrModules
 		}
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
+		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+		}
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cp.fk_categorie = cat.rowid';
 		}
@@ -347,9 +351,9 @@ class modService extends DolibarrModules
 				$this->export_permission[$r] = array(array("service", "export"));
 				$this->export_fields_array[$r] = array(
 					'p.rowid'=>"Id", 'p.ref'=>"Ref", 'p.label'=>"Label", 'p.description'=>"Description", 'p.url'=>"PublicUrl",
-					'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
-					'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", 'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",
-					'p.accountancy_code_buy_intra'=>"ProductAccountancyBuyIntraCode", 'p.accountancy_code_buy_export'=>"ProductAccountancyBuyExportCode",
+					$alias_product_accounting . '.accountancy_code_sell'=>"ProductAccountancySellCode", $alias_product_accounting . '.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
+					$alias_product_accounting . '.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", $alias_product_accounting . '.accountancy_code_buy'=>"ProductAccountancyBuyCode",
+					$alias_product_accounting . '.accountancy_code_buy_intra'=>"ProductAccountancyBuyIntraCode", $alias_product_accounting . '.accountancy_code_buy_export'=>"ProductAccountancyBuyExportCode",
 					'p.note'=>"NotePrivate", 'p.note_public'=>'NotePublic',
 					'p.weight'=>"Weight", 'p.length'=>"Length", 'p.surface'=>"Surface", 'p.volume'=>"Volume", 'p.customcode'=>'CustomCode',
 					'p.price_base_type'=>"PriceBase", 'p.price'=>"UnitPriceHT", 'p.price_ttc'=>"UnitPriceTTC", 'p.tva_tx'=>'VATRate', 'p.tosell'=>"OnSell",
@@ -364,8 +368,8 @@ class modService extends DolibarrModules
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty', 'pa.incdec'=>'ComposedProductIncDecStock'));
 				$this->export_TypeFields_array[$r] = array(
 					'p.ref'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.url'=>"Text",
-					'p.accountancy_code_sell'=>"Text", 'p.accountancy_code_sell_intra'=>"Text", 'p.accountancy_code_sell_export'=>"Text",
-					'p.accountancy_code_buy'=>"Text", 'p.accountancy_code_buy_intra'=>"Text", 'p.accountancy_code_buy_export'=>"Text",
+					$alias_product_accounting . 'p.accountancy_code_sell'=>"Text", $alias_product_accounting . '.accountancy_code_sell_intra'=>"Text", $alias_product_accounting . '.accountancy_code_sell_export'=>"Text",
+					$alias_product_accounting . 'p.accountancy_code_buy'=>"Text", $alias_product_accounting . '.accountancy_code_buy_intra'=>"Text", $alias_product_accounting . '.accountancy_code_buy_export'=>"Text",
 					'p.note'=>"Text", 'p.note_public'=>"Text",
 					'p.weight'=>"Numeric", 'p.length'=>"Numeric", 'p.surface'=>"Numeric", 'p.volume'=>"Numeric", 'p.customcode'=>'Text',
 					'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean",
@@ -380,8 +384,8 @@ class modService extends DolibarrModules
 				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('pa.qty'=>'Numeric'));
 				$this->export_entities_array[$r] = array(
 					'p.rowid'=>"virtualproduct", 'p.ref'=>"virtualproduct", 'p.label'=>"virtualproduct", 'p.description'=>"virtualproduct", 'p.url'=>"virtualproduct",
-					'p.accountancy_code_sell'=>'virtualproduct', 'p.accountancy_code_sell_intra'=>'virtualproduct', 'p.accountancy_code_sell_export'=>'virtualproduct',
-					'p.accountancy_code_buy'=>'virtualproduct', 'p.accountancy_code_buy_intra'=>'virtualproduct', 'p.accountancy_code_buy_export'=>'virtualproduct',
+					$alias_product_accounting . '.accountancy_code_sell'=>'virtualproduct', $alias_product_accounting . '.accountancy_code_sell_intra'=>'virtualproduct', $alias_product_accounting . '.accountancy_code_sell_export'=>'virtualproduct',
+					$alias_product_accounting . '.accountancy_code_buy'=>'virtualproduct', $alias_product_accounting . '.accountancy_code_buy_intra'=>'virtualproduct', $alias_product_accounting . '.accountancy_code_buy_export'=>'virtualproduct',
 					'p.note'=>"virtualproduct", 'p.length'=>"virtualproduct",
 					'p.surface'=>"virtualproduct", 'p.volume'=>"virtualproduct", 'p.weight'=>"virtualproduct", 'p.customcode'=>'virtualproduct',
 					'p.price_base_type'=>"virtualproduct", 'p.price'=>"virtualproduct", 'p.price_ttc'=>"virtualproduct", 'p.tva_tx'=>"virtualproduct",
@@ -402,6 +406,9 @@ class modService extends DolibarrModules
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p2.rowid'=>"subproduct", 'p2.ref'=>"subproduct", 'p2.label'=>"subproduct", 'p2.description'=>"subproduct"));
 				$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 				$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
+				if (!empty($conf->global->ACCOUNTANCY_COMPANY_SHARED)) {
+					$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_accounting as sa ON sa.fk_soc = s.rowid AND sa.entity = " . ((int) $conf->entity);
+				}
 				$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object,';
 				$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'product_association as pa, '.MAIN_DB_PREFIX.'product as p2';
 				$this->export_sql_end[$r] .= ' WHERE p.entity IN ('.getEntity('product').')'; // For product and service profile
