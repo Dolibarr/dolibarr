@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -554,7 +555,6 @@ if (empty($reshook)) {
 				$db->commit();
 				$rowid = $object->id;
 				$id = $object->id;
-				$action = '';
 			} else {
 				$db->rollback();
 
@@ -563,12 +563,41 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-
-				$action = 'create';
 			}
-		} else {
-			$action = 'create';
+			// Auto-create thirdparty on member creation
+			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+				if ($result > 0) {
+					// User creation
+					$company = new Societe($db);
+
+					$companyalias = '';
+					$fullname = $object->getFullName($langs);
+
+					if ($object->morphy == 'mor') {
+						$companyname = $object->company;
+						if (!empty($fullname)) {
+							$companyalias = $fullname;
+						}
+					} else {
+						$companyname = $fullname;
+						if (!empty($object->company)) {
+							$companyalias = $object->company;
+						}
+					}
+
+					$result = $company->create_from_member($object, $companyname, $companyalias);
+
+					if ($result < 0) {
+						$langs->load("errors");
+						setEventMessages($langs->trans($company->error), null, 'errors');
+						setEventMessages($company->error, $company->errors, 'errors');
+					}
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
 		}
+		$action = ($result < 0 || !$error) ?  '' : 'create';
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {
