@@ -75,6 +75,7 @@ if (!$sortorder) {
 
 $tva_static = new Tva($db);
 $tva = new Tva($db);
+$accountlinestatic = new AccountLine($db);
 $payment_vat_static = new PaymentVAT($db);
 $sal_static = new PaymentSalary($db);
 
@@ -119,17 +120,19 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATDeclaration", $_SERVER["PHP_SELF"], "tva.label", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "tva.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "tva.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
+	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "pc.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
+	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "ptva.fk_bank", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "tva.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "tva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "ptva.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT tva.rowid, tva.label as label, b.fk_account";
+	$sql = "SELECT tva.rowid, tva.label as label, b.fk_account, ptva.fk_bank";
 	$sql .= ", tva.datev";
 	$sql .= ", tva.amount as total,";
 	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaye, ptva.num_paiement as num_payment,";
@@ -175,22 +178,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			$payment_vat_static->ref = $obj->pid;
 
 			print '<tr class="oddeven">';
+
 			// Ref payment
 			print '<td>'.$payment_vat_static->getNomUrl(1)."</td>\n";
-			// Date payment
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
-			// Type payment
-			print '<td>';
-			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-			}
-			print $obj->num_payment.'</td>';
-			// Account
-			print '<td>';
-			$account = new Account($db);
-			$account->fetch($obj->fk_account);
-			print $account->getNomUrl(1);
-			print '</td>';
+
 			// Label
 			print '<td>';
 			$tva->id = $obj->rowid;
@@ -198,11 +189,38 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			$tva->label = $obj->label;
 			print $tva->getNomUrl(1, '20');
 			print '</td>';
-			// Type
-			//print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
+
 			// Date
 			$date = $obj->datev;
 			print '<td>'.dol_print_date($date, 'day').'</td>';
+
+			// Date payment
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
+
+			// Type payment
+			print '<td>';
+			if ($obj->payment_code) {
+				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+			}
+			print '</td>';
+
+			// Chq number
+			print '<td>'.$obj->num_payment.'</td>';
+
+			// Bank transaction
+			print '<td>';
+			$accountlinestatic->id = $obj->fk_bank;
+			print $accountlinestatic->getNomUrl(1);
+			print '</td>';
+
+			// Account
+			print '<td>';
+			$account = new Account($db);
+			$account->fetch($obj->fk_account);
+			print $account->getNomUrl(1);
+			print '</td>';
+			// Type
+			//print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Paid
@@ -221,6 +239,8 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
 		print '<td class="liste_total right"></td>'; // A total here has no sense
 		//print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td align="center" class="liste_total">&nbsp;</td>';
+		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';

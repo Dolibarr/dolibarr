@@ -235,7 +235,7 @@ $title = $langs->trans('Salaries');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment as paymenttype, ";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code as payment_code,";
 $sql .= " SUM(ps.amount) as alreadypayed";
 $sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
@@ -270,7 +270,7 @@ if ($search_amount) {
 	$sql .= natural_search("s.amount", $search_amount, 1);
 }
 if ($search_account > 0) {
-	$sql .= " AND b.fk_account=".((int) $search_account);
+	$sql .= " AND s.fk_account=".((int) $search_account);
 }
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND s.paye = ".$db->escape($search_status);
@@ -280,7 +280,7 @@ if ($search_type_id) {
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
-$sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label,";
+$sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -409,10 +409,6 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre left">';
 print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 print '</td>';
-// Employee
-print '<td class="liste_titre">';
-print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
-print '</td>';
 // Label
 print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
 
@@ -434,6 +430,11 @@ print '</div>';
 print '<div class="nowrap">';
 print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 print '</div>';
+print '</td>';
+
+// Employee
+print '<td class="liste_titre">';
+print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
 print '</td>';
 
 // Type
@@ -475,10 +476,10 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) {
 	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
@@ -541,12 +542,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
-	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
 	// Label payment
 	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 	if (!$i) {
@@ -565,8 +560,16 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
+	// Employee
+	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
 	// Type
-	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
+	print '<td>';
+	if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -578,7 +581,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//$accountstatic->fetch($obj->fk_bank);
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
+			$accountstatic->label = $obj->blabel;
 			$accountstatic->number = $obj->bnumber;
+			$accountstatic->iban = $obj->iban;
+			$accountstatic->bic = $obj->bic;
+			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+			$accountstatic->account_number = $obj->account_number;
+			$accountstatic->clos = $obj->clos;
 
 			if (!empty($conf->accounting->enabled)) {
 				$accountstatic->account_number = $obj->account_number;

@@ -77,6 +77,8 @@ $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
+$search_fk_bank = GETPOST('search_fk_bank', 'int');
+$search_chq_number = GETPOST('search_chq_number', 'int');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
@@ -141,6 +143,8 @@ if (empty($reshook)) {
 		$search_date_end = '';
 		$search_amount = "";
 		$search_account = '';
+		$search_fk_bank = '';
+		$search_chq_number = '';
 		$search_type_id = "";
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -171,6 +175,7 @@ $salstatic = new Salary($db);
 $paymentsalstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 $accountstatic = new Account($db);
+$accountlinestatic = new AccountLine($db);
 
 $now = dol_now();
 
@@ -180,7 +185,7 @@ $title = $langs->trans('SalariesPayments');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql .= " s.rowid, s.fk_user, s.amount, s.salary, sal.rowid as id_salary, sal.label, s.datep as datep, b.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code as payment_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as sal ON (sal.rowid = s.fk_salary)";
@@ -201,6 +206,9 @@ if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_
 if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
 if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0)	$sql .= " AND b.fk_account=".((int) $search_account);
+if ($search_fk_bank)			$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
+if ($search_chq_number)		$sql .= natural_search(array('s.num_payment'), $search_chq_number);
+
 if ($search_type_id > 0) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;
 }
@@ -245,8 +253,10 @@ if ($search_type_id) $param .= '&search_type_id='.urlencode($search_type_id);
 if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
 if ($search_ref_salary) $param .= '&search_ref_salary='.urlencode($search_ref_salary);
-if ($search_user > 0) $param .= '&search_user='.urlencode($search_user);
+if ($search_user) $param .= '&search_user='.urlencode($search_user);
 if ($search_label) $param .= '&search_label='.urlencode($search_label);
+if ($search_fk_bank) $param .= '&search_fk_bank='.urlencode($search_fk_bank);
+if ($search_chq_number) $param .= '&search_chq_number='.urlencode($search_chq_number);
 if ($search_account) $param .= '&search_account='.urlencode($search_account);
 if ($search_date_start) $param .= '&search_date_startday='.urlencode(GETPOST('search_date_startday', 'int')).'&search_date_startmonth='.urlencode(GETPOST('search_date_startmonth', 'int')).'&search_date_startyear='.urlencode(GETPOST('search_date_startyear', 'int'));
 if ($search_date_end) $param .= '&search_date_endday='.urlencode(GETPOST('search_date_endday', 'int')).'&search_date_endmonth='.urlencode(GETPOST('search_date_endmonth', 'int')).'&search_date_endyear='.urlencode(GETPOST('search_date_endyear', 'int'));
@@ -292,10 +302,6 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre left">';
 print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 print '</td>';
-// Employee
-print '<td class="liste_titre">';
-print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
-print '</td>';
 // Salary
 print '<td class="liste_titre center">';
 print '<input class="flat" type="text" size="3" name="search_ref_salary" value="'.$db->escape($search_ref_salary).'">';
@@ -314,9 +320,19 @@ print '</td>';
 // Date value
 print '<td class="liste_titre center">';
 print '</td>';
+// Employee
+print '<td class="liste_titre">';
+print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
+print '</td>';
 // Type
 print '<td class="liste_titre left">';
 $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
+print '</td>';
+// Chq number
+print '<td class="liste_titre right"><input name="search_chq_number" class="flat" type="text" size="8" value="'.$db->escape($search_chq_number).'"></td>';
+// Bank transaction
+print '<td class="liste_titre center">';
+print '<input class="flat" type="text" size="3" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';
 print '</td>';
 // Account
 if (!empty($conf->banque->enabled)) {
@@ -345,13 +361,15 @@ print '</tr>'."\n";
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Salary", $_SERVER["PHP_SELF"], "sal.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "b.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
+print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 // Extra fields
@@ -407,10 +425,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print "<td>".$paymentsalstatic->getNomUrl(1)."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
-	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
-
 	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
@@ -426,18 +440,36 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
+	// Employee
+	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	if (!$i) $totalarray['nbfield']++;
+
 	// Type
-	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
+	if (!$i) $totalarray['nbfield']++;
+
+	// Chq number
+	print '<td>'.$obj->num_payment.'</td>';
 	if (!$i) $totalarray['nbfield']++;
 
 	// Account
 	if (!empty($conf->banque->enabled)) {
+		// Bank transaction
+		print '<td>';
+		$accountlinestatic->id = $obj->fk_bank;
+		print $accountlinestatic->getNomUrl(1);
+		print '</td>';
+
 		print '<td>';
 		if ($obj->fk_bank > 0) {
 			//$accountstatic->fetch($obj->fk_bank);
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
 			$accountstatic->number = $obj->bnumber;
+			$accountstatic->iban = $obj->iban;
+			$accountstatic->bic = $obj->bic;
+			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+			$accountstatic->clos = $obj->clos;
 
 			if (!empty($conf->accounting->enabled)) {
 				$accountstatic->account_number = $obj->account_number;
