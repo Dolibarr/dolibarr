@@ -382,8 +382,7 @@ class FormMail extends Form
 			$listofmimes = array();
 			$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
-			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
-			{
+			if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 				if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
 				{
 					foreach ($this->param['fileinit'] as $file)
