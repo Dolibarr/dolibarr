@@ -55,7 +55,7 @@ if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO'])) {
  * only be guaranted by escaping data during output.
  *
  * @param		string		$val		Value brut found int $_GET, $_POST or PHP_SELF
- * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
+ * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function testSqlAndScriptInject($val, $type)
@@ -149,7 +149,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
 	if ($type == 2) {
-		$inj += preg_match('/[;"]/', $val); // PHP_SELF is a file system path. It can contains spaces.
+		$inj += preg_match('/[;"<>]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
 	}
 
 	return $inj;
