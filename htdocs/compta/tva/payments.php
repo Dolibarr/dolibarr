@@ -204,7 +204,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			$date = $obj->datev;
 			print '<td>'.dol_print_date($date, 'day').'</td>';
 			// Expected to pay
-			print '<td class="right">'.price($obj->total).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Paid
 			print '<td class="right">';
 			if ($obj->totalpaye) {

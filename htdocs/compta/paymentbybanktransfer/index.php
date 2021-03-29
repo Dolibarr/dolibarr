@@ -216,8 +216,8 @@ if ($result) {
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-			print '<td class="right">'.price($obj->amount)."</td>\n";
-			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.$bprev->getLibStatut(3)."</span></td>\n";
 
 			print "</tr>\n";
 			$i++;

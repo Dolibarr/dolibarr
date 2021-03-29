@@ -1717,9 +1717,9 @@ if ($resql) {
 					print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
 				}
 			} elseif ($totalarray['totaldebfield'] == $i) {
-				print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+				print '<td class="right"><span class="amount">'.price(-1 * $totalarray['totaldeb']).'</span></td>';
 			} elseif ($totalarray['totalcredfield'] == $i) {
-				print '<td class="right">'.price($totalarray['totalcred']).'</td>';
+				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action == 'reconcile') {

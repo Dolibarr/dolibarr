@@ -365,13 +365,13 @@ if ($resql) {
 				print '</td>';
 			}
 			// Expected to pay
-			print '<td class="right">'.price($objp->total_ttc).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->total_ttc).'</span></td>';
 
 			// Amount payed
-			print '<td class="right">'.price($objp->amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 
 			// Remain to pay
-			print '<td class="right">'.price($remaintopay).'</td>';
+			print '<td class="right"><span class="amount">'.price($remaintopay).'</span></td>';
 
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';

@@ -558,8 +558,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '<td class="nowrap right">&nbsp;</td>';
 				print '<td class="right">&nbsp;</td>';
 			}
-			print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+			print '<td class="right"><span class="amount">'.price(price2num($subtot_coll_total_ht, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($subtot_coll_vat, 'MT')).'</span></td>';
 			print '</tr>';
 		}
 	}
@@ -748,8 +748,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '<td class="nowrap right">&nbsp;</td>';
 				print '<td class="right">&nbsp;</td>';
 			}
-			print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+			print '<td class="right"><span class="amount">'.price(price2num($subtot_paye_total_ht, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($subtot_paye_vat, 'MT')).'</span></td>';
 			print '</tr>';
 		}
 	}

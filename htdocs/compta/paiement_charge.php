@@ -266,11 +266,11 @@ if ($action == 'create') {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
-		print '<td class="right">'.price($objp->amount)."</td>";
+		print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>";
 
-		print '<td class="right">'.price($sumpaid)."</td>";
+		print '<td class="right"><span class="amount">'.price($sumpaid)."</span></td>";
 
-		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
+		print '<td class="right"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
 
 		print '<td class="center">';
 		if ($sumpaid < $objp->amount) {

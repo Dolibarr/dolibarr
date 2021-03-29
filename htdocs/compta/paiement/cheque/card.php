@@ -462,7 +462,7 @@ if ($action == 'new') {
 				print '<td>'.$value["numero"]."</td>\n";
 				print '<td>'.$value["emetteur"]."</td>\n";
 				print '<td>'.$value["banque"]."</td>\n";
-				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Link to payment
 				print '<td class="center">';
@@ -639,7 +639,7 @@ if ($action == 'new') {
 				print '<td class="center">'.($objp->num_chq ? $objp->num_chq : '&nbsp;').'</td>';
 				print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
 				print '<td>'.dol_trunc($objp->banque, 24).'</td>';
-				print '<td class="right">'.price($objp->amount).'</td>';
+				print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 				// Link to payment
 				print '<td class="center">';
 				$paymentstatic->id = $objp->pid;
