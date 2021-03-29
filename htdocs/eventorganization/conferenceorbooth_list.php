@@ -597,7 +597,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -769,7 +769,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
 			} elseif ($key == 'ref') {
-				print $object->getNomUrl(1);
+				print $object->getNomUrl(1, 0, '', (($projectid > 0)?'withproject':''));
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

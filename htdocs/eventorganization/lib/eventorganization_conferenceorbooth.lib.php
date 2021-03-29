@@ -25,9 +25,10 @@
  * Prepare array of tabs for ConferenceOrBooth
  *
  * @param	ConferenceOrBooth	$object		ConferenceOrBooth
+ * @param	int	$with_project		Add project id to URL
  * @return 	array					Array of tabs
  */
-function conferenceorboothPrepareHead($object)
+function conferenceorboothPrepareHead($object, $with_project = 0)
 {
 	global $db, $langs, $conf;
 
@@ -36,19 +37,24 @@ function conferenceorboothPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_card.php", 1).'?id='.$object->id;
+	$withProjectUrl='';
+	if ($with_project>0) {
+		$withProjectUrl="&withproject=1";
+	}
+
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_card.php", 1).'?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_contact.php", 1).'?conforboothid='.$object->id;
-	$head[$h][1] = $langs->trans("Contact/Adress");
-	$head[$h][2] = 'attendees';
+	//$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_contact.php", 1).'?conforboothid='.$object->id.$withProjectUrl;
+	//$head[$h][1] = $langs->trans("Contact/Adress");
+	//$head[$h][2] = 'attendees';
+	//$h++;
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?conforboothid='.$object->id;
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?conforboothid='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Attendees");
 	$head[$h][2] = 'attendees';
-
 	// Enable caching of conf or booth count attendees
 	$nbAttendees = 0;
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -77,7 +83,7 @@ function conferenceorboothPrepareHead($object)
 	$upload_dir = $conf->eventorganization->dir_output."/conferenceorbooth/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_document.php", 1).'?id='.$object->id;
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_document.php", 1).'?id='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
