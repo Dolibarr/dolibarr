@@ -577,8 +577,38 @@ class Notify
 						$pdf_path = $dir_output."/".$ref.".pdf";
 						if (!dol_is_file($pdf_path)) {
 							// We can't add PDF as it is not generated yet.
-							$filepdf = '';
-						} else {
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$outputlangs = $langs;
+				$newlang = '';
+				//if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($pdf['lang_id'])) {
+				//	 $newlang = $pdf['lang_id'];
+				//}
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						  $newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$modelpdf = !empty($object->modelpdf)?$object->modelpdf:$conf->global->FACTURE_ADDON_PDF;
+				$ret = $object->fetch($object->id); // Reload to get new records
+
+$hidedetails = (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
+$hidedesc = (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
+$hideref = (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
+
+			$object->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+          $ref = dol_sanitizeFileName($newref);
+					$pdf_path = $dir_output."/".$ref.".pdf";
+						if (dol_is_file($pdf_path)) {
+							$filepdf = $pdf_path;
+							$filename_list[] = $filepdf;
+							$mimetype_list[] = mime_content_type($filepdf);
+							$mimefilename_list[] = $ref.".pdf";
+			} else {
+							$filepdf = '';      
+      }
+					}	} else {
 							$filepdf = $pdf_path;
 							$filename_list[] = $filepdf;
 							$mimetype_list[] = mime_content_type($filepdf);
