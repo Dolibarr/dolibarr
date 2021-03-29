@@ -79,8 +79,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
-$help_url = '';
+$help_url = 'EN:Module_BOM';
+
 llxHeader('', $langs->trans('BillOfMaterials'), $help_url);
 
 if ($id > 0 || !empty($ref)) {
