@@ -644,7 +644,7 @@ if (empty($reshook)) {
 			if ($object->statut == $object::STATUS_VALIDATED) {
 				$db->begin();
 
-				$result = $object->cloture($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
+				$result = $object->signature($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
