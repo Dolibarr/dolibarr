@@ -1175,7 +1175,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-		$sql .= " WHERE rowid =".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
 		if ($this->db->query($sql)) {
