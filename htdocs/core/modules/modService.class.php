@@ -408,7 +408,7 @@ class modService extends DolibarrModules
 				$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 				$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
 				if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-					$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pac ON pac.fk_product = p.rowid AND pac.entity = " . ((int) $conf->entity);
+					$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pac ON pac.fk_product = p.rowid AND pac.entity = " . ((int) $conf->entity);
 				}
 				$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object,';
 				$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'product_association as pa, '.MAIN_DB_PREFIX.'product as p2';

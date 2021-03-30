@@ -502,13 +502,13 @@ if ($search_accountancy_code_sell_export) {
 	$sql .= natural_search($alias_product_perentity . '.accountancy_code_sell_export', $search_accountancy_code_sell_export);
 }
 if ($search_accountancy_code_buy) {
-	$sql .= natural_search($alias_product_accounting . '.accountancy_code_buy', $search_accountancy_code_buy);
+	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy', $search_accountancy_code_buy);
 }
 if ($search_accountancy_code_buy_intra) {
-	$sql .= natural_search($alias_product_accounting . '.accountancy_code_buy_intra', $search_accountancy_code_buy_intra);
+	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy_intra', $search_accountancy_code_buy_intra);
 }
 if ($search_accountancy_code_buy_export) {
-	$sql .= natural_search($alias_product_accounting . '.accountancy_code_buy_export', $search_accountancy_code_buy_export);
+	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy_export', $search_accountancy_code_buy_export);
 }
 
 // Add where from extra fields
@@ -1004,23 +1004,23 @@ if ($resql) {
 		print '<td class="liste_titre center">'.$formcompany->select_state($search_state, $search_country).'</td>';
 	}
 	// Accountancy code sell
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell']['checked'])) {
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell_intra']['checked'])) {
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_intra" value="'.dol_escape_htmltag($search_accountancy_code_sell_intra).'"></td>';
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell_export']['checked'])) {
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_export" value="'.dol_escape_htmltag($search_accountancy_code_sell_export).'"></td>';
 	}
 	// Accountancy code buy
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy']['checked'])) {
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy_intra']['checked'])) {
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy_intra" value="'.dol_escape_htmltag($search_accountancy_code_buy_intra).'"></td>';
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy_export']['checked'])) {
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy_export" value="'.dol_escape_htmltag($search_accountancy_code_buy_export).'"></td>';
 	}
 	// Extra fields
@@ -1167,23 +1167,23 @@ if ($resql) {
 	if (!empty($arrayfields['p.fk_state']['checked'])) {
 		print_liste_field_titre($arrayfields['p.fk_state']['label'], $_SERVER["PHP_SELF"], "p.fk_state", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell']['checked'])) {
-		print_liste_field_titre($arrayfields[$alias_product_accounting . '.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"], $alias_product_accounting . ".accountancy_code_sell", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
+		print_liste_field_titre($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"], $alias_product_perentity . ".accountancy_code_sell", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell_intra']['checked'])) {
-		print_liste_field_titre($arrayfields[$alias_product_accounting . '.accountancy_code_sell_intra']['label'], $_SERVER["PHP_SELF"], $alias_product_accounting . ".accountancy_code_sell_intra", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['checked'])) {
+		print_liste_field_titre($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['label'], $_SERVER["PHP_SELF"], $alias_product_perentity . ".accountancy_code_sell_intra", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell_export']['checked'])) {
-		print_liste_field_titre($arrayfields[$alias_product_accounting . '.accountancy_code_sell_export']['label'], $_SERVER["PHP_SELF"], $alias_product_accounting . ".accountancy_code_sell_export", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['checked'])) {
+		print_liste_field_titre($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['label'], $_SERVER["PHP_SELF"], $alias_product_perentity . ".accountancy_code_sell_export", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy']['checked'])) {
-		print_liste_field_titre($arrayfields[$alias_product_accounting . '.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"], $alias_product_accounting . ".accountancy_code_buy", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['checked'])) {
+		print_liste_field_titre($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"], $alias_product_perentity . ".accountancy_code_buy", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy_intra']['checked'])) {
-		print_liste_field_titre($arrayfields[$alias_product_accounting . '.accountancy_code_buy_intra']['label'], $_SERVER["PHP_SELF"], $alias_product_accounting . ".accountancy_code_buy_intra", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['checked'])) {
+		print_liste_field_titre($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['label'], $_SERVER["PHP_SELF"], $alias_product_perentity . ".accountancy_code_buy_intra", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy_export']['checked'])) {
-		print_liste_field_titre($arrayfields[$alias_product_accounting . '.accountancy_code_buy_export']['label'], $_SERVER["PHP_SELF"], $alias_product_accounting . ".accountancy_code_buy_export", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
+		print_liste_field_titre($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['label'], $_SERVER["PHP_SELF"], $alias_product_perentity . ".accountancy_code_buy_export", "", $param, '', $sortfield, $sortorder);
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -1708,38 +1708,38 @@ if ($resql) {
 			}
 		}
 		// Accountancy code sell
-		if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell']['checked'])) {
+		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
 			print '<td>'.$obj->accountancy_code_sell.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell_intra']['checked'])) {
+		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['checked'])) {
 			print '<td>'.$obj->accountancy_code_sell_intra.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_sell_export']['checked'])) {
+		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['checked'])) {
 			print '<td>'.$obj->accountancy_code_sell_export.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Accountancy code buy
-		if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy']['checked'])) {
+		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['checked'])) {
 			print '<td>'.$obj->accountancy_code_buy.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy_intra']['checked'])) {
+		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['checked'])) {
 			print '<td>'.$obj->accountancy_code_buy_intra.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		if (!empty($arrayfields[$alias_product_accounting . '.accountancy_code_buy_export']['checked'])) {
+		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
 			print '<td>'.$obj->accountancy_code_buy_export.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
