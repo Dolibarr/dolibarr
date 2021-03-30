@@ -169,7 +169,8 @@ if (preg_match('/^cs\./', $sortfield)
 	|| preg_match('/^c\./', $sortfield)
 	|| preg_match('/^pc\./', $sortfield)
 	|| preg_match('/^pct\./', $sortfield)
-	|| preg_match('/^u\./', $sortfield)) {
+	|| preg_match('/^u\./', $sortfield)
+	|| preg_match('/^ba\./', $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 }
 
@@ -233,8 +234,8 @@ print "</tr>\n";
 print '<tr class="liste_titre">';
 print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "pc.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("SocialContribution", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
+print_liste_field_titre("TypeContrib", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, 'width="140px"', $sortfield, $sortorder);
 print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
@@ -316,7 +317,7 @@ while ($i < min($num, $limit)) {
 		print '</td>';
 
 		print '<td>';
-		if ($obj->fk_bank > 0) {
+		if ($obj->bid > 0) {
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
 			$accountstatic->number = $obj->bnumber;
