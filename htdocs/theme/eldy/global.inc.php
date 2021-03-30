@@ -719,6 +719,9 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.paddingright2imp {
+	padding-<?php print $right; ?>: 2px !important;
+}
 .paddingtop {
 	padding-top: 4px;
 }
