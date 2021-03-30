@@ -436,7 +436,7 @@ class Entrepot extends CommonObject
 		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id) {
-			$sql .= " WHERE rowid = '".$id."'";
+			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) {

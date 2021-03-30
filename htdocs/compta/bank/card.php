@@ -570,13 +570,13 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	if (($_GET["id"] || $_GET["ref"]) && $action != 'edit') {
+	if ((GETPOST("id", 'int') || GETPOST("ref")) && $action != 'edit') {
 		$object = new Account($db);
-		if ($_GET["id"]) {
-			$object->fetch($_GET["id"]);
+		if (GETPOST("id", 'int')) {
+			$object->fetch(GETPOST("id", 'int'));
 		}
-		if ($_GET["ref"]) {
-			$object->fetch(0, $_GET["ref"]);
+		if (GETPOST("ref")) {
+			$object->fetch(0, GETPOST("ref"));
 			$_GET["id"] = $object->id;
 		}
 

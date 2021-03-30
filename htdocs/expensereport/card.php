@@ -1191,7 +1191,7 @@ if (empty($reshook)) {
 			}
 
 			$object->update_totaux_del($object_ligne->total_ht, $object_ligne->total_tva);
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_GET['id']);
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id', 'int'));
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');

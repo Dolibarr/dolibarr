@@ -1915,10 +1915,10 @@ if ($id) {
 								$showfield = 0;
 							} elseif ($fieldlist[$field] == 'unicode') {
 								$valuetoshow = $langs->getCurrencySymbol($obj->code, 1);
-							} elseif ($fieldlist[$field] == 'label' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX.'c_units') {
+							} elseif ($fieldlist[$field] == 'label' && $tabname[GETPOST("id", 'int')] == MAIN_DB_PREFIX.'c_units') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
-							} elseif ($fieldlist[$field] == 'short_label' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX.'c_units') {
+							} elseif ($fieldlist[$field] == 'short_label' && $tabname[GETPOST("id", 'int')] == MAIN_DB_PREFIX.'c_units') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							} elseif (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format')) {
