@@ -1820,9 +1820,9 @@ class Product extends CommonObject
 			$sql .= ", pfp.packaging";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-		$sql .= " WHERE pfp.rowid = ".$prodfournprice;
+		$sql .= " WHERE pfp.rowid = ".((int) $prodfournprice);
 		if ($qty > 0) {
-			$sql .= " AND pfp.quantity <= ".$qty;
+			$sql .= " AND pfp.quantity <= ".((float) $qty);
 		}
 		$sql .= " ORDER BY pfp.quantity DESC";
 
@@ -1874,15 +1874,15 @@ class Product extends CommonObject
 				$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 				$sql .= " pfp.packaging";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-				$sql .= " WHERE pfp.fk_product = ".$product_id;
+				$sql .= " WHERE pfp.fk_product = ".((int) $product_id);
 				if ($fourn_ref != 'none') {
 					$sql .= " AND pfp.ref_fourn = '".$this->db->escape($fourn_ref)."'";
 				}
 				if ($fk_soc > 0) {
-					$sql .= " AND pfp.fk_soc = ".$fk_soc;
+					$sql .= " AND pfp.fk_soc = ".((int) $fk_soc);
 				}
 				if ($qty > 0) {
-					$sql .= " AND pfp.quantity <= ".$qty;
+					$sql .= " AND pfp.quantity <= ".((float) $qty);
 				}
 				$sql .= " ORDER BY pfp.quantity DESC";
 				$sql .= " LIMIT 1";
@@ -2360,7 +2360,7 @@ class Product extends CommonObject
 					$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
 					$sql .= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
-					$sql .= " WHERE fk_product = ".$this->id;
+					$sql .= " WHERE fk_product = ".((int) $this->id);
 					$sql .= " ORDER BY date_price DESC, rowid DESC";
 					$sql .= " LIMIT 1";
 					$resql = $this->db->query($sql);
@@ -2374,7 +2374,7 @@ class Product extends CommonObject
 						if ($this->prices_by_qty[0] == 1) {
 							$sql = "SELECT rowid,price, unitprice, quantity, remise_percent, remise, remise, price_base_type";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-							$sql .= " WHERE fk_product_price = ".$this->prices_by_qty_id[0];
+							$sql .= " WHERE fk_product_price = ".((int) $this->prices_by_qty_id[0]);
 							$sql .= " ORDER BY quantity ASC";
 							$resultat = array();
 							$resql = $this->db->query($sql);
@@ -3862,7 +3862,7 @@ class Product extends CommonObject
 
 		// Check not already father of id_pere (to avoid father -> child -> father links)
 		$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = '.$id_fils.' AND fk_product_fils = '.$id_pere;
+		$sql .= ' WHERE fk_product_pere  = '.((int) $id_fils).' AND fk_product_fils = '.((int) $id_pere);
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 			return -1;
@@ -3875,7 +3875,7 @@ class Product extends CommonObject
 					return -1;
 				} else {
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
-					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.')';
+					$sql .= ' VALUES ('.((int) $id_pere).', '.((int) $id_fils).', '.((float) $qty).', '.((int) $incdec).')';
 					if (!$this->db->query($sql)) {
 						 dol_print_error($this->db);
 						 return -1;
@@ -3946,8 +3946,8 @@ class Product extends CommonObject
 		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_association";
-		$sql .= " WHERE fk_product_pere  = ".$fk_parent;
-		$sql .= " AND fk_product_fils = ".$fk_child;
+		$sql .= " WHERE fk_product_pere  = ".((int) $fk_parent);
+		$sql .= " AND fk_product_fils = ".((int) $fk_child);
 
 		dol_syslog(get_class($this).'::del_sousproduit', LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -4040,14 +4040,14 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql .= " WHERE fk_soc = ".$id_fourn;
+		$sql .= " WHERE fk_soc = ".((int) $id_fourn);
 		if ($ref_fourn) {
 			$sql .= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
 		} else {
 			$sql .= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		}
-		$sql .= " AND quantity = ".$quantity;
-		$sql .= " AND fk_product = ".$this->id;
+		$sql .= " AND quantity = ".((float) $quantity);
+		$sql .= " AND fk_product = ".((int) $this->id);
 		$sql .= " AND entity IN (".getEntity('productsupplierprice').")";
 
 		$resql = $this->db->query($sql);
@@ -4198,7 +4198,7 @@ class Product extends CommonObject
 		$sql .= ", multicurrency_price";
 		$sql .= ", multicurrency_price_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
-		$sql .= " WHERE fk_product = ".$fromId;
+		$sql .= " WHERE fk_product = ".((int) $fromId);
 		$sql .= " ORDER BY date_price DESC";
 		if ($conf->global->PRODUIT_MULTIPRICES_LIMIT > 0) {
 			$sql .= " LIMIT ".$conf->global->PRODUIT_MULTIPRICES_LIMIT;
@@ -4230,7 +4230,7 @@ class Product extends CommonObject
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association (fk_product_pere, fk_product_fils, qty)';
 		$sql .= " SELECT ".$toId.", fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
-		$sql .= " WHERE fk_product_pere = ".$fromId;
+		$sql .= " WHERE fk_product_pere = ".((int) $fromId);
 
 		dol_syslog(get_class($this).'::clone_association', LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -4262,7 +4262,7 @@ class Product extends CommonObject
 		. " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
 		. " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
 		. " FROM ".MAIN_DB_PREFIX."product_fournisseur"
-		. " WHERE fk_product = ".$fromId;
+		. " WHERE fk_product = ".((int) $fromId);
 
 		if ( ! $this->db->query($sql ) )
 		{
@@ -4273,9 +4273,9 @@ class Product extends CommonObject
 		// les prix de fournisseurs.
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price (";
 		$sql .= " datec, fk_product, fk_soc, price, quantity, fk_user)";
-		$sql .= " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, price, quantity, fk_user";
+		$sql .= " SELECT '".$this->db->idate($now)."', ".((int) $toId).", fk_soc, price, quantity, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql .= " WHERE fk_product = ".$fromId;
+		$sql .= " WHERE fk_product = ".((int) $fromId);
 
 		dol_syslog(get_class($this).'::clone_fournisseurs', LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -692,7 +692,7 @@ class Adherent extends CommonObject
 			$sql .= ", datevalid = '".$this->db->idate($this->datevalid)."'"; // Must be modified only when validating a member
 		}
 		$sql .= ", fk_user_mod = ".($user->id > 0 ? $user->id : 'null'); // Can be null because member can be create by a guest
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		// If we change the type of membership, we set also label of new type
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
@@ -964,7 +964,7 @@ class Adherent extends CommonObject
 		}
 
 		// Remove category
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".((int) $rowid);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -975,7 +975,7 @@ class Adherent extends CommonObject
 
 		// Remove subscription
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1007,7 +1007,7 @@ class Adherent extends CommonObject
 
 		// Remove adherent
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1154,7 +1154,7 @@ class Adherent extends CommonObject
 		// Set link to user
 		if ($userid > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".((int) $this->id);
-			$sql .= " WHERE rowid = ".$userid;
+			$sql .= " WHERE rowid = ".((int) $userid);
 			dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {

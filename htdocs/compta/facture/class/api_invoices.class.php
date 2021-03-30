@@ -1142,7 +1142,7 @@ class Invoices extends DolibarrApi
 				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 				$sql .= " re.description, re.fk_facture_source";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-				$sql .= " WHERE fk_facture = ".$this->invoice->id;
+				$sql .= " WHERE fk_facture = ".((int) $this->invoice->id);
 				$resql = $this->db->query($sql);
 				if (!empty($resql)) {
 					while ($obj = $this->db->fetch_object($resql)) {

@@ -198,7 +198,7 @@ class InterfaceStripe extends DolibarrTriggers
 			}
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
-			$sql .= " WHERE site='stripe' AND fk_soc = ".$object->id;
+			$sql .= " WHERE site='stripe' AND fk_soc = ".((int) $object->id);
 			$this->db->query($sql);
 		}
 

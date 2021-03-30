@@ -260,7 +260,7 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 	$sql .= " cp.code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-	$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$facid;
+	$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
 	$sql .= " ORDER BY p.datep";
 	$resql = $db->query($sql);
 	if ($resql) {

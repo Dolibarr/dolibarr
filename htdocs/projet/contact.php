@@ -223,7 +223,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer) {
 // Delete a contact
 if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer) {
 	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid"));
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: contact.php?id=".$object->id);

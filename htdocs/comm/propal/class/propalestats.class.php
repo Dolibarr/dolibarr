@@ -100,18 +100,18 @@ class PropaleStats extends Stats
 			$this->where .= " AND p.fk_soc = ".$this->socid;
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND fk_user_author = '.$this->userid;
+			$this->where .= ' AND fk_user_author = '.((int) $this->userid);
 		}
 
 		if ($typentid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
-			$this->where .= ' AND s.fk_typent = '.$typentid;
+			$this->where .= ' AND s.fk_typent = '.((int) $typentid);
 		}
 
 		if ($categid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = p.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
-			$this->where .= ' AND c.rowid = '.$categid;
+			$this->where .= ' AND c.rowid = '.((int) $categid);
 		}
 	}
 

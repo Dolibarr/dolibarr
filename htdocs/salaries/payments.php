@@ -485,7 +485,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 			}
 			$accountstatic->label = $obj->blabel;
-			print $accountstatic->getNomUrl(1);
+			if ($accountstatic->id > 0) {
+				print $accountstatic->getNomUrl(1);
+			}
 		} else print '&nbsp;';
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;

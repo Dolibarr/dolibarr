@@ -284,7 +284,7 @@ class SocieteAccount extends CommonObject
 	{
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
-		$sql .= " WHERE sa.fk_soc = ".$id;
+		$sql .= " WHERE sa.fk_soc = ".((int) $id);
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";

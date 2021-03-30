@@ -1157,7 +1157,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) $statut);
 			$sql .= " WHERE rowid = ".$this->id;
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -2306,7 +2306,7 @@ class CommandeFournisseur extends CommonOrder
 				$this->db->begin();
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-				$sql .= " SET fk_statut = ".$statut;
+				$sql .= " SET fk_statut = ".((int) $statut);
 				$sql .= " WHERE rowid = ".$this->id;
 				$sql .= " AND fk_statut IN (".self::STATUS_ORDERSENT.",".self::STATUS_RECEIVED_PARTIALLY.")"; // Process running or Partially received
 

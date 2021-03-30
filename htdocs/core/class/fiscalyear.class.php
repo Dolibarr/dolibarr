@@ -196,8 +196,8 @@ class Fiscalyear extends CommonObject
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", statut = '".$this->db->escape($this->statut ? $this->statut : 0)."'";
-		$sql .= ", fk_user_modif = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);

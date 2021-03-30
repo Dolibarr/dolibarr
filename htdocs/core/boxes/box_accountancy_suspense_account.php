@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,7 +83,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 			if (!empty($suspenseAccount) && $suspenseAccount > 0) {
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-				$sql .= " WHERE b.numero_compte = ".$suspenseAccount;
+				$sql .= " WHERE b.numero_compte = '".$this->db->escape($suspenseAccount)."'";
 				$sql .= " AND b.entity = ".$conf->entity;
 
 				$result = $this->db->query($sql);

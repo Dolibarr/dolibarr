@@ -242,7 +242,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		if ($user->rights->facture->paiement)
 		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }

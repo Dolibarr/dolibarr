@@ -1113,7 +1113,7 @@ class Commande extends CommonOrder
 						}
 
 						$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-						$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+						$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 						$resqlcontact = $this->db->query($sqlcontact);
 						if ($resqlcontact) {
@@ -2331,7 +2331,7 @@ class Commande extends CommonOrder
 
 			$sql = "SELECT fk_product, qty";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".$lineid;
+			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2417,7 +2417,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET remise_percent = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2468,18 +2468,20 @@ class Commande extends CommonOrder
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
+		if (empty($remise)) {
+			$remise = 0;
+		}
+
+		$remise = price2num($remise);
 
 		if ($user->rights->commande->creer) {
 			$error = 0;
 
 			$this->db->begin();
 
-			$remise = price2num($remise);
-
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET remise_absolue = '.$remise;
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' SET remise_absolue = '.((float) $remise);
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2741,7 +2743,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_availability = '.$availability_id;
+			$sql .= ' SET fk_availability = '.((int) $availability_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2805,7 +2807,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
+			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);

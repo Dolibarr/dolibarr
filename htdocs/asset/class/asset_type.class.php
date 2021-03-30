@@ -238,7 +238,7 @@ class AssetType extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."asset_type";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

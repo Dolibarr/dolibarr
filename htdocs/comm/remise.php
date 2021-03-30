@@ -66,7 +66,7 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header("Location: remise.php?id=".$_GET["id"]);
+			header("Location: remise.php?id=".GETPOST("id", 'int'));
 			exit;
 		}
 	} else {

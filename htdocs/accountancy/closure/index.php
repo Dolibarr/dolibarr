@@ -91,9 +91,9 @@ if ($action == 'validate_movements_confirm' && !empty($user->rights->accounting-
 
 				$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 				$sql .= " SET date_validated = '".$db->idate($now)."'";
-				$sql .= " WHERE rowid = ".$movement->id;
-				$sql .= " AND doc_date >= '" . dol_print_date($date_start, 'dayrfc') . "'";
-				$sql .= " AND doc_date <= '" . dol_print_date($date_end, 'dayrfc') . "'";
+				$sql .= " WHERE rowid = ".((int) $movement->id);
+				$sql .= " AND doc_date >= '" . $db->idate($date_start) . "'";
+				$sql .= " AND doc_date <= '" . $db->idate($date_end) . "'";
 
 				dol_syslog("/accountancy/closure/index.php :: Function validate_movement_confirm Specify movements as validated sql=".$sql, LOG_DEBUG);
 				$result = $db->query($sql);

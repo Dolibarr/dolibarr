@@ -275,7 +275,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 // Remove file in doc form
 /*if ($action == 'remove_file')
 {
-	$object = new Don($db, 0, $_GET['id']);
+	$object = new Don($db, 0, GETPOST('id', 'int'));
 	if ($object->fetch($id))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

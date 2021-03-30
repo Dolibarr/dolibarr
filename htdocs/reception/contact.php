@@ -110,7 +110,7 @@ if ($action == 'addcontact' && $user->rights->reception->creer) {
 	$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
 } elseif ($action == 'deletecontact' && $user->rights->reception->creer) {
 	// Efface un contact
-	$result = $objectsrc->delete_contact(GETPOST("lineid"));
+	$result = $objectsrc->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);

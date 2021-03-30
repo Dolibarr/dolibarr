@@ -694,7 +694,7 @@ class ConferenceOrBooth extends ActionComm
 		$sql = 'SELECT rowid, datec as datec, tms as datem,';
 		$sql .= ' fk_user_author, fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.id = '.$id;
+		$sql .= ' WHERE t.id = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

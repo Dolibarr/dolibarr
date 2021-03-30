@@ -50,7 +50,7 @@ if ($mode == 'mine') {
 	$mine = 1;
 }
 
-$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
+$projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 $hookmanager->initHooks(array('timesheetperweekcard'));
 

@@ -104,7 +104,7 @@ class Client extends Societe
 
 		$sql = "SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcomm";
 		if ($active >= 0) {
-			$sql .= " WHERE active = ".$active;
+			$sql .= " WHERE active = ".((int) $active);
 		}
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);

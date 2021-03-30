@@ -1197,11 +1197,11 @@ class Task extends CommonObject
 		if ($ret > 0) {
 			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
+			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
 			if (isset($this->progress)) {
-				$sql .= ", progress = ".$this->progress; // Do not overwrite value if not provided
+				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1210,8 +1210,8 @@ class Task extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")"; // set average hour rate of user
-			$sql .= " WHERE rowid = ".$tasktime_id;
+			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
+			$sql .= " WHERE rowid = ".((int) $tasktime_id);
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1317,9 +1317,9 @@ class Task extends CommonObject
 		$sql .= " SUM(t.task_duration) as nbseconds,";
 		$sql .= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " WHERE t.fk_task = ".$id;
+		$sql .= " WHERE t.fk_task = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
-			$sql .= " AND fk_user = ".$fuser->id;
+			$sql .= " AND fk_user = ".((int) $fuser->id);
 		}
 		if ($dates > 0) {
 			$datefieldname = "task_datehour";
@@ -1552,8 +1552,8 @@ class Task extends CommonObject
 			$newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->db->escape($this->id).")";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
