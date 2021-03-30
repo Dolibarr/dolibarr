@@ -45,6 +45,8 @@
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008800;
 	--amountremaintopaybackcolor:none;
+	--productlinestockod: #002200;
+	--productlinestocktoolow: #884400;
 }
 
 <?php
@@ -57,7 +59,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
-	            --colorbacktabcard1: #38393d;
+	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
 	            --colorbacktabactive: rgb(220,220,220);
 	            --colorbacklineimpair1: #38393d;
 	            --colorbacklineimpair2: #2b2d2f;
@@ -89,7 +91,11 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
-	      }\n";
+	      }
+
+		body, button {
+			color: #bbb;
+		}\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "}\n";
 	}
@@ -3492,9 +3498,11 @@ div.pagination li.pagination a,
 div.pagination li.pagination span {
   padding: 6px 12px;
   line-height: 1.42857143;
-  color: #000;
   text-decoration: none;
   background-repeat: repeat-x;
+  <?php if (empty($conf->global->THEME_DARKMODEENABLED)) { ?>
+  color: #000;
+  <?php } ?>
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -4274,8 +4282,8 @@ div.boximport {
 	min-height: unset;
 }
 
-.product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #884400; }
+.product_line_stock_ok { color: var(--productlinestockok); }
+.product_line_stock_too_low { color: var(--productlinestocktoolow); }
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
