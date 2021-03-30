@@ -232,7 +232,7 @@ if (empty($numref)) {
 	// List of all standing receipts
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= " WHERE b.fk_account = ".$object->id;
+	$sql .= " WHERE b.fk_account = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records

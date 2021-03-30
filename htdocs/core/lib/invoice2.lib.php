@@ -96,7 +96,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		}
 		if (in_array('bank', $filter)) {
 			$sqlwhere .= " AND p.fk_bank = b.rowid";
-			$sqlwhere .= " AND b.fk_account = ".$paymentbankid;
+			$sqlwhere .= " AND b.fk_account = ".((int) $paymentbankid);
 		}
 		$sqlorder = " ORDER BY p.datep ASC";
 	}

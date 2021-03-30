@@ -663,7 +663,7 @@ class ExpenseReport extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
-		$sql .= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
+		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
 		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

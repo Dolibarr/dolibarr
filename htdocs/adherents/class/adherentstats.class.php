@@ -72,7 +72,7 @@ class AdherentStats extends Stats
 		$this->where .= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent').")";
 		//if (!$user->rights->societe->client->voir && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($this->memberid) {
-			$this->where .= " AND m.rowid = ".$this->memberid;
+			$this->where .= " AND m.rowid = ".((int) $this->memberid);
 		}
 		//if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}

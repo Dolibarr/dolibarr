@@ -304,7 +304,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
-				$sql .= " WHERE fk_account = ".$bankid;
+				$sql .= " WHERE fk_account = ".((int) $bankid);
 				if ($syear && !$smonth) {
 					$sql .= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
 				} elseif ($syear && $smonth && !$sday) {

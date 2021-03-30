@@ -613,7 +613,7 @@ if ($id > 0) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-		$sql .= " WHERE p.fk_charge = ".$id;
+		$sql .= " WHERE p.fk_charge = ".((int) $id);
 		$sql .= " AND p.fk_charge = cs.rowid";
 		$sql .= " AND cs.entity IN (".getEntity('tax').")";
 		$sql .= " ORDER BY dp DESC";

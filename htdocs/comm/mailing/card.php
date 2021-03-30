@@ -149,7 +149,7 @@ if (empty($reshook)) {
 			// or sent in error (statut=-1)
 			$sql = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
+			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $object->id);
 			$sql .= " ORDER BY mc.statut DESC"; // first status 0, then status -1
 
 			dol_syslog("card.php: select targets", LOG_DEBUG);

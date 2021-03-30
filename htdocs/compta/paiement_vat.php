@@ -189,7 +189,7 @@ if ($action == 'create') {
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_vat as p";
-	$sql .= " WHERE p.fk_tva = ".$chid;
+	$sql .= " WHERE p.fk_tva = ".((int) $chid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
