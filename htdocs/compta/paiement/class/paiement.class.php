@@ -736,7 +736,7 @@ class Paiement extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
 		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.((int) $id_bank);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::update_fk_bank', LOG_DEBUG);
@@ -855,7 +855,7 @@ class Paiement extends CommonObject
 	 */
 	public function validate(User $user = null)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this).'::valide', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -876,7 +876,7 @@ class Paiement extends CommonObject
 	 */
 	public function reject(User $user = null)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this).'::reject', LOG_DEBUG);
 		$result = $this->db->query($sql);

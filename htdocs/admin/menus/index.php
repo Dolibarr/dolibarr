@@ -111,13 +111,13 @@ if ($action == 'up') {
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".$previous['order'];
-	$sql .= " WHERE m.rowid = ".$current['rowid']; // Up the selected entry
+	$sql .= " SET m.position = ".((int) $previous['order']);
+	$sql .= " WHERE m.rowid = ".((int) $current['rowid']); // Up the selected entry
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1);
-	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
+	$sql .= " SET m.position = ".((int) ($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1));
+	$sql .= " WHERE m.rowid = ".((int) $previous['rowid']); // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 } elseif ($action == 'down') {

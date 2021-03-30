@@ -275,7 +275,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 // Remove file in doc form
 /*if ($action == 'remove_file')
 {
-	$object = new Don($db, 0, $_GET['id']);
+	$object = new Don($db, 0, GETPOST('id', 'int'));
 	if ($object->fetch($id))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -329,7 +329,7 @@ if ($action == 'builddoc')
  * View
  */
 
-$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
 
 llxHeader('', $langs->trans("Donation"), $help_url);
 

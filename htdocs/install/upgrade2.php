@@ -678,7 +678,7 @@ function migrate_paiements($db, $langs, $conf)
 
 					$res += $db->query($sql);
 
-					$sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".$row[$i][0];
+					$sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".((int) $row[$i][0]);
 
 					$res += $db->query($sql);
 

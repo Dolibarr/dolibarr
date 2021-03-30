@@ -281,10 +281,10 @@ if ($resql) {
 		print "</td>\n";
 
 		// Amount of invoice
-		print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+		print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 		// Amount requested
-		print '<td class="right">'.price($obj->amount_requested)."</td>\n";
+		print '<td class="right"><span class="amount">'.price($obj->amount_requested)."</span></td>\n";
 
 		// Status of requests
 		print '<td class="center">';

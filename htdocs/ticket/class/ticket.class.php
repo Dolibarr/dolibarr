@@ -1982,8 +1982,8 @@ class Ticket extends CommonObject
 	 *     Link element with a project
 	 * 	   Override core function because of key name 'fk_project' used for this module
 	 *
-	 *     @param  int $projectid Project id to link element to
-	 *     @return int                        <0 if KO, >0 if OK
+	 *     @param  int 		$projectid 			Project id to link element to
+	 *     @return int                   	   <0 if KO, >0 if OK
 	 */
 	public function setProject($projectid)
 	{
@@ -1994,16 +1994,15 @@ class Ticket extends CommonObject
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		if ($projectid) {
-			$sql .= ' SET fk_project = '.$projectid;
+			$sql .= ' SET fk_project = '.((int) $projectid);
 		} else {
 			$sql .= ' SET fk_project = NULL';
 		}
-
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::setProject sql=".$sql);
 		if ($this->db->query($sql)) {
-			$this->fk_project = $projectid;
+			$this->fk_project = ((int) $projectid);
 			return 1;
 		} else {
 			dol_print_error($this->db);

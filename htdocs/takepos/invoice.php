@@ -1063,7 +1063,7 @@ $( document ).ready(function() {
 			if ($placeid == $obj->rowid) {
 				echo "<b>";
 			}
-			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
+			echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) {
 				echo "</b>";
 			}
@@ -1071,7 +1071,7 @@ $( document ).ready(function() {
 		}
 		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;
-		echo '\\\'; invoiceid=0; Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+		echo '\\\'; invoiceid=0; Refresh();"><div><span class="fa fa-plus" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"><span class="fa fa-shopping-cart"></span></div></a>\');';
 	} else {
 		dol_print_error($db);
 	}

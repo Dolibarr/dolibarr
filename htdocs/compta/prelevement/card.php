@@ -423,7 +423,7 @@ if ($id > 0 || $ref) {
 			print $thirdparty->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td class="right">';
 

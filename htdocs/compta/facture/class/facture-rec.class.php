@@ -1808,7 +1808,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET nb_gen_max = '.$nb;
+		$sql .= ' SET nb_gen_max = '.((int) $nb);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
@@ -1835,7 +1835,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET auto_validate = '.$validate;
+		$sql .= ' SET auto_validate = '.((int) $validate);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
@@ -1862,7 +1862,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET generate_pdf = '.$validate;
+		$sql .= ' SET generate_pdf = '.((int) $validate);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setGeneratePdf", LOG_DEBUG);
@@ -2007,7 +2007,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.rowid = '.$rowid;
+		$sql .= ' WHERE l.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY l.rang';
 
 		dol_syslog('FactureRec::fetch', LOG_DEBUG);
