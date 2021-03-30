@@ -1347,8 +1347,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 				$qty_for_line = min($remaining_qty, $obj_line->qty);
 				if ($first_iteration) {
 					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-					$sql_attach .= ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line;
-					$sql_attach .= ' WHERE rowid = '.$obj_dispatch->rowid;
+					$sql_attach .= ' SET fk_commandefourndet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
+					$sql_attach .= ' WHERE rowid = '.((int) $obj_dispatch->rowid);
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(
