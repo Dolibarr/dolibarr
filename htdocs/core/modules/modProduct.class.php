@@ -176,7 +176,7 @@ class modProduct extends DolibarrModules
 		//--------
 		$r = 0;
 
-		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa" : "p";
+		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pac";
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = "Products"; // Translation key (used only if key ExportDataset_xxx_z not found)
@@ -446,7 +446,7 @@ class modProduct extends DolibarrModules
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 			$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
 			if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-				$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+				$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pac ON pac.fk_product = p.rowid AND pac.entity = " . ((int) $conf->entity);
 			}
 			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object,';
 			$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'product_association as pa, '.MAIN_DB_PREFIX.'product as p2';
@@ -641,7 +641,16 @@ class modProduct extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-
+		$this->import_regex_array[$r] = array(
+			'p.ref'=>'[^ ]',
+			'p.price_base_type' => 'HT|TTC',
+			'p.tosell'=>'^[0|1]$',
+			'p.tobuy'=>'^[0|1]$',
+			'p.fk_product_type'=>'^[0|1]$',
+			'p.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+			'p.recuperableonly' => '^[0|1]$',
+			'p.finished' => '^[0|1]$'
+		);
 		// field order as per structure of table llx_product
 		$import_sample = array(
 			'p.ref' => "ref:PREF123456",
@@ -893,7 +902,7 @@ class modProduct extends DolibarrModules
 			$this->import_convertvalue_array[$r] = array(
 					'l.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
-			$this->import_examplevalues_array[$r] = array('l.fk_product'=>'PRODUCT_REF or id:123456', 'l.lang'=>'en_US', 'l.label'=>'Label in en_US', 'l.description'=>'Desc in en_US');
+			$this->import_examplevalues_array[$r] = array('l.fk_product'=>'ref:PRODUCT_REF or id:123456', 'l.lang'=>'en_US', 'l.label'=>'Label in en_US', 'l.description'=>'Desc in en_US');
 			$this->import_updatekeys_array[$r] = array('l.fk_product'=>'ProductOrService', 'l.lang'=>'Language');
 		}
 	}
