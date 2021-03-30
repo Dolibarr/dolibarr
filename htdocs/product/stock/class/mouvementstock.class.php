@@ -488,7 +488,7 @@ class MouvementStock extends CommonObject
 			if (!$error)
 			{
 				$sql = "SELECT rowid, reel FROM ".MAIN_DB_PREFIX."product_stock";
-				$sql .= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product; // This is a unique key
+				$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key
 
 				dol_syslog(get_class($this)."::_create check if a record already exists in product_stock", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -544,12 +544,12 @@ class MouvementStock extends CommonObject
 			{
 				if ($alreadyarecord > 0)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
-					$sql .= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".((float) $qty);
+					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
 					$sql .= " (reel, fk_entrepot, fk_product) VALUES ";
-					$sql .= " (".$qty.", ".$entrepot_id.", ".$fk_product.")";
+					$sql .= " (".((float) $qty).", ".((int) $entrepot_id).", ".((int) $fk_product).")";
 				}
 
 				dol_syslog(get_class($this)."::_create update stock value", LOG_DEBUG);
@@ -602,7 +602,7 @@ class MouvementStock extends CommonObject
 				$newpmp = price2num($newpmp, 'MU');
 
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
-				// $sql.= " WHERE rowid = ".$fk_product;
+				// $sql.= " WHERE rowid = ".((int) $fk_product);
 				// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".((float) $newpmp).",";
 				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
@@ -763,7 +763,7 @@ class MouvementStock extends CommonObject
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
-		$sql .= " WHERE fk_product_pere = ".$idProduct;
+		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
 		$sql .= " AND incdec = 1";
 
 		dol_syslog(get_class($this)."::_createSubProduct for parent product ".$idProduct, LOG_DEBUG);
@@ -875,7 +875,7 @@ class MouvementStock extends CommonObject
 		$nbSP=0;
 
 		$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
-		$resql.= " WHERE fk_product_pere = ".$id;
+		$resql.= " WHERE fk_product_pere = ".((int) $id);
 		if ($this->db->query($resql))
 		{
 			$obj=$this->db->fetch_object($resql);
@@ -1284,7 +1284,7 @@ class MouvementStock extends CommonObject
 		$sql = "SELECT sum(pb.qty) as cpt";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
-		$sql .= " WHERE ps.fk_product = " . $fk_product;
+		$sql .= " WHERE ps.fk_product = " . ((int) $fk_product);
 		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
 
 		$result = $this->db->query($sql);

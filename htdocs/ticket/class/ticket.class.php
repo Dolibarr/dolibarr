@@ -568,7 +568,7 @@ class Ticket extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$this->db->escape($id);
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element, 1).")";
 			if (!empty($ref)) {

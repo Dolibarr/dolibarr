@@ -880,7 +880,7 @@ class ExpenseReport extends CommonObject
 		if ($user->rights->expensereport->lire) {
 			$sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
-			$sql .= " WHERE de.fk_projet = ".$projectid;
+			$sql .= " WHERE de.fk_projet = ".((int) $projectid);
 
 			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -1117,8 +1117,8 @@ class ExpenseReport extends CommonObject
 		// Delete extrafields of lines and lines
 		if (!$error && !empty($this->table_element_line)) {
 			$tabletodelete = $this->table_element_line;
-			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -1154,7 +1154,7 @@ class ExpenseReport extends CommonObject
 
 		// Delete main record
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".((int) $this->id);
 			$res = $this->db->query($sql);
 			if (!$res) {
 				$error++;
@@ -2124,7 +2124,7 @@ class ExpenseReport extends CommonObject
 			// Select des infos sur le type fees
 			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-			$sql .= " WHERE c.id = ".$type_fees_id;
+			$sql .= " WHERE c.id = ".((int) $type_fees_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objp_fees = $this->db->fetch_object($resql);
@@ -2136,7 +2136,7 @@ class ExpenseReport extends CommonObject
 			// Select des informations du projet
 			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql .= " WHERE p.rowid = ".$projet_id;
+			$sql .= " WHERE p.rowid = ".((int) $projet_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objp_projet = $this->db->fetch_object($resql);
@@ -2331,7 +2331,7 @@ class ExpenseReport extends CommonObject
 		$ret = array();
 		$sql = "SELECT id, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees";
-		$sql .= " WHERE active = ".$active;
+		$sql .= " WHERE active = ".((int) $active);
 		dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2495,7 +2495,7 @@ class ExpenseReport extends CommonObject
 
 		$type = 'expense_report';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

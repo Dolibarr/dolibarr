@@ -205,7 +205,7 @@ if ($action == 'order' && GETPOST('valid')) {
 			$order = new CommandeFournisseur($db);
 			// Check if an order for the supplier exists
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-			$sql .= " WHERE fk_soc = ".$suppliersid[$i];
+			$sql .= " WHERE fk_soc = ".((int) $suppliersid[$i]);
 			$sql .= " AND source = 42 AND fk_statut = 0";
 			$sql .= " AND entity IN (".getEntity('commande_fournisseur').")";
 			$sql .= " ORDER BY date_creation DESC";

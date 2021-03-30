@@ -290,7 +290,7 @@ if ($result) {
 				// sql nb sellers
 				$sql_seller  = "SELECT COUNT(sc.rowid) as nb";
 				$sql_seller .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-				$sql_seller .= " WHERE sc.fk_soc = ".$objp->socid;
+				$sql_seller .= " WHERE sc.fk_soc = ".((int) $objp->socid);
 				$sql_seller .= " LIMIT 1";
 
 				$resql_seller = $db->query($sql_seller);

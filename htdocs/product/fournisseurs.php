@@ -793,7 +793,7 @@ END;
 							$sql .= ", ".$key;
 						}
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
-						$sql .= " WHERE fk_object = ".$rowid;
+						$sql .= " WHERE fk_object = ".((int) $rowid);
 						$resql = $db->query($sql);
 						if ($resql) {
 							$obj = $db->fetch_object($resql);
@@ -1145,7 +1145,7 @@ END;
 								$sql .= ", ".$key;
 							}
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
-							$sql .= " WHERE fk_object = ".$productfourn->product_fourn_price_id;
+							$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);
 							$resql = $db->query($sql);
 							if ($resql) {
 								if ($db->num_rows($resql) != 1) {

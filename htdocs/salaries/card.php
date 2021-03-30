@@ -780,7 +780,7 @@ if ($id) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 	$sql .= ", ".MAIN_DB_PREFIX."salary as salaire";
-	$sql .= " WHERE p.fk_salary = ".$id;
+	$sql .= " WHERE p.fk_salary = ".((int) $id);
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
