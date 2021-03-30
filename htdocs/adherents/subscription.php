@@ -410,11 +410,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
 		// Clean some POST vars
 		if (!$error) {
-			$_POST["subscription"] = '';
-			$_POST["accountid"] = '';
-			$_POST["operation"] = '';
-			$_POST["label"] = '';
-			$_POST["num_chq"] = '';
+			$GETPOST("subscription",'alpha') = '';
+			$GETPOST("accountid",'int') = '';
+			$GETPOST("operation",'alphanohtml') = '';
+			$GETPOST("label",'alpha') = '';
+			$GETPOST("num_chq",'alphanohtml') = '';
 		}
 	}
 }
