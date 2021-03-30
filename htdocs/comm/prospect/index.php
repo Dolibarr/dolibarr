@@ -30,10 +30,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 // Load translation files required by the page
 $langs->load("propal");
 
-
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$action = '';
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'propal', $socid, '');
+
 
 
 /*

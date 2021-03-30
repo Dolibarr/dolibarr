@@ -1110,16 +1110,14 @@ class User extends CommonObject
 		// Check parameters
 		if ($this->statut == $status) {
 			return 0;
-		} else {
-			$this->statut = $status;
 		}
 
 		$this->db->begin();
 
 		// Save in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-		$sql .= " SET statut = ".$this->statut;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " SET statut = ".((int) $status);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
@@ -1136,6 +1134,8 @@ class User extends CommonObject
 			$this->db->rollback();
 			return -$error;
 		} else {
+			$this->status = $status;
+			$this->statut = $status;
 			$this->db->commit();
 			return 1;
 		}
@@ -1199,7 +1199,7 @@ class User extends CommonObject
 
 		// If contact, remove link
 		if ($this->contact_id > 0) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
 			if (!$error && !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -1737,7 +1737,7 @@ class User extends CommonObject
 			// If user is linked to a member, remove old link to this member
 			if ($this->fk_member > 0) {
 				dol_syslog(get_class($this)."::update remove link with member. We will recreate it later", LOG_DEBUG);
-				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".((int) $this->fk_member);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->error(); $this->db->rollback(); return -5;
@@ -1745,7 +1745,7 @@ class User extends CommonObject
 			}
 			// Set link to user
 			dol_syslog(get_class($this)."::update set link with member", LOG_DEBUG);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member > 0 ? $this->fk_member : 'null')." where rowid = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member > 0 ? ((int) $this->fk_member) : 'null')." where rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->error(); $this->db->rollback(); return -5;

@@ -671,7 +671,7 @@ if ($result) {
 		if ($arrayfields['debit']['checked']) {
 			print '<td class="nowrap right">';
 			if ($obj->sens == 0) {
-				print price($obj->amount);
+				print '<span class="amount">'.price($obj->amount).'</span>';
 				$totalarray['val']['total_deb'] += $obj->amount;
 			}
 			if (!$i) {
@@ -687,7 +687,7 @@ if ($result) {
 		if ($arrayfields['credit']['checked']) {
 			print '<td class="nowrap right">';
 			if ($obj->sens == 1) {
-				print price($obj->amount);
+				print '<span class="amount">'.price($obj->amount).'</span>';
 				$totalarray['val']['total_cred'] += $obj->amount;
 			}
 			if (!$i) {

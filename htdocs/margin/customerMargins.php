@@ -344,9 +344,9 @@ if ($result) {
 				print '<td>'.$companystatic->getNomUrl(1, 'margin').'</td>';
 			}
 
-			print '<td class="nowrap right">'.price(price2num($pv, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num($pa, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num($marge, 'MT')).'</td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($pv, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($pa, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($marge, 'MT')).'</span></td>';
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 			}

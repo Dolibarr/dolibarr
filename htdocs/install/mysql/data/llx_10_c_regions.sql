@@ -11,10 +11,6 @@
 -- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
 -- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
 -- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
-
-
-
--- LICENSE ---------------------------------------------------------------------
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -56,8 +52,20 @@
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 0,   0,   '0',0,'-');
 
 
+-- Algeria Regions (id country=13)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 13, 1301, '', 0, 'Algerie');
+
+
+-- Argentina Regions (id country=23)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 23, 2301, '', 0, 'Norte');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 23, 2302, '', 0, 'Litoral');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 23, 2303, '', 0, 'Cuyana');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 23, 2304, '', 0, 'Central');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 23, 2305, '', 0, 'Patagonia');
+
+
 -- Austria Regions (id country=41)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 41, 4101, '', 0, 'Österreich', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 41, 4101, '', 0, 'Österreich');
 
 
 -- Belgium Regions (id country=2)
@@ -188,8 +196,7 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,102
 -- Region USA (id country=11)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 11, 1101, '', 0, 'United-States', 1);
 
--- Regions Algeria (id country=13)
-INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 13, 1301, '', 0, 'Algerie', 1);
+
 
 -- Region Canada (id country=14)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 14, 1401, '', 0, 'Canada', 1);
@@ -197,12 +204,6 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 -- Regions The Netherlands (id country=17)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 17, 1701, '', 0,'Provincies van Nederland ', 1);
 
--- Regions Argentina (id country=23)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 23, 2301, '', 0, 'Norte', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 23, 2302, '', 0, 'Litoral', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 23, 2303, '', 0, 'Cuyana', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 23, 2304, '', 0, 'Central', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 23, 2305, '', 0, 'Patagonia', 1);
 
 -- Regions Australia (id country=28)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 28, 2801, '', 0, 'Australia', 1);

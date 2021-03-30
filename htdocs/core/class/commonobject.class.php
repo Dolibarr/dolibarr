@@ -358,7 +358,7 @@ abstract class CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see model_pdf
+	 * @see $model_pdf
 	 */
 	public $modelpdf;
 
@@ -1338,7 +1338,7 @@ abstract class CommonObject
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
 		$sql .= " tc.code, tc.libelle";
 		$sql .= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-		$sql .= " WHERE ec.rowid =".$rowid;
+		$sql .= " WHERE ec.rowid =".((int) $rowid);
 		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
 
@@ -2201,22 +2201,22 @@ abstract class CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
-				$sql .= ' SET fk_project = '.$projectid;
+				$sql .= ' SET fk_project = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_project = NULL';
 			}
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 		} elseif ($this->table_element == 'actioncomm') {	// Special case for actioncomm
 			if ($projectid) {
-				$sql .= ' SET fk_project = '.$projectid;
+				$sql .= ' SET fk_project = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_project = NULL';
 			}
-			$sql .= ' WHERE id = '.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 		} else // Special case for old architecture objects
 		{
 			if ($projectid) {
-				$sql .= ' SET fk_projet = '.$projectid;
+				$sql .= ' SET fk_projet = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_projet = NULL';
 			}
@@ -2225,7 +2225,7 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->fk_project = $projectid;
+			$this->fk_project = ((int) $projectid);
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -2649,7 +2649,7 @@ abstract class CommonObject
 			$fieldname = 'fk_address';
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".((int) $id);
 		$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 		if ($this->db->query($sql)) {
@@ -2695,7 +2695,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_shipping_method = ".$shipping_method_id;
+		$sql .= " SET fk_shipping_method = ".((int) $shipping_method_id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -2742,7 +2742,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setWarehouse('.$warehouse_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_warehouse = ".$warehouse_id;
+		$sql .= " SET fk_warehouse = ".((int) $warehouse_id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		if ($this->db->query($sql)) {
@@ -2819,7 +2819,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_account = ".$fk_account;
+		$sql .= " SET fk_account = ".((int) $fk_account);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -3067,7 +3067,7 @@ abstract class CommonObject
 			$sql .= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3098,7 +3098,7 @@ abstract class CommonObject
 			$sql .= ' AND rang = '.($rang + 1);
 			if ($this->db->query($sql)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang + 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -8411,7 +8411,7 @@ abstract class CommonObject
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
 			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)') {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".$this->id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
 				if ($resqlupdate === false) {

@@ -933,14 +933,14 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 					}
 					if ($methodtofix == 'updatestock') {
 						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? $obj->reelbatch : '0').' for ps.rowid = '.$obj->psrowid;
+						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
 							$error = 0;
 
 							$db->begin();
 
 							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? $obj->reelbatch : '0')." WHERE rowid = ".$obj->psrowid;
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
 							$resql2 = $db->query($sql2);
 							if ($resql2) {
 								// We update product_stock, so we must fill p.stock into product too.
@@ -1027,7 +1027,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
 						$error++;

@@ -72,7 +72,7 @@ span.butAction, span.butActionDelete {
 	border-radius: 3px;
 }
 .butActionRefused:last-child, .butAction:last-child, .butActionDelete:last-child {
-	margin-right: 0px !important;
+	margin-<?php echo $right; ?>: 0px !important;
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;

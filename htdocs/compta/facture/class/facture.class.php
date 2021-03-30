@@ -2289,7 +2289,7 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact()) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
@@ -3735,14 +3735,14 @@ class Facture extends CommonInvoice
 		}
 
 		if ($user->rights->facture->creer) {
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_percent = '.$remise;
+			$sql .= ' SET remise_percent = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.$this->id;
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
@@ -3804,7 +3804,7 @@ class Facture extends CommonInvoice
 			$remise = price2num($remise);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_absolue = '.$remise;
+			$sql .= ' SET remise_absolue = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.$this->id;
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
@@ -4982,7 +4982,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
-		$sql .= ' WHERE fd.rowid = '.$rowid;
+		$sql .= ' WHERE fd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 		if ($result) {

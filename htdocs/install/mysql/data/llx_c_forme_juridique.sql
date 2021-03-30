@@ -8,13 +8,9 @@
 -- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 -- Copyright (C) 2012 	   Tommaso Basilici     <t.basilici@19.coop>
--- Copyright (C) 2012	     Ricardo Schluter     <info@ripasch.nl>
--- Copyright (C) 2013	     Cedric GROSS		      <c.gross@kreiz-it.fr>
+-- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
+-- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
 -- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
---
-
-
--- LICENSE ---------------------------------------------------------------
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by

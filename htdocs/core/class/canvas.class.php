@@ -107,6 +107,7 @@ class Canvas
 		$this->card = $card;
 		$this->dirmodule = $module;
 		// Correct values if canvas is into an external module
+		$regs = array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $canvas, $regs)) {
 			$this->canvas = $regs[1];
 			$this->dirmodule = $regs[2];

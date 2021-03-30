@@ -868,6 +868,7 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
+			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
 			$sql .= ", canvas";
 			$sql .= ", status";
@@ -882,6 +883,7 @@ class Societe extends CommonObject
 			$sql .= ", accountancy_code_sell";
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
+			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".$this->status;
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -958,7 +960,7 @@ class Societe extends CommonObject
 	 * @param 	array	$tags		Array of tag to affect to contact
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user, $no_email, $tags = array())
+	public function create_individual(User $user, $no_email = 0, $tags = array())
 	{
 		global $conf;
 
@@ -1619,7 +1621,7 @@ class Societe extends CommonObject
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid) {
-			$sql .= ' AND s.rowid = '.$rowid;
+			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}
 		if ($ref) {
 			$sql .= " AND s.nom = '".$this->db->escape($ref)."'";
@@ -1983,7 +1985,7 @@ class Societe extends CommonObject
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET client = ".$newclient;
+			$sql .= " SET client = ".((int) $newclient);
 			$sql .= " WHERE rowid = ".$this->id;
 
 			$resql = $this->db->query($sql);
@@ -2285,8 +2287,8 @@ class Societe extends CommonObject
 			$now = dol_now();
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET price_level = '".$this->db->escape($price_level)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET price_level = ".((int) $price_level);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
@@ -2295,7 +2297,7 @@ class Societe extends CommonObject
 
 			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
 			$sql .= " (datec, fk_soc, price_level, fk_user_author)";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($price_level)."', ".$user->id.")";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", ".((int) $price_level).", ".$user->id.")";
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
@@ -3793,11 +3795,14 @@ class Societe extends CommonObject
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
 		$this->code_fournisseur = -1;
+		$this->typent_code = ($member->morphy == 'phy' ? 'TE_PRIVATE' : 0);
+		$this->typent_id = $this->typent_code ? dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code') : 0;
 
 		$this->db->begin();
 
 		// Cree et positionne $this->id
 		$result = $this->create($user);
+
 		if ($result >= 0) {
 			// Auto-create contact on thirdparty creation
 			if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT)) {
@@ -3808,6 +3813,7 @@ class Societe extends CommonObject
 
 				dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
 				$result = $this->create_individual($user);
+
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 					$this->db->rollback();

@@ -236,8 +236,8 @@ class RemiseCheque extends CommonObject
 
 					if ($checkremise) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-						$sql .= " SET fk_bordereau = ".$this->id;
-						$sql .= " WHERE rowid = ".$lineid;
+						$sql .= " SET fk_bordereau = ".((int) $this->id);
+						$sql .= " WHERE rowid = ".((int) $lineid);
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {

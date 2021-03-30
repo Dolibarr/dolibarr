@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,12 +85,10 @@ if (!empty($canvas)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('membercard', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', 0);
-
-if ($id > 0) {
+// Fetch object
+if ($id > 0 || !empty($ref)) {
 	// Load member
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
 	$canadduser = ($user->admin || $user->rights->user->user->creer);
@@ -97,9 +96,9 @@ if ($id > 0) {
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-				|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
 		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-				|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
 	}
 }
 
@@ -110,6 +109,8 @@ if ($id) {
 	$caneditfieldmember = $user->rights->adherent->creer;
 }
 
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
 /*
@@ -331,62 +332,66 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
+			if (!$error) {
+				$result = $object->update($user, 0, $nosyncuser, $nosyncuserpass);
 
-			if ($result >= 0 && !count($object->errors)) {
-				$categories = GETPOST('memcats', 'array');
-				$object->setCategories($categories);
+				if ($result >= 0 && !count($object->errors)) {
+					$categories = GETPOST('memcats', 'array');
+					$object->setCategories($categories);
 
-				// Logo/Photo save
-				$dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
-				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if ($file_OK) {
-					if (GETPOST('deletephoto')) {
-						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						$fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
-						$dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
-						dol_delete_file($fileimg);
-						dol_delete_dir_recursive($dirthumbs);
-					}
+					// Logo/Photo save
+					$dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
+					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+					if ($file_OK) {
+						if (GETPOST('deletephoto')) {
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+							$fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
+							$dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
+							dol_delete_file($fileimg);
+							dol_delete_dir_recursive($dirthumbs);
+						}
 
-					if (image_format_supported($_FILES['photo']['name']) > 0) {
-						dol_mkdir($dir);
+						if (image_format_supported($_FILES['photo']['name']) > 0) {
+							dol_mkdir($dir);
 
-						if (@is_dir($dir)) {
-							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-							if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
-								setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-							} else {
-								// Create thumbs
-								$object->addThumbs($newfile);
+							if (@is_dir($dir)) {
+								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+								if (!dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']) > 0) {
+									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+								} else {
+									// Create thumbs
+									$object->addThumbs($newfile);
+								}
 							}
+						} else {
+							setEventMessages("ErrorBadImageFormat", null, 'errors');
 						}
 					} else {
-						setEventMessages("ErrorBadImageFormat", null, 'errors');
+						switch ($_FILES['photo']['error']) {
+							case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+							case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+								$errors[] = "ErrorFileSizeTooLarge";
+								break;
+							case 3: //uploaded file was only partially uploaded
+								$errors[] = "ErrorFilePartiallyUploaded";
+								break;
+						}
+					}
+
+					$rowid = $object->id;
+					$id = $object->id;
+					$action = '';
+
+					if (!empty($backtopage)) {
+						header("Location: ".$backtopage);
+						exit;
 					}
 				} else {
-					switch ($_FILES['photo']['error']) {
-						case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
-						case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-							$errors[] = "ErrorFileSizeTooLarge";
-							break;
-						case 3: //uploaded file was only partially uploaded
-							$errors[] = "ErrorFilePartiallyUploaded";
-							break;
-					}
-				}
-
-				$rowid = $object->id;
-				$id = $object->id;
-				$action = '';
-
-				if (!empty($backtopage)) {
-					header("Location: ".$backtopage);
-					exit;
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = '';
 				}
 			} else {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
+				$action = 'edit';
 			}
 		} else {
 			$action = 'edit';
@@ -550,7 +555,6 @@ if (empty($reshook)) {
 				$db->commit();
 				$rowid = $object->id;
 				$id = $object->id;
-				$action = '';
 			} else {
 				$db->rollback();
 
@@ -559,12 +563,41 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-
-				$action = 'create';
 			}
-		} else {
-			$action = 'create';
+			// Auto-create thirdparty on member creation
+			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+				if ($result > 0) {
+					// User creation
+					$company = new Societe($db);
+
+					$companyalias = '';
+					$fullname = $object->getFullName($langs);
+
+					if ($object->morphy == 'mor') {
+						$companyname = $object->company;
+						if (!empty($fullname)) {
+							$companyalias = $fullname;
+						}
+					} else {
+						$companyname = $fullname;
+						if (!empty($object->company)) {
+							$companyalias = $object->company;
+						}
+					}
+
+					$result = $company->create_from_member($object, $companyname, $companyalias);
+
+					if ($result < 0) {
+						$langs->load("errors");
+						setEventMessages($langs->trans($company->error), null, 'errors');
+						setEventMessages($company->error, $company->errors, 'errors');
+					}
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
 		}
+		$action = ($result < 0 || !$error) ?  '' : 'create';
 	}
 
 	if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confirm == 'yes') {

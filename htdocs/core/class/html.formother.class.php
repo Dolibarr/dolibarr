@@ -481,7 +481,12 @@ class FormOther
 				$sql_usr .= $hookmanager->resArray[1];
 			}
 		}
-		$sql_usr .= " ORDER BY statut DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+
+		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+			$sql_usr .= " ORDER BY status DESC, firstname ASC, lastname ASC";
+		} else {
+			$sql_usr .= " ORDER BY status DESC, lastname ASC, firstname ASC";
+		}
 		//print $sql_usr;exit;
 
 		$resql_usr = $this->db->query($sql_usr);

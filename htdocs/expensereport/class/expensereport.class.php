@@ -1384,7 +1384,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".$fuser->id.",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($this->date_approve)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql)) {
@@ -1434,7 +1434,7 @@ class ExpenseReport extends CommonObject
 		// date de refus
 		if ($this->status != self::STATUS_REFUSED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".$fuser->id.",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".((int) $fuser->id).",";
 			$sql .= " date_refuse='".$this->db->idate($now)."',";
 			$sql .= " detail_refuse='".$this->db->escape($details)."',";
 			$sql .= " fk_user_approve = NULL";
@@ -1558,7 +1558,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
+			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
 			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
 			$sql .= " ,detail_cancel='".$this->db->escape($detail)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
@@ -2173,7 +2173,7 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.$rowid;
+		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2628,7 +2628,7 @@ class ExpenseReportLine
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id'; // Sometimes type of expense report has been removed, so we use a left join here.
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
-		$sql .= ' WHERE fde.rowid = '.$rowid;
+		$sql .= ' WHERE fde.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 
