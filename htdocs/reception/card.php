@@ -237,8 +237,6 @@ if (empty($reshook))
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($object->origin_id);
 
-
-
 		$object->socid = $objectsrc->socid;
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 		$object->model_pdf = GETPOST('model');
@@ -280,10 +278,8 @@ if (empty($reshook))
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-
-
-				//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
-				//reception line for product with no batch management and no multiple stock location
+			//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
+			//reception line for product with no batch management and no multiple stock location
 			if (GETPOST($qty, 'int') > 0)
 				$totalqty += GETPOST($qty, 'int');
 
