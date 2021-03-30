@@ -40,13 +40,6 @@ $socid = GETPOST('socid', 'int');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-// Security check
-$receptionid = GETPOST('id', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'reception', $receptionid, '');
-
 $diroutputmassaction = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id;
 
 $search_ref_rcp = GETPOST("search_ref_rcp");
@@ -128,6 +121,13 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
+
+// Security check
+$receptionid = GETPOST('id', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', $receptionid, '');
 
 
 /*

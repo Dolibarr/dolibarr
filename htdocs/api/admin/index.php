@@ -139,18 +139,25 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Show message
 $message = '';
-$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
+//$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
+$url = $urlwithroot.'/api/index.php/login?login=auserlogin&password=thepassword[&reset=1]';
 $message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
-$message .= img_picto('', 'globe').' '.$url;
+$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'"></div>';
 print $message;
+print ajax_autoselect("urltogettoken");
 print '<br>';
 print '<br>';
 
 // Explorer
-print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
+print '<span class="opacitymedium">'.$langs->trans("ApiExporerIs").':</span><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer')) {
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a></div><br>\n";
+	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
+	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
+	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a></div><br>\n";
+	print '</div>';
 } else {
 	$langs->load("errors");
 	print info_admin($langs->trans("ErrorNotAvailableWithThisDistribution"), 0, 0, 'error');

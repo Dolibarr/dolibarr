@@ -125,22 +125,22 @@ $permissiondellink = $user->rights->facture->creer; // Used by the include of ac
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
 $arrayfields = array(
-	'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
-	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>0),
-	'f.fk_cond_reglement'=>array('label'=>$langs->trans("PaymentTerm"), 'checked'=>0),
-	'recurring'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
-	'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
-	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDoneShort"), 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGenerationShort"), 'checked'=>1),
-	'f.date_when'=>array('label'=>$langs->trans("NextDateToExecutionShort"), 'checked'=>1),
-	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
-	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'f.total'=>array('label'=>"AmountHT", 'checked'=>1),
+	'f.tva'=>array('label'=>"AmountVAT", 'checked'=>1),
+	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
+	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
+	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>0),
+	'recurring'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
+	'f.frequency'=>array('label'=>"Frequency", 'checked'=>1),
+	'f.unit_frequency'=>array('label'=>"FrequencyUnit", 'checked'=>1),
+	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
+	'f.date_last_gen'=>array('label'=>"DateLastGenerationShort", 'checked'=>1),
+	'f.date_when'=>array('label'=>"NextDateToExecutionShort", 'checked'=>1),
+	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>100),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -655,7 +655,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.total']['checked'])) {
-				print '<td class="nowrap right">'.price($objp->total).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -665,7 +665,7 @@ if ($resql) {
 				$totalarray['val']['f.total'] += $objp->total;
 			}
 			if (!empty($arrayfields['f.tva']['checked'])) {
-				print '<td class="nowrap right">'.price($objp->total_vat).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_vat).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -675,7 +675,7 @@ if ($resql) {
 				$totalarray['val']['f.tva'] += $objp->total_vat;
 			}
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
-				print '<td class="nowrap right">'.price($objp->total_ttc).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_ttc).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
