@@ -318,9 +318,15 @@ if (empty($reshook))
 
 					$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
 
+					if (!empty($lineToTest)) {
+						$fk_product = $lineToTest->fk_product;
+					} else {
+						$fk_product = $linesrc->fk_product;
+					}
+
 					if ($entrepot_id < 0)
 						$entrepot_id = '';
-					if (!($linesrc->fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					if (!($fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						$entrepot_id = 0;
 					$eatby = GETPOST($eatby, 'alpha');
 					$sellby = GETPOST($sellby, 'alpha');
