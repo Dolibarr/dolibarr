@@ -2649,7 +2649,7 @@ abstract class CommonObject
 			$fieldname = 'fk_address';
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".((int) $id);
 		$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 		if ($this->db->query($sql)) {
@@ -2695,7 +2695,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_shipping_method = ".$shipping_method_id;
+		$sql .= " SET fk_shipping_method = ".((int) $shipping_method_id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -2742,7 +2742,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setWarehouse('.$warehouse_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_warehouse = ".$warehouse_id;
+		$sql .= " SET fk_warehouse = ".((int) $warehouse_id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		if ($this->db->query($sql)) {
@@ -2819,7 +2819,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_account = ".$fk_account;
+		$sql .= " SET fk_account = ".((int) $fk_account);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -8411,7 +8411,7 @@ abstract class CommonObject
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
 			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)') {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".$this->id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
 				if ($resqlupdate === false) {

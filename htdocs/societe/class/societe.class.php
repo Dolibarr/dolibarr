@@ -1985,7 +1985,7 @@ class Societe extends CommonObject
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET client = ".$newclient;
+			$sql .= " SET client = ".((int) $newclient);
 			$sql .= " WHERE rowid = ".$this->id;
 
 			$resql = $this->db->query($sql);

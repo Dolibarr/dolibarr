@@ -372,15 +372,15 @@ class ProductFournisseur extends Product
 				}
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " SET fk_user = ".$user->id." ,";
+			$sql .= " SET fk_user = ".((int) $user->id)." ,";
 			$sql .= " ref_fourn = '".$this->db->escape($ref_fourn)."',";
 			$sql .= " desc_fourn = '".$this->db->escape($desc_fourn)."',";
-			$sql .= " price = ".$buyprice.",";
-			$sql .= " quantity = ".$qty.",";
-			$sql .= " remise_percent = ".$remise_percent.",";
-			$sql .= " remise = ".$remise.",";
-			$sql .= " unitprice = ".$unitBuyPrice.",";
-			$sql .= " fk_availability = ".$availability.",";
+			$sql .= " price = ".((float) $buyprice).",";
+			$sql .= " quantity = ".((float) $qty).",";
+			$sql .= " remise_percent = ".((float) $remise_percent).",";
+			$sql .= " remise = ".((float) $remise).",";
+			$sql .= " unitprice = ".((float) $unitBuyPrice).",";
+			$sql .= " fk_availability = ".((int) $availability).",";
 			$sql .= " multicurrency_price = ".(isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 			$sql .= " multicurrency_unitprice = ".(isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
 			$sql .= " multicurrency_tx = ".(isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
@@ -394,16 +394,16 @@ class ProductFournisseur extends Product
 			//$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$this->db->escape($localtaxtype1)."'":"'0'").",";
 			//$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$this->db->escape($localtaxtype2)."'":"'0'").",";
 			$sql .= " default_vat_code=".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " info_bits = ".$newnpr.",";
-			$sql .= " charges = ".$charges.","; // deprecated
-			$sql .= " delivery_time_days = ".($delivery_time_days != '' ? $delivery_time_days : 'null').",";
+			$sql .= " info_bits = ".((int) $newnpr).",";
+			$sql .= " charges = ".((float) $charges).","; // deprecated
+			$sql .= " delivery_time_days = ".($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
 			$sql .= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 			$sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
 			$sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
 			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			}
-			$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
+			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
 			// TODO Add price_base_type and price_ttc
 
 			dol_syslog(get_class($this).'::update_buyprice update knowing id of line = product_fourn_price_id = '.$this->product_fourn_price_id, LOG_DEBUG);
@@ -885,8 +885,8 @@ class ProductFournisseur extends Product
 		$expression_id = $expression_id != 0 ? $expression_id : 'NULL';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql .= " SET fk_supplier_price_expression = ".$expression_id;
-		$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
+		$sql .= " SET fk_supplier_price_expression = ".((int) $expression_id);
+		$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
 
 		dol_syslog(get_class($this)."::setSupplierPriceExpression", LOG_DEBUG);
 

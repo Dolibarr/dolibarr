@@ -1651,7 +1651,7 @@ class Contact extends CommonObject
 
 		// Desactive utilisateur
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " SET statut = ".$this->statut;
+		$sql .= " SET statut = ".((int) $this->statut);
 		$sql .= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 

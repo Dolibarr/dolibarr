@@ -1541,13 +1541,13 @@ class SupplierProposal extends CommonObject
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if (!empty($user->rights->supplier_proposal->creer)) {
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".$remise;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".((float) $remise);
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
-				$this->remise_percent = $remise;
+				$this->remise_percent = ((float) $remise);
 				$this->update_price(1);
 				return 1;
 			} else {
@@ -1569,13 +1569,15 @@ class SupplierProposal extends CommonObject
 	public function set_remise_absolue($user, $remise)
 	{
 		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
+		if (empty($remise)) {
+			$remise = 0;
+		}
+
+		$remise = price2num($remise);
 
 		if (!empty($user->rights->supplier_proposal->creer)) {
-			$remise = price2num($remise);
-
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET remise_absolue = ".$remise;
+			$sql .= " SET remise_absolue = ".((float) $remise);
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
@@ -1608,7 +1610,7 @@ class SupplierProposal extends CommonObject
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".$this->statut.",";
+		$sql .= " SET fk_statut = ".((int) $this->statut).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -1669,7 +1671,7 @@ class SupplierProposal extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);

@@ -64,7 +64,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql .= " SET fk_code_ventilation = ".$codeventil;
+		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);
