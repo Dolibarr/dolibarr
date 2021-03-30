@@ -1281,7 +1281,7 @@ class Website extends CommonObject
 
 		$objectpagestatic = new WebsitePage($this->db);
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.$this->id;
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {

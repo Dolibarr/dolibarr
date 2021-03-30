@@ -283,7 +283,7 @@ for ($i = 0; $i < $nblines; $i++) {
 
 			if ($compteur == $i) {
 				$sql2 = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
-				$sql2 .= ' WHERE id_users = '.$db->escape($obj->id_users);
+				$sql2 .= " WHERE id_users = ".((int) $obj->id_users);
 				$resql2 = $db->query($sql2);
 			}
 

@@ -2233,7 +2233,7 @@ class Facture extends CommonInvoice
 		if (!$error) {
 			// If invoice was converted into a discount not yet consumed, we remove discount
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' WHERE fk_facture_source = '.$rowid;
+			$sql .= ' WHERE fk_facture_source = '.((int) $rowid);
 			$sql .= ' AND fk_facture_line IS NULL';
 			$resql = $this->db->query($sql);
 
@@ -4575,7 +4575,7 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture';
-		$sql .= ' WHERE situation_cycle_ref = '.$this->situation_cycle_ref;
+		$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
 		$sql .= ' AND situation_counter < '.$this->situation_counter;
 		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 		$resql = $this->db->query($sql);
@@ -4654,7 +4654,7 @@ class Facture extends CommonInvoice
 		if (!empty($this->situation_cycle_ref)) {
 			// No point in testing anything if we're not inside a cycle
 			$sql = 'SELECT max(situation_counter) FROM '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' WHERE situation_cycle_ref = '.$this->situation_cycle_ref;
+			$sql .= ' WHERE situation_cycle_ref = '.((int) $this->situation_cycle_ref);
 			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 			$resql = $this->db->query($sql);
 

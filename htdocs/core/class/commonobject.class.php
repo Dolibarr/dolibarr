@@ -4047,7 +4047,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.((int) $fk_object_where);
 		$resql = $db->query($sql);
 
 		if (empty($resql)) {

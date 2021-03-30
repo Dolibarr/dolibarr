@@ -1342,7 +1342,7 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-				$check_sql .= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
+				$check_sql .= ' WHERE fk_paiementfourn = '.((int) $select_obj->rowid).' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
 				$check_resql = $db->query($check_sql);
 				if ($check_resql) {
 					$check_num = $db->num_rows($check_resql);
