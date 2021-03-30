@@ -52,7 +52,7 @@ class Inventory extends CommonObject
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 1;
+	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for inventory
@@ -254,6 +254,7 @@ class Inventory extends CommonObject
 	 */
 	public function validate(User $user, $notrigger = false)
 	{
+		global $conf;
 		$this->db->begin();
 
 		$result = 0;
@@ -371,6 +372,27 @@ class Inventory extends CommonObject
 		$this->db->begin();
 
 		$result = $this->setStatut($this::STATUS_RECORDED, null, '', 'INVENTORY_RECORDED');
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Set to Canceled
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function setCanceled(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = $this->setStatut($this::STATUS_CANCELED, null, '', 'INVENTORY_CANCELED');
 
 		if ($result > 0) {
 			$this->db->commit();
@@ -587,9 +609,11 @@ class Inventory extends CommonObject
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+		$labelStatus[self::STATUS_RECORDED] = $langs->trans('Closed');
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
 		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', 'status'.$status, $mode);
 	}
@@ -649,6 +673,7 @@ class Inventory extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
+		$this->title = '';
 	}
 }
 

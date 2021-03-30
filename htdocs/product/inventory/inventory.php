@@ -99,6 +99,10 @@ $now = dol_now();
  * Actions
  */
 
+if ($action == 'cancel_record' && $permissiontoadd) {
+	$object->setCanceled($user);
+}
+
 if ($action == 'update' && $user->rights->stock->mouvement->creer) {
 	$stockmovment = new MouvementStock($db);
 	$stockmovment->origin = $object;
@@ -285,6 +289,18 @@ if ($object->id > 0) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	// Confirmation to close
+	if ($action == 'record') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Close'), $langs->trans('ConfirmFinish'), 'update', '', 0, 1);
+		$action = 'view';
+	}
+
+	// Confirmation to close
+	if ($action == 'confirm_cancel') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancel'), 'cancel_record', '', 0, 1);
+		$action = 'view';
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -369,24 +385,7 @@ if ($object->id > 0) {
 
 
 	// Buttons for actions
-	if ($action == 'record') {
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		if ($backtopage) {
-			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		}
-
-		print '<div class="center">';
-		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
-		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-		print '<br>';
-		print '</form>';
-	} else {
+	if ($action != 'record') {
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -422,7 +421,8 @@ if ($object->id > 0) {
 
 			if ($object->status == Inventory::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_cancel">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Close").'</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
 				}
