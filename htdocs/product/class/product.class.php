@@ -725,7 +725,7 @@ class Product extends CommonObject
 
 							// update accountancy for this entity
 							if (!$error && !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accounting (";
+								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (";
 								$sql .= " fk_product";
 								$sql .= ", entity";
 								$sql .= ", accountancy_code_buy";
@@ -1119,9 +1119,9 @@ class Product extends CommonObject
 
 				// update accountancy for this entity
 				if (!$error && !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_accounting WHERE fk_product = " . $this->id . " AND entity = " . $conf->entity);
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product = " . $this->id . " AND entity = " . $conf->entity);
 
-					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_accounting (";
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (";
 					$sql .= " fk_product";
 					$sql .= ", entity";
 					$sql .= ", accountancy_code_buy";
@@ -2174,7 +2174,7 @@ class Product extends CommonObject
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 		}
 		if ($id) {
 			$sql .= " WHERE p.rowid = ".((int) $id);

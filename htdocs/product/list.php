@@ -191,7 +191,7 @@ if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 $isInEEC = isInEEC($mysoc);
 
-$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
+$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
 
 // Definition of fields for lists
 $arrayfields = array(
@@ -228,12 +228,12 @@ $arrayfields = array(
 	'p.tobatch'=>array('label'=>"ManageLotSerial", 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>60),
 	'p.fk_country'=>array('label'=>"Country", 'checked'=>0, 'position'=>100),
 	'p.fk_state'=>array('label'=>"State", 'checked'=>0, 'position'=>101),
-	$alias_product_accounting . '.accountancy_code_sell'=>array('label'=>"ProductAccountancySellCode", 'checked'=>0, 'position'=>400),
-	$alias_product_accounting . '.accountancy_code_sell_intra'=>array('label'=>"ProductAccountancySellIntraCode", 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>401),
-	$alias_product_accounting . '.accountancy_code_sell_export'=>array('label'=>"ProductAccountancySellExportCode", 'checked'=>0, 'position'=>402),
-	$alias_product_accounting . '.accountancy_code_buy'=>array('label'=>"ProductAccountancyBuyCode", 'checked'=>0, 'position'=>403),
-	$alias_product_accounting . '.accountancy_code_buy_intra'=>array('label'=>"ProductAccountancyBuyIntraCode", 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>404),
-	$alias_product_accounting . '.accountancy_code_buy_export'=>array('label'=>"ProductAccountancyBuyExportCode", 'checked'=>0, 'position'=>405),
+	$alias_product_perentity . '.accountancy_code_sell'=>array('label'=>"ProductAccountancySellCode", 'checked'=>0, 'position'=>400),
+	$alias_product_perentity . '.accountancy_code_sell_intra'=>array('label'=>"ProductAccountancySellIntraCode", 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>401),
+	$alias_product_perentity . '.accountancy_code_sell_export'=>array('label'=>"ProductAccountancySellExportCode", 'checked'=>0, 'position'=>402),
+	$alias_product_perentity . '.accountancy_code_buy'=>array('label'=>"ProductAccountancyBuyCode", 'checked'=>0, 'position'=>403),
+	$alias_product_perentity . '.accountancy_code_buy_intra'=>array('label'=>"ProductAccountancyBuyIntraCode", 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>404),
+	$alias_product_perentity . '.accountancy_code_buy_export'=>array('label'=>"ProductAccountancyBuyExportCode", 'checked'=>0, 'position'=>405),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.tosell'=>array('label'=>$langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked'=>1, 'position'=>1000),
@@ -387,7 +387,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -493,13 +493,13 @@ if ($search_finished >= 0 && $search_finished !== '') {
 	$sql .= " AND p.finished = ".((int) $search_finished);
 }
 if ($search_accountancy_code_sell) {
-	$sql .= natural_search($alias_product_accounting . '.accountancy_code_sell', $search_accountancy_code_sell);
+	$sql .= natural_search($alias_product_perentity . '.accountancy_code_sell', $search_accountancy_code_sell);
 }
 if ($search_accountancy_code_sell_intra) {
-	$sql .= natural_search($alias_product_accounting . '.accountancy_code_sell_intra', $search_accountancy_code_sell_intra);
+	$sql .= natural_search($alias_product_perentity . '.accountancy_code_sell_intra', $search_accountancy_code_sell_intra);
 }
 if ($search_accountancy_code_sell_export) {
-	$sql .= natural_search($alias_product_accounting . '.accountancy_code_sell_export', $search_accountancy_code_sell_export);
+	$sql .= natural_search($alias_product_perentity . '.accountancy_code_sell_export', $search_accountancy_code_sell_export);
 }
 if ($search_accountancy_code_buy) {
 	$sql .= natural_search($alias_product_accounting . '.accountancy_code_buy', $search_accountancy_code_buy);
