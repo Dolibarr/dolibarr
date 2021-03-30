@@ -306,7 +306,7 @@ $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("
 
 $title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
 
-$help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
 
 llxHeader("", $title, $help_url);
 
