@@ -329,6 +329,7 @@ class Inventory extends CommonObject
 		} else {
 			$this->db->rollback();
 		}
+		return $result;
 	}
 
 	/**
@@ -358,6 +359,7 @@ class Inventory extends CommonObject
 		} else {
 			$this->db->rollback();
 		}
+		return $result;
 	}
 
 	/**
@@ -379,6 +381,7 @@ class Inventory extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return $result;
 	}
 
 	/**
@@ -400,6 +403,7 @@ class Inventory extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return $result;
 	}
 
 	/**
