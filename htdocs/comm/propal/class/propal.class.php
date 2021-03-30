@@ -2997,7 +2997,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_availability = '.$availability_id;
+			$sql .= ' SET fk_availability = '.((int) $availability_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$availability_id.')', LOG_DEBUG);
@@ -3061,7 +3061,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
+			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__.' demand_reason('.$demand_reason_id.')', LOG_DEBUG);

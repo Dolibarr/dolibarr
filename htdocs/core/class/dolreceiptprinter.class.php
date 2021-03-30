@@ -879,7 +879,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE rowid = '.$printerid;
+		$sql .= ' WHERE rowid = '.((int) $printerid);
 		$sql .= ' AND entity = '.$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {

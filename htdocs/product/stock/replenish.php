@@ -756,7 +756,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
-			$sql .= ' WHERE fk_product = '.$objp->rowid;
+			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
 			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
 			$sql .= ' LIMIT 1';
 

@@ -2417,7 +2417,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET remise_percent = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2743,7 +2743,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_availability = '.$availability_id;
+			$sql .= ' SET fk_availability = '.((int) $availability_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2807,7 +2807,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
+			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);

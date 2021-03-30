@@ -3862,7 +3862,7 @@ class Product extends CommonObject
 
 		// Check not already father of id_pere (to avoid father -> child -> father links)
 		$sql = 'SELECT fk_product_pere from '.MAIN_DB_PREFIX.'product_association';
-		$sql .= ' WHERE fk_product_pere  = '.$id_fils.' AND fk_product_fils = '.$id_pere;
+		$sql .= ' WHERE fk_product_pere  = '.((int) $id_fils).' AND fk_product_fils = '.((int) $id_pere);
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 			return -1;
@@ -3875,7 +3875,7 @@ class Product extends CommonObject
 					return -1;
 				} else {
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_association(fk_product_pere,fk_product_fils,qty,incdec)';
-					$sql .= ' VALUES ('.$id_pere.', '.$id_fils.', '.$qty.', '.$incdec.')';
+					$sql .= ' VALUES ('.((int) $id_pere).', '.((int) $id_fils).', '.((float) $qty).', '.((int) $incdec).')';
 					if (!$this->db->query($sql)) {
 						 dol_print_error($this->db);
 						 return -1;

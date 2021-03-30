@@ -2332,7 +2332,7 @@ abstract class CommonObject
 			$fieldname = 'multicurrency_tx';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$rate;
+			$sql .= ' SET '.$fieldname.' = '.((float) $rate);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2617,7 +2617,7 @@ abstract class CommonObject
 			$fieldname = 'retained_warranty_fk_cond_reglement';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$id;
+			$sql .= ' SET '.$fieldname.' = '.((int) $id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -3062,11 +3062,11 @@ abstract class CommonObject
 				$fieldposition = 'position';
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql .= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang - 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
@@ -3093,11 +3093,11 @@ abstract class CommonObject
 				$fieldposition = 'position';
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND rang = '.($rang + 1);
+			$sql .= ' AND rang = '.((int) ($rang + 1));
 			if ($this->db->query($sql)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang + 1);
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang + 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
@@ -4221,7 +4221,7 @@ abstract class CommonObject
 	public function getSpecialCode($lineid)
 	{
 		$sql = 'SELECT special_code FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.$lineid;
+		$sql .= ' WHERE rowid = '.((int) $lineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -7656,7 +7656,7 @@ abstract class CommonObject
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {

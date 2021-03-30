@@ -2282,9 +2282,9 @@ class Facture extends CommonInvoice
 			// Invoice line extrafileds
 			$main = MAIN_DB_PREFIX.'facturedet';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid);
 			// Delete invoice line
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
@@ -3585,8 +3585,7 @@ class Facture extends CommonInvoice
 	{
 		$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd
 				INNER JOIN '.MAIN_DB_PREFIX.'facture f ON (fd.fk_facture = f.rowid)
-				WHERE fd.fk_prev_id = '.$idline.'
-				AND f.fk_statut <> 0';
+				WHERE fd.fk_prev_id = '.((int) $idline).' AND f.fk_statut <> 0';
 
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -3663,7 +3662,7 @@ class Facture extends CommonInvoice
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_facture_line = NULL';
-		$sql .= ' WHERE fk_facture_line = '.$rowid;
+		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -4610,7 +4609,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.$this->situation_final.' where rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.$this->situation_final.' where rowid = '.((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

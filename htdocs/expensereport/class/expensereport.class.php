@@ -973,7 +973,7 @@ class ExpenseReport extends CommonObject
 	{
 		$sql = 'SELECT tt.total_ht, tt.total_ttc, tt.total_tva';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as tt';
-		$sql .= ' WHERE tt.'.$this->fk_element.' = '.$id;
+		$sql .= ' WHERE tt.'.$this->fk_element.' = '.((int) $id);
 
 		$total_ht = 0; $total_tva = 0; $total_ttc = 0;
 
@@ -2757,7 +2757,7 @@ class ExpenseReportLine
 		$sql = 'SELECT SUM(d.total_ttc) as total_amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det d';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport e ON (d.fk_expensereport = e.rowid)';
-		$sql .= ' WHERE e.fk_user_author = '.$fk_user;
+		$sql .= ' WHERE e.fk_user_author = '.((int) $fk_user);
 		if (!empty($this->id)) {
 			$sql .= ' AND d.rowid <> '.$this->id;
 		}

@@ -1777,7 +1777,7 @@ class SupplierProposal extends CommonObject
 		$price = price2num($product->subprice * $product->qty, 'MU');
 		$unitPrice = price2num($product->subprice, 'MU');
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$product->ref_fourn.'", ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$this->db->escape($product->ref_fourn).'", ' : '').' price ='.((float) $price).', unitprice ='.((float) $unitPrice).' WHERE rowid = '.((int) $idProductFournPrice);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {

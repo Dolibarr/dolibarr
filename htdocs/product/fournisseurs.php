@@ -290,7 +290,7 @@ if (empty($reshook)) {
 						foreach ($extrafield_values as $key => $value) {
 							$sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
 						}
-						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.$object->product_fourn_price_id;
+						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
 					}
 
 					// Execute the sql command from above

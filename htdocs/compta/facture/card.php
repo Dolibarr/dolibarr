@@ -3091,7 +3091,7 @@ if ($action == 'create') {
 
 		$sql = 'SELECT r.rowid, r.titre as title, r.total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
-		$sql .= ' WHERE r.fk_soc = '.$invoice_predefined->socid;
+		$sql .= ' WHERE r.fk_soc = '.((int) $invoice_predefined->socid);
 
 		$resql = $db->query($sql);
 		if ($resql) {

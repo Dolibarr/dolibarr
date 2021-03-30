@@ -801,7 +801,7 @@ abstract class CommonInvoice extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-		$sql .= ' WHERE rowid = '.$did;
+		$sql .= ' WHERE rowid = '.((int) $did);
 		$sql .= ' AND traite = 0';
 		if ($this->db->query($sql)) {
 			return 0;

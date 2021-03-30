@@ -863,7 +863,7 @@ class AccountancyCategory // extends CommonObject
 		if (!empty($cat_id)) {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
-			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
+			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " ORDER BY t.account_number";
 		} else {

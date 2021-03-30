@@ -4620,7 +4620,7 @@ class Societe extends CommonObject
 
 		$resql = $db->query($sql);
 		while ($obj = $db->fetch_object($resql)) {
-			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.$obj->rowid);
+			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
 		/**

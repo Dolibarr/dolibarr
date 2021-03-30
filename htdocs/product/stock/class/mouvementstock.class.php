@@ -896,7 +896,7 @@ class MouvementStock extends CommonObject
 		$nb = 0;
 
 		$sql = 'SELECT SUM(value) as nb from '.MAIN_DB_PREFIX.'stock_mouvement';
-		$sql .= ' WHERE fk_product = '.$productidselected;
+		$sql .= ' WHERE fk_product = '.((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
 		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);

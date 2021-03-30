@@ -181,10 +181,8 @@ class ProductFournisseurPrice extends CommonObject
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val)
-		{
-			if (isset($val['enabled']) && empty($val['enabled']))
-			{
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
 				unset($this->fields[$key]);
 			}
 		}
@@ -241,14 +239,11 @@ class ProductFournisseurPrice extends CommonObject
 		if (property_exists($object, 'date_modification')) { $object->date_modification = null; }
 		// ...
 		// Clear extrafields that are unique
-		if (is_array($object->array_options) && count($object->array_options) > 0)
-		{
+		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
-			foreach ($object->array_options as $key => $option)
-			{
+			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey]))
-				{
+				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
 					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
@@ -264,20 +259,16 @@ class ProductFournisseurPrice extends CommonObject
 			$this->errors = $object->errors;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0)
-			{
+			if ($this->copy_linked_contact($object, 'internal') < 0) {
 				$error++;
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// copy external contacts if same company
-			if (property_exists($this, 'socid') && $this->socid == $object->socid)
-			{
+			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0)
 					$error++;
 			}
@@ -362,8 +353,7 @@ class ProductFournisseurPrice extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < ($limit ? min($limit, $num) : $num))
-			{
+			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);
@@ -424,8 +414,7 @@ class ProductFournisseurPrice extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED)
-		{
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -435,8 +424,7 @@ class ProductFournisseurPrice extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
-		{
+		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;
@@ -454,15 +442,13 @@ class ProductFournisseurPrice extends CommonObject
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
+			if (!$resql) {
 				dol_print_error($this->db);
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
 
-			if (!$error && !$notrigger)
-			{
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('PRODUCTFOURNISSEURPRICE_VALIDATE', $user);
 				if ($result < 0) $error++;
@@ -470,13 +456,11 @@ class ProductFournisseurPrice extends CommonObject
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->oldref = $this->ref;
 
 			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref))
-			{
+			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'productfournisseurprice/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'productfournisseurprice/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
@@ -488,17 +472,14 @@ class ProductFournisseurPrice extends CommonObject
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->buypricehistory->dir_output.'/productfournisseurprice/'.$oldref;
 				$dirdest = $conf->buypricehistory->dir_output.'/productfournisseurprice/'.$newref;
-				if (!$error && file_exists($dirsource))
-				{
+				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
-					if (@rename($dirsource, $dirdest))
-					{
+					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
 						$listoffiles = dol_dir_list($conf->buypricehistory->dir_output.'/productfournisseurprice/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry)
-						{
+						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
 							$dirsource = $fileentry['path'].'/'.$dirsource;
@@ -511,14 +492,12 @@ class ProductFournisseurPrice extends CommonObject
 		}
 
 		// Set new ref and current status
-		if (!$error)
-		{
+		if (!$error) {
 			$this->ref = $num;
 			$this->status = self::STATUS_VALIDATED;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -538,8 +517,7 @@ class ProductFournisseurPrice extends CommonObject
 	public function setDraft($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status <= self::STATUS_DRAFT)
-		{
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -556,8 +534,7 @@ class ProductFournisseurPrice extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_VALIDATED)
-		{
+		if ($this->status != self::STATUS_VALIDATED) {
 			return 0;
 		}
 
@@ -574,8 +551,7 @@ class ProductFournisseurPrice extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
-		{
+		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -609,8 +585,7 @@ class ProductFournisseurPrice extends CommonObject
 
 		$url = dol_buildpath('/buypricehistory/productfournisseurprice_card.php', 1).'?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
@@ -618,10 +593,8 @@ class ProductFournisseurPrice extends CommonObject
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowProductFournisseurPrice");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -699,8 +672,7 @@ class ProductFournisseurPrice extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("buypricehistory@buypricehistory");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
@@ -729,30 +701,25 @@ class ProductFournisseurPrice extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid)
-				{
+				if ($obj->fk_user_valid) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 
-				if ($obj->fk_user_cloture)
-				{
+				if ($obj->fk_user_cloture) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;
@@ -794,8 +761,7 @@ class ProductFournisseurPrice extends CommonObject
 			$conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON = 'mod_productfournisseurprice_standard';
 		}
 
-		if (!empty($conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON))
-		{
+		if (!empty($conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON)) {
 			$mybool = false;
 
 			$file = $conf->global->BUYPRICEHISTORY_PRODUCTFOURNISSEURPRICE_ADDON.".php";
@@ -803,16 +769,14 @@ class ProductFournisseurPrice extends CommonObject
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir)
-			{
+			foreach ($dirmodels as $reldir) {
 				$dir = dol_buildpath($reldir."core/modules/buypricehistory/");
 
 				// Load file with numbering class (if found)
 				$mybool |= @include_once $dir.$file;
 			}
 
-			if ($mybool === false)
-			{
+			if ($mybool === false) {
 				dol_print_error('', "Failed to include file ".$file);
 				return '';
 			}
@@ -821,8 +785,7 @@ class ProductFournisseurPrice extends CommonObject
 				$obj = new $classname();
 				$numref = $obj->getNextValue($this);
 
-				if ($numref != '' && $numref != '-1')
-				{
+				if ($numref != '' && $numref != '-1') {
 					return $numref;
 				} else {
 					$this->error = $obj->error;
