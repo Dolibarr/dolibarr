@@ -75,14 +75,14 @@ if ($action == 'addcontact' && $user->rights->commande->creer) {
 } elseif ($action == 'swapstatut' && $user->rights->commande->creer) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'deletecontact' && $user->rights->commande->creer) {
 	// Efface un contact
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);

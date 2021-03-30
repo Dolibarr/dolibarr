@@ -678,30 +678,30 @@ if ($search_all) {
 
 $moreforfilter = '';
 
-// Filter on categories
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
-	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
-}
-
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').': ';
+$tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 //$includeonly = 'hierarchyme';
 $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
 if ($user->rights->societe->client->voir || $socid) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
 	$moreforfilter .= '</div>';
+}
+
+// Filter on categories
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
 }
 
 if (!empty($moreforfilter)) {
@@ -1243,7 +1243,7 @@ while ($i < min($num, $limit)) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.price_registration';
 			}
 		}
-		// PriceOfBooth
+		// Price of booth
 		if (!empty($arrayfields['p.price_booth']['checked'])) {
 			print '<td class="right">';
 			if ($obj->price_booth != '') {
@@ -1266,7 +1266,7 @@ while ($i < min($num, $limit)) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['p.datec']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -1275,7 +1275,7 @@ while ($i < min($num, $limit)) {
 		}
 		// Date modification
 		if (!empty($arrayfields['p.tms']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {

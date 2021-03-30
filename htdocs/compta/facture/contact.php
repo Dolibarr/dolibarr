@@ -82,7 +82,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
 	}
 } elseif ($action == 'swapstatut' && $user->rights->facture->creer) {
 	// Toggle the status of a contact
-	$result = $object->swapContactStatus(GETPOST('ligne'));
+	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 } elseif ($action == 'deletecontact' && $user->rights->facture->creer) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);

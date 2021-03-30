@@ -53,7 +53,7 @@ $nblines = $object->fetch_lines();
 
 // Return to the results
 if (GETPOST('retoursondage')) {
-	header('Location: results.php?id='.$_GET['id']);
+	header('Location: results.php?id='.GETPOST('id', 'int'));
 	exit;
 }
 

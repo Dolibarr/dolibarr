@@ -104,7 +104,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer) {
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->projet->creer) {
 	if ($object->fetch($id, $ref)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
@@ -113,7 +113,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer) {
 // Efface un contact
 if ($action == 'deleteline' && $user->rights->projet->creer) {
 	$object->fetch($id, $ref);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));

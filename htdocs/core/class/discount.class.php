@@ -421,17 +421,17 @@ class DiscountAbsolute
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			if ($rowidline) {
-				$sql .= " SET fk_invoice_supplier_line = ".$rowidline;
+				$sql .= " SET fk_invoice_supplier_line = ".((int) $rowidline);
 			}
 			if ($rowidinvoice) {
-				$sql .= " SET fk_invoice_supplier = ".$rowidinvoice;
+				$sql .= " SET fk_invoice_supplier = ".((int) $rowidinvoice);
 			}
 		} else {
 			if ($rowidline) {
-				$sql .= " SET fk_facture_line = ".$rowidline;
+				$sql .= " SET fk_facture_line = ".((int) $rowidline);
 			}
 			if ($rowidinvoice) {
-				$sql .= " SET fk_facture = ".$rowidinvoice;
+				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
 			}
 		}
 		$sql .= " WHERE rowid = ".$this->id;

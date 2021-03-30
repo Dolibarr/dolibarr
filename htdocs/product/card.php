@@ -940,20 +940,6 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans('ProductServiceCard');
-$helpurl = '';
-$shortlabel = dol_trunc($object->label, 16);
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
-}
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
-}
-
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
@@ -961,6 +947,21 @@ $formcompany = new FormCompany($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
+
+
+$title = $langs->trans('ProductServiceCard');
+$help_url = '';
+$shortlabel = dol_trunc($object->label, 16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
+	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
+	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+}
+
+llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
@@ -984,7 +985,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// When used with CANVAS
 	// -----------------------------------------
 	if (empty($object->error) && $id) {
-		$object = new Product($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
 			dol_print_error('', $object->error);
@@ -1465,6 +1465,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		/*
 		 * Product card
 		 */
+
 		// Fiche en mode edition
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor

@@ -40,10 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->load("mails");
 
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
-	accessforbidden();
-}
-
 $id = (GETPOST('mailid', 'int') ? GETPOST('mailid', 'int') : GETPOST('id', 'int'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel');
@@ -80,6 +76,10 @@ $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
 
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
 
 
 /*

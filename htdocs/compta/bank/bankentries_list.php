@@ -211,7 +211,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty_user = '';
 	$search_num_releve = '';
 	$search_conciliated = '';
-	$thirdparty = '';
 
 	$search_account = "";
 	if ($id > 0 || !empty($ref)) {
@@ -992,9 +991,9 @@ if ($resql) {
 
 			// Bank line
 			$moreforfilter .= '<div class="divsearchfield">';
-			$moreforfilter .= $langs->trans('RubriquesTransactions').' : ';
+			$tmptitle = $langs->trans('RubriquesTransactions');
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
-			$moreforfilter .= $form->selectarray('search_bid', $cate_arbo, $search_bid, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+			$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_bid', $cate_arbo, $search_bid, $tmptitle, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}
 	}
@@ -1561,12 +1560,12 @@ if ($resql) {
 
 		// Debit
 		if (!empty($arrayfields['b.debit']['checked'])) {
-			print '<td class="nowrap right">';
+			print '<td class="nowrap right"><span class="amount">';
 			if ($objp->amount < 0) {
 				print price($objp->amount * -1);
 				$totalarray['totaldeb'] += $objp->amount;
 			}
-			print "</td>\n";
+			print "</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1577,12 +1576,12 @@ if ($resql) {
 
 		// Credit
 		if (!empty($arrayfields['b.credit']['checked'])) {
-			print '<td class="nowrap right">';
+			print '<td class="nowrap right"><span class="amount">';
 			if ($objp->amount > 0) {
 				print price($objp->amount);
 				$totalarray['totalcred'] += $objp->amount;
 			}
-			print "</td>\n";
+			print "</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1717,9 +1716,9 @@ if ($resql) {
 					print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
 				}
 			} elseif ($totalarray['totaldebfield'] == $i) {
-				print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+				print '<td class="right"><span class="amount">'.price(-1 * $totalarray['totaldeb']).'</span></td>';
 			} elseif ($totalarray['totalcredfield'] == $i) {
-				print '<td class="right">'.price($totalarray['totalcred']).'</td>';
+				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action == 'reconcile') {

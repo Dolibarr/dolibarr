@@ -771,7 +771,7 @@ class Project extends CommonObject
 			'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project'
 		);
 		foreach ($listoftables as $key => $value) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$value." = NULL where ".$value." = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$value." = NULL where ".$value." = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = $this->db->lasterror();
@@ -1033,7 +1033,7 @@ class Project extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".$user->id.", date_close = '".$this->db->idate($now)."'";
+			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 

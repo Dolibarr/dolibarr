@@ -604,7 +604,7 @@ class Categorie extends CommonObject
 		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-			$sql .= " SET fk_parent = ".$this->fk_parent;
+			$sql .= " SET fk_parent = ".((int) $this->fk_parent);
 			$sql .= " WHERE fk_parent = ".$this->id;
 
 			if (!$this->db->query($sql)) {

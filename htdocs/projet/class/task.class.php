@@ -1197,11 +1197,11 @@ class Task extends CommonObject
 		if ($ret > 0) {
 			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
+			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
 			if (isset($this->progress)) {
-				$sql .= ", progress = ".$this->progress; // Do not overwrite value if not provided
+				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1210,8 +1210,8 @@ class Task extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")"; // set average hour rate of user
-			$sql .= " WHERE rowid = ".$tasktime_id;
+			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
+			$sql .= " WHERE rowid = ".((int) $tasktime_id);
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1552,7 +1552,7 @@ class Task extends CommonObject
 			$newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->db->escape($this->id).")";
+			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);

@@ -702,7 +702,7 @@ class Don extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".((int) $userid)." WHERE rowid = ".((int) $id)." AND fk_statut = 0";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

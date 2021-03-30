@@ -784,8 +784,8 @@ class FichinterRec extends Fichinter
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET nb_gen_max = '.$nb;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' SET nb_gen_max = '.((int) $nb);
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -811,8 +811,8 @@ class FichinterRec extends Fichinter
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET auto_validate = '.$validate;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' SET auto_validate = '.((int) $validate);
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {

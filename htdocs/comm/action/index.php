@@ -79,7 +79,6 @@ $socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOS
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) {
 	$socid = '';
 }
@@ -154,6 +153,11 @@ $langs->loadLangs(array('agenda', 'other', 'commercial'));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
+
+$result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*

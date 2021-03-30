@@ -283,44 +283,42 @@ class Facture extends CommonInvoice
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>1),
+		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>5),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
-		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>25),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>30), // deprecated
-		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'Ref client', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'Ref client', 'enabled'=>1, 'visible'=>-1, 'position'=>10),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>12),
+		//'ref_int' =>array('type'=>'varchar(255)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>0, 'position'=>30), // deprecated
+		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
 		//'increment' =>array('type'=>'varchar(10)', 'label'=>'Increment', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>50),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'datef' =>array('type'=>'date', 'label'=>'DateInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'date_valid' =>array('type'=>'date', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'date_closing' =>array('type'=>'datetime', 'label'=>'Date closing', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'datef' =>array('type'=>'date', 'label'=>'DateInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+		'date_valid' =>array('type'=>'date', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
+		'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateDue', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'date_closing' =>array('type'=>'datetime', 'label'=>'Date closing', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'paye' =>array('type'=>'smallint(6)', 'label'=>'InvoicePaidCompletely', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
 		//'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
 		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>91),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'tva' =>array('type'=>'double(24,8)', 'label'=>'TotalVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>115, 'isameasure'=>1),
-		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LT1', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
-		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
-		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
-		'total' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>135, 'isameasure'=>1),
-		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'TotalTTC', 'enabled'=>1, 'visible'=>-1, 'position'=>140, 'isameasure'=>1),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
-		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>155),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
-		'fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
+		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
+		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>93),
+		'total' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'isameasure'=>1),
+		'tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>100, 'isameasure'=>1),
+		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LT1', 'enabled'=>1, 'visible'=>-1, 'position'=>110, 'isameasure'=>1),
+		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
+		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>115, 'isameasure'=>1),
+		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>1, 'position'=>130, 'isameasure'=>1),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
+		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>166),
+		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>167),
+		'fk_user_closing' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>-1, 'position'=>168),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'SourceInvoice', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
 		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'CurrencyCode', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>190),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'date_lim_reglement' =>array('type'=>'date', 'label'=>'DateDue', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>205),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>210),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>215),
@@ -335,8 +333,8 @@ class Facture extends CommonInvoice
 		'location_incoterms' =>array('type'=>'varchar(255)', 'label'=>'IncotermLabel', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-1, 'position'=>265),
 		'date_pointoftax' =>array('type'=>'date', 'label'=>'DatePointOfTax', 'enabled'=>'$conf->global->INVOICE_POINTOFTAX_DATE', 'visible'=>-1, 'position'=>270),
 		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'MulticurrencyID', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>275),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'MulticurrencyCurrency', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>280),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyRate', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
+		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Currency', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>280),
+		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'CurrencyRate', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>285, 'isameasure'=>1),
 		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountHT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>290, 'isameasure'=>1),
 		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>295, 'isameasure'=>1),
 		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'$conf->multicurrency->enabled', 'visible'=>-1, 'position'=>300, 'isameasure'=>1),
@@ -344,8 +342,10 @@ class Facture extends CommonInvoice
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>-1, 'position'=>310),
 		'module_source' =>array('type'=>'varchar(32)', 'label'=>'POSModule', 'enabled'=>1, 'visible'=>-1, 'position'=>315),
 		'pos_source' =>array('type'=>'varchar(32)', 'label'=>'POSTerminal', 'enabled'=>1, 'visible'=>-1, 'position'=>320),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
+		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -2289,7 +2289,7 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact()) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
@@ -3735,14 +3735,14 @@ class Facture extends CommonInvoice
 		}
 
 		if ($user->rights->facture->creer) {
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_percent = '.$remise;
+			$sql .= ' SET remise_percent = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.$this->id;
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
@@ -3804,7 +3804,7 @@ class Facture extends CommonInvoice
 			$remise = price2num($remise);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET remise_absolue = '.$remise;
+			$sql .= ' SET remise_absolue = '.((float) $remise);
 			$sql .= ' WHERE rowid = '.$this->id;
 			$sql .= ' AND fk_statut = '.self::STATUS_DRAFT;
 
@@ -4610,7 +4610,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.$this->situation_final.' where rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET situation_final = '.$this->situation_final.' where rowid = '.((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4982,7 +4982,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
-		$sql .= ' WHERE fd.rowid = '.$rowid;
+		$sql .= ' WHERE fd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 		if ($result) {
