@@ -3261,7 +3261,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 				if ($resqla && $resql) {
 					foreach ($elements['tables'] as $table) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-						$sql .= "fk_mode_reglement = "((int) $elements['new_id'][$key]);
+						$sql .= "fk_mode_reglement = ".((int) $elements['new_id'][$key]);
 						$sql .= " WHERE fk_mode_reglement = ".((int) $old_id);
 
 						$resql = $db->query($sql);
