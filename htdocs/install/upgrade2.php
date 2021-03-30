@@ -3247,7 +3247,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 				$db->begin();
 
 				$sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET";
-				$sqla .= " fk_paiement = ".$elements['new_id'][$key];
+				$sqla .= " fk_paiement = ".((int) $elements['new_id'][$key]);
 				$sqla .= " WHERE fk_paiement = ".((int) $old_id);
 				$sqla .= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".((int) $old_id)." AND code = '".$db->escape($elements['code'][$key])."')";
 				$resqla = $db->query($sqla);
@@ -3261,7 +3261,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 				if ($resqla && $resql) {
 					foreach ($elements['tables'] as $table) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-						$sql .= "fk_mode_reglement = "((int) $elements['new_id'][$key]);
+						$sql .= "fk_mode_reglement = ".((int) $elements['new_id'][$key]);
 						$sql .= " WHERE fk_mode_reglement = ".((int) $old_id);
 
 						$resql = $db->query($sql);
