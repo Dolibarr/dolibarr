@@ -21,7 +21,7 @@ create table llx_c_ticket_category
   entity		 integer DEFAULT 1,
   code			 varchar(32) NOT NULL,
   label			 varchar(128) NOT NULL,
-  pos			 varchar(32) NOT NULL,
+  pos			 integer DEFAULT 0 NOT NULL,
   public         integer DEFAULT 0,
   use_default	 integer DEFAULT 1,
   active		 integer DEFAULT 1,

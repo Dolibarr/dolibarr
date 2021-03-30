@@ -310,5 +310,5 @@ ALTER TABLE llx_societe_perentity ADD INDEX idx_societe_perentity_fk_soc (fk_soc
 ALTER TABLE llx_societe_perentity ADD UNIQUE INDEX uk_societe_perentity (fk_soc, entity);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
-
+ALTER TABLE llc_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
