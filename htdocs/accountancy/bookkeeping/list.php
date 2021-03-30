@@ -520,7 +520,7 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET date_export = '".$db->idate($now)."'";
 					$sql .= " , date_validated = '".$db->idate($now)."'";
-					$sql .= " WHERE rowid = ".$movement->id;
+					$sql .= " WHERE rowid = ".((int) $movement->id);
 
 					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
 					$result = $db->query($sql);

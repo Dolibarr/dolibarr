@@ -194,7 +194,7 @@ if ($action == 'validatehistory') {
 			if ($objp->aarowid_suggest > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sqlupdate .= " SET fk_code_ventilation = ".((int) $objp->aarowid_suggest);
-				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
+				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $objp->rowid);
 
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {
