@@ -2172,20 +2172,20 @@ class Product extends CommonObject
 		}
 		$sql .= " p.stock,p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 		}
 		if ($id) {
-			$sql .= " WHERE rowid = ".(int) $id;
+			$sql .= " WHERE p.rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE entity IN (".getEntity($this->element).")";
+			$sql .= " WHERE p.entity IN (".getEntity($this->element).")";
 			if ($ref) {
-				$sql .= " AND ref = '".$this->db->escape($ref)."'";
+				$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
 			} elseif ($ref_ext) {
-				$sql .= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
+				$sql .= " AND p.ref_ext = '".$this->db->escape($ref_ext)."'";
 			} elseif ($barcode) {
-				$sql .= " AND barcode = '".$this->db->escape($barcode)."'";
+				$sql .= " AND p.barcode = '".$this->db->escape($barcode)."'";
 			}
 		}
 
