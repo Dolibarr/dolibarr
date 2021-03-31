@@ -103,16 +103,16 @@ dol_mkdir($dir);
 $stats = new FactureStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= 0) {
-		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
+		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 	if (is_array($custcats) && !empty($custcats)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.implode(',', $custcats).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
-		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
+		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
 }
 
@@ -133,7 +133,8 @@ $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -168,7 +169,8 @@ $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -212,7 +214,8 @@ $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg) {
 	$px3->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -381,9 +384,9 @@ foreach ($data as $val) {
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['nb_diff']).'</td>';
-	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
+	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
 	print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['total_diff']).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '<td class="right" style="'.(($val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.round($val['avg_diff']).'</td>';
 	print '</tr>';
 	$oldyear = $year;

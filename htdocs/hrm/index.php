@@ -4,6 +4,7 @@
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +151,7 @@ if (!empty($conf->holiday->enabled)) {
 		print '<td colspan="3">';
 
 		$out = '';
+		$nb_holiday = 0;
 		$typeleaves = $holiday->getTypes(1, 1);
 		foreach ($typeleaves as $key => $val) {
 			$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
@@ -180,7 +182,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->holiday->readall)) {
-		$sql .= ' AND x.fk_user IN ('.join(',', $childids).')';
+		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
@@ -261,7 +263,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
-		$sql .= ' AND x.fk_user_author IN ('.join(',', $childids).')';
+		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
 	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;

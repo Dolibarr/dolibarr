@@ -67,15 +67,14 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 if ($action == 'firstpingok') {
 	// Note: pings are per installed instances / entity.
 	// Once this constants are set, no more ping will be tried (except if we add parameter &forceping=1 on URL). So we can say this are 'first' ping.
-	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
-	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id);
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', $hash_unique_id, 'chaine', 0, '', $conf->entity);
 
 	print 'First ping OK saved for entity '.$conf->entity;
-}
-// If ko
-elseif ($action == 'firstpingko') {
+} elseif ($action == 'firstpingko') {
+	// If ko
 	// Note: pings are by installation, done on entity 1.
-	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog'), 'gmt'); // erase last value
+	dolibarr_set_const($db, 'MAIN_LAST_PING_KO_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity); // erase last value
 	print 'First ping KO saved for entity '.$conf->entity;
 } else {
 	print 'Error action='.$action.' not supported';

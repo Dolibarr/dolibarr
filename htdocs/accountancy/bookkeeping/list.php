@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,14 @@ $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
-$search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
+$search_date_creation_end = dol_mktime(23, 59, 59, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
 $search_date_modification_start = dol_mktime(0, 0, 0, GETPOST('date_modification_startmonth', 'int'), GETPOST('date_modification_startday', 'int'), GETPOST('date_modification_startyear', 'int'));
-$search_date_modification_end = dol_mktime(0, 0, 0, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
+$search_date_modification_end = dol_mktime(23, 59, 59, GETPOST('date_modification_endmonth', 'int'), GETPOST('date_modification_endday', 'int'), GETPOST('date_modification_endyear', 'int'));
 $search_date_export_start = dol_mktime(0, 0, 0, GETPOST('date_export_startmonth', 'int'), GETPOST('date_export_startday', 'int'), GETPOST('date_export_startyear', 'int'));
-$search_date_export_end = dol_mktime(0, 0, 0, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
+$search_date_export_end = dol_mktime(23, 59, 59, GETPOST('date_export_endmonth', 'int'), GETPOST('date_export_endday', 'int'), GETPOST('date_export_endyear', 'int'));
 
 //var_dump($search_date_start);exit;
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
@@ -170,6 +170,16 @@ if (empty($listofformat[$formatexportset])) {
 }
 
 $error = 0;
+
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -471,7 +481,7 @@ if (count($filter) > 0) {
 	}
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('accountancy').')';
-if ($conf->global->ACCOUNTING_REEXPORT == 0) {
+if (empty($conf->global->ACCOUNTING_REEXPORT)) {
 	$sql .= " AND t.date_export IS NULL";
 }
 if (count($sqlwhere) > 0) {
@@ -487,7 +497,7 @@ if (!empty($sortfield)) {
 // Must be after definition of $sql
 if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->export) {
 	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
+	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', (empty($conf->global->ACCOUNTING_REEXPORT) ? 0 : 1));
 
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -510,7 +520,7 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
 					$sql .= " SET date_export = '".$db->idate($now)."'";
 					$sql .= " , date_validated = '".$db->idate($now)."'";
-					$sql .= " WHERE rowid = ".$movement->id;
+					$sql .= " WHERE rowid = ".((int) $movement->id);
 
 					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
 					$result = $db->query($sql);
@@ -717,7 +727,9 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 }
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.(is_array($search_ledger_code) ? join('|', $search_ledger_code) : $search_ledger_code).'"></td>';
+	print '<td class="liste_titre center">';
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
@@ -738,12 +750,10 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.numero_compte']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 1);
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 1);
 	print '</div>';
 	print '</td>';
 }

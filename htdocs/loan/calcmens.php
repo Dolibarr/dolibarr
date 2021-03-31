@@ -37,11 +37,11 @@ if (!defined('NOREQUIREAJAX')) {
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
-$mens = GETPOST('mens');
-$capital = GETPOST('capital');
-$rate = GETPOST('rate');
-$echance = GETPOST('echeance');
-$nbterm = GETPOST('nbterm');
+$mens = price2num(GETPOST('mens'));
+$capital = price2num(GETPOST('capital'));
+$rate = price2num(GETPOST('rate'));
+$echance = GETPOST('echeance', 'int');
+$nbterm = GETPOST('nbterm', 'int');
 
 top_httphead();
 

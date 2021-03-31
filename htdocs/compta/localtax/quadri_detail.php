@@ -61,7 +61,8 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
 		if (GETPOST("month", "int")) {
-			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
+			$date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false);
+			$date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false);
 		} else {
 			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) {
@@ -74,16 +75,20 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		}
 	} else {
 		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+			$date_start = dol_get_first_day($year_start, 1, false);
+			$date_end = dol_get_last_day($year_start, 3, false);
 		}
 		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+			$date_start = dol_get_first_day($year_start, 4, false);
+			$date_end = dol_get_last_day($year_start, 6, false);
 		}
 		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+			$date_start = dol_get_first_day($year_start, 7, false);
+			$date_end = dol_get_last_day($year_start, 9, false);
 		}
 		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+			$date_start = dol_get_first_day($year_start, 10, false);
+			$date_end = dol_get_last_day($year_start, 12, false);
 		}
 	}
 }
@@ -487,8 +492,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print '<td class="nowrap right">&nbsp;</td>';
 			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-		print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+		print '<td class="right"><span class="amount">'.price(price2num($subtot_coll_total_ht, 'MT')).'</span></td>';
+		print '<td class="nowrap right"><span class="amount">'.price(price2num($subtot_coll_vat, 'MT')).'</span></td>';
 		print '</tr>';
 	}
 
@@ -500,8 +505,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print '<td class="nowrap right">&nbsp;</td>';
 			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
-		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="right"><span class="amount">'.price(price2num(0, 'MT')).'</span></td>';
+		print '<td class="nowrap right"><span class="amount">'.price(price2num(0, 'MT')).'</span></td>';
 		print '</tr>';
 	}
 
@@ -638,8 +643,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print '<td class="nowrap right">&nbsp;</td>';
 			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-		print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+		print '<td class="right"><span class="amount">'.price(price2num($subtot_paye_total_ht, 'MT')).'</span></td>';
+		print '<td class="nowrap right"><span class="amount">'.price(price2num($subtot_paye_vat, 'MT')).'</span></td>';
 		print '</tr>';
 	}
 
@@ -651,8 +656,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print '<td class="nowrap right">&nbsp;</td>';
 			print '<td class="right">&nbsp;</td>';
 		}
-		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
-		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="right"><span class="amount">'.price(price2num(0, 'MT')).'</span></td>';
+		print '<td class="nowrap right"><span class="amount">'.price(price2num(0, 'MT')).'</span></td>';
 		print '</tr>';
 	}
 

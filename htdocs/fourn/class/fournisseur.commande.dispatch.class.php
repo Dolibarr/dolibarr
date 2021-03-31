@@ -286,7 +286,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE t.ref = '".$ref."'";
 		} else {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 
 		dol_syslog(get_class($this)."::fetch");
@@ -389,7 +389,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
 
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -472,7 +472,7 @@ class CommandeFournisseurDispatch extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
@@ -674,8 +674,10 @@ class CommandeFournisseurDispatch extends CommonObject
 					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
 					$sqlwhere [] = $key.' = \''.$this->db->escape($value).'\'';
+				} elseif ($key == 'qty') {
+					$sqlwhere [] = $key.' = '.((float) $value);
 				} else {
-					$sqlwhere [] = $key.' = '.$this->db->escape($value);
+					$sqlwhere [] = $key.' = '.((int) $value);
 				}
 			}
 		}

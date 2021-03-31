@@ -75,18 +75,19 @@ if (!empty($conf->global->TICKET_SHOW_MODULE_LOGO)) {
 div.ticketform {
 	font-family: arial;
 	position: static;
-	padding: 2em 1em;
+/*	padding: 2em 1em;
 	overflow-x: auto;
 	border: 2px solid rgb(153, 153, 153);
 	background-color: rgb(255, 255, 255);
 	box-shadow: 2px 2px 2px rgb(245, 245, 245);
 	border-radius: 10px 10px 10px 10px;
 	margin: 1.5em;
+*/
 	background : #ffffff;
 	text-align: center;
 }
 
-div.ticketform .index_create, .index_display {
+div.ticketform .index_create, div.ticketform .index_display {
 	display: inline-block;
 	width: 200px;
 	height: 45px;

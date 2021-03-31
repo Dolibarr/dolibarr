@@ -223,7 +223,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			return '';
 		}
 
-		$field = ''; $where = '';
+		$field = '';
+		$where = '';
 		if ($type == 0) {
 			$field = 'code_client';
 			//$where = ' AND client in (1,2)';
@@ -312,6 +313,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if (is_string($result)) {
 				$this->error = $result;
 				return -6;
+			} else {
+				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
+				if ($is_dispo <> 0) {
+					$result = -3;
+				}
 			}
 		}
 

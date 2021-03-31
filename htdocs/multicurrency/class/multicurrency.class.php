@@ -200,7 +200,7 @@ class MultiCurrency extends CommonObject
 		if (!empty($code)) {
 			$sql .= ' WHERE c.code = \''.$this->db->escape($code).'\' AND c.entity = '.$conf->entity;
 		} else {
-			$sql .= ' WHERE c.rowid = '.$id;
+			$sql .= ' WHERE c.rowid = '.((int) $id);
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -301,7 +301,7 @@ class MultiCurrency extends CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 		$sql .= ' name=\''.$this->db->escape($this->name).'\'';
 		$sql .= ' code=\''.$this->db->escape($this->code).'\'';
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -363,7 +363,7 @@ class MultiCurrency extends CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -591,7 +591,7 @@ class MultiCurrency extends CommonObject
 	{
 		global $db;
 
-		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
+		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.((int) $fk_facture);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -833,7 +833,7 @@ class CurrencyRate extends CommonObjectLine
 
 		$sql = 'SELECT cr.rowid, cr.rate, cr.date_sync, cr.fk_multicurrency, cr.entity';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS cr';
-		$sql .= ' WHERE cr.rowid = '.$id;
+		$sql .= ' WHERE cr.rowid = '.((int) $id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -888,7 +888,7 @@ class CurrencyRate extends CommonObjectLine
 		if (!empty($this->fk_multicurrency)) {
 			$sql .= ', fk_multicurrency='.$this->fk_multicurrency;
 		}
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -944,7 +944,7 @@ class CurrencyRate extends CommonObjectLine
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);

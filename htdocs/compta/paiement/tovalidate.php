@@ -120,7 +120,7 @@ if ($resql) {
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"), "payment").' '.$objp->rowid.'</a></td>';
 		print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 		print "<td>$objp->paiement_type $objp->num_payment</td>\n";
-		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 		print '<td class="center">';
 
 		if ($objp->statut == 0) {

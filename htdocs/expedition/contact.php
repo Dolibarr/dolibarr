@@ -41,12 +41,6 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expedition', $id, '');
-
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -68,6 +62,12 @@ if ($id > 0 || !empty($ref)) {
 		$objectsrc->fetch($object->$typeobject->id);
 	}
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 
 /*
@@ -96,10 +96,10 @@ if ($action == 'addcontact' && $user->rights->expedition->creer) {
 	}
 } elseif ($action == 'swapstatut' && $user->rights->expedition->creer) {
 	// bascule du statut d'un contact
-	$result = $objectsrc->swapContactStatus(GETPOST('ligne'));
+	$result = $objectsrc->swapContactStatus(GETPOST('ligne', 'int'));
 } elseif ($action == 'deletecontact' && $user->rights->expedition->creer) {
 	// Efface un contact
-	$result = $objectsrc->delete_contact(GETPOST("lineid"));
+	$result = $objectsrc->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);

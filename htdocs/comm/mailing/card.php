@@ -40,12 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->load("mails");
 
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
-	accessforbidden();
-}
-
 $id = (GETPOST('mailid', 'int') ? GETPOST('mailid', 'int') : GETPOST('id', 'int'));
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel');
 $confirm = GETPOST('confirm', 'alpha');
 $urlfrom = GETPOST('urlfrom');
 
@@ -79,6 +76,10 @@ $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
 
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
 
 
 /*
@@ -148,7 +149,7 @@ if (empty($reshook)) {
 			// or sent in error (statut=-1)
 			$sql = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
+			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $object->id);
 			$sql .= " ORDER BY mc.statut DESC"; // first status 0, then status -1
 
 			dol_syslog("card.php: select targets", LOG_DEBUG);
@@ -207,8 +208,8 @@ if (empty($reshook)) {
 						$substitutionarray['__OTHER4__'] = $other4;
 						$substitutionarray['__OTHER5__'] = $other5;
 						$substitutionarray['__USER_SIGNATURE__'] = $signature; // Signature is empty when ran from command line or taken from user in parameter)
-						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
-						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
+						$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($obj->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid.'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
+						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid.'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
 
 						$onlinepaymentenabled = 0;
 						if (!empty($conf->paypal->enabled)) {
@@ -393,12 +394,12 @@ if (empty($reshook)) {
 	}
 
 	// Action send test emailing
-	if ($action == 'send' && empty($_POST["cancel"])) {
+	if ($action == 'send' && ! $cancel) {
 		$error = 0;
 
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
-		$object->sendto = $_POST["sendto"];
+		$object->sendto = GETPOST("sendto", 'alphawithlgt');
 		if (!$object->sendto) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTo")), null, 'errors');
 			$error++;
@@ -537,7 +538,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of file remove
-	if (!empty($_POST["removedfile"])) {
+	if (GETPOST("removedfile")) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -548,7 +549,7 @@ if (empty($reshook)) {
 	}
 
 	// Action of emailing update
-	if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"])) {
+	if ($action == 'update' && !GETPOST("removedfile") && !$cancel) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$isupload = 0;
@@ -643,7 +644,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (!empty($_POST["cancel"])) {
+	if ($cancel) {
 		$action = '';
 	}
 }

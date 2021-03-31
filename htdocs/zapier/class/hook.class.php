@@ -416,13 +416,13 @@ class Hook extends CommonObject
 		$sql .= ' t.rowid';
 		// TODO Get all fields
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.entity = '.$conf->entity;
+		$sql .= ' WHERE t.entity = '.((int) $conf->entity);
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
@@ -639,7 +639,7 @@ class Hook extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

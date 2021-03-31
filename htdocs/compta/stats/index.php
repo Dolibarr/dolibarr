@@ -51,8 +51,8 @@ if (empty($year)) {
 	$month_current = dol_print_date(dol_now(), "%m");
 	$year_start = $year - ($nbofyear - 1);
 }
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');
+$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
@@ -73,19 +73,24 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		} else {
 			$month_end = $month_start;
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
 	}
 	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
 	}
 	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
 	}
 	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
 	}
 }
 
@@ -147,7 +152,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
 	$calcmode = str_replace('{link1}', '<a class="bold" href="'.$_SERVER["PHP_SELF"].'?'.($param ? $param : 'year_start='.$year_start).'&modecompta=BOOKKEEPING">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesCADue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -162,7 +166,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPINGCOLLECTED">','</a>').')';
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesCAIn");
 	$description .= $langs->trans("DepositsAreIncluded");
@@ -175,12 +178,14 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = str_replace('{link1}', '<a class="bold" href="'.$_SERVER["PHP_SELF"].'?'.($param ? $param : 'year_start='.$year_start).'&modecompta=CREANCES-DETTES">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesCATotalSaleJournal");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 
 $moreparam = array();
 if (!empty($modecompta)) {
@@ -194,7 +199,7 @@ if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql = "SELECT date_format(f.datef, '%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -204,14 +209,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
 	 */
-	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT date_format(p.datep, '%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -219,10 +224,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
-	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
 	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
 	$sql .= " AND aj.entity = ".$conf->entity;

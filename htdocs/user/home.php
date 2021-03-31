@@ -24,6 +24,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
@@ -52,7 +53,24 @@ $fuserstatic = new User($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('userhome'));
+if (!isset($form) || !is_object($form)) {
+	$form = new Form($db);
+}
+// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+$resultboxes = FormOther::getBoxesArea($user, "1");
 
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOST('areacode', 'aZ09');
+	$userid = GETPOST('userid', 'int');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
 
 /*
  * View
@@ -61,40 +79,35 @@ $hookmanager->initHooks(array('userhome'));
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("MenuUsersAndGroups"), '', 'user');
-
-
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"), $resultboxes['selectboxlist'], 'user');
 
 
 // Search User
-print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
+$searchbox = '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+$searchbox .= '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<table class="noborder nohover centpercent">';
-print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
-print '<tr><td>';
-print $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
+$searchbox .= '<table class="noborder nohover centpercent">';
+$searchbox .= '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Search").'</td></tr>';
+$searchbox .= '<tr><td>';
+$searchbox .= $langs->trans("User").':</td><td><input class="flat inputsearch" type="text" name="search_user" size="18"></td></tr>';
 
 // Search Group
 if ($canreadperms) {
-	print '<tr><td>';
-	print $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
+	$searchbox .= '<tr><td>';
+	$searchbox .= $langs->trans("Group").':</td><td><input class="flat inputsearch" type="text" name="search_group" size="18"></td></tr>';
 }
 
-print '<tr><td class="center" colspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table><br>\n";
+$searchbox .= '<tr><td class="center" colspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+$searchbox .= "</table><br>\n";
 
-print '</form>';
-
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+$searchbox .= '</form>';
 
 
 /*
  * Latest created users
  */
 $max = 10;
-
+$lastcreatedbox = '';
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
 $sql .= ", u.entity";
 $sql .= ", u.ldap_sid";
@@ -115,7 +128,7 @@ if ($reshook > 0) {
 	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) {
-	$sql .= " AND u.fk_soc = ".$socid;
+	$sql .= " AND u.fk_soc = ".((int) $socid);
 }
 $sql .= $db->order("u.datec", "DESC");
 $sql .= $db->plimit($max);
@@ -124,11 +137,11 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
-	print '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-	print '</tr>'."\n";
+	$lastcreatedbox .='<div class="div-table-responsive-no-min">';
+	$lastcreatedbox .='<table class="noborder centpercent">';
+	$lastcreatedbox .='<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
+	$lastcreatedbox .='<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	$lastcreatedbox .='</tr>'."\n";
 	$i = 0;
 
 	while ($i < $num && $i < $max) {
@@ -149,24 +162,24 @@ if ($resql) {
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->canvas = $obj->canvas;
 
-		print '<tr class="oddeven">';
-		print '<td class="nowraponall">';
-		print $fuserstatic->getNomUrl(-1);
+		$lastcreatedbox .='<tr class="oddeven">';
+		$lastcreatedbox .='<td class="nowraponall">';
+		$lastcreatedbox .=$fuserstatic->getNomUrl(-1);
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
-			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+			$lastcreatedbox .=img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		} elseif ($obj->admin) {
-			print img_picto($langs->trans("Administrator"), 'star');
+			$lastcreatedbox .=img_picto($langs->trans("Administrator"), 'star');
 		}
-		print "</td>";
-		print '<td>'.$obj->login.'</td>';
-		print "<td>";
+		$lastcreatedbox .="</td>";
+		$lastcreatedbox .='<td>'.$obj->login.'</td>';
+		$lastcreatedbox .="<td>";
 		if ($obj->fk_soc) {
-			print $companystatic->getNomUrl(1);
+			$lastcreatedbox .=$companystatic->getNomUrl(1);
 		} else {
-			print $langs->trans("InternalUser");
+			$lastcreatedbox .=$langs->trans("InternalUser");
 		}
 		if ($obj->ldap_sid) {
-			print ' ('.$langs->trans("DomainUser").')';
+			$lastcreatedbox .=' ('.$langs->trans("DomainUser").')';
 		}
 
 		$entity = $obj->entity;
@@ -180,19 +193,19 @@ if ($resql) {
 				$entitystring = $mc->label;
 			}
 		}
-		print ($entitystring ? ' ('.$entitystring.')' : '');
+		$lastcreatedbox .=($entitystring ? ' ('.$entitystring.')' : '');
 
-		print '</td>';
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-		print '<td class="right">';
-		print $fuserstatic->getLibStatut(3);
-		print '</td>';
+		$lastcreatedbox .='</td>';
+		$lastcreatedbox .='<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+		$lastcreatedbox .='<td class="right">';
+		$lastcreatedbox .=$fuserstatic->getLibStatut(3);
+		$lastcreatedbox .='</td>';
 
-		print '</tr>';
+		$lastcreatedbox .='</tr>';
 		$i++;
 	}
-	print "</table>";
-	print "</div><br>";
+	$lastcreatedbox .="</table>";
+	$lastcreatedbox .="</div><br>";
 
 	$db->free($resql);
 } else {
@@ -203,6 +216,7 @@ if ($resql) {
 /*
  * Last groups created
  */
+$lastgroupbox = '';
 if ($canreadperms) {
 	$max = 5;
 
@@ -224,11 +238,11 @@ if ($canreadperms) {
 		}
 		$num = $db->num_rows($resql);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
-		print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-		print '</tr>';
+		$lastgroupbox .='<div class="div-table-responsive-no-min">';
+		$lastgroupbox .='<table class="noborder centpercent">';
+		$lastgroupbox .='<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
+		$lastgroupbox .='<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		$lastgroupbox .='</tr>';
 		$i = 0;
 
 		$grouptemp = new UserGroup($db);
@@ -240,25 +254,25 @@ if ($canreadperms) {
 			$grouptemp->name = $obj->name;
 			$grouptemp->note = $obj->note;
 
-			print '<tr class="oddeven">';
-			print '<td>';
-			print $grouptemp->getNomUrl(1);
+			$lastgroupbox .='<tr class="oddeven">';
+			$lastgroupbox .='<td>';
+			$lastgroupbox .=$grouptemp->getNomUrl(1);
 			if (!$obj->entity) {
-				print img_picto($langs->trans("GlobalGroup"), 'redstar');
+				$lastgroupbox .=img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
-			print "</td>";
+			$lastgroupbox .="</td>";
 			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
 				$mc->getInfo($obj->entity);
-				print '<td>';
-				print $mc->label;
-				print '</td>';
+				$lastgroupbox .='<td>';
+				$lastgroupbox .=$mc->label;
+				$lastgroupbox .='</td>';
 			}
-			print '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-			print "</tr>";
+			$lastgroupbox .='<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
+			$lastgroupbox .="</tr>";
 			$i++;
 		}
-		print "</table>";
-		print "</div><br>";
+		$lastgroupbox .= "</table>";
+		$lastgroupbox .= "</div><br>";
 
 		$db->free($resql);
 	} else {
@@ -266,7 +280,28 @@ if ($canreadperms) {
 	}
 }
 
-print '</div></div></div>';
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+$boxlist = '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $searchbox;
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $lastcreatedbox;
+$boxlist .= $lastgroupbox;
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= '</div>';
+
+print $boxlist;
+
+print '</div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);

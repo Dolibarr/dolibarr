@@ -328,7 +328,7 @@ ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float;
 
-ALTER TABLE llx_product ADD COLUMN fk_state integer DEFAULT NULL;
+ALTER TABLE llx_product ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
 
 ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
@@ -579,7 +579,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',205);
 
 -- Removed no more used function
--- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m CASCADE;
+-- VPGSQL8.2 DROP FUNCTION IF EXISTS update_modified_column_date_m() CASCADE;
 
 insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values ( 6,'AC_EMAIL_IN','system','reception Email',NULL, 1, 4);
 

@@ -62,9 +62,9 @@ $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
 if (!empty($_REQUEST['search_fourn_id'])) {
-	$_GET['id_fourn'] = $_GET['search_fourn_id'];
-	$_POST['id_fourn'] = $_POST['search_fourn_id'];
-	$_REQUEST['id_fourn'] = $_REQUEST['search_fourn_id'];
+	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
+	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
+	$_REQUEST['id_fourn'] = GETPOST('search_fourn_id', 'int');
 }
 
 // Security check
@@ -217,7 +217,7 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
-		if (price2num($_POST["price"]) < 0 || $_POST["price"] == '') {
+		if (price2num(GETPOST("price")) < 0 || GETPOST("price") == '') {
 			if ($price_expression === '') {	// Return error of missing price only if price_expression not set
 				$error++;
 				$langs->load("errors");
@@ -227,17 +227,17 @@ if (empty($reshook)) {
 			}
 		}
 		if (!empty($conf->multicurrency->enabled)) {
-			if (empty($_POST["multicurrency_code"])) {
+			if (!GETPOST("multicurrency_code")) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Currency")), null, 'errors');
 			}
-			if (price2num($_POST["multicurrency_tx"]) <= 0 || $_POST["multicurrency_tx"] == '') {
+			if (price2num(GETPOST("multicurrency_tx")) <= 0 || GETPOST("multicurrency_tx") == '') {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CurrencyRate")), null, 'errors');
 			}
-			if (price2num($_POST["multicurrency_price"]) < 0 || $_POST["multicurrency_price"] == '') {
+			if (price2num(GETPOST("multicurrency_price")) < 0 || GETPOST("multicurrency_price") == '') {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PriceCurrency")), null, 'errors');
@@ -290,7 +290,7 @@ if (empty($reshook)) {
 						foreach ($extrafield_values as $key => $value) {
 							$sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
 						}
-						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.$object->product_fourn_price_id;
+						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
 					}
 
 					// Execute the sql command from above
@@ -793,7 +793,7 @@ END;
 							$sql .= ", ".$key;
 						}
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
-						$sql .= " WHERE fk_object = ".$rowid;
+						$sql .= " WHERE fk_object = ".((int) $rowid);
 						$resql = $db->query($sql);
 						if ($resql) {
 							$obj = $db->fetch_object($resql);
@@ -1081,7 +1081,7 @@ END;
 
 						// Currency
 						if (!empty($conf->multicurrency->enabled)) {
-							print '<td class="right">';
+							print '<td class="right nowraponall">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
 							print '</td>';
 						}
@@ -1130,9 +1130,9 @@ END;
 							print '</td>';
 						}
 
-						// Date
+						// Date modification
 						if (!empty($arrayfields['pfp.tms']['checked'])) {
-							print '<td align="right">';
+							print '<td class="right nowraponall">';
 							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
 							print '</td>';
 						}
@@ -1145,7 +1145,7 @@ END;
 								$sql .= ", ".$key;
 							}
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
-							$sql .= " WHERE fk_object = ".$productfourn->product_fourn_price_id;
+							$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);
 							$resql = $db->query($sql);
 							if ($resql) {
 								if ($db->num_rows($resql) != 1) {

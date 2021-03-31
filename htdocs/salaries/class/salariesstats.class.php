@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (c) 2018      Fidesio              <contact@fidesio.com>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,12 +62,15 @@ class SalariesStats extends Stats
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
 		$this->field = 'amount';
 
-		$this->where .= " entity = ".$conf->entity;
-		if ($this->socid) {
-			$this->where .= " AND fk_soc = ".$this->socid;
+		$this->where = " entity = ".$conf->entity;
+		if ($this->socid > 0) {
+			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
-		if (is_array($this->userid) && count($this->userid) > 0) $this->where .= ' AND fk_user IN ('.join(',', $this->userid).')';
-		elseif ($this->userid > 0) $this->where .= ' AND fk_user = '.$this->userid;
+		if (is_array($this->userid) && count($this->userid) > 0) {
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+		} elseif ($this->userid > 0) {
+			$this->where .= ' AND fk_user = '.$this->userid;
+		}
 	}
 
 
@@ -79,8 +83,8 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT YEAR(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " GROUP BY dm DESC";
 		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY dm DESC";
 
 		return $this->_getNbByYear($sql);
 	}
@@ -97,13 +101,13 @@ class SalariesStats extends Stats
 	{
 		$sql = "SELECT MONTH(datep) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(datep) = ".$year;
+		$sql .= " WHERE YEAR(datep) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -125,7 +129,6 @@ class SalariesStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
 
 		return $res;
 	}

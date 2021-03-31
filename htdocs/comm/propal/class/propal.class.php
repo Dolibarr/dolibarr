@@ -141,6 +141,16 @@ class Propal extends CommonObject
 	public $date_validation;
 
 	/**
+	 * @var integer|string $date_signature;
+	 */
+	public $date_signature;
+
+	/**
+	 * @var User $user_signature
+	 */
+	public $user_signature;
+
+	/**
 	 * @var integer|string date of the quote;
 	 */
 	public $date;
@@ -1232,7 +1242,7 @@ class Propal extends CommonObject
 				/*if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-					$sql.= " SET fk_delivery_address = ".$this->fk_delivery_address;
+					$sql.= " SET fk_delivery_address = ".((int) $this->fk_delivery_address);
 					$sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
 					$sql.= " AND entity = ".setEntity($this);
 
@@ -1644,14 +1654,15 @@ class Propal extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -1891,7 +1902,8 @@ class Propal extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -2201,7 +2213,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql .= " SET fk_input_reason = ".$id;
+			$sql .= " SET fk_input_reason = ".((int) $id);
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2320,13 +2332,13 @@ class Propal extends CommonObject
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if (!empty($user->rights->propal->creer)) {
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
 			$error = 0;
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".((float) $remise);
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2378,17 +2390,18 @@ class Propal extends CommonObject
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
+		if (empty($remise)) {
+			$remise = 0;
+		}
+		$remise = price2num($remise);
 
 		if (!empty($user->rights->propal->creer)) {
-			$remise = price2num($remise);
-
 			$error = 0;
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql .= " SET remise_absolue = ".$remise;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+			$sql .= " SET remise_absolue = ".((float) $remise);
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2433,19 +2446,17 @@ class Propal extends CommonObject
 	 *	Reopen the commercial proposal
 	 *
 	 *	@param      User	$user		Object user that close
-	 *	@param      int		$statut		Statut
+	 *	@param      int		$status		Status
 	 *	@param      string	$note		Comment
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	public function reopen($user, $statut, $note = '', $notrigger = 0)
+	public function reopen($user, $status, $note = '', $notrigger = 0)
 	{
-
-		$this->statut = $statut;
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".$this->statut.",";
+		$sql .= " SET fk_statut = ".$status.",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -2457,7 +2468,8 @@ class Propal extends CommonObject
 		dol_syslog(get_class($this)."::reopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 		if (!$error) {
 			if (!$notrigger) {
@@ -2481,11 +2493,105 @@ class Propal extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			$this->statut = $status;
+			$this->status = $status;
+
 			$this->db->commit();
 			return 1;
 		}
 	}
 
+	/**
+	 *	Sign the commercial proposal
+	 *
+	 *	@param      User	$user		Object user that close
+	 *	@param      int		$statut		Status
+	 *	@param      string	$note		Complete private note with this note
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int         		<0 if KO, >0 if OK
+	 */
+	public function signature($user, $statut, $note = '', $notrigger = 0)
+	{
+		global $langs,$conf;
+
+		$error = 0;
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
+		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
+		$sql .= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
+			$trigger_name = 'PROPAL_CLOSE_REFUSED';
+
+			if ($statut == self::STATUS_SIGNED) {
+				$trigger_name = 'PROPAL_CLOSE_SIGNED';
+				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->model_pdf;
+
+				// The connected company is classified as a client
+				$soc=new Societe($this->db);
+				$soc->id = $this->socid;
+				$result = $soc->set_as_client();
+
+				if ($result < 0) {
+					$this->error=$this->db->lasterror();
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				// Define output language
+				$outputlangs = $langs;
+				if (!empty($conf->global->MAIN_MULTILANGS)) {
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
+			}
+
+			if (!$error) {
+				$this->oldcopy= clone $this;
+				$this->statut = $statut;
+				$this->date_signature = $now;
+				$this->note_private = $newprivatenote;
+			}
+
+			if (!$notrigger && empty($error)) {
+				// Call trigger
+				$result=$this->call_trigger($trigger_name, $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error ) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->statut = $this->oldcopy->statut;
+				$this->date_signature = $this->oldcopy->date_signature;
+				$this->note_private = $this->oldcopy->note_private;
+
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 *	Close the commercial proposal
@@ -2508,7 +2614,7 @@ class Propal extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
@@ -2731,7 +2837,7 @@ class Propal extends CommonObject
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if ($draft) {
 			$sql .= " AND p.fk_statut = ".self::STATUS_DRAFT;
@@ -2818,7 +2924,7 @@ class Propal extends CommonObject
 		if (count($linkedInvoices) > 0) {
 			$sql = "SELECT rowid as facid, ref, total, datef as df, fk_user_author, fk_statut, paye";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql .= " WHERE rowid IN (".implode(',', $linkedInvoices).")";
+			$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $linkedInvoices)).")";
 
 			dol_syslog(get_class($this)."::InvoiceArrayList", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2881,7 +2987,7 @@ class Propal extends CommonObject
 		// Delete extrafields of lines and lines
 		if (!$error && !empty($this->table_element_line)) {
 			$tabletodelete = $this->table_element_line;
-			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
+			$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id).")";
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
 			if (!$this->db->query($sqlef) || !$this->db->query($sql)) {
 				$error++;
@@ -2992,8 +3098,8 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_availability = '.$availability_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' SET fk_availability = '.((int) $availability_id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__.' availability('.$availability_id.')', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3056,8 +3162,8 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__.' demand_reason('.$demand_reason_id.')', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3110,8 +3216,8 @@ class Propal extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, ";
-		$sql .= " c.datec, c.date_valid as datev, c.date_cloture as dateo,";
-		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
+		$sql .= " c.datec, c.date_valid as datev, c.date_signature, c.date_cloture as dateo,";
+		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_signature, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
@@ -3125,6 +3231,7 @@ class Propal extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_signature    = $this->db->jdate($obj->date_signature);
 				$this->date_cloture      = $this->db->jdate($obj->dateo);
 
 				$cuser = new User($this->db);
@@ -3135,6 +3242,12 @@ class Propal extends CommonObject
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
+				}
+
+				if ($obj->fk_user_signature) {
+					$user_signature = new User($this->db);
+					$user_signature->fetch($obj->fk_user_signature);
+					$this->user_signature = $user_signature;
 				}
 
 				if ($obj->fk_user_cloture) {
@@ -3840,7 +3953,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.date_start, pd.date_end, pd.product_type';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
-		$sql .= ' WHERE pd.rowid = '.$rowid;
+		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 		if ($result) {

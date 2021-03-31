@@ -440,9 +440,8 @@ class ImportXlsx extends ModeleImports
 							$this->errors[$error]['type'] = 'NOTNULL';
 							$errorforthistable++;
 							$error++;
-						}
-						// Test format only if field is not a missing mandatory field (field may be a value or empty but not mandatory)
-						else {
+						} else {
+							// Test format only if field is not a missing mandatory field (field may be a value or empty but not mandatory)
 							// We convert field if required
 							if (!empty($objimport->array_import_convertvalue[0][$val])) {
 								//print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
@@ -718,9 +717,8 @@ class ImportXlsx extends ModeleImports
 										$errorforthistable++;
 										$error++;
 									}
-								}
-								// If test is just a static regex
-								elseif (!preg_match('/' . $objimport->array_import_regex[0][$val] . '/i', $newval)) {
+								} elseif (!preg_match('/' . $objimport->array_import_regex[0][$val] . '/i', $newval)) {
+									// If test is just a static regex
 									//if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
 									$this->errors[$error]['lib'] = $langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type'] = 'REGEX';
@@ -832,7 +830,7 @@ class ImportXlsx extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= ' WHERE ' . $keyfield . ' = ' . $lastinsertid;
+								$sqlSelect .= ' WHERE ' . $keyfield . ' = ' .((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -866,7 +864,7 @@ class ImportXlsx extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlend = ' WHERE ' . $keyfield . ' = ' . $lastinsertid;
+								$sqlend = ' WHERE ' . $keyfield . ' = '.((int) $lastinsertid);
 
 								$sql = $sqlstart . $sqlend;
 

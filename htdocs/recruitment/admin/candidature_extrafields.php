@@ -16,7 +16,7 @@
  */
 
 /**
- *      \file       htdocs/recruitement/admin/candidature_extrafields.php
+ *      \file       htdocs/recruitment/admin/candidature_extrafields.php
  *		\ingroup    recruitment
  *		\brief      Page to setup extra fields of Candidature
  */
@@ -34,13 +34,17 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
+foreach ($tmptype2label as $key => $val) {
+	$type2label[$key] = $langs->transnoentitiesnoconv($val);
+}
 
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'recruitment_recruitmentcandidature';
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -73,8 +77,7 @@ print dol_get_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
+if ($action != 'create' && $action != 'edit') {
 	print '<div class="tabsAction">';
 	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
 	print "</div>";
@@ -84,8 +87,7 @@ if ($action != 'create' && $action != 'edit')
 /*
  * Creation of an optional field
  */
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print '<br><div id="newattrib"></div>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
@@ -95,8 +97,7 @@ if ($action == 'create')
 /*
  * Edition of an optional field
  */
-if ($action == 'edit' && !empty($attrname))
-{
+if ($action == 'edit' && !empty($attrname)) {
 	print "<br>";
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 

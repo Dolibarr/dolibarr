@@ -323,8 +323,8 @@ class Categorie extends CommonObject
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type, ref_ext";
 		$sql .= ", date_creation, tms, fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
-		if ($id > 0) {
-			$sql .= " WHERE rowid = ".$id;
+		if ($id) {
+			$sql .= " WHERE rowid = ".((int) $id);
 		} elseif (!empty($ref_ext)) {
 			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
 		} else {
@@ -604,7 +604,7 @@ class Categorie extends CommonObject
 		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (!$error) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-			$sql .= " SET fk_parent = ".$this->fk_parent;
+			$sql .= " SET fk_parent = ".((int) $this->fk_parent);
 			$sql .= " WHERE fk_parent = ".$this->id;
 
 			if (!$this->db->query($sql)) {
@@ -869,7 +869,7 @@ class Categorie extends CommonObject
 	public function containsObject($type, $object_id)
 	{
 		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type]);
-		$sql .= " WHERE fk_categorie = ".$this->id." AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".$object_id;
+		$sql .= " WHERE fk_categorie = ".$this->id." AND fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".((int) $object_id);
 		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1300,7 +1300,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c ";
 		$sql .= " WHERE c.entity IN (".getEntity('category').")";
-		$sql .= " AND c.type = ".$type;
+		$sql .= " AND c.type = ".((int) $type);
 		$sql .= " AND c.fk_parent = ".$this->fk_parent;
 		$sql .= " AND c.label = '".$this->db->escape($this->label)."'";
 
@@ -1520,7 +1520,6 @@ class Categorie extends CommonObject
 		return $cats;
 	}
 
-
 	/**
 	 * 	Returns categories whose id or name match
 	 * 	add wildcards in the name unless $exact = true
@@ -1555,7 +1554,7 @@ class Categorie extends CommonObject
 		$sql .= " AND entity IN (".getEntity('category').")";
 		if ($nom) {
 			if (!$exact) {
-				$nom = '%'.str_replace('*', '%', $nom).'%';
+				$nom = '%'.$this->db->escape(str_replace('*', '%', $nom)).'%';
 			}
 			if (!$case) {
 				$sql .= " AND label LIKE '".$this->db->escape($nom)."'";
@@ -1564,7 +1563,7 @@ class Categorie extends CommonObject
 			}
 		}
 		if ($id) {
-			$sql .= " AND rowid = '".$id."'";
+			$sql .= " AND rowid = ".((int) $id);
 		}
 
 		$res = $this->db->query($sql);
@@ -1792,7 +1791,7 @@ class Categorie extends CommonObject
 			$sql = "SELECT rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_lang";
 			$sql .= " WHERE fk_category=".$this->id;
-			$sql .= " AND lang='".$key."'";
+			$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 			$result = $this->db->query($sql);
 

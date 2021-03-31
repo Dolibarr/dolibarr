@@ -258,7 +258,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	//    $documentstatic=new SupplierProposal($db);
 	//    $sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
 	//    $tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
-	//    $where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	//    $where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	//    $where.= " AND d.fk_supplier_proposal = c.rowid";
 	//    $where.= " AND c.entity = ".$conf->entity;
 	//    $dateprint = 'c.date_valid';

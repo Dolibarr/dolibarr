@@ -58,8 +58,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	if ($selecteddir != '/') {
 		$selecteddir = preg_replace('/\/$/', '', $selecteddir); // We removed last '/' except if it is '/'
 	}
-} else // For no ajax call
-{
+} else {
+	// For no ajax call
 	//if (GETPOST('preopened')) { $_GET['dir'] = $_POST['dir'] = GETPOST('preopened'); }
 
 	$openeddir = GETPOST('openeddir');
@@ -75,6 +75,9 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 		$url = DOL_URL_ROOT.'/ecm/index.php';
 	}
 }
+
+$websitekey = GETPOST('websitekey', 'alpha');
+$pageid = GETPOST('pageid', 'int');
 
 // Load translation files required by the page
 $langs->load("ecm");
@@ -237,17 +240,14 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 		// If directory is son of expanded directory, we show line
 		if (in_array($val['id_mere'], $expandedsectionarray)) {
 			$showline = 4;
-		}
-		// If directory is brother of selected directory, we show line
-		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) {
+		} elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) {
+			// If directory is brother of selected directory, we show line
 			$showline = 3;
-		}
-		// If directory is parent of selected directory or is selected directory, we show line
-		elseif (preg_match('/'.$val['fullpath'].'_/i', $fullpathselected.'_')) {
+		} elseif (preg_match('/'.$val['fullpath'].'_/i', $fullpathselected.'_')) {
+			// If directory is parent of selected directory or is selected directory, we show line
 			$showline = 2;
-		}
-		// If we are level one we show line
-		elseif ($val['level'] < 2) {
+		} elseif ($val['level'] < 2) {
+			// If we are level one we show line
 			$showline = 1;
 		}
 
@@ -291,6 +291,7 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 			print '<td class="center">';
 			$userstatic->id = $val['fk_user_c'];
 			$userstatic->lastname = $val['login_c'];
+			$userstatic->statut = $val['statut_c'];
 			$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 			$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';
@@ -457,6 +458,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 							print '<td class="right" width="18">';
 							$userstatic->id = isset($val['fk_user_c']) ? $val['fk_user_c'] : 0;
 							$userstatic->lastname = isset($val['login_c']) ? $val['login_c'] : 0;
+							$userstatic->statut = isset($val['statut_c']) ? $val['statut_c'] : 0;
 							$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 							$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 							$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', false, 1).'<br>';

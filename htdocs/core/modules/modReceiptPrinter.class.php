@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/modReceiptPrinter.class.php
  *  \ingroup    printing
- *  \brief      File of class to describe and activate module Receipt Printer
+ *  \brief      Description and activation file for the module Receipt Printer
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

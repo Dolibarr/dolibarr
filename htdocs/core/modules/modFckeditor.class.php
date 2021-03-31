@@ -22,7 +22,7 @@
  *  \brief      Module pour mettre en page les zones de saisie de texte
  *  \file       htdocs/core/modules/modFckeditor.class.php
  *  \ingroup    fckeditor
- *  \brief      Fichier de description et activation du module Fckeditor
+ *  \brief      Description and activation file for the module Fckeditor
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

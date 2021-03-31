@@ -96,6 +96,8 @@ print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETP
 // Structure
 print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
 print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+// Rebuild sequence
+print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
@@ -174,7 +176,8 @@ $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
-	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha'));
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha')
+	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
 	// Show wait message
@@ -899,7 +902,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
 	$sql .= " WHERE p.rowid = ps.fk_product";
-	$sql .= " AND p.tobatch = 1";
+	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
 	$sql .= " HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
 	print $sql;
@@ -932,14 +935,14 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 					}
 					if ($methodtofix == 'updatestock') {
 						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? $obj->reelbatch : '0').' for ps.rowid = '.$obj->psrowid;
+						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
 							$error = 0;
 
 							$db->begin();
 
 							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? $obj->reelbatch : '0')." WHERE rowid = ".$obj->psrowid;
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
 							$resql2 = $db->query($sql2);
 							if ($resql2) {
 								// We update product_stock, so we must fill p.stock into product too.
@@ -983,7 +986,7 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch', 'alpha')) {
 	$sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
 	$sql .= " WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
-	$sql .= " AND p.tobatch = 1";
+	$sql .= " AND p.tobatch > 0";
 	$sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
 	$sql .= " HAVING reel != SUM(pb.qty)";
 	$resql = $db->query($sql);
@@ -1026,7 +1029,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
 						$error++;
@@ -1177,7 +1180,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 	foreach ($conf->modules as $key => $val) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
+	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods).') AND id > 100000';
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1303,6 +1306,23 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 	}
 }
 
+// rebuild sequences for pgsql
+if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Force to rebuild sequences (for postgresql only)</td></tr>';
+
+	if ($db->type == "pgsql") {
+		$rebuild_sequence = GETPOST('rebuild_sequences', 'alpha');
+
+		if ($rebuild_sequence == 'confirmed') {
+			$sql = "SELECT dol_util_rebuild_sequences();";
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+	} else {
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
+}
+
 //
 if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 	/*
@@ -1346,8 +1366,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 		}
 		while ($obj_dispatch = $db->fetch_object($resql_dispatch)) {
 			$sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line';
-			$sql_line .= ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande;
-			$sql_line .= ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
+			$sql_line .= ' WHERE line.fk_commande = '.((int) $obj_dispatch->fk_commande);
+			$sql_line .= ' AND   line.fk_product  = '.((int) $obj_dispatch->fk_product);
 			$resql_line = $db->query($sql_line);
 
 			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
@@ -1375,8 +1395,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 				$qty_for_line = min($remaining_qty, $obj_line->qty);
 				if ($first_iteration) {
 					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-					$sql_attach .= ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line;
-					$sql_attach .= ' WHERE rowid = '.$obj_dispatch->rowid;
+					$sql_attach .= ' SET fk_commandefourndet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
+					$sql_attach .= ' WHERE rowid = '.((int) $obj_dispatch->rowid);
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(

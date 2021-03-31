@@ -32,3 +32,4 @@ DONATION_ART238=Show article 238 from CGI if you are concerned
 DONATION_ART885=Show article 885 from CGI if you are concerned
 DonationPayment=Donation payment
 DonationValidated=Donation %s validated
+DonationUseThirdparties=Use an existing thirdparty as coordinates of donators

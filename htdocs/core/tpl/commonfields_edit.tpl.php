@@ -46,7 +46,7 @@ foreach ($object->fields as $key => $val) {
 		continue; // We don't want this field
 	}
 
-	print '<tr><td';
+	print '<tr class="field_'.$key.'"><td';
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) {
 		print ' fieldrequired';
@@ -61,7 +61,7 @@ foreach ($object->fields as $key => $val) {
 		print $langs->trans($val['label']);
 	}
 	print '</td>';
-	print '<td>';
+	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
 		print img_picto('', $val['picto']);
 	}
@@ -77,6 +77,8 @@ foreach ($object->fields as $key => $val) {
 			$check = 'restricthtml';
 		}
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif ($val['type'] == 'price') {
+		$value = price2num(GETPOST($key));
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}

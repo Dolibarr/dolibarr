@@ -28,7 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies'));
-$mesg = '';
+
+$id = GETPOST('id', 'int');
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -43,17 +44,12 @@ $form = new Form($db);
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
-if ($_GET["id"]) {
-	if ($mesg) {
-		print $mesg;
-	}
-
+if ($id > 0) {
 	$entrepot = new Entrepot($db);
-	$result = $entrepot->fetch($_GET["id"]);
+	$result = $entrepot->fetch($id);
 	if ($result < 0) {
 		dol_print_error($db);
 	}
-
 
 	$head = stock_prepare_head($entrepot);
 

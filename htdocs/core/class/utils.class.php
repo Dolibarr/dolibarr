@@ -223,11 +223,13 @@ class Utils
 			$prefix = 'dump';
 			$ext = 'sql';
 			if (in_array($type, array('mysql', 'mysqli'))) {
-				$prefix = 'mysqldump'; $ext = 'sql';
+				$prefix = 'mysqldump';
+				$ext = 'sql';
 			}
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) {
-				$prefix = 'pg_dump'; $ext = 'sql';
+				$prefix = 'pg_dump';
+				$ext = 'sql';
 			}
 			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
 		}
@@ -356,7 +358,8 @@ class Utils
 
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1) {
-					$output_arr = array(); $retval = null;
+					$output_arr = array();
+					$retval = null;
 					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0) {

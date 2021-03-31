@@ -79,19 +79,24 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		} else {
 			$month_end = $month_start;
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
 	}
 	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
 	}
 	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
 	}
 	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
 	}
 }
 
@@ -103,6 +108,14 @@ $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
+$modecompta = $conf->global->ACCOUNTING_MODE;
+if (!empty($conf->accounting->enabled)) {
+	$modecompta = 'BOOKKEEPING';
+}
+if (GETPOST("modecompta", 'alpha')) {
+	$modecompta = GETPOST("modecompta", 'alpha');
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -114,15 +127,6 @@ if (!empty($conf->comptabilite->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
-
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
-	$modecompta = 'BOOKKEEPING';
-}
-if (GETPOST("modecompta", 'alpha')) {
-	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
 
@@ -343,7 +347,7 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 
 	$sql .= " AND f.entity = ".$conf->entity;
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY dm";
 

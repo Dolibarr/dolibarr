@@ -299,7 +299,7 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".$this->country_id;
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
 
@@ -436,7 +436,7 @@ class Entrepot extends CommonObject
 		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id) {
-			$sql .= " WHERE rowid = '".$id."'";
+			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) {
@@ -499,7 +499,7 @@ class Entrepot extends CommonObject
 	{
 		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -547,7 +547,7 @@ class Entrepot extends CommonObject
 		$sql = "SELECT rowid, ref as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " WHERE entity IN (".getEntity('stock').")";
-		$sql .= " AND statut = ".$status;
+		$sql .= " AND statut = ".((int) $status);
 
 		$result = $this->db->query($sql);
 		$i = 0;
@@ -782,7 +782,7 @@ class Entrepot extends CommonObject
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
 		while ($parentid > 0 && $i < $protection) {
-			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.$parentid;
+			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.((int) $parentid);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);
@@ -817,7 +817,7 @@ class Entrepot extends CommonObject
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
-				WHERE fk_parent = '.$id;
+				WHERE fk_parent = '.((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

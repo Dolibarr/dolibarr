@@ -39,13 +39,6 @@ $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); //
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-$socid = '';
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, $origin, $origin_id);
-
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -66,9 +59,17 @@ if ($id > 0 || !empty($ref)) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
+
+	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
 }
 
 $permissionnote = $user->rights->expedition->creer; // Used by the include of actions_setnotes.inc.php
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 
 /*

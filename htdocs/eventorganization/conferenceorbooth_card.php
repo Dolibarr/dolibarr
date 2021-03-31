@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       event.php
+ *   	\file       htdocs/eventorganization/conferenceorbooth_card.php
  *		\ingroup    eventorganization
  *		\brief      Page to create/edit/view conferenceorbooth
  */
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "projects"));
@@ -84,13 +85,16 @@ $permissionnote = $user->rights->eventorganization->write; // Used by the includ
 $permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
-if ($user->socid > 0) accessforbidden();
-if ($user->socid > 0) $socid = $user->socid;
-$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+$isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -197,9 +201,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -435,7 +436,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			// Send
@@ -444,7 +447,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED) {
+			if ($object->status == $object::STATUS_CONFIRMED) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes', '', $permissiontoadd);
 			}
 
@@ -467,16 +470,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
 				}
 			}
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans("Re-Open").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}
 			*/

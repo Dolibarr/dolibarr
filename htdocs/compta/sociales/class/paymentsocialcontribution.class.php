@@ -262,7 +262,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= ' b.fk_account';
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		// TODO link on entity of tax;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -362,14 +362,15 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
 
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -415,12 +416,13 @@ class PaymentSocialContribution extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -634,7 +636,7 @@ class PaymentSocialContribution extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);

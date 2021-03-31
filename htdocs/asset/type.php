@@ -196,8 +196,9 @@ if ($action == 'confirm_delete' && $user->rights->asset->write) {
 
 $form = new Form($db);
 
-$helpurl = '';
-llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
+$help_url = '';
+
+llxHeader('', $langs->trans("AssetsTypeSetup"), $help_url);
 
 
 // List of asset type
@@ -230,7 +231,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$newcardbutton = dolGetButtonTitle($langs->trans('NewAssetType'), '', 'fa fa-plus-circle', dol_buildpath('/asset/type.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -296,13 +297,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 
 			if ($user->rights->asset->write) {
-				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			} else {
 				print '<td class="right">&nbsp;</td>';
 			}
 			print "</tr>";
 			$i++;
 		}
+
+		// If no record found
+		if ($num == 0) {
+			$colspan = 6;
+			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
+
 		print "</table>";
 		print '</div>';
 
@@ -324,7 +332,7 @@ if ($action == 'create') {
 		$formaccounting = new FormAccounting($db);
 	}
 
-	print load_fiche_titre($langs->trans("NewAssetType"));
+	print load_fiche_titre($langs->trans("NewAssetType"), '', $object->picto);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -417,7 +425,7 @@ if ($rowid > 0) {
 
 		$head = asset_type_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'setup');
+		print dol_get_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'asset');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -432,10 +440,10 @@ if ($rowid > 0) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr>';
-		print '<td class="nowrap">';
+		print '<td class="nowrap titlefieldcreate">';
 		print $langs->trans("AccountancyCodeAsset");
 		print '</td><td>';
 		if (!empty($conf->accounting->enabled)) {
@@ -534,7 +542,7 @@ if ($rowid > 0) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 

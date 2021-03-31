@@ -133,7 +133,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot";
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
+		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
 		$sql .= " AND ps.fk_product = ".$productid;
@@ -183,7 +183,7 @@ if ($date && $dateIsValid) {
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot";
 	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
-		$sql .= " AND w.statut IN (".$db->sanitize($db->escape(implode(',', $warehouseStatus))).")";
+		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($mode == 'future') {
 		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";
@@ -191,10 +191,10 @@ if ($date && $dateIsValid) {
 		$sql .= " AND sm.datem >= '".$db->idate($date)."'";
 	}
 	if ($productid > 0) {
-		$sql .= " AND sm.fk_product = ".$productid;
+		$sql .= " AND sm.fk_product = ".((int) $productid);
 	}
 	if ($fk_warehouse > 0) {
-		$sql .= " AND sm.fk_entrepot = ".$fk_warehouse;
+		$sql .= " AND sm.fk_entrepot = ".((int) $fk_warehouse);
 	}
 	$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
 	$resql = $db->query($sql);
@@ -358,12 +358,12 @@ print '<span class="fieldrequired">'.$langs->trans('Date').'</span> '.$form->sel
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'product').' ';
 print $langs->trans('Product').'</span> ';
-$form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
+print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300', 0, '', null, 1);
 
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock').' ';
 print $langs->trans('Warehouse').'</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1);
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, '', 0, 0, null, '', '', 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();
@@ -487,7 +487,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
-			$sql .= ' WHERE fk_product = '.$objp->rowid;
+			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
 			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
 			$sql .= ' LIMIT 1';
 

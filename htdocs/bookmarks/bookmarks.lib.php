@@ -53,7 +53,7 @@ function printDropdownBookmarksList()
 		if (is_array($_POST)) {
 			foreach ($_POST as $key => $val) {
 				if (preg_match('/^search_/', $key) && $val != '') {
-					$tmpurl .= ($tmpurl ? '&' : '').$key.'='.$val;
+					$tmpurl .= ($tmpurl ? '&' : '').http_build_query(array($key => $val));
 				}
 			}
 		}

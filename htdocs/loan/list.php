@@ -252,7 +252,7 @@ if ($resql) {
 		print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
 		// Capital
-		print '<td class="right maxwidth100">'.price($obj->capital).'</td>';
+		print '<td class="right maxwidth100"><span class="amount">'.price($obj->capital).'</span></td>';
 
 		// Date start
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';

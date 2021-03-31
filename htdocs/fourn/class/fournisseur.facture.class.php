@@ -442,7 +442,7 @@ class FactureFournisseur extends CommonInvoice
 
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1007,7 +1007,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1181,7 +1181,7 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			// If invoice was converted into a discount not yet consumed, we remove discount
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' WHERE fk_invoice_supplier_source = '.$rowid;
+			$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
 			$sql .= ' AND fk_invoice_supplier_line IS NULL';
 			$resql = $this->db->query($sql);
 
@@ -1196,7 +1196,7 @@ class FactureFournisseur extends CommonInvoice
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
-				$sql .= ' WHERE fk_invoice_supplier_line IN ('.join(',', $list_rowid_det).')';
+				$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
@@ -1208,13 +1208,13 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'facture_fourn_det';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ".((int) $rowid).")";
 			$resqlef = $this->db->query($sqlef);
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resqlef && $resql) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.((int) $rowid);
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				$resql2 = $this->db->query($sql);
 				if (!$resql2) {
@@ -1250,7 +1250,7 @@ class FactureFournisseur extends CommonInvoice
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				$ref = dol_sanitizeFileName($this->ref);
-				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoive_supplier').$ref;
+				$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2, 0, 0, $this, 'invoice_supplier').$ref;
 				$file = $dir."/".$ref.".pdf";
 				if (file_exists($file)) {
 					if (!dol_delete_file($file, 0, 0, 0, $this)) { // For triggers
@@ -1465,7 +1465,7 @@ class FactureFournisseur extends CommonInvoice
 		$this->newref = dol_sanitizeFileName($num);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-		$sql .= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+		$sql .= " SET ref='".$this->db->escape($num)."', fk_statut = 1, fk_user_valid = ".((int) $user->id).", date_valid = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -2092,7 +2092,7 @@ class FactureFournisseur extends CommonInvoice
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_invoice_supplier_line = NULL';
-		$sql .= ' WHERE fk_invoice_supplier_line = '.$rowid;
+		$sql .= ' WHERE fk_invoice_supplier_line = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2140,7 +2140,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = 'SELECT c.rowid, datec, tms as datem, ';
 		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2398,6 +2398,10 @@ class FactureFournisseur extends CommonInvoice
 			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
 		} elseif ($this->type == self::TYPE_DEPOSIT) {
 			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+		}
+		if (isset($this->status)) {
+			$alreadypaid = -1;
+			$label .= ' '.$this->getLibStatut(5, $alreadypaid);
 		}
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -3089,7 +3093,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-		$sql .= ' WHERE f.rowid = '.$rowid;
+		$sql .= ' WHERE f.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY f.rang, f.rowid';
 
 		$query = $this->db->query($sql);
@@ -3162,7 +3166,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	{
 		global $user, $conf;
 
-		dol_syslog(get_class($this)."::deleteline rowid=".$this->id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteline rowid=".((int) $this->id), LOG_DEBUG);
 
 		$error = 0;
 

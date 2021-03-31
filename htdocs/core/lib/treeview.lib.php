@@ -156,7 +156,8 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 					  continue;
 				}
 
-				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>'; $ulprinted++;
+				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>';
+				$ulprinted++;
 			}
 			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
 			if ($showfk) {
@@ -184,7 +185,8 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 					continue;
 				}
 
-				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>'; $ulprinted++;
+				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>';
+				$ulprinted++;
 			}
 			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
 			if ($showfk) {

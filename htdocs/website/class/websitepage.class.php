@@ -284,7 +284,7 @@ class WebsitePage extends CommonObject
 		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
 		$sql .= ' WHERE 1 = 1';
 		if ($id > 0) {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		} else {
 			if ($id < 0) {
 				$sql .= ' AND t.rowid <> '.abs($id);
@@ -407,7 +407,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.object_type,";
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid;
+		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
 		// Manage filter (same than into countAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -426,7 +426,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang)).")";
 					if ($foundnull) {
 						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
 					}
@@ -509,7 +509,7 @@ class WebsitePage extends CommonObject
 
 		$sql = 'SELECT COUNT(t.rowid) as nb';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid;
+		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
 		// Manage filter (same than into fetchAll)
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -528,7 +528,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang)).")";
 					if ($foundnull) {
 						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
 					}

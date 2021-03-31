@@ -49,7 +49,9 @@ function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 	dol_syslog("pdf_getFormat Get paper format with mode=".$mode." MAIN_PDF_FORMAT=".(empty($conf->global->MAIN_PDF_FORMAT) ? 'null' : $conf->global->MAIN_PDF_FORMAT)." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
 
 	// Default value if setup was not done and/or entry into c_paper_format not defined
-	$width = 210; $height = 297; $unit = 'mm';
+	$width = 210;
+	$height = 297;
+	$unit = 'mm';
 
 	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || $conf->global->MAIN_PDF_FORMAT == 'auto') {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -725,7 +727,8 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$text = make_substitutions($text, $substitutionarray, $outputlangs);
 	$text = $outputlangs->convToOutputCharset($text);
 
-	$savx = $pdf->getX(); $savy = $pdf->getY();
+	$savx = $pdf->getX();
+	$savy = $pdf->getY();
 
 	$watermark_angle = atan($h / $w) / 2;
 	$watermark_x_pos = 0;
@@ -961,7 +964,10 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	}
 
 	// First line of company infos
-	$line1 = ""; $line2 = ""; $line3 = ""; $line4 = "";
+	$line1 = "";
+	$line2 = "";
+	$line3 = "";
+	$line4 = "";
 
 	if ($showdetails == 1 || $showdetails == 3) {
 		// Company name
@@ -1086,9 +1092,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if ($line) {	// Free text
 		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 		if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-			$width = 20000; $align = 'L'; // By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
+			$width = 20000;
+			$align = 'L'; // By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
 			if (!empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
-				$width = 200; $align = 'C';
+				$width = 200;
+				$align = 'C';
 			}
 			$freetextheight = $pdf->getStringHeight($width, $line);
 		} else {
@@ -2047,9 +2055,9 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 				if (method_exists($object, 'get_prev_progress')) {
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
-				$result = ($object->lines[$i]->situation_percent - $prev_progress).'%';
+				$result = round($object->lines[$i]->situation_percent - $prev_progress, 1).'%';
 			} else {
-				$result = $object->lines[$i]->situation_percent.'%';
+				$result = round($object->lines[$i]->situation_percent, 1).'%';
 			}
 		}
 	}

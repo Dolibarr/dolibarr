@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +124,12 @@ class FormTicket
 	/**
 	 * Show the form to input ticket
 	 *
-	 * @param  	int	 		$withdolfichehead		With dol_fiche_head
+	 * @param  	int	 		$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
 	 * @param	string		$mode					Mode ('create' or 'edit')
+	 * @param	int			$public					1=If we show the form for the public interface
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit')
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -181,6 +183,7 @@ class FormTicket
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
+			$regs = array();
 			if (preg_match('/^([^_]+)_([^_]+)/i', $this->param['origin'], $regs)) {
 				$element = $regs[1];
 				$subelement = $regs[2];
@@ -207,7 +210,11 @@ class FormTicket
 
 		// Group
 		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', 2, 0, 0, 0, 'minwidth200');
+		$filter = '';
+		if ($public) {
+			$filter = 'public=1';
+		}
+		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 0, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity
@@ -306,7 +313,7 @@ class FormTicket
 			if ($this->withfile == 2) { // Can add other files
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
-				$out .= '<input type="submit" class="button" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
+				$out .= '<input type="submit" class="button smallpaddingimp" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
 
@@ -438,8 +445,8 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<div class="center">';
-		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")).'" />';
+		print '<br><div class="center">';
+		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; &nbsp;";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -517,7 +524,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arraytypes['use_default'] == "1" && !$empty) {
+				} elseif ($arraytypes['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -550,7 +557,7 @@ class FormTicket
 	 *
 	 *      @param  string $selected    Id categorie pre-selectionnée
 	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on field type in llx_c_ticket_category (array('code'=>xx,'label'=>zz))
+	 *      @param  string $filtertype  To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
 	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
 	 *      @param  int    $empty       1=peut etre vide, 0 sinon
 	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
@@ -566,12 +573,6 @@ class FormTicket
 
 		dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
-		$filterarray = array();
-
-		if ($filtertype != '' && $filtertype != '-1') {
-			$filterarray = explode(',', $filtertype);
-		}
-
 		$ticketstat->loadCacheCategoriesTickets();
 
 		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -581,9 +582,11 @@ class FormTicket
 
 		if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
 			foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arraycategories['type'], $filterarray)) {
-					continue;
+				// Exclude some record
+				if ($filtertype == 'public=1') {
+					if (empty($arraycategories['public'])) {
+						continue;
+					}
 				}
 
 				// We discard empty line if showempty is on because an empty line has already been output.
@@ -612,7 +615,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arraycategories['use_default'] == "1" && !$empty) {
+				} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -713,7 +716,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arrayseverities['use_default'] == "1" && !$empty) {
+				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -1080,7 +1083,7 @@ class FormTicket
 			if ($this->withfile == 2) { // Can add other files
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
-				$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+				$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
 

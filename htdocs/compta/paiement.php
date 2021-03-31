@@ -559,12 +559,14 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$alreadypayedlabel = $langs->trans('Received');
 				$multicurrencyalreadypayedlabel = $langs->trans('MulticurrencyReceived');
 				if ($facture->type == 2) {
-					$alreadypayedlabel = $langs->trans("PaidBack"); $multicurrencyalreadypayedlabel = $langs->trans("MulticurrencyPaidBack");
+					$alreadypayedlabel = $langs->trans("PaidBack");
+					$multicurrencyalreadypayedlabel = $langs->trans("MulticurrencyPaidBack");
 				}
 				$remaindertopay = $langs->trans('RemainderToTake');
 				$multicurrencyremaindertopay = $langs->trans('MulticurrencyRemainderToTake');
 				if ($facture->type == 2) {
-					$remaindertopay = $langs->trans("RemainderToPayBack"); $multicurrencyremaindertopay = $langs->trans("MulticurrencyRemainderToPayBack");
+					$remaindertopay = $langs->trans("RemainderToPayBack");
+					$multicurrencyremaindertopay = $langs->trans("MulticurrencyRemainderToPayBack");
 				}
 
 				$i = 0;
@@ -711,17 +713,17 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					}
 
 					// Price
-					print '<td class="right">'.price($sign * $objp->total_ttc).'</td>';
+					print '<td class="right"><span class="amount">'.price($sign * $objp->total_ttc).'</span></td>';
 
 					// Received + already paid
-					print '<td class="right">'.price($sign * $paiement);
+					print '<td class="right"><span class="amount">'.price($sign * $paiement);
 					if ($creditnotes) {
 						print '<span class="opacitymedium">+'.price($creditnotes).'</span>';
 					}
 					if ($deposits) {
 						print '<span class="opacitymedium">+'.price($deposits).'</span>';
 					}
-					print '</td>';
+					print '</span></td>';
 
 					// Remain to take or to pay back
 					print '<td class="right">'.price($sign * $remaintopay).'</td>';
@@ -899,7 +901,7 @@ if (!GETPOST('action', 'aZ09')) {
 			print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$objp->facid.'">'.$objp->ref."</a></td>\n";
 			print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
 			print '<td>'.$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-			print '<td class="right">'.price($objp->amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 

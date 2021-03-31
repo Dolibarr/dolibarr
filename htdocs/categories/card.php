@@ -97,7 +97,7 @@ $error = 0;
 
 // Add action
 if ($action == 'add' && $user->rights->categorie->creer) {
-	// Action ajout d'une categorie
+	// Action add a category
 	if ($cancel) {
 		if ($urlfrom) {
 			header("Location: ".$urlfrom);
@@ -167,7 +167,7 @@ if ($action == 'add' && $user->rights->categorie->creer) {
 
 // Confirm action
 if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer) {
-	// Action confirmation de creation categorie
+	// Action confirmation of creation category
 	if ($action == 'confirmed') {
 		if ($urlfrom) {
 			header("Location: ".$urlfrom);
@@ -208,8 +208,9 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$helpurl = '';
-llxHeader("", $langs->trans("Categories"), $helpurl);
+$help_url = 'EN:Module_Categories|FR:Module_Catégories|DE:Modul_Kategorien';
+
+llxHeader("", $langs->trans("Categories"), $help_url);
 
 if ($user->rights->categorie->creer) {
 	// Create or add

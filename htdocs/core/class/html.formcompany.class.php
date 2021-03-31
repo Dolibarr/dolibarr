@@ -435,7 +435,7 @@ class FormCompany extends Form
 	 *  @param	int		$addjscombo		Add js combo
 	 *  @return	string					String with HTML select
 	 */
-	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 0)
+	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 1)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -547,7 +547,8 @@ class FormCompany extends Form
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				$i = 0;
-				$country = ''; $arraydata = array();
+				$country = '';
+				$arraydata = array();
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
@@ -622,7 +623,8 @@ class FormCompany extends Form
 			// Use Ajax search
 			$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT) ? $conf->global->COMPANY_USE_SEARCH_TO_SELECT : 2);
 
-			$socid = 0; $name = '';
+			$socid = 0;
+			$name = '';
 			if ($selected > 0) {
 				$tmpthirdparty = new Societe($this->db);
 				$result = $tmpthirdparty->fetch($selected);
@@ -703,7 +705,7 @@ class FormCompany extends Form
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
-				$sql .= " AND s.rowid IN (".join(',', $limitto).")";
+				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
 			$sql .= " ORDER BY s.nom ASC";
 
@@ -711,7 +713,7 @@ class FormCompany extends Form
 			if ($resql) {
 				print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax) {
-					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+					$javaScript = "window.location='".dol_escape_js($_SERVER['PHP_SELF'])."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
 					print ' onChange="'.$javaScript.'"';
 				}
 				print '>';
@@ -937,7 +939,8 @@ class FormCompany extends Form
 
 		$maxlength = $formlength;
 		if (empty($formlength)) {
-			$formlength = 24; $maxlength = 128;
+			$formlength = 24;
+			$maxlength = 128;
 		}
 
 		$out = '';

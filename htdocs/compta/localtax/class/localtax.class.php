@@ -180,7 +180,7 @@ class Localtax extends CommonObject
 		$sql .= " fk_bank=".(int) $this->fk_bank.",";
 		$sql .= " fk_user_creat=".(int) $this->fk_user_creat.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -234,7 +234,7 @@ class Localtax extends CommonObject
 		$sql .= " b.rappro";
 		$sql .= " FROM ".MAIN_DB_PREFIX."localtax as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -284,7 +284,7 @@ class Localtax extends CommonObject
 		// End call triggers
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -559,8 +559,8 @@ class Localtax extends CommonObject
 	public function update_fk_bank($id)
 	{
 		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'localtax SET fk_bank = '.$id;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'localtax SET fk_bank = '.((int) $id);
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;

@@ -427,7 +427,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " SET fk_user_credit = ".$user->id;
 			$sql .= ", statut = ".self::STATUS_CREDITED;
 			$sql .= ", date_credit = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND statut = ".self::STATUS_TRANSFERED;
 
@@ -579,7 +579,7 @@ class BonPrelevement extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
 			$sql .= " SET fk_user_trans = ".$user->id;
 			$sql .= " , date_trans = '".$this->db->idate($date)."'";
-			$sql .= " , method_trans = ".$method;
+			$sql .= " , method_trans = ".((int) $method);
 			$sql .= " , statut = ".self::STATUS_TRANSFERED;
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND entity = ".$conf->entity;
@@ -1076,7 +1076,7 @@ class BonPrelevement extends CommonObject
 						$sql .= " SET traite = 1";
 						$sql .= ", date_traite = '".$this->db->idate($now)."'";
 						$sql .= ", fk_prelevement_bons = ".$this->id;
-						$sql .= " WHERE rowid = ".$fac[1];
+						$sql .= " WHERE rowid = ".((int) $fac[1]);
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -1139,7 +1139,7 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " SET amount = ".price2num($this->total);
-				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " WHERE rowid = ".((int) $this->id);
 				$sql .= " AND entity = ".$conf->entity;
 
 				$resql = $this->db->query($sql);
@@ -2107,7 +2107,7 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT rowid, ref";
 		$sql .= " FROM";
 		$sql .= " ".MAIN_DB_PREFIX."prelevement_bons as pb";
-		$sql .= " WHERE pb.rowid = ".$this->id;
+		$sql .= " WHERE pb.rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

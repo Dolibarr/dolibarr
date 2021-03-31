@@ -22,7 +22,7 @@
  *
  *  \file       htdocs/core/modules/modTakePos.class.php
  *  \ingroup    takepos
- *  \brief      Description and activation file for module TakePos
+ *  \brief      Description and activation file for the module TakePos
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -216,6 +216,7 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
+								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,

@@ -36,7 +36,9 @@ if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
 }
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk"));
 
@@ -61,7 +63,6 @@ if ($resql) {
 
 if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
-	if (GETPOST('socid', 'int') < 0) $_POST["socid"] = '';
 
 	$res = dolibarr_set_const($db, "CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -86,7 +87,9 @@ if (GETPOST('action', 'alpha') == 'set') {
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
 	if (!$error) {
 		$db->commit();

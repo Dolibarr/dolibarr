@@ -31,10 +31,6 @@ if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
-}
-
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
 
@@ -185,6 +181,10 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 $error = 0;
 
+if (!$user->rights->user->user->lire && !$user->admin) {
+	accessforbidden();
+}
+
 $childids = $user->getAllChildIds(1);
 
 
@@ -308,8 +308,8 @@ if (empty($reshook)) {
 
 $formother = new FormOther($db);
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
-$help_url = '';
+$help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
+
 if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$text = $langs->trans("ListOfEmployees");
 } else {
@@ -353,11 +353,11 @@ if ($reshook > 0) {
 	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
 if ($socid > 0) {
-	$sql .= " AND u.fk_soc = ".$socid;
+	$sql .= " AND u.fk_soc = ".((int) $socid);
 }
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0) {
-	$sql .= " AND u.fk_user IN (".$db->sanitize($db->escape($search_supervisor)).")";
+	$sql .= " AND u.fk_user IN (".$db->sanitize($search_supervisor).")";
 }
 if ($search_thirdparty != '') {
 	$sql .= natural_search(array('s.nom'), $search_thirdparty);
@@ -393,7 +393,7 @@ if ($search_api_key != '') {
 	$sql .= natural_search("u.api_key", $search_api_key);
 }
 if ($search_statut != '' && $search_statut >= 0) {
-	$sql .= " AND u.statut IN (".$db->sanitize($db->escape($search_statut)).")";
+	$sql .= " AND u.statut IN (".$db->sanitize($search_statut).")";
 }
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -411,7 +411,7 @@ if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
-	$sql .= " AND u.fk_user IN (".join(',', $childids).")";
+	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -925,16 +925,16 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.fk_soc']['checked'])) {
-		print "<td>";
+		print '<td class="tdoverflowmax200">';
 		if ($obj->fk_soc) {
 			$companystatic->id = $obj->fk_soc;
 			$companystatic->name = $obj->name;
 			$companystatic->canvas = $obj->canvas;
 			print $companystatic->getNomUrl(1);
 		} elseif ($obj->ldap_sid) {
-			print $langs->trans("DomainUser");
+			print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
 		} else {
-			print $langs->trans("InternalUser");
+			print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
 		}
 		print '</td>';
 		if (!$i) {

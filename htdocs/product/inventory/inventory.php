@@ -27,6 +27,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
@@ -97,6 +98,71 @@ $now = dol_now();
 /*
  * Actions
  */
+
+if ($action == 'cancel_record' && $permissiontoadd) {
+	$object->setCanceled($user);
+}
+
+if ($action == 'update' && $user->rights->stock->mouvement->creer) {
+	$stockmovment = new MouvementStock($db);
+	$stockmovment->origin = $object;
+
+	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
+	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$totalarray = array();
+		while ($i < $num) {
+			$line = $db->fetch_object($resql);
+			$qty_view = $line->qty_view;
+			$qty_stock = $line->qty_stock;
+			$stock_movement_qty = $qty_view - $qty_stock;
+			if ($stock_movement_qty != 0) {
+				if ($stock_movement_qty < 0) {
+					$movement_type = 1;
+				} else {
+					$movement_type = 0;
+				}
+				$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->id), 'INV'.$object->id);
+				if ($idstockmove < 0) {
+					$error++;
+					setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
+				}
+			}
+			$i++;
+		}
+		if (!$error) {
+			$object->setRecorded($user);
+		}
+	}
+}
+
+if ($action =='updateinventorylines' && $permissiontoadd) {
+	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
+	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		$totalarray = array();
+		while ($i < $num) {
+			$line = $db->fetch_object($resql);
+			$lineid = $line->rowid;
+			$inventoryline = new InventoryLine($db);
+			$inventoryline->fetch($lineid);
+			$inventoryline->qty_view = GETPOST("id_".$inventoryline->id);
+			$inventoryline->update($user);
+			$i++;
+		}
+	}
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -223,6 +289,18 @@ if ($object->id > 0) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	// Confirmation to close
+	if ($action == 'record') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Close'), $langs->trans('ConfirmFinish'), 'update', '', 0, 1);
+		$action = 'view';
+	}
+
+	// Confirmation to close
+	if ($action == 'confirm_cancel') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $langs->trans('ConfirmCancel'), 'cancel_record', '', 0, 1);
+		$action = 'view';
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -307,24 +385,7 @@ if ($object->id > 0) {
 
 
 	// Buttons for actions
-	if ($action == 'record') {
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="action" value="update">';
-		print '<input type="hidden" name="id" value="'.$object->id.'">';
-		if ($backtopage) {
-			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		}
-
-		print '<div class="center">';
-		print '<span class="opacitymedium">'.$langs->trans("InventoryDesc").'</span><br>';
-		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-		print ' &nbsp; ';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-		print '<br>';
-		print '</form>';
-	} else {
+	if ($action != 'record') {
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -360,7 +421,8 @@ if ($object->id > 0) {
 
 			if ($object->status == Inventory::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_cancel">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Close").'</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
 				}
@@ -419,13 +481,14 @@ if ($object->id > 0) {
 	print '<td class="center">';
 	print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
 	print '</td>';
-	// Actions
-	print '<td class="center">';
-	print '</td>';
-	print '</tr>';
+	if ($object->status == $object::STATUS_VALIDATED) {
+		// Actions
+		print '<td class="center">';
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Line to add a new line in inventory
-	//if ($action == 'addline') {
 	if ($object->status == $object::STATUS_VALIDATED) {
 		print '<tr>';
 		print '<td>';
@@ -454,7 +517,7 @@ if ($object->id > 0) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
-	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -506,15 +569,20 @@ if ($object->id > 0) {
 			}
 
 			print '<td class="right">';
-			print 'TODO';
+			print $obj->qty_stock;
 			print '</td>';
 			print '<td class="center">';
-			print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.' value="'.GETPOST("id_".$obj->rowid).'">';
-			print '</td>';
-			print '<td class="right">';
-			print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
-			print '</td>';
-
+			if ($object->status == $object::STATUS_VALIDATED) {
+				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
+				print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.'" value="'.$qty_view.'">';
+				print '</td>';
+				print '<td class="right">';
+				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
+				print '</td>';
+			} else {
+				print $obj->qty_view;
+				print '</td>';
+			}
 			print '</tr>';
 
 			$i++;

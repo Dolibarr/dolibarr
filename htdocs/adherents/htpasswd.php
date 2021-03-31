@@ -26,8 +26,19 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+$status = GETPOST('status', 'int');
+$cotis = GETPOST('cotis', 'int');
+
+$sortfield = GETPOST('sortfield', 'alphanohtml');
+$sortorder = GETPOST('sortorder', 'aZ09');
+
 // Security check
-if (!$user->rights->adherent->export) accessforbidden();
+if (empty($conf->adherent->enabled)) {
+	accessforbidden();
+}
+if (!$user->rights->adherent->export) {
+	accessforbidden();
+}
 
 
 /*
@@ -38,21 +49,16 @@ llxHeader();
 
 $now = dol_now();
 
-if (empty($sortorder)) {  $sortorder = "ASC"; }
-if (empty($sortfield)) {  $sortfield = "d.login"; }
-if (!isset($statut)) {
-	$statut = 1;
+if (empty($sortorder)) {
+	$sortorder = "ASC";
 }
-
-if (!isset($cotis)) {
-	// by default, members must be up to date of subscription
-	$cotis = 1;
+if (empty($sortfield)) {
+	$sortfield = "d.login";
 }
-
 
 $sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
-$sql .= " WHERE d.statut = ".$statut;
+$sql .= " WHERE d.statut = ".((int) $status);
 if ($cotis == 1) {
 	$sql .= " AND datefin > '".$db->idate($now)."'";
 }
@@ -64,6 +70,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$param = '';
 	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0);
 
 	print "<hr>\n";

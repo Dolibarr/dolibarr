@@ -87,7 +87,8 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -99,7 +100,8 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$coyymm = substr($row[0], 0, 6); $max = $row[0];
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
@@ -161,7 +163,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
-			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
+			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.((int) $ref_number_int).' WHERE rowid = '.((int) $object->id);
 			$resqlbis = $db->query($sqlbis);
 			if (!$resqlbis) {
 				dol_print_error($resqlbis);

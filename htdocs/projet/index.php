@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
 $search_project_user = GETPOST('search_project_user', 'int');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
-	$search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
+	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
 }
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -238,7 +238,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 if ($mine || empty($user->rights->projet->all->lire)) {
-	$sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
 	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -338,10 +338,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) {
-	$sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
-if ($socid) {
-	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($socid > 0) {
+	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.canvas, s.status";
 $sql .= $db->order($sortfield, $sortorder);

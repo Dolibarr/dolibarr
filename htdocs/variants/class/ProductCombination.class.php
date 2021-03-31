@@ -106,7 +106,7 @@ class ProductCombination
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".(int) $rowid." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE rowid = ".((int) $rowid)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -281,7 +281,7 @@ class ProductCombination
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -320,7 +320,7 @@ class ProductCombination
 	public function countNbOfCombinationForFkProductParent($fk_product_parent)
 	{
 		$nb = 0;
-		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".((int) $fk_product_parent)." AND entity IN (".getEntity('product').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

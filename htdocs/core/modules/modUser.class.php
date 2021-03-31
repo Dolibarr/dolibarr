@@ -22,7 +22,7 @@
  *	\brief      Module pour gerer les utilisateurs
  *	\file       htdocs/core/modules/modUser.class.php
  *	\ingroup    user
- *	\brief      Fichier de description et activation du module Utilisateur
+ *	\brief      Description and activation file for the module users
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -256,7 +256,9 @@ class modUser extends DolibarrModules
 			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
 			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member"
 		);
-		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
+		$keyforselect = 'user';
+		$keyforelement = 'user';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		if (empty($conf->adherent->enabled)) {
 			unset($this->export_fields_array[$r]['u.fk_member']);

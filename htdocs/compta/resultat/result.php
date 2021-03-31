@@ -91,19 +91,24 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		} else {
 			$month_end = $month_start;
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
 	}
 	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
 	}
 	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
 	}
 	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
 	}
 }
 
@@ -139,15 +144,19 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->rights->accounting->comptarapport->lire) {
-	accessforbidden();
-}
-
 $AccCat = new AccountancyCategory($db);
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
 
 
 /*
@@ -272,7 +281,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
 	if (! empty($month)) {
-		$sql .= " AND MONTH(t.doc_date) = " . $month;
+		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);
 	if ($resql)
@@ -491,18 +500,18 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 				print '</td>';
 
-				print '<td class="right">'.price($totCat['NP']).'</td>';
-				print '<td class="right">'.price($totCat['N']).'</td>';
+				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($totCat['N']).'</span></td>';
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) >= $date_startmonth) {
-						print '<td class="right">'.price($v).'</td>';
+						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
-						print '<td class="right">'.price($v).'</td>';
+						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 
@@ -522,20 +531,20 @@ if ($modecompta == 'CREANCES-DETTES') {
 							print ' - ';
 							print $cpt['account_label'];
 							print '</td>';
-							print '<td class="right">'.price($resultNP).'</td>';
-							print '<td class="right">'.price($resultN).'</td>';
+							print '<td class="right"><span class="amount">'.price($resultNP).'</span></td>';
+							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {
 								if (($k + 1) >= $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right">'.price($resultM).'</td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span>/td>';
 								}
 							}
 							foreach ($months as $k => $v) {
 								if (($k + 1) < $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right">'.price($resultM).'</td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
 								}
 							}
 							print "</tr>\n";

@@ -42,7 +42,7 @@ class AssetType extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'invoice';
+	public $picto = 'asset';
 
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -238,7 +238,7 @@ class AssetType extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."asset_type";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -332,7 +332,7 @@ class AssetType extends CommonObject
 	/**
 	 * 	Return array of Asset objects for asset type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude
+	 * 	@param	string	$excludefilter		Filter to exclude. This parameter must not be provided by input of users
 	 *  @param	int		$mode				0=Return array of asset instance
 	 *  									1=Return array of asset instance without extra data
 	 *  									2=Return array of asset id only
@@ -397,7 +397,7 @@ class AssetType extends CommonObject
 		$result = '';
 		$label = $langs->trans("ShowTypeCard", $this->label);
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.((int) $this->id).'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

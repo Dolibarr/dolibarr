@@ -475,13 +475,13 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " u.login";
+if ($search_categ_sup && $search_categ_sup != '-1') {
+	$sql .= ", cs.fk_categorie, cs.fk_soc";
+}
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed';
-}
-if ($search_categ_sup) {
-	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -580,10 +580,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_montant_ht != '') {
 	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
@@ -677,6 +677,9 @@ if (!$search_all) {
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
 	$sql .= " u.login";
+	if ($search_categ_sup && $search_categ_sup != '-1') {
+		$sql .= ", cs.fk_categorie, cs.fk_soc";
+	}
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by
@@ -931,32 +934,32 @@ if ($resql) {
 	if ($user->rights->societe->client->voir || $socid) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+		$moreforfilter .= img_picto($tmptitle, 'company', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth200');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
-		$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		$tmptitle = $langs->trans('LinkedToSpecificUsers');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
+		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
 
 	if (!empty($conf->categorie->enabled)) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1);
+		$tmptitle = $langs->trans('SuppliersCategoriesShort');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();

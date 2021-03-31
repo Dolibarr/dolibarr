@@ -1060,7 +1060,7 @@ class Commande extends CommonOrder
 					$initialref = $this->ref;
 				}
 
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
 
@@ -1113,7 +1113,7 @@ class Commande extends CommonOrder
 						}
 
 						$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-						$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+						$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 						$resqlcontact = $this->db->query($sqlcontact);
 						if ($resqlcontact) {
@@ -2265,6 +2265,7 @@ class Commande extends CommonOrder
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
 		$sql .= ' WHERE el.fk_source = '.$this->id;
+		$sql .= " AND el.sourcetype = 'commande'";
 		$sql .= " AND el.fk_target = e.rowid";
 		$sql .= " AND el.targettype = 'shipping'";
 
@@ -2299,8 +2300,8 @@ class Commande extends CommonOrder
 		if (count($array_of_product)) {
 			$sql = "SELECT fk_product, sum(ps.reel) as total";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-			$sql .= " WHERE ps.fk_product IN (".join(',', $array_of_product).")";
-			$sql .= ' GROUP BY fk_product ';
+			$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize(join(',', $array_of_product)).")";
+			$sql .= ' GROUP BY fk_product';
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -2330,7 +2331,7 @@ class Commande extends CommonOrder
 
 			$sql = "SELECT fk_product, qty";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".$lineid;
+			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2412,11 +2413,11 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET remise_percent = '.$remise;
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' SET remise_percent = '.((float) $remise);
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2467,18 +2468,20 @@ class Commande extends CommonOrder
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
+		if (empty($remise)) {
+			$remise = 0;
+		}
+
+		$remise = price2num($remise);
 
 		if ($user->rights->commande->creer) {
 			$error = 0;
 
 			$this->db->begin();
 
-			$remise = price2num($remise);
-
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET remise_absolue = '.$remise;
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' SET remise_absolue = '.((float) $remise);
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2740,8 +2743,8 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_availability = '.$availability_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' SET fk_availability = '.((int) $availability_id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2804,8 +2807,8 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2866,7 +2869,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
-			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
+			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= ' WHERE rowid = '.$this->id;
 
 			dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
@@ -2962,11 +2965,12 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as not invoiced
 	 *
-	 * @return     int     <0 if ko, >0 if ok
+	 * @param	User    $user       Object user making the change
+	 * @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+	 * @return  int     			<0 if ko, >0 if ok
 	 */
-	public function classifyUnBilled()
+	public function classifyUnBilled(User $user, $notrigger = 0)
 	{
-		global $conf, $user, $langs;
 		$error = 0;
 
 		$this->db->begin();
@@ -2981,12 +2985,14 @@ class Commande extends CommonOrder
 				$this->billed = 1;
 			}
 
-			// Call trigger
-			$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$notrigger && empty($error)) {
+				// Call trigger
+				$result = $this->call_trigger('ORDER_CLASSIFY_UNBILLED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 
 			if (!$error) {
 				$this->billed = 0;
@@ -3307,7 +3313,7 @@ class Commande extends CommonOrder
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -3683,7 +3689,7 @@ class Commande extends CommonOrder
 				$label .= ' '.$this->getLibStatut(5);
 			}
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}
@@ -3760,7 +3766,7 @@ class Commande extends CommonOrder
 		$sql .= ' date_cloture as datecloture,';
 		$sql .= ' fk_user_author, fk_user_valid, fk_user_cloture';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -4122,7 +4128,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.date_start, cd.date_end';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
-		$sql .= ' WHERE cd.rowid = '.$rowid;
+		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);

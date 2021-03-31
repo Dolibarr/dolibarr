@@ -41,6 +41,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 	public $info_box_head = array();
 	public $info_box_contents = array();
 
+	public $widgettype = 'graph';
+
 
 	/**
 	 *  Constructor
@@ -122,13 +124,14 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
 			}
 			if (empty($shownb) && empty($showtot)) {
-				$shownb = 1; $showtot = 1;
+				$shownb = 1;
+				$showtot = 1;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 1 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+			$startyear = $endyear - (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 2 : ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1));
 
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
@@ -149,7 +152,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$px1->SetType($datatype1);
 					$px1->SetData($data1);
 					unset($data1);
-					$i = $startyear; $legend = array();
+					$i = $startyear;
+					$legend = array();
 					while ($i <= $endyear) {
 						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
@@ -195,7 +199,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$px2->SetType($datatype2);
 					$px2->SetData($data2);
 					unset($data2);
-					$i = $startyear; $legend = array();
+					$i = $startyear;
+					$legend = array();
 					while ($i <= $endyear) {
 						if ($startmonth != 1) {
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);

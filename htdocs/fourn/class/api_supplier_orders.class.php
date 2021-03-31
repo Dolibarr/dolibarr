@@ -131,10 +131,10 @@ class SupplierOrders extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if (!empty($product_ids)) {
-			$sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
+			$sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$this->db->sanitize($product_ids).")";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -276,7 +276,7 @@ class SupplierOrders extends DolibarrApi
 			$this->order->$field = $value;
 		}
 
-		if ($this->order->update($id, DolibarrApiAccess::$user)) {
+		if ($this->order->update(DolibarrApiAccess::$user)) {
 			return $this->get($id);
 		}
 

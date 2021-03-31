@@ -611,7 +611,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
@@ -941,7 +942,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = 120; $col2x = 170;
+		$col1x = 120;
+		$col2x = 170;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$col2x -= 20;
 		}
@@ -1548,12 +1550,16 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
-			'status' => true,
+			'status' => false,
 			'title' => array(
 				'textkey' => 'PriceUHT'
 			),
 			'border-left' => true, // add left line separator
 		);
+
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE)) {
+			$this->cols['subprice']['status'] = true;
+		}
 
 		$rank = $rank + 10;
 		$this->cols['qty'] = array(
@@ -1604,6 +1610,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			),
 			'border-left' => true, // add left line separator
 		);
+
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN)) {
+			$this->cols['totalexcltax']['status'] = true;
+		}
 
 		// Add extrafields cols
 		if (!empty($object->lines)) {

@@ -44,7 +44,7 @@ foreach ($object->fields as $key => $val) {
 		continue; // We don't want this field
 	}
 
-	print '<tr id="field_'.$key.'">';
+	print '<tr class="field_'.$key.'">';
 	print '<td';
 	print ' class="titlefieldcreate';
 	if ($val['notnull'] > 0) {
@@ -61,7 +61,7 @@ foreach ($object->fields as $key => $val) {
 		print $langs->trans($val['label']);
 	}
 	print '</td>';
-	print '<td>';
+	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
 		print img_picto('', $val['picto']);
 	}
@@ -77,6 +77,8 @@ foreach ($object->fields as $key => $val) {
 		$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));
 	} elseif ($val['type'] == 'boolean') {
 		$value = (GETPOST($key) == 'on' ? 1 : 0);
+	} elseif ($val['type'] == 'price') {
+		$value = price2num(GETPOST($key));
 	} else {
 		$value = GETPOST($key, 'alphanohtml');
 	}

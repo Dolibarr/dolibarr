@@ -35,12 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->load("mails");
 
-// Security check
-if (!$user->rights->mailing->lire || $user->socid > 0) {
-	accessforbidden();
-}
-
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -73,6 +67,13 @@ $modulesdir = dolGetModulesDirs('/mailings');
 
 $object = new Mailing($db);
 $result = $object->fetch($id);
+
+
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mailing');
 
 
 /*

@@ -22,7 +22,7 @@
  *	\brief      Module pour gerer la tenue de contrat de services
  *	\file       htdocs/core/modules/modContrat.class.php
  *	\ingroup    contrat
- *	\brief      Fichier de description et activation du module Contrat
+ *	\brief      Description and activation file for the module contract
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -193,9 +193,13 @@ class modContrat extends DolibarrModules
 		'p.rowid'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text');
 
 
-		$keyforselect = 'contrat'; $keyforelement = 'contract'; $keyforaliasextra = 'coextra';
+		$keyforselect = 'contrat';
+		$keyforelement = 'contract';
+		$keyforaliasextra = 'coextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'contratdet'; $keyforelement = 'contract_line'; $keyforaliasextra = 'codextra';
+		$keyforselect = 'contratdet';
+		$keyforelement = 'contract_line';
+		$keyforaliasextra = 'codextra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';

@@ -117,9 +117,9 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 	}
 }
 
-if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque) {
+if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
 	if (is_array($_POST['toRemise'])) {
-		$result = $object->create($user, $_POST["accountid"], 0, $_POST['toRemise']);
+		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise'));
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
 				$object->fetch($object->id); // To force to reload all properties in correct property name
@@ -134,7 +134,7 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = $object->generatePdf($_POST["model"], $outputlangs);
+				$result = $object->generatePdf(GETPOST("model"), $outputlangs);
 			}
 
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -227,7 +227,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result = $object->generatePdf($_POST["model"], $outputlangs);
+	$result = $object->generatePdf(GETPOST("model"), $outputlangs);
 	if ($result <= 0) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -235,8 +235,8 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
 		exit;
 	}
-} // Remove file in doc form
-elseif ($action == 'remove_file' && $user->rights->banque->cheque) {
+} elseif ($action == 'remove_file' && $user->rights->banque->cheque) {
+	// Remove file in doc form
 	if ($object->fetch($id) > 0) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -364,8 +364,9 @@ if ($action == 'new') {
 	print '</form>';
 	print '<br>';
 
-	$sql = "SELECT ba.rowid as bid, b.datec as datec, b.dateo as date, b.rowid as transactionid, ";
-	$sql .= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque,";
+	$sql = "SELECT ba.rowid as bid, ba.label,";
+	$sql .= " b.rowid as transactionid, b.label as transactionlabel, b.datec as datec, b.dateo as date, ";
+	$sql .= " b.amount, b.emetteur, b.num_chq, b.banque,";
 	$sql .= " p.rowid as paymentid, p.ref as paymentref";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
@@ -393,6 +394,8 @@ if ($action == 'new') {
 			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
 			$lines[$obj->bid][$i]["id"] = $obj->transactionid;
+			$lines[$obj->bid][$i]["ref"] = $obj->transactionid;
+			$lines[$obj->bid][$i]["label"] = $obj->transactionlabel;
 			$lines[$obj->bid][$i]["paymentid"] = $obj->paymentid;
 			$lines[$obj->bid][$i]["paymentref"] = $obj->paymentref;
 			$i++;
@@ -459,7 +462,7 @@ if ($action == 'new') {
 				print '<td>'.$value["numero"]."</td>\n";
 				print '<td>'.$value["emetteur"]."</td>\n";
 				print '<td>'.$value["banque"]."</td>\n";
-				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Link to payment
 				print '<td class="center">';
@@ -473,8 +476,9 @@ if ($action == 'new') {
 				print '</td>';
 				// Link to bank transaction
 				print '<td class="center">';
-				$accountlinestatic->rowid = $value["id"];
-				if ($accountlinestatic->rowid) {
+				$accountlinestatic->id = $value["id"];
+				$accountlinestatic->ref = $value["ref"];
+				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
@@ -594,7 +598,7 @@ if ($action == 'new') {
 
 
 	// List of bank checks
-	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
+	$sql = "SELECT b.rowid, b.rowid as ref, b.label, b.amount, b.num_chq, b.emetteur,";
 	$sql .= " b.dateo as date, b.datec as datec, b.banque,";
 	$sql .= " p.rowid as pid, p.ref as pref, ba.rowid as bid, p.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
@@ -635,7 +639,7 @@ if ($action == 'new') {
 				print '<td class="center">'.($objp->num_chq ? $objp->num_chq : '&nbsp;').'</td>';
 				print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
 				print '<td>'.dol_trunc($objp->banque, 24).'</td>';
-				print '<td class="right">'.price($objp->amount).'</td>';
+				print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 				// Link to payment
 				print '<td class="center">';
 				$paymentstatic->id = $objp->pid;
@@ -648,8 +652,9 @@ if ($action == 'new') {
 				print '</td>';
 				// Link to bank transaction
 				print '<td class="center">';
-				$accountlinestatic->rowid = $objp->rowid;
-				if ($accountlinestatic->rowid) {
+				$accountlinestatic->id = $objp->rowid;
+				$accountlinestatic->ref = $objp->ref;
+				if ($accountlinestatic->id > 0) {
 					print $accountlinestatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';

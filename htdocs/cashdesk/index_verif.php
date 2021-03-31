@@ -41,6 +41,12 @@ $bankid_cash = (GETPOST("CASHDESK_ID_BANKACCOUNT_CASH") > 0) ?GETPOST("CASHDESK_
 $bankid_cheque = (GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE") > 0) ?GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE", 'int') : $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 $bankid_cb = (GETPOST("CASHDESK_ID_BANKACCOUNT_CB") > 0) ?GETPOST("CASHDESK_ID_BANKACCOUNT_CB", 'int') : $conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 
+
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
 // Check username
 if (empty($username)) {
 	$retour = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Login"));

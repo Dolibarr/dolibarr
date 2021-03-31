@@ -201,7 +201,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
@@ -248,7 +248,7 @@ if ($action == 'edit') {
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+				print $formother->select_categories($tmp[1], $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
@@ -266,7 +266,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {

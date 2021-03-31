@@ -52,8 +52,7 @@ $object = new Bookmark($db);
  * Actions
  */
 
-if ($action == 'add' || $action == 'addproduct' || $action == 'update')
-{
+if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	if ($action == 'update') {
 		$invertedaction = 'edit';
 	} else {
@@ -62,14 +61,17 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	$error = 0;
 
-	if (GETPOST('cancel', 'alpha'))
-	{
-		if (empty($backtopage)) $backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
+	if (GETPOST('cancel', 'alpha')) {
+		if (empty($backtopage)) {
+			$backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
+		}
 		header("Location: ".$backtopage);
 		exit;
 	}
 
-	if ($action == 'update') $object->fetch(GETPOST("id", 'int'));
+	if ($action == 'update') {
+		$object->fetch(GETPOST("id", 'int'));
+	}
 	// Check if null because user not admin can't set an user and send empty value here.
 	if (!empty($userid)) {
 		$object->fk_user = $userid;
@@ -89,21 +91,23 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$object->favicon = 'none';
 
-		if ($action == 'update') $res = $object->update();
-		else $res = $object->create();
+		if ($action == 'update') {
+			$res = $object->update();
+		} else {
+			$res = $object->create();
+		}
 
-		if ($res > 0)
-		{
-			if (empty($backtopage)) $backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
+		if ($res > 0) {
+			if (empty($backtopage)) {
+				$backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
+			}
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			if ($object->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-			{
+			if ($object->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
 				setEventMessages($langs->transnoentities("WarningBookmarkAlreadyExists"), null, 'warnings');
 			} else {
@@ -137,8 +141,7 @@ $h++;
 $hselected = 'card';
 
 
-if ($action == 'create')
-{
+if ($action == 'create') {
 	/*
 	 * Fact bookmark creation mode
 	 */
@@ -189,8 +192,7 @@ if ($action == 'create')
 }
 
 
-if ($id > 0 && !preg_match('/^add/i', $action))
-{
+if ($id > 0 && !preg_match('/^add/i', $action)) {
 	/*
 	 * Fact bookmark mode or visually edition
 	 */
@@ -205,8 +207,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 		)
 	);
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -239,8 +240,11 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	}
 
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat minwidth300" name="title" value="'.(GETPOSTISSET("title") ? GETPOST("title", '', 2) : $object->title).'">';
-	else print $object->title;
+	if ($action == 'edit') {
+		print '<input class="flat minwidth300" name="title" value="'.(GETPOSTISSET("title") ? GETPOST("title", '', 2) : $object->title).'">';
+	} else {
+		print $object->title;
+	}
 	print '</td></tr>';
 
 	print '<tr><td>';
@@ -252,28 +256,32 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 		print '</span>';
 	}
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
-	else print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
+	if ($action == 'edit') {
+		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
+	} else {
+		print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
+	}
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, GETPOSTISSET("target") ? GETPOST("target") : $object->target);
 	} else {
-		if ($object->target == 0) print $langs->trans("ReplaceWindow");
-		if ($object->target == 1) print $langs->trans("OpenANewWindow");
+		if ($object->target == 0) {
+			print $langs->trans("ReplaceWindow");
+		}
+		if ($object->target == 1) {
+			print $langs->trans("OpenANewWindow");
+		}
 	}
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	if ($action == 'edit' && $user->admin)
-	{
+	if ($action == 'edit' && $user->admin) {
 		print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
-		if ($object->fk_user > 0)
-		{
+		if ($object->fk_user > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
 			print $fuser->getNomUrl(1);
@@ -285,8 +293,11 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
-	else print $object->position;
+	if ($action == 'edit') {
+		print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
+	} else {
+		print $object->position;
+	}
 	print '</td></tr>';
 
 	// Date creation
@@ -298,8 +309,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 
 	print dol_get_fiche_end();
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print '<div align="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
 		print '</form>';
 	}
@@ -310,14 +320,12 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit
-	if ($user->rights->bookmark->creer && $action != 'edit')
-	{
+	if ($user->rights->bookmark->creer && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit&amp;token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
-	if ($user->rights->bookmark->supprimer && $action != 'edit')
-	{
+	if ($user->rights->bookmark->supprimer && $action != 'edit') {
 		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 

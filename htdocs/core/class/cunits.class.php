@@ -133,7 +133,8 @@ class CUnits // extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -180,7 +181,7 @@ class CUnits // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
 		$sql_where = array();
 		if ($id) {
-			$sql_where[] = " t.rowid = ".$id;
+			$sql_where[] = " t.rowid = ".((int) $id);
 		}
 		if ($unit_type) {
 			$sql_where[] = " t.unit_type = '".$this->db->escape($unit_type)."'";
@@ -344,14 +345,15 @@ class CUnits // extends CommonObject
 		$sql .= " unit_type=".(isset($this->unit_type) ? "'".$this->db->escape($this->unit_type)."'" : "null").",";
 		$sql .= " scale=".(isset($this->scale) ? "'".$this->db->escape($this->scale)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null");
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -382,14 +384,15 @@ class CUnits // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_units";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback

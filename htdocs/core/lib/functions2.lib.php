@@ -507,6 +507,61 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
+	// User signature
+	if (!empty($object->user_signature)) {
+		if ($usetable) {
+			print '<tr><td class="titlefield">';
+		}
+		print $langs->trans('SignedBy');
+		if ($usetable) {
+			print '</td><td>';
+		} else {
+			print ': ';
+		}
+		if (is_object($object->user_signature)) {
+			if ($object->user_signature->id) {
+				print $object->user_signature->getNomUrl(-1, '', 0, 0, 0);
+			} else {
+				print $langs->trans('Unknown');
+			}
+		} else {
+			$userstatic = new User($db);
+			$userstatic->fetch($object->user_signature);
+			if ($userstatic->id) {
+				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
+			} else {
+				print $langs->trans('Unknown');
+			}
+		}
+		if ($usetable) {
+			print '</td></tr>';
+		} else {
+			print '<br>';
+		}
+	}
+
+	// Date signature
+	if (!empty($object->date_signature)) {
+		if ($usetable) {
+			print '<tr><td class="titlefield">';
+		}
+		print $langs->trans('DateSigning');
+		if ($usetable) {
+			print '</td><td>';
+		} else {
+			print ': ';
+		}
+		print dol_print_date($object->date_signature, 'dayhour');
+		if ($deltadateforuser) {
+			print ' '.$langs->trans('CurrentHour').' &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;'.$langs->trans('ClientHour');
+		}
+		if ($usetable) {
+			print '</td></tr>';
+		} else {
+			print '<br>';
+		}
+	}
+
 	// User close
 	if (!empty($object->user_cloture) || !empty($object->user_closing)) {
 		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
@@ -1090,9 +1145,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Define posy, posm and reg
 		if ($maskraz > 1) {	// if reset is not first month, we need month and year into mask
 			if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2; $posm = 3;
+				$posy = 2;
+				$posm = 3;
 			} elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 3; $posm = 2;
+				$posy = 3;
+				$posm = 2;
 			} else {
 				return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
 			}
@@ -1103,11 +1160,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} else // if reset is for a specific month in year, we need year
 		{
 			if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 3; $posm = 2;
+				$posy = 3;
+				$posm = 2;
 			} elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2; $posm = 3;
+				$posy = 2;
+				$posm = 3;
 			} elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2; $posm = 0;
+				$posy = 2;
+				$posm = 0;
 			} else {
 				return 'ErrorCantUseRazIfNoYearInMask';
 			}
@@ -1141,12 +1201,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 				if ($date < $nextnewyeardate && $yearoffsettype == '+') {
 					$yearoffset = 1;
 				}
-			} // If after or equal of current new year date
-			elseif ($date >= $newyeardate && $yearoffsettype == '-') {
+			} elseif ($date >= $newyeardate && $yearoffsettype == '-') {
+				// If after or equal of current new year date
 				$yearoffset = -1;
 			}
-		} // For backward compatibility
-		elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) {
+		} elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) {
+			// For backward compatibility
 			$yearoffset = -1;
 		}	// If current month lower that month of return to zero, year is previous year
 
@@ -1225,7 +1285,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
 	} elseif (!empty($forceentity)) {
-		$sql .= " AND entity IN (".$forceentity.")";
+		$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 	}
 	if ($where) {
 		$sql .= $where;
@@ -1285,7 +1345,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		if ($bentityon) { // only if entity enable
 			$sql .= " AND entity IN (".getEntity($sharetable).")";
 		} elseif (!empty($forceentity)) {
-			$sql .= " AND entity IN (".$forceentity.")";
+			$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 		}
 		if ($where) {
 			$sql .= $where;
@@ -1346,7 +1406,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
-				$sql .= " AND entity IN (".$forceentity.")";
+				$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 			}
 			if ($where) {
 				$maskrefclient_sql .= $where; //use the same optional where as general mask
@@ -1892,7 +1952,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					$tmpdir = trim($tmpdir);
 					$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 					if (!$tmpdir) {
-						unset($listofdir[$key]); continue;
+						unset($listofdir[$key]);
+						continue;
 					}
 					if (is_dir($tmpdir)) {
 						// all type of template is allowed
@@ -2121,15 +2182,15 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'mrp/class';
 		$module = 'mrp';
 		$myobject = 'mo';
-	}
-	elseif ($objecttype == 'productlot') {
+	} elseif ($objecttype == 'productlot') {
 		$classpath = 'product/stock/class';
 		$module = 'stock';
 		$myobject = 'productlot';
 	}
 
 	// Generic case for $classfile and $classname
-	$classfile = strtolower($myobject); $classname = ucfirst($myobject);
+	$classfile = strtolower($myobject);
+	$classname = ucfirst($myobject);
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath;
 
 	if ($objecttype == 'invoice_supplier') {
@@ -2228,7 +2289,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			// Check depth
 			//print 'Analyse record id='.$id.' with parent '.$pid.'<br>';
 
-			$cursor = $id; $arrayidparsed = array(); // We start from child $id
+			$cursor = $id;
+			$arrayidparsed = array(); // We start from child $id
 			while ($cursor > 0) {
 				$arrayidparsed[$cursor] = 1;
 				if ($arrayidparsed[$listofparentid[$cursor]]) {	// We detect a loop. A record with a parent that was already into child
@@ -2247,7 +2309,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE rowid IN (".join(',', $listofidtoclean).")"; // So we update only records detected wrong
+		$sql .= " WHERE rowid IN (".$db->sanitize(join(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
@@ -2264,7 +2326,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		// Check and clean orphelins
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".join(',', $listofid).")"; // So we update only records linked to a non existing parent
+		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(join(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
@@ -2628,7 +2690,8 @@ if (!function_exists('dolEscapeXML')) {
 function autoOrManual($automaticmanual, $case = 1, $color = 0)
 {
 	global $langs;
-	$result = 'unknown'; $classname = '';
+	$result = 'unknown';
+	$classname = '';
 	if ($automaticmanual == 1 || strtolower($automaticmanual) == 'automatic' || strtolower($automaticmanual) == 'true') { 	// A mettre avant test sur no a cause du == 0
 		$result = $langs->trans('automatic');
 		if ($case == 1 || $case == 3) {

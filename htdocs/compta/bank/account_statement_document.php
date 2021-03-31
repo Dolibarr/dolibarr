@@ -79,12 +79,12 @@ $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
 // Define number of receipt to show (current, previous or next one ?)
 $found = false;
-if ($_GET["rel"] == 'prev') {
+if (GETPOST("rel") == 'prev') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$id;
+	$sql .= " AND b.fk_account = ".((int) $id);
 	$sql .= " ORDER BY b.num_releve DESC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -97,12 +97,12 @@ if ($_GET["rel"] == 'prev') {
 			$found = true;
 		}
 	}
-} elseif ($_GET["rel"] == 'next') {
+} elseif (GETPOST("rel") == 'next') {
 	// Recherche valeur pour num = numero releve precedent
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$id;
+	$sql .= " AND b.fk_account = ".((int) $id);
 	$sql .= " ORDER BY b.num_releve ASC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -186,14 +186,14 @@ if ($id > 0 || !empty($ref)) {
 		$permission = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
 		$param = '&id='.$object->id.'&num='.urlencode($numref);
-		$moreparam = '&num='.urlencode($numref); ;
+		$moreparam = '&num='.urlencode($numref);
 		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($numref)."/";
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}
 } else {
-	Header('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

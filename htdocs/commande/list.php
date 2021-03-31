@@ -426,10 +426,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
@@ -806,39 +806,39 @@ if ($resql) {
 	if ($user->rights->societe->client->voir || $socid) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
 	if ($user->rights->user->user->lire) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
-		$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		$tmptitle = $langs->trans('LinkedToSpecificUsers');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
+		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
+		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('Warehouse').': ';
-		$moreforfilter .= $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1);
+		$tmptitle = $langs->trans('Warehouse');
+		$moreforfilter .= img_picto($tmptitle, 'warehouse', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -1437,7 +1437,7 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['c.total_ht']['checked'])) {
-			  print '<td class="nowrap right">'.price($obj->total_ht)."</td>\n";
+			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1448,7 +1448,7 @@ if ($resql) {
 		}
 		// Amount VAT
 		if (!empty($arrayfields['c.total_vat']['checked'])) {
-			print '<td class="nowrap right">'.price($obj->total_tva)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_tva)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1459,7 +1459,7 @@ if ($resql) {
 		}
 		// Amount TTC
 		if (!empty($arrayfields['c.total_ttc']['checked'])) {
-			print '<td class="nowrap right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1488,21 +1488,21 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
-			  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['c.multicurrency_total_vat']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['c.multicurrency_total_ttc']['checked'])) {
-			print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

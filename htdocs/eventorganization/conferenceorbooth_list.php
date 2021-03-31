@@ -22,54 +22,22 @@
  *		\brief      List page for conferenceorbooth
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
-//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
-//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
-
-// Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) $res = @include "../main.inc.php";
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-
-// load eventorganization libraries
-require_once __DIR__.'/class/conferenceorbooth.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+if ($conf->categorie->enabled) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization@eventorganization", "other"));
+$langs->loadLangs(array("eventorganization", "other"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -82,6 +50,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
+$projectid = GETPOST('projectid', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -132,7 +101,9 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
+	if ($val['searchall']) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
 }
 
 // Definition of array of fields for columns
@@ -156,20 +127,17 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->eventorganization->conferenceorbooth->read;
-$permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write;
-$permissiontodelete = $user->rights->eventorganization->conferenceorbooth->delete;
+$permissiontoread = $user->rights->eventorganization->read;
+$permissiontoadd = $user->rights->eventorganization->write;
+$permissiontodelete = $user->rights->eventorganization->delete;
 
 // Security check
-if (empty($conf->eventorganization->enabled)) accessforbidden('Module not enabled');
-$socid = 0;
+//$socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'eventorganization', $id, '');
-//if (!$permissiontoread) accessforbidden();
-
+$result = restrictedArea($user, 'eventorganization');
 
 
 /*
@@ -223,26 +191,197 @@ if (empty($reshook)) {
 /*
  * View
  */
-
 $form = new Form($db);
-
 $now = dol_now();
 
 //$help_url="EN:Module_ConferenceOrBooth|FR:Module_ConferenceOrBooth_FR|ES:Módulo_ConferenceOrBooth";
 $help_url = '';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBooths"));
 
+if ($projectid > 0) {
+	$project = new Project($db);
+	$result = $project->fetch($projectid);
+	if ($result < 0) {
+		setEventMessages(null, $project->errors, 'errors');
+	}
+	$result = $project->fetch_thirdparty();
+	if ($result < 0) {
+		setEventMessages(null, $project->errors, 'errors');
+	}
+	$result = $project->fetch_optionals();
+	if ($result < 0) {
+		setEventMessages(null, $project->errors, 'errors');
+	}
+
+	$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+	$title = $langs->trans("Project") . ' - ' . $langs->trans("ConferenceOrBooths") . ' - ' . $project->ref . ' ' . $project->name;
+	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $project->name) {
+		$title = $project->ref . ' ' . $project->name . ' - ' . $langs->trans("ConferenceOrBooths");
+	}
+}
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url);
+
+// Example : Adding jquery code
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	function init_myfunc()
+	{
+		jQuery("#myid").removeAttr(\'disabled\');
+		jQuery("#myid").attr(\'disabled\',\'disabled\');
+	}
+	init_myfunc();
+	jQuery("#mybutton").click(function() {
+		init_myfunc();
+	});
+});
+</script>';
+
+if ($projectid > 0) {
+	// To verify role of users
+	//$userAccess = $object->restrictedProjectArea($user,'read');
+	$userWrite = $project->restrictedProjectArea($user, 'write');
+	//$userDelete = $object->restrictedProjectArea($user,'delete');
+	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
+
+	$head = project_prepare_head($project);
+	print dol_get_fiche_head($head, 'eventorganisation', $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'));
+
+	// Project card
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $project->title;
+	// Thirdparty
+	if ($project->thirdparty->id > 0) {
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
+
+	// Define a complementary filter for search of next/prev ref.
+	if (!$user->rights->project->all->lire) {
+		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
+		$project->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+	}
+
+	dol_banner_tab($project, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border tableforfield" width="100%">';
+
+	// Usage
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		print '<input type="checkbox" disabled name="usage_opportunity"'.($project->usage_opportunity ? ' checked="checked"' : '').'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		print '<input type="checkbox" disabled name="usage_task"'.($project->usage_task ? ' checked="checked"' : '').'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		print '<input type="checkbox" disabled name="usage_bill_time"'.($project->usage_bill_time ? ' checked="checked"' : '').'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->eventorganization->enabled)) {
+		print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+	}
+	print '</td></tr>';
+
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($project->public) {
+		print $langs->trans('SharedProject');
+	} else {
+		print $langs->trans('PrivateProject');
+	}
+	print '</td></tr>';
+
+	// Date start - end
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	$start = dol_print_date($project->date_start, 'day');
+	print ($start ? $start : '?');
+	$end = dol_print_date($project->date_end, 'day');
+	print ' - ';
+	print ($end ? $end : '?');
+	if ($object->hasDelay()) {
+		print img_warning("Late");
+	}
+	print '</td></tr>';
+
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($project->budget_amount, '')) {
+		print price($project->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	}
+	print '</td></tr>';
+
+	// Other attributes
+	$cols = 2;
+	$objectconf=$object;
+	$object = $project;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	$object = $objectconf;
+
+	print '</table>';
+
+	print '</div>';
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border tableforfield" width="100%">';
+
+	// Description
+	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print nl2br($project->description);
+	print '</td></tr>';
+
+	// Categories
+	if ($conf->categorie->enabled) {
+		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+		print $form->showCategories($project->id, Categorie::TYPE_PROJECT, 1);
+		print "</td></tr>";
+	}
+
+	print '</table>';
+
+	print '</div>';
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
+
+	print dol_get_fiche_end();
+}
 
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
-foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
-}
+$sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -252,26 +391,37 @@ $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.id = ef.fk_object)";
 }
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as cact ON cact.id=t.fk_action AND cact.module LIKE '%@eventorganization'";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($object->ismultientitymanaged == 1) $sql .= " WHERE t.entity IN (".getEntity($object->element).")";
-else $sql .= " WHERE 1 = 1";
+if ($object->ismultientitymanaged == 1) {
+	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
+} else {
+	$sql .= " WHERE 1 = 1";
+}
+
 foreach ($search as $key => $val) {
-	if (in_array($key, $object->fields)) {
-		if ($key == 'status' && $search[$key] == -1) continue;
+	if (array_key_exists($key, $object->fields)) {
+		//var_dump($key,$object->fields);
+		if ($key == 'status' && $search[$key] == -1) {
+			continue;
+		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
-			if ($search[$key] == '-1') $search[$key] = '';
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
+			if ($search[$key] == '-1' || $search[$key] === '0') {
+				$search[$key] = '';
+			}
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
 			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
+		//var_dump($key,$object->fields);
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
@@ -285,6 +435,7 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -328,7 +479,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
-	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
+	if ($limit) {
+		$sql .= $db->plimit($limit + 1, $offset);
+	}
 
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -346,27 +499,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	header("Location: ".dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.$id);
 	exit;
 }
-
-
-// Output page
-// --------------------------------------------------------------------
-
-llxHeader('', $title, $help_url);
-
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -411,7 +543,7 @@ if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].(!empty($projectid)?'?projectid='.$projectid:'').'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -422,9 +554,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendConferenceOrBoothRef";
@@ -485,7 +617,7 @@ foreach ($object->fields as $key => $val) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
-		} elseif (strpos($val['type'], 'integer:') === 0) {
+		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
@@ -548,7 +680,9 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) $needToFetchEachLine++; // There is at least one compute field that use $object
+		if (preg_match('/\$object/', $val)) {
+			$needToFetchEachLine++; // There is at least one compute field that use $object
+		}
 	}
 }
 
@@ -616,11 +750,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<td class="nowrap center">';
 	if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected = 0;
-		if (in_array($object->id, $arrayofselected)) $selected = 1;
+		if (in_array($object->id, $arrayofselected)) {
+			$selected = 1;
+		}
 		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 	}
 	print '</td>';
-	if (!$i) $totalarray['nbfield']++;
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
 
 	print '</tr>'."\n";
 

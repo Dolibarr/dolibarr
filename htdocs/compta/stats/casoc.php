@@ -44,8 +44,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
-$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
+$sortorder = GETPOST("sortorder", 'aZ09');
+$sortfield = GETPOST("sortfield", 'aZ09');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -83,23 +83,23 @@ $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
 $search_country = GETPOST("search_country", 'alpha');
-$date_startyear = GETPOST("date_startyear", 'alpha');
-$date_startmonth = GETPOST("date_startmonth", 'alpha');
-$date_startday = GETPOST("date_startday", 'alpha');
-$date_endyear = GETPOST("date_endyear", 'alpha');
-$date_endmonth = GETPOST("date_endmonth", 'alpha');
-$date_endday = GETPOST("date_endday", 'alpha');
+$date_startyear = GETPOST("date_startyear", 'int');
+$date_startmonth = GETPOST("date_startmonth", 'int');
+$date_startday = GETPOST("date_startday", 'int');
+$date_endyear = GETPOST("date_endyear", 'int');
+$date_endmonth = GETPOST("date_endmonth", 'int');
+$date_endday = GETPOST("date_endday", 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int") ?GETPOST("q", "int") : 0;
@@ -120,23 +120,29 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 				$year_end++;
 			}
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
 	}
 	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
 	}
 	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
 	}
 	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
 	}
 } else {
 	// TODO We define q
 }
+//print dol_print_date($date_start, 'dayhour', 'gmt');
 
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
 $tmps = dol_getdate($date_start);
@@ -219,7 +225,9 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPING") {
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 } else {
@@ -259,14 +267,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$db->escape($selected_cat);
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
-} else {
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -290,13 +298,15 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$selected_cat;
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$selected_cat;
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
+} elseif ($modecompta == "BOOKKEEPING") {
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
 if (!empty($search_societe)) {
 	$sql .= natural_search('s.nom', $search_societe);
@@ -308,11 +318,11 @@ if (!empty($search_town)) {
 	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_country > 0) {
-	$sql .= ' AND s.fk_pays = '.$search_country.'';
+	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
@@ -342,7 +352,7 @@ if ($result) {
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') {
+if ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";

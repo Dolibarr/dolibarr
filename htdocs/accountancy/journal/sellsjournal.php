@@ -4,11 +4,11 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,13 +59,20 @@ if ($in_bookkeeping == '') {
 
 $now = dol_now();
 
+$hookmanager->initHooks(array('sellsjournal'));
+$parameters = array();
+
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
-$hookmanager->initHooks(array('sellsjournal'));
-$parameters = array();
 
 /*
  * Actions
@@ -101,9 +108,16 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-$sql .= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
+$sql .= " p.rowid as pid, p.ref as pref, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	$sql .= " pa.accountancy_code_sell";
+} else {
+	$sql .= " p.accountancy_code_sell";
+}
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
@@ -656,7 +670,7 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {

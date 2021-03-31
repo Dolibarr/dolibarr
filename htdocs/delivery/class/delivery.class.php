@@ -307,7 +307,7 @@ class Delivery extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."delivery as l";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
-		$sql .= " WHERE l.rowid = ".$id;
+		$sql .= " WHERE l.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -614,7 +614,7 @@ class Delivery extends CommonObject
 	{
 		if ($this->statut == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".$lineid;
+			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			if ($this->db->query($sql)) {
 				$this->update_price();
@@ -940,7 +940,7 @@ class Delivery extends CommonObject
 		$sqlSourceLine .= ", p.ref, p.label";
 		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
+		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
 		if ($resultSourceLine) {
