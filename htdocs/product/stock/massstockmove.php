@@ -30,6 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/import/import_csv.modules.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
+
+$confirm = GETPOST('confirm', 'alpha');
+$filetoimport = GETPOST('filetoimport');
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
@@ -79,6 +85,20 @@ if (!empty($_SESSION['massstockmove'])) {
 /*
  * Actions
  */
+
+
+if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+	dol_mkdir($conf->stock->dir_temp);
+	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
+	$fullpath = $conf->stock->dir_temp."/".$nowyearmonth.'-'.$_FILES['userfile']['name'];
+	if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
+		dol_syslog("File ".$fullpath." was added for import");
+	} else {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+	}
+}
 
 if ($action == 'addline') {
 	if (!($id_product > 0)) {
@@ -288,8 +308,99 @@ if ($action == 'createmovements') {
 	}
 }
 
+if ($action == 'importCSV') {
+	$importcsv = new ImportCsv($db, 'massstocklist');
+	$dir = $conf->stock->dir_temp;
+	$fullpath = $dir.'/'.$filetoimport;
+	$nblinesrecord = $importcsv->import_get_nb_of_lines($fullpath)-1;
+	$importcsv->import_open_file($fullpath);
+	$labelsrecord = $importcsv->import_read_record();
+	$i=0;
+	$data = array();
+	while ($i < $nblinesrecord) {
+		$data[] = $importcsv->import_read_record();
+		$id_product = $data[$i][0]['val'];
+		$id_sw = $data[$i][1]['val'];
+		$id_tw = $data[$i][2]['val'];
+		$qty = $data[$i][3]['val'];
+		$batch = $data[$i][4]['val'];
 
+		if (!($id_product > 0)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
+		}
+		if (!($id_sw > 0)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+		}
+		if (!($id_tw > 0)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
+		}
+		if ($id_sw > 0 && $id_tw == $id_sw) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorWarehouseMustDiffers"), null, 'errors');
+		}
+		if (!$qty) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
+		}
 
+		// Check a batch number is provided if product need it
+		if (!$error) {
+			$producttmp = new Product($db);
+			$producttmp->fetch($id_product);
+			if ($producttmp->hasbatch()) {
+				if (empty($batch)) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $producttmp->ref), null, 'errors');
+				}
+			}
+		}
+
+		$i++;
+	}
+	if (!$error) {
+		foreach ($data as $key => $value) {
+			if (count(array_keys($listofdata)) > 0) {
+				$id = max(array_keys($listofdata)) + 1;
+			} else {
+				$id = 1;
+			}
+			$id_product = $data[$key][0]['val'];
+			$id_sw = $data[$key][1]['val'];
+			$id_tw = $data[$key][2]['val'];
+			$qty = $data[$key][3]['val'];
+			$batch = $data[$key][4]['val'];
+			$listofdata[$key] = array('id'=>$key, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
+		}
+	}
+	$_SESSION['massstockmove'] = json_encode($listofdata);
+}
+
+if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+	$langs->load("other");
+
+	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
+	if ($excludefirstline) {
+		$param .= '&excludefirstline='.urlencode($excludefirstline);
+	}
+	if ($endatlinenb) {
+		$param .= '&endatlinenb='.urlencode($endatlinenb);
+	}
+
+	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$ret = dol_delete_file($file);
+	if ($ret) {
+		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
+	Header('Location: '.$_SERVER["PHP_SELF"]);
+	exit;
+}
 /*
  * View
  */
@@ -411,6 +522,130 @@ print '</div>';
 
 print '</form>';
 
+print '<br>';
+
+print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+print '<span class="opacitymedium">';
+$s = $langs->trans("ChooseFileToImport", '{s1}');
+$s = str_replace('{s1}', img_picto('', 'next'), $s);
+print $s;
+print '<br><br>';
+print $langs->trans('InfoTemplateImport');
+print '</span><br><br>';
+
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+
+print '<tr class="oddeven nohover"><td colspan="6">';
+print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
+$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
+print '<input type="submit" class="button" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
+$out = '';
+if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+	$maxphp = @ini_get('upload_max_filesize'); // In unknown
+	if (preg_match('/k$/i', $maxphp)) {
+		$maxphp = $maxphp * 1;
+	}
+	if (preg_match('/m$/i', $maxphp)) {
+		$maxphp = $maxphp * 1024;
+	}
+	if (preg_match('/g$/i', $maxphp)) {
+		$maxphp = $maxphp * 1024 * 1024;
+	}
+	if (preg_match('/t$/i', $maxphp)) {
+		$maxphp = $maxphp * 1024 * 1024 * 1024;
+	}
+	$maxphp2 = @ini_get('post_max_size'); // In unknown
+	if (preg_match('/k$/i', $maxphp2)) {
+		$maxphp2 = $maxphp2 * 1;
+	}
+	if (preg_match('/m$/i', $maxphp2)) {
+		$maxphp2 = $maxphp2 * 1024;
+	}
+	if (preg_match('/g$/i', $maxphp2)) {
+		$maxphp2 = $maxphp2 * 1024 * 1024;
+	}
+	if (preg_match('/t$/i', $maxphp2)) {
+		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+	}
+	// Now $max and $maxphp and $maxphp2 are in Kb
+	$maxmin = $max;
+	$maxphptoshow = $maxphptoshowparam = '';
+	if ($maxphp > 0) {
+		$maxmin = min($max, $maxphp);
+		$maxphptoshow = $maxphp;
+		$maxphptoshowparam = 'upload_max_filesize';
+	}
+	if ($maxphp2 > 0) {
+		$maxmin = min($max, $maxphp2);
+		if ($maxphp2 < $maxphp) {
+			$maxphptoshow = $maxphp2;
+			$maxphptoshowparam = 'post_max_size';
+		}
+	}
+
+	$langs->load('other');
+	$out .= ' ';
+	$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
+} else {
+	$out .= ' ('.$langs->trans("UploadDisabled").')';
+}
+print $out;
+print '</td>';
+print "</tr>\n";
+
+// Search available imports
+$filearray = dol_dir_list($conf->stock->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
+if (count($filearray) > 0) {
+	$dir = $conf->stock->dir_temp;
+
+	// Search available files to import
+	$i = 0;
+	foreach ($filearray as $key => $val) {
+		$file = $val['name'];
+
+		// readdir return value in ISO and we want UTF8 in memory
+		if (!utf8_check($file)) {
+			$file = utf8_encode($file);
+		}
+
+		if (preg_match('/^\./', $file)) {
+			continue;
+		}
+
+		$modulepart = 'import';
+		$urlsource = $_SERVER["PHP_SELF"].'&filetoimport='.urlencode($filetoimport);
+		$relativepath = $file;
+
+		print '<tr class="oddeven">';
+		print '<td width="16">'.img_mime($file).'</td>';
+		print '<td>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'" target="_blank">';
+		print $file;
+		print '</a>';
+		print '</td>';
+		// Affiche taille fichier
+		print '<td style="text-align:right">'.dol_print_size(dol_filesize($dir.'/'.$file)).'</td>';
+		// Affiche date fichier
+		print '<td style="text-align:right">'.dol_print_date(dol_filemtime($dir.'/'.$file), 'dayhour').'</td>';
+		// Del button
+		print '<td style="text-align:right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&urlfile='.urlencode($relativepath);
+		print '">'.img_delete().'</a></td>';
+		// Action button
+		print '<td style="text-align:right">';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=importCSV&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"), 'next', 'class="fa-15x"').'</a>';
+		print '</td>';
+		print '</tr>';
+	}
+}
+
+print '</table>';
+print '</div>';
+
+print '</form>';
 
 print '<br>';
 
@@ -437,7 +672,9 @@ print '<br>';
 print '</div>';
 
 print '</form>';
-
+if ($action == 'delete') {
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+}
 // End of page
 llxFooter();
 $db->close();
