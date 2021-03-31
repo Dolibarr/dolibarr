@@ -324,39 +324,39 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 				$data[] = $importcsv->import_read_record();
 				if (count($data[$i]) == 1) {
 					// Only 1 empty line
-					unset($data);
+					unset($data[$i]);
 					$i++;
 					continue;
 				}
 				//var_dump($data);
 
-				$id_sw = $data[$i][0]['val'];
-				$id_tw = $data[$i][1]['val'];
-				$id_product = $data[$i][2]['val'];
-				$qty = $data[$i][3]['val'];
-				$batch = $data[$i][4]['val'];
+				$tmp_id_sw = $data[$i][0]['val'];
+				$tmp_id_tw = $data[$i][1]['val'];
+				$tmp_id_product = $data[$i][2]['val'];
+				$tmp_qty = $data[$i][3]['val'];
+				$tmp_batch = $data[$i][4]['val'];
 
 				// TODO If product is a ref (not numeric or starts with "ref:..."), retreive the id of product from the ref
-				if (!($id_product > 0)) {
+				if (!($tmp_id_product > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 				}
 				// TODO If warehouse is a ref (not numeric or starts with "ref:..."), retreive the id of product from the ref
-				if (!($id_sw > 0)) {
+				if (!($tmp_id_sw > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 				}
 				// TODO If warehouse is a ref (not numeric or starts with "ref:..."), retreive the id of product from the ref
-				if (!($id_tw > 0)) {
+				if (!($tmp_id_tw > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 				}
-				if ($id_sw > 0 && $id_tw == $id_sw) {
+				if ($tmp_id_sw > 0 && $tmp_id_tw == $tmp_id_sw) {
 					$error++;
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorWarehouseMustDiffers"), null, 'errors');
 				}
-				if (!$qty) {
+				if (!$tmp_qty) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 				}
@@ -364,9 +364,9 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 				// Check a batch number is provided if product need it
 				if (!$error) {
 					$producttmp = new Product($db);
-					$producttmp->fetch($id_product);
+					$producttmp->fetch($tmp_id_product);
 					if ($producttmp->hasbatch()) {
-						if (empty($batch)) {
+						if (empty($tmp_batch)) {
 							$error++;
 							$langs->load("errors");
 							setEventMessages($langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $producttmp->ref), null, 'errors');
@@ -384,12 +384,12 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 					} else {
 						$id = 1;
 					}
-					$id_product = $data[$key][0]['val'];
-					$id_sw = $data[$key][1]['val'];
-					$id_tw = $data[$key][2]['val'];
-					$qty = $data[$key][3]['val'];
-					$batch = $data[$key][4]['val'];
-					$listofdata[$key] = array('id'=>$key, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
+					$tmp_id_sw = $data[$key][0]['val'];
+					$tmp_id_tw = $data[$key][1]['val'];
+					$tmp_id_product = $data[$key][2]['val'];
+					$tmp_qty = $data[$key][3]['val'];
+					$tmp_batch = $data[$key][4]['val'];
+					$listofdata[$key] = array('id'=>$key, 'id_sw'=>$tmp_id_sw, 'id_tw'=>$tmp_id_tw, 'id_product'=>$tmp_id_product, 'qty'=>$tmp_qty, 'batch'=>$tmp_batch);
 				}
 			}
 		}
@@ -455,6 +455,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
 print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 print '<span class="opacitymedium">';
+$importcsv = new ImportCsv($db, 'massstocklist');
 print $form->textwithpicto($langs->trans('OrSelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
 
