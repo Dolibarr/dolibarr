@@ -525,7 +525,7 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['cs.libelle']['checked'])) {
-		print '<td>'.dol_trunc($obj->label, 42).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
