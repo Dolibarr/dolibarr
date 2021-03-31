@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur <eldy@uers.sourceforge.net>
- * Copyright (C) 2018		Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2018      Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +34,25 @@ $action = GETPOST('action', 'aZ09');
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset($_SESSION['serObjFacturation']);
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * View
+ */
 
 switch ($action) {
 	default:
-		if ($_POST['hdnSource'] != 'NULL') {
+		if (GETPOST('hdnSource') != 'NULL') {
 			$sql = "SELECT p.rowid, p.ref, p.price, p.tva_tx, p.default_vat_code, p.recuperableonly";
 			if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) {
 				$sql .= ", ps.reel";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			if (!empty($conf->stock->enabled) && !empty($conf_fkentrepot)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".((int) $conf_fkentrepot);
 			}
 			$sql .= " WHERE p.entity IN (".getEntity('product').")";
 
@@ -156,18 +164,18 @@ switch ($action) {
 					$obj_facturation->vatrate = $vatrate; // Save vat rate (full text vat with code)
 
 					// Definition du filtre pour n'afficher que le produit concerne
-					if ($_POST['hdnSource'] == 'LISTE') {
+					if (GETPOST('hdnSource') == 'LISTE') {
 						$filtre = $ret['ref'];
-					} elseif ($_POST['hdnSource'] == 'REF') {
-						$filtre = $_POST['txtRef'];
+					} elseif (GETPOST('hdnSource') == 'REF') {
+						$filtre = GETPOST('txtRef');
 					}
 
-					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$filtre;
+					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.urlencode($filtre);
 				} else {
 					$obj_facturation->raz();
 
-					if ($_POST['hdnSource'] == 'REF') {
-						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$_POST['txtRef'];
+					if (GETPOST('hdnSource') == 'REF') {
+						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.urlencode(GETPOST('txtRef'));
 					} else {
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 					}
@@ -192,10 +200,10 @@ switch ($action) {
 
 	case 'ajout_article':
 		if (!empty($obj_facturation->id)) {	// A product was previously selected and stored in session, so we can add it
-			dol_syslog("facturation_verif save vat ".$_POST['selTva']);
-			$obj_facturation->qte($_POST['txtQte']);
-			$obj_facturation->tva($_POST['selTva']); // id of vat. Saved so we can use it for next product
-			$obj_facturation->remisePercent($_POST['txtRemise']);
+			dol_syslog("facturation_verif save vat ".GETPOST('selTva'));
+			$obj_facturation->qte(GETPOST('txtQte'));
+			$obj_facturation->tva(GETPOST('selTva')); // id of vat. Saved so we can use it for next product
+			$obj_facturation->remisePercent(GETPOST('txtRemise'));
 			$obj_facturation->ajoutArticle(); // This add an entry into $_SESSION['poscart']
 			// We update prixTotalTtc
 		}
@@ -204,7 +212,7 @@ switch ($action) {
 		break;
 
 	case 'suppr_article':
-		$obj_facturation->supprArticle($_GET['suppr_id']);
+		$obj_facturation->supprArticle(GETPOST('suppr_id'));
 
 		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		break;

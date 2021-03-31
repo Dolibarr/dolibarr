@@ -29,10 +29,6 @@
 
 require '../main.inc.php';
 
-if (!$user->rights->societe->lire) {
-	accessforbidden();
-}
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -63,9 +59,20 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
 
+// Security check
+$socid = GETPOST("socid", 'int');
+if ($user->socid > 0) {
+	$action = '';
+	$id = $user->socid;
+}
+restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+
 /*
  * Actions
  */
+
+// None
 
 
 /*
@@ -169,7 +176,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -441,7 +448,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
  * Draft purchase orders
  */
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
-	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, cf.fk_statut as status";
+	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -485,7 +492,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 				$supplierorderstatic->id = $obj->rowid;
 				$supplierorderstatic->ref = $obj->ref;
-				$supplierorderstatic->ref_supplier = $obj->ref_suppliert;
+				$supplierorderstatic->ref_supplier = $obj->ref_supplier;
 				$supplierorderstatic->total_ht = $obj->total_ht;
 				$supplierorderstatic->total_tva = $obj->total_tva;
 				$supplierorderstatic->total_ttc = $obj->total_ttc;
@@ -882,7 +889,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
-				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+				//$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 				$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
 
 				print '<tr class="oddeven">';
@@ -998,7 +1005,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
+				//$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 				//$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
 
 				print '<tr class="oddeven">';
@@ -1013,7 +1020,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
+				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dv), 'day').'</td>';
 				print '<td class="right tdamount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>';
 

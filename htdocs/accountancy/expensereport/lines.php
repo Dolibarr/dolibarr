@@ -74,12 +74,16 @@ if (!$sortorder) {
 }
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->bind->write) {
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
+
 
 $formaccounting = new FormAccounting($db);
 
@@ -102,7 +106,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_year = '';
 }
 
-if (is_array($changeaccount) && count($changeaccount) > 0) {
+if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->accounting->bind->write) {
 	$error = 0;
 
 	if (!(GETPOST('account_parent', 'int') >= 0)) {
@@ -115,7 +119,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
 		$sql1 .= " SET erd.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE erd.rowid IN ('.implode(',', $changeaccount).')';
+		$sql1 .= ' WHERE erd.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);

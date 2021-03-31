@@ -48,12 +48,6 @@ $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'facture', $id, '');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -73,10 +67,16 @@ if (!$sortfield) {
 }
 
 $object = new Facture($db);
-if ($object->fetch($id)) {
+if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'facture', $object->id, '');
 
 
 /*
@@ -91,8 +91,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Documents');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
+
+$help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

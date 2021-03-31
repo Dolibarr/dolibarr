@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -59,7 +60,7 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"])) {
+if ($action == 'update' && !$cancel) {
 	// Send mode parameters
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE_EMAILING", GETPOST("MAIN_MAIL_SENDMODE_EMAILING"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT_EMAILING", GETPOST("MAIN_MAIL_SMTP_PORT_EMAILING"), 'chaine', 0, '', $conf->entity);
@@ -446,12 +447,12 @@ if ($action == 'edit') {
 
 		// SMTPS ID
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer'))) {
-			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID_EMAILING.'</td></tr>';
+			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.getDolGlobalString('MAIN_MAIL_SMTPS_ID_EMAILING').'</td></tr>';
 		}
 
 		// SMTPS PW
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer'))) {
-			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW_EMAILING).'</td></tr>';
+			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./', '*', getDolGlobalString('MAIN_MAIL_SMTPS_PW_EMAILING')).'</td></tr>';
 		}
 
 		// TLS
@@ -484,7 +485,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer'))) {
 			if (function_exists('openssl_open')) {
-				print yn($conf->global->MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING);
+				print yn(getDolGlobalInt('MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_EMAILING'));
 			} else {
 				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 			}
@@ -503,11 +504,9 @@ if ($action == 'edit') {
 		print '<br>';
 		/*
 		// Warning 1
-		if ($linuxlike)
-		{
+		if ($linuxlike) {
 			$sendmailoption=ini_get('mail.force_extra_parameters');
-			if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
-			{
+			if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption)) {
 				print info_admin($langs->trans("SendmailOptionNotComplete"));
 			}
 		}*/

@@ -92,14 +92,6 @@ if ($id || $ref) {
 	$object->ref = $object->batch; // For document management ( it use $object->ref)
 }
 
-// Protection if external user
-if ($user->socid > 0) {
-	//accessforbidden();
-}
-//$result = restrictedArea($user, 'mymodule', $id);
-
-
-
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
@@ -114,7 +106,21 @@ $usercandelete = $user->rights->produit->supprimer;
 
 $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
 
+$permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
+//$permissiontodelete = $usercandelete;
+
+// Security check
+if (empty($conf->productbatch->enabled)) {
+	accessforbidden('Module not enabled');
+}
+$socid = 0;
+if ($user->socid > 0) { // Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'productbatch');
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -470,7 +476,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 
 if ($action != 'presend') {

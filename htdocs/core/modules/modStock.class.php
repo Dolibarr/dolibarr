@@ -23,7 +23,7 @@
  *	\brief      	Module pour gerer la tenue de stocks produits
  *	\file       htdocs/core/modules/modStock.class.php
  *	\ingroup    stock
- *	\brief      Fichier de description et activation du module Stock
+ *	\brief      Description and activation file for the module Stock
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -172,6 +172,12 @@ class modStock extends DolibarrModules
 			$this->rights[9][3] = 0; // Permission by default for new user (0/1)
 			$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 			$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
+			$this->rights[10][0] = 1016;
+			$this->rights[10][1] = 'inventoryDeletePermission'; // Permission label
+			$this->rights[10][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[10][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[10][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		}
 
 		// Main menu entries

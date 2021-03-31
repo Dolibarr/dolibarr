@@ -21,7 +21,7 @@
  *      \brief      Module to manage expense report. Replace old module Deplacement.
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
- *      \brief      Description and activation file for module ExpenseReport
+ *      \brief      Description and activation file for the module ExpenseReport
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 

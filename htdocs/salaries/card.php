@@ -282,7 +282,7 @@ if ($action == 'confirm_delete') {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write) {
 	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
 	if (empty($amount)) {
@@ -780,7 +780,7 @@ if ($id) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 	$sql .= ", ".MAIN_DB_PREFIX."salary as salaire";
-	$sql .= " WHERE p.fk_salary = ".$id;
+	$sql .= " WHERE p.fk_salary = ".((int) $id);
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
@@ -882,8 +882,9 @@ if ($id) {
 	print dol_get_fiche_end();
 
 
-	// Action buttons
-
+	/*
+	 * Action bar
+	 */
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
 		// Reopen

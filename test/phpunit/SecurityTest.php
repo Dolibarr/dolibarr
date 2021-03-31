@@ -190,7 +190,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThanOrEqual(0, $result, 'Error on testSqlAndScriptInject kkk');
 		*/
 
-		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
+		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should be ok');
 
@@ -201,7 +201,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// Should detect XSS
 		$expectedresult=1;
 
-		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
+		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
 
@@ -316,6 +316,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_GET["param4"]='../dir';
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
+		$_POST["param6b"]='<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
 		$_GET["param7"]='"c:\this is a path~1\aaa&#110;" abc<bad>def</bad>';
 		$_POST["param8a"]="Hacker<svg o&#110;load='console.log(&quot;123&quot;)'";	// html tag is not closed so it is not detected as html tag but is still harmfull
 		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
@@ -385,6 +386,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=GETPOST("param6", 'nohtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('">', $result);
+
+		$result=GETPOST("param6b");
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('abc', $result);
 
 		// With restricthtml we must remove html open/close tag and content but not htmlentities like &#110;
 
@@ -567,6 +572,21 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$stringtotest = '<a href="javascript&colon;aaa">bbbڴ';
 		$decodedstring = dol_string_onlythesehtmltags($stringtotest, 1, 1, 1);
 		$this->assertEquals('<a href="aaa">bbbڴ', $decodedstring, 'Function did not sanitize correclty with test 3');
+
+		return 0;
+	}
+
+	/**
+	 * testDolStringOnlyTheseHtmlAttributes
+	 *
+	 * @return number
+	 */
+	public function testDolStringOnlyTheseHtmlAttributes()
+	{
+		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
+		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
+		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 1');
 
 		return 0;
 	}

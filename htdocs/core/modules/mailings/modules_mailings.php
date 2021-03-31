@@ -132,14 +132,14 @@ class MailingTargets // This can't be abstract as it is used for some method
 		// phpcs:enable
 		// Mise a jour nombre de destinataire dans table des mailings
 		$sql = "SELECT COUNT(*) nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " WHERE fk_mailing = ".$mailing_id;
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
 			$nb = $obj->nb;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
-			$sql .= " SET nbemail = ".$nb." WHERE rowid = ".$mailing_id;
+			$sql .= " SET nbemail = ".$nb." WHERE rowid = ".((int) $mailing_id);
 			if (!$this->db->query($sql)) {
 				dol_syslog($this->db->error());
 				$this->error = $this->db->error();
@@ -250,7 +250,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	{
 		// phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " WHERE fk_mailing = ".$mailing_id;
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 
 		if (!$this->db->query($sql)) {
 			dol_syslog($this->db->error());

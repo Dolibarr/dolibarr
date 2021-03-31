@@ -179,7 +179,8 @@ $sqlrequestforbankline = $sql;
 
 if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt)) {
 	// TODO Add a test to check newbankreceipt does not exists yet
-	$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX.'bank SET num_releve = "'.$db->escape($newbankreceipt).'" WHERE num_releve = "'.$db->escape($oldbankreceipt).'" AND fk_account = '.$id;
+	$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX.'bank';
+	$sqlupdate .= ' SET num_releve = "'.$db->escape($newbankreceipt).'" WHERE num_releve = "'.$db->escape($oldbankreceipt).'" AND fk_account = '.((int) $id);
 	$result = $db->query($sqlupdate);
 	if ($result < 0) {
 		dol_print_error($db);
@@ -231,7 +232,7 @@ if (empty($numref)) {
 	// List of all standing receipts
 	$sql = "SELECT DISTINCT(b.num_releve) as numr";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= " WHERE b.fk_account = ".$object->id;
+	$sql .= " WHERE b.fk_account = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
@@ -346,7 +347,7 @@ if (empty($numref)) {
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -359,7 +360,7 @@ if (empty($numref)) {
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
@@ -454,11 +455,14 @@ if (empty($numref)) {
 
 			// Date de valeur
 			print '<td valign="center" class="center nowrap">';
-			print dol_print_date($db->jdate($objp->dv), "day").' ';
-			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<span class="spanforajaxedit">'.dol_print_date($db->jdate($objp->dv), "day").'</span>';
+			print '&nbsp;';
+			print '<span class="inline-block">';
+			print '<a class="ajaxforbankoperationchange reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.$numref.'&amp;account='.$object->id.'&amp;rowid='.$objp->rowid.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="ajax reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.$numref.'&amp;account='.$object->id.'&amp;rowid='.$objp->rowid.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
+			print '</span>';
 			print "</td>\n";
 
 			// Type and num
@@ -655,6 +659,29 @@ if (empty($numref)) {
 	print '<td class="right"><b>'.price(price2num($total, 'MT'))."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
+
+	// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
+	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
+	print '
+    <script type="text/javascript">
+    $(function() {
+    	$("a.ajaxforbankoperationchange").each(function(){
+    		var current = $(this);
+    		current.click(function()
+    		{
+				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+    			$.get(url, function(data)
+    			{
+    			    console.log(url)
+					console.log(data)
+    				current.parent().parent().find(".spanforajaxedit").replaceWith(data);
+    			});
+    			return false;
+    		});
+    	});
+    });
+    </script>
+    ';
 
 	print "</div>";
 

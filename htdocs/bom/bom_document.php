@@ -79,6 +79,12 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/bom/".get_exdir(0, 0, 0, 1, $object);
 }
 
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+
 
 /*
  * Actions

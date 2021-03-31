@@ -72,14 +72,14 @@ span.butAction, span.butActionDelete {
 	border-radius: 3px;
 }
 .butActionRefused:last-child, .butAction:last-child, .butActionDelete:last-child {
-	margin-right: 0px !important;
+	margin-<?php echo $right; ?>: 0px !important;
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	display: inline-block;
 	text-align: center;

@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modDav.class.php
  *  \ingroup    dav
- *  \brief      Description and activation file for module dav
+ *  \brief      Description and activation file for the module dav
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

@@ -26,7 +26,7 @@
  *	\brief      Module pour gerer la tenue de propositions commerciales
  *	\file       htdocs/core/modules/modPropale.class.php
  *	\ingroup    propale
- *	\brief      Fichier de description et activation du module Propale
+ *	\brief      Description and activation file for the module customer proposal
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -350,7 +350,7 @@ class modPropale extends DolibarrModules
 		//Import Proposal Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'line_'.$r;
-		$this->import_label[$r] = "ProposalLine"; // Translation key
+		$this->import_label[$r] = "ProposalLines"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = [

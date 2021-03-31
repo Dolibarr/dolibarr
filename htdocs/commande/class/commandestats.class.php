@@ -100,13 +100,13 @@ class CommandeStats extends Stats
 
 		if ($typentid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = c.fk_soc';
-			$this->where .= ' AND s.fk_typent = '.$typentid;
+			$this->where .= ' AND s.fk_typent = '.((int) $typentid);
 		}
 
 		if ($categid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cats ON cats.fk_soc = c.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
-			$this->where .= ' AND cat.rowid = '.$categid;
+			$this->where .= ' AND cat.rowid = '.((int) $categid);
 		}
 	}
 

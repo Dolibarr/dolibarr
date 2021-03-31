@@ -42,9 +42,6 @@ $ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-$result = restrictedArea($user, 'adherent', $id);
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -63,8 +60,6 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-
-$form = new Form($db);
 $object = new Adherent($db);
 $membert = new AdherentType($db);
 $result = $object->fetch($id, $ref);
@@ -73,6 +68,33 @@ if ($result < 0) {
 	exit;
 }
 $upload_dir = $conf->adherent->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'member');
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+	}
+}
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
+
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
 /*
@@ -89,8 +111,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("Member")." - ".$langs->trans("Documents");
-$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder";
+
+llxHeader("", $title, $help_url);
 
 if ($id > 0) {
 	$result = $membert->fetch($object->typeid);

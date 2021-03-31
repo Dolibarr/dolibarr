@@ -97,7 +97,7 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("SalaryPayment"), -1, 'payment');
+print dol_get_fiche_head($head, $hselected, $langs->trans("SalaryPayment"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
@@ -169,7 +169,7 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
@@ -255,7 +255,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->rights->salaries->delete) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentSalaryPaid")).'">'.$langs->trans('Delete').'</a>';
 		}

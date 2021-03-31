@@ -137,7 +137,7 @@ if (!$mesg) {
 }
 
 
-$head = member_stats_prepare_head($adh);
+$head = member_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 

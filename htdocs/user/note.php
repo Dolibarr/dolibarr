@@ -67,7 +67,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
+	if ($action == 'update' && $user->rights->user->user->creer && !GETPOST("cancel")) {
 		$db->begin();
 
 		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5));
@@ -105,7 +105,7 @@ if ($id) {
 
 	print '<div class="underbanner clearboth"></div>';
 
-	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="fichecenter">';

@@ -604,7 +604,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Load default value in property ->default_values
+	 *  Load default values from database table into property ->default_values
 	 *
 	 *  @return int						> 0 if OK, < 0 if KO
 	 */
@@ -616,7 +616,7 @@ class User extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 			$defaultValues = new DefaultValues($this->db);
-			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array($this->entity, $conf->entity)));	// User 0 (all) + me (if defined)
+			$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
 
 			if (!is_array($result) && $result < 0) {
 				setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
@@ -871,7 +871,7 @@ class User extends CommonObject
 					$nid = $obj->id;
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
-					$sql .= " WHERE fk_user = ".$this->id." AND fk_id=".$nid;
+					$sql .= " WHERE fk_user = ".$this->id." AND fk_id = ".((int) $nid);
 					$sql .= " AND entity = ".$entity;
 					if (!$this->db->query($sql)) {
 						$error++;
@@ -1110,16 +1110,14 @@ class User extends CommonObject
 		// Check parameters
 		if ($this->statut == $status) {
 			return 0;
-		} else {
-			$this->statut = $status;
 		}
 
 		$this->db->begin();
 
 		// Save in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-		$sql .= " SET statut = ".$this->statut;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " SET statut = ".((int) $status);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
@@ -1136,6 +1134,8 @@ class User extends CommonObject
 			$this->db->rollback();
 			return -$error;
 		} else {
+			$this->status = $status;
+			$this->statut = $status;
 			$this->db->commit();
 			return 1;
 		}
@@ -1199,7 +1199,7 @@ class User extends CommonObject
 
 		// If contact, remove link
 		if ($this->contact_id > 0) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
 			if (!$error && !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -1737,7 +1737,7 @@ class User extends CommonObject
 			// If user is linked to a member, remove old link to this member
 			if ($this->fk_member > 0) {
 				dol_syslog(get_class($this)."::update remove link with member. We will recreate it later", LOG_DEBUG);
-				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".((int) $this->fk_member);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->error(); $this->db->rollback(); return -5;
@@ -1745,7 +1745,7 @@ class User extends CommonObject
 			}
 			// Set link to user
 			dol_syslog(get_class($this)."::update set link with member", LOG_DEBUG);
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member > 0 ? $this->fk_member : 'null')." where rowid = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member > 0 ? ((int) $this->fk_member) : 'null')." where rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->error(); $this->db->rollback(); return -5;
@@ -2229,7 +2229,7 @@ class User extends CommonObject
 	/**
 	 *  Add user into a group
 	 *
-	 *  @param	int	$group      Id of group
+	 *  @param	int		$group      Id of group
 	 *  @param  int		$entity     Entity
 	 *  @param  int		$notrigger  Disable triggers
 	 *  @return int  				<0 if KO, >0 if OK
@@ -2245,7 +2245,7 @@ class User extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
@@ -2286,7 +2286,7 @@ class User extends CommonObject
 	/**
 	 *  Remove a user from a group
 	 *
-	 *  @param	int   $group       Id of group
+	 *  @param	int   	$group       Id of group
 	 *  @param  int		$entity      Entity
 	 *  @param  int		$notrigger   Disable triggers
 	 *  @return int  			     <0 if KO, >0 if OK
@@ -2302,7 +2302,7 @@ class User extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".$this->id;
-		$sql .= " AND fk_usergroup = ".$group;
+		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".$entity;
 
 		$result = $this->db->query($sql);
@@ -3065,7 +3065,7 @@ class User extends CommonObject
 	 *				fullpath = chemin complet compose des id: "_grandparentid_parentid_id"
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
-	 *  @param		string	$filter				SQL filter on users
+	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user intput.
 	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')

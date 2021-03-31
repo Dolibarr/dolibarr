@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/expensereport/ajax/ajaxprojet.php
+ *       \file       htdocs/expensereport/ajax/ajaxik.php
  *       \ingroup    expensereport
  *       \brief      File to return Ajax response on third parties request
  */
@@ -49,18 +49,18 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'trips'));
 
+$fk_expense = GETPOST('fk_expense', 'int');
+$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
+
+// Security check
+$result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
+
+
 /*
  * View
  */
 
 top_httphead();
-
-
-dol_syslog(join(',', $_POST));
-
-$fk_expense = GETPOST('fk_expense');
-$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
-
 
 if (empty($fk_expense) || $fk_expense < 0) {
 	echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense')));
@@ -82,7 +82,7 @@ if (empty($fk_expense) || $fk_expense < 0) {
 				echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'range' => $range));
 			} else {
 				$ikoffset = price($range->ikoffset, 0, $langs, 1, -1, -1, $conf->currency);
-				echo json_encode(array('up' => $range->coef, 'ikoffset' => $range->ikoffset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $offset), 'comment' => 'offset should be apply on addline or updateline'));
+				echo json_encode(array('up' => $range->coef, 'ikoffset' => $range->ikoffset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $ikoffset), 'comment' => 'offset should be applied on addline or updateline'));
 			}
 		}
 	}

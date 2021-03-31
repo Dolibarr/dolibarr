@@ -290,7 +290,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise($user, $_POST['remise_percent']);
+		$result = $object->set_remise($user, price2num(GETPOST('remise_percent')));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1146,8 +1146,8 @@ if (empty($reshook)) {
 			// Creation commande
 			$object->ref_supplier  	= GETPOST('refsupplier');
 			$object->socid         	= $socid;
-			$object->cond_reglement_id = GETPOST('cond_reglement_id');
-			$object->mode_reglement_id = GETPOST('mode_reglement_id');
+			$object->cond_reglement_id = GETPOST('cond_reglement_id', 'int');
+			$object->mode_reglement_id = GETPOST('mode_reglement_id', 'int');
 			$object->fk_account        = GETPOST('fk_account', 'int');
 			$object->note_private = GETPOST('note_private', 'restricthtml');
 			$object->note_public   	= GETPOST('note_public', 'restricthtml');
@@ -1157,7 +1157,7 @@ if (empty($reshook)) {
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-			$object->fk_project       = GETPOST('projectid');
+			$object->fk_project       = GETPOST('projectid', 'int');
 
 			// Fill array 'array_options' with data from add form
 			if (!$error) {
@@ -1436,10 +1436,10 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'swapstatut' && $object->id > 0) {
 			// bascule du statut d'un contact
-			$result = $object->swapContactStatus(GETPOST('ligne'));
+			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 		} elseif ($action == 'deletecontact' && $object->id > 0) {
 			// Efface un contact
-			$result = $object->delete_contact($_GET["lineid"]);
+			$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1883,7 +1883,7 @@ if ($action == 'create') {
 	// Confirmation de l'envoi de la commande
 	if ($action == 'commande') {
 		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"), $langs->trans("ConfirmMakeOrder", dol_print_date($date_com, 'day')), "confirm_commande", '', 0, 2);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".GETPOST("methodecommande")."&comment=".urlencode(GETPOST("comment")), $langs->trans("MakeOrder"), $langs->trans("ConfirmMakeOrder", dol_print_date($date_com, 'day')), "confirm_commande", '', 0, 2);
 	}
 
 	// Confirmation to delete line

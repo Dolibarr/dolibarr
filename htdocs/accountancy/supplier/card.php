@@ -42,7 +42,13 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
 
@@ -58,7 +64,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql .= " SET fk_code_ventilation = ".$codeventil;
+		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);

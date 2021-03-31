@@ -479,7 +479,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
-		$sql .= " AND cp.fk_user IN (".$user_id.")";
+		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
 		if (!empty($filter)) {
@@ -1122,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
 		if ($status != '-1') {
-			$sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
+			$sql .= " AND cp.statut IN (".$this->db->sanitize($status).")";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2069,7 +2069,7 @@ class Holiday extends CommonObject
 
 		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
-		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".$mysoc->country_id.')';
+		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
@@ -2209,8 +2209,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (empty($user->rights->expensereport->readall)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2251,8 +2251,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (empty($user->rights->expensereport->read_all)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

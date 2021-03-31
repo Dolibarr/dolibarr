@@ -1023,7 +1023,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf, ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-		$sql .= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".$object->id;
+		$sql .= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".((int) $object->id);
 		$sql .= " ORDER BY p.datep";
 		$resql = $this->db->query($sql);
 		if ($resql) {

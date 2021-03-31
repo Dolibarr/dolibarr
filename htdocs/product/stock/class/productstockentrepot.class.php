@@ -196,7 +196,7 @@ class ProductStockEntrepot extends CommonObject
 		if (!empty($id)) {
 			$sql .= ' WHERE t.rowid = '.((int) $id);
 		} else {
-			$sql .= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
+			$sql .= ' WHERE t.fk_product = '.((int) $fk_product).' AND t.fk_entrepot = '.((int) $fk_entrepot);
 		}
 
 		$resql = $this->db->query($sql);

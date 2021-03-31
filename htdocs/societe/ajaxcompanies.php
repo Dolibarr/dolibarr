@@ -58,20 +58,18 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog(join(',', $_GET));
-
 
 // Generation liste des societes
 if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 	$return_arr = array();
 
 	// Define filter on text typed
-	$socid = $_GET['newcompany'] ? $_GET['newcompany'] : '';
+	$socid = GETPOST('newcompany');
 	if (!$socid) {
-		$socid = $_GET['socid'] ? $_GET['socid'] : '';
+		$socid = GETPOST('socid', 'int');
 	}
 	if (!$socid) {
-		$socid = $_GET['id_fourn'] ? $_GET['id_fourn'] : '';
+		$socid = GETPOST('id_fourn', 'int');
 	}
 
 	$sql = "SELECT rowid, nom";
@@ -90,7 +88,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 			$sql .= " OR code_fournisseur LIKE '%".$db->escape($socid)."%'";
 		}
 		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) {
-			$sql .= " OR rowid = '".$db->escape($socid)."'";
+			$sql .= " OR rowid = ".((int) $socid);
 		}
 		$sql .= ")";
 	}

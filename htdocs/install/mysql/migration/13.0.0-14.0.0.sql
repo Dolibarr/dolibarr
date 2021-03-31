@@ -52,6 +52,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
 ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
+ALTER TABLE llx_events ADD COLUMN authentication_method varchar(64) NULL;
+ALTER TABLE llx_events ADD COLUMN fk_oauth_token integer NULL;
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN tag varchar(64) NULL;
 ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_tag (tag);
@@ -74,6 +76,11 @@ ALTER TABLE llx_facture MODIFY COLUMN date_valid DATETIME NULL DEFAULT NULL;
 
 
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_dolibarr_state_board.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_dolibarr_state_board.php' AND entity = 1);
+
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_members_last_modified.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_members_last_modified.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_members_last_subscriptions.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_members_last_subscriptions.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_members_subscriptions_by_year.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_members_subscriptions_by_year.php' AND entity = 1);
+-- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_members_by_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_members_by_type.php' AND entity = 1);
 
 
 ALTER TABLE llx_website ADD COLUMN lastaccess datetime NULL;
@@ -141,7 +148,8 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_warehouse(fk_warehouse);
 
 -- VMYSQL4.3 ALTER TABLE llx_societe MODIFY COLUMN fk_typent integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe ALTER COLUMN fk_typent DROP NOT NULL;
-UPDATE llx_societe SET fk_typent=NULL WHERE fk_typent=0;
+UPDATE llx_societe SET fk_typent=NULL, tms=tms WHERE fk_typent=0;
+
 DELETE FROM llx_c_typent WHERE code='TE_UNKNOWN';
 
 ALTER TABLE llx_socpeople MODIFY poste varchar(255);
@@ -263,10 +271,51 @@ UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
 ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
 
 
-DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
-DELETE FROM llx_boxes_def WHERE file IN ('box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
 
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_ticket_by_severity.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_ticket_by_severity.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_ticket_last_x_days.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_ticket_last_x_days.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_tickets_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_tickets_type.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_new_vs_close_ticket.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_new_vs_close_ticket.php' AND entity = 1);
+
+create table llx_product_perentity
+(
+    rowid         				integer AUTO_INCREMENT PRIMARY KEY,
+    fk_product	   				integer,
+    entity             			integer DEFAULT 1 NOT NULL,      	-- multi company id
+    accountancy_code_sell         varchar(32),                        -- Selling accountancy code
+    accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity
+    accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
+    accountancy_code_buy          varchar(32),                        -- Buying accountancy code
+    accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
+    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
+ALTER TABLE llx_product_perentity ADD UNIQUE INDEX uk_product_perentity (fk_product, entity);
+
+create table llx_societe_perentity
+(
+    rowid         			integer AUTO_INCREMENT PRIMARY KEY,
+    fk_soc        			integer,
+    entity             		integer DEFAULT 1 NOT NULL,             -- multi company id
+--  code_compta            	varchar(24),                         	-- code compta client
+--  code_compta_fournisseur varchar(24),                         	-- code compta founisseur
+    accountancy_code_sell		varchar(32),                            -- Selling accountancy code
+    accountancy_code_buy		varchar(32)                             -- Buying accountancy code
+)ENGINE=innodb;
+
+ALTER TABLE llx_societe_perentity ADD INDEX idx_societe_perentity_fk_soc (fk_soc);
+ALTER TABLE llx_societe_perentity ADD UNIQUE INDEX uk_societe_perentity (fk_soc, entity);
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+ALTER TABLE llc_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
+
+
+ALTER TABLE llx_propal ADD COLUMN date_signature datetime AFTER date_valid;
+ALTER TABLE llx_propal ADD COLUMN fk_user_signature integer AFTER fk_user_valid;
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_signature FOREIGN KEY (fk_user_signature) REFERENCES llx_user (rowid);
+
+UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signature IS NULL AND fk_user_cloture IS NOT NULL;
+UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;

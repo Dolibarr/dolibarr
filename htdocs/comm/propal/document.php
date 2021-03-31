@@ -80,6 +80,13 @@ if (!$sortfield) {
 $object = new Propal($db);
 $object->fetch($id, $ref);
 
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	$object->id = $user->socid;
+}
+restrictedArea($user, 'propal', $object->id);
+
 
 /*
  * Actions

@@ -45,12 +45,6 @@ $confirm	= GETPOST('confirm');
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expedition', $id, '');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -71,14 +65,21 @@ if (!$sortfield) {
 
 $object = new Expedition($db);
 
+if ($object->fetch($id, $ref)) {
+	$object->fetch_thirdparty();
+	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
+}
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
+
 
 /*
  * Actions
  */
-if ($object->fetch($id)) {
-	$object->fetch_thirdparty();
-	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
-}
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 

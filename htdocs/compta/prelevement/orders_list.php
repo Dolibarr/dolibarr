@@ -205,7 +205,7 @@ if ($result) {
 
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td class="right">';
 			print $bon->LibStatut($obj->statut, 3);

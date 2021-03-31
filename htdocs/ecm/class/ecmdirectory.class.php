@@ -646,6 +646,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " c.fk_user_c,";
 		$sql .= " c.date_c,";
 		$sql .= " u.login as login_c,";
+		$sql .= " u.statut as statut_c,";
 		$sql .= " ca.rowid as rowid_fille";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ecm_directories as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
@@ -667,7 +668,8 @@ class EcmDirectory extends CommonObject
 				$this->cats[$obj->rowid]['description'] = $obj->description;
 				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
 				$this->cats[$obj->rowid]['date_c'] = $this->db->jdate($obj->date_c);
-				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
+				$this->cats[$obj->rowid]['fk_user_c'] = (int) $obj->fk_user_c;
+				$this->cats[$obj->rowid]['statut_c'] = (int) $obj->statut_c;
 				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
 
 				if (!empty($obj->rowid_fille)) {

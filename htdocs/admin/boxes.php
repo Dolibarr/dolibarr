@@ -49,8 +49,8 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", $_POST["MAIN_BOXES_MAXLINES"], '', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", $_POST["MAIN_ACTIVATE_FILECACHE"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOST("MAIN_BOXES_MAXLINES", 'int'), '', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
 if ($action == 'add') {
@@ -93,7 +93,7 @@ if ($action == 'add') {
 						$arrayofexistingboxid = array();
 						$nbboxonleft = $nbboxonright = 0;
 						$sql = "SELECT box_id, box_order FROM ".MAIN_DB_PREFIX."boxes";
-						$sql .= " WHERE position = ".$pos." AND fk_user = ".$fk_user." AND entity = ".$conf->entity;
+						$sql .= " WHERE position = ".((int) $pos)." AND fk_user = ".((int) $fk_user)." AND entity = ".((int) $conf->entity);
 						dol_syslog("boxes.php activate box", LOG_DEBUG);
 						$resql = $db->query($sql);
 						if ($resql) {

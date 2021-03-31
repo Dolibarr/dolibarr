@@ -25,6 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
 // Load translation files required by the page
@@ -54,7 +55,12 @@ print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
 
 // Get version of PHP
 $phpversion = version_php();
-print "<strong>PHP</strong> - ".$langs->trans("Version").": ".$phpversion."<br>\n";
+print "<strong>PHP</strong>: ".$langs->trans("Version").": ".$phpversion;
+if (function_exists('php_ini_loaded_file')) {
+	$inipath = php_ini_loaded_file();
+	print " - <strong>INI</strong>: ".$inipath;
+}
+print "<br>\n";
 
 // Get versionof web server
 print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
@@ -62,6 +68,35 @@ print '<br>';
 
 print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0))."<br>\n";
 print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0))."<br>\n";
+print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0))."<br>\n";
+print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0))."<br>\n";
+print "<strong>PHP disable_functions</strong> = ";
+$arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
+$arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
+$arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open,popen');
+print join(', ', $arrayoffunctionsdisabled);
+print "<br>\n";
+$todisabletext = '';
+foreach ($arrayoffunctionstodisable as $functiontodisable) {
+	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
+		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.$functiontodisable;
+	}
+}
+if ($todisabletext) {
+	print $langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
+	print '<br>';
+}
+$todisabletext = '';
+foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
+	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
+		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.$functiontodisable;
+	}
+}
+if ($todisabletext) {
+	print $langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
+	print '<br>';
+}
+
 print '<br>';
 
 // XDebug
@@ -110,6 +145,14 @@ $perms = fileperms($dolibarr_main_document_root.'/'.$conffile);
 if ($perms) {
 	if (($perms & 0x0004) || ($perms & 0x0002)) {
 		print img_warning().' '.$langs->trans("ConfFileIsReadableOrWritableByAnyUsers");
+		// Web user group by default
+		$labeluser = dol_getwebuser('user');
+		$labelgroup = dol_getwebuser('group');
+		print ' '.$langs->trans("User").': '.$labeluser.':'.$labelgroup;
+		if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
+			$arrayofinfoofuser = posix_getpwuid(posix_geteuid());
+			print ' <span class="opacitymedium">(POSIX '.$arrayofinfoofuser['name'].':'.$arrayofinfoofuser['gecos'].':'.$arrayofinfoofuser['dir'].':'.$arrayofinfoofuser['shell'].')</span>';
+		}
 	} else {
 		print img_picto('', 'tick');
 	}

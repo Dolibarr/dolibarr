@@ -48,7 +48,7 @@ if ($mode == 'mine') {
 	$mine = 1;
 }
 
-$projectid = isset($_GET["id"]) ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
+$projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
 
 // Security check
 $socid = 0;
@@ -491,9 +491,11 @@ print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").
 /*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br>';
+print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>';
+print '<span class="nowraponall">';
 print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
 print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
+print '</span>';
 print '</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</td>';
 

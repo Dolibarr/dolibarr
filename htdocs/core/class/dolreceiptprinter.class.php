@@ -784,7 +784,7 @@ class dolReceiptPrinter extends Printer
 						$sql .= " cp.code";
 						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
+						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $object->id);
 						$sql .= " ORDER BY p.datep";
 						$resql = $this->db->query($sql);
 						if ($resql) {
@@ -879,7 +879,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE rowid = '.$printerid;
+		$sql .= ' WHERE rowid = '.((int) $printerid);
 		$sql .= ' AND entity = '.$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {

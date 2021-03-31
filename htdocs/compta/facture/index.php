@@ -232,7 +232,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -285,7 +285,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 		$result .= '<tr class="oddeven">';
 		$result .= '<td class="nowrap">'.$objectstatic->getNomUrl(1).'</td>';
 		$result .= '<td>'.$companystatic->getNomUrl(1, 'customer', 24).'</td>';
-		$result .= '<td class="right">'.price($obj->total_ttc).'</td>';
+		$result .= '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 		$result .= '</tr>';
 
 		$i++;
@@ -299,7 +299,7 @@ function getDraftTable($maxCount = 500, $socid = 0)
 	} elseif ($total > 0) {
 		$result .= '<tr class="liste_total">';
 		$result .= '<td colspan="2" class="right">'.$langs->trans("Total").'</td>';
-		$result .= '<td class="right">'.price($total).'</td>';
+		$result .= '<td class="right"><span class="amount">'.price($total).'</span></td>';
 		$result .= '</tr>';
 	}
 
@@ -329,7 +329,7 @@ function getLatestEditTable($maxCount = 5, $socid = 0)
 	$sql .= " WHERE f.fk_soc = s.rowid";
 	$sql .= " AND f.entity IN (".getEntity('facture').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -432,7 +432,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY f.rowid DESC";
 	$sql .= $db->plimit($maxCount, 0);
@@ -508,7 +508,7 @@ function getOpenTable($maxCount = 500, $socid = 0)
 
 		$result .= '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 		$result .= '<td class="right">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
-		$result .= '<td class="right">'.price($obj->total_ttc).'</td>';
+		$result .= '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
 		$result .= '</tr>';
 

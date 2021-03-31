@@ -144,15 +144,19 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->rights->accounting->comptarapport->lire) {
-	accessforbidden();
-}
-
 $AccCat = new AccountancyCategory($db);
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
 
 
 /*
@@ -277,7 +281,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
 	if (! empty($month)) {
-		$sql .= " AND MONTH(t.doc_date) = " . $month;
+		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);
 	if ($resql)
@@ -496,18 +500,18 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 				print '</td>';
 
-				print '<td class="right">'.price($totCat['NP']).'</td>';
-				print '<td class="right">'.price($totCat['N']).'</td>';
+				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($totCat['N']).'</span></td>';
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) >= $date_startmonth) {
-						print '<td class="right">'.price($v).'</td>';
+						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
-						print '<td class="right">'.price($v).'</td>';
+						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 
@@ -527,20 +531,20 @@ if ($modecompta == 'CREANCES-DETTES') {
 							print ' - ';
 							print $cpt['account_label'];
 							print '</td>';
-							print '<td class="right">'.price($resultNP).'</td>';
-							print '<td class="right">'.price($resultN).'</td>';
+							print '<td class="right"><span class="amount">'.price($resultNP).'</span></td>';
+							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {
 								if (($k + 1) >= $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right">'.price($resultM).'</td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span>/td>';
 								}
 							}
 							foreach ($months as $k => $v) {
 								if (($k + 1) < $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right">'.price($resultM).'</td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
 								}
 							}
 							print "</tr>\n";

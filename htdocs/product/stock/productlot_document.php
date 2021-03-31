@@ -90,6 +90,28 @@ if ($id || $ref) {
 	}
 }
 
+$usercanread = $user->rights->produit->lire;
+$usercancreate = $user->rights->produit->creer;
+$usercandelete = $user->rights->produit->supprimer;
+
+$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+
+$permissiontoread = $usercanread;
+$permissiontoadd = $usercancreate;
+//$permissiontodelete = $usercandelete;
+
+// Security check
+if (empty($conf->productbatch->enabled)) {
+	accessforbidden('Module not enabled');
+}
+$socid = 0;
+if ($user->socid > 0) { // Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'productbatch');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions

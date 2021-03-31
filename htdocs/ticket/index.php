@@ -46,6 +46,7 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -404,7 +405,7 @@ if ($result) {
 
 		$db->free($result);
 	} else {
-		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</span></td></tr>';
 	}
 
 	print "</table>";

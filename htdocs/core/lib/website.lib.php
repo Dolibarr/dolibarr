@@ -846,9 +846,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
 		}
-		$sql .= " WHERE wp.fk_website = ".$website->id;
+		$sql .= " WHERE wp.fk_website = ".((int) $website->id);
 		if ($status >= 0) {
-			$sql .= " AND wp.status = ".$status;
+			$sql .= " AND wp.status = ".((int) $status);
 		}
 		if ($langcode) {
 			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
@@ -859,7 +859,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			foreach ($tmparrayoftype as $tmptype) {
 				$typestring .= ($typestring ? ", " : "")."'".$db->escape(trim($tmptype))."'";
 			}
-			$sql .= " AND wp.type_container IN (".$typestring.")";
+			$sql .= " AND wp.type_container IN (".$db->sanitize($typestring, 1).")";
 		}
 		$sql .= " AND (";
 		$searchalgo = '';

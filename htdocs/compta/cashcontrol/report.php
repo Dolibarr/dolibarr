@@ -72,6 +72,15 @@ $sday   = $cashcontrol->day_close;
 $posmodule = $cashcontrol->posmodule;
 $terminalid = $cashcontrol->posnumber;
 
+// Security check
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+	accessforbidden();
+}
+
 
 /*
  * View
@@ -195,7 +204,7 @@ if ($resql) {
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td class="right">'.price($cashcontrol->opening).'</td>';
+			print '<td></td><td></td><td></td><td class="right"><span class="amount">'.price($cashcontrol->opening).'</span></td>';
 			print '</tr>';
 			$first = "no";
 		}*/

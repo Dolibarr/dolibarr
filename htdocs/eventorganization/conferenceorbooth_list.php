@@ -132,17 +132,12 @@ $permissiontoadd = $user->rights->eventorganization->write;
 $permissiontodelete = $user->rights->eventorganization->delete;
 
 // Security check
-if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
+//$socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'eventorganization', $id, '');
-//if (!$permissiontoread) accessforbidden();
-
+$result = restrictedArea($user, 'eventorganization');
 
 
 /*
@@ -205,11 +200,11 @@ $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("ConferenceOrBoot
 
 if ($projectid > 0) {
 	$project = new Project($db);
-	$result=$project->fetch($projectid);
+	$result = $project->fetch($projectid);
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
 	}
-	$result=$project->fetch_thirdparty();
+	$result = $project->fetch_thirdparty();
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
 	}
@@ -270,7 +265,7 @@ if ($projectid > 0) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->rights->project->all->lire) {
 		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
-		$project->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$project->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($project, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -305,7 +300,7 @@ if ($projectid > 0) {
 		print '<br>';
 	}
 	if (!empty($conf->eventorganization->enabled)) {
-		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+		print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
 		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 	}
@@ -386,7 +381,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -396,7 +391,7 @@ $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.id = ef.fk_object)";
 }
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as cact ON cact.id=t.fk_action AND cact.module LIKE '%@eventorganization'";
 // Add table from hooks
@@ -408,14 +403,16 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+
 foreach ($search as $key => $val) {
-	if (in_array($key, $object->fields)) {
+	if (array_key_exists($key, $object->fields)) {
+		//var_dump($key,$object->fields);
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
-			if ($search[$key] == '-1') {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
+			if ($search[$key] == '-1' || $search[$key] === '0') {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -424,6 +421,7 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
+		//var_dump($key,$object->fields);
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
@@ -437,6 +435,7 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -555,9 +554,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?action=create'.(!empty($projectid)?'&fk_project='.$projectid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendConferenceOrBoothRef";
@@ -618,7 +617,7 @@ foreach ($object->fields as $key => $val) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
-		} elseif (strpos($val['type'], 'integer:') === 0) {
+		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';

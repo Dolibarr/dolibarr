@@ -88,14 +88,9 @@ if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
 }
 
-// Security check
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
-if ($user->socid > 0) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $id, '&societe');
-
 $action = GETPOST('action', 'aZ09');
+
+$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -124,15 +119,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
-
-if ($object->id > 0) {
-	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
-		accessforbidden();
-	}
-}
-
 $now = dol_now();
 
 if ($id > 0 && empty($object->id)) {
@@ -142,6 +128,17 @@ if ($id > 0 && empty($object->id)) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
 }
+if ($object->id > 0) {
+	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+		accessforbidden();
+	}
+}
+
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*
@@ -162,7 +159,7 @@ if (empty($reshook)) {
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = $_POST["customeraccountancycode"];
+		$object->code_compta = GETPOST("customeraccountancycode");
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -305,7 +302,9 @@ $title = $langs->trans("CustomerCard");
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name;
 }
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
+
 llxHeader('', $title, $help_url);
 
 
@@ -1334,9 +1333,8 @@ if ($object->id > 0) {
 
 
 	/*
-	 * Barre d'actions
+	 * Action bar
 	 */
-
 	print '<div class="tabsAction">';
 
 	$parameters = array();

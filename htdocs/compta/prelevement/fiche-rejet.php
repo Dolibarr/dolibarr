@@ -177,7 +177,7 @@ $sql .= " AND pl.fk_soc = s.rowid";
 $sql .= " AND pl.statut = 3 ";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY pl.amount DESC";
 
@@ -222,7 +222,7 @@ if ($resql) {
 			print '</a></td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$obj->name."</a></td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 			print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
 			print '<td class="center">'.yn($obj->afacturer).'</td>';
@@ -240,7 +240,7 @@ if ($resql) {
 	if ($num > 0) {
 		print '<tr class="liste_total"><td>&nbsp;</td>';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td class="right">'.price($total)."</td>\n";
+		print '<td class="right"><span class="amount">'.price($total)."</span></td>\n";
 		print '<td colspan="3">&nbsp;</td>';
 		print "</tr>\n";
 	}

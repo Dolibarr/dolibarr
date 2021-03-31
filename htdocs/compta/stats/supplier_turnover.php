@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file        htdocs/compta/stats/supplier_ca.php
+ *	\file        htdocs/compta/stats/supplier_turnover.php
  *	\brief       Page reporting purchase turnover
  */
 
@@ -47,8 +47,8 @@ if (empty($year)) {
 	$month_current = strftime("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');		// We use timezone of server so report is same from everywhere
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
@@ -120,8 +120,6 @@ if (!empty($conf->accounting->enabled)) {
 }
 
 
-
-
 /*
  * View
  */
@@ -137,7 +135,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
 	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
@@ -145,7 +142,6 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("PurchaseTurnoverCollected");
 	$calcmode = $langs->trans("CalcModeEngagement");
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 	$builddate = dol_now();
@@ -156,12 +152,14 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{link1}', '{link2}').')';
 	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverTotalPurchaseJournal");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 
 $moreparam = array();
 if (!empty($modecompta)) {

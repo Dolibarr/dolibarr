@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer l'appel automatique
  *	\file       htdocs/core/modules/modClickToDial.class.php
  *	\ingroup    clicktodial
- *	\brief      Fichier de description et activation du module de click to Dial
+ *	\brief      Description and activation file for the module Click to Dial
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

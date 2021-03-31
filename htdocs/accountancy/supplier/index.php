@@ -69,12 +69,23 @@ $action = GETPOST('action', 'aZ09');
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
-if ($action == 'clean' || $action == 'validatehistory') {
+if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as fd";
@@ -182,8 +193,8 @@ if ($action == 'validatehistory') {
 
 			if ($objp->aarowid_suggest > 0) {
 				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-				$sqlupdate .= " SET fk_code_ventilation = ".$objp->aarowid_suggest;
-				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
+				$sqlupdate .= " SET fk_code_ventilation = ".((int) $objp->aarowid_suggest);
+				$sqlupdate .= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".((int) $objp->rowid);
 
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {

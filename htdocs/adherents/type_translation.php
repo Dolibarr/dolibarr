@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -142,13 +142,16 @@ $result = $object->fetch($id);
  */
 
 $title = $langs->trans('MemberTypeCard');
-$helpurl = '';
+
+$help_url = '';
+
 $shortlabel = dol_trunc($object->label, 16);
 
 $title = $langs->trans('MemberType')." ".$shortlabel." - ".$langs->trans('Translation');
-$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-llxHeader('', $title, $helpurl);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
@@ -175,12 +178,9 @@ print dol_get_fiche_end();
 
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
+/*
+ * Action bar
+ */
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {

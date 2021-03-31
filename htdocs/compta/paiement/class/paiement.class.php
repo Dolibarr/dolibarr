@@ -171,9 +171,9 @@ class Paiement extends CommonObject
 		if ($id > 0) {
 			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
-			$sql .= " AND p.ref = '".$ref."'";
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
 		} elseif ($fk_bank) {
-			$sql .= ' AND p.fk_bank = '.$fk_bank;
+			$sql .= ' AND p.fk_bank = '.((int) $fk_bank);
 		}
 
 		$resql = $this->db->query($sql);
@@ -736,7 +736,7 @@ class Paiement extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
 		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' set fk_bank = '.((int) $id_bank);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this).'::update_fk_bank', LOG_DEBUG);
@@ -855,7 +855,7 @@ class Paiement extends CommonObject
 	 */
 	public function validate(User $user = null)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 1 WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this).'::valide', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -876,7 +876,7 @@ class Paiement extends CommonObject
 	 */
 	public function reject(User $user = null)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET statut = 2 WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this).'::reject', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1127,9 +1127,10 @@ class Paiement extends CommonObject
 	 *	@param	string	$option			Sur quoi pointe le lien
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
+	 *  @param	string	$morecss		Add more CSS
 	 *	@return	string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
 		global $conf, $langs;
 
@@ -1166,7 +1167,7 @@ class Paiement extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$label = $langs->trans("ShowMyObject");
+				$label = $langs->trans("Payment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

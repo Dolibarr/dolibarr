@@ -91,8 +91,10 @@ $form = new Form($db);
 $fiscalyearstatic = new Fiscalyear($db);
 
 $title = $langs->trans('AccountingPeriods');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";

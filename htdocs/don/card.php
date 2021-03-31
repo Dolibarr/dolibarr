@@ -275,7 +275,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 // Remove file in doc form
 /*if ($action == 'remove_file')
 {
-	$object = new Don($db, 0, $_GET['id']);
+	$object = new Don($db, 0, GETPOST('id', 'int'));
 	if ($object->fetch($id))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -329,7 +329,9 @@ if ($action == 'builddoc')
  * View
  */
 
-llxHeader('', $langs->trans("Donation"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
+llxHeader('', $langs->trans("Donation"), $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -857,7 +859,7 @@ if (!empty($id) && $action != 'edit') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	/*
-	 * Documents generes
+	 * Generated documents
 	 */
 	$filename = dol_sanitizeFileName($object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);

@@ -59,8 +59,6 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog(join(',', $_POST));
-
 // Generate list of countries
 if (!empty($country)) {
 	global $langs;
