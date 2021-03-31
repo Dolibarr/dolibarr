@@ -382,7 +382,7 @@ if ($massaction == 'makepayment') {
 				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
-				$rsql .= " WHERE fk_facture = ".$objecttmp->id;
+				$rsql .= " WHERE fk_facture = ".((int) $objecttmp->id);
 				$rsql .= " AND pfd.fk_user_demande = u.rowid";
 				$rsql .= " AND pfd.traite = 0";
 				$rsql .= " ORDER BY pfd.date_demande DESC";

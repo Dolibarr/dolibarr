@@ -178,7 +178,7 @@ if ($massaction == 'ventil') {
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
-				$sql .= " WHERE rowid = ".$monId;
+				$sql .= " WHERE rowid = ".((int) $monId);
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);

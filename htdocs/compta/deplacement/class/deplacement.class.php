@@ -441,7 +441,7 @@ class Deplacement extends CommonObject
 
 		$sql = "SELECT id, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees";
-		$sql .= " WHERE active = ".$active;
+		$sql .= " WHERE active = ".((int) $active);
 
 		dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
 		$result = $this->db->query($sql);

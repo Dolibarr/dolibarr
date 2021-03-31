@@ -560,7 +560,7 @@ class Localtax extends CommonObject
 	{
 		// phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'localtax SET fk_bank = '.((int) $id);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;

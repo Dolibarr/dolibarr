@@ -105,13 +105,13 @@ class FactureStats extends Stats
 
 		if ($typentid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = f.fk_soc';
-			$this->where .= ' AND s.fk_typent = '.$typentid;
+			$this->where .= ' AND s.fk_typent = '.((int) $typentid);
 		}
 
 		if ($categid) {
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = f.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
-			$this->where .= ' AND c.rowid = '.$categid;
+			$this->where .= ' AND c.rowid = '.((int) $categid);
 		}
 	}
 

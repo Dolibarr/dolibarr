@@ -118,7 +118,7 @@ if (empty($reshook)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
-				$sql .= " WHERE er.resource_id = ".$resource_id;
+				$sql .= " WHERE er.resource_id = ".((int) $resource_id);
 				$sql .= " AND er.busy = 1";
 				$sql .= " AND (";
 
@@ -193,8 +193,8 @@ if (empty($reshook)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($object->resource_type)."'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element_type)."'";
-				$sql .= " WHERE er.resource_id = ".$object->resource_id;
-				$sql .= " AND ac.id != ".$object->element_id;
+				$sql .= " WHERE er.resource_id = ".((int) $object->resource_id);
+				$sql .= " AND ac.id <> ".((int) $object->element_id);
 				$sql .= " AND er.busy = 1";
 				$sql .= " AND (";
 

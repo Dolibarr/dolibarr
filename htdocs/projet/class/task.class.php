@@ -1317,9 +1317,9 @@ class Task extends CommonObject
 		$sql .= " SUM(t.task_duration) as nbseconds,";
 		$sql .= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " WHERE t.fk_task = ".$id;
+		$sql .= " WHERE t.fk_task = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
-			$sql .= " AND fk_user = ".$fuser->id;
+			$sql .= " AND fk_user = ".((int) $fuser->id);
 		}
 		if ($dates > 0) {
 			$datefieldname = "task_datehour";
@@ -1553,7 +1553,7 @@ class Task extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
 			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {

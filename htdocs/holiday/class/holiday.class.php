@@ -2069,7 +2069,7 @@ class Holiday extends CommonObject
 
 		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
-		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".$mysoc->country_id.')';
+		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}

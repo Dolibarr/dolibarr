@@ -114,7 +114,7 @@ class FormExpenseReport
 
 		$sql = "SELECT c.id, c.code, c.label as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
 		if ($active >= 0) {
-			$sql .= " WHERE c.active = ".$active;
+			$sql .= " WHERE c.active = ".((int) $active);
 		}
 		$sql .= " ORDER BY c.label ASC";
 		$resql = $this->db->query($sql);

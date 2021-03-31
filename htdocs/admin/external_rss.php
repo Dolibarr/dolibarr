@@ -140,7 +140,7 @@ if (GETPOST("delete")) {
 				$resql = $db->query($sql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-				$sql .= " WHERE rowid = ".$obj->rowid;
+				$sql .= " WHERE rowid = ".((int) $obj->rowid);
 				$resql = $db->query($sql);
 
 				if (!$resql) {

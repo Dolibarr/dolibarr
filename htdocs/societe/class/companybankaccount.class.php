@@ -217,12 +217,12 @@ class CompanyBankAccount extends Account
 			$sql .= " WHERE rowid = ".((int) $id);
 		}
 		if ($socid) {
-			$sql .= " WHERE fk_soc  = ".$socid;
+			$sql .= " WHERE fk_soc  = ".((int) $socid);
 			if ($default > -1) {
-				$sql .= " AND default_rib = ".$this->db->escape($default);
+				$sql .= " AND default_rib = ".((int) $default);
 			}
 			if ($type) {
-				$sql .= " AND type ='".$this->db->escape($type)."'";
+				$sql .= " AND type = '".$this->db->escape($type)."'";
 			}
 		}
 
@@ -351,12 +351,12 @@ class CompanyBankAccount extends Account
 				$this->db->begin();
 
 				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
-				$sql2 .= " WHERE type = 'ban' AND fk_soc = ".$obj->fk_soc;
+				$sql2 .= " WHERE type = 'ban' AND fk_soc = ".((int) $obj->fk_soc);
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result2 = $this->db->query($sql2);
 
 				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
-				$sql3 .= " WHERE rowid = ".$obj->id;
+				$sql3 .= " WHERE rowid = ".((int) $obj->id);
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result3 = $this->db->query($sql3);
 

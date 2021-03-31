@@ -164,7 +164,7 @@ class ProductFournisseur extends Product
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-		$sql .= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
+		$sql .= " WHERE fk_product = ".$this->id." AND fk_soc = ".((int) $id_fourn);
 
 		dol_syslog(get_class($this)."::remove_fournisseur", LOG_DEBUG);
 		$resql2 = $this->db->query($sql);
@@ -208,7 +208,7 @@ class ProductFournisseur extends Product
 
 		if (empty($error)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(get_class($this)."::remove_product_fournisseur_price", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -438,7 +438,7 @@ class ProductFournisseur extends Product
 
 			// Delete price for this quantity
 			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " WHERE fk_soc = ".$fourn->id." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".$qty." AND entity = ".$conf->entity;
+			$sql .= " WHERE fk_soc = ".$fourn->id." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".((float) $qty)." AND entity = ".$conf->entity;
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Add price for this quantity to supplier

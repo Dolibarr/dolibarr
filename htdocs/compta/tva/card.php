@@ -618,7 +618,7 @@ if ($id) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
 	$sql .= ", ".MAIN_DB_PREFIX."tva as tva";
-	$sql .= " WHERE p.fk_tva = ".$id;
+	$sql .= " WHERE p.fk_tva = ".((int) $id);
 	$sql .= " AND p.fk_tva = tva.rowid";
 	$sql .= " AND tva.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";

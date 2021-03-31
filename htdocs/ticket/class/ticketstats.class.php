@@ -98,7 +98,7 @@ class TicketStats extends Stats
 	{
 		$sql = "SELECT MONTH(datec) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(datec) = ".$year;
+		$sql .= " WHERE YEAR(datec) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

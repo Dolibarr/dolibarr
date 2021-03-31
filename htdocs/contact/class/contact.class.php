@@ -1652,7 +1652,7 @@ class Contact extends CommonObject
 		// Desactive utilisateur
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
 		$sql .= " SET statut = ".((int) $this->statut);
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
@@ -1882,7 +1882,7 @@ class Contact extends CommonObject
 
 		$sql = "SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 		if ($active >= 0) {
-			$sql .= " WHERE active = ".$active;
+			$sql .= " WHERE active = ".((int) $active);
 		}
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);

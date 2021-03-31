@@ -218,7 +218,7 @@ if ($db->type == 'pgsql') {
 } else {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
 }
-$sql .= " WHERE asy.rowid = ".$pcgver;
+$sql .= " WHERE asy.rowid = ".((int) $pcgver);
 //print $sql;
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;

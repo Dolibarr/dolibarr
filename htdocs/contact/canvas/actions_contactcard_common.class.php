@@ -308,7 +308,7 @@ abstract class ActionsContactCardCommon
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {
-			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".((int) $this->object->country_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);

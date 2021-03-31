@@ -291,7 +291,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				$sql = "SELECT p.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-				$sql .= " WHERE p.fk_soc = ".$object->id;
+				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 
 				$result = $this->db->query($sql);
 				$num = $this->db->num_rows($result);
