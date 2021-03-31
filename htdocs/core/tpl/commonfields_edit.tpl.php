@@ -78,7 +78,7 @@ foreach ($object->fields as $key => $val) {
 		}
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
 	} elseif ($val['type'] == 'price') {
-		$value = price2num(GETPOST($key));
+		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
 	} else {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}
