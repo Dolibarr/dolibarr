@@ -1282,11 +1282,18 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
-			print '<!-- '.$sql.' -->';
+			$sql1 = 'ALTER TABLE '.$table.' ROW_FORMAT=dynamic;';
+			$sql2 = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {
-				$resql = $db->query($sql);
-				print ' - Done ('.($resql ? 'OK' : 'KO').')';
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
 			} else {
 				print ' - Disabled';
 			}
