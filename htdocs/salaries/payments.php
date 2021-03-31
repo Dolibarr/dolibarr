@@ -75,6 +75,8 @@ $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_dateep_start = dol_mktime(0, 0, 0, GETPOST('search_dateep_startmonth', 'int'), GETPOST('search_dateep_startday', 'int'), GETPOST('search_dateep_startyear', 'int'));
+$search_dateep_end = dol_mktime(23, 59, 59, GETPOST('search_dateep_endmonth', 'int'), GETPOST('search_dateep_endday', 'int'), GETPOST('search_dateep_endyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_fk_bank = GETPOST('search_fk_bank', 'int');
@@ -141,6 +143,8 @@ if (empty($reshook)) {
 		$search_label = "";
 		$search_date_start = '';
 		$search_date_end = '';
+		$search_dateep_start = '';
+				$search_dateep_end = '';
 		$search_amount = "";
 		$search_account = '';
 		$search_fk_bank = '';
@@ -184,7 +188,7 @@ $help_url = '';
 $title = $langs->trans('SalariesPayments');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
-$sql .= " s.rowid, s.fk_user, s.amount, s.salary, sal.rowid as id_salary, sal.label, s.datep as datep, b.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
+$sql .= " s.rowid, s.fk_user, s.amount, s.salary, sal.rowid as id_salary, sal.label, s.datep as datep, sal.dateep, b.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code as payment_code";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
@@ -204,6 +208,8 @@ if ($search_user)			$sql .= natural_search(array('u.login', 'u.lastname', 'u.fir
 if ($search_label)			$sql .= natural_search(array('sal.label'), $search_label);
 if ($search_date_start)     $sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
 if ($search_date_end)		$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
+if ($search_dateep_start)     $sql .= " AND sal.dateep >= '".$db->idate($search_dateep_start)."'";
+if ($search_dateep_end)		$sql .= " AND sal.dateep <= '".$db->idate($search_dateep_end)."'";
 if ($search_amount)			$sql .= natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0)	$sql .= " AND b.fk_account=".((int) $search_account);
 if ($search_fk_bank)			$sql .= " AND s.fk_bank=".((int) $search_fk_bank);
@@ -259,7 +265,9 @@ if ($search_fk_bank) $param .= '&search_fk_bank='.urlencode($search_fk_bank);
 if ($search_chq_number) $param .= '&search_chq_number='.urlencode($search_chq_number);
 if ($search_account) $param .= '&search_account='.urlencode($search_account);
 if ($search_date_start) $param .= '&search_date_startday='.urlencode(GETPOST('search_date_startday', 'int')).'&search_date_startmonth='.urlencode(GETPOST('search_date_startmonth', 'int')).'&search_date_startyear='.urlencode(GETPOST('search_date_startyear', 'int'));
+if ($search_dateep_start) $param .= '&search_dateep_startday='.urlencode(GETPOST('search_dateep_startday', 'int')).'&search_dateep_startmonth='.urlencode(GETPOST('search_dateep_startmonth', 'int')).'&search_dateep_startyear='.urlencode(GETPOST('search_dateep_startyear', 'int'));
 if ($search_date_end) $param .= '&search_date_endday='.urlencode(GETPOST('search_date_endday', 'int')).'&search_date_endmonth='.urlencode(GETPOST('search_date_endmonth', 'int')).'&search_date_endyear='.urlencode(GETPOST('search_date_endyear', 'int'));
+if ($search_dateep_end) $param .= '&search_dateep_endday='.urlencode(GETPOST('search_dateep_endday', 'int')).'&search_dateep_endmonth='.urlencode(GETPOST('search_dateep_endmonth', 'int')).'&search_dateep_endyear='.urlencode(GETPOST('search_dateep_endyear', 'int'));
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -308,6 +316,15 @@ print '<input class="flat" type="text" size="3" name="search_ref_salary" value="
 print '</td>';
 // Label
 print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
+// Date end period
+print '<td class="liste_titre center">';
+print '<div class="nowrap">';
+print $form->selectDate($search_dateep_start ? $search_dateep_start : -1, 'search_dateep_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '</div>';
+print '<div class="nowrap">';
+print $form->selectDate($search_dateep_end ? $search_dateep_end : -1, 'search_dateep_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '</div>';
+print '</td>';
 // Date payment
 print '<td class="liste_titre center">';
 print '<div class="nowrap">';
@@ -318,8 +335,8 @@ print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_e
 print '</div>';
 print '</td>';
 // Date value
-print '<td class="liste_titre center">';
-print '</td>';
+/*print '<td class="liste_titre center">';
+print '</td>';*/
 // Employee
 print '<td class="liste_titre">';
 print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
@@ -366,8 +383,9 @@ print '<tr class="liste_titre">';
 print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Salary", $_SERVER["PHP_SELF"], "sal.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "sal.dateep", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "b.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+//print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "b.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
@@ -436,13 +454,17 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
+	// Date end period
+	print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
+		if (!$i) $totalarray['nbfield']++;
+
 	// Date payment
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 	if (!$i) $totalarray['nbfield']++;
 
 	// Date value
-	print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-	if (!$i) $totalarray['nbfield']++;
+	/*print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+	if (!$i) $totalarray['nbfield']++;*/
 
 	// Employee
 	print "<td>".$userstatic->getNomUrl(1)."</td>\n";

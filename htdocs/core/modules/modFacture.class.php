@@ -207,7 +207,7 @@ class modFacture extends DolibarrModules
 		//--------
 		$r = 1;
 
-		$alias_product_accounting = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pac";
+		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'CustomersInvoicesAndInvoiceLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'invoice';
@@ -228,7 +228,7 @@ class modFacture extends DolibarrModules
 			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
 			'fd.total_ttc'=>"LineTotalTTC", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
 			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
-			$alias_product_accounting . '.accountancy_code_sell'=>'ProductAccountancySellCode'
+			$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode'
 		);
 		if (!empty($conf->multicurrency->enabled)) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
@@ -251,7 +251,7 @@ class modFacture extends DolibarrModules
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.label'=>'Text', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
 			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
-			$alias_product_accounting . '.accountancy_code_sell'=>'Text'
+			$alias_product_perentity . '.accountancy_code_sell'=>'Text'
 		);
 		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
 			$this->export_TypeFields_array[$r]['f.module_source'] = 'Text';
@@ -263,7 +263,7 @@ class modFacture extends DolibarrModules
 			's.tva_intra'=>'company', 'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>'invoice_line', 'fd.label'=>"invoice_line", 'fd.description'=>"invoice_line",
 			'fd.subprice'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva_tx'=>"invoice_line",
 			'fd.qty'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>'invoice_line',
-			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', $alias_product_accounting . '.accountancy_code_sell'=>'product',
+			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity . '.accountancy_code_sell'=>'product',
 			'f.fk_user_author'=>'user', 'uc.login'=>'user', 'f.fk_user_valid'=>'user', 'uv.login'=>'user'
 		);
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
@@ -296,7 +296,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet_extrafields as extra2 on fd.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pac ON pac.fk_product = p.rowid AND pac.entity = " . ((int) $conf->entity);
+			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
