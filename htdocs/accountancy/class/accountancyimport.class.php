@@ -39,61 +39,63 @@
  */
 class AccountancyImport
 {
-    /**
-     *  Compute amount
-     *
-     * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-     * @param   string      $fieldname          Field name with alias
-     * @param   array       $listfields         Fields list to add
-     * @param   array       $listvalues         Values list to add
-     * @return  int         <0 if KO, >0 if OK
-     */
-    public function computeAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues) {
-        $fieldArr = explode('.', $fieldname);
-        if (count($fieldArr) > 0) {
-            $fieldname = $fieldArr[1];
-        }
+	/**
+	 *  Compute amount
+	 *
+	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   string      $fieldname          Field name with alias
+	 * @param   array       $listfields         Fields list to add
+	 * @param   array       $listvalues         Values list to add
+	 * @return  int         <0 if KO, >0 if OK
+	 */
+	public function computeAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues)
+	{
+		$fieldArr = explode('.', $fieldname);
+		if (count($fieldArr) > 0) {
+			$fieldname = $fieldArr[1];
+		}
 
-        $debit  = trim($arrayrecord[11]['val']);
-        $credit = trim($arrayrecord[12]['val']);
-        if (!empty($debit)) {
-            $amount = $debit;
-        } else {
-            $amount = $credit;
-        }
+		$debit  = trim($arrayrecord[11]['val']);
+		$credit = trim($arrayrecord[12]['val']);
+		if (!empty($debit)) {
+			$amount = $debit;
+		} else {
+			$amount = $credit;
+		}
 
-        $listfields[] = $fieldname;
-        $listvalues[] = "'" . abs($amount) . "'";
+		$listfields[] = $fieldname;
+		$listvalues[] = "'" . abs($amount) . "'";
 
-        return 1;
-    }
+		return 1;
+	}
 
 
-    /**
-     *  Compute sens
-     *
-     * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-     * @param   string      $fieldname          Field name with alias
-     * @param   array       $listfields         Fields list to add
-     * @param   array       $listvalues         Values list to add
-     * @return  int         <0 if KO, >0 if OK
-     */
-    public function computeDirection(&$arrayrecord, $fieldname, &$listfields, &$listvalues) {
-        $fieldArr = explode('.', $fieldname);
-        if (count($fieldArr) > 0) {
-            $fieldname = $fieldArr[1];
-        }
+	/**
+	 *  Compute sens
+	 *
+	 * @param   array       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   string      $fieldname          Field name with alias
+	 * @param   array       $listfields         Fields list to add
+	 * @param   array       $listvalues         Values list to add
+	 * @return  int         <0 if KO, >0 if OK
+	 */
+	public function computeDirection(&$arrayrecord, $fieldname, &$listfields, &$listvalues)
+	{
+		$fieldArr = explode('.', $fieldname);
+		if (count($fieldArr) > 0) {
+			$fieldname = $fieldArr[1];
+		}
 
-        $debit = trim($arrayrecord[11]['val']);
-        if (!empty($debit)) {
-            $sens = 'D';
-        } else {
-            $sens = 'C';
-        }
+		$debit = trim($arrayrecord[11]['val']);
+		if (!empty($debit)) {
+			$sens = 'D';
+		} else {
+			$sens = 'C';
+		}
 
-        $listfields[] = $fieldname;
-        $listvalues[] = "'" . $sens . "'";
+		$listfields[] = $fieldname;
+		$listvalues[] = "'" . $sens . "'";
 
-        return 1;
-    }
+		return 1;
+	}
 }
