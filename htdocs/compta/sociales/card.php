@@ -366,13 +366,13 @@ if ($action == 'create') {
 	}
 
 	// Payment Mode
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans('DefaultPaymentMode').'</td><td colspan="2">';
 	$form->select_types_paiements(GETPOST('mode_reglement_id', 'int'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
-		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOST('fk_account', 'int'), 'fk_account', 0, '', 2, '', 0, '', 1);
 		print '</td></tr>';
 	}
@@ -557,7 +557,7 @@ if ($id > 0) {
 		// Mode of payment
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('PaymentMode');
+		print $langs->trans('DefaultPaymentMode');
 		print '</td>';
 		if ($action != 'editmode') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
@@ -575,7 +575,7 @@ if ($id > 0) {
 		if (!empty($conf->banque->enabled)) {
 			print '<tr><td class="nowrap">';
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-			print $langs->trans('BankAccount');
+			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
@@ -731,7 +731,7 @@ if ($id > 0) {
 		*   Actions buttons
 		*/
 		if ($action != 'edit') {
-			print "<div class=\"tabsAction\">\n";
+			print '<div class="tabsAction">'."\n";
 
 			// Reopen
 			if ($object->paye && $user->rights->tax->charges->creer) {
