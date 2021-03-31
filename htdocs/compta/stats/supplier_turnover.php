@@ -199,7 +199,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$pcgvercode = $pcgverid;
 	}
 
-	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit) as amount_ttc";
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit - b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
@@ -209,6 +209,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
 	$sql .= " AND aa.pcg_type = 'EXPENSE'";		// TODO Be able to use a custom group
 }
+//print $sql;
 
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";

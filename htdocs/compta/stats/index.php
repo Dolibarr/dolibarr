@@ -233,7 +233,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$pcgvercode = $pcgverid;
 	}
 
-	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit) as amount_ttc";
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.credit - b.debit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
 	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
@@ -246,6 +246,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
 // TODO Add a filter on $date_start and $date_end to reduce quantity on data
+//print $sql;
 
 $minyearmonth = $maxyearmonth = 0;
 
