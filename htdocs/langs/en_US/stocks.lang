@@ -243,3 +243,5 @@ UpdateByScaning=Update by scaning
 UpdateByScaningProductBarcode=Update by scan (product barcode)
 UpdateByScaningLot=Update by scan (lot|serial barcode)
 DisableStockChangeOfSubProduct=Deactivate the stock change for all the subproducts of this Kit during this movement.
+ImportFromCSV=Import CSV list of movement
+ChooseFileToImport=Upload file then click on the %s icon to select file as source import file...
