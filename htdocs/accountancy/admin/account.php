@@ -349,7 +349,7 @@ if ($resql) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
 	dol_syslog('accountancy/admin/account.php $sql='.$sql);
-	print $sql;
+
 	$resqlchart = $db->query($sql);
 	if ($resqlchart) {
 		$numbis = $db->num_rows($resqlchart);

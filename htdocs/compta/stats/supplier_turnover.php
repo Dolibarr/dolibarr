@@ -153,7 +153,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
-	$description = $langs->trans("RulesPurchaseTurnoverTotalPurchaseJournal");
+	$description = $langs->trans("RulesPurchaseTurnoverOfExpenseAccounts");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -193,11 +193,21 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".$socid;
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
-	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
+	$pcgverid = $conf->global->CHARTOFACCOUNTS;
+	$pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+	if (empty($pcgvercode)) {
+		$pcgvercode = $pcgverid;
+	}
+
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit) as amount_ttc";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
+	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
-	$sql .= " AND aj.entity = ".$conf->entity;
-	$sql .= " AND b.code_journal = aj.code AND aj.nature = 3"; // @todo currently count amount in sale journal, but we need to define a category group for turnover
+	$sql .= " AND b.doc_type = 'supplier_invoice'";
+	$sql .= " AND b.numero_compte = aa.account_number";
+	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+	$sql .= " AND aa.pcg_type = 'EXPENSE'";		// TODO Be able to use a custom group
 }
 
 $sql .= " GROUP BY dm";

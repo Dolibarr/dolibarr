@@ -179,7 +179,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
-	$description = $langs->trans("RulesCATotalSaleJournal");
+	$description = $langs->trans("RulesSalesTurnoverOfIncomeAccounts");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -227,17 +227,25 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
-	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.credit) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
-	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
-	$sql .= " AND aj.entity = ".$conf->entity;
-	$sql .= " AND b.code_journal = aj.code AND aj.nature = 2"; // @todo currently count amount in sale journal, but we need to define a category group for turnover
-}
+	$pcgverid = $conf->global->CHARTOFACCOUNTS;
+	$pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+	if (empty($pcgvercode)) {
+		$pcgvercode = $pcgverid;
+	}
 
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit) as amount_ttc";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
+	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
+	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
+	$sql .= " AND b.numero_compte = aa.account_number";
+	$sql .= " AND b.doc_type = 'customer_invoice'";
+	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+	$sql .= " AND aa.pcg_type = 'INCOME'";		// TODO Be able to use a custom group
+}
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
 // TODO Add a filter on $date_start and $date_end to reduce quantity on data
-//print $sql;
 
 $minyearmonth = $maxyearmonth = 0;
 

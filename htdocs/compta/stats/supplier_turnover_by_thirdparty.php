@@ -258,7 +258,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
-} else {
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
