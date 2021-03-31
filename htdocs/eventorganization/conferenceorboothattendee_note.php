@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       conferenceorbooth_note.php
+ *  \file       conferenceorboothattendee_note.php
  *  \ingroup    eventorganization
- *  \brief      Tab for notes on ConferenceOrBooth
+ *  \brief      Tab for notes on ConferenceOrBoothAttendee
  */
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
@@ -74,8 +74,8 @@ if (!$res) {
 	die("Include of main fails");
 }
 
-dol_include_once('/eventorganization/class/conferenceorbooth.class.php');
-dol_include_once('/eventorganization/lib/eventorganization_conferenceorbooth.lib.php');
+dol_include_once('/eventorganization/class/conferenceorboothattendee.class.php');
+dol_include_once('/eventorganization/lib/eventorganization_conferenceorboothattendee.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization@eventorganization", "companies"));
@@ -88,10 +88,10 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object = new ConferenceOrBooth($db);
+$object = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('conferenceorboothnote', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('conferenceorboothattendeenote', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -106,15 +106,9 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->rights->eventorganization->conferenceorboothattendee->write; // Used by the include of actions_addupdatedelete.inc.php
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-$isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
@@ -132,18 +126,18 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url = '';
-llxHeader('', $langs->trans('ConferenceOrBooth'), $help_url);
+llxHeader('', $langs->trans('ConferenceOrBoothAttendee'), $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
-	$head = conferenceorboothPrepareHead($object);
+	$head = conferenceorboothattendeePrepareHead($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $langs->trans("ConferenceOrBoothAttendee"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
