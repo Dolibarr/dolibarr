@@ -1398,7 +1398,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// If html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (!empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && !empty($_GET["log"])) {
 			print "\n\n<!-- Log start\n";
-			print $message."\n";
+			print dol_escape_htmltag($message)."\n";
 			print "Log end -->\n";
 		}
 
