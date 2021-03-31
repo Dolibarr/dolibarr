@@ -1231,6 +1231,24 @@ if ($action == 'create') {
 		print '</tr>';
 	}
 
+	// Outstanding Bill
+	if ($soc->outstanding_limit)
+	{
+		print '<tr><td>';
+		print $langs->trans('OutstandingBill');
+		print '</td><td class="left">';
+		$arrayoutstandingbills = $soc->getOutstandingBills();
+		if ($arrayoutstandingbills['opened'] >= $soc->outstanding_limit)
+		{
+    		print '<span class="amountremaintopay">'.price($arrayoutstandingbills['opened']).'</span> / ';
+		} else {
+		    print price($arrayoutstandingbills['opened']).' / ';
+		}
+		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
+		print '</td>';
+		print '</tr>';
+	}
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
