@@ -183,7 +183,7 @@ $sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label,";
-if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " pa.accountancy_code_sell,";
 } else {
 	$sql .= " p.accountancy_code_sell,";

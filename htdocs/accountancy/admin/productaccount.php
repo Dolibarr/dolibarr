@@ -287,7 +287,7 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {
-	$sql .= natural_search((!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa." : "p.") . $accountancy_field_name, $search_current_account);
+	$sql .= natural_search((empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "pa.") . $accountancy_field_name, $search_current_account);
 }
 if ($search_current_account_valid == 'withoutvalidaccount') {
 	$sql .= " AND aa.account_number IS NULL";
@@ -466,7 +466,7 @@ if ($result) {
 	} else {
 		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa." : "p.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "pa.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');

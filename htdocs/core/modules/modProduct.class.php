@@ -176,7 +176,7 @@ class modProduct extends DolibarrModules
 		//--------
 		$r = 0;
 
-		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa" : "p";
+		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;

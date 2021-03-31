@@ -147,8 +147,8 @@ if ($action == 'validatehistory') {
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 	}
-	$alias_societe_perentity = !empty($conf->global->ACCOUNTANCY_COMPANY_SHARED) ? "sa" : "s";
-	$alias_product_perentity = !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa" : "p";
+	$alias_societe_perentity = empty($conf->global->ACCOUNTANCY_COMPANY_SHARED) ? "s" : "sa";
+	$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;

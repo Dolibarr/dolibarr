@@ -218,7 +218,7 @@ if (empty($chartaccountcode)) {
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
-if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " pa.accountancy_code_sell as code_sell, pa.accountancy_code_sell_intra as code_sell_intra, pa.accountancy_code_sell_export as code_sell_export,";
 	$sql .= " pa.accountancy_code_buy as code_buy, pa.accountancy_code_buy_intra as code_buy_intra, pa.accountancy_code_buy_export as code_buy_export,";
 } else {
