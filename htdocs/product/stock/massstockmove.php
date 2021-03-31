@@ -455,8 +455,9 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
 print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 print '<span class="opacitymedium">';
+print $langs->trans("or").' ';
 $importcsv = new ImportCsv($db, 'massstocklist');
-print $form->textwithpicto($langs->trans('OrSelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
+print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
 
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
