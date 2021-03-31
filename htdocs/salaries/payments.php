@@ -144,7 +144,7 @@ if (empty($reshook)) {
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_dateep_start = '';
-                $search_dateep_end = '';
+				$search_dateep_end = '';
 		$search_amount = "";
 		$search_account = '';
 		$search_fk_bank = '';
@@ -456,7 +456,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Date end period
 	print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
-        if (!$i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 	// Date payment
 	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
