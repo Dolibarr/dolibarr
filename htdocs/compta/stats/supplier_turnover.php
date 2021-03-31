@@ -272,7 +272,13 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="liste_titre right">'.$langs->trans("AmountHT").'</td>';
 	}
-	print '<td class="liste_titre right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="liste_titre right">';
+	if ($modecompta == "BOOKKEEPING") {
+		print $langs->trans("Amount");
+	} else {
+		print $langs->trans("AmountTTC");
+	}
+	print '</td>';
 	print '<td class="liste_titre right borderrightlight">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) {
 		print '<td class="liste_titre" width="15">&nbsp;</td>';
