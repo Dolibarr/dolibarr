@@ -307,8 +307,8 @@ if ($step == 4 && $action == 'select_model') {
 
 if ($action == 'saveorder') {
 	// Enregistrement de la position des champs
-	dol_syslog("boxorder=".$_GET['boxorder']." datatoimport=".$_GET["datatoimport"], LOG_DEBUG);
-	$part = explode(':', $_GET['boxorder']);
+	dol_syslog("boxorder=".GETPOST('boxorder')." datatoimport=".GETPOST("datatoimport"), LOG_DEBUG);
+	$part = explode(':', GETPOST('boxorder'));
 	$colonne = $part[0];
 	$list = $part[1];
 	dol_syslog('column='.$colonne.' list='.$list);

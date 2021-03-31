@@ -61,7 +61,6 @@ restrictedArea($user, 'projet', 0, 'projet&project');
  */
 
 dol_syslog("Call ajax projet/ajax/projects.php");
-//dol_syslog(join(',', $_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
