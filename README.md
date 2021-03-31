@@ -98,7 +98,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 ### Main application/modules (all optional)
 
 - Customers, Prospects (Leads) and/or Suppliers directory + Contacts
-- Members management 
+- Members/Membership management 
 - Products and/or Services catalog
 - Commercial proposals management
 - Customer & Supplier Orders management
@@ -112,6 +112,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
 - Opportunities or Leads management
 - Projects & Tasks management
+- Ticket System
 - Contracts management
 - Interventions management
 - Employee's leave requests management
@@ -160,7 +161,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Canadian double taxes (federal/province) and other countries using cumulative VAT
   - Tunisian tax stamp
   - Argentina invoice numbering using A,B,C...
-  - Compatible with [European directives](http://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
+  - Compatible with [European directives] (https://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
   - Compatible with European GDPR rules
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
