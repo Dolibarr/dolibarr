@@ -199,7 +199,7 @@ if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql = "SELECT date_format(f.datef, '%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -216,7 +216,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
 	 */
-	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT date_format(p.datep, '%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -227,7 +227,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
-	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
 	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
 	$sql .= " AND aj.entity = ".$conf->entity;

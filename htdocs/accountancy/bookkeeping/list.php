@@ -750,12 +750,10 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.numero_compte']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $langs->trans('From').' ';
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, 'maxwidth200');
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 1);
 	print '</div>';
 	print '<div class="nowrap">';
-	print $langs->trans('to').' ';
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, 'maxwidth200');
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 1);
 	print '</div>';
 	print '</td>';
 }
