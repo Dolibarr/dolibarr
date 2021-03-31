@@ -48,7 +48,7 @@ class AccountancyImport
      * @param   array       $listvalues         Values list to add
      * @return  int         <0 if KO, >0 if OK
      */
-    public function computeMontant(&$arrayrecord, $fieldname, &$listfields, &$listvalues) {
+    public function computeAmount(&$arrayrecord, $fieldname, &$listfields, &$listvalues) {
         $fieldArr = explode('.', $fieldname);
         if (count($fieldArr) > 0) {
             $fieldname = $fieldArr[1];
@@ -78,7 +78,7 @@ class AccountancyImport
      * @param   array       $listvalues         Values list to add
      * @return  int         <0 if KO, >0 if OK
      */
-    public function computeSens(&$arrayrecord, $fieldname, &$listfields, &$listvalues) {
+    public function computeDirection(&$arrayrecord, $fieldname, &$listfields, &$listvalues) {
         $fieldArr = explode('.', $fieldname);
         if (count($fieldArr) > 0) {
             $fieldname = $fieldArr[1];
