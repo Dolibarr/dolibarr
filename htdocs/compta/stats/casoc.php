@@ -267,14 +267,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$db->escape($selected_cat);
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
-} else {
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -298,13 +298,15 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$selected_cat;
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$selected_cat;
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
+} elseif ($modecompta == "BOOKKEEPING") {
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
 if (!empty($search_societe)) {
 	$sql .= natural_search('s.nom', $search_societe);
@@ -316,11 +318,11 @@ if (!empty($search_town)) {
 	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_country > 0) {
-	$sql .= ' AND s.fk_pays = '.$search_country.'';
+	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
@@ -350,7 +352,7 @@ if ($result) {
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') {
+if ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT '0' as socid, 'Autres' as name, sum(p.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";

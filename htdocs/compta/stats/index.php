@@ -209,7 +209,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
@@ -224,7 +224,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
 	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";

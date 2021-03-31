@@ -243,7 +243,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
-} else {
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
@@ -257,6 +257,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($date_start && $date_end) {
 		$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
+} elseif ($modecompta == "BOOKKEEPING") {
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
@@ -286,7 +288,7 @@ if ($result) {
 }
 
 // Adding old-version payments, non-bound by "paiement_facture" then without User
-if ($modecompta != 'CREANCES-DETTES') {
+if ($modecompta == 'RECETTES-DEPENSES') {
 	$sql = "SELECT -1 as rowidx, '' as name, '' as firstname, sum(DISTINCT p.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";

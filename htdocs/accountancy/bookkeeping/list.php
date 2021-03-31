@@ -727,7 +727,9 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 }
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
-	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="'.(is_array($search_ledger_code) ? join('|', $search_ledger_code) : $search_ledger_code).'"></td>';
+	print '<td class="liste_titre center">';
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
 }
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {

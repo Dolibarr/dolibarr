@@ -301,6 +301,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("TotalHT").'</b></td></tr>';
 
+	// Sales invoices
 	$sql = "SELECT fd.tva_tx AS vatrate,";
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
@@ -323,7 +324,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
 	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
 	$sql .= " ORDER BY country, product_type, vatrate";
-
 
 	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -374,7 +374,6 @@ if ($modecompta == 'CREANCES-DETTES') {
 		print $db->lasterror(); // Show last sql error
 	}
 
-
 	print '<tr class="liste_titre"><td width="6%" class="right">'.$langs->trans("PurchasebyVatrate").'</td>';
 	print '<td class="left">'.$langs->trans("ProductOrService").'</td>';
 	print '<td class="left">'.$langs->trans("Country").'</td>';
@@ -389,6 +388,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("TotalHT").'</b></td></tr>';
 
+	// Purchase invoices
 	$sql2 = "SELECT ffd.tva_tx AS vatrate,";
 	$sql2 .= " ffd.product_type AS product_type,";
 	$sql2 .= " cc.code, cc.label AS country,";

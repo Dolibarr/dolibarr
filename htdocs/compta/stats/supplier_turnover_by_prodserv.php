@@ -288,20 +288,20 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_type >= 0) {
-		$sql .= " AND l.product_type = ".$selected_type;
+		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cp.fk_product is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$selected_cat;
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$selected_cat;
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
 	if ($selected_soc > 0) {
-		$sql .= " AND soc.rowid=".$selected_soc;
+		$sql .= " AND soc.rowid=".((int) $selected_soc);
 	}
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";

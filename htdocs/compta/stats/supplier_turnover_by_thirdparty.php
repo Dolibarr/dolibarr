@@ -251,9 +251,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$db->escape($selected_cat);
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
@@ -278,9 +278,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$selected_cat;
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$selected_cat;
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
