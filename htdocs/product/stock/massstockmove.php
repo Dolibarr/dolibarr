@@ -320,9 +320,9 @@ if ($action == 'importCSV') {
 	while ($i < $nblinesrecord) {
 		$data[] = $importcsv->import_read_record();
 		$id_product = $data[$i][0]['val'];
-		$qty = $data[$i][1]['val'];
-		$id_sw = $data[$i][2]['val'];
-		$id_tw = $data[$i][3]['val'];
+		$id_sw = $data[$i][1]['val'];
+		$id_tw = $data[$i][2]['val'];
+		$qty = $data[$i][3]['val'];
 		$batch = $data[$i][4]['val'];
 
 		if (!($id_product > 0)) {
@@ -370,9 +370,9 @@ if ($action == 'importCSV') {
 				$id = 1;
 			}
 			$id_product = $data[$key][0]['val'];
-			$qty = $data[$key][1]['val'];
-			$id_sw = $data[$key][2]['val'];
-			$id_tw = $data[$key][3]['val'];
+			$id_sw = $data[$key][1]['val'];
+			$id_tw = $data[$key][2]['val'];
+			$qty = $data[$key][3]['val'];
 			$batch = $data[$key][4]['val'];
 			$listofdata[$key] = array('id'=>$key, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
 		}
@@ -531,6 +531,8 @@ print '<span class="opacitymedium">';
 $s = $langs->trans("ChooseFileToImport", '{s1}');
 $s = str_replace('{s1}', img_picto('', 'next'), $s);
 print $s;
+print '<br><br>';
+print $langs->trans('InfoTemplateImport');
 print '</span><br><br>';
 
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
