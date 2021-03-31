@@ -68,8 +68,6 @@ $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
  */
 
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-
-dol_syslog(join(',', $_GET));
 // print_r($_GET);
 
 if (!empty($action) && $action == 'fetch' && !empty($id)) {

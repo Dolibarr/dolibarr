@@ -85,7 +85,7 @@ class DonationStats extends Stats
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND d.entity = ".$conf->entity;
 		if ($this->userid > 0) {
-			$this->where .= ' WHERE c.fk_user_author = '.$this->userid;
+			$this->where .= ' WHERE c.fk_user_author = '.((int) $this->userid);
 		}
 	}
 

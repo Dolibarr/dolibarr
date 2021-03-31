@@ -350,5 +350,12 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+ALTER TABLE llc_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
 
+ALTER TABLE llx_propal ADD COLUMN date_signature datetime AFTER date_valid;
+ALTER TABLE llx_propal ADD COLUMN fk_user_signature integer AFTER fk_user_valid;
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_signature FOREIGN KEY (fk_user_signature) REFERENCES llx_user (rowid);
+
+UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signature IS NULL AND fk_user_cloture IS NOT NULL;
+UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;

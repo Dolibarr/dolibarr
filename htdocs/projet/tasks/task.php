@@ -474,14 +474,14 @@ if ($id > 0 || !empty($ref)) {
 			print dol_get_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 			if ($action == 'delete') {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
 			}
 
 			if (!GETPOST('withproject') || empty($projectstatic->id)) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 				$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
 			} else {
-				$object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+				$object->next_prev_filter = " fk_projet = ".((int) $projectstatic->id);
 			}
 
 			$morehtmlref = '';

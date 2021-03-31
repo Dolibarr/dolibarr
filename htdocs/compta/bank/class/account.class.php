@@ -451,9 +451,9 @@ class Account extends CommonObject
 		$sql = "SELECT fk_bank, url_id, url, label, type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_url";
 		if ($fk_bank > 0) {
-			$sql .= " WHERE fk_bank = ".$fk_bank;
+			$sql .= " WHERE fk_bank = ".((int) $fk_bank);
 		} else {
-			$sql .= " WHERE url_id = ".$url_id." AND type = '".$this->db->escape($type)."'";
+			$sql .= " WHERE url_id = ".((int) $url_id)." AND type = '".$this->db->escape($type)."'";
 		}
 		$sql .= " ORDER BY type, label";
 
@@ -2435,7 +2435,7 @@ class AccountLine extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

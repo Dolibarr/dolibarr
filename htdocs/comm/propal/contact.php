@@ -40,12 +40,6 @@ $ref = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'propal', $id);
-
 $object = new Propal($db);
 
 // Load object
@@ -66,6 +60,13 @@ if (!$error) {
 	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 	exit;
 }
+
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	$object->id = $user->socid;
+}
+restrictedArea($user, 'propal', $object->id);
 
 
 /*

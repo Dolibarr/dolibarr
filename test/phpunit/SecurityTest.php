@@ -190,7 +190,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$this->assertGreaterThanOrEqual(0, $result, 'Error on testSqlAndScriptInject kkk');
 		*/
 
-		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices';
+		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should be ok');
 
@@ -201,7 +201,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		// Should detect XSS
 		$expectedresult=1;
 
-		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php?mainmenu=home&leftmenu=setup&username=weservices;badaction';
+		$_SERVER["PHP_SELF"]='/DIR WITH SPACE/htdocs/admin/index.php/<svg>';
 		$result=testSqlAndScriptInject($_SERVER["PHP_SELF"], 2);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject for PHP_SELF that should detect XSS');
 

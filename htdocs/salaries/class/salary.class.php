@@ -463,7 +463,7 @@ class Salary extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'salary SET fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'salary SET fk_bank = '.((int) $id_bank);
 		$sql .= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result) {

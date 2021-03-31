@@ -1367,7 +1367,7 @@ class ActionComm extends CommonObject
 		$sql .= ' fk_user_author,';
 		$sql .= ' fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-		$sql .= ' WHERE a.id = '.$id;
+		$sql .= ' WHERE a.id = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);

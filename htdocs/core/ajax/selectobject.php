@@ -43,9 +43,7 @@ require '../../main.inc.php';
 
 $objectdesc = GETPOST('objectdesc', 'alpha');
 $htmlname = GETPOST('htmlname', 'aZ09');
-$sqlfilter = GETPOST('sqlfilter', 'alpha');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 
 
@@ -54,10 +52,7 @@ $id = GETPOST('id', 'int');
  */
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-
-dol_syslog(join(',', $_GET));
 //print_r($_GET);
-
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 $form = new Form($db);

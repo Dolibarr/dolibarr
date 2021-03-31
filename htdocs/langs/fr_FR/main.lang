@@ -278,6 +278,7 @@ DateModificationShort=Date modif.
 IPModification=Modification IP
 DateLastModification=Date de dernière modification
 DateValidation=Date validation
+DateSigning=Date signature
 DateClosing=Date clôture
 DateDue=Date échéance
 DateValue=Date valeur

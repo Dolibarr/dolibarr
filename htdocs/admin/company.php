@@ -288,8 +288,8 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 	} else {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFileDoesNotExists", $_GET["file"]), null, 'errors');
-		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists", $_GET["file"]), LOG_WARNING);
+		setEventMessages($langs->trans("ErrorFileDoesNotExists", GETPOST("file")), null, 'errors');
+		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists", GETPOST("file")), LOG_WARNING);
 	}
 }
 

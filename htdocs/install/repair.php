@@ -933,14 +933,14 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 					}
 					if ($methodtofix == 'updatestock') {
 						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? $obj->reelbatch : '0').' for ps.rowid = '.$obj->psrowid;
+						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
 							$error = 0;
 
 							$db->begin();
 
 							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? $obj->reelbatch : '0')." WHERE rowid = ".$obj->psrowid;
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
 							$resql2 = $db->query($sql2);
 							if ($resql2) {
 								// We update product_stock, so we must fill p.stock into product too.
@@ -1027,7 +1027,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
 						$error++;
@@ -1318,8 +1318,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 		}
 		while ($obj_dispatch = $db->fetch_object($resql_dispatch)) {
 			$sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line';
-			$sql_line .= ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande;
-			$sql_line .= ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
+			$sql_line .= ' WHERE line.fk_commande = '.((int) $obj_dispatch->fk_commande);
+			$sql_line .= ' AND   line.fk_product  = '.((int) $obj_dispatch->fk_product);
 			$resql_line = $db->query($sql_line);
 
 			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
@@ -1347,8 +1347,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 				$qty_for_line = min($remaining_qty, $obj_line->qty);
 				if ($first_iteration) {
 					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-					$sql_attach .= ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line;
-					$sql_attach .= ' WHERE rowid = '.$obj_dispatch->rowid;
+					$sql_attach .= ' SET fk_commandefourndet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
+					$sql_attach .= ' WHERE rowid = '.((int) $obj_dispatch->rowid);
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(

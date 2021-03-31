@@ -218,7 +218,7 @@ if ($db->type == 'pgsql') {
 } else {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
 }
-$sql .= " WHERE asy.rowid = ".$pcgver;
+$sql .= " WHERE asy.rowid = ".((int) $pcgver);
 //print $sql;
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;
@@ -349,7 +349,7 @@ if ($resql) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
 	dol_syslog('accountancy/admin/account.php $sql='.$sql);
-	print $sql;
+
 	$resqlchart = $db->query($sql);
 	if ($resqlchart) {
 		$numbis = $db->num_rows($resqlchart);

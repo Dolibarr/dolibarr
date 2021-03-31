@@ -40,6 +40,14 @@ if ($user->socid > 0) {
 	$_socid = $user->socid;
 }
 
+// Security check
+$socid = GETPOST("socid", 'int');
+if ($user->socid > 0) {
+	$action = '';
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
 
 /*
  * Actions

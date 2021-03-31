@@ -153,8 +153,8 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
-				$sql .= " SET fk_code_ventilation = ".$monCompte;
-				$sql .= " WHERE rowid = ".$monId;
+				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
+				$sql .= " WHERE rowid = ".((int) $monId);
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);

@@ -337,11 +337,11 @@ class DiscountAbsolute
 		// Delete but only if not used
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
 		if ($this->fk_facture_source) {
-			$sql .= " WHERE fk_facture_source = ".$this->fk_facture_source; // Delete all lines of same serie
+			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same serie
 		} elseif ($this->fk_invoice_supplier_source) {
-			$sql .= " WHERE fk_invoice_supplier_source = ".$this->fk_invoice_supplier_source; // Delete all lines of same serie
+			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same serie
 		} else {
-			$sql .= " WHERE rowid = ".$this->id; // Delete only line
+			$sql .= " WHERE rowid = ".((int) $this->id); // Delete only line
 		}
 		$sql .= " AND (fk_facture_line IS NULL"; // Not used as absolute simple discount
 		$sql .= " AND fk_facture IS NULL)"; // Not used as credit note and not used as deposit
@@ -421,17 +421,17 @@ class DiscountAbsolute
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			if ($rowidline) {
-				$sql .= " SET fk_invoice_supplier_line = ".$rowidline;
+				$sql .= " SET fk_invoice_supplier_line = ".((int) $rowidline);
 			}
 			if ($rowidinvoice) {
-				$sql .= " SET fk_invoice_supplier = ".$rowidinvoice;
+				$sql .= " SET fk_invoice_supplier = ".((int) $rowidinvoice);
 			}
 		} else {
 			if ($rowidline) {
-				$sql .= " SET fk_facture_line = ".$rowidline;
+				$sql .= " SET fk_facture_line = ".((int) $rowidline);
 			}
 			if ($rowidinvoice) {
-				$sql .= " SET fk_facture = ".$rowidinvoice;
+				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
 			}
 		}
 		$sql .= " WHERE rowid = ".$this->id;
