@@ -250,7 +250,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	{
 		// phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " WHERE fk_mailing = ".$mailing_id;
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 
 		if (!$this->db->query($sql)) {
 			dol_syslog($this->db->error());

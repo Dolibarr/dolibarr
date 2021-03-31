@@ -162,13 +162,13 @@ if ($action == 'up') {
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1); // Down the selected entry
-	$sql .= " WHERE m.rowid = ".$current['rowid'];
+	$sql .= " SET m.position = ".((int) ($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1)); // Down the selected entry
+	$sql .= " WHERE m.rowid = ".((int) $current['rowid']);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m"; // Up the next entry
-	$sql .= " SET m.position = ".$current['order'];
-	$sql .= " WHERE m.rowid = ".$next['rowid'];
+	$sql .= " SET m.position = ".((int) $current['order']);
+	$sql .= " WHERE m.rowid = ".((int) $next['rowid']);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 } elseif ($action == 'confirm_delete' && $confirm == 'yes') {

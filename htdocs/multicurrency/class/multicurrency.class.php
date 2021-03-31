@@ -591,7 +591,7 @@ class MultiCurrency extends CommonObject
 	{
 		global $db;
 
-		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
+		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.((int) $fk_facture);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);

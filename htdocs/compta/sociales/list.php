@@ -233,7 +233,7 @@ if ($year > 0) {
 if ($search_typeid) {
 	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
 if (!empty($conf->projet->enabled)) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }

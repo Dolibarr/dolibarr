@@ -131,7 +131,7 @@ llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-$sql .= " WHERE entity = ".$entity;
+$sql .= " WHERE entity = ".((int) $entity);
 $sql .= " AND statut = 1";
 $sql .= " AND public = 1";
 $sql .= $db->order($sortfield, $sortorder);

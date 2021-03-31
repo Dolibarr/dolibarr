@@ -1113,7 +1113,7 @@ class Commande extends CommonOrder
 						}
 
 						$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-						$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+						$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 						$resqlcontact = $this->db->query($sqlcontact);
 						if ($resqlcontact) {
@@ -2331,7 +2331,7 @@ class Commande extends CommonOrder
 
 			$sql = "SELECT fk_product, qty";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".$lineid;
+			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2417,7 +2417,7 @@ class Commande extends CommonOrder
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql .= ' SET remise_percent = '.((float) $remise);
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);

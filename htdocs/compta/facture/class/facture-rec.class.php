@@ -762,12 +762,12 @@ class FactureRec extends CommonInvoice
 
 		$main = MAIN_DB_PREFIX.'facturedet_rec';
 		$ef = $main."_extrafields";
-		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid);
 		dol_syslog($sqlef);
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
 		dol_syslog($sql);
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".((int) $rowid);
 			dol_syslog($sql);
 			if ($this->db->query($sql)) {
 				// Delete linked object
@@ -1151,7 +1151,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ', multicurrency_total_ht = '.$multicurrency_total_ht;
 			$sql .= ', multicurrency_total_tva = '.$multicurrency_total_tva;
 			$sql .= ', multicurrency_total_ttc = '.$multicurrency_total_ttc;
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 			if ($this->db->query($sql)) {

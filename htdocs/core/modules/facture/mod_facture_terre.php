@@ -65,6 +65,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
+		global $conf;
 		if (!empty($conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX)) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX;
 		}

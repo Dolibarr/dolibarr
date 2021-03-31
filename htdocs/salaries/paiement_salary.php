@@ -188,12 +188,12 @@ if ($action == 'create') {
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-	$sql .= " WHERE p.fk_salary = ".$chid;
+	$sql .= " WHERE p.fk_salary = ".((int) $chid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/

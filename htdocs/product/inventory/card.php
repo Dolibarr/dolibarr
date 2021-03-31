@@ -407,6 +407,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
+			// Back to validate
+			if ($object->status == $object::STATUS_RECORDED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("ReOpen").'</a>';
+				}
+			}
 
 			// Modify
 			if ($object->status == $object::STATUS_DRAFT) {

@@ -1148,7 +1148,7 @@ abstract class CommonObject
 		if ($fk_socpeople) {
 			$sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		}
-		$sql .= " where rowid = ".$rowid;
+		$sql .= " where rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 0;
@@ -1548,7 +1548,7 @@ abstract class CommonObject
 			$sql .= " ".MAIN_DB_PREFIX."socpeople as c,";
 		}
 		$sql .= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql .= " WHERE ec.element_id = ".$id;
+		$sql .= " WHERE ec.element_id = ".((int) $id);
 		$sql .= " AND ec.fk_socpeople = c.rowid";
 		if ($source == 'internal') {
 			$sql .= " AND c.entity IN (".getEntity('user').")";
@@ -1564,7 +1564,7 @@ abstract class CommonObject
 		}
 		$sql .= " AND tc.active = 1";
 		if ($status) {
-			$sql .= " AND ec.statut = ".$status;
+			$sql .= " AND ec.statut = ".((int) $status);
 		}
 
 		dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
@@ -1706,7 +1706,7 @@ abstract class CommonObject
 			if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder)) {    // If data not already loaded
 				$sql = "SELECT rowid, code, libelle as label, coder";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-				$sql .= " WHERE rowid = ".$idtype;
+				$sql .= " WHERE rowid = ".((int) $idtype);
 				dol_syslog(get_class($this).'::fetch_barcode', LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -1939,7 +1939,7 @@ abstract class CommonObject
 			}
 		}
 
-		$sql .= " WHERE ".$id_field." = ".$id;
+		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
 		dol_syslog(__METHOD__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4047,7 +4047,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.((int) $fk_object_where);
 		$resql = $db->query($sql);
 
 		if (empty($resql)) {
@@ -4221,7 +4221,7 @@ abstract class CommonObject
 	public function getSpecialCode($lineid)
 	{
 		$sql = 'SELECT special_code FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.$lineid;
+		$sql .= ' WHERE rowid = '.((int) $lineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -4263,7 +4263,7 @@ abstract class CommonObject
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
 			// Check if third party can be deleted
 			$sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
-			$sql .= " WHERE ".$this->fk_element." = ".$id;
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -9267,7 +9267,7 @@ abstract class CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files";
-			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();

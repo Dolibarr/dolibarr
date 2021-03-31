@@ -3530,7 +3530,7 @@ class Form
 		// looking for users
 		$sql = "SELECT a.rowid, a.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_address as a";
-		$sql .= " WHERE a.fk_soc = ".$socid;
+		$sql .= " WHERE a.fk_soc = ".((int) $socid);
 		$sql .= " ORDER BY a.label ASC";
 
 		dol_syslog(get_class($this)."::select_address", LOG_DEBUG);

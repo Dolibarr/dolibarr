@@ -144,7 +144,7 @@ llxHeader();
 
 $sql = "SELECT sum(p.amount) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
-$sql .= " WHERE p.fk_donation = ".$chid;
+$sql .= " WHERE p.fk_donation = ".((int) $chid);
 $resql = $db->query($sql);
 if ($resql) {
 	$obj = $db->fetch_object($resql);
