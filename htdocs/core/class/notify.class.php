@@ -580,9 +580,7 @@ class Notify
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 								$outputlangs = $langs;
 								$newlang = '';
-								//if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($pdf['lang_id'])) {
-								//	 $newlang = $pdf['lang_id'];
-								//}
+
 								if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
 										  $newlang = $object->thirdparty->default_lang;
 								}
