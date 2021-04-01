@@ -30,7 +30,7 @@
 		"ckeditor/ckeditor" : "4.6.2",
 		"mike42/escpos-php" : "1.2.1",
 		"mobiledetect/mobiledetectlib" : "2.8.17",
-		"phpoffice/phpexcel" : "1.8.1",
+		"phpoffice/phpexcel" : "1.8.2",
 		"restler/framework" : "3.0.0-RC6",
 		"tecnickcom/tcpdf" : "^6.2",
 		"atgp/factur-x" : "^1.0",
