@@ -350,7 +350,7 @@ create table llx_eventorganization_conferenceorboothattendee_extrafields
 ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
 
 ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
-ALTER TABLE llc_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
 
 
 ALTER TABLE llx_propal ADD COLUMN date_signature datetime AFTER date_valid;
