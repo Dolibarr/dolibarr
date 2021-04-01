@@ -53,7 +53,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
  * Actions
  */
 
-if ($action == 'setpricelevel') {
+if ($action == 'setpricelevel' && $user->rights->societe->creer) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
 	$soc->setPriceLevel(GETPOST("price_level"), $user);
