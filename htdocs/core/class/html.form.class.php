@@ -8280,9 +8280,10 @@ class Form
 				}
 			} else {
 				$nophoto = '/public/theme/common/nophoto.png';
-				if (in_array($modulepart, array('userphoto', 'contact', 'memberphoto'))) {	// For module that are "physical" users
-					if ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor') !== false) {
-						$nophoto = '/public/theme/common/company.png';
+				$defaultimg = 'identicon';		// For gravatar
+				if (in_array($modulepart, array('societe', 'userphoto', 'contact', 'memberphoto'))) {	// For modules that need a special image when photo not found
+					if ($modulepart == 'societe' || ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor')) !== false) {
+						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
 						if ($object->gender == 'man') {
@@ -8296,13 +8297,14 @@ class Form
 
 				if (!empty($conf->gravatar->enabled) && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
-					global $dolibarr_main_url_root;
 					$ret .= '<!-- Put link to gravatar -->';
-					//$defaultimg=urlencode(dol_buildpath($nophoto,3));
-					$defaultimg = 'mm';
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
 				} else {
-					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
+					if ($nophoto == 'company') {
+						$ret .= '<div class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').'">'.img_picto('', 'company').'</div>';
+					} else {
+						$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
+					}
 				}
 			}
 

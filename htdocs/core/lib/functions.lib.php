@@ -1751,52 +1751,25 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	$modulepart = 'unknown';
 
-	if ($object->element == 'societe') {
-		$modulepart = 'societe';
-	}
-	if ($object->element == 'contact') {
-		$modulepart = 'contact';
-	}
-	if ($object->element == 'member') {
+	if ($object->element == 'societe' || $object->element == 'contact' || $object->element == 'product' || $object->element == 'ticket') {
+		$modulepart = $object->element;
+	} elseif ($object->element == 'member') {
 		$modulepart = 'memberphoto';
-	}
-	if ($object->element == 'user') {
+	} elseif ($object->element == 'user') {
 		$modulepart = 'userphoto';
-	}
-	if ($object->element == 'product') {
-		$modulepart = 'product';
-	}
-	if ($object->element == 'ticket') {
-		$modulepart = 'ticket';
 	}
 
 	if (class_exists("Imagick")) {
-		if ($object->element == 'propal') {
-			$modulepart = 'propal';
-		}
-		if ($object->element == 'commande') {
-			$modulepart = 'commande';
-		}
-		if ($object->element == 'facture') {
-			$modulepart = 'facture';
-		}
-		if ($object->element == 'fichinter') {
+		if ($object->element == 'expensereport' || $object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'supplier_proposal') {
+			$modulepart = $object->element;
+		} elseif ($object->element == 'fichinter') {
 			$modulepart = 'ficheinter';
-		}
-		if ($object->element == 'contrat') {
+		} elseif ($object->element == 'contrat') {
 			$modulepart = 'contract';
-		}
-		if ($object->element == 'supplier_proposal') {
-			$modulepart = 'supplier_proposal';
-		}
-		if ($object->element == 'order_supplier') {
+		} elseif ($object->element == 'order_supplier') {
 			$modulepart = 'supplier_order';
-		}
-		if ($object->element == 'invoice_supplier') {
+		} elseif ($object->element == 'invoice_supplier') {
 			$modulepart = 'supplier_invoice';
-		}
-		if ($object->element == 'expensereport') {
-			$modulepart = 'expensereport';
 		}
 	}
 
@@ -1903,7 +1876,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow) { // example if modulepart = 'photo'
+				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo'
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
