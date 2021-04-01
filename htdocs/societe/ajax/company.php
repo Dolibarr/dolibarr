@@ -42,6 +42,7 @@ if (!defined('NOCSRFCHECK')) {
 }
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $htmlname = GETPOST('htmlname', 'alpha');
 $filter = GETPOST('filter', 'alpha');
