@@ -7207,7 +7207,7 @@ class Form
 						print '<td class="center">'.$objp->ref.'</td>';
 						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : $objp->ref_supplier).'</td>';
 						print '<td class="right">';
-						if ($possiblelink[label] == 'LinkToContract') {
+						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}
