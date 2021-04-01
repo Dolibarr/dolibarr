@@ -315,7 +315,7 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 		$importcsv->import_open_file($fullpath);
 		$labelsrecord = $importcsv->import_read_record();
 
-		if ($nblinesrecord <= 1) {
+		if ($nblinesrecord < 1) {
 			setEventMessages($langs->trans("BadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
 		} else {
 			$i=0;
@@ -329,28 +329,46 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 					continue;
 				}
 				//var_dump($data);
-
+				$formproduct = new FormProduct($db);
+				$productstatic = new Product($db);
+				$warehousestatics = new Entrepot($db);
+				$warehousestatict = new Entrepot($db);
 				$tmp_id_sw = $data[$i][0]['val'];
 				$tmp_id_tw = $data[$i][1]['val'];
 				$tmp_id_product = $data[$i][2]['val'];
 				$tmp_qty = $data[$i][3]['val'];
 				$tmp_batch = $data[$i][4]['val'];
 
-				// TODO If product is a ref (not numeric or starts with "ref:..."), retreive the id of product from the ref
+				if (!is_numeric($tmp_id_product)) {
+					$result = fetchref($productstatic, $tmp_id_product);
+					$tmp_id_product = $result;
+					$data[$i][2]['val'] = $result;
+				}
 				if (!($tmp_id_product > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 				}
-				// TODO If warehouse is a ref (not numeric or starts with "ref:..."), retreive the id of product from the ref
+
+				if (!is_numeric($tmp_id_sw)) {
+					$result = fetchref($warehousestatics, $tmp_id_sw);
+					$tmp_id_sw = $result;
+					$data[$i][0]['val'] = $result;
+				}
 				if (!($tmp_id_sw > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
 				}
-				// TODO If warehouse is a ref (not numeric or starts with "ref:..."), retreive the id of product from the ref
+
+				if (!is_numeric($tmp_id_tw)) {
+					$result = fetchref($warehousestatict, $tmp_id_tw);
+					$tmp_id_tw = $result;
+					$data[$i][1]['val'] = $result;
+				}
 				if (!($tmp_id_tw > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 				}
+
 				if ($tmp_id_sw > 0 && $tmp_id_tw == $tmp_id_sw) {
 					$error++;
 					$langs->load("errors");
@@ -585,24 +603,39 @@ foreach ($listofdata as $key => $val) {
 	$warehousestatics->fetch($val['id_sw']);
 	$warehousestatict->fetch($val['id_tw']);
 
-	print '<tr class="oddeven">';
-	print '<td>';
-	print $warehousestatics->getNomUrl(1);
-	print '</td>';
-	print '<td>';
-	print $warehousestatict->getNomUrl(1);
-	print '</td>';
-	print '<td>';
-	print $productstatic->getNomUrl(1).' - '.$productstatic->label;
-	print '</td>';
-	if ($conf->productbatch->enabled) {
-		print '<td>';
-		print $val['batch'];
-		print '</td>';
+	if ($productstatic->id <= 0) {
+		$error++;
+		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 	}
-	print '<td class="center">'.$val['qty'].'</td>';
-	print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
-	print '</tr>';
+	if ($warehousestatics->id <= 0) {
+		$error++;
+		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+	}
+	if ($warehousestatics->id <= 0) {
+		$error++;
+		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
+	}
+
+	if (!$error) {
+		print '<tr class="oddeven">';
+		print '<td>';
+		print $warehousestatics->getNomUrl(1);
+		print '</td>';
+		print '<td>';
+		print $warehousestatict->getNomUrl(1);
+		print '</td>';
+		print '<td>';
+		print $productstatic->getNomUrl(1).' - '.$productstatic->label;
+		print '</td>';
+		if ($conf->productbatch->enabled) {
+			print '<td>';
+			print $val['batch'];
+			print '</td>';
+		}
+		print '<td class="center">'.$val['qty'].'</td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+		print '</tr>';
+	}
 }
 
 print '</table>';
@@ -645,3 +678,30 @@ if ($action == 'delete') {
 // End of page
 llxFooter();
 $db->close();
+
+/**
+ * Verify if $haystack startswith $needle
+ * @param String $haystack string to test
+ * @param String $needle string to find
+ * @return false if Ko true else
+ */
+function startsWith($haystack, $needle)
+{
+	$length = strlen($needle);
+	return substr($haystack, 0, $length) === $needle;
+}
+
+/**
+ * Fetch object with ref
+ * @param Object $static_object static object to fetch
+ * @param String $tmp_ref ref of the object to fetch
+ * @return <0 if Ko or Id of object
+ */
+function fetchref($static_object, $tmp_ref)
+{
+	if (startsWith($tmp_ref, 'ref:')) {
+		$tmp_ref = str_replace('ref:', '', $tmp_ref);
+	}
+	$static_object->fetch('', $tmp_ref);
+	return $static_object->id;
+}
