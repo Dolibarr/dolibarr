@@ -1996,7 +1996,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 				}
 
 				// Save page content
-				$result = dolSavePageContent($filetpl, $object, $objectpage);
+				$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 				if ($result) {
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
 
