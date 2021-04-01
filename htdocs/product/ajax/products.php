@@ -62,6 +62,9 @@ $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
+// Security check
+$result = restrictedArea($user, 'produit|service', 0, 'product&product');
+
 
 /*
  * View
@@ -216,10 +219,13 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
+	// Filter on product to search can be:
+	// Into an array with key $htmlname123 (we take first one found)
+	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
-	$idprod = (!empty($match[0]) ? $match[0] : '');
+	$idprod = (empty($match[0]) ? '' : $match[0]);		// Take first param in GET with key answer
 
 	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha'))) {
 		print json_encode(array());
