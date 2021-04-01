@@ -24,7 +24,7 @@ Following changes may create regressions for some external modules, but were nec
 * Field "total" renamed into "total_ttc" for table lx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSql, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySql or MariaDB, you need at least version 5.1
-
+* Function set_price_level() has been renamed into setPriceLevel() to follow camelcase rules
 
 
 ***** ChangeLog for 13.0.2 compared to 13.0.1 *****
