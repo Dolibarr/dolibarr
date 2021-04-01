@@ -68,15 +68,18 @@ if ($action == 'update') {
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
-	if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
-		dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
-		dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
-	} elseif (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'showprojectref') {
-		dolibarr_set_const($db, "PDF_SHOW_PROJECT", GETPOST("PDF_SHOW_PROJECT_REF_OR_LABEL"), 'chaine', 0, '', $conf->entity);
-		dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
-	} elseif (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'showprojectlabel') {
-		dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
-		dolibarr_set_const($db, "PDF_SHOW_PROJECT_TITLE", GETPOST("PDF_SHOW_PROJECT_REF_OR_LABEL"), 'chaine', 0, '', $conf->entity);
+
+	if (!empty($conf->projet->enabled)) {
+		if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
+		} elseif (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'showprojectref') {
+			dolibarr_set_const($db, "PDF_SHOW_PROJECT", GETPOST("PDF_SHOW_PROJECT_REF_OR_LABEL"), 'chaine', 0, '', $conf->entity);
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
+		} elseif (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'showprojectlabel') {
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
+			dolibarr_set_const($db, "PDF_SHOW_PROJECT_TITLE", GETPOST("PDF_SHOW_PROJECT_REF_OR_LABEL"), 'chaine', 0, '', $conf->entity);
+		}
 	}
 
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"), 'chaine', 0, '', $conf->entity);
@@ -303,11 +306,13 @@ print '</td></tr>';
 
 // Show project
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
-$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
-$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
-print $form->selectarray('PDF_SHOW_PROJECT_REF_OR_LABEL', $tmparray, $showprojectref, 0, 0, 0, '', 1);
-print '</td></tr>';
+if (!empty($conf->projet->enabled)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
+	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
+	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
+	print $form->selectarray('PDF_SHOW_PROJECT_REF_OR_LABEL', $tmparray, $showprojectref, 0, 0, 0, '', 1);
+	print '</td></tr>';
+}
 
 //Invert sender and recipient
 
