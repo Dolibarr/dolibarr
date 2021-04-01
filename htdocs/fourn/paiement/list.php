@@ -172,7 +172,7 @@ if ($search_company)			$sql .= natural_search('s.nom', $search_company);
 if ($search_payment_type != '')	$sql .= " AND c.code='".$db->escape($search_payment_type)."'";
 if ($search_cheque_num != '')	$sql .= natural_search('p.num_paiement', $search_cheque_num);
 if ($search_amount)				$sql .= natural_search('p.amount', $search_amount, 1);
-if ($search_bank_account > 0)	$sql .= ' AND b.fk_account='.$search_bank_account;
+if ($search_bank_account > 0)	$sql .= ' AND b.fk_account='.((int) $search_bank_account);
 
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 
