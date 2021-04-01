@@ -7232,7 +7232,7 @@ class Form
 	}
 
 	/**
-	 *	Show a multiselect form from an array.
+	 *	Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 *	@param	string	$htmlname		Name of select
 	 *	@param	array	$array			Array with key+value
