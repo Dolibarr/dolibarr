@@ -51,6 +51,19 @@ $id = GETPOST('id', 'int');
 $excludeids = GETPOST('excludeids', 'intcomma');
 $showtype = GETPOST('showtype', 'int');
 
+$object = new Societe($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+
+// Security check
+if ($user->socid > 0) {
+	unset($action);
+	$socid = $user->socid;
+	$object->id = $socid;
+}
+restrictedArea($user, 'societe', $object->id, '&societe');
+
 
 /*
  * View
@@ -64,9 +77,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$outjson = array();
 
-	$object = new Societe($db);
-	$ret = $object->fetch($id);
-	if ($ret > 0) {
+	if ($object->id > 0) {
 		$outref = $object->ref;
 		$outname = $object->name;
 		$outdesc = '';
@@ -87,12 +98,16 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
+	// Filter on the company to search can be:
+	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
+	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
-	$id = (!empty($match[0]) ? $match[0] : '');
+
+	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
 	// When used from jQuery, the search term is added as GET param "term".
-	$searchkey = (($id && GETPOST($id, 'alpha')) ?GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
+	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
 
 	if (!$searchkey) {
 		return;
