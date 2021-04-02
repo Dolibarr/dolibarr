@@ -111,22 +111,32 @@ class Project extends CommonObject
 	public $budget_amount;
 
 	/**
-	 * @var boolean Use to bill task spend time
+	 * @var integer		Can use projects to follow opportunities
+	 */
+	public $usage_opportunity;
+
+	/**
+	 * @var integer		Can follow tasks on project and enter time spent on it
+	 */
+	public $usage_task;
+
+	/**
+	 * @var integer	 	Use to bill task spend time
 	 */
 	public $usage_bill_time; // Is the time spent on project must be invoiced or not
 
 	/**
-	 * @var boolean Event organization: Use Event Organization
+	 * @var integer		Event organization: Use Event Organization
 	 */
 	public $usage_organize_event;
 
 	/**
-	 * @var boolean Event organization: Allow unknown people to suggest conferences
+	 * @var integer		Event organization: Allow unknown people to suggest new conferences
 	 */
 	public $accept_conference_suggestions;
 
 	/**
-	 * @var boolean Event organization: Allow unknown people to suggest booth
+	 * @var integer		Event organization: Allow unknown people to suggest new booth
 	 */
 	public $accept_booth_suggestions;
 
