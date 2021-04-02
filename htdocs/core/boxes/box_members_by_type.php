@@ -93,7 +93,7 @@ class box_members_by_type extends ModeleBoxes
 		if ($user->rights->adherent->lire) {
 			$MembersToValidate = array();
 			$MembersValidated = array();
-			$MemberUpToDate = array();
+			$MembersUpToDate = array();
 			$MembersExcluded = array();
 			$MembersResiliated = array();
 
@@ -164,7 +164,7 @@ class box_members_by_type extends ModeleBoxes
 					$i = 0;
 					while ($i < $num2) {
 						$objp = $this->db->fetch_object($result);
-						$MemberUpToDate[$objp->fk_adherent_type] = $objp->somme;
+						$MembersUpToDate[$objp->fk_adherent_type] = $objp->somme;
 						$i++;
 					}
 					$this->db->free($result);
@@ -215,12 +215,12 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(1, 1, 0, 3),
+						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(1, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(1, 1, $now, 3),
+						'text' => (isset($MembersUpToDate[$key]) && $MembersUpToDate[$key] > 0 ? $MembersUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(1, 1, $now, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
