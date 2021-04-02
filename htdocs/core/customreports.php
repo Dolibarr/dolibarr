@@ -151,8 +151,6 @@ if ($user->socid > 0) {	// Protection if external user
 	accessforbidden();
 }
 
-$result = restrictedArea($user, $object->element, 0, '');
-
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 //$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -177,6 +175,7 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
+$result = restrictedArea($user, $object->element, 0, '');
 
 
 /*
