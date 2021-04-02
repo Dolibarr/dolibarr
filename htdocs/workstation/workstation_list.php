@@ -213,9 +213,12 @@ $formresource = new FormResource($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_Workstation|FR:Module_Workstation_FR|ES:Módulo_Workstation";
-$help_url = '';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Workstations"));
+
+//$help_url="EN:Module_Workstation|FR:Module_Workstation_FR|ES:Módulo_Workstation";
+$help_url = 'EN:Module_Workstation';
+
+llxHeader('', $title, $help_url);
 
 
 // Build and execute select
