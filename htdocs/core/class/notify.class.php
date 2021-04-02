@@ -363,6 +363,7 @@ class Notify
 		$num = 0;
 		$error = 0;
 
+		$ret = $object->fetch($object->id); // Reload to get new records ie: final ref when validation
 		$oldref = (empty($object->oldref) ? $object->ref : $object->oldref);
 		$newref = (empty($object->newref) ? $object->ref : $object->newref);
 
