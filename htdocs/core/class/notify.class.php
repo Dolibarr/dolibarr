@@ -446,7 +446,7 @@ class Notify
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
 								$labeltouse = $conf->global->BILL_VALIDATE_TEMPLATE;
-                $defaultmodelpdf = $conf->global->FACTURE_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->FACTURE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $link);
 								break;
 							case 'BILL_PAYED':
@@ -454,7 +454,7 @@ class Notify
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
 								$labeltouse = $conf->global->BILL_PAYED_TEMPLATE;
-                $defaultmodelpdf = $conf->global->FACTURE_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->FACTURE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 								break;
 							case 'ORDER_VALIDATE':
@@ -462,7 +462,7 @@ class Notify
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 								$object_type = 'order';
 								$labeltouse = $conf->global->ORDER_VALIDATE_TEMPLATE;
-                $defaultmodelpdf = $conf->global->COMMANDE_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->COMMANDE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
 							case 'PROPAL_VALIDATE':
@@ -470,7 +470,7 @@ class Notify
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
 								$labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
-                $defaultmodelpdf = $conf->global->PROPALE_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->PROPALE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
@@ -478,7 +478,7 @@ class Notify
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
 								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
-                $defaultmodelpdf = $conf->global->PROPALE_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->PROPALE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
 								break;
 							case 'FICHINTER_ADD_CONTACT':
@@ -522,7 +522,7 @@ class Notify
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
 								$object_type = 'expedition';
 								$labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
-                $defaultmodelpdf = $conf->global->EXPEDITION_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->EXPEDITION_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_VALIDATE':
@@ -530,7 +530,7 @@ class Notify
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
 								$labeltouse = $conf->global->EXPENSE_REPORT_VALIDATE_TEMPLATE;
-                $defaultmodelpdf = $conf->global->EXPENSEREPORT_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->EXPENSEREPORT_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_APPROVE':
@@ -538,7 +538,7 @@ class Notify
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
 								$labeltouse = $conf->global->EXPENSE_REPORT_APPROVE_TEMPLATE;
-                $defaultmodelpdf = $conf->global->EXPENSEREPORT_ADDON_PDF;
+								$defaultmodelpdf = $conf->global->EXPENSEREPORT_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $link);
 								break;
 							case 'HOLIDAY_VALIDATE':
@@ -546,7 +546,7 @@ class Notify
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
 								$labeltouse = $conf->global->HOLIDAY_VALIDATE_TEMPLATE;
-                //$defaultmodelpdf = $conf->global->HOLIDAY_ADDON_PDF;
+								//$defaultmodelpdf = $conf->global->HOLIDAY_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated", $link);
 								break;
 							case 'HOLIDAY_APPROVE':
@@ -554,7 +554,7 @@ class Notify
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
 								$labeltouse = $conf->global->HOLIDAY_APPROVE_TEMPLATE;
-                //$defaultmodelpdf = $conf->global->HOLIDAY_ADDON_PDF;
+								//$defaultmodelpdf = $conf->global->HOLIDAY_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
 				break;
 							case 'ACTION_CREATE':
@@ -562,7 +562,7 @@ class Notify
 								$dir_output = $conf->agenda->dir_output;
 								$object_type = 'action';
 								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
-                //$defaultmodelpdf = $conf->global->ACTION_ADDON_PDF;
+								//$defaultmodelpdf = $conf->global->ACTION_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
 						}
