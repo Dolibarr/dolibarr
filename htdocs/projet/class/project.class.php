@@ -116,6 +116,17 @@ class Project extends CommonObject
 	public $usage_bill_time; // Is the time spent on project must be invoiced or not
 
 	/**
+	 * @var boolean Use opportunities management
+	 */
+	public $usage_opportunity;
+
+	/**
+	 * @var boolean Use task management
+	 */
+	public $usage_task;
+
+
+	/**
 	 * @var boolean Event organization: Use Event Organization
 	 */
 	public $usage_organize_event;
