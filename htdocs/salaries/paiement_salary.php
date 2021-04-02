@@ -18,9 +18,9 @@
  */
 
 /**
- *      \file       htdocs/compta/paiement_charge.php
- *      \ingroup    tax
- *      \brief      Page to add payment of a tax
+ *      \file       htdocs/compta/paiement_salary.php
+ *      \ingroup    salary
+ *      \brief      Page to add payment of a salary
  */
 
 require '../main.inc.php';
@@ -31,16 +31,25 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->load("bills");
 
-$chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 $amounts = array();
 
+$object = new Salary($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
 // Security check
-$socid = 0;
+$socid = GETPOST("socid", "int");
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
 /*
@@ -51,7 +60,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 	$error = 0;
 
 	if ($cancel) {
-		$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
+		$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$id;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -96,7 +105,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->chid         = $chid;
+			$paiement->chid         = $id;
 			$paiement->datepaye     = $datepaye;
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
@@ -124,7 +133,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 			if (!$error) {
 				$db->commit();
-				$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
+				$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$id;
 				header('Location: '.$loc);
 				exit;
 			} else {
@@ -139,15 +148,16 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+$help_url = '';
+
+llxHeader('', '', $help_url);
+
+$salary = $object;
 
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
-	$salary = new Salary($db);		// Salary to pay
-	$salary->fetch($chid);
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
 	$salary->paiementtype = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
 
@@ -171,15 +181,15 @@ if ($action == 'create') {
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="id" value="'.$chid.'">';
-	print '<input type="hidden" name="chid" value="'.$chid.'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<input type="hidden" name="chid" value="'.$id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$id.'">'.$id.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("DateStart")."</td><td>".dol_print_date($salary->datesp, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("DateEnd")."</td><td>".dol_print_date($salary->dateep, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$salary->label."</td></tr>\n";
@@ -188,7 +198,7 @@ if ($action == 'create') {
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-	$sql .= " WHERE p.fk_salary = ".((int) $chid);
+	$sql .= " WHERE p.fk_salary = ".((int) $id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
