@@ -320,6 +320,9 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 		} else {
 			$i=0;
 			$data = array();
+			$productstatic = new Product($db);
+			$warehousestatics = new Entrepot($db);
+			$warehousestatict = new Entrepot($db);
 			while (($i < $nblinesrecord) && !$error) {
 				$data[] = $importcsv->import_read_record();
 				if (count($data[$i]) == 1) {
@@ -329,10 +332,6 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 					continue;
 				}
 				//var_dump($data);
-				$formproduct = new FormProduct($db);
-				$productstatic = new Product($db);
-				$warehousestatics = new Entrepot($db);
-				$warehousestatict = new Entrepot($db);
 				$tmp_id_sw = $data[$i][0]['val'];
 				$tmp_id_tw = $data[$i][1]['val'];
 				$tmp_id_product = $data[$i][2]['val'];
@@ -681,6 +680,7 @@ $db->close();
 
 /**
  * Verify if $haystack startswith $needle
+ *
  * @param String $haystack string to test
  * @param String $needle string to find
  * @return false if Ko true else
@@ -693,6 +693,7 @@ function startsWith($haystack, $needle)
 
 /**
  * Fetch object with ref
+ *
  * @param Object $static_object static object to fetch
  * @param String $tmp_ref ref of the object to fetch
  * @return <0 if Ko or Id of object
