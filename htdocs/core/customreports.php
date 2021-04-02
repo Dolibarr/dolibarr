@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Note: This tool can be included into a list page with :
- * define('USE_CUSTOME_REPORT_AS_INCLUDE', 1);
+ * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
@@ -25,7 +25,7 @@
  *		\brief      Page to make custom reports
  */
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
 	// Get parameters
@@ -194,7 +194,7 @@ $arrayofvaluesforgroupby = array();
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
 	print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
@@ -790,7 +790,7 @@ if ($sql) {
 
 print '<div>';
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	print dol_get_fiche_end();
 }
 
