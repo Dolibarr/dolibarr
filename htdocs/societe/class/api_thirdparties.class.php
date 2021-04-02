@@ -575,7 +575,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->company->set_price_level($priceLevel, DolibarrApiAccess::$user);
+		$result = $this->company->setPriceLevel($priceLevel, DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, 'Error setting new price level for thirdparty '.$id, array($this->company->db->lasterror()));
 		}

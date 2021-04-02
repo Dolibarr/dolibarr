@@ -53,10 +53,10 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
  * Actions
  */
 
-if ($action == 'setpricelevel') {
+if ($action == 'setpricelevel' && $user->rights->societe->creer) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
-	$soc->set_price_level(GETPOST("price_level"), $user);
+	$soc->setPriceLevel(GETPOST("price_level"), $user);
 
 	header("Location: multiprix.php?id=".$id);
 	exit;

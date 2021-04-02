@@ -206,11 +206,29 @@ function project_prepare_head(Project $project)
 
 	if ($conf->eventorganization->enabled) {
 		$langs->load('eventorganization');
-		//TODO : Count
-		$nbConfOrBooth = 1;
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
-		if ($nbContact > 0) {
+
+		// Enable caching of conf or booth count
+		$nbConfOrBooth = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_conferenceorbooth_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbConfOrBooth = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+			$conforbooth=new ConferenceOrBooth($db);
+			$result = $conforbooth->fetchAll('', '', 0, 0, array('t.fk_project'=>$project->id));
+			//,
+			if (!is_array($result) && $result<0) {
+				setEventMessages($conforbooth->error, $conforbooth->errors, 'errors');
+			} else {
+				$nbConfOrBooth = count($result);
+			}
+			dol_setcache($cachekey, $nbConfOrBooth, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbConfOrBooth > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
 		}
 		$head[$h][2] = 'eventorganisation';

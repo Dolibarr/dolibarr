@@ -41,6 +41,14 @@ if ($type == '' && !$user->rights->service->lire) {
 	$type = '0'; // Force global page on product page only
 }
 
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('productindex'));
+
+$product_static = new Product($db);
+
 // Security check
 if ($type == '0') {
 	$result = restrictedArea($user, 'produit');
@@ -49,14 +57,6 @@ if ($type == '0') {
 } else {
 	$result = restrictedArea($user, 'produit|service|expedition');
 }
-
-// Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks'));
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array('productindex'));
-
-$product_static = new Product($db);
 
 
 /*

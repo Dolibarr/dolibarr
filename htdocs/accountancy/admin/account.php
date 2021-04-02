@@ -349,7 +349,7 @@ if ($resql) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
 	dol_syslog('accountancy/admin/account.php $sql='.$sql);
-	print $sql;
+
 	$resqlchart = $db->query($sql);
 	if ($resqlchart) {
 		$numbis = $db->num_rows($resqlchart);
@@ -430,7 +430,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
+		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
 	}
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {

@@ -73,7 +73,6 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if (empty($user->rights->fournisseur->lire)) {
 	accessforbidden();
@@ -113,6 +112,8 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*

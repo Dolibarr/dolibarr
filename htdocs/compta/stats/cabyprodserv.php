@@ -97,8 +97,8 @@ if (empty($year)) {
 	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzuserrel');
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzuserrel');
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int");
@@ -254,7 +254,9 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
 
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 } else {
@@ -313,7 +315,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_type >= 0) {
-		$sql .= " AND l.product_type = ".$selected_type;
+		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cp.fk_product is null";
@@ -340,7 +342,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= "))";
 	}
 	if ($selected_soc > 0) {
-		$sql .= " AND soc.rowid=".$selected_soc;
+		$sql .= " AND soc.rowid=".((int) $selected_soc);
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 

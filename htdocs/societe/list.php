@@ -463,7 +463,7 @@ $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
-if ($search_sale) {
+if ($search_sale && $search_sale != '-1') {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
 // We'll need these fields in order to filter by categ
@@ -505,7 +505,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
 if ($search_sale == -2) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-} elseif ($search_sale || (empty($user->rights->societe->client->voir) && !$socid)) {
+} elseif (!empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -513,7 +513,7 @@ $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-if ($search_sale && $search_sale != -2) {
+if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
 	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 }
 if (!$user->rights->fournisseur->lire) {

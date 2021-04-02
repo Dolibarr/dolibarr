@@ -42,7 +42,6 @@ $mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -61,8 +60,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
 $staticproduct = new Product($db);
+
+$result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
 
 /*

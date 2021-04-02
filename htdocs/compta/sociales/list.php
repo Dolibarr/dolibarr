@@ -110,13 +110,13 @@ $arrayfields = array(
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
 	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->projet->enabled))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
-	'cs.fk_mode_reglement'	=>array('checked'=>1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
+	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
 	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
 );
 
 if (!empty($conf->banque->enabled)) {
-	$arrayfields['cs.fk_account'] = array('checked'=>1, 'position'=>90, 'label'=>"DefaultBankAccount");
+	$arrayfields['cs.fk_account'] = array('checked'=>-1, 'position'=>90, 'label'=>"DefaultBankAccount");
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -354,7 +354,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 
 // Filter: Ref
 if (!empty($arrayfields['cs.rowid']['checked'])) {
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre">';
 	print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
@@ -368,8 +368,8 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 
 // Filter: Type
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
-	print '<td class="liste_titre" align="left">';
-	$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth100onsmartphone', 1);
+	print '<td class="liste_titre">';
+	$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
 	print '</td>';
 }
 
@@ -399,21 +399,21 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	// Employee
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre">';
 	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
 }
 
 // Filter: Type
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-	print '<td class="liste_titre left">';
-	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 16);
+	print '<td class="liste_titre">';
+	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150');
 	print '</td>';
 }
 
 // Filter: Bank Account
 if (!empty($arrayfields['cs.fk_account']['checked'])) {
-	print '<td class="liste_titre left">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	print '<td class="liste_titre">';
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth150');
 	print '</td>';
 }
 
@@ -452,16 +452,16 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.rowid']['label'], $_SERVER["PHP_SELF"], "cs.rowid", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.libelle']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle", '', $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type", '', $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech", '', $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cs.periode']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
@@ -470,10 +470,10 @@ if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'class="left"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.fk_account']['checked'])) {
-	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account", '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cs.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount", '', $param, 'class="right"', $sortfield, $sortorder);
@@ -525,7 +525,7 @@ while ($i < min($num, $limit)) {
 
 	// Label
 	if (!empty($arrayfields['cs.libelle']['checked'])) {
-		print '<td>'.dol_trunc($obj->label, 42).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -533,7 +533,7 @@ while ($i < min($num, $limit)) {
 
 	// Type
 	if (!empty($arrayfields['cs.fk_type']['checked'])) {
-		print '<td>'.$obj->type_label.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->type_label).'">'.dol_escape_htmltag($obj->type_label).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -551,7 +551,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['cs.periode']['checked'])) {
 		print '<td class="center">';
 		if ($obj->periode) {
-			print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">';
+			print '<a href="list.php?search_year_lim='.dol_print_date($db->jdate($obj->periode), "%Y").'">';
 			print dol_print_date($db->jdate($obj->periode), 'day');
 			print '</a>';
 		}
@@ -627,7 +627,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['cs.amount']['checked'])) {
-		print '<td class="nowrap right">'.price($obj->amount).'</td>';
+		print '<td class="nowrap amount right">'.price($obj->amount).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

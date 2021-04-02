@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,7 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
 print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -1256,6 +1258,60 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 	}
 }
 
+// force utf8mb4 on tables  EXPERIMENTAL !
+if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8mb4/utf8mb4_unicode_ci (for mysql/mariadb only)</td></tr>';
+
+	if ($db->type == "mysql" || $db->type == "mysqli") {
+		$force_utf8mb4_on_tables = GETPOST('force_utf8mb4_on_tables', 'alpha');
+
+		$listoftables = $db->DDLListTables($db->database_name);
+
+		// Disable foreign key checking for avoid errors
+		if ($force_utf8mb4_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=0';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+
+		foreach ($listoftables as $table) {
+			// do not convert llx_const if mysql encrypt/decrypt is used
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) {
+				continue;
+			}
+
+			print '<tr><td colspan="2">';
+			print $table;
+			$sql1 = 'ALTER TABLE '.$table.' ROW_FORMAT=dynamic;';
+			$sql2 = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
+			if ($force_utf8mb4_on_tables == 'confirmed') {
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+			} else {
+				print ' - Disabled';
+			}
+			print '</td></tr>';
+			flush();
+			ob_flush();
+		}
+
+		// Enable foreign key checking
+		if ($force_utf8mb4_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=1';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+	} else {
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
+}
 
 // rebuild sequences for pgsql
 if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
@@ -1273,7 +1329,6 @@ if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
 		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
 	}
 }
-
 
 //
 if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {

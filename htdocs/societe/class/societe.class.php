@@ -2272,7 +2272,6 @@ class Societe extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set the price level
 	 *
@@ -2280,9 +2279,8 @@ class Societe extends CommonObject
 	 * @param 	User	$user			Use making change
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	public function set_price_level($price_level, User $user)
+	public function setPriceLevel($price_level, User $user)
 	{
-		// phpcs:enable
 		if ($this->id) {
 			$now = dol_now();
 

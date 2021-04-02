@@ -104,8 +104,51 @@ class Project extends CommonObject
 	 */
 	public $user_close_id;
 	public $public; //!< Tell if this is a public or private project
+
+	/**
+	 * @var float budget Amount
+	 */
 	public $budget_amount;
+
+	/**
+	 * @var integer		Can use projects to follow opportunities
+	 */
+	public $usage_opportunity;
+
+	/**
+	 * @var integer		Can follow tasks on project and enter time spent on it
+	 */
+	public $usage_task;
+
+	/**
+	 * @var integer	 	Use to bill task spend time
+	 */
 	public $usage_bill_time; // Is the time spent on project must be invoiced or not
+
+	/**
+	   * @var integer		Event organization: Use Event Organization
+	   */
+	public $usage_organize_event;
+
+	/**
+	 * @var integer		Event organization: Allow unknown people to suggest new conferences
+	 */
+	public $accept_conference_suggestions;
+
+	/**
+	 * @var integer		Event organization: Allow unknown people to suggest new booth
+	 */
+	public $accept_booth_suggestions;
+
+	/**
+	 * @var float Event organization: registration price
+	 */
+	public $price_registration;
+
+	/**
+	 * @var float Event organization: booth price
+	 */
+	public $price_booth;
 
 	public $statuts_short;
 	public $statuts_long;

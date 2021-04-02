@@ -62,7 +62,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	 exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes') {
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user->rights->societe->creer) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -192,7 +192,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	}
 }
 
-if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes') {
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $user->rights->societe->creer) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -487,8 +487,8 @@ if ($socid > 0) {
 					print '</td>';
 					if ($user->rights->societe->creer || $user->rights->facture->creer) {
 						print '<td class="center nowrap">';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
-						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
+						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
 					} else {
 						print '<td>&nbsp;</td>';
@@ -626,8 +626,8 @@ if ($socid > 0) {
 					print '</td>';
 					if ($user->rights->societe->creer || $user->rights->facture->creer) {
 						print '<td class="center nowrap">';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
-						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
+						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
 					} else {
 						print '<td>&nbsp;</td>';

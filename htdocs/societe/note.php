@@ -33,12 +33,7 @@ $action = GETPOST('action', 'aZ09');
 
 $langs->load("companies");
 
-// Security check
 $id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
-if ($user->socid) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -49,6 +44,13 @@ $permissionnote = $user->rights->societe->creer; // Used by the include of actio
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartynote', 'globalcard'));
+
+// Security check
+if ($user->socid > 0) {
+	unset($action);
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*

@@ -37,13 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'productbatch'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service');
-
-
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
@@ -89,6 +82,11 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
 
 /*

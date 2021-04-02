@@ -136,7 +136,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 	}
 }
 
-if ($action == 'add' && $cancel) {
+if ($action == 'add' && !$cancel) {
 	$error = 0;
 
 	$object->fk_account = GETPOST("accountid", 'int');
@@ -454,7 +454,7 @@ if ($action == 'create') {
 	// Comments
 	print '<tr class="hide_if_no_auto_create_payment">';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
 
 	// Other attributes
