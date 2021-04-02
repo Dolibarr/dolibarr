@@ -106,7 +106,7 @@ function checkLinkedElements($sourcetype, $targettype)
 		foreach ($elements as $key => $element) {
 			if (!checkElementExist($element[$sourcetype], $sourcetable) || !checkElementExist($element[$targettype], $targettable)) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
-				$sql .= ' WHERE rowid = '.$key;
+				$sql .= ' WHERE rowid = '.((int) $key);
 				$resql = $db->query($sql);
 				$deleted++;
 			}

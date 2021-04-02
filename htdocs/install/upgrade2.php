@@ -678,7 +678,7 @@ function migrate_paiements($db, $langs, $conf)
 
 					$res += $db->query($sql);
 
-					$sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".$row[$i][0];
+					$sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".((int) $row[$i][0]);
 
 					$res += $db->query($sql);
 
@@ -1342,7 +1342,7 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
 				$check_sql = 'SELECT fk_paiementfourn, fk_facturefourn';
 				$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-				$check_sql .= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn;
+				$check_sql .= ' WHERE fk_paiementfourn = '.((int) $select_obj->rowid).' AND fk_facturefourn = '.((int) $select_obj->fk_facture_fourn);
 				$check_resql = $db->query($check_sql);
 				if ($check_resql) {
 					$check_num = $db->num_rows($check_resql);
@@ -2161,7 +2161,7 @@ function migrate_detail_livraison($db, $langs, $conf)
 					if ($resql2) {
 						$sql = "SELECT total_ht";
 						$sql .= " FROM ".MAIN_DB_PREFIX."livraison";
-						$sql .= " WHERE rowid = ".$obj->fk_livraison;
+						$sql .= " WHERE rowid = ".((int) $obj->fk_livraison);
 						$resql3 = $db->query($sql);
 
 						if ($resql3) {
@@ -2864,7 +2864,7 @@ function migrate_project_task_time($db, $langs, $conf)
 					foreach ($totaltime as $taskid => $total_duration) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET";
 						$sql .= " duration_effective = ".$total_duration;
-						$sql .= " WHERE rowid = ".$taskid;
+						$sql .= " WHERE rowid = ".((int) $taskid);
 
 						$resql = $db->query($sql);
 						if (!$resql) {
@@ -3235,7 +3235,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 
 		$sqlSelect = "SELECT id";
 		$sqlSelect .= " FROM ".MAIN_DB_PREFIX."c_paiement";
-		$sqlSelect .= " WHERE id = ".$old_id;
+		$sqlSelect .= " WHERE id = ".((int) $old_id);
 		$sqlSelect .= " AND code = '".$db->escape($elements['code'][$key])."'";
 
 		$resql = $db->query($sqlSelect);
@@ -3246,23 +3246,23 @@ function migrate_mode_reglement($db, $langs, $conf)
 
 				$db->begin();
 
-				$sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET ";
-				$sqla .= "fk_paiement = ".$elements['new_id'][$key];
-				$sqla .= " WHERE fk_paiement = ".$old_id;
-				$sqla .= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".$old_id." AND code = '".$db->escape($elements['code'][$key])."')";
+				$sqla = "UPDATE ".MAIN_DB_PREFIX."paiement SET";
+				$sqla .= " fk_paiement = ".((int) $elements['new_id'][$key]);
+				$sqla .= " WHERE fk_paiement = ".((int) $old_id);
+				$sqla .= " AND fk_paiement IN (SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE id = ".((int) $old_id)." AND code = '".$db->escape($elements['code'][$key])."')";
 				$resqla = $db->query($sqla);
 
-				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
-				$sql .= "id = ".$elements['new_id'][$key];
-				$sql .= " WHERE id = ".$old_id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET";
+				$sql .= " id = ".((int) $elements['new_id'][$key]);
+				$sql .= " WHERE id = ".((int) $old_id);
 				$sql .= " AND code = '".$db->escape($elements['code'][$key])."'";
 				$resql = $db->query($sql);
 
 				if ($resqla && $resql) {
 					foreach ($elements['tables'] as $table) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
-						$sql .= "fk_mode_reglement = ".$elements['new_id'][$key];
-						$sql .= " WHERE fk_mode_reglement = ".$old_id;
+						$sql .= "fk_mode_reglement = ".((int) $elements['new_id'][$key]);
+						$sql .= " WHERE fk_mode_reglement = ".((int) $old_id);
 
 						$resql = $db->query($sql);
 						if (!$resql) {
@@ -3786,16 +3786,16 @@ function migrate_remise_except_entity($db, $langs, $conf)
 
 					$sqlSelect2 = "SELECT f.entity";
 					$sqlSelect2 .= " FROM ".MAIN_DB_PREFIX."facture as f";
-					$sqlSelect2 .= " WHERE f.rowid = ".$fk_facture;
+					$sqlSelect2 .= " WHERE f.rowid = ".((int) $fk_facture);
 				} elseif (!empty($obj->fk_facture_line)) {
 					$sqlSelect2 = "SELECT f.entity";
 					$sqlSelect2 .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
-					$sqlSelect2 .= " WHERE fd.rowid = ".$obj->fk_facture_line;
+					$sqlSelect2 .= " WHERE fd.rowid = ".((int) $obj->fk_facture_line);
 					$sqlSelect2 .= " AND fd.fk_facture = f.rowid";
 				} else {
 					$sqlSelect2 = "SELECT s.entity";
 					$sqlSelect2 .= " FROM ".MAIN_DB_PREFIX."societe as s";
-					$sqlSelect2 .= " WHERE s.rowid = ".$obj->fk_soc;
+					$sqlSelect2 .= " WHERE s.rowid = ".((int) $obj->fk_soc);
 				}
 
 				$resql2 = $db->query($sqlSelect2);

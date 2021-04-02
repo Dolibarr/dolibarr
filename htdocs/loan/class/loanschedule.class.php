@@ -447,7 +447,7 @@ class LoanSchedule extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-		$sql .= " WHERE t.fk_loan = ".$loanid;
+		$sql .= " WHERE t.fk_loan = ".((int) $loanid);
 
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -535,7 +535,7 @@ class LoanSchedule extends CommonObject
 	{
 		$sql = "SELECT p.datep";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as p ";
-		$sql .= " WHERE p.fk_loan = ".$loanid;
+		$sql .= " WHERE p.fk_loan = ".((int) $loanid);
 		$sql .= " ORDER BY p.datep DESC ";
 		$sql .= " LIMIT 1 ";
 
@@ -563,7 +563,7 @@ class LoanSchedule extends CommonObject
 
 		$sql = "SELECT p.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p ";
-		$sql .= " WHERE p.fk_loan = ".$loanid;
+		$sql .= " WHERE p.fk_loan = ".((int) $loanid);
 		if (!empty($datemax)) {
 			$sql .= " AND p.datep > '".$this->db->idate($datemax)."'";
 		}

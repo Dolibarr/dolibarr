@@ -674,8 +674,10 @@ class CommandeFournisseurDispatch extends CommonObject
 					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
 					$sqlwhere [] = $key.' = \''.$this->db->escape($value).'\'';
+				} elseif ($key == 'qty') {
+					$sqlwhere [] = $key.' = '.((float) $value);
 				} else {
-					$sqlwhere [] = $key.' = '.$this->db->escape($value);
+					$sqlwhere [] = $key.' = '.((int) $value);
 				}
 			}
 		}

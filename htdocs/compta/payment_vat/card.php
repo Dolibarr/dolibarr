@@ -298,7 +298,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		if ($user->rights->facture->paiement)
 		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
@@ -307,7 +307,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 if ($action == '') {
 	if ($user->rights->tax->charges->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentVATPaid")).'">'.$langs->trans('Delete').'</a>';
 		}

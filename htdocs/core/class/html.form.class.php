@@ -16,7 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
@@ -96,7 +96,7 @@ class Form
 	 * @param   string	$preselected    Value to show/edit (not used in this function)
 	 * @param	object	$object			Object
 	 * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
 	 * @param	string	$moreparam		More param to add on a href URL.
 	 * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
 	 * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
@@ -237,6 +237,9 @@ class Form
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
+				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
+					$tmp = explode(':', $typeofdata);
+					$ret .= '<input type="checkbox" id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {	// if wysiwyg is enabled $typeofdata = 'ckeditor'
 					$tmp = explode(':', $typeofdata);
 					$cols = $tmp[2];
@@ -298,6 +301,9 @@ class Form
 					$ret .= dol_print_email($value, 0, 0, 0, 0, 1);
 				} elseif (preg_match('/^(amount|numeric)/', $typeofdata)) {
 					$ret .= ($value != '' ? price($value, '', $langs, 0, -1, -1, $conf->currency) : '');
+				} elseif (preg_match('/^(checkbox)/', $typeofdata)) {
+					$tmp = explode(':', $typeofdata);
+					$ret .= '<input type="checkbox" disabled id="' . $htmlname . '" name="' . $htmlname . '" value="' . $value . '"' . ($tmp[1] ? $tmp[1] : '') . '/>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata)) {
 					$ret .= dol_htmlentitiesbr($value);
 				} elseif (preg_match('/^safehtmlstring/', $typeofdata)) {
@@ -3530,7 +3536,7 @@ class Form
 		// looking for users
 		$sql = "SELECT a.rowid, a.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_address as a";
-		$sql .= " WHERE a.fk_soc = ".$socid;
+		$sql .= " WHERE a.fk_soc = ".((int) $socid);
 		$sql .= " ORDER BY a.label ASC";
 
 		dol_syslog(get_class($this)."::select_address", LOG_DEBUG);
@@ -7226,7 +7232,7 @@ class Form
 	}
 
 	/**
-	 *	Show a multiselect form from an array.
+	 *	Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 *	@param	string	$htmlname		Name of select
 	 *	@param	array	$array			Array with key+value
@@ -7739,7 +7745,7 @@ class Form
 						print '<input type="radio" name="idtolinkto" id="'.$key.'_'.$objp->rowid.'" value="'.$objp->rowid.'">';
 						print '</td>';
 						print '<td class="center"><label for="'.$key.'_'.$objp->rowid.'">'.$objp->ref.'</label></td>';
-						print '<td>'.$objp->ref_client.'</td>';
+						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : $objp->ref_supplier).'</td>';
 						print '<td class="right">';
 						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($this->db);
@@ -8274,9 +8280,10 @@ class Form
 				}
 			} else {
 				$nophoto = '/public/theme/common/nophoto.png';
-				if (in_array($modulepart, array('userphoto', 'contact', 'memberphoto'))) {	// For module that are "physical" users
-					if ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor') !== false) {
-						$nophoto = '/public/theme/common/company.png';
+				$defaultimg = 'identicon';		// For gravatar
+				if (in_array($modulepart, array('societe', 'userphoto', 'contact', 'memberphoto'))) {	// For modules that need a special image when photo not found
+					if ($modulepart == 'societe' || ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor')) !== false) {
+						$nophoto = 'company';
 					} else {
 						$nophoto = '/public/theme/common/user_anonymous.png';
 						if ($object->gender == 'man') {
@@ -8290,13 +8297,14 @@ class Form
 
 				if (!empty($conf->gravatar->enabled) && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
-					global $dolibarr_main_url_root;
 					$ret .= '<!-- Put link to gravatar -->';
-					//$defaultimg=urlencode(dol_buildpath($nophoto,3));
-					$defaultimg = 'mm';
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
 				} else {
-					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
+					if ($nophoto == 'company') {
+						$ret .= '<div class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').'">'.img_picto('', 'company').'</div>';
+					} else {
+						$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
+					}
 				}
 			}
 

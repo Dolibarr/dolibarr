@@ -239,7 +239,7 @@ class Propalmergepdfproduct extends CommonObject
 
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal_merge_pdf_product as t";
-		$sql .= " WHERE t.fk_product = ".$product_id;
+		$sql .= " WHERE t.fk_product = ".((int) $product_id);
 		if ($conf->global->MAIN_MULTILANGS && !empty($lang)) {
 			$sql .= " AND t.lang = '".$this->db->escape($lang)."'";
 		}

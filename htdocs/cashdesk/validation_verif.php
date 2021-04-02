@@ -165,7 +165,7 @@ switch ($action) {
 		if (empty($cond_reglement_id)) {
 			$cond_reglement_id = 0; // If cond_reglement_id not found
 		}
-		$note .= $_POST['txtaNotes'];
+		$note .= GETPOST('txtaNotes', 'alphanohtml');
 		dol_syslog("obj_facturation->getSetPaymentMode()=".$obj_facturation->getSetPaymentMode()." mode_reglement_id=".$mode_reglement_id." cond_reglement_id=".$cond_reglement_id);
 
 		$error = 0;

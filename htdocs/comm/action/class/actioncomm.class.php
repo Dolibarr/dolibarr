@@ -407,7 +407,7 @@ class ActionComm extends CommonObject
 		// Check parameters
 		if (!isset($this->userownerid) || $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) of > 0
 			dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
-			$this->errors[] = 'ErrorPropertyUserowneridNotDefined';
+			$this->errors[] = 'ErrorActionCommPropertyUserowneridNotDefined';
 			return -1;
 		}
 
@@ -478,7 +478,7 @@ class ActionComm extends CommonObject
 				$this->type_id = $cactioncomm->id;
 				$this->type_code = $cactioncomm->code;
 			} elseif ($result == 0) {
-				$this->error = 'Failed to get record with id '.$this->type_id.' code '.$this->type_code.' from dictionary "type of events"';
+				$this->error = $langs->trans('ErrorActionCommBadType', $this->type_id, $this->type_code);
 				return -1;
 			} else {
 				$this->error = $cactioncomm->error;
@@ -1367,7 +1367,7 @@ class ActionComm extends CommonObject
 		$sql .= ' fk_user_author,';
 		$sql .= ' fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-		$sql .= ' WHERE a.id = '.$id;
+		$sql .= ' WHERE a.id = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);

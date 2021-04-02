@@ -436,7 +436,7 @@ class Entrepot extends CommonObject
 		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id) {
-			$sql .= " WHERE rowid = '".$id."'";
+			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) {
@@ -782,7 +782,7 @@ class Entrepot extends CommonObject
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
 		while ($parentid > 0 && $i < $protection) {
-			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.$parentid;
+			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.((int) $parentid);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);
@@ -817,7 +817,7 @@ class Entrepot extends CommonObject
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
-				WHERE fk_parent = '.$id;
+				WHERE fk_parent = '.((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

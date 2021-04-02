@@ -284,9 +284,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
 		if (!empty($id)) {
-			$sql .= " WHERE t.fk_element = ".$id." AND type_element='mailing'";
+			$sql .= " WHERE t.fk_element = ".((int) $id)." AND type_element = 'mailing'";
 		} else {
-			$sql .= " WHERE t.fk_element = ".$this->fk_element."  AND type_element='mailing'";
+			$sql .= " WHERE t.fk_element = ".((int) $this->fk_element)." AND type_element = 'mailing'";
 		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -347,9 +347,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
 		if (!empty($id)) {
-			$sql .= " WHERE t.fk_element = ".$id." AND type_element='$type_element'";
+			$sql .= " WHERE t.fk_element = ".((int) $id)." AND type_element = '".$this->db->escape($type_element)."'";
 		} else {
-			$sql .= " WHERE t.fk_element = ".$this->fk_element."  AND type_element='$type_element'";
+			$sql .= " WHERE t.fk_element = ".((int) $this->fk_element)." AND type_element = '".$this->db->escape($type_element)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);

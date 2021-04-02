@@ -66,7 +66,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 {
 	global $conf;
 
-	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
+	// Now create the .tpl file
 	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
 
 	$aliascontent = '<?php'."\n";
@@ -138,10 +138,11 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website
  * @param	WebsitePage	$objectpage			Object websitepage
+ * @param	int			$backupold			1=Make a backup of old page
  * @return	boolean							True if OK
  * @see dolSavePageAlias()
  */
-function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
+function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
 	global $conf, $db;
 
@@ -149,7 +150,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	dol_delete_file($filetpl);
+
+	if ($backupold) {
+		dol_delete_file($filetpl.'.old');
+		$result = dol_move($filetpl, $filetpl.'.old', 0, 1, 0, 0);
+		if (! $result) {
+			return false;
+		}
+	} else {
+		dol_delete_file($filetpl);
+	}
 
 	$shortlangcode = '';
 	if ($objectpage->lang) {

@@ -42,6 +42,8 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  aft
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in attendees creation card/form with customer type
 
 #
 # Object
@@ -50,6 +52,9 @@ EventOrganizationConfOrBooth= Conference Or Booth
 ManageOrganizeEvent = Manage event organisation
 ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
+AmountOfSubscriptionPaid = Amount of subscription paid
+DateSubscription = Date of subscription
+ConferenceOrBoothAttendee = Conference Or Booth Attendee
 
 #
 # Template Mail
@@ -60,7 +65,7 @@ EventOrganizationEmailAskConf = Request for conference
 EventOrganizationEmailAskBooth = Request for booth
 EventOrganizationEmailSubsBooth = Subscription for booth
 EventOrganizationEmailSubsEvent = Subscription for an event
-EventOrganizationMassEmailAttendees = Communication to attendes
+EventOrganizationMassEmailAttendees = Communication to attendees
 EventOrganizationMassEmailSpeakers = Communication to speakers
 
 #
@@ -72,10 +77,11 @@ AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
 AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
 PriceOfRegistration=Price of registration
 PriceOfRegistrationHelp=Price of registration
-PriceOfBooth=Price of subscription
-PriceOfBoothHelp=Price of subscription
+PriceOfBooth=Subscription price to stand a booth
+PriceOfBoothHelp=Subscription price to stand a booth
 EventOrganizationICSLink=Link ICS for events
-
+ConferenceOrBoothInformation=Conference Or Booth informations
+Attendees = Attendees
 #
 # Status
 #

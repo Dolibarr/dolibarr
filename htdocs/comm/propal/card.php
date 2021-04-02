@@ -89,12 +89,6 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES = 4;
 
-// Security check
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'propal', $id);
-
 $object = new Propal($db);
 $extrafields = new ExtraFields($db);
 
@@ -133,6 +127,14 @@ $usercancreatepurchaseorder = $user->rights->fournisseur->commande->creer;
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
+
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	$object->id = $user->socid;
+}
+restrictedArea($user, 'propal', $object->id);
+
 
 /*
  * Actions
@@ -642,7 +644,7 @@ if (empty($reshook)) {
 			if ($object->statut == $object::STATUS_VALIDATED) {
 				$db->begin();
 
-				$result = $object->cloture($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
+				$result = $object->signature($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -1324,9 +1326,9 @@ if (empty($reshook)) {
 		// Terms of payment
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
-		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
+		$result = $object->set_remise_percent($user, price2num(GETPOST('remise_percent')));
 	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
-		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
+		$result = $object->set_remise_absolue($user, price2num(GETPOST('remise_absolue')));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// Payment choice
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -1387,7 +1389,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'swapstatut') {
 			// Toggle the status of a contact
 			if ($object->fetch($id) > 0) {
-				$result = $object->swapContactStatus(GETPOST('ligne'));
+				$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 			} else {
 				dol_print_error($db);
 			}
@@ -1586,7 +1588,7 @@ if ($action == 'create') {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
 		print '</td></tr>';
 
 		// Third party discounts info line

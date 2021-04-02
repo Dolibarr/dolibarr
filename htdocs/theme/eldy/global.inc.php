@@ -21,6 +21,7 @@
 	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
+	--colorbackmobilemenu: #f8f8f8;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -45,6 +46,8 @@
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008800;
 	--amountremaintopaybackcolor:none;
+	--productlinestockod: #002200;
+	--productlinestocktoolow: #884400;
 }
 
 <?php
@@ -57,7 +60,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
-	            --colorbacktabcard1: #38393d;
+	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
 	            --colorbacktabactive: rgb(220,220,220);
 	            --colorbacklineimpair1: #38393d;
 	            --colorbacklineimpair2: #2b2d2f;
@@ -66,6 +69,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairhover: #2b2d2f;
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
+				--colorbackmobilemenu: #080808;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitlenotab2: rgb(220,220,220);
@@ -89,7 +93,11 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
-	      }\n";
+	      }
+
+		body, button {
+			color: #bbb;
+		}\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "}\n";
 	}
@@ -718,6 +726,9 @@ textarea.centpercent {
 }
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
+}
+.paddingright2imp {
+	padding-<?php print $right; ?>: 2px !important;
 }
 .paddingtop {
 	padding-top: 4px;
@@ -1827,7 +1838,7 @@ div.vmenu, td.vmenu {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '32' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '34' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu)) {
 		print 'margin-bottom: 12px;'."\n";
@@ -3489,9 +3500,11 @@ div.pagination li.pagination a,
 div.pagination li.pagination span {
   padding: 6px 12px;
   line-height: 1.42857143;
-  color: #000;
   text-decoration: none;
   background-repeat: repeat-x;
+  <?php if (empty($conf->global->THEME_DARKMODEENABLED)) { ?>
+  color: #000;
+  <?php } ?>
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -4271,8 +4284,8 @@ div.boximport {
 	min-height: unset;
 }
 
-.product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #884400; }
+.product_line_stock_ok { color: var(--productlinestockok); }
+.product_line_stock_too_low { color: var(--productlinestocktoolow); }
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
@@ -6073,7 +6086,7 @@ li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
 .ui-btn {
-	margin: 0.1em 2px
+	margin: 0 2px;
 }
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
@@ -6227,7 +6240,7 @@ ul.ulmenu {
 }
 .alilevel0 {
 	color: var(--colortexttitle) !important;
-	background: #f8f8f8
+	background: var(--colorbackmobilemenu);
 }
 .ulmenu {
 	box-shadow: none !important;

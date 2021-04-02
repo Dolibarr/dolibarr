@@ -58,7 +58,8 @@ if ($action == 'addcontact' && $permissiontoedit) {
 
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-		$result = $object->add_contact($contactid, GETPOST("type"), GETPOST("source"));
+		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source"));
 	}
 
 	if ($result >= 0) {
@@ -75,7 +76,7 @@ if ($action == 'addcontact' && $permissiontoedit) {
 } elseif ($action == 'swapstatut' && $permissiontoedit) {
 	// Toggle the status of a contact
 	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}

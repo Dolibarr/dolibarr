@@ -1181,7 +1181,7 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			// If invoice was converted into a discount not yet consumed, we remove discount
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' WHERE fk_invoice_supplier_source = '.$rowid;
+			$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
 			$sql .= ' AND fk_invoice_supplier_line IS NULL';
 			$resql = $this->db->query($sql);
 
@@ -1208,13 +1208,13 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'facture_fourn_det';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ".((int) $rowid).")";
 			$resqlef = $this->db->query($sqlef);
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resqlef && $resql) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.((int) $rowid);
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				$resql2 = $this->db->query($sql);
 				if (!$resql2) {
@@ -1465,7 +1465,7 @@ class FactureFournisseur extends CommonInvoice
 		$this->newref = dol_sanitizeFileName($num);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-		$sql .= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+		$sql .= " SET ref='".$this->db->escape($num)."', fk_statut = 1, fk_user_valid = ".((int) $user->id).", date_valid = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -2092,7 +2092,7 @@ class FactureFournisseur extends CommonInvoice
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_invoice_supplier_line = NULL';
-		$sql .= ' WHERE fk_invoice_supplier_line = '.$rowid;
+		$sql .= ' WHERE fk_invoice_supplier_line = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3093,7 +3093,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-		$sql .= ' WHERE f.rowid = '.$rowid;
+		$sql .= ' WHERE f.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY f.rang, f.rowid';
 
 		$query = $this->db->query($sql);

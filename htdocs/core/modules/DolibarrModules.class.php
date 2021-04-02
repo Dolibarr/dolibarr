@@ -1696,7 +1696,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
-					$sql .= " WHERE id = ".$r_id." AND entity = ".$entity;
+					$sql .= " WHERE id = ".((int) $r_id)." AND entity = ".((int) $entity);
 
 					$resqlselect = $this->db->query($sql);
 					if ($resqlselect) {

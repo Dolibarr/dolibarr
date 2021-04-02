@@ -1915,10 +1915,10 @@ if ($id) {
 								$showfield = 0;
 							} elseif ($fieldlist[$field] == 'unicode') {
 								$valuetoshow = $langs->getCurrencySymbol($obj->code, 1);
-							} elseif ($fieldlist[$field] == 'label' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX.'c_units') {
+							} elseif ($fieldlist[$field] == 'label' && $tabname[GETPOST("id", 'int')] == MAIN_DB_PREFIX.'c_units') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
-							} elseif ($fieldlist[$field] == 'short_label' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX.'c_units') {
+							} elseif ($fieldlist[$field] == 'short_label' && $tabname[GETPOST("id", 'int')] == MAIN_DB_PREFIX.'c_units') {
 								$langs->load("products");
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							} elseif (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format')) {
@@ -2056,7 +2056,7 @@ if ($id) {
 					if ($id == 4) {
 						print '<td class="nowrap center">';
 						if ($iserasable) {
-							print '<a class="reposition" href="'.$url.'action='.$acts[$obj->favorite].'_favorite">'.$actl[$obj->favorite].'</a>';
+							print '<a class="reposition" href="'.$url.'action='.$acts[$obj->favorite].'_favorite&token='.newToken().'">'.$actl[$obj->favorite].'</a>';
 						} else {
 							print $langs->trans("AlwaysActive");
 						}
@@ -2066,7 +2066,7 @@ if ($id) {
 					// Active
 					print '<td class="nowrap center">';
 					if ($canbedisabled) {
-						print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+						print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 					} else {
 						if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO'))) {
 							print $langs->trans("AlwaysActive");

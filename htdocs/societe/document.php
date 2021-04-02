@@ -39,13 +39,6 @@ $confirm = GETPOST('confirm');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
-// Security check
-if ($user->socid > 0) {
-	unset($action);
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $id, '&societe');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -83,6 +76,13 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartydocument', 'globalcard'));
 
+
+// Security check
+if ($user->socid > 0) {
+	unset($action);
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*

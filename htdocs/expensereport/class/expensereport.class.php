@@ -663,7 +663,7 @@ class ExpenseReport extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
-		$sql .= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
+		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
 		dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -880,7 +880,7 @@ class ExpenseReport extends CommonObject
 		if ($user->rights->expensereport->lire) {
 			$sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
-			$sql .= " WHERE de.fk_projet = ".$projectid;
+			$sql .= " WHERE de.fk_projet = ".((int) $projectid);
 
 			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -973,7 +973,7 @@ class ExpenseReport extends CommonObject
 	{
 		$sql = 'SELECT tt.total_ht, tt.total_ttc, tt.total_tva';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as tt';
-		$sql .= ' WHERE tt.'.$this->fk_element.' = '.$id;
+		$sql .= ' WHERE tt.'.$this->fk_element.' = '.((int) $id);
 
 		$total_ht = 0; $total_tva = 0; $total_ttc = 0;
 
@@ -1117,8 +1117,8 @@ class ExpenseReport extends CommonObject
 		// Delete extrafields of lines and lines
 		if (!$error && !empty($this->table_element_line)) {
 			$tabletodelete = $this->table_element_line;
-			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id.")";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".$this->id;
+			//$sqlef = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete."_extrafields WHERE fk_object IN (SELECT rowid FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE ".$this->fk_element." = ".((int) $this->id);
 			if (!$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -1154,7 +1154,7 @@ class ExpenseReport extends CommonObject
 
 		// Delete main record
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".((int) $this->id);
 			$res = $this->db->query($sql);
 			if (!$res) {
 				$error++;
@@ -1384,7 +1384,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".$fuser->id.",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".((int) $fuser->id).",";
 			$sql .= " date_approve='".$this->db->idate($this->date_approve)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
 			if ($this->db->query($sql)) {
@@ -1434,7 +1434,7 @@ class ExpenseReport extends CommonObject
 		// date de refus
 		if ($this->status != self::STATUS_REFUSED) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".$fuser->id.",";
+			$sql .= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".((int) $fuser->id).",";
 			$sql .= " date_refuse='".$this->db->idate($now)."',";
 			$sql .= " detail_refuse='".$this->db->escape($details)."',";
 			$sql .= " fk_user_approve = NULL";
@@ -1558,7 +1558,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
+			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
 			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
 			$sql .= " ,detail_cancel='".$this->db->escape($detail)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
@@ -2124,7 +2124,7 @@ class ExpenseReport extends CommonObject
 			// Select des infos sur le type fees
 			$sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-			$sql .= " WHERE c.id = ".$type_fees_id;
+			$sql .= " WHERE c.id = ".((int) $type_fees_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objp_fees = $this->db->fetch_object($resql);
@@ -2136,7 +2136,7 @@ class ExpenseReport extends CommonObject
 			// Select des informations du projet
 			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql .= " WHERE p.rowid = ".$projet_id;
+			$sql .= " WHERE p.rowid = ".((int) $projet_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objp_projet = $this->db->fetch_object($resql);
@@ -2173,7 +2173,7 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.$rowid;
+		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
@@ -2331,7 +2331,7 @@ class ExpenseReport extends CommonObject
 		$ret = array();
 		$sql = "SELECT id, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees";
-		$sql .= " WHERE active = ".$active;
+		$sql .= " WHERE active = ".((int) $active);
 		dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2495,7 +2495,7 @@ class ExpenseReport extends CommonObject
 
 		$type = 'expense_report';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2628,7 +2628,7 @@ class ExpenseReportLine
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id'; // Sometimes type of expense report has been removed, so we use a left join here.
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
-		$sql .= ' WHERE fde.rowid = '.$rowid;
+		$sql .= ' WHERE fde.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 
@@ -2757,7 +2757,7 @@ class ExpenseReportLine
 		$sql = 'SELECT SUM(d.total_ttc) as total_amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_det d';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'expensereport e ON (d.fk_expensereport = e.rowid)';
-		$sql .= ' WHERE e.fk_user_author = '.$fk_user;
+		$sql .= ' WHERE e.fk_user_author = '.((int) $fk_user);
 		if (!empty($this->id)) {
 			$sql .= ' AND d.rowid <> '.$this->id;
 		}

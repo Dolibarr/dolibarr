@@ -52,7 +52,6 @@ $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$id = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $id, 'product&product');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -73,6 +72,8 @@ if (!$sortorder) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
+
+$result = restrictedArea($user, 'produit|service', $id, 'product&product');
 
 
 /*

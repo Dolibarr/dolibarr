@@ -53,7 +53,8 @@ $donation_static = new Don($db);
 
 $donstatic = new Don($db);
 
-$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
 llxHeader('', $langs->trans("Donations"), $help_url);
 
 $nb = array();

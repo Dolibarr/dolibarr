@@ -405,7 +405,7 @@ while ($j < $numlt) {
 
 	$sql = "SELECT pv.rowid, pv.amount, pv.label, pv.datev as dm, pv.datep as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."localtax as pv";
-	$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".$j;
+	$sql .= " WHERE pv.entity = ".$conf->entity." AND localtaxtype = ".((int) $j);
 	if ($year > 0) {
 		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
 		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire

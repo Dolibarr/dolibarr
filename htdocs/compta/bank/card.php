@@ -306,7 +306,7 @@ $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("
 
 $title = $langs->trans("FinancialAccount")." - ".$langs->trans("Card");
 
-$help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
 
 llxHeader("", $title, $help_url);
 
@@ -570,13 +570,13 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	if (($_GET["id"] || $_GET["ref"]) && $action != 'edit') {
+	if ((GETPOST("id", 'int') || GETPOST("ref")) && $action != 'edit') {
 		$object = new Account($db);
-		if ($_GET["id"]) {
-			$object->fetch($_GET["id"]);
+		if (GETPOST("id", 'int')) {
+			$object->fetch(GETPOST("id", 'int'));
 		}
-		if ($_GET["ref"]) {
-			$object->fetch(0, $_GET["ref"]);
+		if (GETPOST("ref")) {
+			$object->fetch(0, GETPOST("ref"));
 			$_GET["id"] = $object->id;
 		}
 

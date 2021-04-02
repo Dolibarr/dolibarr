@@ -117,6 +117,13 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('thirdparty', 'card', $canvas);
 }
 
+$permissiontoread = $user->rights->societe->lire;
+$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->societe->supprimer || ($permissiontoadd && isset($object->status) && $object->status == 0);
+$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
+
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 
@@ -130,12 +137,6 @@ if ($object->id > 0) {
 }
 */
 
-$permissiontoread = $user->rights->societe->lire;
-$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->societe->supprimer || ($permissiontoadd && isset($object->status) && $object->status == 0);
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
 /*
@@ -792,7 +793,7 @@ if (empty($reshook)) {
 				// Update linked member
 				if (!$error && $object->fk_soc > 0) {
 					$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
-					$sql .= " SET fk_soc = NULL WHERE fk_soc = ".$id;
+					$sql .= " SET fk_soc = NULL WHERE fk_soc = ".((int) $socid);
 					if (!$object->db->query($sql)) {
 						$error++;
 						$object->error .= $object->db->lasterror();

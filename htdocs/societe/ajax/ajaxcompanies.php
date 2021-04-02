@@ -19,7 +19,7 @@
  */
 
 /**
- *       \file       htdocs/societe/ajaxcompanies.php
+ *       \file       htdocs/societe/ajax/ajaxcompanies.php
  *       \brief      File to return Ajax response on third parties request
  */
 
@@ -42,7 +42,22 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
 
-require '../main.inc.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+$id = GETPOST('socid', 'int') || GETPOST('id_fourn', 'int');
+
+$object = new Societe($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+
+// Security check
+if ($user->socid > 0) {
+	$socid = $user->socid;
+	$object->id = $socid;
+}
+restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*
@@ -58,20 +73,18 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog(join(',', $_GET));
 
-
-// Generation liste des societes
-if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
+// Generate list of companies
+if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn', 'int')) {
 	$return_arr = array();
 
 	// Define filter on text typed
-	$socid = $_GET['newcompany'] ? $_GET['newcompany'] : '';
+	$socid = GETPOST('newcompany');
 	if (!$socid) {
-		$socid = $_GET['socid'] ? $_GET['socid'] : '';
+		$socid = GETPOST('socid', 'int');
 	}
 	if (!$socid) {
-		$socid = $_GET['id_fourn'] ? $_GET['id_fourn'] : '';
+		$socid = GETPOST('id_fourn', 'int');
 	}
 
 	$sql = "SELECT rowid, nom";
@@ -90,7 +103,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 			$sql .= " OR code_fournisseur LIKE '%".$db->escape($socid)."%'";
 		}
 		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) {
-			$sql .= " OR rowid = '".$db->escape($socid)."'";
+			$sql .= " OR rowid = ".((int) $socid);
 		}
 		$sql .= ")";
 	}

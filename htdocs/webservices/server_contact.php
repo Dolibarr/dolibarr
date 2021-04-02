@@ -503,7 +503,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		$sql .= " WHERE c.fk_soc = ".$idthirdparty;
+		$sql .= " WHERE c.fk_soc = ".((int) $idthirdparty);
 
 		$resql = $db->query($sql);
 		if ($resql) {

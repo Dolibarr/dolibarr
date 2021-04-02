@@ -193,7 +193,7 @@ if ($action == 'create') {
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
-	$sql .= " WHERE p.fk_charge = ".$chid;
+	$sql .= " WHERE p.fk_charge = ".((int) $chid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);

@@ -80,6 +80,7 @@ $arrayofparameters = array(
 	//'MYMODULE_MYPARAM3'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	//'MYMODULE_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
 	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
+	//'MYMODULE_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
 );
 
 $error = 0;
@@ -271,6 +272,10 @@ if ($action == 'edit') {
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
 				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+				$formcompany = new FormCompany($db);
+				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
@@ -327,6 +332,16 @@ if ($action == 'edit') {
 						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
 					}
 					print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
+					if ($conf->global->{$constname}==2) {
+						print $langs->trans("Prospect");
+					} elseif ($conf->global->{$constname}==3) {
+						print $langs->trans("ProspectCustomer");
+					} elseif ($conf->global->{$constname}==1) {
+						print $langs->trans("Customer");
+					} elseif ($conf->global->{$constname}==0) {
+						print $langs->trans("NorProspectNorCustomer");
+					}
 				} else {
 					print  $conf->global->{$constname};
 				}

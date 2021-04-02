@@ -572,7 +572,7 @@ class PaymentVarious extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
 		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_various SET fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_various SET fk_bank = '.((int) $id_bank);
 		$sql .= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -783,7 +783,7 @@ class PaymentVarious extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$banklineid;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

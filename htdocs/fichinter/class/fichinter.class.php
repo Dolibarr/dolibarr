@@ -1438,7 +1438,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang,';
 		$sql .= ' ft.date as datei';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
-		$sql .= ' WHERE ft.rowid = '.$rowid;
+		$sql .= ' WHERE ft.rowid = '.((int) $rowid);
 
 		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1622,7 +1622,7 @@ class FichinterLigne extends CommonObjectLine
 
 		$sql = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
-		$sql .= " WHERE fk_fichinter=".$this->fk_fichinter;
+		$sql .= " WHERE fk_fichinter=".((int) $this->fk_fichinter);
 
 		dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1634,10 +1634,10 @@ class FichinterLigne extends CommonObjectLine
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-			$sql .= " SET duree = ".$total_duration;
+			$sql .= " SET duree = ".((int) $total_duration);
 			$sql .= " , dateo = ".(!empty($obj->dateo) ? "'".$this->db->idate($obj->dateo)."'" : "null");
 			$sql .= " , datee = ".(!empty($obj->datee) ? "'".$this->db->idate($obj->datee)."'" : "null");
-			$sql .= " WHERE rowid = ".$this->fk_fichinter;
+			$sql .= " WHERE rowid = ".((int) $this->fk_fichinter);
 
 			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 			$resql = $this->db->query($sql);

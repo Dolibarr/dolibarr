@@ -68,7 +68,6 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Product($db);
@@ -82,6 +81,8 @@ if ((!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productpricecard', 'globalcard'));
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -429,12 +430,12 @@ if (empty($reshook)) {
 			// Ajout / mise à jour
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
-				$sql .= " price='".$db->escape($price)."',";
-				$sql .= " unitprice=".$unitPrice.",";
-				$sql .= " quantity=".$quantity.",";
-				$sql .= " remise_percent=".$remise_percent.",";
-				$sql .= " remise=".$remise;
-				$sql .= " WHERE rowid = ".$rowid;
+				$sql .= " price=".((float) $price)."',";
+				$sql .= " unitprice=".((float) $unitPrice).",";
+				$sql .= " quantity=".((float) $quantity).",";
+				$sql .= " remise_percent=".((float) $remise_percent).",";
+				$sql .= " remise=".((float) $remise);
+				$sql .= " WHERE rowid = ".((int) $rowid);
 
 				$result = $db->query($sql);
 				if (!$result) {
@@ -442,7 +443,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,unitprice,quantity,remise_percent,remise) values (";
-				$sql .= $priceid.','.$price.','.$unitPrice.','.$quantity.','.$remise_percent.','.$remise.')';
+				$sql .= ((int) $priceid).','.((float) $price).','.((float) $unitPrice).','.((float) $quantity).','.((float) $remise_percent).','.((float) $remise).')';
 
 				$result = $db->query($sql);
 				if (!$result) {
@@ -460,7 +461,7 @@ if (empty($reshook)) {
 		$rowid = GETPOST('rowid', 'int');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			$result = $db->query($sql);
 		} else {
@@ -472,7 +473,7 @@ if (empty($reshook)) {
 		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-			$sql .= " WHERE fk_product_price = ".$priceid;
+			$sql .= " WHERE fk_product_price = ".((int) $priceid);
 
 			$result = $db->query($sql);
 		} else {
@@ -1413,11 +1414,11 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 	$sql .= " p.date_price as dp, p.fk_price_expression, u.rowid as user_id, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_price as p,";
 	$sql .= " ".MAIN_DB_PREFIX."user as u";
-	$sql .= " WHERE fk_product = ".$object->id;
+	$sql .= " WHERE fk_product = ".((int) $object->id);
 	$sql .= " AND p.entity IN (".getEntity('productprice').")";
 	$sql .= " AND p.fk_user_author = u.rowid";
 	if (!empty($socid) && !empty($conf->global->PRODUIT_MULTIPRICES)) {
-		$sql .= " AND p.price_level = ".$soc->price_level;
+		$sql .= " AND p.price_level = ".((int) $soc->price_level);
 	}
 	$sql .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
 	// $sql .= $db->plimit();

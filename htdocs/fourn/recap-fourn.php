@@ -73,7 +73,7 @@ if ($socid > 0) {
 		$sql .= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql .= " u.login, u.rowid as userid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $societe->id);
 		$sql .= " AND f.entity IN (".getEntity("facture_fourn").")"; // Recognition of the entity attributed to this invoice for Multicompany
 		$sql .= " AND f.fk_user_valid = u.rowid";
 		$sql .= " ORDER BY f.datef DESC";

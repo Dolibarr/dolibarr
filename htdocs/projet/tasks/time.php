@@ -185,12 +185,12 @@ if ($action == 'addtimespent' && $user->rights->projet->lire) {
 				$action = 'createtime';
 				$error++;
 			} else {
-				$object->timespent_note = GETPOST("timespent_note");
+				$object->timespent_note = GETPOST("timespent_note", 'alpha');
 				if (GETPOST('progress', 'int') > 0) {
 					$object->progress = GETPOST('progress', 'int'); // If progress is -1 (not defined), we do not change value
 				}
-				$object->timespent_duration = GETPOST("timespent_durationhour") * 60 * 60; // We store duration in seconds
-				$object->timespent_duration += (GETPOST("timespent_durationmin") ? GETPOST("timespent_durationmin") : 0) * 60; // We store duration in seconds
+				$object->timespent_duration = GETPOSTINT("timespent_durationhour") * 60 * 60; // We store duration in seconds
+				$object->timespent_duration += (GETPOSTINT('timespent_durationmin') ? GETPOSTINT('timespent_durationmin') : 0) * 60; // We store duration in seconds
 				if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0) {	// If hour was entered
 					$object->timespent_date = dol_mktime(GETPOST("timehour"), GETPOST("timemin"), 0, GETPOST("timemonth"), GETPOST("timeday"), GETPOST("timeyear"));
 					$object->timespent_withhour = 1;
@@ -233,10 +233,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$result = $object->delTimeSpent($user);
 
 			$object->fetch($id, $ref);
-			$object->timespent_note = GETPOST("timespent_note_line");
+			$object->timespent_note = GETPOST("timespent_note_line", 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
-			$object->timespent_duration = GETPOST("new_durationhour") * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += (GETPOST("new_durationmin") ? GETPOST("new_durationmin") : 0) * 60; // We store duration in seconds
+			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 				$object->timespent_withhour = 1;
@@ -258,8 +258,8 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 			$object->timespent_id = GETPOST("lineid", 'int');
 			$object->timespent_note = GETPOST("timespent_note_line");
 			$object->timespent_old_duration = GETPOST("old_duration");
-			$object->timespent_duration = GETPOST("new_durationhour") * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += (GETPOST("new_durationmin") ? GETPOST("new_durationmin") : 0) * 60; // We store duration in seconds
+			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
+			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {	// If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 				$object->timespent_withhour = 1;
@@ -428,7 +428,7 @@ if ($action == 'confirm_generateinvoice') {
 					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
 					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
@@ -467,7 +467,7 @@ if ($action == 'confirm_generateinvoice') {
 					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
 					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).') AND fk_user = '.((int) $userid);
 					$result = $db->query($sql);
 					if (!$result) {
@@ -503,7 +503,7 @@ if ($action == 'confirm_generateinvoice') {
 					$lineid = $tmpinvoice->addline($lineName, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.$lineid.', invoice_id = '.$tmpinvoice->id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
 					$sql .= ' WHERE rowid IN ('.$db->sanitize(join(',', $toselect)).')';
 					$result = $db->query($sql);
 					if (!$result) {
