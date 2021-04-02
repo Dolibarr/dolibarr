@@ -126,8 +126,8 @@ class Project extends CommonObject
 	public $usage_bill_time; // Is the time spent on project must be invoiced or not
 
 	/**
-	 * @var integer		Event organization: Use Event Organization
-	 */
+	   * @var integer		Event organization: Use Event Organization
+	   */
 	public $usage_organize_event;
 
 	/**

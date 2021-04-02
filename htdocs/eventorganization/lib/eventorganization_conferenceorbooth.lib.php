@@ -47,10 +47,10 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	$head[$h][2] = 'card';
 	$h++;
 
-	//$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_contact.php", 1).'?conforboothid='.$object->id.$withProjectUrl;
-	//$head[$h][1] = $langs->trans("Contact/Adress");
-	//$head[$h][2] = 'attendees';
-	//$h++;
+	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_contact.php", 1).'?id='.$object->id.$withProjectUrl;
+	$head[$h][1] = $langs->trans("ContactsAddresses");
+	$head[$h][2] = 'contact';
+	$h++;
 
 	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorboothattendee_list.php", 1).'?conforboothid='.$object->id.$withProjectUrl;
 	$head[$h][1] = $langs->trans("Attendees");
