@@ -359,3 +359,47 @@ ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_signature FOREIGN KEY (f
 
 UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signature IS NULL AND fk_user_cloture IS NOT NULL;
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
+
+
+
+
+
+CREATE TABLE llx_partnership(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	fk_soc integer, 
+	fk_member integer, 
+	date_partnership_start datetime NOT NULL, 
+	date_partnership_end datetime NOT NULL, 
+	status smallint NOT NULL DEFAULT '0', 
+	date_creation datetime NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	tms timestamp, 
+	fk_user_modif integer, 
+	note_private text, 
+	note_public text, 
+	last_main_doc varchar(255), 
+	count_last_url_check_error integer DEFAULT '0', 
+	reason_decline_or_cancel text NULL,
+	import_key varchar(14), 
+	model_pdf varchar(255)
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_ref (ref);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_soc (fk_soc);
+ALTER TABLE llx_partnership ADD CONSTRAINT llx_partnership_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_status (status);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_member (fk_member);
+
+create table llx_partnership_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_partnership_extrafields ADD INDEX idx_partnership_fk_object(fk_object);
