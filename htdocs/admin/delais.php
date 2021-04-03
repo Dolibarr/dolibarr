@@ -289,7 +289,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if ($conf->global->MAIN_DISABLE_METEO != 1) {
+if (isset($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
