@@ -237,8 +237,6 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Check user access to a resource
-	 *
 	 * Check access by user to a given resource
 	 *
 	 * @param string	$resource		element to check

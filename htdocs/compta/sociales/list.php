@@ -28,14 +28,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-$socid = isset($_GET["socid"]) ? $_GET["socid"] : '';
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax', '', '', 'charges');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
@@ -124,6 +116,14 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('sclist'));
 $object = new ChargeSociales($db);
+
+// Security check
+$socid = GETPOST("socid", 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
+
 
 /*
  * Actions

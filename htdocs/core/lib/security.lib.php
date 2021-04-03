@@ -563,6 +563,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 	foreach ($featuresarray as $feature) {
 		$sql = '';
 
+		//var_dump($feature);
+
 		// For backward compatibility
 		if ($feature == 'member') {
 			$feature = 'adherent';
@@ -574,7 +576,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			$feature = 'projet_task';
 		}
 
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'website'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salary', 'website'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
