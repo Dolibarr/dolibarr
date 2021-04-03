@@ -765,7 +765,7 @@ class Partnership extends CommonObject
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function refused($user, $reason = '')
+	public function refused($user, $notrigger = '')
 	{
 		// Protection
 		// if ($this->status != self::STATUS_DRAFT) {
