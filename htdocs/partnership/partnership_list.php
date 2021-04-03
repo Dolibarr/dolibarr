@@ -123,10 +123,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-if($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
+if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
 	unset($object->fields['fk_soc']);
-else
-	unset($object->fields['fk_member']);
+else unset($object->fields['fk_member']);
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {

@@ -80,10 +80,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 if ($action == 'setting') {
-
 	$value = GETPOST('managed_for', 'alpha');
 	$res = dolibarr_set_const($db, "PARTNERSHIP_IS_MANAGED_FOR", $value, 'chaine', 0, '', $conf->entity);
-
 }
 
 if ($action) {
