@@ -252,4 +252,4 @@ InfoTemplateImport=Uploaded file needs to have this format (* are mandatory fiel
 LabelOfInventoryMovemement=Inventory %s
 ReOpen=Reopen
 ConfirmFinish=Confirm closing
-
+ObjectNotFound=%s not found
