@@ -57,18 +57,21 @@ if (empty($refund)) {
 $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
 $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 'int'), GETPOST("datepyear", 'int'));
 
+$object = new Tva($db);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('taxvatcard', 'globalcard'));
+
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', '', 'charges');
-
-$object = new Tva($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('taxvatcard', 'globalcard'));
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /**
@@ -330,6 +333,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	}
 }
 
+
 /*
  *	View
  */
@@ -338,7 +342,8 @@ $form = new Form($db);
 
 $title = $langs->trans("VAT")." - ".$langs->trans("Card");
 $help_url = '';
-llxHeader("", $title, $helpurl);
+
+llxHeader("", $title, $help_url);
 
 
 if ($id) {
@@ -438,6 +443,7 @@ if ($action == 'create') {
 
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
+		print img_picto('', 'bank_account', 'pictofixedwidth');
 		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1); // List of bank account available
 		print '</td></tr>';
 	}

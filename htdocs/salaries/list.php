@@ -108,13 +108,6 @@ if (!GETPOST('search_type_id', 'int')) {
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
@@ -160,6 +153,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write;
 $permissiontodelete = $user->rights->salaries->delete;
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', '', 'salary', '');
 
 
 /*

@@ -41,14 +41,13 @@ $id = GETPOST("id", 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 if ($user->socid) $socid = $user->socid;
-// TODO ajouter regle pour restreindre acces paiement
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSalary($db);
 if ($id > 0) {
 	$result = $object->fetch($id);
 	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
+restrictedArea($user, 'salaries', $object->fk_salary, 'salary', '');	// $object is payment of salary
 
 
 /*

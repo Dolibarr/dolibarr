@@ -34,27 +34,8 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-// doesn't work :-(
-// restrictedArea($user, 'fournisseur');
-
-// doesn't work :-(
-// require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-// $object = new PaiementFourn($db);
-// restrictedArea($user, $object->element);
-
-if (!$user->rights->fournisseur->facture->lire) {
-	accessforbidden();
-}
-
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
@@ -120,9 +101,28 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+// doesn't work :-(
+// restrictedArea($user, 'fournisseur');
+// doesn't work :-(
+// require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+// $object = new PaiementFourn($db);
+// restrictedArea($user, $object->element);
+if (empty($conf->fournisseur->enabled)) {
+	accessforbidden();
+}
+if (!$user->rights->fournisseur->facture->lire) {
+	accessforbidden();
+}
+
+
 /*
-* Actions
-*/
+ * Actions
+ */
 
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -520,7 +520,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right">'.price($objp->pamount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
