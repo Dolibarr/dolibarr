@@ -66,12 +66,14 @@ if (empty($modetax)) {
 	$modetax = 0;
 }
 
+$object = new Tva($db);
+
 // Security check
 $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*

@@ -56,20 +56,23 @@ $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOST('userid', 'int');
 
+$object = new ChargeSociales($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
+$result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
-$object = new ChargeSociales($db);
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Actions                                                                     */
-/*                                                                             */
-/* *************************************************************************** */
+
+/*
+ * Actions
+ */
 
 // Classify paid
 if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes') {

@@ -46,13 +46,6 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax', '', 'vat', 'charges');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -71,14 +64,20 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-
 $object = new Tva($db);
+
 if ($id > 0) {
 	$object->fetch($id);
 }
 
 $upload_dir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'tax-vat';
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*
