@@ -18,6 +18,7 @@
 *.pp text eol=lf
 *.sh text eol=lf
 *.yaml text eol=lf
+*.conf text eol=lf
 
 .bash_aliases text eol=lf
 
@@ -26,6 +27,7 @@
 *.ico binary
 *.png binary
 *.jpg binary
+*.jpeg binary
 *.odt binary
 *.odf binary
 *.frm binary
