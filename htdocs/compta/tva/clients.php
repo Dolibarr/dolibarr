@@ -65,7 +65,7 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 
@@ -496,14 +496,14 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// Total HT
 					if ($modetax != 1) {
-						print '<td class="nowrap right">';
+						print '<td class="nowrap right"><span class="amount">';
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc'])) {
 							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
 							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
 							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
-						print '</td>';
+						print '</span></td>';
 					}
 
 					// Payment
@@ -523,7 +523,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
 								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
 							}
-							print price(price2num($fields['payment_amount'], 'MT'));
+							print '<span class="amount">'.price(price2num($fields['payment_amount'], 'MT')).'</span>';
 							if (isset($fields['payment_amount'])) {
 								print ' ('.round($ratiopaymentinvoice * 100, 2).'%)';
 							}
@@ -532,17 +532,17 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Total collected
-					print '<td class="nowrap right">';
+					print '<td class="nowrap right"><span class="amount">';
 					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
-					print '</td>';
+					print '</span></td>';
 
 					// VAT
-					print '<td class="nowrap right">';
+					print '<td class="nowrap right"><span class="amount">';
 					$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 					print price(price2num($temp_vat, 'MT'), 1);
 					//print price($fields['vat']);
-					print '</td>';
+					print '</span></td>';
 					print '</tr>';
 
 					$subtot_coll_total_ht += $temp_ht;
@@ -550,6 +550,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$x_coll_sum += $temp_vat;
 				}
 			}
+
 			// Total customers for this vat rate
 			print '<tr class="liste_total">';
 			print '<td colspan="4"></td>';
@@ -686,14 +687,14 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// Total HT
 					if ($modetax != 1) {
-						print '<td class="nowrap right">';
+						print '<td class="nowrap right"><span class="amount">';
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc'])) {
 							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
 							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
 							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
-						print '</td>';
+						print '</span></td>';
 					}
 
 					// Payment
@@ -713,7 +714,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
 								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
 							}
-							print price(price2num($fields['payment_amount'], 'MT'));
+							print '<span class="amount">'.price(price2num($fields['payment_amount'], 'MT')).'</span>';
 							if (isset($fields['payment_amount'])) {
 								print ' ('.round($ratiopaymentinvoice * 100, 2).'%)';
 							}
@@ -722,17 +723,17 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// VAT paid
-					print '<td class="nowrap right">';
+					print '<td class="nowrap right"><span class="amount">';
 					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
-					print '</td>';
+					print '</span></td>';
 
 					// VAT
-					print '<td class="nowrap right">';
+					print '<td class="nowrap right"><span class="amount">';
 					$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 					print price(price2num($temp_vat, 'MT'), 1);
 					//print price($fields['vat']);
-					print '</td>';
+					print '</span></td>';
 					print '</tr>';
 
 					$subtot_paye_total_ht += $temp_ht;
