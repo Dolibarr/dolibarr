@@ -733,36 +733,36 @@ if ($action == 'create'){
 					setEventMessages('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
 					if ($conf->file->mailing_limit_sendbyweb != '-1')  // MAILING_LIMIT_SENDBYWEB was set to -1 in database, but it is allowed ot increase it.{
 						setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings'); // You can send online with constant...
-					}
-					$action = '';//$_GET["action"] = '';
-				} else {
-					if (!empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
-					if (!empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
-
-					$text = '';
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0){
-						$text .= $langs->trans("MailingNeedCommand");
-						$text .= '<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
-						$text .= '<br><br>';
-					}
-					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
-					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm('card.php?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 330, 600);
 				}
+					$action = '';//$_GET["action"] = '';
+			} else {
+				if (!empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+				if (!empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
+
+				$text = '';
+				if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || $conf->global->MAILING_LIMIT_SENDBYCLI >= 0){
+					$text .= $langs->trans("MailingNeedCommand");
+					$text .= '<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
+					$text .= '<br><br>';
+				}
+				$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
+				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
+				print $form->formconfirm('card.php?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', '', '', 1, 330, 600);
 			}
+		}
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright = '';
 			$nbtry = $nbok = 0;
-			if ($object->statut == 2 || $object->statut == 3){
-				$nbtry = $object->countNbOfTargets('alreadysent');
-				$nbko  = $object->countNbOfTargets('alreadysentko');
+		if ($object->statut == 2 || $object->statut == 3){
+			$nbtry = $object->countNbOfTargets('alreadysent');
+			$nbko  = $object->countNbOfTargets('alreadysentko');
 
-				$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
-				if ($nbko) $morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
-				$morehtmlright .= ') &nbsp; ';
-			}
+			$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
+			if ($nbko) $morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+			$morehtmlright .= ') &nbsp; ';
+		}
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 
@@ -814,22 +814,22 @@ if ($action == 'create'){
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
-			if (is_numeric($nbemail)){
-				$text = '';
-				if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))){
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0){
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					} else {
-						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
-					}
-				}
-				if (empty($nbemail)) $nbemail .= ' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
-				if ($text){
-					print $form->textwithpicto($nbemail, $text, 1, 'warning');
+		if (is_numeric($nbemail)){
+			$text = '';
+			if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))){
+				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0){
+					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 				} else {
-					print $nbemail;
+					$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 				}
 			}
+			if (empty($nbemail)) $nbemail .= ' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+			if ($text){
+				print $form->textwithpicto($nbemail, $text, 1, 'warning');
+			} else {
+				print $nbemail;
+			}
+		}
 			print '</td></tr>';
 
 			// Other attributes
@@ -842,134 +842,134 @@ if ($action == 'create'){
 			print dol_get_fiche_end();
 
 			// Clone confirmation
-			if ($action == 'clone'){
-				// Create an array for form
-				$formquestion = array(
-					'text' => $langs->trans("ConfirmClone"),
-				array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
-				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
-				);
-				// Incomplete payment. On demande si motif = escompte ou autre
-				print $form->formconfirm('card.php?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
-			}
+		if ($action == 'clone'){
+			// Create an array for form
+			$formquestion = array(
+				'text' => $langs->trans("ConfirmClone"),
+			array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneContent"), 'value' => 1),
+			array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
+			);
+			// Incomplete payment. On demande si motif = escompte ou autre
+			print $form->formconfirm('card.php?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneEMailing', $object->ref), 'confirm_clone', $formquestion, 'yes', 2, 240);
+		}
 
 			/*
 			 * Actions Buttons
 			 */
 
-			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test'))){
-				print "\n\n<div class=\"tabsAction\">\n";
+		if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test'))){
+			print "\n\n<div class=\"tabsAction\">\n";
 
-				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->fk_user_valid == $user->id)){
-					print '<a class="butAction" href="card.php?action=settodraft&amp;id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
-				}
-
-				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer){
-					if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)){
-						print '<a class="butAction" href="card.php?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
-					} else {
-						print '<a class="butAction" href="card.php?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
-					}
-
-					if (!empty($conf->use_javascript_ajax)) print '<a class="butAction" href="card.php?action=edithtml&amp;id='.$object->id.'">'.$langs->trans("EditHTMLSource").'</a>';
-				}
-
-				//print '<a class="butAction" href="card.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
-
-				if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send){
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
-				} else {
-					print '<a class="butAction" href="card.php?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
-				}
-
-				if ($object->statut == 0){
-					if ($object->nbemail <= 0){
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
-					} elseif (empty($user->rights->mailing->valider)){
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
-					} else {
-						print '<a class="butAction" href="card.php?action=valid&amp;id='.$object->id.'">'.$langs->trans("ValidMailing").'</a>';
-					}
-				}
-
-				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider){
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0){
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
-					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send){
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
-					} else {
-						print '<a class="butAction" href="card.php?action=sendall&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
-					}
-				}
-
-				if ($user->rights->mailing->creer){
-					print '<a class="butAction" href="card.php?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
-				}
-
-				if (($object->statut == 2 || $object->statut == 3) && $user->rights->mailing->valider){
-					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send){
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
-					} else {
-						print '<a class="butAction" href="card.php?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
-					}
-				}
-
-				if (($object->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer){
-					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->delete)){
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
-					} else {
-						print '<a class="butActionDelete" href="card.php?action=delete&amp;token='.newToken().'&amp;id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
-					}
-				}
-
-				print '</div>';
+			if (($object->statut == 1) && ($user->rights->mailing->valider || $object->fk_user_valid == $user->id)){
+				print '<a class="butAction" href="card.php?action=settodraft&amp;id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 			}
+
+			if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer){
+				if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)){
+					print '<a class="butAction" href="card.php?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
+				} else {
+					print '<a class="butAction" href="card.php?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
+				}
+
+				if (!empty($conf->use_javascript_ajax)) print '<a class="butAction" href="card.php?action=edithtml&amp;id='.$object->id.'">'.$langs->trans("EditHTMLSource").'</a>';
+			}
+
+			//print '<a class="butAction" href="card.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
+
+			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send){
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
+			} else {
+				print '<a class="butAction" href="card.php?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
+			}
+
+			if ($object->statut == 0){
+				if ($object->nbemail <= 0){
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
+				} elseif (empty($user->rights->mailing->valider)){
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
+				} else {
+					print '<a class="butAction" href="card.php?action=valid&amp;id='.$object->id.'">'.$langs->trans("ValidMailing").'</a>';
+				}
+			}
+
+			if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider){
+				if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0){
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
+				} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send){
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
+				} else {
+					print '<a class="butAction" href="card.php?action=sendall&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
+				}
+			}
+
+			if ($user->rights->mailing->creer){
+				print '<a class="butAction" href="card.php?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+			}
+
+			if (($object->statut == 2 || $object->statut == 3) && $user->rights->mailing->valider){
+				if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send){
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
+				} else {
+					print '<a class="butAction" href="card.php?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
+				}
+			}
+
+			if (($object->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer){
+				if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->delete)){
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
+				} else {
+					print '<a class="butActionDelete" href="card.php?action=delete&amp;token='.newToken().'&amp;id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
+				}
+			}
+
+			print '</div>';
+		}
 
 			// Display of the TEST form
-			if ($action == 'test'){
-				print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
-				print load_fiche_titre($langs->trans("TestMailing"));
+		if ($action == 'test'){
+			print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+			print load_fiche_titre($langs->trans("TestMailing"));
 
-				print dol_get_fiche_head(null, '', '', -1);
+			print dol_get_fiche_head(null, '', '', -1);
 
-				// Create mail form object
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				$formmail->fromname = $object->email_from;
-				$formmail->frommail = $object->email_from;
-				$formmail->withsubstit = 1;
-				$formmail->withfrom = 0;
-				$formmail->withto = $user->email ? $user->email : 1;
-				$formmail->withtocc = 0;
-				$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
-				$formmail->withtopic = 0;
-				$formmail->withtopicreadonly = 1;
-				$formmail->withfile = 0;
-				$formmail->withbody = 0;
-				$formmail->withbodyreadonly = 1;
-				$formmail->withcancel = 1;
-				$formmail->withdeliveryreceipt = 0;
-				// Table of substitutions
-				$formmail->substit = $object->substitutionarrayfortest;
-				// Table of post's complementary params
-				$formmail->param["action"] = "send";
-				$formmail->param["models"] = 'none';
-				$formmail->param["mailid"] = $object->id;
-				$formmail->param["returnurl"] = $_SERVER['PHP_SELF']."?id=".$object->id;
+			// Create mail form object
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->fromname = $object->email_from;
+			$formmail->frommail = $object->email_from;
+			$formmail->withsubstit = 1;
+			$formmail->withfrom = 0;
+			$formmail->withto = $user->email ? $user->email : 1;
+			$formmail->withtocc = 0;
+			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withtopic = 0;
+			$formmail->withtopicreadonly = 1;
+			$formmail->withfile = 0;
+			$formmail->withbody = 0;
+			$formmail->withbodyreadonly = 1;
+			$formmail->withcancel = 1;
+			$formmail->withdeliveryreceipt = 0;
+			// Table of substitutions
+			$formmail->substit = $object->substitutionarrayfortest;
+			// Table of post's complementary params
+			$formmail->param["action"] = "send";
+			$formmail->param["models"] = 'none';
+			$formmail->param["mailid"] = $object->id;
+			$formmail->param["returnurl"] = $_SERVER['PHP_SELF']."?id=".$object->id;
 
-				print $formmail->get_form();
+			print $formmail->get_form();
 
-				print '<br>';
+			print '<br>';
 
-				print dol_get_fiche_end();
+			print dol_get_fiche_end();
 
-				print dol_set_focus('#sendto');
-			}
+			print dol_set_focus('#sendto');
+		}
 
 			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
-			foreach ($object->substitutionarray as $key => $val){
-				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
-			}
+		foreach ($object->substitutionarray as $key => $val){
+			$htmltext .= $key.' = '.$langs->trans($val).'<br>';
+		}
 			$htmltext .= '</i>';
 
 			// Print mail content
@@ -986,14 +986,14 @@ if ($action == 'create'){
 			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
 			// List of files
 			$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
-			if (count($listofpaths)){
-				foreach ($listofpaths as $key => $val){
-					print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-					print '<br>';
-				}
-			} else {
-				print '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+		if (count($listofpaths)){
+			foreach ($listofpaths as $key => $val){
+				print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
+				print '<br>';
 			}
+		} else {
+			print '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+		}
 			print '</td></tr>';
 
 			// Background color
@@ -1011,180 +1011,180 @@ if ($action == 'create'){
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, empty($conf->global->FCKEDITOR_ENABLE_MAILING) ? 0 : 1, 20, '90%', $readonly);
 				$doleditor->Create();
-			} else print dol_htmlentitiesbr($object->body);
+	} else print dol_htmlentitiesbr($object->body);
 			print '</div>';
 
 			print dol_get_fiche_end();
-		} else {
-			/*
-			 * Edition mode mailing (CKeditor or HTML source)
-			 */
+} else {
+	/*
+	 * Edition mode mailing (CKeditor or HTML source)
+	 */
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			$morehtmlright = '';
-			if ($object->statut == 2) $morehtmlright .= ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+	$morehtmlright = '';
+	if ($object->statut == 2) $morehtmlright .= ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
 
-			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 
-			print '<div class="fichecenter">';
-			print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+	print '<table class="border centpercent">';
 
-			/*
-			print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-			print '<td colspan="3">';
-			print $form->showrefnav($object,'id', $linkback);
-			print '</td></tr>';
-			*/
+	/*
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="3">';
+	print $form->showrefnav($object,'id', $linkback);
+	print '</td></tr>';
+	*/
 
-			// Topic
-			print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
-			// From
-			print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
-			// To
-			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
+	// Topic
+	print '<tr><td class="titlefield">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->title.'</td></tr>';
+	// From
+	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from, 0, 0, 0, 0, 1).'</td></tr>';
+	// To
+	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1).'</td></tr>';
 
-			// Number of distinct emails
-			print '<tr><td>';
-			print $langs->trans("TotalNbOfDistinctRecipients");
-			print '</td><td colspan="3">';
-			$nbemail = ($object->nbemail ? $object->nbemail : 0);
-			if (is_numeric($nbemail)){
-				$text = '';
-				if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2)){
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0){
-						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					} else {
-						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
-					}
-				}
-				if (empty($nbemail)) $nbemail .= ' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
-				if ($text){
-					print $form->textwithpicto($nbemail, $text, 1, 'warning');
-				} else {
-					print $nbemail;
-				}
-			}
-			print '</td></tr>';
-
-			// Other attributes
-			$parameters = array();
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			if (empty($reshook)){
-				print $object->showOptionals($extrafields, 'edit', $parameters);
-			}
-
-			print '</table>';
-			print '</div>';
-
-			print dol_get_fiche_end();
-
-
-			print "<br>\n";
-
-			print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="update">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
-			foreach ($object->substitutionarray as $key => $val){
-				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
-			}
-			$htmltext .= '</i>';
-
-			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
-
-			print dol_get_fiche_head(null, '', '', -1);
-
-			print '<table class="bordernooddeven" width="100%">';
-
-			// Subject
-			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
-
-			$trackid = ''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.
-			dol_init_file_process($upload_dir, $trackid);
-
-			// Joined files
-			$addfileaction = 'addfile';
-			print '<tr><td>'.$langs->trans("MailFile").'</td>';
-			print '<td colspan="3">';
-			// List of files
-			$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
-
-			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
-			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-			$out .= '<script type="text/javascript" language="javascript">';
-			$out .= 'jQuery(document).ready(function () {';
-			$out .= '    jQuery(".removedfile").click(function() {';
-			$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
-			$out .= '    });';
-			$out .= '})';
-			$out .= '</script>'."\n";
-			if (count($listofpaths)){
-				foreach ($listofpaths as $key => $val){
-					$out .= '<div id="attachfile_'.$key.'">';
-					$out .= img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-					$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"), 'delete.png', '', '', 1).'" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
-					$out .= '<br></div>';
-				}
+	// Number of distinct emails
+	print '<tr><td>';
+	print $langs->trans("TotalNbOfDistinctRecipients");
+	print '</td><td colspan="3">';
+	$nbemail = ($object->nbemail ? $object->nbemail : 0);
+	if (is_numeric($nbemail)){
+		$text = '';
+		if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2)){
+			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0){
+				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 			} else {
-				$out .= $langs->trans("NoAttachedFiles").'<br>';
+				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
-			// Add link to add file
-			$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
-			$out .= ' ';
-			$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
-			print $out;
-			print '</td></tr>';
-
-			// Background color
-			print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
-			print $htmlother->selectColor($object->bgcolor, 'bgcolor', '', 0);
-			print '</td></tr>';
-
-			print '</table>';
-
-			// Message
-			print '<div style="padding-top: 10px">';
-
-			if ($action == 'edit'){
-				// wysiwyg editor
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
-				$doleditor->Create();
-			}
-			if ($action == 'edithtml'){
-				// HTML source editor
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, 'ace', 20, '90%');
-				$doleditor->Create(0, '', false, 'HTML Source', 'php');
-			}
-
-			print '</div>';
-
-			print dol_get_fiche_end();
-
-			print '<div class="center">';
-			print '<input type="submit" class="button buttonforacesave button-save" value="'.$langs->trans("Save").'" name="save">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
-			print '</div>';
-
-			print '</form>';
-			print '<br>';
 		}
+		if (empty($nbemail)) $nbemail .= ' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+		if ($text){
+			print $form->textwithpicto($nbemail, $text, 1, 'warning');
+		} else {
+			print $nbemail;
+		}
+	}
+	print '</td></tr>';
+
+	// Other attributes
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	if (empty($reshook)){
+		print $object->showOptionals($extrafields, 'edit', $parameters);
+	}
+
+	print '</table>';
+	print '</div>';
+
+	print dol_get_fiche_end();
+
+
+	print "<br>\n";
+
+	print '<form name="edit_mailing" action="card.php" method="post" enctype="multipart/form-data">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+
+	$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+	foreach ($object->substitutionarray as $key => $val){
+		$htmltext .= $key.' = '.$langs->trans($val).'<br>';
+	}
+	$htmltext .= '</i>';
+
+	// Print mail content
+	print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+
+	print dol_get_fiche_head(null, '', '', -1);
+
+	print '<table class="bordernooddeven" width="100%">';
+
+	// Subject
+	print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
+
+	$trackid = ''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.
+	dol_init_file_process($upload_dir, $trackid);
+
+	// Joined files
+	$addfileaction = 'addfile';
+	print '<tr><td>'.$langs->trans("MailFile").'</td>';
+	print '<td colspan="3">';
+	// List of files
+	$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
+
+	// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+	$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
+	$out .= '<script type="text/javascript" language="javascript">';
+	$out .= 'jQuery(document).ready(function () {';
+	$out .= '    jQuery(".removedfile").click(function() {';
+	$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
+	$out .= '    });';
+	$out .= '})';
+	$out .= '</script>'."\n";
+	if (count($listofpaths)){
+		foreach ($listofpaths as $key => $val){
+			$out .= '<div id="attachfile_'.$key.'">';
+			$out .= img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
+			$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"), 'delete.png', '', '', 1).'" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+			$out .= '<br></div>';
+		}
+	} else {
+		$out .= $langs->trans("NoAttachedFiles").'<br>';
+	}
+	// Add link to add file
+	$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
+	$out .= ' ';
+	$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+	print $out;
+	print '</td></tr>';
+
+	// Background color
+	print '<tr><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+	print $htmlother->selectColor($object->bgcolor, 'bgcolor', '', 0);
+	print '</td></tr>';
+
+	print '</table>';
+
+	// Message
+	print '<div style="padding-top: 10px">';
+
+	if ($action == 'edit'){
+		// wysiwyg editor
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, $conf->global->FCKEDITOR_ENABLE_MAILING, 20, '90%');
+		$doleditor->Create();
+	}
+	if ($action == 'edithtml'){
+		// HTML source editor
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, true, 'ace', 20, '90%');
+		$doleditor->Create(0, '', false, 'HTML Source', 'php');
+	}
+
+	print '</div>';
+
+	print dol_get_fiche_end();
+
+	print '<div class="center">';
+	print '<input type="submit" class="button buttonforacesave button-save" value="'.$langs->trans("Save").'" name="save">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
+	print '</div>';
+
+	print '</form>';
+	print '<br>';
+}
 	} else {
 		dol_print_error($db, $object->error);
 	}
-}
+	}
 
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();
