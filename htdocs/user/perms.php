@@ -288,7 +288,7 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 }
 print '<td>'.$langs->trans("Permissions").'</td>';
 if ($user->admin) {
-	print '<td class="right">'.$langs->trans("ID").'</td>';
+	print '<td class="right"></td>';
 }
 print '</tr>'."\n";
 
@@ -438,7 +438,11 @@ if ($result) {
 
 		// Permission id
 		if ($user->admin) {
-			print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
+			print '<td class="right">';
+			$htmltext = $langs->trans("ID").': '.$obj->id;
+			print $form->textwithpicto('', $htmltext);
+			//print '<span class="opacitymedium">'.$obj->id.'</span>';
+			print '</td>';
 		}
 
 		print '</tr>'."\n";
