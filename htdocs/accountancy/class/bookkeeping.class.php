@@ -135,7 +135,6 @@ class BookKeeping extends CommonObject
 
 	/**
 	 * @var float FEC:Amount (Not necessary)
-	 * @deprecated No more used
 	 */
 	public $amount;
 
