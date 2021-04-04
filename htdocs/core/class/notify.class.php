@@ -588,7 +588,7 @@ class Notify
 						$pdf_path = $dir_output."/".$ref.".pdf";
 						if (!dol_is_file($pdf_path)) {
 							// We can't add PDF as it is not generated yet.
-							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+							if (method_exists($object, 'generateDocument') && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 								$outputlangs = $langs;
 								$newlang = '';
 
