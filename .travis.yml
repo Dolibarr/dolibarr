@@ -30,6 +30,8 @@ addons:
     - libapache2-mod-fastcgi
     # We need pgloader for import mysql database into pgsql
     - pgloader
+    # We need pgloader for import mysql database into pgsql
+    - php-gd
 
 env:
   global:
