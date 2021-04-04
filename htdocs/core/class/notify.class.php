@@ -561,7 +561,7 @@ class Notify
 								$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->agenda->dir_output;
 								$object_type = 'action';
-								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
+								//$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
 								//$defaultmodelpdf = $conf->global->ACTION_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
