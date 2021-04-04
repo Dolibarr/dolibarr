@@ -49,14 +49,19 @@
 
 -- CONTENT -------------------------------------------------------------------
 -- 
--- Algeria
+-- Algeria -> for Departmements
+-- Andorra -> for Departmements
+-- Angola -> for Departmements
 -- Argentina
--- Australia
--- Austria
--- Barbados
+-- Australia -> for Departmements
+-- Austria -> for Departmements
+-- Barbados -> for Departmements
 -- Belgium
 -- Bolivia
--- Brazil
+-- Brazil -> for Departmements
+-- Canada -> for Departmements
+-- Colombie -> for Departmements
+
 
 
 -- TEMPLATE ----------------------------------------------------------------------------------------
@@ -65,6 +70,14 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 0
 
 -- Algeria Regions (id country=13)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 13, 1301, '', 0, 'Algerie');
+
+
+-- Andorra Regions (id country=18)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 34, 34000, 'AD', NULL, 'Andorra');
+
+
+-- Angola Regions (id country=35)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 35, 35001, 'AO', NULL, 'Angola');
 
 
 -- Argentina Regions (id country=23)
@@ -364,8 +377,6 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 -- Regions United Arab Emirates (rowid country=227)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  227, 22701, '', 0, 'United Arab Emirates', 1);
 
--- Regions Andorra (rowid country=18)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (34, 34000, 'AD', NULL, 'Andorra');
 
 -- Regions Hungary (rowid country=18)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183100, 'HU31', NULL, 'Northern Hungary');
@@ -420,8 +431,6 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 932
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 933, '港',0,'香港特别行政区');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 934, '澳',0,'澳门特别行政区');
 
--- Regions Angola (rowid country=35)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (35, 35001, 'AO', NULL, 'Angola');
 
 -- Regions Taiwan (rowid country=213)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (213, 21301, 'TW', NULL, 'Taiwan');
