@@ -1544,7 +1544,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 
-		if (dol_mkdir($upload_dir) >= 0) {
+		$result = dol_mkdir($upload_dir);
+		//      var_dump($result);exit;
+		if ($result >= 0) {
 			$TFile = $_FILES[$varfiles];
 			if (!is_array($TFile['name'])) {
 				foreach ($TFile as $key => &$val) {
@@ -1647,6 +1649,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$res = 1;
 				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToCreateDir", $upload_dir), null, 'errors');
 		}
 	} elseif ($link) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
