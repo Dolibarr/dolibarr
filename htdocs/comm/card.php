@@ -88,14 +88,9 @@ if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
 }
 
-// Security check
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
-if ($user->socid > 0) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $id, '&societe');
-
 $action = GETPOST('action', 'aZ09');
+
+$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -124,15 +119,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
-
-if ($object->id > 0) {
-	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
-		accessforbidden();
-	}
-}
-
 $now = dol_now();
 
 if ($id > 0 && empty($object->id)) {
@@ -142,6 +128,17 @@ if ($id > 0 && empty($object->id)) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
 }
+if ($object->id > 0) {
+	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+		accessforbidden();
+	}
+}
+
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*

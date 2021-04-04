@@ -417,7 +417,7 @@ class IntracommReport extends CommonObject
 						(
 							SELECT fk_product
 							FROM '.MAIN_DB_PREFIX.'categorie_product
-							WHERE fk_categorie = '.$categ_fraisdeport->id.'
+							WHERE fk_categorie = '.((int) $categ_fraisdeport->id).'
 						)
 					)';
 

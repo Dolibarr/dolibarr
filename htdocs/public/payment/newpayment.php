@@ -405,8 +405,8 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	}
 
 	dol_syslog("--- newpayment.php Execute action = ".$action, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
-	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
+	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_stripe');
 
 	$stripeToken = GETPOST("stripeToken", 'alpha');
 	$email = GETPOST("email", 'alpha');
@@ -414,7 +414,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$dol_type = (GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha'));
 	$dol_id = GETPOST('dol_id', 'int');
 	$vatnumber = GETPOST('vatnumber', 'alpha');
-	$savesource = GETPOSTISSET('savesource') ?GETPOST('savesource', 'int') : 1;
+	$savesource = GETPOSTISSET('savesource') ? GETPOST('savesource', 'int') : 1;
 
 	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_stripe');

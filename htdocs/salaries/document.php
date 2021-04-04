@@ -44,14 +44,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -70,12 +62,20 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-
 $object = new Salary($db);
-$object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
 
 $upload_dir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'salaries';
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
 /*

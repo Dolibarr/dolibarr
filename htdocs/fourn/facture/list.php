@@ -1042,7 +1042,7 @@ if ($resql) {
 		}
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month_lim" value="'.$month_lim.'">';
 		$formother->select_year($year_lim ? $year_lim : -1, 'year_lim', 1, 20, 5);
-		print '<br><input type="checkbox" name="option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Late");
+		print '<br><input type="checkbox" class="paddingright paddingleft" name="option" id="option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="option">'.$langs->trans("Late").'</label>';
 		print '</td>';
 	}
 	// Project
@@ -1541,7 +1541,7 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				  print '<td class="right nowrap">'.price($obj->total_ht)."</td>\n";
+				  print '<td class="right nowrap"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1552,7 +1552,7 @@ if ($resql) {
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.total_vat']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_vat)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_vat)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1563,7 +1563,7 @@ if ($resql) {
 			}
 			// Amount LocalTax1
 			if (!empty($arrayfields['f.total_localtax1']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_localtax1)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_localtax1)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1574,7 +1574,7 @@ if ($resql) {
 			}
 			// Amount LocalTax2
 			if (!empty($arrayfields['f.total_localtax2']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_localtax2)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_localtax2)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1585,7 +1585,7 @@ if ($resql) {
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_ttc)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1612,7 +1612,7 @@ if ($resql) {
 			}
 
 			if (!empty($arrayfields['dynamount_payed']['checked'])) {
-				print '<td class="right nowrap">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap"><span class="amount">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1652,27 +1652,27 @@ if ($resql) {
 			}
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
-				  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+				  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-				print '<td class="right nowrap">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap"><span class="amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1680,9 +1680,9 @@ if ($resql) {
 
 			// Pending amount
 			if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
-				print '<td class="right nowrap">';
-				print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
-				print '</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap"><span class="amount">';
+				print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '');
+				print '</span></td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1695,6 +1695,7 @@ if ($resql) {
 			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
+
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
 				print '<td class="center nowrap">';

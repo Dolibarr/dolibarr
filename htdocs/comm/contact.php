@@ -54,6 +54,7 @@ $begin = GETPOST('begin', 'alpha');
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
+	$action = '';
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'societe', $socid, '');

@@ -42,11 +42,6 @@ if (!empty($conf->categorie->enabled)) {
 	$langs->load("categories");
 }
 
-// Security check
-if (!$user->rights->mailing->lire || $user->socid > 0) {
-	accessforbidden();
-}
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -98,6 +93,12 @@ if ($result < 0) {
 		$array_query = json_decode($advTarget->filtervalue, true);
 	}
 }
+
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mailing');
 
 
 /*

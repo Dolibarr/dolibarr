@@ -245,8 +245,8 @@ class modApi extends DolibarrModules
 	{
 		// Remove old constants with entity fields different of 0
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API', 1),
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE', 1)
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->db->escape($this->db->encrypt('MAIN_MODULE_API'))."'",
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->db->escape($this->db->encrypt('API_PRODUCTION_MODE'))."'"
 		);
 
 		return $this->_remove($sql, $options);

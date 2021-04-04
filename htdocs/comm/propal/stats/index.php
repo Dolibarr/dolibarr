@@ -38,12 +38,6 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
-if ($mode == 'customer' && !$user->rights->propale->lire) {
-	accessforbidden();
-}
-if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {
-	accessforbidden();
-}
 
 $object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOST('typent_id', 'int');
@@ -65,6 +59,13 @@ $endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
+
+if ($mode == 'customer' && !$user->rights->propale->lire) {
+	accessforbidden();
+}
+if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {
+	accessforbidden();
+}
 
 
 /*

@@ -189,13 +189,13 @@ if ($action == 'update') {
 					$db->begin();
 
 					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (fk_product, entity, " . $accountancy_field_name . ")";
-						$sql .= " VALUES (" . ((int) $productid) . ", " . ((int) $conf->entity) . ", " . $accounting->account_number . ")";
-						$sql .= " ON DUPLICATE KEY UPDATE " . $accountancy_field_name . " = " . $accounting->account_number;
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_perentity (fk_product, entity, '".$db->escape($accountancy_field_name)."')";
+						$sql .= " VALUES (".((int) $productid).", ".((int) $conf->entity).", '".$db->escape($accounting->account_number)."')";
+						$sql .= " ON DUPLICATE KEY UPDATE ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
 					} else {
 						$sql = " UPDATE ".MAIN_DB_PREFIX."product";
-						$sql .= " SET " . $accountancy_field_name . " = " . $accounting->account_number;
-						$sql .= " WHERE rowid = " . ((int) $productid);
+						$sql .= " SET ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
+						$sql .= " WHERE rowid = ".((int) $productid);
 					}
 
 					dol_syslog("/accountancy/admin/productaccount.php sql=".$sql, LOG_DEBUG);
@@ -280,14 +280,14 @@ $sql .= " p.tms, p.fk_product_type as product_type,";
 $sql .= " aa.rowid as aaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_accounting as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = pa." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 } else {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if (strlen(trim($search_current_account))) {
-	$sql .= natural_search((!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa." : "p.") . $accountancy_field_name, $search_current_account);
+	$sql .= natural_search((empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "pa.") . $accountancy_field_name, $search_current_account);
 }
 if ($search_current_account_valid == 'withoutvalidaccount') {
 	$sql .= " AND aa.account_number IS NULL";
@@ -466,7 +466,7 @@ if ($result) {
 	} else {
 		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "pa." : "p.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "pa.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');

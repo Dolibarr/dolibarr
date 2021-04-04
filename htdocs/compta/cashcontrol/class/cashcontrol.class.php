@@ -213,7 +213,7 @@ class CashControl extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."pos_cash_fence");
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'pos_cash_fence SET ref = rowid where rowid = '.$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'pos_cash_fence SET ref = rowid where rowid = '.((int) $this->id);
 			$this->db->query($sql);
 		}
 

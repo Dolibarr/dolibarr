@@ -319,7 +319,7 @@ class ProductAttribute extends CommonObject
 			$newrang = $this->rang + 1;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_attribute SET rang = '.$this->rang.' WHERE rang = '.$newrang;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_attribute SET rang = '.((int) $this->rang).' WHERE rang = '.((int) $newrang);
 
 		if (!$this->db->query($sql)) {
 			$this->db->rollback();

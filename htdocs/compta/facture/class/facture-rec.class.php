@@ -772,12 +772,12 @@ class FactureRec extends CommonInvoice
 
 		$main = MAIN_DB_PREFIX.'facturedet_rec';
 		$ef = $main."_extrafields";
-		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid);
 		dol_syslog($sqlef);
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
 		dol_syslog($sql);
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".((int) $rowid);
 			dol_syslog($sql);
 			if ($this->db->query($sql)) {
 				// Delete linked object
@@ -1161,7 +1161,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ', multicurrency_total_ht = '.$multicurrency_total_ht;
 			$sql .= ', multicurrency_total_tva = '.$multicurrency_total_tva;
 			$sql .= ', multicurrency_total_ttc = '.$multicurrency_total_ttc;
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -1818,7 +1818,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET nb_gen_max = '.$nb;
+		$sql .= ' SET nb_gen_max = '.((int) $nb);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
@@ -1845,7 +1845,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET auto_validate = '.$validate;
+		$sql .= ' SET auto_validate = '.((int) $validate);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
@@ -1872,7 +1872,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET generate_pdf = '.$validate;
+		$sql .= ' SET generate_pdf = '.((int) $validate);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setGeneratePdf", LOG_DEBUG);

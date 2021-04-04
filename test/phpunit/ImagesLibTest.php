@@ -152,4 +152,20 @@ class ImagesLibTest extends PHPUnit\Framework\TestCase
 
 		return 1;
 	}
+
+	/**
+	 * testDolImageResizeOrCrop
+	 *
+	 * @return 	int
+	 */
+	public function testDolImageResizeOrCrop()
+	{
+		global $conf;
+
+		$file=dirname(__FILE__).'/img250x20.png';
+		$filetarget=$conf->admin->dir_temp.'/img250x20.webp';
+		$result = dol_imageResizeOrCrop($file, 0, 0, 0, 0, 0, $filetarget);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($filetarget, $result, 'Failed to convert into webp');
+	}
 }

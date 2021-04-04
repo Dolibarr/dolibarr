@@ -110,15 +110,29 @@ $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_date_valid_start = dol_mktime(0, 0, 0, GETPOST('search_date_valid_startmonth', 'int'), GETPOST('search_date_valid_startday', 'int'), GETPOST('search_date_valid_startyear', 'int'));
-$search_date_valid_end = dol_mktime(23, 59, 59, GETPOST('search_date_valid_endmonth', 'int'), GETPOST('search_date_valid_endday', 'int'), GETPOST('search_date_valid_endyear', 'int'));
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
+$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
+$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
+$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
+$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
+$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
+$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
+
+
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -314,8 +328,20 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_date_valid_startday = '';
+	$search_date_valid_startmonth = '';
+	$search_date_valid_startyear = '';
+	$search_date_valid_endday = '';
+	$search_date_valid_endmonth = '';
+	$search_date_valid_endyear = '';
 	$search_date_valid_start = '';
 	$search_date_valid_end = '';
 	$search_datelimit_start = '';
@@ -382,7 +408,7 @@ if ($massaction == 'makepayment') {
 				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
-				$rsql .= " WHERE fk_facture = ".$objecttmp->id;
+				$rsql .= " WHERE fk_facture = ".((int) $objecttmp->id);
 				$rsql .= " AND pfd.fk_user_demande = u.rowid";
 				$rsql .= " AND pfd.traite = 0";
 				$rsql .= " ORDER BY pfd.date_demande DESC";
@@ -761,7 +787,7 @@ if ($resql) {
 		}
 	}
 
-	$param = '&socid='.$socid;
+	$param = '&socid='.urlencode($socid);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -771,17 +797,41 @@ if ($resql) {
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
 	}
-	if ($search_date_start) {
-		$param .= '&search_date_start='.urlencode($search_date_start);
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
 	}
-	if ($search_date_end) {
-		$param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 	}
-	if ($search_date_valid_start) {
-		$param .= '&search_date_valid_start='.urlencode($search_date_valid_start);
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 	}
-	if ($search_date_valid_end) {
-		$param .= '&search_date_valid_end='.urlencode($search_date_valid_end);
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	}
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	}
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	}
+	if ($search_date_valid_startday) {
+		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	}
+	if ($search_date_valid_startmonth) {
+		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	}
+	if ($search_date_valid_startyear) {
+		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	}
+	if ($search_date_valid_endday) {
+		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	}
+	if ($search_date_valid_endmonth) {
+		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	}
+	if ($search_date_valid_endyear) {
+		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
 	}
 	if ($search_datelimit_start) {
 		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
@@ -1310,7 +1360,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.datef']['checked'])) {
-		print_liste_field_titre($arrayfields['f.date']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['f.date_valid']['label'], $_SERVER['PHP_SELF'], 'f.date_valid', '', $param, 'align="center"', $sortfield, $sortorder);

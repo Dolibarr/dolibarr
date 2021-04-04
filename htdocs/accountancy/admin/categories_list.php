@@ -149,7 +149,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Check that all fields are filled
 	$ok = 1;
 	foreach ($listfield as $f => $value) {
-		if ($value == 'formula' && empty($_POST['formula'])) {
+		if ($value == 'formula' && !GETPOST('formula')) {
 			continue;
 		}
 		if ($value == 'range_account' && empty($_POST['range_account'])) {

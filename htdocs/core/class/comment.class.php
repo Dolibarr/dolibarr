@@ -365,7 +365,7 @@ class Comment extends CommonObject
 			$sql = "SELECT";
 			$sql .= " c.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-			$sql .= " WHERE c.fk_element = ".$fk_element;
+			$sql .= " WHERE c.fk_element = ".((int) $fk_element);
 			$sql .= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql .= " AND c.entity = ".$conf->entity;
 			$sql .= " ORDER BY c.tms DESC";

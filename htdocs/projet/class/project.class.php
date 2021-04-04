@@ -104,8 +104,51 @@ class Project extends CommonObject
 	 */
 	public $user_close_id;
 	public $public; //!< Tell if this is a public or private project
+
+	/**
+	 * @var float budget Amount
+	 */
 	public $budget_amount;
+
+	/**
+	 * @var integer		Can use projects to follow opportunities
+	 */
+	public $usage_opportunity;
+
+	/**
+	 * @var integer		Can follow tasks on project and enter time spent on it
+	 */
+	public $usage_task;
+
+	/**
+	 * @var integer	 	Use to bill task spend time
+	 */
 	public $usage_bill_time; // Is the time spent on project must be invoiced or not
+
+	/**
+	   * @var integer		Event organization: Use Event Organization
+	   */
+	public $usage_organize_event;
+
+	/**
+	 * @var integer		Event organization: Allow unknown people to suggest new conferences
+	 */
+	public $accept_conference_suggestions;
+
+	/**
+	 * @var integer		Event organization: Allow unknown people to suggest new booth
+	 */
+	public $accept_booth_suggestions;
+
+	/**
+	 * @var float Event organization: registration price
+	 */
+	public $price_registration;
+
+	/**
+	 * @var float Event organization: booth price
+	 */
+	public $price_booth;
 
 	public $statuts_short;
 	public $statuts_long;
@@ -463,7 +506,7 @@ class Project extends CommonObject
 			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
 			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
 			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -771,7 +814,7 @@ class Project extends CommonObject
 			'actioncomm'=>'fk_project', 'mrp_mo'=>'fk_project'
 		);
 		foreach ($listoftables as $key => $value) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$value." = NULL where ".$value." = ".$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$key." SET ".$value." = NULL where ".$value." = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = $this->db->lasterror();
@@ -783,7 +826,7 @@ class Project extends CommonObject
 		// Remove linked categories.
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_project";
-			$sql .= " WHERE fk_project = ".$this->id;
+			$sql .= " WHERE fk_project = ".((int) $this->id);
 
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -808,7 +851,7 @@ class Project extends CommonObject
 			foreach ($elements as $table) {
 				if (!$error) {
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql .= " WHERE fk_project = ".$this->id;
+					$sql .= " WHERE fk_project = ".((int) $this->id);
 
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -900,17 +943,17 @@ class Project extends CommonObject
 		if ($type == 'agenda') {
 			$sql = "SELECT COUNT(id) as nb FROM ".MAIN_DB_PREFIX."actioncomm WHERE fk_project = ".$this->id." AND entity IN (".getEntity('agenda').")";
 		} elseif ($type == 'expensereport') {
-			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".$this->id;
+			$sql = "SELECT COUNT(ed.rowid) as nb FROM ".MAIN_DB_PREFIX."expensereport as e, ".MAIN_DB_PREFIX."expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND e.entity IN (".getEntity('expensereport').") AND ed.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'project_task') {
 			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt WHERE pt.fk_projet = ".$this->id;
 		} elseif ($type == 'project_task_time') {	// Case we want to duplicate line foreach user
-			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".$this->id;
+			$sql = "SELECT DISTINCT COUNT(pt.rowid) as nb FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet = ".((int) $this->id);
 		} elseif ($type == 'stock_mouvement') {
-			$sql = 'SELECT COUNT(ms.rowid) as nb FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".$this->id." AND ms.type_mouvement = 1";
+			$sql = 'SELECT COUNT(ms.rowid) as nb FROM '.MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin = ".((int) $this->id)." AND ms.type_mouvement = 1";
 		} elseif ($type == 'loan') {
-			$sql = 'SELECT COUNT(l.rowid) as nb FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".$this->id;
+			$sql = 'SELECT COUNT(l.rowid) as nb FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet = ".((int) $this->id);
 		} else {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".$this->id." AND entity IN (".getEntity($type).")";
+			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." = ".((int) $this->id)." AND entity IN (".getEntity($type).")";
 		}
 
 		$result = $this->db->query($sql);
@@ -1033,7 +1076,7 @@ class Project extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".$user->id.", date_close = '".$this->db->idate($now)."'";
+			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 

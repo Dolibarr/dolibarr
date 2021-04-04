@@ -97,7 +97,9 @@ if (!empty($conf->projet->enabled)) {
 	$projectstatic = new Project($db);
 }
 
-llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
+llxHeader('', $langs->trans("Donations"), $help_url);
 
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";

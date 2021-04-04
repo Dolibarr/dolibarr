@@ -138,10 +138,11 @@ $head = bank_prepare_head($object);
 print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 $title = $langs->trans("FinancialAccount")." : ".$object->label;
-$link = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start - 1)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$object->id."&year_start=".($year_start + 1)."'>".img_next('', 'class="valignbottom"')."</a>" : "");
+$link = ($year_start ? '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&year_start='.($year_start - 1).'">'.img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year").' <a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&year_start='.($year_start + 1).'">'.img_next('', 'class="valignbottom"').'</a>' : '');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+$morehtmlref = '';
 
 if (!empty($id)) {
 	if (!preg_match('/,/', $id)) {

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,6 +95,7 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
 print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -933,14 +935,14 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 					}
 					if ($methodtofix == 'updatestock') {
 						// Method 2
-						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? $obj->reelbatch : '0').' for ps.rowid = '.$obj->psrowid;
+						print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? ((float) $obj->reelbatch) : '0').' for ps.rowid = '.((int) $obj->psrowid);
 						if (GETPOST('clean_product_stock_batch') == 'confirmed') {
 							$error = 0;
 
 							$db->begin();
 
 							$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
-							$sql2 .= " SET reel = ".($obj->reelbatch ? $obj->reelbatch : '0')." WHERE rowid = ".$obj->psrowid;
+							$sql2 .= " SET reel = ".($obj->reelbatch ? ((float) $obj->reelbatch) : '0')." WHERE rowid = ".((int) $obj->psrowid);
 							$resql2 = $db->query($sql2);
 							if ($resql2) {
 								// We update product_stock, so we must fill p.stock into product too.
@@ -1027,7 +1029,7 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha')) {
 
 				if (GETPOST('set_empty_time_spent_amount') == 'confirmed') {
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+					$sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".((int) $obj->user_id);
 					$resql2 = $db->query($sql2);
 					if (!$resql2) {
 						$error++;
@@ -1256,6 +1258,60 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 	}
 }
 
+// force utf8mb4 on tables  EXPERIMENTAL !
+if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8mb4/utf8mb4_unicode_ci (for mysql/mariadb only)</td></tr>';
+
+	if ($db->type == "mysql" || $db->type == "mysqli") {
+		$force_utf8mb4_on_tables = GETPOST('force_utf8mb4_on_tables', 'alpha');
+
+		$listoftables = $db->DDLListTables($db->database_name);
+
+		// Disable foreign key checking for avoid errors
+		if ($force_utf8mb4_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=0';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+
+		foreach ($listoftables as $table) {
+			// do not convert llx_const if mysql encrypt/decrypt is used
+			if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) {
+				continue;
+			}
+
+			print '<tr><td colspan="2">';
+			print $table;
+			$sql1 = 'ALTER TABLE '.$table.' ROW_FORMAT=dynamic;';
+			$sql2 = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
+			if ($force_utf8mb4_on_tables == 'confirmed') {
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
+			} else {
+				print ' - Disabled';
+			}
+			print '</td></tr>';
+			flush();
+			ob_flush();
+		}
+
+		// Enable foreign key checking
+		if ($force_utf8mb4_on_tables == 'confirmed') {
+			$sql = 'SET FOREIGN_KEY_CHECKS=1';
+			print '<!-- '.$sql.' -->';
+			$resql = $db->query($sql);
+		}
+	} else {
+		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
+	}
+}
 
 // rebuild sequences for pgsql
 if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
@@ -1273,7 +1329,6 @@ if ($ok && GETPOST('rebuild_sequences', 'alpha')) {
 		print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
 	}
 }
-
 
 //
 if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
@@ -1318,8 +1373,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 		}
 		while ($obj_dispatch = $db->fetch_object($resql_dispatch)) {
 			$sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line';
-			$sql_line .= ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande;
-			$sql_line .= ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
+			$sql_line .= ' WHERE line.fk_commande = '.((int) $obj_dispatch->fk_commande);
+			$sql_line .= ' AND   line.fk_product  = '.((int) $obj_dispatch->fk_product);
 			$resql_line = $db->query($sql_line);
 
 			// s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
@@ -1347,8 +1402,8 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 				$qty_for_line = min($remaining_qty, $obj_line->qty);
 				if ($first_iteration) {
 					$sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-					$sql_attach .= ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line;
-					$sql_attach .= ' WHERE rowid = '.$obj_dispatch->rowid;
+					$sql_attach .= ' SET fk_commandefourndet = '.((int) $obj_line->rowid).', qty = '.((float) $qty_for_line);
+					$sql_attach .= ' WHERE rowid = '.((int) $obj_dispatch->rowid);
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(

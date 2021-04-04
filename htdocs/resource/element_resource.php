@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
  * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ if (empty($reshook)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($resource_type)."'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($objstat->element)."'";
-				$sql .= " WHERE er.resource_id = ".$resource_id;
+				$sql .= " WHERE er.resource_id = ".((int) $resource_id);
 				$sql .= " AND er.busy = 1";
 				$sql .= " AND (";
 
@@ -193,8 +194,8 @@ if (empty($reshook)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."element_resources as er";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."resource as r ON r.rowid = er.resource_id AND er.resource_type = '".$db->escape($object->resource_type)."'";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as ac ON ac.id = er.element_id AND er.element_type = '".$db->escape($object->element_type)."'";
-				$sql .= " WHERE er.resource_id = ".$object->resource_id;
-				$sql .= " AND ac.id != ".$object->element_id;
+				$sql .= " WHERE er.resource_id = ".((int) $object->resource_id);
+				$sql .= " AND ac.id <> ".((int) $object->element_id);
 				$sql .= " AND er.busy = 1";
 				$sql .= " AND (";
 
@@ -355,7 +356,10 @@ if (!$ret) {
 
 			// Type
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
+				print $act->getTypePicto();
+				print $langs->trans("Action".$act->type_code);
+				print '</td></tr>';
 			}
 
 			// Full day event

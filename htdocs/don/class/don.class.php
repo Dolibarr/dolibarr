@@ -702,7 +702,7 @@ class Don extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".((int) $userid)." WHERE rowid = ".((int) $id)." AND fk_statut = 0";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -759,9 +759,9 @@ class Don extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 		if ($modepayment) {
-			$sql .= ", fk_payment=".$modepayment;
+			$sql .= ", fk_payment = ".((int) $modepayment);
 		}
-		$sql .= " WHERE rowid = ".$id." AND fk_statut = 1";
+		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = 1";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -843,7 +843,7 @@ class Don extends CommonObject
 
 		$sql = "SELECT sum(amount) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."don";
-		$sql .= " WHERE fk_statut = ".$param;
+		$sql .= " WHERE fk_statut = ".((int) $param);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);

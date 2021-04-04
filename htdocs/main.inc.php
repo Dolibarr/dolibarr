@@ -150,7 +150,7 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
 	}
 	if ($type == 2) {
-		$inj += preg_match('/[;"<>]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
+		$inj += preg_match('/[:;"\'<>\?\(\){}\$%]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
 	}
 
 	return $inj;
@@ -438,13 +438,13 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && !empty($conf->gl
 		'confirm_create_user', 'confirm_create_thirdparty', 'confirm_purge', 'confirm_reject_check',
 		'delete', 'deletefilter', 'deleteoperation', 'deleteprof', 'deletepayment', 'disable',
 		'doprev', 'donext', 'dvprev', 'dvnext',
-		'enable'
+		'enable', 'setpricelevel'
 	);
 	$sensitiveget = false;
 	if (in_array(GETPOST('action', 'aZ09'), $arrayofactiontoforcetokencheck)) {
 		$sensitiveget = true;
 	}
-	if (preg_match('/^(disable_|enable_)/', GETPOST('action', 'aZ09'))) {
+	if (preg_match('/^(disable_|enable_|setremise)/', GETPOST('action', 'aZ09'))) {
 		$sensitiveget = true;
 	}
 

@@ -28,13 +28,6 @@
 
 require '../../main.inc.php';
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax', '', '', 'charges');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -57,7 +50,6 @@ $search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 
 $search_datepayment_start = dol_mktime(0, 0, 0, GETPOST('search_datepayment_startmonth', 'int'), GETPOST('search_datepayment_startday', 'int'), GETPOST('search_datepayment_startyear', 'int'));
 $search_datepayment_end = dol_mktime(23, 59, 59, GETPOST('search_datepayment_endmonth', 'int'), GETPOST('search_datepayment_endday', 'int'), GETPOST('search_datepayment_endyear', 'int'));
 $search_type = GETPOST('search_type', 'int');
-$search_cheque = GETPOST('search_cheque', 'alpha');
 $search_account				= GETPOST('search_account', 'int');
 $search_amount 				= GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
@@ -100,6 +92,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $hookmanager->initHooks(array('salestaxeslist'));
 $object = new Tva($db);
 
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
+
 
 /*
  * Actions
@@ -123,7 +122,6 @@ if (empty($reshook)) {
 		$search_datepayment_start = '';
 		$search_datepayment_end = '';
 		$search_type = '';
-		$search_cheque = '';
 		$search_account = '';
 		$search_amount = '';
 		$search_status = '';
@@ -267,9 +265,6 @@ if (!empty($search_datepayment_end)) {
 }
 if (!empty($search_type) && $search_type > 0) {
 	$param .= '&search_type='.$search_type;
-}
-if (!empty($search_cheque)) {
-	$param .= '&search_cheque="'.$search_cheque.'"';
 }
 if (!empty($search_account) && $search_account > 0) {
 	$param .= '&search_account='.$search_account;
@@ -514,7 +509,7 @@ while ($i < min($num, $limit)) {
 	// Amount
 	if (!empty($arrayfields['t.amount']['checked'])) {
 		$total = $total + $obj->amount;
-		print '<td class="nowrap right">' . price($obj->amount) . '</td>';
+		print '<td class="nowrap right"><span class="amount">' . price($obj->amount) . '</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

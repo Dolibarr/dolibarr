@@ -25,7 +25,7 @@ Following changes may create regressions for some external modules, but were nec
 * Field "total" renamed into "total_ttc" for table lx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSql, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)
 * If your database is MySql or MariaDB, you need at least version 5.1
-
+* Function set_price_level() has been renamed into setPriceLevel() to follow camelcase rules
 
 
 ***** ChangeLog for 13.0.2 compared to 13.0.1 *****
@@ -49,21 +49,21 @@ FIX: #16533
 FIX: #16629
 FIX: #16671 Can not generate zip file of documents in backup tool
 FIX: Add "Now" link on social charges creation card
-FIX: avoid undefined url and missing token
+FIX: avoid undefined URL and missing token
 FIX: Bad project filter in ticket list
 FIX: Buttons to disable bindings not working
 FIX: class not found when creating recuring invoice from invoice+discount
-FIX: File attachment on lots
+FIX: File attachment on lots/batches
 FIX: handling $heightforinfotot when he's superior to a page height on Supplier Invoice
 FIX: hourglass and hide button to pay
-FIX: massaction validate invoice do not regenerate pdf
+FIX: massaction validate invoice do not regenerate PDF
 FIX: missing mp4 video mime
 FIX: picto on shipment to reset qty to 0. Some quantities were not reset.
 FIX: Protection to avoid #16504
 FIX: rounding amount on card updating
-FIX: Rounding amount on social charges card updating
+FIX: rounding amount on social charges card updating
 FIX: select list dependencies now work for ModuleBuilder sellist field
-FIX: Status in popup of member in widget
+FIX: status in popup of member in widget
 FIX: status on tooltip on widgets
 FIX: Timezone management for datetime on list of events
 FIX: Timezone management for datetime with modulebuilder and extrafields
@@ -94,9 +94,9 @@ FIX: #16135
 FIX: #16143
 FIX: #16156
 FIX: #16160
-FIX: #16165 Create customer discount without vat
+FIX: #16165  Create customer discount without VAT
 FIX: #16185
-FIX: #16189, fix download/see check deposit PDF
+FIX: #16189  fix download/see check deposit PDF
 FIX: #16215
 FIX: Accountancy - label_operation is used instead of label_compte
 FIX: Add critical price patch
@@ -106,7 +106,7 @@ FIX: cash fence for takepos with multientity
 FIX: CSRF errors on margin forms
 FIX: encoding status in graph of vendor proposals
 FIX: Fix detect dispached product and set to received completely when the supplier order have services (support STOCK_SUPPORTS_SERVICES)
-FIX: Hide/Unhide external ICSS calendars
+FIX: hide/unhide external ICS calendars
 FIX: link to create event when task is in a project with a thirdparty
 FIX: Localtax must be converted with price2num
 FIX: manage price min for PRODUIT_CUSTOMER_PRICES
@@ -127,7 +127,7 @@ FIX: warning when adding a line if $remise_percent is an empty string
 FIX: status late on purchase orders
 FIX: ODT generation very slow
 FIX: amount in summary of report
-FIX: vat value when code contains number
+FIX: VAT value when code contains number
 FIX: payment term label on PDF
 FIX: date selector when using reduced year (like on smartphone)
 
@@ -146,7 +146,7 @@ NEW: Accountancy - add options to disable binding on sales, purchases & expense 
 NEW: Accountancy balance - add a menu entry to show subtotal by group
 NEW: Accountancy - change menu disposition
 NEW: Accountancy - on transfers, select the periodicity by default
-NEW: Accountancy - Add export for Gestinum (v3 & v5) #15180
+NEW: Accountancy - add export for Gestinum (v3 & v5) #15180
 NEW: new currency rate editor
 NEW: Solve blocking feature. Can increase stock of a Kit without changing subproduct stock.
 NEW: add a widget to show the customers with outstanding limits reached

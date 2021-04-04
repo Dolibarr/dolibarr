@@ -45,6 +45,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 $id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
@@ -63,13 +64,6 @@ $dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday
 $label = GETPOST('label', 'alphanohtml');
 $fk_user = GETPOSTINT('userid');
 
-// Security check
-$socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
 
@@ -78,6 +72,18 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
+
+$object = new Salary($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
 /**
@@ -780,7 +786,7 @@ if ($id) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 	$sql .= ", ".MAIN_DB_PREFIX."salary as salaire";
-	$sql .= " WHERE p.fk_salary = ".$id;
+	$sql .= " WHERE p.fk_salary = ".((int) $id);
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
@@ -885,21 +891,22 @@ if ($id) {
 	/*
 	 * Action bar
 	 */
+
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=".$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
 		if ($object->paye == 0 && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
 		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/paiement_salary.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/paiement_salary.php?id=".$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 		}
 
 		// Classify 'paid'
@@ -909,16 +916,16 @@ if ($id) {
 				|| (round($resteapayer) >= 0 && $object->amount < 0)
 			)
 			&& $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 		}
 
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}

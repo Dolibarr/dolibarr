@@ -814,7 +814,7 @@ class Productcustomerprice extends CommonObject
 		// Find all susidiaries
 		$sql = "SELECT s.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.parent = ".$this->fk_soc;
+		$sql .= " WHERE s.parent = ".((int) $this->fk_soc);
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::setPriceOnAffiliateThirdparty", LOG_DEBUG);

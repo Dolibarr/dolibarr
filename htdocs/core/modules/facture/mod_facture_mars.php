@@ -55,6 +55,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
+		global $conf;
 		if (!empty($conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX)) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
 		}

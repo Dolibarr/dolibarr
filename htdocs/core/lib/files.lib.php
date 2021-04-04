@@ -1840,14 +1840,15 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 
 
 /**
- * 	Convert an image file into another format.
- *  This need Imagick php extension.
+ * 	Convert an image file or a PDF into another image format.
+ *  This need Imagick php extension. You can use dol_imageResizeOrCrop() for a function that need GD.
  *
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
  *  @param  string  $page       Page number if we convert a PDF into png
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
+ *  @see dol_imageResizeOrCrop()
  */
 function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {

@@ -159,8 +159,8 @@ if ($result) {
 				// TODO Define familyposition
 				$family = (!empty($modules[$obj->module]->family_position) ? $modules[$obj->module]->family_position : '');
 				$familyposition = 0;
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-				$sqlupdate .= " family_position = ".$familyposition;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $modules[$obj->module]->module_position).",";
+				$sqlupdate .= " family_position = ".((int) $familyposition);
 				$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
 				$db->query($sqlupdate);
 			}

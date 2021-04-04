@@ -168,7 +168,7 @@ if ($action == 'add') {
 
 // Delete line from delete picto
 if ($action == 'delete') {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".$db->escape($id);
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."overwrite_trans WHERE rowid = ".((int) $id);
 	$result = $db->query($sql);
 	if ($result >= 0) {
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');

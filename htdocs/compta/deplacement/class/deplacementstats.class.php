@@ -102,7 +102,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT MONTH(dated) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(dated) = ".$year;
+		$sql .= " WHERE YEAR(dated) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

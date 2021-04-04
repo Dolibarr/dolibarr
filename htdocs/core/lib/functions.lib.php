@@ -1398,7 +1398,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// If html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (!empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && !empty($_GET["log"])) {
 			print "\n\n<!-- Log start\n";
-			print $message."\n";
+			print dol_escape_htmltag($message)."\n";
 			print "Log end -->\n";
 		}
 
@@ -1751,52 +1751,25 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	$modulepart = 'unknown';
 
-	if ($object->element == 'societe') {
-		$modulepart = 'societe';
-	}
-	if ($object->element == 'contact') {
-		$modulepart = 'contact';
-	}
-	if ($object->element == 'member') {
+	if ($object->element == 'societe' || $object->element == 'contact' || $object->element == 'product' || $object->element == 'ticket') {
+		$modulepart = $object->element;
+	} elseif ($object->element == 'member') {
 		$modulepart = 'memberphoto';
-	}
-	if ($object->element == 'user') {
+	} elseif ($object->element == 'user') {
 		$modulepart = 'userphoto';
-	}
-	if ($object->element == 'product') {
-		$modulepart = 'product';
-	}
-	if ($object->element == 'ticket') {
-		$modulepart = 'ticket';
 	}
 
 	if (class_exists("Imagick")) {
-		if ($object->element == 'propal') {
-			$modulepart = 'propal';
-		}
-		if ($object->element == 'commande') {
-			$modulepart = 'commande';
-		}
-		if ($object->element == 'facture') {
-			$modulepart = 'facture';
-		}
-		if ($object->element == 'fichinter') {
+		if ($object->element == 'expensereport' || $object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'supplier_proposal') {
+			$modulepart = $object->element;
+		} elseif ($object->element == 'fichinter') {
 			$modulepart = 'ficheinter';
-		}
-		if ($object->element == 'contrat') {
+		} elseif ($object->element == 'contrat') {
 			$modulepart = 'contract';
-		}
-		if ($object->element == 'supplier_proposal') {
-			$modulepart = 'supplier_proposal';
-		}
-		if ($object->element == 'order_supplier') {
+		} elseif ($object->element == 'order_supplier') {
 			$modulepart = 'supplier_order';
-		}
-		if ($object->element == 'invoice_supplier') {
+		} elseif ($object->element == 'invoice_supplier') {
 			$modulepart = 'supplier_invoice';
-		}
-		if ($object->element == 'expensereport') {
-			$modulepart = 'expensereport';
 		}
 	}
 
@@ -1903,7 +1876,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow) { // example if modulepart = 'photo'
+				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo'
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
@@ -3540,7 +3513,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_asset', 'object_barcode', 'object_bill', 'object_billr', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'conferenceorbooth', 'object_conversation', 'object_bookmark', 'object_bug', 'object_building', 'object_clock', 'object_collab', 'object_dolly', 'object_dollyrevert',
+				'object_category', 'object_conferenceorbooth', 'object_conversation', 'object_bookmark', 'object_bug', 'object_building', 'object_clock', 'object_collab', 'object_dolly', 'object_dollyrevert',
 				'object_folder', 'object_folder-open','object_generic',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
 				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_cron', 'object_donation', 'object_dynamicprice', 'object_establishment',
@@ -3565,7 +3538,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'user-cog', 'website',
-				'conferenceorbooth', 'eventorganization', 'object_eventorganization'
+				'conferenceorbooth', 'eventorganization'
 			))) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
@@ -3610,7 +3583,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
-				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
+				'uparrow'=>'share', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'

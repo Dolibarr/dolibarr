@@ -73,7 +73,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, libelle as label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -136,7 +136,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_reason as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -539,7 +539,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_availability as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -648,7 +648,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT id, code, type, libelle as label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($type) {
 			$sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
 		}
@@ -714,7 +714,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT id, code, label, accountancy_code, active, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($module) {
 			$sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
 		}
@@ -778,7 +778,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($type) {
 			$sql .= " AND type LIKE '%".$this->db->escape($type)."%'";
 		}
@@ -843,7 +843,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_civility as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($module) {
 			$sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
 		}
@@ -911,7 +911,7 @@ class Setup extends DolibarrApi
 			$sql .= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
 			$sql .= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
 		}
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if (!empty($multicurrency)) {
 			$sql .= " AND m.entity IN (".getEntity('multicurrency').")";
 			if (!empty($multicurrency) && $multicurrency != 2) {
@@ -1242,7 +1242,7 @@ class Setup extends DolibarrApi
 		//TODO link with multicurrency module
 		$sql = "SELECT t.rowid, t.code, t.label,t.short_label, t.active, t.scale, t.unit_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1365,7 +1365,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1423,7 +1423,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
