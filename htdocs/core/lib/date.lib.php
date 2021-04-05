@@ -658,7 +658,7 @@ function getGMTEasterDatetime($year)
 }
 
 /**
- *  Return the number of non working days including saturday and sunday (or not) between 2 dates in timestamp.
+ *  Return the number of non working days including Friday, Saturday and Sunday (or not) between 2 dates in timestamp.
  *  Dates must be UTC with hour, min, sec to 0.
  *  Called by function num_open_day()
  *
@@ -687,7 +687,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$country_code = $mysoc->country_code;
 	}
 	if ($includefriday < 0) {
-				$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 1);
+				$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
 	}
 	if ($includesaturday < 0) {
 		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
@@ -839,7 +839,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		}
 		//print "ferie=".$ferie."\n";
 
-		// If we have to include saturday and sunday
+		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
 			if ($includefriday || $includesaturday || $includesunday) {
 				$jour_julien = unixtojd($timestampStart);
