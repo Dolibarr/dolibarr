@@ -85,7 +85,7 @@ if ($id > 0 || !empty($ref)) {
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
-restrictedArea($user, $object->element, $object->id);
+restrictedArea($user, $object->element, $object->id, '', 'workstation');
 
 
 /*

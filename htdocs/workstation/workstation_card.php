@@ -83,7 +83,7 @@ $permissiondellink = $user->rights->workstation->workstation->write; // Used by 
 $upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
-restrictedArea($user, $object->element, $object->id);
+restrictedArea($user, $object->element, $object->id, '', 'workstation');
 
 
 /*
@@ -212,7 +212,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
-	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true);
+	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'minwidth200');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
@@ -220,7 +220,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $object->entity, true, 0, '', true);
+	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $object->entity, true, 0, 'minwidth200', true);
 	print '</td></tr>';
 
 	// Other attributes
