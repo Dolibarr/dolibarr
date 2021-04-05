@@ -687,8 +687,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$country_code = $mysoc->country_code;
 	}
 	if ($includefriday < 0) {
-                $includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 1);
-        }
+				$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 1);
+	}
 	if ($includesaturday < 0) {
 		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
 	}
@@ -845,10 +845,10 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$jour_julien = unixtojd($timestampStart);
 				$jour_semaine = jddayofweek($jour_julien, 0);
 				if ($includefriday) {					//Friday (5), Saturday (6) and Sunday (0)
-                                        if ($jour_semaine == 5) {
-                                                $ferie = true;
-                                        }
-                                }
+					if ($jour_semaine == 5) {
+							$ferie = true;
+					}
+				}
 				if ($includesaturday) {					//Friday (5), Saturday (6) and Sunday (0)
 					if ($jour_semaine == 6) {
 						$ferie = true;
