@@ -787,7 +787,7 @@ if ($id) {
 							$class = 'tddict';
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
 							}
 						}
 					}
