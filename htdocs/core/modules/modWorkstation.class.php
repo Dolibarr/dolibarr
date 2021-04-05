@@ -45,7 +45,7 @@ class modWorkstation extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 690;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'workstation';
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
@@ -239,7 +239,7 @@ class modWorkstation extends DolibarrModules
 
 		// Permissions provided by this module
 		$this->rights = array();
-		$r = 0;
+		$r = 1;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
@@ -330,6 +330,7 @@ class modWorkstation extends DolibarrModules
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>$langs->trans('Workstations'),
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation',
 			'url'=>'',

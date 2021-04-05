@@ -105,7 +105,7 @@ if (empty($reshook)) {
 			setEventMessages($edituser->error, $edituser->errors, 'errors');
 		}
 
-		// If we are changing our own permissions, we reload
+		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 			setEventMessages($edituser->error, $edituser->errors, 'errors');
 		}
 
-		// If we are changing our own permissions, we reload
+		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
