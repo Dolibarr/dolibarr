@@ -146,18 +146,7 @@ $permissiontoadd = $user->rights->workstation->workstation->write;
 $permissiontodelete = $user->rights->workstation->workstation->delete;
 
 // Security check
-if (empty($conf->workstation->enabled)) {
-	accessforbidden('Module not enabled');
-}
-$socid = 0;
-if ($user->socid > 0) {
-	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'workstation', $id, '');
-//if (!$permissiontoread) accessforbidden();
-
+restrictedArea($user, $object->element, 0);
 
 
 /*

@@ -82,15 +82,8 @@ $permissionnote = $user->rights->workstation->workstation->write; // Used by the
 $permissiondellink = $user->rights->workstation->workstation->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'workstation', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-
-if (!$permissiontoread) {
-	accessforbidden();
-}
+// Security check
+restrictedArea($user, $object->element, $object->id);
 
 
 /*
@@ -343,7 +336,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/workstation/workstation_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/workstation/workstation_list.php', 1).'?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*

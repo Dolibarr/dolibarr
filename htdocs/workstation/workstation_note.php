@@ -60,6 +60,8 @@ if ($id > 0 || !empty($ref)) {
 $permissionnote = $user->rights->workstation->workstation->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
 
+// Security check
+restrictedArea($user, $object->element, $object->id);
 
 
 /*
