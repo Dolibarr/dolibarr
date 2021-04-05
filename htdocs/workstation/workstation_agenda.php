@@ -132,7 +132,7 @@ if ($object->id > 0) {
 	$head = workstationPrepareHead($object);
 
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("Workstation"), -1, 'mrp');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("Workstation"), -1, 'workstation');
 
 	// Object card
 	// ------------------------------------------------------------
