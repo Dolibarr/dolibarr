@@ -590,9 +590,11 @@ class ActionComm extends CommonObject
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
-							$error++;
-							dol_syslog('Error to process userassigned: '.$this->db->lasterror(), LOG_ERR);
-							$this->errors[] = $this->db->lasterror();
+							if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$error++;
+								dol_syslog('Error to process userassigned: ' . $this->db->lasterror(), LOG_ERR);
+								$this->errors[] = $this->db->lasterror();
+							}
 						}
 						//var_dump($sql);exit;
 					}
@@ -607,9 +609,11 @@ class ActionComm extends CommonObject
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
-							$error++;
-							dol_syslog('Error to process socpeopleassigned: '.$this->db->lasterror(), LOG_ERR);
-							$this->errors[] = $this->db->lasterror();
+							if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$error++;
+								dol_syslog('Error to process socpeopleassigned: ' . $this->db->lasterror(), LOG_ERR);
+								$this->errors[] = $this->db->lasterror();
+							}
 						}
 					}
 				}
@@ -1152,8 +1156,10 @@ class ActionComm extends CommonObject
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++;
-						$this->errors[] = $this->db->lasterror();
+						if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							$error++;
+							$this->errors[] = $this->db->lasterror();
+						}
 					}
 					//var_dump($sql);exit;
 				}
@@ -1170,8 +1176,10 @@ class ActionComm extends CommonObject
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
-							$error++;
-							$this->errors[] = $this->db->lasterror();
+							if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$error++;
+								$this->errors[] = $this->db->lasterror();
+							}
 						}
 					}
 				}
