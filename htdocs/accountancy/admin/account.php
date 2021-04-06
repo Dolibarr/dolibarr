@@ -431,7 +431,7 @@ if ($resql) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0, 'checkforselect', 1);
+	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
