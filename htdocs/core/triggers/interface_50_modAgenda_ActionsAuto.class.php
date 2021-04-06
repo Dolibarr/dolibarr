@@ -942,6 +942,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$societeforaction->fetch($object->socid);
 		} elseif (isset($object->fk_soc) && $object->fk_soc > 0) {
 			$societeforaction->fetch($object->fk_soc);
+		} elseif (isset($object->thirdparty->id) && $object->thirdparty->id > 0) {
+			$societeforaction = $object->thirdparty;
 		}
 
 		$projectid = isset($object->fk_project) ? $object->fk_project : 0;
@@ -958,11 +960,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		//var_dump($societeforaction);var_dump($contactforaction);var_dump($elementid);var_dump($elementtype);exit;
 
+		$type_code = '';
+		if (strpos($action, 'SENTBYMAIL')) $type_code = 'AC_EMAIL_OUT';
+
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
-		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-		$actioncomm->code        = 'AC_'.$action;
+		$actioncomm->type_code   = !empty($type_code) ? $type_code : $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+		$actioncomm->code        = !empty($type_code) ? $type_code : 'AC_' . $action;
 		$actioncomm->label       = $object->actionmsg2;
 		$actioncomm->note_private = $object->actionmsg; // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
 		$actioncomm->fk_project  = $projectid;
