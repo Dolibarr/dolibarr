@@ -247,7 +247,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'formula') {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -787,7 +787,7 @@ if ($id) {
 							$class = 'tddict';
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
+								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
 							}
 						}
 					}
