@@ -1964,11 +1964,9 @@ if ($action == 'create') {
 	print $desc;
 	print '</div></div>';
 
-	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid))))
-	{
+	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid)))) {
 		// Deposit - Down payment
-		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT))
-		{
+		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT)) {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" id="radio_deposit" name="type" value="3"' . (GETPOST('type') == 3 ? ' checked' : '') . '> ';
 			print '<script type="text/javascript" language="javascript">
