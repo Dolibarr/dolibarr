@@ -436,7 +436,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$result = '';
 	$tmpinvoice = new Facture($db);
 
-	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
+	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total_ht, f.total_tva, f.total_ttc, f.ref_client";
 	$sql .= ", f.type, f.fk_statut as status, f.paye";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
@@ -463,7 +463,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
 	if (!$user->rights->societe->client->voir && !$socid) {
