@@ -984,7 +984,7 @@ class Form
 			print '>'.$langs->trans("Service");
 
 			print '<option value="2"';
-			if (1 == $selected) print ' selected';
+			if (2 == $selected) print ' selected';
 			print '>'.$langs->trans("Commentaire");
 
 			print '</select>';
