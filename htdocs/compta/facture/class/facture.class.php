@@ -157,10 +157,17 @@ class Facture extends CommonInvoice
 	public $total_ttc = 0;
 	public $revenuestamp;
 
-	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
-	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
 	public $close_code;
-	//! Commentaire si mis a paye sans paiement complet
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
 	public $close_note;
 
 	/**
@@ -2237,14 +2244,14 @@ class Facture extends CommonInvoice
 			$sql .= ' AND fk_facture_line IS NULL';
 			$resql = $this->db->query($sql);
 
-			// If invoice has consumned discounts
+			// If invoice has consumed discounts
 			$this->fetch_lines();
 			$list_rowid_det = array();
 			foreach ($this->lines as $key => $invoiceline) {
 				$list_rowid_det[] = $invoiceline->id;
 			}
 
-			// Consumned discounts are freed
+			// Consumed discounts are freed
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
@@ -2536,8 +2543,8 @@ class Facture extends CommonInvoice
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// On desaffecte de la facture les remises liees
-			// car elles n'ont pas ete utilisees vu que la facture est abandonnee.
+			// Bound discounts are deducted from the invoice
+			// as they have not been used since the invoice is abandoned.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_facture = NULL';
 			$sql .= ' WHERE fk_facture = '.$this->id;
@@ -3659,7 +3666,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		// Libere remise liee a ligne de facture
+		// Free discount linked to invoice line
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_facture_line = NULL';
 		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
