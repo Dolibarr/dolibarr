@@ -171,7 +171,7 @@ $arrayfields = array(
 	'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
 	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
+	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>-1),
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
@@ -1398,7 +1398,7 @@ if ($resql) {
 
 			// Supplier ref
 			if (!empty($arrayfields['f.ref_supplier']['checked'])) {
-				print '<td class="nowrap tdoverflowmax200">';
+				print '<td class="nowrap tdoverflowmax150" title="'.dol_escape_htmltag($obj->ref_supplier).'">';
 				print $obj->ref_supplier;
 				print '</td>';
 				if (!$i) {
