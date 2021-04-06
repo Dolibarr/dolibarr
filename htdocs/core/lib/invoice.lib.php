@@ -903,7 +903,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 		$tmpinvoice = new Facture($db);
 
-		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 		$sql .= ", f.date_lim_reglement as datelimite";
 		$sql .= ", s.nom as name";
 		$sql .= ", s.rowid as socid, s.email";
@@ -929,7 +929,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerUnpaid', $parameters);
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+		$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
 		$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 		$sql .= " ORDER BY f.datef ASC, f.ref ASC";
@@ -1117,7 +1117,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$reshook = $hookmanager->executeHooks('printFieldListWhereSupplierUnpaid', $parameters);
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
+		$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
 		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 		$sql .= " ORDER BY ff.date_lim_reglement ASC";
 
