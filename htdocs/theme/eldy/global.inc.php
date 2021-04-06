@@ -3092,16 +3092,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	text-decoration: none;
 	white-space: nowrap;
 
-	/*border-right: 1px solid #ddd;
-	border-left: 1px solid #ddd;
-	border-top: 1px solid #ddd; */
-	border-right: 1px solid transparent;
-	border-left: 1px solid transparent;
-	border-top: 1px solid transparent;
-	border-bottom: 0px !important;
-
 	background-image: none !important;
 }
+
 .tabactive, a.tab#active {
 	color: var(--colortextbacktab); !important;
 	background: var(--colorbacktabcard1) !important;
@@ -3110,6 +3103,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
 	border-top: 3px solid var(--colorbackhmenu1) !important;
+}
+.tabunactive, a.tab#unactive {
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 0px !important;*/
 }
 a.tab:hover
 {

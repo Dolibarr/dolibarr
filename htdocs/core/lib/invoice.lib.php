@@ -270,6 +270,8 @@ function getCustomerInvoicePieChart($socid = 0)
 
 	$db->free($resql);
 
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder nohover centpercent">';
 	$result .= '<tr class="liste_titre">';
@@ -285,6 +287,19 @@ function getCustomerInvoicePieChart($socid = 0)
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
 		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		if ($status == Facture::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == Facture::STATUS_VALIDATED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == Facture::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
+		if ($status == Facture::STATUS_ABANDONED) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+
 		if (!$conf->use_javascript_ajax) {
 			$result .= '<tr class="oddeven">';
 			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
@@ -296,6 +311,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	if ($conf->use_javascript_ajax) {
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
@@ -373,6 +389,8 @@ function getPurchaseInvoicePieChart($socid = 0)
 
 	$db->free($resql);
 
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder nohover centpercent">';
 
@@ -389,6 +407,19 @@ function getPurchaseInvoicePieChart($socid = 0)
 		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
 
 		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		if ($status == FactureFournisseur::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == FactureFournisseur::STATUS_VALIDATED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == FactureFournisseur::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
+		if ($status == FactureFournisseur::STATUS_ABANDONED) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+
 		if (!$conf->use_javascript_ajax) {
 			$result .= '<tr class="oddeven">';
 			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
@@ -400,6 +431,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	if ($conf->use_javascript_ajax) {
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
@@ -436,7 +468,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$result = '';
 	$tmpinvoice = new Facture($db);
 
-	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
+	$sql = "SELECT f.rowid, f.ref, f.datef as date, f.total_ht, f.total_tva, f.total_ttc, f.ref_client";
 	$sql .= ", f.type, f.fk_statut as status, f.paye";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid, s.email";
@@ -463,7 +495,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.ref_client, f.type, f.fk_statut, f.paye,";
 	$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur,";
 	$sql .= " cc.rowid, cc.code";
 	if (!$user->rights->societe->client->voir && !$socid) {
@@ -903,7 +935,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 		$tmpinvoice = new Facture($db);
 
-		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 		$sql .= ", f.date_lim_reglement as datelimite";
 		$sql .= ", s.nom as name";
 		$sql .= ", s.rowid as socid, s.email";
@@ -929,7 +961,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerUnpaid', $parameters);
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+		$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.datef, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
 		$sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
 		$sql .= " ORDER BY f.datef ASC, f.ref ASC";
@@ -1117,7 +1149,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 		$reshook = $hookmanager->executeHooks('printFieldListWhereSupplierUnpaid', $parameters);
 		$sql .= $hookmanager->resPrint;
 
-		$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
+		$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.type, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye, ff.date_lim_reglement,";
 		$sql .= " s.nom, s.rowid, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 		$sql .= " ORDER BY ff.date_lim_reglement ASC";
 

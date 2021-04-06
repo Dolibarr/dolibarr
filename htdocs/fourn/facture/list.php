@@ -171,7 +171,7 @@ $arrayfields = array(
 	'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
 	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0),
 	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
+	's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>-1),
 	's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
@@ -1255,7 +1255,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 	if (!empty($arrayfields['f.total_vat']['checked'])) {
-		print_liste_field_titre($arrayfields['f.total_vat']['label'], $_SERVER['PHP_SELF'], 'f.tva', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['f.total_vat']['label'], $_SERVER['PHP_SELF'], 'f.total_tva', '', $param, '', $sortfield, $sortorder, 'right ');
 	}
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1398,7 +1398,7 @@ if ($resql) {
 
 			// Supplier ref
 			if (!empty($arrayfields['f.ref_supplier']['checked'])) {
-				print '<td class="nowrap tdoverflowmax200">';
+				print '<td class="nowrap tdoverflowmax150" title="'.dol_escape_htmltag($obj->ref_supplier).'">';
 				print $obj->ref_supplier;
 				print '</td>';
 				if (!$i) {
@@ -1522,7 +1522,7 @@ if ($resql) {
 
 			// Payment condition
 			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', '', -1);
 				print '</td>';
 				if (!$i) {
@@ -1531,7 +1531,7 @@ if ($resql) {
 			}
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
 				print '</td>';
 				if (!$i) {
