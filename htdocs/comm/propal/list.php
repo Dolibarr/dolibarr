@@ -333,9 +333,8 @@ if ($action == "sign") {
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
-					if ($tmpproposal->cloture($user,$tmpproposal::STATUS_SIGNED)) {
+					if ($tmpproposal->cloture($user, $tmpproposal::STATUS_SIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
-						
 					} else {
 						dol_print_error($db);
 						$error++;
@@ -364,7 +363,7 @@ if ($action == "nosign") {
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
-					if ($tmpproposal->cloture($user,$tmpproposal::STATUS_NOTSIGNED)) {
+					if ($tmpproposal->cloture($user, $tmpproposal::STATUS_NOTSIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
 						dol_print_error($db);
