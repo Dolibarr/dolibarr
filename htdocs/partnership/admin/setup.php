@@ -80,8 +80,24 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 if ($action == 'setting') {
+	require_once DOL_DOCUMENT_ROOT."/core/modules/modPartnership.class.php";
+	$partnership = new modPartnership($db);
+
 	$value = GETPOST('managed_for', 'alpha');
 	$res = dolibarr_set_const($db, "PARTNERSHIP_IS_MANAGED_FOR", $value, 'chaine', 0, '', $conf->entity);
+
+	$partnership->tabs = array();
+	
+	$tabtoadd = ($value == 'member') ? 'member' : 'thirdparty';
+
+	if($tabtoadd == 'member')
+		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership_list.php?id=__ID__');
+	else
+		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership_list.php?id=__ID__');
+
+	$error += $partnership->delete_tabs();
+	$error += $partnership->insert_tabs();
+
 }
 
 if ($action) {

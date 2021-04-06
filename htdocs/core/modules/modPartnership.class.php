@@ -176,6 +176,14 @@ class modPartnership extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
+
+		$tabtoadd = ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'member' : 'thirdparty';
+
+		if($tabtoadd == 'member')
+			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership_list.php?id=__ID__');
+		else
+			$this->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership_list.php?id=__ID__');
+
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@partnership:$user->rights->partnership->read:/partnership/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@partnership:$user->rights->othermodule->read:/partnership/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
