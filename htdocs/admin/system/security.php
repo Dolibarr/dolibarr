@@ -74,12 +74,24 @@ print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
 $arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open,popen');
-print join(', ', $arrayoffunctionsdisabled);
+$i = 0;
+foreach ($arrayoffunctionsdisabled as $functionkey) {
+	if ($i > 0) {
+		print ', ';
+	}
+	print '<span class="opacitymedium">'.$functionkey.'</span>';
+	$i++;
+}
 print "<br>\n";
 $todisabletext = '';
+$i = 0;
 foreach ($arrayoffunctionstodisable as $functiontodisable) {
 	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.$functiontodisable;
+		if ($i > 0) {
+			$todisabletext .= ', ';
+		}
+		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$i++;
 	}
 }
 if ($todisabletext) {
@@ -87,9 +99,14 @@ if ($todisabletext) {
 	print '<br>';
 }
 $todisabletext = '';
+$i = 0;
 foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
 	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.$functiontodisable;
+		if ($i > 0) {
+			$todisabletext .= ', ';
+		}
+		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$i++;
 	}
 }
 if ($todisabletext) {
@@ -172,7 +189,11 @@ $test = empty($conf->syslog->enabled);
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
+	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
@@ -199,12 +220,12 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? $langs->trans("Undefined") : $conf->global->MAIN_SECURITY_SALT).'<br>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<span class="opacitymedium">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print 'If you really want to switch, you must:<br>';
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
 	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
 	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
-	print '</span><br>';
+	print '</div><br>';
 }
 print '<br>';
 // TODO
@@ -227,12 +248,17 @@ $eventstolog = $securityevent->eventstolog;
 
 print '<strong>'.$langs->trans("LogEvents").'</strong>: ';
 // Loop on each event type
+$i = 0;
 foreach ($eventstolog as $key => $arr) {
 	if ($arr['id']) {
 		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
 		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
 		if ($value) {
-			print $key.', ';
+			if ($i > 0) {
+				print ', ';
+			}
+			print '<span class="opacitymedium">'.$key.'</span>';
+			$i++;
 		}
 	}
 }
