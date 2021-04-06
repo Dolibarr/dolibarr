@@ -518,7 +518,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Amount
-	print '<td class="nowrap right">'.price($obj->amount).'</td>';
+	print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
 	if (!$i) $totalarray['nbfield']++;
 	if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 	$totalarray['val']['totalttcfield'] += $obj->amount;

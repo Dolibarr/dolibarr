@@ -32,9 +32,7 @@ $error = 0;
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy"));
 
-$mesg = '';
 $id = GETPOST('id', 'int');
-$rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cat_id = GETPOST('account_category', 'int');
