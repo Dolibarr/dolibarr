@@ -270,6 +270,8 @@ function getCustomerInvoicePieChart($socid = 0)
 
 	$db->free($resql);
 
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder nohover centpercent">';
 	$result .= '<tr class="liste_titre">';
@@ -285,6 +287,19 @@ function getCustomerInvoicePieChart($socid = 0)
 		$objectstatic->paye = $status == Facture::STATUS_CLOSED ? -1 : 0;
 
 		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		if ($status == Facture::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == Facture::STATUS_VALIDATED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == Facture::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
+		if ($status == Facture::STATUS_ABANDONED) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+
 		if (!$conf->use_javascript_ajax) {
 			$result .= '<tr class="oddeven">';
 			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
@@ -296,6 +311,7 @@ function getCustomerInvoicePieChart($socid = 0)
 	if ($conf->use_javascript_ajax) {
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
@@ -373,6 +389,8 @@ function getPurchaseInvoicePieChart($socid = 0)
 
 	$db->free($resql);
 
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
 	$result = '<div class="div-table-responsive-no-min">';
 	$result .= '<table class="noborder nohover centpercent">';
 
@@ -389,6 +407,19 @@ function getPurchaseInvoicePieChart($socid = 0)
 		$objectstatic->paye = $status == FactureFournisseur::STATUS_CLOSED ? -1 : 0;
 
 		$dataseries[] = [$objectstatic->getLibStatut(1), (isset($vals[$status]) ? (int) $vals[$status] : 0)];
+		if ($status == FactureFournisseur::STATUS_DRAFT) {
+			$colorseries[$status] = '-'.$badgeStatus0;
+		}
+		if ($status == FactureFournisseur::STATUS_VALIDATED) {
+			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == FactureFournisseur::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus9;
+		}
+		if ($status == FactureFournisseur::STATUS_ABANDONED) {
+			$colorseries[$status] = $badgeStatus6;
+		}
+
 		if (!$conf->use_javascript_ajax) {
 			$result .= '<tr class="oddeven">';
 			$result .= '<td>'.$objectstatic->getLibStatut(0).'</td>';
@@ -400,6 +431,7 @@ function getPurchaseInvoicePieChart($socid = 0)
 	if ($conf->use_javascript_ajax) {
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
