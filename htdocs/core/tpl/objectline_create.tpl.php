@@ -161,13 +161,13 @@ if ($nolinesbefore) {
 			$forceall = 1; // We always force all type for free lines (module product or service means we use predefined product or service)
 			if ($object->element == 'contrat')
 			{
-				if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall = -1; // With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
+				if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->commentaire->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall = -1; // With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
 				elseif (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall = 3;
 			}
 			// Free line
 			echo '<span class="prod_entry_mode_free">';
 			// Show radio free line
-			if ($forceall >= 0 && (!empty($conf->product->enabled) || !empty($conf->service->enabled)))
+			if ($forceall >= 0 && (!empty($conf->product->enabled) || !empty($conf->service->enabled) || !empty($conf->commentaires->enabled)))
 			{
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
@@ -183,7 +183,7 @@ if ($nolinesbefore) {
 				// Show type selector
 				if ($forceall >= 0)
 				{
-					if (empty($conf->product->enabled) || empty($conf->service->enabled)) echo $langs->trans("Type");
+					if (empty($conf->product->enabled) || empty($conf->service->enabled) || empty($conf->commentaire->enabled)) echo $langs->trans("Type");
 					else echo $langs->trans("FreeLineOfType");
 					echo ' ';
 				}
@@ -621,7 +621,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 			}
 		}
 		console.log("Hide/show date according to product type");
-		if (jQuery('#select_type').val() == '0')
+		if (jQuery('#select_type').val() == '0' || jQuery('#select_type').val() == '2')
 		{
 			jQuery('#trlinefordates').hide();
 			jQuery('.divlinefordates').hide();

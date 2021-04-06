@@ -983,15 +983,24 @@ class Form
 			if (1 == $selected) print ' selected';
 			print '>'.$langs->trans("Service");
 
+			print '<option value="2"';
+			if (1 == $selected) print ' selected';
+			print '>'.$langs->trans("Commentaire");
+
 			print '</select>';
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
-		if ((empty($forceall) && empty($conf->product->enabled) && !empty($conf->service->enabled)) || $forceall == 3)
+		if ((empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled) && !empty($conf->commentaire->enabled)) || $forceall == 4)
+		{
+			print $langs->trans("Commentaire");
+			print '<input type="hidden" name="'.$htmlname.'" value="2">';
+		}
+		if ((empty($forceall) && empty($conf->product->enabled) && !empty($conf->service->enabled) && empty($conf->commentaire->enabled)) || $forceall == 3)
 		{
 			print $langs->trans("Service");
 			print '<input type="hidden" name="'.$htmlname.'" value="1">';
 		}
-		if ((empty($forceall) && !empty($conf->product->enabled) && empty($conf->service->enabled)) || $forceall == 2)
+		if ((empty($forceall) && !empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->commentaire->enabled)) || $forceall == 2)
 		{
 			print $langs->trans("Product");
 			print '<input type="hidden" name="'.$htmlname.'" value="0">';
