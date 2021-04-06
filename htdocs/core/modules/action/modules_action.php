@@ -96,7 +96,9 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 	}
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);

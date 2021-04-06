@@ -48,7 +48,7 @@ $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
@@ -56,20 +56,23 @@ $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOST('userid', 'int');
 
+$object = new ChargeSociales($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
+$result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
-$object = new ChargeSociales($db);
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Actions                                                                     */
-/*                                                                             */
-/* *************************************************************************** */
+
+/*
+ * Actions
+ */
 
 // Classify paid
 if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes') {
@@ -93,7 +96,7 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
 // Link to a project
 if ($action == 'classin' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
-	$object->setProject(GETPOST('projectid'));
+	$object->setProject(GETPOST('fk_project'));
 }
 
 if ($action == 'setfk_user' && $user->rights->tax->charges->creer) {
@@ -180,7 +183,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer) {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->tax->charges->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
 	$amount = price2num(GETPOST('amount'), 'MT');
 
 	if (!$dateech) {
@@ -323,7 +326,7 @@ if ($action == 'create') {
 	print $langs->trans("Date");
 	print '</td>';
 	print '<td>';
-	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1);
+	print $form->selectDate(!empty($dateech) ? $dateech : '-1', 'ech', 0, 0, 0, 'charge', 1, 1);
 	print '</td>';
 	print "</tr>\n";
 
@@ -360,20 +363,20 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 
 		print '</td></tr>';
 	}
 
 	// Payment Mode
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
+	print '<tr><td>'.$langs->trans('DefaultPaymentMode').'</td><td colspan="2">';
+	$form->select_types_paiements(GETPOST('mode_reglement_id', 'int'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
-		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 2, '', 0, '', 1);
+		print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOST('fk_account', 'int'), 'fk_account', 0, '', 2, '', 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -445,12 +448,24 @@ if ($id > 0) {
 
 		// Employee
 		if ($action != 'editfk_user') {
-			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-
-			if (!empty($object->fk_user)) {
+			if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
 				$userstatic = new User($db);
-				$userstatic->fetch($object->fk_user);
-				$morehtmlref .= $userstatic->getNomUrl(1);
+				$result = $userstatic->fetch($object->fk_user);
+				if ($result > 0) {
+					$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+				}
+			} else {
+				$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+				if (!empty($object->fk_user)) {
+					$userstatic = new User($db);
+					$result = $userstatic->fetch($object->fk_user);
+					if ($result > 0) {
+						$morehtmlref .= $userstatic->getNomUrl(1);
+					} else {
+						dol_print_error($db);
+						exit();
+					}
+				}
 			}
 		} else {
 			$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
@@ -475,7 +490,7 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
@@ -536,16 +551,16 @@ if ($id > 0) {
 		// Amount
 		if ($action == 'edit') {
 			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
-			print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
+			print '<input type="text" name="amount" size="12" class="flat" value="'.price($object->amount).'">';
 			print "</td></tr>";
 		} else {
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
 		// Mode of payment
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('PaymentMode');
+		print $langs->trans('DefaultPaymentMode');
 		print '</td>';
 		if ($action != 'editmode') {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
@@ -563,7 +578,7 @@ if ($id > 0) {
 		if (!empty($conf->banque->enabled)) {
 			print '<tr><td class="nowrap">';
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-			print $langs->trans('BankAccount');
+			print $langs->trans('DefaultBankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
@@ -601,7 +616,7 @@ if ($id > 0) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepaiement = c.id";
 		$sql .= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-		$sql .= " WHERE p.fk_charge = ".$id;
+		$sql .= " WHERE p.fk_charge = ".((int) $id);
 		$sql .= " AND p.fk_charge = cs.rowid";
 		$sql .= " AND cs.entity IN (".getEntity('tax').")";
 		$sql .= " ORDER BY dp DESC";
@@ -612,7 +627,8 @@ if ($id > 0) {
 			$totalpaye = 0;
 
 			$num = $db->num_rows($resql);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder paymenttable">';
@@ -664,7 +680,7 @@ if ($id > 0) {
 						}
 						print '</td>';
 					}
-					print '<td class="right">'.price($objp->amount)."</td>\n";
+					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>";
 					$totalpaye += $objp->amount;
 					$i++;
@@ -718,7 +734,7 @@ if ($id > 0) {
 		*   Actions buttons
 		*/
 		if ($action != 'edit') {
-			print "<div class=\"tabsAction\">\n";
+			print '<div class="tabsAction">'."\n";
 
 			// Reopen
 			if ($object->paye && $user->rights->tax->charges->creer) {

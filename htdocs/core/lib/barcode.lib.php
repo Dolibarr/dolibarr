@@ -100,7 +100,7 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
 }
 
 /**
- * Encodes $code with $encoding using genbarcode OR built-in encoder if you don't have genbarcode only EAN-13/ISBN is possible
+ * Encodes $code with $encoding using genbarcode OR built-in encoder if you don't have genbarcode only EAN-13/ISBN or UPC is possible
  *
  * You can use the following encodings (when you have genbarcode):
  *   ANY    choose best-fit (default)
@@ -125,7 +125,13 @@ function barcode_encode($code, $encoding)
 {
 	global $genbarcode_loc;
 
-	if ((preg_match("/^ean$/i", $encoding))
+	if ((preg_match("/^upc$/i", $encoding))
+	&& (preg_match("/^[0-9]{11,12}$/", $code))
+	) {
+		/* use built-in UPC-Encoder */
+		dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_upc");
+		$bars = barcode_encode_upc($code, $encoding);
+	} elseif ((preg_match("/^ean$/i", $encoding))
 
 	|| (($encoding) && (preg_match("/^isbn$/i", $encoding))
 	&& ((strlen($code) == 9 || strlen($code) == 10) ||
@@ -167,7 +173,9 @@ function barcode_encode($code, $encoding)
  */
 function barcode_gen_ean_sum($ean)
 {
-	$even = true; $esum = 0; $osum = 0;
+	$even = true;
+	$esum = 0;
+	$osum = 0;
 	$ln = strlen($ean) - 1;
 	for ($i = $ln; $i >= 0; $i--) {
 		if ($even) {
@@ -180,39 +188,19 @@ function barcode_gen_ean_sum($ean)
 	return (10 - ((3 * $esum + $osum) % 10)) % 10;
 }
 
+
 /**
- * Encode EAN
+ * Generate EAN bars
  *
- * @param	string	$ean		Code
- * @param	string	$encoding	Encoding
- * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
+ * @param	string	$ean	EAN to encode
+ * @return	string			Encoded EAN
  */
-function barcode_encode_ean($ean, $encoding = "EAN-13")
+function barcode_gen_ean_bars($ean)
 {
 	$digits = array(3211, 2221, 2122, 1411, 1132, 1231, 1114, 1312, 1213, 3112);
 	$mirror = array("000000", "001011", "001101", "001110", "010011", "011001", "011100", "010101", "010110", "011010");
-	$guards = array("9a1a", "1a1a1", "a1a");
+	$guards = array("9a1a", "1a1a1", "a1a7");
 
-	$ean = trim($ean);
-	if (preg_match("/[^0-9]/i", $ean)) {
-		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
-	}
-	$encoding = strtoupper($encoding);
-	if ($encoding == "ISBN") {
-		if (!preg_match("/^978/", $ean)) {
-			$ean = "978".$ean;
-		}
-	}
-	if (preg_match("/^978/", $ean)) {
-		$encoding = "ISBN";
-	}
-	if (strlen($ean) < 12 || strlen($ean) > 13) {
-		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
-	}
-
-	$ean = substr($ean, 0, 12);
-	$eansum = barcode_gen_ean_sum($ean);
-	$ean .= $eansum;
 	$line = $guards[0];
 	for ($i = 1; $i < 13; $i++) {
 		$str = $digits[$ean[$i]];
@@ -226,6 +214,40 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 		}
 	}
 	$line .= $guards[2];
+
+	return $line;
+}
+
+/**
+ * Encode EAN
+ *
+ * @param	string	$ean		Code
+ * @param	string	$encoding	Encoding
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
+ */
+function barcode_encode_ean($ean, $encoding = "EAN-13")
+{
+	$ean = trim($ean);
+	if (preg_match("/[^0-9]/i", $ean)) {
+		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (not a numeric)");
+	}
+	$encoding = strtoupper($encoding);
+	if ($encoding == "ISBN") {
+		if (!preg_match("/^978/", $ean)) {
+			$ean = "978".$ean;
+		}
+	}
+	if (preg_match("/^97[89]/", $ean)) {
+		$encoding = "ISBN";
+	}
+	if (strlen($ean) < 12 || strlen($ean) > 13) {
+		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
+	}
+
+	$ean = substr($ean, 0, 12);
+	$eansum = barcode_gen_ean_sum($ean);
+	$ean .= $eansum;
+	$bars = barcode_gen_ean_bars($ean);
 
 	/* create text */
 	$pos = 0;
@@ -247,7 +269,57 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 	return array(
 		"error" => '',
 		"encoding" => $encoding,
-		"bars" => $line,
+		"bars" => $bars,
+		"text" => $text
+	);
+}
+
+/**
+ * Encode UPC
+ *
+ * @param	string	$upc		Code
+ * @param	string	$encoding	Encoding
+ * @return	array				array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info, 'error': error message if error)
+ */
+function barcode_encode_upc($upc, $encoding = "UPC")
+{
+	$upc = trim($upc);
+	if (preg_match("/[^0-9]/i", $upc)) {
+		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (not a numeric)");
+	}
+	$encoding = strtoupper($encoding);
+	if (strlen($upc) < 11 || strlen($upc) > 12) {
+		return array("error"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)", "text"=>"Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)");
+	}
+
+	$upc = substr("0".$upc, 0, 12);
+	$eansum = barcode_gen_ean_sum($upc);
+	$upc .= $eansum;
+	$bars = barcode_gen_ean_bars($upc);
+
+	/* create text */
+	$pos = 0;
+	$text = "";
+	for ($a = 1; $a < 13; $a++) {
+		if ($a > 1) {
+			$text .= " ";
+		}
+		$text .= "$pos:12:{$upc[$a]}";
+		if ($a == 1) {
+			$pos += 15;
+		} elseif ($a == 6) {
+			$pos += 17;
+		} elseif ($a == 11) {
+			$pos += 15;
+		} else {
+			$pos += 7;
+		}
+	}
+
+	return array(
+		"error" => '',
+		"encoding" => $encoding,
+		"bars" => $bars,
 		"text" => $text
 	);
 }
@@ -300,7 +372,8 @@ function barcode_encode_genbarcode($code, $encoding)
 	);
 	//var_dump($ret);
 	if (preg_match('/permission denied/i', $ret['bars'])) {
-		$ret['error'] = $ret['bars']; $ret['bars'] = '';
+		$ret['error'] = $ret['bars'];
+		$ret['bars'] = '';
 		return $ret;
 	}
 	if (!$ret['bars']) {

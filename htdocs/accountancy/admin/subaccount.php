@@ -118,9 +118,10 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
+$help_url = '';
 $title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 // Customer
 $sql = "SELECT sa.rowid, sa.nom as label, sa.code_compta as subaccount, '1' as type, sa.entity";
@@ -314,7 +315,7 @@ if ($resql) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
-	print '<div class="warning">'.$langs->trans("WarningCreateSubAccounts").'</div>';
+	print '<div class="info">'.$langs->trans("WarningCreateSubAccounts").'</div>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -418,11 +419,11 @@ if ($resql) {
 			if (!empty($arrayfields['reconcilable']['checked'])) {
 				print '<td class="center">';
 				if (empty($obj->reconcilable)) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&token='.newToken().'">';
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					print '</a>';
 				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&token='.newToken().'">';
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print '</a>';
 				}

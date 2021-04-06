@@ -67,11 +67,6 @@ if ($contextpage == 'takepos') {
 	$_GET['optioncss'] = 'print';
 }
 
-// Security check
-if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
-	accessforbidden();
-}
-
 $arrayofpaymentmode = array('cash'=>'Cash', 'cheque'=>'Cheque', 'card'=>'CreditCard');
 
 $arrayofposavailable = array();
@@ -94,6 +89,15 @@ $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+// Security check
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+	accessforbidden();
+}
 
 
 /*
@@ -300,7 +304,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 			if ($bankid > 0) {
 				$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
-				$sql .= " WHERE fk_account = ".$bankid;
+				$sql .= " WHERE fk_account = ".((int) $bankid);
 				if ($syear && !$smonth) {
 					$sql .= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
 				} elseif ($syear && $smonth && !$sday) {
@@ -413,9 +417,11 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		for ($i = 1; $i <= $numterminals; $i++) {
 			$array[$i] = $i;
 		}
-		$selectedposnumber = 0; $showempty = 1;
+		$selectedposnumber = 0;
+		$showempty = 1;
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == '1') {
-			$selectedposnumber = 1; $showempty = 0;
+			$selectedposnumber = 1;
+			$showempty = 0;
 		}
 		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';

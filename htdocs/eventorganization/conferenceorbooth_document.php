@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,73 +22,27 @@
  *  \brief      Tab for documents linked to ConferenceOrBooth
  */
 
-//if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');				// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');				// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');				// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       	  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If this page is public (can be called outside logged session). This include the NOIPCHECK too.
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("FORCECSP"))                 define('FORCECSP', 'none');				// Disable all Content Security Policies
-//if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
-//if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
-
-// Load Dolibarr environment
-$res = 0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-}
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
-}
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
-	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-}
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
-	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
-}
-// Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) {
-	$res = @include "../main.inc.php";
-}
-if (!$res && file_exists("../../main.inc.php")) {
-	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
-}
-if (!$res) {
-	die("Include of main fails");
-}
+require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-dol_include_once('/eventorganization/class/conferenceorbooth.class.php');
-dol_include_once('/eventorganization/lib/eventorganization_conferenceorbooth.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization@eventorganization", "companies", "other", "mails"));
-
+$langs->loadLangs(array("eventorganization", "companies", "other", "mails"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
+$withproject = GETPOST('withproject', 'int');
+$project_ref = GETPOST('project_ref', 'alpha');
+
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -112,6 +66,7 @@ if (!$sortfield) {
 // Initialize technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
+$projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothdocument', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -124,13 +79,14 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity ? $object->entity : $conf->entity]."/conferenceorbooth/".get_exdir(0, 0, 0, 1, $object);
 }
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'eventorganization', $object->id);
-
 $permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_addupdatedelete.inc.php
 
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+$isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
@@ -151,11 +107,187 @@ $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
+$result = $projectstatic->fetch($object->fk_project);
+if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+	$projectstatic->fetchComments();
+}
+if (!empty($projectstatic->socid)) {
+	$projectstatic->fetch_thirdparty();
+}
+
+$withProjectUrl='';
+$object->project = clone $projectstatic;
+
+if (!empty($withproject)) {
+	// Tabs for project
+	$tab = 'eventorganisation';
+	$head = project_prepare_head($projectstatic);
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
+
+	// Project card
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref = '<div class="refidno">';
+	// Title
+	$morehtmlref .= $projectstatic->title;
+	// Thirdparty
+	if ($projectstatic->thirdparty->id > 0) {
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+	}
+	$morehtmlref .= '</div>';
+
+	// Define a complementary filter for search of next/prev ref.
+	if (!$user->rights->projet->all->lire) {
+		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
+		$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	}
+
+	dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border tableforfield centpercent">';
+
+	// Usage
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
+		if (!empty($conf->eventorganization->enabled)) {
+			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
+		print '</td></tr>';
+	}
+
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($projectstatic->public) {
+		print $langs->trans('SharedProject');
+	} else {
+		print $langs->trans('PrivateProject');
+	}
+	print '</td></tr>';
+
+	// Date start - end
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	$start = dol_print_date($projectstatic->date_start, 'day');
+	print ($start ? $start : '?');
+	$end = dol_print_date($projectstatic->date_end, 'day');
+	print ' - ';
+	print ($end ? $end : '?');
+	if ($projectstatic->hasDelay()) {
+		print img_warning("Late");
+	}
+	print '</td></tr>';
+
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($projectstatic->budget_amount, '')) {
+		print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	}
+	print '</td></tr>';
+
+	// Other attributes
+	$cols = 2;
+	//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+
+	print '</table>';
+
+	print '</div>';
+
+	print '<div class="fichehalfright">';
+	print '<div class="ficheaddleft">';
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<table class="border centpercent">';
+
+	// Description
+	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print nl2br($projectstatic->description);
+	print '</td></tr>';
+
+	// Categories
+	if ($conf->categorie->enabled) {
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		print $form->showCategories($projectstatic->id, 'project', 1);
+		print "</td></tr>";
+	}
+
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($projectstatic->accept_booth_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfRegistration', 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfBooth', 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
+	print '';
+	//TODO fill with ics
+	print "</td></tr>";
+
+	print '</table>';
+
+	print '</div>';
+	print '</div>';
+	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
+	print dol_get_fiche_end();
+
+	print '<br>';
+}
+
 if ($object->id) {
 	/*
 	 * Show tabs
 	 */
-	$head = conferenceorboothPrepareHead($object);
+	$head = conferenceorboothPrepareHead($object, $withproject);
 
 	print dol_get_fiche_head($head, 'document', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
@@ -168,47 +300,11 @@ if ($object->id) {
 	}
 
 	// Object card
-	// ------------------------------------------------------------
+	// -------------
+	//-----------------------------------------------
 	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	/*
-	 // Ref customer
-	 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-	 // Thirdparty
-	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
-	 // Project
-	 if (! empty($conf->projet->enabled))
-	 {
-	 $langs->load("projects");
-	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($permissiontoadd)
-	 {
-	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	 $morehtmlref.=' : ';
-	 if ($action == 'classify') {
-	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	 $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-	 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	 $morehtmlref.='</form>';
-	 } else {
-	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	 }
-	 } else {
-	 if (! empty($object->fk_project)) {
-	 $proj = new Project($db);
-	 $proj->fetch($object->fk_project);
-	 $morehtmlref .= ': '.$proj->getNomUrl();
-	 } else {
-	 $morehtmlref .= '';
-	 }
-	 }
-	 }*/
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -236,7 +332,10 @@ if ($object->id) {
 	//$permtoedit = $user->rights->eventorganization->conferenceorbooth->write;
 	$permtoedit = 1;
 	$param = '&id='.$object->id;
-
+	//$param = '';
+	if ($withproject) {
+		$param .= '&withproject=1';
+	}
 	//$relativepathwithnofile='conferenceorbooth/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'conferenceorbooth/'.dol_sanitizeFileName($object->ref).'/';
 

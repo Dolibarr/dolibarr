@@ -46,6 +46,9 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
+}
 
 /**
  * Header empty
@@ -67,6 +70,8 @@ function llxFooter()
 
 require '../../main.inc.php';
 
+$mtid = GETPOST('mtid');
+$email = GETPOST('email');
 $tag = GETPOST('tag');
 $securitykey = GETPOST('securitykey');
 
@@ -83,23 +88,55 @@ if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
 }
 
 if (!empty($tag)) {
-	$statut = '2';
-	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
-	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
+	dol_syslog("public/emailing/mailing-read.php : Update status of email target and thirdparty for tag ".$tag, LOG_DEBUG);
+
+	$sql = "SELECT mc.rowid, mc.email, mc.statut, mc.source_type, mc.source_id, m.entity";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
+	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
+	if (!$resql) dol_print_error($db);
+
+	$obj = $db->fetch_object($resql);
+
+	if (empty($obj)) {
+		print 'Email target not valid. Operation canceled.';
+		exit;
+	}
+	if (empty($obj->email)) {
+		print 'Email target not valid. Operation canceled.';
+		exit;
+	}
+	if ($obj->statut == 2 || $obj->statut == 3) {
+		print 'Email target already set to read or unsubscribe. Operation canceled.';
+		exit;
+	}
+	// TODO Test that mtid and email match also with the one found from $tag
+	/*
+	 if ($obj->email != $email)
+	 {
+	 print 'Email does not match tagnot found. No need to unsubscribe.';
+	 exit;
+	 }
+	 */
+
+	//Update status of target
+	$statut = '2';
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE rowid = ".((int) $obj->rowid);
+	$resql = $db->query($sql);
+	if (!$resql) dol_print_error($db);
 
 	//Update status communication of thirdparty prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE fk_stcomm != -1 AND rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$db->escape($tag)."' AND source_type='thirdparty' AND source_id is not null)";
-	dol_syslog("public/emailing/mailing-read.php : Mail read thirdparty : ".$sql, LOG_DEBUG);
-
-	$resql = $db->query($sql);
+	if ($obj->source_id > 0 && $obj->source_type == 'thirdparty' && $obj->entity) {
+		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.$obj->entity.' AND rowid = '.((int) $obj->source_id);
+		$resql = $db->query($sql);
+	}
 
 	//Update status communication of contact prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE fk_stcomm != -1 AND rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$db->escape($tag)."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
-	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
-
-	$resql = $db->query($sql);
+	if ($obj->source_id > 0 && $obj->source_type == 'contact' && $obj->entity) {
+		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.$obj->entity.' AND rowid IN (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'socpeople AS sc WHERE sc.rowid = '.((int) $obj->source_id).')';
+		$resql = $db->query($sql);
+	}
 }
 
 $db->close();

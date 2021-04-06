@@ -21,6 +21,7 @@
 	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
+	--colorbackmobilemenu: #f8f8f8;
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgba(<?php print $colortexttitle; ?>, 0.9);
@@ -45,6 +46,8 @@
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008800;
 	--amountremaintopaybackcolor:none;
+	--productlinestockod: #002200;
+	--productlinestocktoolow: #884400;
 }
 
 <?php
@@ -57,7 +60,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
-	            --colorbacktabcard1: #38393d;
+	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
 	            --colorbacktabactive: rgb(220,220,220);
 	            --colorbacklineimpair1: #38393d;
 	            --colorbacklineimpair2: #2b2d2f;
@@ -66,6 +69,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colorbacklinepairhover: #2b2d2f;
 	            --colorbacklinepairchecked: #0e5ccd;
 	            --colorbackbody: #1d1e20;
+				--colorbackmobilemenu: #080808;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
 	            --colortexttitlenotab2: rgb(220,220,220);
@@ -89,7 +93,11 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
-	      }\n";
+	      }
+
+		body, button {
+			color: #bbb;
+		}\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
 		print "}\n";
 	}
@@ -210,7 +218,10 @@ input, select {
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
 }
-
+input.button:hover {
+	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
 input.button:focus {
 	border-bottom: 0;
 }
@@ -364,6 +375,9 @@ td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
+td.amount, span.amount, div.amount {
+	color: #006666;
+}
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -393,7 +407,7 @@ input.pageplusone {
 	opacity: 0.6;
 }
 .opacityhigh {
-	opacity: 0.2;
+	opacity: 0.24;
 }
 .opacitytransp {
 	opacity: 0;
@@ -465,6 +479,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 .formconsumeproduce {
 	background: #f3f3f3;
 	padding: 20px 0px 0px 0px;
+	border-radius: 8px;
 }
 
 div#moretabsList, div#moretabsListaction {
@@ -573,7 +588,9 @@ button[name='button_removefilter_x'] span.fa.fa-remove {
 button:focus {
 	outline: none;
 }
-
+.fa-info-circle {
+	padding-<?php echo $left; ?>: 3px;
+}
 
 th .button {
 	-webkit-box-shadow: none !important;
@@ -710,6 +727,9 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.paddingright2imp {
+	padding-<?php print $right; ?>: 2px !important;
+}
 .paddingtop {
 	padding-top: 4px;
 }
@@ -760,6 +780,38 @@ textarea.centpercent {
 	max-height: 250px;
 	max-width: 100%;
 	overflow-y: auto;
+}
+div.urllink {
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	/* border: 1px solid #ccc; */
+	border-radius: 5px;
+	/* width: fit-content; */
+	background-color: #f0f0f8;
+	opacity: 0.8;
+}
+div.urllink, div.urllink a {
+	color: #339 !important;
+}
+
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+	color: #888 !important;
+	opacity: 0.4;
+	padding-<?php echo $left; ?>: 3px;
+}
+.stockmovemententry {
+	color: #080;
+	transform: rotate(0.25turn);
+	font-size: 1.2em;
+}
+.stockmovementexit {
+	color: #968822;
+	transform: rotate(0.3turn);
+	font-size: 1.2em;
+}
+.stockmovement {
+	font-size: 1.4em;
 }
 
 body[class*="colorblind-"] .text-warning{
@@ -1062,6 +1114,18 @@ select.flat.selectlimit {
 }
 .tdoverflowmax300 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax400 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 400px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.tdoverflowmax500 {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 500px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -1606,7 +1670,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width: calc(100% - 210px);
 	display: inline-block;
 }
 
@@ -1710,8 +1774,15 @@ div.vmenu, td.vmenu {
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
+	/* no side-nav */
 	body.sidebar-collapse .side-nav {
 		display: none;
+	}
+
+	/* if no side-nav, we don't need to have width forced */
+	.classforhorizontalscrolloftabs #id-right {
+		width: unset;
+		display: unset;
 	}
 
 	body.sidebar-collapse .login_block {
@@ -1767,8 +1838,8 @@ div.vmenu, td.vmenu {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '28' : '6')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '34' : '6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '30' : '6')); ?>px;
 	<?php if (!empty($dol_hide_leftmenu)) {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
@@ -1815,14 +1886,14 @@ div.fichetwothirdright {
 	} ?>
 }
 div.fichetwothirdright div.ficheaddleft {
-	 padding-<?php echo $left; ?>: 20px;
+	 padding-<?php echo $left; ?>: 28px;
 }
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone') {
 		print "float: ".$left.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1830,7 +1901,7 @@ div.fichehalfright {
 		print "float: ".$right.";\n";
 	} ?>
 	<?php if ($conf->browser->layout != 'phone') {
-		print "width: calc(50% - 10px);\n";
+		print "width: calc(50% - 14px);\n";
 	} ?>
 }
 div.fichehalfright {
@@ -1838,12 +1909,15 @@ div.fichehalfright {
 		print "margin-top: 10px;\n";
 	} ?>
 }
-div.firstcolumn div.box {
+
+/*div.firstcolumn div.box {
 	padding-right: 10px;
 }
 div.secondcolumn div.box {
 	padding-left: 10px;
-}
+}*/
+
+
 /* Force values on one colum for small screen */
 @media only screen and (max-width: 1000px)
 {
@@ -1994,7 +2068,7 @@ span.widthpictotitle.pictotitle {
 	padding-right: 1px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	width: 44px;
+	width: 50px;
 	text-align:center;
 }
 div.attacharea {
@@ -3426,9 +3500,11 @@ div.pagination li.pagination a,
 div.pagination li.pagination span {
   padding: 6px 12px;
   line-height: 1.42857143;
-  color: #000;
   text-decoration: none;
   background-repeat: repeat-x;
+  <?php if (empty($conf->global->THEME_DARKMODEENABLED)) { ?>
+  color: #000;
+  <?php } ?>
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -4208,8 +4284,8 @@ div.boximport {
 	min-height: unset;
 }
 
-.product_line_stock_ok { color: #002200; }
-.product_line_stock_too_low { color: #884400; }
+.product_line_stock_ok { color: var(--productlinestockok); }
+.product_line_stock_too_low { color: var(--productlinestocktoolow); }
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
@@ -4602,6 +4678,11 @@ span[phptag] {
 	border: none;
 	font-weight: normal;
 }
+.websitebar .button.bordertransp {
+	color: unset;
+	text-decoration: unset !important;
+}
+
 .websitebar {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
@@ -4716,7 +4797,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 div.event { margin-left: 8px; margin-right: 8px; margin-bottom: 8px; margin-top: 4px; border-radius: 4px; box-shadow: 2px 2px 5px rgba(100, 100, 100, 0.2); }
 table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); border-radius: 3px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
-table.cal_event td.cal_event { padding: 4px 4px !important; }
+table.cal_event td.cal_event { padding: 4px 4px !important; padding-bottom: 2px !important; padding-top: 2px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event              { font-size: 1em; }
 .cal_event a:link       { color: #111111; font-weight: normal !important; }
@@ -6005,7 +6086,7 @@ li.ui-li-divider .ui-link {
 	color: #FFF !important;
 }
 .ui-btn {
-	margin: 0.1em 2px
+	margin: 0 2px;
 }
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
@@ -6159,7 +6240,7 @@ ul.ulmenu {
 }
 .alilevel0 {
 	color: var(--colortexttitle) !important;
-	background: #f8f8f8
+	background: var(--colorbackmobilemenu);
 }
 .ulmenu {
 	box-shadow: none !important;
@@ -6223,12 +6304,6 @@ div.tabsElem a.tab {
 /*  POS                                                                           */
 /* ============================================================================== */
 
-.menu_choix1 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png', 1) ?>') top left no-repeat;
-}
-.menu_choix2 a {
-	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png', 1) ?>') top left no-repeat;
-}
 .menu_choix1,.menu_choix2 {
 	font-size: 1.4em;
 	text-align: left;
@@ -6240,7 +6315,7 @@ div.tabsElem a.tab {
 	color: #fff;
 	text-decoration: none;
 	padding-top: 18px;
-	padding-left: 54px;
+	padding-left: 10px;
 	font-size: 14px;
 	height: 38px;
 }

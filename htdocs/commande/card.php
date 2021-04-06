@@ -423,7 +423,7 @@ if (empty($reshook)) {
 								$originidforcontact=$srcobject->origin_id;
 							}
 							$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-							$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$db->escape($originforcontact)."'";
+							$sqlcontact.= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$db->escape($originforcontact)."'";
 
 							$resqlcontact = $db->query($sqlcontact);
 							if ($resqlcontact)
@@ -490,7 +490,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'classifyunbilled' && $usercancreate) {
-		$ret = $object->classifyUnBilled();
+		$ret = $object->classifyUnBilled($user);
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -501,7 +501,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'setremise' && $usercancreate) {
-		$result = $object->setDiscount($user, GETPOST('remise'));
+		$result = $object->setDiscount($user, price2num(GETPOST('remise'), 2));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -515,7 +515,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setdate' && $usercancreate) {
 		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-		$date = dol_mktime(0, 0, 0, GETPOST('order_month'), GETPOST('order_day'), GETPOST('order_year'));
+		$date = dol_mktime(0, 0, 0, GETPOST('order_month', 'int'), GETPOST('order_day', 'int'), GETPOST('order_year', 'int'));
 
 		$result = $object->set_date($user, $date);
 		if ($result < 0) {
@@ -540,7 +540,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0) {
@@ -616,8 +616,8 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$price_ht = price2num(GETPOST('price_ht'), 'MU');
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
+		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
@@ -984,9 +984,9 @@ if (empty($reshook)) {
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$description = dol_htmlcleanlastbr(GETPOST('product_desc', 'restricthtml'));
-		$pu_ht = GETPOST('price_ht');
+		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
-		$pu_ht_devise = GETPOST('multicurrency_subprice');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1370,7 +1370,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'swapstatut') {
 			// bascule du statut d'un contact
 			if ($object->id > 0) {
-				$result = $object->swapContactStatus(GETPOST('ligne'));
+				$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 			} else {
 				dol_print_error($db);
 			}
@@ -1393,7 +1393,7 @@ if (empty($reshook)) {
  *	View
  */
 
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1580,7 +1580,8 @@ if ($action == 'create' && $usercancreate) {
 					console.log("We have changed the company - Reload page");
 					var socid = $(this).val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&ref_client="+$("input[name=ref_client]").val();
+					$("input[name=action]").val("create");
+					$("form[name=crea_commande]").submit();
 				});
 			});
 			</script>';

@@ -61,6 +61,9 @@ class Dolresource extends CommonObject
 
 	public $cache_code_type_resource = array();
 
+	/**
+	 * @var Dolresource Clone of object before changing it
+	 */
 	public $oldcopy;
 
 	/**
@@ -272,7 +275,7 @@ class Dolresource extends CommonObject
 		$sql .= " fk_country=".($this->country_id > 0 ? $this->country_id : "null").",";
 		$sql .= " fk_code_type_resource=".(isset($this->fk_code_type_resource) ? "'".$this->db->escape($this->fk_code_type_resource)."'" : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -407,7 +410,7 @@ class Dolresource extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid =".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this), LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -490,6 +493,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
+		$sql .= " t.fk_country,";
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms,";
 		// Add fields from extrafields
@@ -776,7 +780,7 @@ class Dolresource extends CommonObject
 		$sql .= " mandatory=".(isset($this->mandatory) ? $this->mandatory : "null").",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 

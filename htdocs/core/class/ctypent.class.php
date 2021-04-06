@@ -130,7 +130,8 @@ class Ctypent // extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -162,7 +163,6 @@ class Ctypent // extends CommonObject
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.id,";
 		$sql .= " t.code,";
@@ -172,7 +172,7 @@ class Ctypent // extends CommonObject
 		$sql .= " t.module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_typent as t";
 		if ($id) {
-			$sql .= " WHERE t.id = ".$id;
+			$sql .= " WHERE t.id = ".((int) $id);
 		} elseif ($code) {
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
@@ -244,7 +244,8 @@ class Ctypent // extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -282,7 +283,8 @@ class Ctypent // extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback

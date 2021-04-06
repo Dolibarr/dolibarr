@@ -116,13 +116,13 @@ class FormProduct
 		}
 		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
 		if (count($warehouseStatus)) {
-			$sql .= " AND e.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $warehouseStatus))).")";
+			$sql .= " AND e.statut IN (".$this->db->sanitize(implode(',', $warehouseStatus)).")";
 		} else {
 			$sql .= " AND e.statut = 1";
 		}
 
 		if (!empty($exclude)) {
-			$sql .= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
+			$sql .= ' AND e.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
 		// minimum stock
@@ -646,7 +646,7 @@ class FormProduct
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
 			if (!empty($productIdList)) {
-				$sql .= " WHERE ps.fk_product IN (".$productIdList.")";
+				$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize($productIdList).")";
 			}
 			$sql .= " ORDER BY e.ref, pb.batch";
 

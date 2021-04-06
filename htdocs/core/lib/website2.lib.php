@@ -66,7 +66,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 {
 	global $conf;
 
-	// Now create the .tpl file (duplicate code with actions updatesource or updatecontent but we need this to save new header)
+	// Now create the .tpl file
 	dol_syslog("dolSavePageAlias We regenerate the alias page filealias=".$filealias);
 
 	$aliascontent = '<?php'."\n";
@@ -102,9 +102,8 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($filealiassub, octdec($conf->global->MAIN_UMASK));
 		}
-	}
-	// Save also alias into all language subdirectories if it is a main language
-	elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+		// Save also alias into all language subdirectories if it is a main language
 		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
@@ -139,10 +138,11 @@ function dolSavePageAlias($filealias, $object, $objectpage)
  * @param	string		$filetpl			Full path of filename to generate
  * @param	Website		$object				Object website
  * @param	WebsitePage	$objectpage			Object websitepage
+ * @param	int			$backupold			1=Make a backup of old page
  * @return	boolean							True if OK
  * @see dolSavePageAlias()
  */
-function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
+function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, $backupold = 0)
 {
 	global $conf, $db;
 
@@ -150,7 +150,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	dol_delete_file($filetpl);
+
+	if ($backupold) {
+		dol_delete_file($filetpl.'.old');
+		$result = dol_move($filetpl, $filetpl.'.old', 0, 1, 0, 0);
+		if (! $result) {
+			return false;
+		}
+	} else {
+		dol_delete_file($filetpl);
+	}
 
 	$shortlangcode = '';
 	if ($objectpage->lang) {
@@ -215,7 +224,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 			}
 		}
 		// Add "has translation pages"
-		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$objectpage->id.($translationof ? ", ".$translationof : "").")";
+		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objectpage->id.($translationof ? ', '.$translationof : '')).")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_rows = $db->num_rows($resql);
@@ -241,7 +250,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	// Add js
 	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include link to JS file -->'."\n";
-	$tplcontent .= '<script src="/javascript.js.php"></script>'."\n";
+	$tplcontent .= '<script async src="/javascript.js.php"></script>'."\n";
 	// Add headers
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent .= '<?php if (file_exists(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")) include DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html"; ?>'."\n";

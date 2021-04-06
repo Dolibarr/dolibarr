@@ -2,6 +2,7 @@
 /* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,15 +167,15 @@ class Import
 						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i] = $module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
-						$this->array_import_fieldshidden[$i] = $module->import_fieldshidden_array[$r];
+						$this->array_import_fieldshidden[$i] = (isset($module->import_fieldshidden_array[$r]) ? $module->import_fieldshidden_array[$r] : '');
 						// Tableau des entites a exporter (cle=champ, valeur=entite)
 						$this->array_import_entities[$i] = $module->import_entities_array[$r];
 						// Tableau des alias a exporter (cle=champ, valeur=alias)
-						$this->array_import_regex[$i] = $module->import_regex_array[$r];
+						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
-						$this->array_import_updatekeys[$i] = $module->import_updatekeys_array[$r];
+						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of examples
-						$this->array_import_examplevalues[$i] = $module->import_examplevalues_array[$r];
+						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
 						$this->array_import_convertvalue[$i] = (isset($module->import_convertvalue_array[$r]) ? $module->import_convertvalue_array[$r] : '');
 						// Sql request to run after import
@@ -328,7 +329,7 @@ class Import
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."import_model";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 

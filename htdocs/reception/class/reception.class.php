@@ -853,7 +853,7 @@ class Reception extends CommonObject
 		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
 		$sql .= " entity=".$conf->entity;
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1410,7 +1410,7 @@ class Reception extends CommonObject
 		if (!empty($this->shipping_method_id)) {
 			$sql = "SELECT em.code, em.tracking";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-			$sql .= " WHERE em.rowid = ".$this->shipping_method_id;
+			$sql .= " WHERE em.rowid = ".((int) $this->shipping_method_id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {

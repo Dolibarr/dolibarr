@@ -22,7 +22,7 @@
  *  \brief		Module to manage LDAP interfaces with contacts or users
  *	\file       htdocs/core/modules/modLdap.class.php
  *	\ingroup    ldap
- *	\brief		File to describe and activate Ldap module
+ *	\brief		Description and activation file for the module LDAP
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -85,6 +85,7 @@ class modLdap extends DolibarrModules
 		11=>array('LDAP_FIELD_PHONE', 'chaine', 'telephonenumber', '', 0),
 		12=>array('LDAP_FIELD_FAX', 'chaine', 'facsimiletelephonenumber', '', 0),
 		13=>array('LDAP_FIELD_MOBILE', 'chaine', 'mobile', '', 0),
+		14=>array('LDAP_GROUP_FILTER', 'chaine', '&(objectClass=groupOfNames)', '', 0),
 		);
 
 		// Boxes

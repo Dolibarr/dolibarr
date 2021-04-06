@@ -66,7 +66,7 @@ if ($action == 'send' && !$_POST['cancel']) {
 	$error = 0;
 
 	$smsfrom = '';
-	if (!empty($_POST["fromsms"])) {
+	if (GETPOST("fromsms", 'alphanohtml')) {
 		$smsfrom = GETPOST("fromsms", 'alphanohtml');
 	}
 	if (empty($smsfrom)) {
@@ -156,7 +156,7 @@ asort($listofmethods);
 
 if (!count($listofmethods)) {
 	$descnosms = $langs->trans("NoSmsEngine", '{Dolistore}');
-	$descnosms = str_replace('{Dolistore}', '<a href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
+	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>', $descnosms);
 	print '<div class="warning">'.$descnosms.'</div>';
 }
 

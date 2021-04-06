@@ -565,7 +565,7 @@ class Don extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."don";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -702,7 +702,7 @@ class Don extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".$userid." WHERE rowid = ".$id." AND fk_statut = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = ".((int) $userid)." WHERE rowid = ".((int) $id)." AND fk_statut = 0";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -759,9 +759,9 @@ class Don extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 		if ($modepayment) {
-			$sql .= ", fk_payment=".$modepayment;
+			$sql .= ", fk_payment = ".((int) $modepayment);
 		}
-		$sql .= " WHERE rowid = ".$id." AND fk_statut = 1";
+		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = 1";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -787,7 +787,7 @@ class Don extends CommonObject
 	public function set_cancel($id)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -843,7 +843,7 @@ class Don extends CommonObject
 
 		$sql = "SELECT sum(amount) as total";
 		$sql .= " FROM ".MAIN_DB_PREFIX."don";
-		$sql .= " WHERE fk_statut = ".$param;
+		$sql .= " WHERE fk_statut = ".((int) $param);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -953,7 +953,7 @@ class Don extends CommonObject
 		$sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
 		$sql .= ' d.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'don as d';
-		$sql .= ' WHERE d.rowid = '.$id;
+		$sql .= ' WHERE d.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1080,5 +1080,22 @@ class Don extends CommonObject
 			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 			return 0;
 		}
+	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param  DoliDB  $db             Database handler
+	 * @param  int     $origin_id      Old third-party id
+	 * @param  int     $dest_id        New third-party id
+	 * @return bool
+	 */
+	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'don'
+		);
+
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 }

@@ -33,6 +33,8 @@ $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
 $action = GETPOST("action", "alpha");
+$cancel = GETPOST('cancel');
+
 $refund = GETPOST("refund", "int");
 if (empty($refund)) {
 	$refund = 0;
@@ -57,18 +59,18 @@ $hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && !$id) {
+if ($cancel && !$id) {
 	header("Location: list.php?localTaxType=".$lttype);
 	exit;
 }
 
-if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel")) {
+if ($action == 'add' && $cancel) {
 	$db->begin();
 
-	$datev = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-	$datep = dol_mktime(12, 0, 0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+	$datev = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+	$datep = dol_mktime(12, 0, 0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
 
-	$object->accountid = GETPOST("accountid");
+	$object->accountid = GETPOST("accountid", 'int');
 	$object->paymenttype = GETPOST("paiementtype");
 	$object->datev = $datev;
 	$object->datep = $datep;
@@ -165,14 +167,14 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.($_POST["label"] ?GETPOST("label", '', 2) : $langs->transcountry(($lttype == 2 ? "LT2Payment" : "LT1Payment"), $mysoc->country_code)).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $langs->transcountry(($lttype == 2 ? "LT2Payment" : "LT1Payment"), $mysoc->country_code)).'"></td></tr>';
 
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($_POST["accountid"], "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
+		$form->select_comptes(GETPOST("accountid", "int"), "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
 		print '</td></tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
@@ -266,7 +268,7 @@ if ($id) {
 
 
 	/*
-	 * Action buttons
+	 * Action bar
 	 */
 	print "<div class=\"tabsAction\">\n";
 	if ($object->rappro == 0) {

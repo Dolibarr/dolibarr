@@ -194,6 +194,7 @@ class Utils
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
+		global $dolibarr_main_db_character_set;
 
 		$langs->load("admin");
 
@@ -222,11 +223,13 @@ class Utils
 			$prefix = 'dump';
 			$ext = 'sql';
 			if (in_array($type, array('mysql', 'mysqli'))) {
-				$prefix = 'mysqldump'; $ext = 'sql';
+				$prefix = 'mysqldump';
+				$ext = 'sql';
 			}
 			//if ($label == 'PostgreSQL') { $prefix='pg_dump'; $ext='dump'; }
 			if (in_array($type, array('pgsql'))) {
-				$prefix = 'pg_dump'; $ext = 'sql';
+				$prefix = 'pg_dump';
+				$ext = 'sql';
 			}
 			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.'.$ext;
 		}
@@ -314,7 +317,12 @@ class Utils
 			} else {
 				$param .= " -d"; // No row information (no data)
 			}
-			$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+			if ($dolibarr_main_db_character_set == 'utf8mb4') {
+				// We save output into utf8mb4 charset
+				$param .= " --default-character-set=utf8mb4";
+			} else {
+				$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+			}
 			$paramcrypted = $param;
 			$paramclear = $param;
 			if (!empty($dolibarr_main_db_pass)) {
@@ -350,7 +358,8 @@ class Utils
 
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1) {
-					$output_arr = array(); $retval = null;
+					$output_arr = array();
+					$retval = null;
 					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0) {

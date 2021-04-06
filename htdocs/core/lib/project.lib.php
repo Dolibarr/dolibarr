@@ -206,11 +206,29 @@ function project_prepare_head(Project $project)
 
 	if ($conf->eventorganization->enabled) {
 		$langs->load('eventorganization');
-		//TODO : Count
-		$nbConfOrBooth = 1;
-		$head[$h][0] = DOL_URL_ROOT . '/projet/event.php?id=' . $project->id;
+		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
-		if ($nbContact > 0) {
+
+		// Enable caching of conf or booth count
+		$nbConfOrBooth = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_conferenceorbooth_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbConfOrBooth = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+			$conforbooth=new ConferenceOrBooth($db);
+			$result = $conforbooth->fetchAll('', '', 0, 0, array('t.fk_project'=>$project->id));
+			//,
+			if (!is_array($result) && $result<0) {
+				setEventMessages($conforbooth->error, $conforbooth->errors, 'errors');
+			} else {
+				$nbConfOrBooth = count($result);
+			}
+			dol_setcache($cachekey, $nbConfOrBooth, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbConfOrBooth > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
 		}
 		$head[$h][2] = 'eventorganisation';
@@ -806,7 +824,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 
-				// Contacts of task
+				// Contacts of tasks. Disabled, because available by default just after
+				/*
 				if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
 					print '<td>';
 					foreach (array('internal', 'external') as $source) {
@@ -822,6 +841,36 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								}
 								$c->fetch($contacttask['id']);
 								print $c->getNomUrl(1).' ('.$contacttask['libelle'].')<br>';
+							}
+						}
+					}
+					print '</td>';
+				}*/
+
+				// Contacts of task
+				if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
+					print '<td>';
+					foreach (array('internal', 'external') as $source) {
+						$tab = $lines[$i]->liste_contact(-1, $source);
+						$num = count($tab);
+						if (!empty($num)) {
+							foreach ($tab as $contacttask) {
+								//var_dump($contacttask);
+								if ($source == 'internal') {
+									$c = new User($db);
+								} else {
+									$c = new Contact($db);
+								}
+								$c->fetch($contacttask['id']);
+								if (!empty($c->photo)) {
+									print $c->getNomUrl(-2).'&nbsp;';
+								} else {
+									if (get_class($c) == 'User') {
+										print $c->getNomUrl(2, '', 0, 0, 24, 1);//.'&nbsp;';
+									} else {
+										print $c->getNomUrl(2);//.'&nbsp;';
+									}
+								}
 							}
 						}
 					}
@@ -965,8 +1014,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</td>';
 			}
 		}
-		// Contacts of task
+		// Contacts of task for backward compatibility,
 		if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
+			print '<td></td>';
+		}
+		// Contacts of task
+		if (count($arrayfields) > 0 && !empty($arrayfields['c.assigned']['checked'])) {
 			print '<td></td>';
 		}
 		print '<td class=""></td>';
@@ -1125,7 +1178,8 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 			print dol_print_date($lines[$i]->timespent_datehour, 'day');
 			print '</td>';
 
-			$disabledproject = 1; $disabledtask = 1;
+			$disabledproject = 1;
+			$disabledtask = 1;
 			//print "x".$lines[$i]->fk_project;
 			//var_dump($lines[$i]);
 			//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -1480,7 +1534,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 				print "</td>\n";
 
-				$disabledproject = 1; $disabledtask = 1;
+				$disabledproject = 1;
+				$disabledtask = 1;
 				//print "x".$lines[$i]->fk_project;
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -1870,7 +1925,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				}
 				print "</td>\n";
 
-				$disabledproject = 1; $disabledtask = 1;
+				$disabledproject = 1;
+				$disabledtask = 1;
 				//print "x".$lines[$i]->fk_project;
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -1887,7 +1943,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 
 				// Fields to show current time
-				$tableCell = ''; $modeinput = 'hours';
+				$tableCell = '';
+				$modeinput = 'hours';
 				for ($idw = 0; $idw < 7; $idw++) {
 					$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
@@ -2148,7 +2205,8 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				}
 				print "</td>\n";
 
-				$disabledproject = 1; $disabledtask = 1;
+				$disabledproject = 1;
+				$disabledtask = 1;
 				//print "x".$lines[$i]->fk_project;
 				//var_dump($lines[$i]);
 				//var_dump($projectsrole[$lines[$i]->fk_project]);
@@ -2165,7 +2223,8 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump($projectstatic->weekWorkLoadPerTask);
 				//TODO
 				// Fields to show current time
-				$tableCell = ''; $modeinput = 'hours';
+				$tableCell = '';
+				$modeinput = 'hours';
 				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y', $firstdaytoshow));
 				$TFirstDay[reset($TWeek)] = 1;
 				foreach ($TFirstDay as &$fday) {
@@ -2337,9 +2396,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	$sql .= " AND p.rowid IN (".$projectsListId.")";
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
 	if ($socid) {
-		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
 	if ($mytasks) {
 		$sql .= " AND p.rowid = t.fk_projet";
@@ -2395,7 +2454,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-	$sql2 .= " WHERE p.rowid IN (".join(',', $arrayidofprojects).")";
+	$sql2 .= " WHERE p.rowid IN (".$db->sanitize(join(',', $arrayidofprojects)).")";
 	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur,";
 	$sql2 .= " s.logo, s.email, s.entity, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
 	$sql2 .= " ORDER BY p.title, p.ref";
@@ -2513,7 +2572,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 						$ponderated_opp_amount += price2num($opp_weighted_amount);
 					}
 					if ($objp->opp_amount) {
-						print '<span title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
+						print '<span class="amount" title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
 					}
 					print '</td>';
 				}

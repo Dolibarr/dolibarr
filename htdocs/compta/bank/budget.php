@@ -72,7 +72,9 @@ $sql .= " ORDER BY c.label";
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0; $totalnb = 0;
+	$i = 0;
+	$total = 0;
+	$totalnb = 0;
 
 	while ($i < $num) {
 		$objp = $db->fetch_object($result);
@@ -80,8 +82,8 @@ if ($result) {
 		print '<tr class="oddeven">';
 		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td class="right">'.$objp->nombre.'</td>';
-		print '<td class="right">'.price(abs($objp->somme))."</td>";
-		print '<td class="right">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</td>";
+		print '<td class="right"><span class="amount">'.price(abs($objp->somme))."</span></td>";
+		print '<td class="right"><span class="amount">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</span></td>";
 		print "</tr>";
 		$i++;
 		$total += abs($objp->somme);

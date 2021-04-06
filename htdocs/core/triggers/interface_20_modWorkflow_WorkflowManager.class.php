@@ -62,7 +62,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->workflow->enabled)) {
+		if (empty($conf->workflow) || empty($conf->workflow->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -79,7 +79,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$ret = $newobject->createFromProposal($object, $user);
 				if ($ret < 0) {
-					$this->error = $newobject->error; $this->errors[] = $newobject->error;
+					$this->error = $newobject->error;
+					$this->errors[] = $newobject->error;
 				}
 				return $ret;
 			}
@@ -98,7 +99,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 				$ret = $newobject->createFromOrder($object, $user);
 				if ($ret < 0) {
-					$this->error = $newobject->error; $this->errors[] = $newobject->error;
+					$this->error = $newobject->error;
+					$this->errors[] = $newobject->error;
 				}
 				return $ret;
 			}
@@ -266,12 +268,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$order = new Commande($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
-					$this->error = $order->error; $this->errors = $order->errors;
+					$this->error = $order->error;
+					$this->errors = $order->errors;
 					return $ret;
 				}
 				$ret = $order->fetchObjectLinked($order->id, 'commande', null, 'shipping');
 				if ($ret < 0) {
-					$this->error = $order->error; $this->errors = $order->errors;
+					$this->error = $order->error;
+					$this->errors = $order->errors;
 					return $ret;
 				}
 				//Build array of quantity shipped by product for an order
@@ -307,7 +311,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					//No diff => mean everythings is shipped
 					$ret = $object->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $object->error; $this->errors = $object->errors;
+						$this->error = $object->error;
+						$this->errors = $object->errors;
 						return $ret;
 					}
 				}

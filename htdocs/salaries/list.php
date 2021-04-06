@@ -2,6 +2,7 @@
 /* Copyright (C) 2011-2019	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,10 +83,13 @@ if (!$sortorder) {
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_date_start_from = dol_mktime(0, 0, 0, GETPOST('search_date_start_frommonth', 'int'), GETPOST('search_date_start_fromday', 'int'), GETPOST('search_date_start_fromyear', 'int'));
+$search_date_start_to = dol_mktime(23, 59, 59, GETPOST('search_date_start_tomonth', 'int'), GETPOST('search_date_start_today', 'int'), GETPOST('search_date_start_toyear', 'int'));
+$search_date_end_from = dol_mktime(0, 0, 0, GETPOST('search_date_end_frommonth', 'int'), GETPOST('search_date_end_fromday', 'int'), GETPOST('search_date_end_fromyear', 'int'));
+$search_date_end_to = dol_mktime(23, 59, 59, GETPOST('search_date_end_tomonth', 'int'), GETPOST('search_date_end_today', 'int'), GETPOST('search_date_end_toyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
+$search_status = GETPOST('search_status', 'int');
 
 $filtre = GETPOST("filtre", 'restricthtml');
 
@@ -104,19 +108,16 @@ if (!GETPOST('search_type_id', 'int')) {
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
+	if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+		$search[$key.'_dtstart'] = dol_mktime(0, 0, 0, GETPOST('search_'.$key.'_dtstartmonth', 'int'), GETPOST('search_'.$key.'_dtstartday', 'int'), GETPOST('search_'.$key.'_dtstartyear', 'int'));
+		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
 	}
 }
 
@@ -128,9 +129,37 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// Definition of array of fields for columns
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['t.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=>$val['help']
+		);
+	}
+}
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write;
 $permissiontodelete = $user->rights->salaries->delete;
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', '', 'salary', '');
 
 
 /*
@@ -160,10 +189,14 @@ if (empty($reshook)) {
 		$search_ref = "";
 		$search_user = "";
 		$search_label = "";
-		$search_date_start = '';
+		$search_date_start_from = '';
+		$search_date_start_to = '';
+		$search_date_end_from = '';
+		$search_date_end_to = '';
 		$search_date_end = '';
 		$search_amount = "";
 		$search_account = '';
+		$search_status = '';
 		$search_type_id = "";
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -190,7 +223,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$salstatic = new PaymentSalary($db);
+$salstatic = new Salary($db);
 $userstatic = new User($db);
 $accountstatic = new Account($db);
 
@@ -198,21 +231,23 @@ $now = dol_now();
 
 //$help_url="EN:Module_BillOfMaterials|FR:Module_BillOfMaterials_FR|ES:Módulo_BillOfMaterials";
 $help_url = '';
-$title = $langs->trans('SalariesPayments');
+$title = $langs->trans('Salaries');
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
-$sql .= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
-$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
-$sql .= " pst.code as payment_code";
-$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
+$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment as paymenttype, ";
+$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " pst.code as payment_code,";
+$sql .= " SUM(ps.amount) as alreadypayed";
+$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (ps.fk_salary = s.rowid) ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON (s.fk_typepayment = pst.id) ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_account), ";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON ps.fk_salary = s.rowid, ";
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
 if (empty($user->rights->salaries->readall)) {
-	$sql .= " AND s.fk_user IN (".join(',', $childids).")";
+	$sql .= " AND s.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
 
 // Search criteria
@@ -225,25 +260,28 @@ if ($search_user) {
 if ($search_label) {
 	$sql .= natural_search(array('s.label'), $search_label);
 }
-if ($search_date_start) {
-	$sql .= " AND s.datep >= '".$db->idate($search_date_start)."'";
+if (!empty($search_date_start_from) && !empty($search_date_start_to)) {
+	$sql .= " AND s.datesp BETWEEN '".$db->idate($search_date_start_from)."' AND '".$db->idate($search_date_start_to)."'";
 }
-if ($search_date_end) {
-	$sql .= " AND s.datep <= '".$db->idate($search_date_end)."'";
+if (!empty($search_date_end_from) && !empty($search_date_end_to)) {
+	$sql .= " AND s.dateep BETWEEN '".$db->idate($search_date_end_from)."' AND '".$db->idate($search_date_end_to)."'";
 }
 if ($search_amount) {
 	$sql .= natural_search("s.amount", $search_amount, 1);
 }
 if ($search_account > 0) {
-	$sql .= " AND b.fk_account=".((int) $search_account);
+	$sql .= " AND s.fk_account=".((int) $search_account);
 }
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
+if ($search_status != '' && $search_status >= 0) {
+	$sql .= " AND s.paye = ".$db->escape($search_status);
 }
 if ($search_type_id) {
 	$sql .= " AND s.fk_typepayment=".$search_type_id;
 }
+$sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary, u.fk_soc, u.statut,";
+$sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
+$sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " pst.code";
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -305,12 +343,22 @@ if ($search_label) {
 if ($search_account) {
 	$param .= '&search_account='.urlencode($search_account);
 }
-if ($search_date_start) {
-	$param .= '&search_date_startday='.urlencode(GETPOST('search_date_startday', 'int')).'&search_date_startmonth='.urlencode(GETPOST('search_date_startmonth', 'int')).'&search_date_startyear='.urlencode(GETPOST('search_date_startyear', 'int'));
+if ($search_status != '' && $search_status != '-1') {
+	$param .= '&search_status='.urlencode($search_status);
 }
-if ($search_date_end) {
-	$param .= '&search_date_endday='.urlencode(GETPOST('search_date_endday', 'int')).'&search_date_endmonth='.urlencode(GETPOST('search_date_endmonth', 'int')).'&search_date_endyear='.urlencode(GETPOST('search_date_endyear', 'int'));
+if (!empty($search_date_start_from)) {
+	$param .= '&search_date_start_fromday='.urlencode(GETPOST('search_date_start_fromday')).'&search_date_start_frommonth='.urlencode(GETPOST('search_date_start_frommonth')).'&search_date_start_fromyear='.urlencode(GETPOST('search_date_start_fromyear'));
 }
+if (!empty($search_date_start_to)) {
+	$param .= "&search_date_start_today=".urlencode(GETPOST('search_date_start_today'))."&search_date_start_tomonth=".urlencode(GETPOST('search_date_start_tomonth'))."&search_date_start_toyear=".urlencode(GETPOST('search_date_start_toyear'));
+}
+if (!empty($search_date_end_from)) {
+	$param .= '&search_date_end_fromday='.urlencode(GETPOST('search_date_end_fromday')).'&search_date_end_frommonth='.urlencode(GETPOST('search_date_end_frommonth')).'&search_date_end_fromyear='.urlencode(GETPOST('search_date_end_fromyear'));
+}
+if (!empty($search_date_end_to)) {
+	$param .= "&search_date_end_today=".urlencode(GETPOST('search_date_end_today'))."&search_date_end_tomonth=".urlencode(GETPOST('search_date_end_tomonth'))."&search_date_end_toyear=".urlencode(GETPOST('search_date_end_toyear'));
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -361,36 +409,53 @@ print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre left">';
 print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 print '</td>';
+// Label
+print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
+
+// Date start
+print '<td class="liste_titre center">';
+print '<div class="nowrap">';
+print $form->selectDate($search_date_start_from ? $search_date_start_from : -1, 'search_date_start_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '</div>';
+print '<div class="nowrap">';
+print $form->selectDate($search_date_start_to ? $search_date_start_to : -1, 'search_date_start_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '</div>';
+print '</td>';
+
+// Date End
+print '<td class="liste_titre center">';
+print '<div class="nowrap">';
+print $form->selectDate($search_date_end_from ? $search_date_end_from : -1, 'search_date_end_from', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+print '</div>';
+print '<div class="nowrap">';
+print $form->selectDate($search_date_end_to ? $search_date_end_to : -1, 'search_date_end_to', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+print '</div>';
+print '</td>';
+
 // Employee
 print '<td class="liste_titre">';
 print '<input class="flat" type="text" size="6" name="search_user" value="'.$db->escape($search_user).'">';
 print '</td>';
-// Label
-print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
-// Date payment
-print '<td class="liste_titre center">';
-print '<div class="nowrap">';
-print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-print '</div>';
-print '<div class="nowrap">';
-print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-print '</div>';
-print '</td>';
-// Date value
-print '<td class="liste_titre center">';
-print '</td>';
+
 // Type
 print '<td class="liste_titre left">';
 $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
 print '</td>';
-// Account
+
+// Bank account
 if (!empty($conf->banque->enabled)) {
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
 	print '</td>';
 }
+
 // Amount
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
+
+print '<td class="liste_titre maxwidthonsmartphone right">';
+$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
+print $form->selectarray('search_status', $liststatus, $search_status, 1);
+print '</td>';
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -411,15 +476,16 @@ print '</tr>'."\n";
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, 'class="left"', $sortfield, $sortorder);
-print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("DateValue", $_SERVER["PHP_SELF"], "s.datev,s.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
+print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
+print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
 if (!empty($conf->banque->enabled)) {
-	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
-print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+print_liste_field_titre('Status', $_SERVER["PHP_SELF"], "s.paye", '', $param, 'class="right"', $sortfield, $sortorder);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -476,32 +542,34 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
-	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
 	// Label payment
 	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
-	// Date payment
-	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+	// Date Start
+	print '<td class="center">'.dol_print_date($db->jdate($obj->datesp), 'day')."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
-	// Date value
-	print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+	// Date End
+	print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
+	// Employee
+	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
 	// Type
-	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+	print '<td>';
+	if (!empty($obj->payment_code)) print $langs->trans("PaymentTypeShort".$obj->payment_code);
+	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -509,11 +577,17 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Account
 	if (!empty($conf->banque->enabled)) {
 		print '<td>';
-		if ($obj->fk_bank > 0) {
+		if ($obj->fk_account > 0) {
 			//$accountstatic->fetch($obj->fk_bank);
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
+			$accountstatic->label = $obj->blabel;
 			$accountstatic->number = $obj->bnumber;
+			$accountstatic->iban = $obj->iban;
+			$accountstatic->bic = $obj->bic;
+			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+			$accountstatic->account_number = $obj->account_number;
+			$accountstatic->clos = $obj->clos;
 
 			if (!empty($conf->accounting->enabled)) {
 				$accountstatic->account_number = $obj->account_number;
@@ -523,7 +597,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 				$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 			}
-			$accountstatic->label = $obj->blabel;
+			//$accountstatic->label = $obj->blabel;
 			print $accountstatic->getNomUrl(1);
 		} else {
 			print '&nbsp;';
@@ -534,8 +608,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 
+	//  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+
 	// Amount
-	print '<td class="nowrap right">'.price($obj->amount).'</td>';
+	print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -543,6 +619,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 	}
 	$totalarray['val']['totalttcfield'] += $obj->amount;
+
+	print '<td class="nowrap right">'.$salstatic->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+	if (!$i) $totalarray['nbfield']++;
 
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -575,12 +654,14 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
-	$colspan = 1;
+	/*$colspan = 1;
 	foreach ($arrayfields as $key => $val) {
 		if (!empty($val['checked'])) {
 			$colspan++;
 		}
-	}
+	}*/
+	$colspan = 9;
+	if (!empty($conf->banque->enabled)) { $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
@@ -595,7 +676,6 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
-
 
 
 // End of page

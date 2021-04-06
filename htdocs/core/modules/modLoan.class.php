@@ -21,7 +21,7 @@
  * 		\brief      Module to include loans management
  *      \file       htdocs/core/modules/modLoan.class.php
  *      \ingroup    loan
- *      \brief      File to activate module loan
+ *      \brief      Description and activation file for the module loan
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -97,7 +97,7 @@ class modLoan extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 520;
+		$this->rights[$r][0] = 521;
 		$this->rights[$r][1] = 'Read loans';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;

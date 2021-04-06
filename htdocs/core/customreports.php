@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Note: This tool can be included into a list page with :
- * define('USE_CUSTOME_REPORT_AS_INCLUDE', 1);
+ * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
@@ -25,7 +25,7 @@
  *		\brief      Page to make custom reports
  */
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
 	// Get parameters
@@ -151,8 +151,6 @@ if ($user->socid > 0) {	// Protection if external user
 	accessforbidden();
 }
 
-$result = restrictedArea($user, $object->element, 0, '');
-
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 //$extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -177,6 +175,7 @@ $arrayofgroupby = array();
 $arrayofyaxis = array();
 $arrayofvaluesforgroupby = array();
 
+$result = restrictedArea($user, $object->element, 0, '');
 
 
 /*
@@ -194,7 +193,7 @@ $arrayofvaluesforgroupby = array();
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
 	print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
@@ -615,7 +614,9 @@ if ($sql) {
 		dol_print_error($db);
 	}
 
-	$ifetch = 0; $xi = 0; $oldlabeltouse = '';
+	$ifetch = 0;
+	$xi = 0;
+	$oldlabeltouse = '';
 	while ($obj = $db->fetch_object($resql)) {
 		$ifetch++;
 		if ($useagroupby) {
@@ -681,9 +682,8 @@ if ($sql) {
 							if ($objfieldforg == '0') {
 								// The record we fetch is for this group
 								$data[$xi][$fieldforybis] = $obj->$fieldfory;
-							}
-							// The record we fetch is not for this group
-							elseif (!isset($data[$xi][$fieldforybis])) {
+							} elseif (!isset($data[$xi][$fieldforybis])) {
+								// The record we fetch is not for this group
 								$data[$xi][$fieldforybis] = '0';
 							}
 						} else {
@@ -691,9 +691,8 @@ if ($sql) {
 							if ((string) $objfieldforg === (string) $gvaluepossiblekey) {
 								// The record we fetch is for this group
 								$data[$xi][$fieldforybis] = $obj->$fieldfory;
-							}
-							// The record we fetch is not for this group
-							elseif (!isset($data[$xi][$fieldforybis])) {
+							} elseif (!isset($data[$xi][$fieldforybis])) {
+								// The record we fetch is not for this group
 								$data[$xi][$fieldforybis] = '0';
 							}
 						}
@@ -790,7 +789,7 @@ if ($sql) {
 
 print '<div>';
 
-if (!defined('USE_CUSTOME_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	print dol_get_fiche_end();
 }
 

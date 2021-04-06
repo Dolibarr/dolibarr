@@ -105,7 +105,7 @@ if (empty($reshook)) {
 			setEventMessages($edituser->error, $edituser->errors, 'errors');
 		}
 
-		// If we are changing our own permissions, we reload
+		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 			setEventMessages($edituser->error, $edituser->errors, 'errors');
 		}
 
-		// If we are changing our own permissions, we reload
+		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->getrights();
@@ -194,7 +194,7 @@ $permsuser = array();
 $sql = "SELECT DISTINCT ur.fk_id";
 $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 $sql .= " WHERE ur.entity = ".$entity;
-$sql .= " AND ur.fk_user = ".$object->id;
+$sql .= " AND ur.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result = $db->query($sql);
@@ -288,7 +288,7 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 }
 print '<td>'.$langs->trans("Permissions").'</td>';
 if ($user->admin) {
-	print '<td class="right">'.$langs->trans("ID").'</td>';
+	print '<td class="right"></td>';
 }
 print '</tr>'."\n";
 
@@ -438,7 +438,12 @@ if ($result) {
 
 		// Permission id
 		if ($user->admin) {
-			print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
+			print '<td class="right">';
+			$htmltext = $langs->trans("ID").': '.$obj->id;
+			$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+			print $form->textwithpicto('', $htmltext);
+			//print '<span class="opacitymedium">'.$obj->id.'</span>';
+			print '</td>';
 		}
 
 		print '</tr>'."\n";

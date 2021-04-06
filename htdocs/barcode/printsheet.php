@@ -286,7 +286,7 @@ print '<div class="tagtable">';
 
 // Sheet format
 print '	<div class="tagtr">';
-print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
+print '	<div class="tagtd">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
 // List of possible labels (defined into $_Avery_Labels variable set into core/lib/format_cards.lib.php)
@@ -302,7 +302,7 @@ print '</div></div>';
 
 // Number of stickers to print
 print '	<div class="tagtr">';
-print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
+print '	<div class="tagtd">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
 print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ?GETPOST('numberofsticker', 'int') : 10).'">';

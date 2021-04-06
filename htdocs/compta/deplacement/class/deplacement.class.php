@@ -239,12 +239,12 @@ class Deplacement extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
-		$sql .= " SET km = ".$this->km; // This is a distance or amount
+		$sql .= " SET km = ".((float) $this->km); // This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->db->escape($this->type)."'";
 		$sql .= " , fk_statut = '".$this->db->escape($this->statut)."'";
-		$sql .= " , fk_user = ".$this->fk_user;
-		$sql .= " , fk_user_modif = ".$user->id;
+		$sql .= " , fk_user = ".((int) $this->fk_user);
+		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , fk_soc = ".($this->socid > 0 ? $this->socid : 'null');
 		$sql .= " , note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= " , note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
@@ -278,7 +278,7 @@ class Deplacement extends CommonObject
 		if ($ref) {
 			$sql .= " AND ref ='".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " AND rowid = ".$id;
+			$sql .= " AND rowid = ".((int) $id);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -317,7 +317,7 @@ class Deplacement extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".$id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -441,7 +441,7 @@ class Deplacement extends CommonObject
 
 		$sql = "SELECT id, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees";
-		$sql .= " WHERE active = ".$active;
+		$sql .= " WHERE active = ".((int) $active);
 
 		dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -471,7 +471,7 @@ class Deplacement extends CommonObject
 		$sql = 'SELECT c.rowid, c.datec, c.fk_user_author, c.fk_user_modif,';
 		$sql .= ' c.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);

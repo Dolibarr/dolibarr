@@ -35,10 +35,10 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
 
 // Security check
-if (isset($_GET["account"]) || isset($_GET["ref"])) {
-	$id = isset($_GET["account"]) ? $_GET["account"] : (isset($_GET["ref"]) ? $_GET["ref"] : '');
+if (GETPOST('account') || GETPOST('ref')) {
+	$id = GETPOST('account') ? GETPOST('account') : GETPOST('ref');
 }
-$fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
+$fieldid = GETPOST('ref') ? 'ref' : 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -66,19 +66,19 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (GETPOST("year")) {
-	$year = sprintf("%04d", GETPOST("year"));
+if (GETPOST("year", 'int')) {
+	$year = sprintf("%04d", GETPOST("year", 'int'));
 }
-if (GETPOST("month")) {
-	$month = sprintf("%02d", GETPOST("month"));
+if (GETPOST("month", 'int')) {
+	$month = sprintf("%02d", GETPOST("month", 'int'));
 }
 
 
 $object = new Account($db);
-if ($_GET["account"] && !preg_match('/,/', $_GET["account"])) {	// if for a particular account and not a list
-	$result = $object->fetch(GETPOST("account", "int"));
+if (GETPOST('account') && !preg_match('/,/', GETPOST('account'))) {	// if for a particular account and not a list
+	$result = $object->fetch(GETPOST('account', 'int'));
 }
-if ($_GET["ref"]) {
+if (GETPOST("ref")) {
 	$result = $object->fetch(0, GETPOST("ref"));
 	$account = $object->id;
 }
@@ -96,7 +96,7 @@ if ($result < 0) {
 	$sql .= " WHERE b.fk_account = ba.rowid";
 	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 	if ($account && $_GET["option"] != 'all') {
-		$sql .= " AND b.fk_account IN (".$account.")";
+		$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 	}
 
 	$resql = $db->query($sql);
@@ -138,7 +138,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".$db->escape($year)."-".$db->escape($month)."-01 00:00:00'";
 		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -166,7 +166,7 @@ if ($result < 0) {
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev < '".$db->escape($year)."-".sprintf("%02s", $month)."-01'";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 
 		$resql = $db->query($sql);
@@ -280,7 +280,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev >= '".$db->escape($year)."-01-01 00:00:00'";
 		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -308,7 +308,7 @@ if ($result < 0) {
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		$sql .= " AND b.datev < '".$db->escape($year)."-01-01'";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 
 		$resql = $db->query($sql);
@@ -416,7 +416,7 @@ if ($result < 0) {
 		$sql .= " WHERE b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
@@ -541,7 +541,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount > 0";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
 
@@ -576,7 +576,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev < '".$db->escape($yearnext)."-".$db->escape($monthnext)."-01 00:00:00'";
 		$sql .= " AND b.amount < 0";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
 
@@ -650,7 +650,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount > 0";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
 
@@ -677,7 +677,7 @@ if ($result < 0) {
 		$sql .= " AND b.datev <= '".$db->escape($year)."-12-31 23:59:59'";
 		$sql .= " AND b.amount < 0";
 		if ($account && $_GET["option"] != 'all') {
-			$sql .= " AND b.fk_account IN (".$account.")";
+			$sql .= " AND b.fk_account IN (".$db->sanitize($account).")";
 		}
 		$sql .= " GROUP BY date_format(b.datev,'%m')";
 
@@ -795,13 +795,17 @@ print '</table>';
 
 // Graphs
 if ($mode == 'standard') {
-	$prevyear = $year; $nextyear = $year;
-	$prevmonth = $month - 1; $nextmonth = $month + 1;
+	$prevyear = $year;
+	$nextyear = $year;
+	$prevmonth = $month - 1;
+	$nextmonth = $month + 1;
 	if ($prevmonth < 1) {
-		$prevmonth = 12; $prevyear--;
+		$prevmonth = 12;
+		$prevyear--;
 	}
 	if ($nextmonth > 12) {
-		$nextmonth = 1; $nextyear++;
+		$nextmonth = 1;
+		$nextyear++;
 	}
 
 	// For month
@@ -818,7 +822,8 @@ if ($mode == 'standard') {
 	print '</div>';
 
 	// For year
-	$prevyear = $year - 1; $nextyear = $year + 1;
+	$prevyear = $year - 1;
+	$nextyear = $year + 1;
 	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account.(GETPOST("option") != 'all' ? '' : '&option=all')."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 
 	print '<div class="right clearboth margintoponly">'.$link.'</div>';

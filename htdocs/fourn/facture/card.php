@@ -362,7 +362,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx', 'alpha')), GETPOST('calculation_mode', 'int'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -417,13 +417,11 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
-		// POST[remise_id] or POST[remise_id_for_payment]
-
 		// We use the credit to reduce amount of invoice
-		if (!empty($_POST["remise_id"])) {
+		if (GETPOST("remise_id", "int")) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount($_POST["remise_id"]);
+				$result = $object->insert_discount(GETPOST("remise_id", "int"));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -432,10 +430,10 @@ if (empty($reshook)) {
 			}
 		}
 		// We use the credit to reduce remain to pay
-		if (!empty($_POST["remise_id_for_payment"])) {
+		if (GETPOST("remise_id_for_payment", "int")) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
-			$discount->fetch($_POST["remise_id_for_payment"]);
+			$discount->fetch(GETPOST("remise_id_for_payment", "int"));
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
@@ -1064,10 +1062,10 @@ if (empty($reshook)) {
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
 		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '') {
-			$up = price2num(GETPOST('price_ht'));
+			$up = price2num(GETPOST('price_ht'), '', 2);
 			$price_base_type = 'HT';
 		} else {
-			$up = price2num(GETPOST('price_ttc'));
+			$up = price2num(GETPOST('price_ttc'), '', 2);
 			$price_base_type = 'TTC';
 		}
 
@@ -1082,14 +1080,14 @@ if (empty($reshook)) {
 			$prod = new Product($db);
 			$prod->fetch(GETPOST('productid'));
 			$label = $prod->description;
-			if (trim($_POST['product_desc']) != trim($label)) {
-				$label = $_POST['product_desc'];
+			if (trim(GETPOST('product_desc', 'restricthtml')) != trim($label)) {
+				$label = GETPOST('product_desc', 'restricthtml');
 			}
 
 			$type = $prod->type;
 		} else {
-			$label = $_POST['product_desc'];
-			$type = $_POST["type"] ? $_POST["type"] : 0;
+			$label = GETPOST('product_desc', 'restricthtml');
+			$type = GETPOST("type") ? GETPOST("type") : 0;
 		}
 
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -1163,17 +1161,17 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = '';
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1590,14 +1588,14 @@ if (empty($reshook)) {
 		} elseif ($action == 'swapstatut') {
 			// bascule du statut d'un contact
 			if ($object->fetch($id)) {
-				$result = $object->swapContactStatus(GETPOST('ligne'));
+				$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 			} else {
 				dol_print_error($db);
 			}
 		} elseif ($action == 'deletecontact') {
 			// Efface un contact
 			$object->fetch($id);
-			$result = $object->delete_contact($_GET["lineid"]);
+			$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 			if ($result >= 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -3241,7 +3239,7 @@ if ($action == 'create') {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 
 					/*
-					 * Documents generes
+					 * Generated documents
 					 */
 					$ref = dol_sanitizeFileName($object->ref);
 					$subdir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$ref;

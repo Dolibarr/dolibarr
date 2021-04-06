@@ -62,6 +62,7 @@ if (!empty($conf->categorie->enabled)) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
 }
 
+$socid = 0;
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -134,7 +135,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -490,7 +492,10 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print "</tr>\n";
 
 
-$totalarray = array(); $found = 0; $i = 0; $lastcurrencycode = '';
+$totalarray = array();
+$found = 0;
+$i = 0;
+$lastcurrencycode = '';
 
 foreach ($accounts as $key => $type) {
 	if ($i >= $limit) {

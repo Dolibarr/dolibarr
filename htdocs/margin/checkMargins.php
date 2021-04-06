@@ -209,12 +209,12 @@ $massactionbutton = '';
 $invoice_status_except_list = array(Facture::STATUS_DRAFT, Facture::STATUS_ABANDONED);
 
 $sql = "SELECT";
-$sql .= " f.ref, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
-$sql .= " ,d.fk_product";
+$sql .= " f.ref, f.rowid as invoiceid,";
+$sql .= " d.rowid as invoicedetid, d.product_type, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description, d.qty, d.fk_product";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f ";
-$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d  ON d.fk_facture = f.rowid";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
-$sql .= " WHERE f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
+$sql .= " WHERE f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= " AND f.entity IN (".getEntity('invoice').") ";
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -279,12 +279,12 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, 'width=20%', $sortfield, $sortorder);
-	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "d.subprice", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "d.buy_price_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$i = 0;
@@ -309,6 +309,12 @@ if ($result) {
 				print $productstatic->getNomUrl(1);
 			}
 		} else {
+			if ($objp->product_type == $productstatic::TYPE_PRODUCT) {
+				print img_picto('', 'product');
+			}
+			if ($objp->product_type == $productstatic::TYPE_SERVICE) {
+				print img_picto('', 'service');
+			}
 			print $objp->label;
 			print '&nbsp;';
 			print $objp->description;
@@ -324,7 +330,7 @@ if ($result) {
 		print $objp->qty;
 		print '</td>';
 		print '<td class="right">';
-		print price($objp->total_ht);
+		print '<span class="amount">'.price($objp->total_ht).'</span>';
 		print '</td>';
 		print '<td></td>';
 

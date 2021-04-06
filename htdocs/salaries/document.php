@@ -7,6 +7,7 @@
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2019 Alexandre Spangaro    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
@@ -42,14 +43,6 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -69,12 +62,20 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
-
-$object = new PaymentSalary($db);
-$object->fetch($id, $ref);
+$object = new Salary($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
 
 $upload_dir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'salaries';
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
 /*

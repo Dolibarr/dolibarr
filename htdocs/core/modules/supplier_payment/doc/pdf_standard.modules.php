@@ -388,7 +388,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
@@ -687,16 +688,27 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
+		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
+			$object->fetch_projet();
+			if (!empty($object->project->ref)) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+			}
+		}
+
 		if (! empty($conf->global->PDF_SHOW_PROJECT))
 		{
 			$object->fetch_projet();
 			if (! empty($object->project->ref))
 			{
+				$outputlangs->load("projects");
 				$posy+=4;
 				$pdf->SetXY($posx,$posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0,0,60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->ref)?'':$object->project->ref), '', 'R');
 			}
 		}
 

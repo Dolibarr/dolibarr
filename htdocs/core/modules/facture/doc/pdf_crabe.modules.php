@@ -584,7 +584,8 @@ class pdf_crabe extends ModelePDFFactures
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
@@ -1191,7 +1192,8 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Total table
-		$col1x = 120; $col2x = 170;
+		$col1x = 120;
+		$col2x = 170;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$col2x -= 20;
 		}
@@ -1701,17 +1703,18 @@ class pdf_crabe extends ModelePDFFactures
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->projet->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
 			}
 		}
 
 		if (!empty($conf->global->PDF_SHOW_PROJECT)) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->projet->ref), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 

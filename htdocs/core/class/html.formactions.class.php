@@ -183,6 +183,10 @@ class FormActions
 			dol_print_error($this->db, 'FailedToGetActions');
 		}
 
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+		$caction = new CActionComm($this->db);
+		$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
 			if ($typeelement == 'invoice') {
@@ -227,7 +231,8 @@ class FormActions
 			print '<!-- formactions->showactions -->'."\n";
 			print load_fiche_titre($title, $newcardbutton, '', 0, 0, '', $morehtmlcenter);
 
-			$page = 0; $param = '';
+			$page = 0;
+			$param = '';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
@@ -274,14 +279,25 @@ class FormActions
 					}
 					print '</td>';
 
+					$actionstatic = $actioncomm;
 					// Type
-					print '<td>';
-					print $actioncomm->getTypePicto();
-					if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
-						print $langs->trans("Message");
-					} else {
-						print $actioncomm->type_short ? $actioncomm->type_short : $actioncomm->type;
+					$labeltype = $actionstatic->type_code;
+					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+						$labeltype = 'AC_OTH';
 					}
+					if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+						$labeltype = $langs->trans("Message");
+					} else {
+						if (!empty($arraylist[$labeltype])) {
+							$labeltype = $arraylist[$labeltype];
+						}
+						if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) {
+							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
+						}
+					}
+					print '<td class="tdoverflowmax100" title="'.$labeltype.'">';
+					print $actioncomm->getTypePicto();
+					print $labeltype;
 					print '</td>';
 
 					// Label

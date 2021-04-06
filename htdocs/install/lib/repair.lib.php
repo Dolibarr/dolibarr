@@ -33,7 +33,7 @@ function checkElementExist($id, $table)
 	global $db;
 
 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$table;
-	$sql .= ' WHERE rowid = '.$id;
+	$sql .= ' WHERE rowid = '.((int) $id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -106,7 +106,7 @@ function checkLinkedElements($sourcetype, $targettype)
 		foreach ($elements as $key => $element) {
 			if (!checkElementExist($element[$sourcetype], $sourcetable) || !checkElementExist($element[$targettype], $targettable)) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
-				$sql .= ' WHERE rowid = '.$key;
+				$sql .= ' WHERE rowid = '.((int) $key);
 				$resql = $db->query($sql);
 				$deleted++;
 			}

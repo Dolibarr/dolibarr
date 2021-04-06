@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file        htdocs/compta/stats/supplier_ca_by_thirdparty.php
+ *       \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
  *       \brief       Page reporting purchase turnover by thirdparty
  */
 
@@ -38,8 +38,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
-$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
+$sortorder = GETPOST("sortorder", 'aZ09');
+$sortfield = GETPOST("sortfield", 'aZ09');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -59,17 +59,6 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 // Hook
 $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 
-// Security check
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-if (!empty($conf->comptabilite->enabled)) {
-	$result = restrictedArea($user, 'compta', '', '', 'resultat');
-}
-if (!empty($conf->accounting->enabled)) {
-	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
-
 // Date range
 $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
@@ -84,16 +73,16 @@ $date_endyear = GETPOST("date_endyear", 'alpha');
 $date_endmonth = GETPOST("date_endmonth", 'alpha');
 $date_endday = GETPOST("date_endday", 'alpha');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int") ?GETPOST("q", "int") : 0;
@@ -114,19 +103,24 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 				$year_end++;
 			}
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
 	}
 	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
 	}
 	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
 	}
 	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
 	}
 } else {
 	// TODO We define q
@@ -170,6 +164,17 @@ foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
 
+// Security check
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (!empty($conf->comptabilite->enabled)) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (!empty($conf->accounting->enabled)) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
+
 
 /*
  * View
@@ -207,7 +212,9 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPING") {
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 } else {
@@ -244,14 +251,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$db->escape($selected_cat);
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
-} else {
+} elseif ($modecompta == "RECETTES-DEPENSES") {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
@@ -271,9 +278,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cs.fk_soc is null";
 	} elseif ($selected_cat) {	// Into a specific category
-		$sql .= " AND (c.rowid = ".$selected_cat;
+		$sql .= " AND (c.rowid = ".((int) $selected_cat);
 		if ($subcat) {
-			$sql .= " OR c.fk_parent = ".$selected_cat;
+			$sql .= " OR c.fk_parent = ".((int) $selected_cat);
 		}
 		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";

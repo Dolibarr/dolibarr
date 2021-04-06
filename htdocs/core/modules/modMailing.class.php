@@ -22,7 +22,7 @@
  *	\brief      Module to manage EMailings
  *	\file       htdocs/core/modules/modMailing.class.php
  *	\ingroup    mailing
- *	\brief      Fichier de description et activation du module Mailing
+ *	\brief      Description and activation file for the module Mailing
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -48,7 +48,7 @@ class modMailing extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '22';
+		$this->module_position = '23';
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));

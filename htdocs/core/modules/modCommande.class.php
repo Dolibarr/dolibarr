@@ -27,7 +27,7 @@
  *		\brief      Module pour gerer le suivi des commandes
  *		\file       htdocs/core/modules/modCommande.class.php
  *		\ingroup    commande
- *		\brief      Fichier de description et activation du module Commande
+ *		\brief      Description and activation file for the module command
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -236,13 +236,21 @@ class modCommande extends DolibarrModules
 			'cd.total_ttc'=>"order_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);
 		$this->export_dependencies_array[$r] = array('order_line'=>'cd.rowid', 'product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		$keyforselect = 'commande'; $keyforelement = 'order'; $keyforaliasextra = 'extra';
+		$keyforselect = 'commande';
+		$keyforelement = 'order';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'commandedet'; $keyforelement = 'order_line'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'commandedet';
+		$keyforelement = 'order_line';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra3';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra3';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra4';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra4';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -360,7 +368,7 @@ class modCommande extends DolibarrModules
 		//Import CPV Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
-		$this->import_label[$r] = 'OrderLine';
+		$this->import_label[$r] = 'SaleOrderLines';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];

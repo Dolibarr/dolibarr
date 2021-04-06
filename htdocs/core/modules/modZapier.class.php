@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modZapier.class.php
  *  \ingroup    zapier
- *  \brief      Description and activation file for module Zapier
+ *  \brief      Description and activation file for the module Zapier
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -110,7 +110,7 @@ class modZapier extends DolibarrModules
 		$this->dirs = array("/zapier/temp");
 		// Config pages. Put here list of php page, stored into zapier/admin directory, to use to setup module.
 		$this->config_page_url = array(
-		//    "setup.php@zapier"
+			"setup.php@zapier"
 		);
 		// Dependencies
 		// A condition to hide module
@@ -242,7 +242,7 @@ class modZapier extends DolibarrModules
 		// Permission array used by this module
 		$this->rights = array();
 
-		$r = 0;
+		$r = 1;
 		// Permission id (must not be already used)
 		$this->rights[$r][0] = $this->numero + $r;
 		// Permission label
@@ -269,53 +269,6 @@ class modZapier extends DolibarrModules
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
 		$r = 0;
-
-		// Add here entries to declare new menus
-		// $this->menu[$r++]=array(
-		//     'fk_menu' => '',                          // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		//     'type' => 'top',                          // This is a Top menu entry
-		//     'titre' => 'Zapier',
-		//     'mainmenu' => 'zapier',
-		//     'leftmenu' => '',
-		//     'url' => '/zapier/zapierindex.php',
-		//     'langs' => 'zapier@zapier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//     'position' => 1000+$r,
-		//     'enabled' => '$conf->zapier->enabled',  // Define condition to show or hide menu entry. Use '$conf->zapier->enabled' if entry must be visible if module is enabled.
-		//     'perms' => '1',			                // Use 'perms'=>'$user->rights->zapier->level1->level2' if you want your menu with a permission rules
-		//     'target' => '',
-		//     'user' => 2,				                // 0=Menu for internal users, 1=external users, 2=both
-		// );
-
-		/*
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=zapier',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List MyObject',
-			'mainmenu'=>'zapier',
-			'leftmenu'=>'zapier_myobject_list',
-			'url'=>'/zapier/myobject_list.php',
-			'langs'=>'zapier@zapier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->zapier->enabled',  // Define condition to show or hide menu entry. Use '$conf->zapier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'1',			                // Use 'perms'=>'$user->rights->zapier->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=zapier,fk_leftmenu=zapier',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New MyObject',
-			'mainmenu'=>'zapier',
-			'leftmenu'=>'zapier_myobject_new',
-			'url'=>'/zapier/myobject_page.php?action=create',
-			'langs'=>'zapier@zapier',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->zapier->enabled',  // Define condition to show or hide menu entry. Use '$conf->zapier->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'1',			                // Use 'perms'=>'$user->rights->zapier->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,                              // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
 	}
 
 	/**

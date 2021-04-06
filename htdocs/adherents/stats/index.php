@@ -32,8 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
-$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
+$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+	$userid = 0;
+}
+$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+	$socid = 0;
+}
 
 // Security check
 if ($user->socid > 0) {
@@ -133,7 +137,7 @@ if (!$mesg) {
 }
 
 
-$head = member_stats_prepare_head($adh);
+$head = member_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 
@@ -209,7 +213,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; } else {
+if ($mesg) {
+	print $mesg;
+} else {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();

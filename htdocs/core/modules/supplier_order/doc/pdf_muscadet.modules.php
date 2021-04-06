@@ -339,10 +339,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Order"));
+				$pdf->SetSubject($outputlangs->transnoentities("PurchaseOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PurchaseOrder")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
 					$pdf->SetCompression(false);
 				}
@@ -519,22 +520,25 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
 					// VAT Rate
-					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva, $curY);
 						$pdf->MultiCell($this->posxup - $this->posxtva - 1, 3, $vat_rate, 0, 'R');
 					}
 
 					// Unit price before discount
-					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 3, $up_excl_tax, 0, 'R', 0);
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_UNIT_PRICE)) {
+						$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
+						$pdf->SetXY($this->posxup, $curY);
+						$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 3, $up_excl_tax, 0, 'R', 0);
+					}
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
@@ -556,9 +560,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					}
 
 					// Total HT line
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
-					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
+					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_PURCHASE_ORDER_WITHOUT_TOTAL_COLUMN)) {
+						$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs);
+						$pdf->SetXY($this->postotalht, $curY);
+						$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
+					}
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) {
@@ -819,7 +825,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = 120; $col2x = 170;
+		$col1x = 120;
+		$col2x = 170;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$col2x -= 20;
 		}
@@ -1171,9 +1178,20 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
+		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
+			$object->fetch_projet();
+			if (!empty($object->project->ref)) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+			}
+		}
+
 		if (!empty($conf->global->PDF_SHOW_PROJECT)) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");

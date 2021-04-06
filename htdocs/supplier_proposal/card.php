@@ -118,6 +118,7 @@ $usercancreateorder = $user->rights->fournisseur->commande->creer;
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $usercancreate;
 
 
 /*
@@ -485,7 +486,6 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->supplier_proposal->dir_output;
-	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -505,9 +505,9 @@ if (empty($reshook)) {
 			$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
-		if ($_POST["remise_id"]) {
+		if (GETPOST("remise_id", 'int')) {
 			if ($object->id > 0) {
-				$result = $object->insert_discount($_POST["remise_id"]);
+				$result = $object->insert_discount(GETPOST("remise_id", 'int'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -529,17 +529,17 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')	{
 			$idprod = 0;
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = price2num(GETPOST('price_ht'), 'MU');
+			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 			$tva_tx = '';
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU');
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -836,7 +836,7 @@ if (empty($reshook)) {
 		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
 
 		if (GETPOST('price_ht') != '') {
-			$ht = price2num(GETPOST('price_ht'));
+			$ht = price2num(GETPOST('price_ht'), '', 2);
 		}
 
 		if (GETPOST('price_ttc') != '') {
@@ -847,7 +847,7 @@ if (empty($reshook)) {
 				$vatratecode = $reg[2];
 			}
 
-			$ttc = price2num(GETPOST('price_ttc'));
+			$ttc = price2num(GETPOST('price_ttc'), '', 2);
 			$ht = $ttc / (1 + ($vatratecleaned / 100));
 		}
 
@@ -1007,7 +1007,7 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
@@ -1036,7 +1036,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('CommRequests'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+
+llxHeader('', $langs->trans('CommRequests'), $help_url);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1786,30 +1788,31 @@ if ($action == 'create') {
 
 	if ($action == 'statut') {
 		// Form to set proposal accepted/refused
-		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce">';
+		$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" id="formacceptrefuse" class="formconsumeproduce paddingbottom paddingleft paddingright">';
 		$form_close .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$form_close .= '<input type="hidden" name="action" value="setstatut">';
 
 		if (!empty($conf->global->SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL)) {
 			$form_close .= '<p class="notice">'.$langs->trans('SupplierProposalRefFournNotice').'</p>'; // TODO Suggest a permanent checkbox instead of option
 		}
-		$form_close .= '<table class="border centpercent">';
-		$form_close .= '<tr><td width="150"  class="left">'.$langs->trans("CloseAs").'</td><td class="left">';
+		$form_close .= '<table class="border centpercent marginleftonly marginrightonly">';
+		$form_close .= '<tr><td>'.$langs->trans("CloseAs").'</td><td class="left">';
 		$form_close .= '<select id="statut" name="statut" class="flat">';
 		$form_close .= '<option value="0">&nbsp;</option>';
 		$form_close .= '<option value="2">'.$langs->trans('SupplierProposalStatusSigned').'</option>';
 		$form_close .= '<option value="3">'.$langs->trans('SupplierProposalStatusNotSigned').'</option>';
 		$form_close .= '</select>';
 		$form_close .= '</td></tr>';
-		$form_close .= '<tr><td width="150" class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-		$form_close .= $object->note;
+		$form_close .= '<tr><td class="left">'.$langs->trans('Note').'</td><td class="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
+		$form_close .= $object->note_private;
 		$form_close .= '</textarea></td></tr>';
-		$form_close .= '<tr><td class="center" colspan="2">';
+		$form_close .= '</table>';
+		$form_close .= '<center>';
 		$form_close .= '<input type="submit" class="button button-save" name="validate" value="'.$langs->trans("Save").'">';
 		$form_close .= ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		$form_close .= '<a name="acceptedrefused">&nbsp;</a>';
-		$form_close .= '</td>';
-		$form_close .= '</tr></table></form>';
+		$form_close .= '</center>';
+		$form_close .= '</form>';
 
 		print $form_close;
 	}
@@ -1894,7 +1897,7 @@ if ($action == 'create') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
 		/*
-		 * Documents generes
+		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->supplier_proposal->dir_output."/".dol_sanitizeFileName($object->ref);

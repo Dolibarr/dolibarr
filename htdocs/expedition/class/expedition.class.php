@@ -1143,7 +1143,7 @@ class Expedition extends CommonObject
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " entity=".$conf->entity;
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2682,7 +2682,7 @@ class ExpeditionLigne extends CommonObjectLine
 	{
 		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_origin_line, ed.qty, ed.rang';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
-		$sql .= ' WHERE ed.rowid = '.$rowid;
+		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);

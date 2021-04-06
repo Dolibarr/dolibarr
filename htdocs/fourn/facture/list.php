@@ -475,13 +475,13 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " u.login";
+if ($search_categ_sup && $search_categ_sup != '-1') {
+	$sql .= ", cs.fk_categorie, cs.fk_soc";
+}
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (!$search_all) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed';
-}
-if ($search_categ_sup) {
-	$sql .= ", cs.fk_categorie, cs.fk_soc";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -580,10 +580,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty >= 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_montant_ht != '') {
 	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
@@ -677,6 +677,9 @@ if (!$search_all) {
 	$sql .= ' country.code,';
 	$sql .= " p.rowid, p.ref, p.title,";
 	$sql .= " u.login";
+	if ($search_categ_sup && $search_categ_sup != '-1') {
+		$sql .= ", cs.fk_categorie, cs.fk_soc";
+	}
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by
@@ -931,32 +934,32 @@ if ($resql) {
 	if ($user->rights->societe->client->voir || $socid) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+		$moreforfilter .= img_picto($tmptitle, 'company', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth200');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
-		$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		$tmptitle = $langs->trans('LinkedToSpecificUsers');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
+		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
 
 	if (!empty($conf->categorie->enabled)) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1);
+		$tmptitle = $langs->trans('SuppliersCategoriesShort');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('supplier', $search_categ_sup, 'search_categ_sup', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -1039,7 +1042,7 @@ if ($resql) {
 		}
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month_lim" value="'.$month_lim.'">';
 		$formother->select_year($year_lim ? $year_lim : -1, 'year_lim', 1, 20, 5);
-		print '<br><input type="checkbox" name="option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Late");
+		print '<br><input type="checkbox" class="paddingright paddingleft" name="option" id="option" value="late"'.($option == 'late' ? ' checked' : '').'><label for="option">'.$langs->trans("Late").'</label>';
 		print '</td>';
 	}
 	// Project
@@ -1538,7 +1541,7 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				  print '<td class="right nowrap">'.price($obj->total_ht)."</td>\n";
+				  print '<td class="right nowrap"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1549,7 +1552,7 @@ if ($resql) {
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.total_vat']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_vat)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_vat)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1560,7 +1563,7 @@ if ($resql) {
 			}
 			// Amount LocalTax1
 			if (!empty($arrayfields['f.total_localtax1']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_localtax1)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_localtax1)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1571,7 +1574,7 @@ if ($resql) {
 			}
 			// Amount LocalTax2
 			if (!empty($arrayfields['f.total_localtax2']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_localtax2)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_localtax2)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1582,7 +1585,7 @@ if ($resql) {
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->total_ttc)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1609,7 +1612,7 @@ if ($resql) {
 			}
 
 			if (!empty($arrayfields['dynamount_payed']['checked'])) {
-				print '<td class="right nowrap">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap"><span class="amount">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1649,27 +1652,27 @@ if ($resql) {
 			}
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
-				  print '<td class="right nowrap">'.price($obj->multicurrency_total_ht)."</td>\n";
+				  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->multicurrency_total_vat)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_vat)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
-				print '<td class="right nowrap">'.price($obj->multicurrency_total_ttc)."</td>\n";
+				print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ttc)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-				print '<td class="right nowrap">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap"><span class="amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1677,9 +1680,9 @@ if ($resql) {
 
 			// Pending amount
 			if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
-				print '<td class="right nowrap">';
-				print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
-				print '</td>'; // TODO Use a denormalized field
+				print '<td class="right nowrap"><span class="amount">';
+				print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '');
+				print '</span></td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1692,6 +1695,7 @@ if ($resql) {
 			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
+
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
 				print '<td class="center nowrap">';

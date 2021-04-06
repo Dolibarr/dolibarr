@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
-/* Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
+ * Copyright (C) 2020   Thibault FOUCART     	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ class Invoices extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 
 		if ($search_sale > 0) {
@@ -1142,7 +1142,7 @@ class Invoices extends DolibarrApi
 				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 				$sql .= " re.description, re.fk_facture_source";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-				$sql .= " WHERE fk_facture = ".$this->invoice->id;
+				$sql .= " WHERE fk_facture = ".((int) $this->invoice->id);
 				$resql = $this->db->query($sql);
 				if (!empty($resql)) {
 					while ($obj = $this->db->fetch_object($resql)) {

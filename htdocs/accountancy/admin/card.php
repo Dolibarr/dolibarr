@@ -212,8 +212,10 @@ $accountsystem = new AccountancySystem($db);
 $accountsystem->fetch($conf->global->CHARTOFACCOUNTS);
 
 $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
-$helpurl = '';
-llxheader('', $title, $helpurl);
+
+$help_url = 'EN:Category:Accounting';
+
+llxheader('', $title, $help_url);
 
 
 // Create mode

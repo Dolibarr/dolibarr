@@ -117,7 +117,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) {
-				unset($listofdir[$key]); continue;
+				unset($listofdir[$key]);
+				continue;
 			}
 			if (!is_dir($tmpdir)) {
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
@@ -244,6 +245,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME)) {
 					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+					$newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
 				if (!empty($conf->global->MAIN_DOC_USE_TIMING)) {
 					$format = $conf->global->MAIN_DOC_USE_TIMING;
@@ -289,7 +291,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 				$sql = "SELECT p.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-				$sql .= " WHERE p.fk_soc = ".$object->id;
+				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 
 				$result = $this->db->query($sql);
 				$num = $this->db->num_rows($result);

@@ -9,14 +9,14 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021	Alexandre Spangaro			<aspangaro@open-dsi.fr>
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,29 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
+/**
+ * Return dolibarr global constant string value
+ * @param string $key key to return value, return '' if not set
+ * @return string
+ */
+function getDolGlobalString($key)
+{
+	global $conf;
+	// return $conf->global->$key ?? '';
+	return (string) (empty($conf->global->$key) ? '' : $conf->global->$key);
+}
+
+/**
+ * Return dolibarr global constant int value
+ * @param string $key key to return value, return 0 if not set
+ * @return int
+ */
+function getDolGlobalInt($key)
+{
+	global $conf;
+	// return $conf->global->$key ?? 0;
+	return (int) (empty($conf->global->$key) ? 0 : $conf->global->$key);
+}
 
 /**
  * Return a DoliDB instance (database handler).
@@ -200,31 +223,39 @@ function getBrowserInfo($user_agent)
 	// Name
 	$reg = array();
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'firefox'; $version = $reg[2];
+		$name = 'firefox';
+		$version = $reg[2];
 	} elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'edge'; $version = $reg[2];
+		$name = 'edge';
+		$version = $reg[2];
 	} elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) {
-		$name = 'chrome'; $version = $reg[2];
-	} // we can have 'chrome (Mozilla...) chrome x.y' in one string
-	elseif (preg_match('/chrome/i', $user_agent, $reg)) {
+		$name = 'chrome';
+		$version = $reg[2];
+	} elseif (preg_match('/chrome/i', $user_agent, $reg)) {
+		// we can have 'chrome (Mozilla...) chrome x.y' in one string
 		$name = 'chrome';
 	} elseif (preg_match('/iceweasel/i', $user_agent)) {
 		$name = 'iceweasel';
 	} elseif (preg_match('/epiphany/i', $user_agent)) {
 		$name = 'epiphany';
 	} elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'safari'; $version = $reg[2];
-	} // Safari is often present in string for mobile but its not.
-	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
-		$name = 'opera'; $version = $reg[2];
+		$name = 'safari';
+		$version = $reg[2];
+	} elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
+		// Safari is often present in string for mobile but its not.
+		$name = 'opera';
+		$version = $reg[2];
 	} elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
-		$name = 'ie'; $version = end($reg);
-	} // MS products at end
-	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
-		$name = 'ie'; $version = end($reg);
-	} // MS products at end
-	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
-		$name = 'lynxlinks'; $version = $reg[4];
+		$name = 'ie';
+		$version = end($reg);
+	} elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
+		// MS products at end
+		$name = 'ie';
+		$version = end($reg);
+	} elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
+		// MS products at end
+		$name = 'lynxlinks';
+		$version = $reg[4];
 	}
 
 	if ($tablet) {
@@ -253,9 +284,11 @@ function getBrowserInfo($user_agent)
 function dol_shutdown()
 {
 	global $conf, $user, $langs, $db;
-	$disconnectdone = false; $depth = 0;
+	$disconnectdone = false;
+	$depth = 0;
 	if (is_object($db) && !empty($db->connected)) {
-		$depth = $db->transaction_opened; $disconnectdone = $db->close();
+		$depth = $db->transaction_opened;
+		$disconnectdone = $db->close();
 	}
 	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth) ? ' (Warn: db disconnection forced, transaction depth was '.$depth.')' : ''), (($disconnectdone && $depth) ?LOG_WARNING:LOG_INFO));
 }
@@ -311,7 +344,7 @@ function GETPOSTISSET($paramname)
 
 /**
  *  Return value of a param into GET or POST supervariable.
- *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
+ *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
  *  @param  string  $paramname   Name of parameter to found
@@ -322,6 +355,7 @@ function GETPOSTISSET($paramname)
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                               'alpha'=Same than alphanohtml since v13
+ *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
@@ -393,8 +427,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			} elseif ($paramname == 'limit' && !empty($_SESSION['lastsearch_limit_'.$relativepathstring])) {
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
-		} // Else, retrieve default values if we are not doing a sort
-		elseif (!isset($_GET['sortfield'])) {	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
+		} elseif (!isset($_GET['sortfield'])) {
+			// Else, retrieve default values if we are not doing a sort
+			// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 			if (!empty($_GET['action']) && $_GET['action'] == 'create' && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
 				// Search default value from $object->field
 				global $object;
@@ -435,12 +470,15 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						}
 					}
-				} // Management of default search_filters and sort order
-				elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
-					if (!empty($user->default_values)) {		// $user->default_values defined from menu 'Setup - Default values'
+				} elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname])) {
+					// Management of default search_filters and sort order
+					if (!empty($user->default_values)) {
+						// $user->default_values defined from menu 'Setup - Default values'
 						//var_dump($user->default_values[$relativepathstring]);
-						if ($paramname == 'sortfield' || $paramname == 'sortorder') {			// Sorted on which fields ? ASC or DESC ?
-							if (isset($user->default_values[$relativepathstring]['sortorder'])) {	// Even if paramname is sortfield, data are stored into ['sortorder...']
+						if ($paramname == 'sortfield' || $paramname == 'sortorder') {
+							// Sorted on which fields ? ASC or DESC ?
+							if (isset($user->default_values[$relativepathstring]['sortorder'])) {
+								// Even if paramname is sortfield, data are stored into ['sortorder...']
 								foreach ($user->default_values[$relativepathstring]['sortorder'] as $defkey => $defval) {
 									$qualified = 0;
 									if ($defkey != '_noquery_') {
@@ -524,9 +562,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	// We do this only if var is a GET. If it is a POST, may be we want to post the text with vars as the setup text.
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
-		$maxloop = 20; $loopnb = 0; // Protection against infinite loop
+		$maxloop = 20;
+		$loopnb = 0; // Protection against infinite loop
 		while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop)) {    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
-			$loopnb++; $newout = '';
+			$loopnb++;
+			$newout = '';
 
 			if ($reg[1] == 'DAY') {
 				$tmp = dol_getdate(dol_now(), true);
@@ -594,10 +634,17 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		$out = checkVal($out, $check, $filter, $options);
 	}
 
-	// Sanitizing for special parameters. There is no reason to allow the backtopage parameter to contains an external URL.
-	if ($paramname == 'backtopage') {
+	// Sanitizing for special parameters. There is no reason to allow the backtopage, backtolist or backtourl parameter to contains an external URL.
+	if ($paramname == 'backtopage' || $paramname == 'backtolist' || $paramname == 'backtourl') {
 		$out = str_replace('\\', '/', $out);
-		$out = preg_replace(array('/^\/\/+/', '/^[a-z]*:/i'), '', $out);
+		$out = str_replace(array(':', ';', '@'), '', $out);
+
+		do {
+			$oldstringtoclean = $out;
+			$out = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $out);
+		} while ($oldstringtoclean != $out);
+
+		$out = preg_replace(array('/^[a-z]*\/\/+/i'), '', $out);
 	}
 
 	// Code for search criteria persistence.
@@ -647,6 +694,8 @@ function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $n
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
+	global $conf;
+
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
@@ -697,24 +746,44 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
 		case 'alpha':		// No html and no ../ and "
 		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
 			if (!is_array($out)) {
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), '', trim($out));
-				$out = str_replace(array('../'), '', $out);
+				$out = trim($out);
+				do {
+					$oldstringtoclean = $out;
+					// Remove html tags
+					$out = dol_string_nohtmltag($out, 0);
+					// Remove also other dangerous string sequences
+					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// '../' is dangerous because it allows dir transversals
+					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+				} while ($oldstringtoclean != $out);
 				// keep lines feed
-				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
 		case 'alphawithlgt':		// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email>"
 			if (!is_array($out)) {
-				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-				// '../' is dangerous because it allows dir transversals
-				$out = str_replace(array('&quot;', '"'), '', trim($out));
-				$out = str_replace(array('../'), '', $out);
+				$out = trim($out);
+				do {
+					$oldstringtoclean = $out;
+					// Remove html tags
+					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
+					// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+					// '../' is dangerous because it allows dir transversals
+					// Note &#38, '&#0000038', '&#x26'... is a simple char like '&' alone but there is no reason to accept such way to encode input data.
+					$out = str_ireplace(array('&#38', '&#0000038', '&#x26', '&quot', '&#34', '&#0000034', '&#x22', '"', '&#47', '&#0000047', '&#x2F', '../'), '', $out);
+				} while ($oldstringtoclean != $out);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
-			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			do {
+				$oldstringtoclean = $out;
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+
+				// We should also exclude non expected attributes
+				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+					$out = dol_string_onlythesehtmlattributes($out);
+				}
+			} while ($oldstringtoclean != $out);
 			break;
 		case 'custom':
 			if (empty($filter)) {
@@ -837,13 +906,14 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 			}
 		}
-		if ($returnemptyifnotfound) {								// Not found into alternate dir
+		if ($returnemptyifnotfound) {
+			// Not found into alternate dir
 			if ($returnemptyifnotfound == 1 || !file_exists($res)) {
 				return '';
 			}
 		}
-	} else // For an url path
-	{
+	} else {
+		// For an url path
 		// We try to get local path of file on filesystem from url
 		// Note that trying to know if a file on disk exist by forging path on disk from url
 		// works only for some web server and some setup. This is bugged when
@@ -983,6 +1053,43 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 }
 
 /**
+ *  Clean a string to use it as an URL (into a href or src attribute)
+ *
+ *  @param      string		$stringtoclean		String to clean
+ *  @param		int			$type				0=Accept all Url, 1=Clean external Url (keep only relative Url)
+ *  @return     string     		 				Escaped string.
+ */
+function dol_sanitizeUrl($stringtoclean, $type = 1)
+{
+	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
+	// We should use dol_string_nounprintableascii but function may not be yet loaded/available
+	$stringtoclean = preg_replace('/[\x00-\x1F\x7F]/u', '', $stringtoclean); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
+
+	$stringtoclean = str_replace('\\', '/', $stringtoclean);
+	if ($type == 1) {
+		// removing : should disable links to external url like http:aaa)
+		// removing ';' should disable "named" html entities encode into an url (we should not have this into an url)
+		$stringtoclean = str_replace(array(':', ';', '@'), '', $stringtoclean);
+	}
+
+	do {
+		$oldstringtoclean = $stringtoclean;
+		// removing '&colon' should disable links to external url like http:aaa)
+		// removing '&#' should disable "numeric" html entities encode into an url (we should not have this into an url)
+		$stringtoclean = str_ireplace(array('javascript', 'vbscript', '&colon', '&#'), '', $stringtoclean);
+	} while ($oldstringtoclean != $stringtoclean);
+
+	if ($type == 1) {
+		// removing '//' should disable links to external url like //aaa or http//)
+		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
+	}
+
+	return $stringtoclean;
+}
+
+/**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
  *	@param	string	$str			String to clean
@@ -1080,7 +1187,6 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 	}
 }
 
-
 /**
  *  Returns text escaped for inclusion into javascript code
  *
@@ -1095,16 +1201,19 @@ function dol_escape_js($stringtoescape, $mode = 0, $noescapebackslashn = 0)
 	$substitjs = array("&#039;"=>"\\'", "\r"=>'\\r');
 	//$substitjs['</']='<\/';	// We removed this. Should be useless.
 	if (empty($noescapebackslashn)) {
-		$substitjs["\n"] = '\\n'; $substitjs['\\'] = '\\\\';
+		$substitjs["\n"] = '\\n';
+		$substitjs['\\'] = '\\\\';
 	}
 	if (empty($mode)) {
-		$substitjs["'"] = "\\'"; $substitjs['"'] = "\\'";
+		$substitjs["'"] = "\\'";
+		$substitjs['"'] = "\\'";
 	} elseif ($mode == 1) {
 		$substitjs["'"] = "\\'";
 	} elseif ($mode == 2) {
 		$substitjs['"'] = '\\"';
 	} elseif ($mode == 3) {
-		$substitjs["'"] = "\\'"; $substitjs['"'] = "\\\"";
+		$substitjs["'"] = "\\'";
+		$substitjs['"'] = "\\\"";
 	}
 	return strtr($stringtoescape, $substitjs);
 }
@@ -1289,7 +1398,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		// If html log tag enabled and url parameter log defined, we show output log on HTML comments
 		if (!empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && !empty($_GET["log"])) {
 			print "\n\n<!-- Log start\n";
-			print $message."\n";
+			print dol_escape_htmltag($message)."\n";
 			print "Log end -->\n";
 		}
 
@@ -1310,16 +1419,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) {
 				$data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
 			}
-		} // This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-		elseif (!empty($_SERVER['SERVER_ADDR'])) {
+		} elseif (!empty($_SERVER['SERVER_ADDR'])) {
+			// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
 			$data['ip'] = $_SERVER['SERVER_ADDR'];
-		}
-		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-		elseif (!empty($_SERVER['COMPUTERNAME'])) {
+		} elseif (!empty($_SERVER['COMPUTERNAME'])) {
+			// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
 			$data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME']) ? '' : '@'.$_SERVER['USERNAME']);
-		}
-		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-		elseif (!empty($_SERVER['LOGNAME'])) {
+		} elseif (!empty($_SERVER['LOGNAME'])) {
+			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 			$data['ip'] = '???@'.$_SERVER['LOGNAME'];
 		}
 		// Loop on each log handler and send output
@@ -1638,63 +1745,37 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	$maxvisiblephotos = 1;
 	$showimage = 1;
 	$entity = (empty($object->entity) ? $conf->entity : $object->entity);
-	$showbarcode = empty($conf->barcode->enabled) ? 0 : ($object->barcode ? 1 : 0);
+	$showbarcode = empty($conf->barcode->enabled) ? 0 : (empty($object->barcode) ? 0 : 1);
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
 		$showbarcode = 0;
 	}
 	$modulepart = 'unknown';
 
-	if ($object->element == 'societe') {
-		$modulepart = 'societe';
-	}
-	if ($object->element == 'contact') {
-		$modulepart = 'contact';
-	}
-	if ($object->element == 'member') {
+	if ($object->element == 'societe' || $object->element == 'contact' || $object->element == 'product' || $object->element == 'ticket') {
+		$modulepart = $object->element;
+	} elseif ($object->element == 'member') {
 		$modulepart = 'memberphoto';
-	}
-	if ($object->element == 'user') {
+	} elseif ($object->element == 'user') {
 		$modulepart = 'userphoto';
-	}
-	if ($object->element == 'product') {
-		$modulepart = 'product';
-	}
-	if ($object->element == 'ticket') {
-		$modulepart = 'ticket';
 	}
 
 	if (class_exists("Imagick")) {
-		if ($object->element == 'propal') {
-			$modulepart = 'propal';
-		}
-		if ($object->element == 'commande') {
-			$modulepart = 'commande';
-		}
-		if ($object->element == 'facture') {
-			$modulepart = 'facture';
-		}
-		if ($object->element == 'fichinter') {
+		if ($object->element == 'expensereport' || $object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'supplier_proposal') {
+			$modulepart = $object->element;
+		} elseif ($object->element == 'fichinter') {
 			$modulepart = 'ficheinter';
-		}
-		if ($object->element == 'contrat') {
+		} elseif ($object->element == 'contrat') {
 			$modulepart = 'contract';
-		}
-		if ($object->element == 'supplier_proposal') {
-			$modulepart = 'supplier_proposal';
-		}
-		if ($object->element == 'order_supplier') {
+		} elseif ($object->element == 'order_supplier') {
 			$modulepart = 'supplier_order';
-		}
-		if ($object->element == 'invoice_supplier') {
+		} elseif ($object->element == 'invoice_supplier') {
 			$modulepart = 'supplier_invoice';
-		}
-		if ($object->element == 'expensereport') {
-			$modulepart = 'expensereport';
 		}
 	}
 
 	if ($object->element == 'product') {
-		$width = 80; $cssclass = 'photoref';
+		$width = 80;
+		$cssclass = 'photoref';
 		$showimage = $object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos = (isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO) ? $conf->global->PRODUCT_MAX_VISIBLE_PHOTO : 5);
 		if ($conf->browser->layout == 'phone') {
@@ -1712,7 +1793,8 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			}
 		}
 	} elseif ($object->element == 'ticket') {
-		$width = 80; $cssclass = 'photoref';
+		$width = 80;
+		$cssclass = 'photoref';
 		$showimage = $object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos = (isset($conf->global->TICKET_MAX_VISIBLE_PHOTO) ? $conf->global->TICKET_MAX_VISIBLE_PHOTO : 2);
 		if ($conf->browser->layout == 'phone') {
@@ -1794,7 +1876,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 							$phototoshow .= '</div>';
 						}
 					}
-				} elseif (!$phototoshow) { // example if modulepart = 'photo'
+				} elseif (!$phototoshow) { // example if modulepart = 'societe' or 'photo'
 					$phototoshow .= $form->showphoto($modulepart, $object, 0, 0, 0, 'photoref', 'small', 1, 0, $maxvisiblephotos);
 				}
 
@@ -1805,14 +1887,15 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 				}
 			}
 
-			if (!$phototoshow) {      // Show No photo link (picto of object)
+			if (empty($phototoshow)) {      // Show No photo link (picto of object)
 				$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">';
 				if ($object->element == 'action') {
 					$width = 80;
 					$cssclass = 'photorefcenter';
 					$nophoto = img_picto('No photo', 'title_agenda');
 				} else {
-					$width = 14; $cssclass = 'photorefcenter';
+					$width = 14;
+					$cssclass = 'photorefcenter';
 					$picto = $object->picto;
 					if ($object->element == 'project' && !$object->public) {
 						$picto = 'project'; // instead of projectpub
@@ -1853,7 +1936,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		} else {
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva'))) {
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
 		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->totalpaye);
@@ -1997,42 +2080,46 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : $object->address);
+		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : $object->address));
 	}
 	// Zip/Town/State
-	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {  	// US: title firstname name \n address lines \n town, state, zip \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
+		// US: title firstname name \n address lines \n town, state, zip \n country
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($ret ? $sep : '').$town;
 		if (!empty($object->state))	{
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
-		if ($object->zip) {
+		if (!empty($object->zip)) {
 			$ret .= ($ret ? ", " : '').$object->zip;
 		}
-	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) { // UK: title firstname name \n address lines \n town state \n zip \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) {
+		// UK: title firstname name \n address lines \n town state \n zip \n country
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($ret ? $sep : '').$town;
 		if (!empty($object->state)) {
 			$ret .= ($ret ? ", " : '').$object->state;
 		}
-		if ($object->zip) {
+		if (!empty($object->zip)) {
 			$ret .= ($ret ? $sep : '').$object->zip;
 		}
-	} elseif (isset($object->country_code) && in_array($object->country_code, array('ES', 'TR'))) { // ES: title firstname name \n address lines \n zip town \n state \n country
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('ES', 'TR'))) {
+		// ES: title firstname name \n address lines \n zip town \n state \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
 			$ret .= "\n".$object->state;
 		}
-	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) { // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
+	} elseif (isset($object->country_code) && in_array($object->country_code, array('IT'))) {
+		// IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 		$ret .= ($ret ? $sep : '').$object->zip;
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		$ret .= (empty($object->state_code) ? '' : (' '.$object->state_code));
 	} else { // Other: title firstname name \n address lines \n zip town \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : $object->town);
-		$ret .= $object->zip ? (($ret ? $sep : '').$object->zip) : '';
+		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
+		$ret .= !empty($object->zip) ? (($ret ? $sep : '').$object->zip) : '';
 		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
 		if (!empty($object->state) && in_array($object->country_code, $countriesusingstate)) {
 			$ret .= ($ret ? ", " : '').$object->state;
@@ -2094,7 +2181,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	global $conf, $langs;
 
 	if ($tzoutput === 'auto') {
-		$tzoutput = (empty($conf) ? 'tzserver' : $conf->tzuserinputkey);
+		$tzoutput = (empty($conf) ? 'tzserver' : (isset($conf->tzuserinputkey) ? $conf->tzuserinputkey : 'tzserver'));
 	}
 
 	// Clean parameters
@@ -2129,7 +2216,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
 	if ($formatwithoutreduce != $format) {
-		$format = $formatwithoutreduce; $reduceformat = 1;
+		$format = $formatwithoutreduce;
+		$reduceformat = 1;
 	}  // so format 'dayreduceformat' is processed like day
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
@@ -2152,9 +2240,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = ($outputlangs->trans("FormatDateHourText") != "FormatDateHourText" ? $outputlangs->trans("FormatDateHourText") : $conf->format_date_hour_text);
 	} elseif ($format == 'dayhourtextshort') {
 		$format = ($outputlangs->trans("FormatDateHourTextShort") != "FormatDateHourTextShort" ? $outputlangs->trans("FormatDateHourTextShort") : $conf->format_date_hour_text_short);
-	}
-	// Format not sensitive to language
-	elseif ($format == 'dayhourlog') {
+	} elseif ($format == 'dayhourlog') {
+		// Format not sensitive to language
 		$format = '%Y%m%d%H%M%S';
 	} elseif ($format == 'dayhourldap') {
 		$format = '%Y%m%d%H%M%SZ';
@@ -2440,13 +2527,13 @@ function dol_now($mode = 'auto')
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-	} /*elseif ($mode == 'tzref')				// Time for now with parent company timezone is added
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		$ret=dol_now('gmt')+($tzsecond*3600);
-	}*/
-	elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {				// Time for now with user timezone added
+		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
+		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
+		//	$ret=dol_now('gmt')+($tzsecond*3600);
+		//}
+	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
+		// Time for now with user timezone added
 		//print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
@@ -2570,7 +2657,8 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		}
 
 		if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
-			$type = 'AC_EMAIL'; $link = '';
+			$type = 'AC_EMAIL';
+			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
 				$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			}
@@ -2938,7 +3026,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 
 		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create) {
-			$type = 'AC_TEL'; $link = '';
+			$type = 'AC_TEL';
+			$link = '';
 			if ($addlink == 'AC_FAX') {
 				$type = 'AC_FAX';
 			}
@@ -3321,7 +3410,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 {
 	global $conf;
 
-	if ($size == 0 || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
+	if (empty($size) || !empty($conf->global->MAIN_DISABLE_TRUNC)) {
 		return $string;
 	}
 
@@ -3416,18 +3505,19 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'company', 'contact', 'contract', 'cron', 'cubes',
-				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'external-link-alt', 'external-link-square-alt',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes',
+				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'intervention', 'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'info', 'intervention', 'inventory', 'intracommreport',
+				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_asset', 'object_barcode', 'object_bill', 'object_billr', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conversation', 'object_bookmark', 'object_bug', 'object_clock', 'object_dolly', 'object_dollyrevert',
+				'object_category', 'object_conferenceorbooth', 'object_conversation', 'object_bookmark', 'object_bug', 'object_building', 'object_clock', 'object_collab', 'object_dolly', 'object_dollyrevert',
 				'object_folder', 'object_folder-open','object_generic',
 				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_donation', 'object_dynamicprice',
-				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_label',
+				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_cron', 'object_donation', 'object_dynamicprice', 'object_establishment',
+				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_inventory', 'object_intracommreport', 'object_label',
 				'object_margin', 'object_members', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
 				'object_lot', 'object_mrp', 'object_other',
 				'object_payment', 'object_pdf', 'object_product', 'object_propal',
@@ -3435,27 +3525,28 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'object_recruitmentjobposition', 'object_recruitmentcandidature',
 				'object_salary', 'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
 				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement',
+				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement', 'object_workstation',
 				'off', 'on', 'order',
-				'paiment', 'play', 'pdf', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'user-cog',
-				'eventorganization', 'object_eventorganization'
+				'user-cog', 'website', 'workstation',
+				'conferenceorbooth', 'eventorganization'
 			))) {
 			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
 			$fakey = $pictowithouttext;
-			$facolor = ''; $fasize = '';
+			$facolor = '';
+			$fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('clock', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
+			if (in_array($pictowithouttext, array('clock', 'establishment', 'generic', 'minus-square', 'object_generic', 'pdf', 'plus-square', 'timespent', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('black-tie', 'github', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'stripe', 'stripe-s', 'youtube', 'google-plus-g', 'whatsapp'))) {
@@ -3466,13 +3557,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'account'=>'university', 'accountline'=>'receipt', 'accountancy'=>'search-dollar', 'action'=>'calendar-alt', 'add'=>'plus-circle', 'address'=> 'address-book', 'asset'=>'money-check-alt',
 				'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billr'=>'file-invoice-dollar', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical',
 				'bom'=>'shapes',
-				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
+				'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
+				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
 				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
-				'email'=>'at',
+				'email'=>'at', 'establishment'=>'building',
 				'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
-				'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
+				'generic'=>'file', 'holiday'=>'umbrella-beach',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
 				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
@@ -3482,7 +3575,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
-				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
 				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
@@ -3490,10 +3583,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
-				'uparrow'=>'mail-forward', 'vcard'=>'address-card',
+				'uparrow'=>'share', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas',
-				'eventorganization'=>'id-badge'
+				'website'=>'globe-americas', 'workstation'=>'pallet',
+				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';
@@ -3523,13 +3616,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$pictowithouttext;
 			}
 
-			if (in_array($pictowithouttext, array('holiday', 'dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
+			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('holiday', 'project'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'project', 'workstation'))) {
 				$morecss = 'em088';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'stock', 'technic'))) {
+			if (in_array($pictowithouttext, array('intervention', 'info', 'payment', 'loan', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 
@@ -3548,7 +3641,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
 				'bank_account'=>'bg-infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
-				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'conversation'=>'infobox-contrat',
+				'conferenceorbooth'=>'infobox-project',
+				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
 				'donation'=>'infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'infobox-action',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
 				'multicurrency'=>'infobox-bank_account',
@@ -3556,7 +3650,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'order'=>'infobox-commande',
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'infobox-holiday', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
+				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
+				'eventorganization'=>'infobox-project',
 				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
@@ -3573,14 +3668,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $color
 			$arrayconvpictotocolor = array(
 				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
-				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'dynamicprice'=>'#a69944',
+				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
+				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
 				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
-				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
+				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
 				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555', 'uparrow'=>'#555', 'user-cog'=>'#999', 'globe-americas'=>'#aaa',
-				'website'=>'#304'
+				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
+				'website'=>'#304', 'workstation'=>'#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
 				$facolor = $arrayconvpictotocolor[$pictowithouttext];
@@ -4249,7 +4345,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param	string	$text				Text info
  *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv				No div
- *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error','xxx'=Other
+ *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error', 'warning', 'xxx'=Other
  *  @param	string	$morecss			More CSS ('', 'warning', 'error')
  *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
  *	@return	string						String with info text
@@ -5011,7 +5107,8 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	$nbdecimal = $rounding;
 
 	// Output separators by default (french)
-	$dec = ','; $thousand = ' ';
+	$dec = ',';
+	$thousand = ' ';
 
 	// If $outlangs not forced, we use use language
 	if (!is_object($outlangs)) {
@@ -5113,7 +5210,8 @@ function price2num($amount, $rounding = '', $option = 0)
 	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
-	$dec = ','; $thousand = ' ';
+	$dec = ',';
+	$thousand = ' ';
 	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
 		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
 	}
@@ -5129,12 +5227,12 @@ function price2num($amount, $rounding = '', $option = 0)
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($option != 1) {	// If not a PHP number or unknown, we change or clean format
-		//print 'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
+		//print "\n".'PP'.$amount.' - '.$dec.' - '.$thousand.' - '.intval($amount).'<br>';
 		if (!is_numeric($amount)) {
 			$amount = preg_replace('/[a-zA-Z\/\\\*\(\)\<\>\_]/', '', $amount);
 		}
 
-		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come frominput data, so 1.123 is 1123
+		if ($option == 2 && $thousand == '.' && preg_match('/\.(\d\d\d)$/', (string) $amount)) {	// It means the . is used as a thousand separator and string come from input data, so 1.123 is 1123
 			$amount = str_replace($thousand, '', $amount);
 		}
 
@@ -5158,6 +5256,7 @@ function price2num($amount, $rounding = '', $option = 0)
 		$amount = str_replace($thousand, '', $amount); // Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount = str_replace($dec, '.', $amount);
 	}
+	//print ' XX'.$amount.' '.$rounding;
 
 	// Now, make a rounding if required
 	if ($rounding) {
@@ -5175,13 +5274,13 @@ function price2num($amount, $rounding = '', $option = 0)
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
-		//print "RR".$amount.' - '.$nbofdectoround.'<br>';
+		//print " RR".$amount.' - '.$nbofdectoround.'<br>';
 		if (dol_strlen($nbofdectoround)) {
 			$amount = round(is_string($amount) ? (float) $amount : $amount, $nbofdectoround); // $nbofdectoround can be 0.
 		} else {
 			return 'ErrorBadParameterProvidedToFunction';
 		}
-		//print 'SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
+		//print ' SS'.$amount.' - '.$nbofdec.' - '.$dec.' - '.$thousand.' - '.$nbofdectoround.'<br>';
 
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
@@ -5781,9 +5880,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany) {
-			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID) && !isValidVATID($thirdparty_buyer)) {
-				//print 'VATRULE 6';
-				return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+			if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				if (!isValidVATID($thirdparty_buyer)) {
+					//print 'VATRULE 6';
+					return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+				}
 			}
 			//print 'VATRULE 3';
 			return 0;
@@ -5904,7 +6006,8 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 function yn($yesno, $case = 1, $color = 0)
 {
 	global $langs;
-	$result = 'unknown'; $classname = '';
+	$result = 'unknown';
+	$classname = '';
 	if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') { 	// A mettre avant test sur no a cause du == 0
 		$result = $langs->trans('yes');
 		if ($case == 1 || $case == 3) {
@@ -6117,12 +6220,13 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 	if ($strip_tags) {
 		$temp = strip_tags($temp);
 	} else {
+		$temp = str_replace('<>', '', $temp);	// No reason to have this into a text, except if value is to try bypass the next html cleaning
 		$pattern = "/<[^<>]+>/";
 		// Example of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
 		$temp = preg_replace($pattern, "", $temp); // pass 1 - $temp after pass 1: <a href="/myurl" title="A title">0000-021
 		$temp = preg_replace($pattern, "", $temp); // pass 2 - $temp after pass 2: 0000-021
-		// Remove '<' into remainging, so non closing html tags like '<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
-		$temp = preg_replace('/<([a-z]+)/i', '\1', $temp);
+		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
+		$temp = preg_replace('/<+([a-z]+)/i', '\1', $temp);
 	}
 
 	$temp = dol_html_entity_decode($temp, ENT_COMPAT, $pagecodeto);
@@ -6150,18 +6254,22 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	int		$removeclassattribute	Remove the class attribute from tags
+ *  @param	int		$removeclassattribute	1=Remove the class attribute from tags
  *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
+ *  @param	int		$allowiframe			Allow iframe tags.
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0)
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 	);
+	if ($allowiframe) {
+		$allowed_tags[] = "iframe";
+	}
 
 	$allowed_tags_string = join("><", $allowed_tags);
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
@@ -6169,10 +6277,11 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = str_replace('<!DOCTYPE html>', '__!DOCTYPE_HTML__', $stringtoclean);	// Replace DOCTYPE to avoid to have it removed by the strip_tags
 
 	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
-	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 
 	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
-	$stringtoclean = preg_replace('/&#58;|&#0000058|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
+
+	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
+	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -6185,7 +6294,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	}
 
 	// Remove 'javascript:' that we should not find into a text with
-	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by the GETPOST).
+	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by a GETPOST(.., powerfullfilter)).
 	if ($cleanalsojavascript) {
 		$temp = preg_replace('/javascript\s*:/i', '', $temp);
 	}
@@ -6193,6 +6302,46 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$temp = str_replace('__!DOCTYPE_HTML__', '<!DOCTYPE html>', $temp);	// Restore the DOCTYPE
 
 	return $temp;
+}
+
+
+/**
+ *	Clean a string from some undesirable HTML tags.
+ *  Note. Not as secured as dol_string_onlythesehtmltags().
+ *
+ *	@param	string	$stringtoclean			String to clean
+ *  @param	array	$allowed_attributes		Array of tags not allowed
+ *	@return string	    					String cleaned
+ *
+ * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
+ */
+function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = array("allow", "allowfullscreen", "alt", "class", "contenteditable", "data-html", "frameborder", "height", "href", "id", "name", "src", "style", "target", "title", "width"))
+{
+	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
+		$stringtoclean = '<html><body>'.$stringtoclean.'</body></html>';
+
+		$dom = new DOMDocument();
+		$dom->loadHTML($stringtoclean, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+		if (is_object($dom)) {
+			for ($els = $dom->getElementsByTagname('*'), $i = $els->length - 1; $i >= 0; $i--) {
+				for ($attrs = $els->item($i)->attributes, $ii = $attrs->length - 1; $ii >= 0; $ii--) {
+					// Delete attribute if not into allowed_attributes
+					if (! empty($attrs->item($ii)->name) && ! in_array($attrs->item($ii)->name, $allowed_attributes)) {
+						$els->item($i)->removeAttribute($attrs->item($ii)->name);
+					}
+				}
+			}
+		}
+
+		$return = $dom->saveHTML();
+
+		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
+		$return = preg_replace('/^<html><body>/', '', $return);
+		$return = preg_replace('/<\/body><\/html>$/', '', $return);
+		return $return;
+	} else {
+		return $stringtoclean;
+	}
 }
 
 /**
@@ -6204,7 +6353,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  @param	string	$cleanalsosomestyles	Clean also some tags
  *	@return string	    					String cleaned
  *
- * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags()
+ * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_onlythesehtmlattributes()
  */
 function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags = array('textarea'), $cleanalsosomestyles = 0)
 {
@@ -6254,8 +6403,8 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		$text = strtr($text, $repTable);
 		if ($charset == 'UTF-8') {
 			$pattern = '/(<br[^>]*>)/Uu';
-		} // /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
-		else {
+		} else {
+			// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
 			$pattern = '/(<br[^>]*>)/U'; // /U is to have UNGREEDY regex to limit to one html tag.
 		}
 		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -6421,9 +6570,11 @@ function dol_string_is_good_iso($s, $clean = 0)
 		$ordchar = ord($s[$scursor]);
 		//print $scursor.'-'.$ordchar.'<br>';
 		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) {
-			$ok = 0; break;
+			$ok = 0;
+			break;
 		} elseif ($ordchar > 126 && $ordchar < 160) {
-			$ok = 0; break;
+			$ok = 0;
+			break;
 		} elseif ($clean) {
 			$out .= $s[$scursor];
 		}
@@ -6473,8 +6624,8 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 	$text = strtr($text, $repTable);
 	if ($charset == 'UTF-8') {
 		$pattern = '/(<br[^>]*>)/Uu';
-	} // /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
-	else {
+	} else {
+		// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
 		$pattern = '/(<br[^>]*>)/U'; // /U is to have UNGREEDY regex to limit to one html tag.
 	}
 	$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -7413,7 +7564,8 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 {
 	global $conf, $langs;
 
-	$ret = 0; $return = '';
+	$ret = 0;
+	$return = '';
 	$out = '';
 	$divstart = $divend = '';
 
@@ -7507,10 +7659,12 @@ function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'o
 	if (is_array($mesgarray)) {
 		foreach ($mesgarray as $val) {
 			if ($val && preg_match('/class="error"/i', $val)) {
-				$iserror++; break;
+				$iserror++;
+				break;
 			}
 			if ($val && preg_match('/class="warning"/i', $val)) {
-				$iswarning++; break;
+				$iswarning++;
+				break;
 			}
 		}
 	} elseif ($mesgstring && preg_match('/class="error"/i', $mesgstring)) {
@@ -8515,7 +8669,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	$j = 0;
 	foreach ($crits as $crit) {
 		$crit = trim($crit);
-		$i = 0; $i2 = 0;
+		$i = 0;
+		$i2 = 0;
 		$newres = '';
 		foreach ($fields as $field) {
 			if ($mode == 1) {
@@ -8595,7 +8750,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 						$tmpcrit = trim($tmpcrit);
 						$tmpcrit2 = $tmpcrit;
-						$tmpbefore = '%'; $tmpafter = '%';
+						$tmpbefore = '%';
+						$tmpafter = '%';
 						if (preg_match('/^[\^\$]/', $tmpcrit)) {
 							$tmpbefore = '';
 							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
@@ -8643,8 +8799,8 @@ function showDirectDownloadLink($object)
 	$url = $object->getLastMainDocLink($object->element);
 
 	if ($url) {
-		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
-		$out .= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
+		$out .= img_picto($langs->trans("PublicDownloadLinkdesc"), 'globe').' <span class="opacitymedium">'.$langs->trans("DirectDownloadLink").'</span><br>';
+		$out .= '<div class="urllink"><input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'"></div>';
 		$out .= ajax_autoselect("directdownloadlink", 0);
 	}
 	return $out;
@@ -8810,209 +8966,362 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 
 	// Plain text files
 	if (preg_match('/\.txt$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.rtx$/i', $tmpfile)) {
-		$mime = 'text/richtext'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/richtext';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.csv$/i', $tmpfile)) {
-		$mime = 'text/csv'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/csv';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.tsv$/i', $tmpfile)) {
-		$mime = 'text/tab-separated-values'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/tab-separated-values';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.(cf|conf|log)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.ini$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'ini'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'ini';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.md$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'md'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'md';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.css$/i', $tmpfile)) {
-		$mime = 'text/css'; $imgmime = 'css.png'; $srclang = 'css'; $famime = 'file-text-o';
+		$mime = 'text/css';
+		$imgmime = 'css.png';
+		$srclang = 'css';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.lang$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'lang'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'lang';
+		$famime = 'file-text-o';
 	}
 	// Certificate files
 	if (preg_match('/\.(crt|cer|key|pub)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $famime = 'file-text-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$famime = 'file-text-o';
 	}
 	// XML based (HTML/XML/XAML)
 	if (preg_match('/\.(html|htm|shtml)$/i', $tmpfile)) {
-		$mime = 'text/html'; $imgmime = 'html.png'; $srclang = 'html'; $famime = 'file-text-o';
+		$mime = 'text/html';
+		$imgmime = 'html.png';
+		$srclang = 'html';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.(xml|xhtml)$/i', $tmpfile)) {
-		$mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xml'; $famime = 'file-text-o';
+		$mime = 'text/xml';
+		$imgmime = 'other.png';
+		$srclang = 'xml';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.xaml$/i', $tmpfile)) {
-		$mime = 'text/xml'; $imgmime = 'other.png'; $srclang = 'xaml'; $famime = 'file-text-o';
+		$mime = 'text/xml';
+		$imgmime = 'other.png';
+		$srclang = 'xaml';
+		$famime = 'file-text-o';
 	}
 	// Languages
 	if (preg_match('/\.bas$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'bas'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'bas';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(c)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'c'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'c';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(cpp)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cpp'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'cpp';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.cs$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'cs'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'cs';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(h)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'h'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'h';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(java|jsp)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'java'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'java';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.php([0-9]{1})?$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'php.png';
+		$srclang = 'php';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.phtml$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'php.png'; $srclang = 'php'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'php.png';
+		$srclang = 'php';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.(pl|pm)$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'pl.png'; $srclang = 'perl'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'pl.png';
+		$srclang = 'perl';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.sql$/i', $tmpfile)) {
-		$mime = 'text/plain'; $imgmime = 'text.png'; $srclang = 'sql'; $famime = 'file-code-o';
+		$mime = 'text/plain';
+		$imgmime = 'text.png';
+		$srclang = 'sql';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.js$/i', $tmpfile)) {
-		$mime = 'text/x-javascript'; $imgmime = 'jscript.png'; $srclang = 'js'; $famime = 'file-code-o';
+		$mime = 'text/x-javascript';
+		$imgmime = 'jscript.png';
+		$srclang = 'js';
+		$famime = 'file-code-o';
 	}
 	// Open office
 	if (preg_match('/\.odp$/i', $tmpfile)) {
-		$mime = 'application/vnd.oasis.opendocument.presentation'; $imgmime = 'ooffice.png'; $famime = 'file-powerpoint-o';
+		$mime = 'application/vnd.oasis.opendocument.presentation';
+		$imgmime = 'ooffice.png';
+		$famime = 'file-powerpoint-o';
 	}
 	if (preg_match('/\.ods$/i', $tmpfile)) {
-		$mime = 'application/vnd.oasis.opendocument.spreadsheet'; $imgmime = 'ooffice.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.oasis.opendocument.spreadsheet';
+		$imgmime = 'ooffice.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.odt$/i', $tmpfile)) {
-		$mime = 'application/vnd.oasis.opendocument.text'; $imgmime = 'ooffice.png'; $famime = 'file-word-o';
+		$mime = 'application/vnd.oasis.opendocument.text';
+		$imgmime = 'ooffice.png';
+		$famime = 'file-word-o';
 	}
 	// MS Office
 	if (preg_match('/\.mdb$/i', $tmpfile)) {
-		$mime = 'application/msaccess'; $imgmime = 'mdb.png'; $famime = 'file-o';
+		$mime = 'application/msaccess';
+		$imgmime = 'mdb.png';
+		$famime = 'file-o';
 	}
 	if (preg_match('/\.doc(x|m)?$/i', $tmpfile)) {
-		$mime = 'application/msword'; $imgmime = 'doc.png'; $famime = 'file-word-o';
+		$mime = 'application/msword';
+		$imgmime = 'doc.png';
+		$famime = 'file-word-o';
 	}
 	if (preg_match('/\.dot(x|m)?$/i', $tmpfile)) {
-		$mime = 'application/msword'; $imgmime = 'doc.png'; $famime = 'file-word-o';
+		$mime = 'application/msword';
+		$imgmime = 'doc.png';
+		$famime = 'file-word-o';
 	}
 	if (preg_match('/\.xlt(x)?$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-excel'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.ms-excel';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.xla(m)?$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-excel'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.ms-excel';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.xls$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-excel'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.ms-excel';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.xls(b|m|x)$/i', $tmpfile)) {
-		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; $imgmime = 'xls.png'; $famime = 'file-excel-o';
+		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+		$imgmime = 'xls.png';
+		$famime = 'file-excel-o';
 	}
 	if (preg_match('/\.pps(m|x)?$/i', $tmpfile)) {
-		$mime = 'application/vnd.ms-powerpoint'; $imgmime = 'ppt.png'; $famime = 'file-powerpoint-o';
+		$mime = 'application/vnd.ms-powerpoint';
+		$imgmime = 'ppt.png';
+		$famime = 'file-powerpoint-o';
 	}
 	if (preg_match('/\.ppt(m|x)?$/i', $tmpfile)) {
-		$mime = 'application/x-mspowerpoint'; $imgmime = 'ppt.png'; $famime = 'file-powerpoint-o';
+		$mime = 'application/x-mspowerpoint';
+		$imgmime = 'ppt.png';
+		$famime = 'file-powerpoint-o';
 	}
 	// Other
 	if (preg_match('/\.pdf$/i', $tmpfile)) {
-		$mime = 'application/pdf'; $imgmime = 'pdf.png'; $famime = 'file-pdf-o';
+		$mime = 'application/pdf';
+		$imgmime = 'pdf.png';
+		$famime = 'file-pdf-o';
 	}
 	// Scripts
 	if (preg_match('/\.bat$/i', $tmpfile)) {
-		$mime = 'text/x-bat'; $imgmime = 'script.png'; $srclang = 'dos'; $famime = 'file-code-o';
+		$mime = 'text/x-bat';
+		$imgmime = 'script.png';
+		$srclang = 'dos';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.sh$/i', $tmpfile)) {
-		$mime = 'text/x-sh'; $imgmime = 'script.png'; $srclang = 'bash'; $famime = 'file-code-o';
+		$mime = 'text/x-sh';
+		$imgmime = 'script.png';
+		$srclang = 'bash';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.ksh$/i', $tmpfile)) {
-		$mime = 'text/x-ksh'; $imgmime = 'script.png'; $srclang = 'bash'; $famime = 'file-code-o';
+		$mime = 'text/x-ksh';
+		$imgmime = 'script.png';
+		$srclang = 'bash';
+		$famime = 'file-code-o';
 	}
 	if (preg_match('/\.bash$/i', $tmpfile)) {
-		$mime = 'text/x-bash'; $imgmime = 'script.png'; $srclang = 'bash'; $famime = 'file-code-o';
+		$mime = 'text/x-bash';
+		$imgmime = 'script.png';
+		$srclang = 'bash';
+		$famime = 'file-code-o';
 	}
 	// Images
 	if (preg_match('/\.ico$/i', $tmpfile)) {
-		$mime = 'image/x-icon'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/x-icon';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.(jpg|jpeg)$/i', $tmpfile)) {
-		$mime = 'image/jpeg'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/jpeg';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.png$/i', $tmpfile)) {
-		$mime = 'image/png'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/png';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.gif$/i', $tmpfile)) {
-		$mime = 'image/gif'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/gif';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.bmp$/i', $tmpfile)) {
-		$mime = 'image/bmp'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/bmp';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.(tif|tiff)$/i', $tmpfile)) {
-		$mime = 'image/tiff'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/tiff';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.svg$/i', $tmpfile)) {
-		$mime = 'image/svg+xml'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/svg+xml';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	if (preg_match('/\.webp$/i', $tmpfile)) {
-		$mime = 'image/webp'; $imgmime = 'image.png'; $famime = 'file-image-o';
+		$mime = 'image/webp';
+		$imgmime = 'image.png';
+		$famime = 'file-image-o';
 	}
 	// Calendar
 	if (preg_match('/\.vcs$/i', $tmpfile)) {
-		$mime = 'text/calendar'; $imgmime = 'other.png'; $famime = 'file-text-o';
+		$mime = 'text/calendar';
+		$imgmime = 'other.png';
+		$famime = 'file-text-o';
 	}
 	if (preg_match('/\.ics$/i', $tmpfile)) {
-		$mime = 'text/calendar'; $imgmime = 'other.png'; $famime = 'file-text-o';
+		$mime = 'text/calendar';
+		$imgmime = 'other.png';
+		$famime = 'file-text-o';
 	}
 	// Other
 	if (preg_match('/\.torrent$/i', $tmpfile)) {
-		$mime = 'application/x-bittorrent'; $imgmime = 'other.png'; $famime = 'file-o';
+		$mime = 'application/x-bittorrent';
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	}
 	// Audio
 	if (preg_match('/\.(mp3|ogg|au|wav|wma|mid)$/i', $tmpfile)) {
-		$mime = 'audio'; $imgmime = 'audio.png'; $famime = 'file-audio-o';
+		$mime = 'audio';
+		$imgmime = 'audio.png';
+		$famime = 'file-audio-o';
 	}
 	// Video
+	if (preg_match('/\.mp4$/i', $tmpfile)) {
+		$mime = 'video/mp4';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
+	}
 	if (preg_match('/\.ogv$/i', $tmpfile)) {
-		$mime = 'video/ogg'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/ogg';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.webm$/i', $tmpfile)) {
-		$mime = 'video/webm'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/webm';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.avi$/i', $tmpfile)) {
-		$mime = 'video/x-msvideo'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/x-msvideo';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.divx$/i', $tmpfile)) {
-		$mime = 'video/divx'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/divx';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.xvid$/i', $tmpfile)) {
-		$mime = 'video/xvid'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video/xvid';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	if (preg_match('/\.(wmv|mpg|mpeg)$/i', $tmpfile)) {
-		$mime = 'video'; $imgmime = 'video.png'; $famime = 'file-video-o';
+		$mime = 'video';
+		$imgmime = 'video.png';
+		$famime = 'file-video-o';
 	}
 	// Archive
-	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh)$/i', $tmpfile)) {
-		$mime = 'archive'; $imgmime = 'archive.png'; $famime = 'file-archive-o';
+	if (preg_match('/\.(zip|rar|gz|tgz|z|cab|bz2|7z|tar|lzh|zst)$/i', $tmpfile)) {
+		$mime = 'archive';
+		$imgmime = 'archive.png';
+		$famime = 'file-archive-o';
 	}    // application/xxx where zzz is zip, ...
 	// Exe
 	if (preg_match('/\.(exe|com)$/i', $tmpfile)) {
-		$mime = 'application/octet-stream'; $imgmime = 'other.png'; $famime = 'file-o';
+		$mime = 'application/octet-stream';
+		$imgmime = 'other.png';
+		$famime = 'file-o';
 	}
 	// Lib
 	if (preg_match('/\.(dll|lib|o|so|a)$/i', $tmpfile)) {
-		$mime = 'library'; $imgmime = 'library.png'; $famime = 'file-o';
+		$mime = 'library';
+		$imgmime = 'library.png';
+		$famime = 'file-o';
 	}
 	// Err
 	if (preg_match('/\.err$/i', $tmpfile)) {
-		$mime = 'error'; $imgmime = 'error.png'; $famime = 'file-text-o';
+		$mime = 'error';
+		$imgmime = 'error.png';
+		$famime = 'file-text-o';
 	}
 
 	// Return string
@@ -9129,7 +9438,8 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 		$found = 0;
 		foreach ($tmploops as $tmploop) {
 			if (in_array($tmploop, $listofmodulesforexternal)) {
-				$found++; break;
+				$found++;
+				break;
 			}
 		}
 		if (!$found) {
@@ -9251,8 +9561,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
 	} elseif ($displayMode == 1) {
 		$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
-	} // Use status with images (for backward compatibility)
-	elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
+	} elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
+		// Use status with images (for backward compatibility)
 		$return = '';
 		$htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 		$htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
@@ -9299,8 +9609,8 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} else { // $displayMode >= 6
 			$return = $htmlLabel.' '.$htmlImg;
 		}
-	} // Use new badge
-	elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
+	} elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
+		// Use new badge
 		$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
@@ -9857,17 +10167,15 @@ function readfileLowMemory($fullpath_original_file_osencoded, $method = -1)
 	// Solution 0
 	if ($method == 0) {
 		readfile($fullpath_original_file_osencoded);
-	}
-	// Solution 1
-	elseif ($method == 1) {
+	} elseif ($method == 1) {
+		// Solution 1
 		$handle = fopen($fullpath_original_file_osencoded, "rb");
 		while (!feof($handle)) {
 			print fread($handle, 8192);
 		}
 		fclose($handle);
-	}
-	// Solution 2
-	elseif ($method == 2) {
+	} elseif ($method == 2) {
+		// Solution 2
 		$handle1 = fopen($fullpath_original_file_osencoded, "rb");
 		$handle2 = fopen("php://output", "wb");
 		stream_copy_to_stream($handle1, $handle2);

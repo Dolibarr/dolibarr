@@ -123,7 +123,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 			}
 		}
 	} else {
-		// Echec transfert (fichier depassant la limite ?)
+		// Transfer failure (file exceeding the limit ?)
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
 	}

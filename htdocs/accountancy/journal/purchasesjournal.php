@@ -57,17 +57,25 @@ if ($in_bookkeeping == '') {
 
 $now = dol_now();
 
+$hookmanager->initHooks(array('purchasesjournal'));
+$parameters = array();
+
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
-$hookmanager->initHooks(array('purchasesjournal'));
-$parameters = array();
 
 /*
  * Actions
  */
+
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 
 $accountingaccount = new AccountingAccount($db);
@@ -727,9 +735,11 @@ if (empty($action) || $action == 'view') {
 
 	// Button to write into Ledger
 	if (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
-		print '<br>';
-		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
+		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
+		print $desc;
+		print '</div>';
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {

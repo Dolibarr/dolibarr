@@ -33,7 +33,7 @@ global $langs;
 
 $err = 0;
 
-$setuplang = GETPOST("selectlang", '', 3) ?GETPOST("selectlang", '', 3) : (isset($_GET["lang"]) ? $_GET["lang"] : 'auto');
+$setuplang = GETPOST("selectlang", '', 3) ? GETPOST("selectlang", '', 3) : (GETPOST('lang', 'alpha', 1) ? GETPOST('lang', 'alpha', 1) : 'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("install", "errors"));

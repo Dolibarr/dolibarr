@@ -82,15 +82,8 @@ $permissionnote = $user->rights->workstation->workstation->write; // Used by the
 $permissiondellink = $user->rights->workstation->workstation->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->workstation->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'workstation', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-
-if (!$permissiontoread) {
-	accessforbidden();
-}
+// Security check
+restrictedArea($user, $object->element, $object->id, '', 'workstation');
 
 
 /*
@@ -160,7 +153,9 @@ $formfile = new FormFile($db);
 $formresource = new FormResource($db);
 
 $title = $langs->trans("Workstation");
-$help_url = '';
+
+$help_url = 'EN:Module_Workstation';
+
 llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
@@ -206,9 +201,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
@@ -220,7 +212,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
-	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true);
+	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'minwidth200');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
@@ -228,7 +220,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $object->entity, true, 0, '', true);
+	print $formresource->select_resource_list($resources, 'resources', '', '', 0, '', '', $object->entity, true, 0, 'minwidth200', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -344,7 +336,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/workstation/workstation_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/workstation/workstation_list.php', 1).'?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -467,16 +459,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
 				}
 			}
 
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			if ($permissiontodelete) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
 			}

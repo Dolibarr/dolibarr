@@ -91,7 +91,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 
 $sql .= " GROUP BY tf.code, tf.label";
@@ -180,11 +180,11 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 $sql .= ' AND d.entity IN ('.getEntity('expensereport').')';
 if (!$user->rights->societe->client->voir && !$user->socid) {
-	$sql .= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND d.fk_user_author = ".$socid;

@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -80,16 +80,12 @@ $id = GETPOST('id', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
-}
 
 $error = GETPOST("error");
 $donotclearsession = GETPOST('donotclearsession') ?GETPOST('donotclearsession') : 0;
 
-$cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
+$cactioncomm = new CActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
@@ -131,6 +127,11 @@ if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 }
 
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+
+$result = restrictedArea($user, 'agenda', $object->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*
@@ -1072,7 +1073,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
-	$percent = -1;
+	$percent = GETPOST('complete')!=='' ? GETPOST('complete') : -1;
 	if (GETPOSTISSET('status')) {
 		$percent = GETPOST('status');
 	} elseif (GETPOSTISSET('percentage')) {
@@ -1180,11 +1181,12 @@ if ($action == 'create') {
 
 		$projectid = GETPOST('projectid', 'int');
 
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container" >';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container">';
 		print img_picto('', 'project', 'class="paddingrightonly"');
 		print $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
 
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create&amp;backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">';
+		print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
 		$url = dol_buildpath('comm/action/card.php', 2).$urloption;
 
@@ -1895,7 +1897,8 @@ if ($id > 0) {
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
-			print $langs->trans($object->type).'</td></tr>';
+			print $langs->trans("Action".$object->type_code);
+			print '</td></tr>';
 		}
 
 		// Full day event
@@ -2120,9 +2123,8 @@ if ($id > 0) {
 
 
 	/*
-	 * Barre d'actions
+	 * Action bar
 	 */
-
 	print '<div class="tabsAction">';
 
 	$parameters = array();
@@ -2160,7 +2162,7 @@ if ($id > 0) {
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-			 * Documents generes
+			 * Generated documents
 			 */
 
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;

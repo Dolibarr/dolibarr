@@ -58,13 +58,21 @@ if ($in_bookkeeping == '') {
 $now = dol_now();
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
+
 $accountingaccount = new AccountingAccount($db);
 
 // Get informations of journal
@@ -498,8 +506,11 @@ if (empty($action) || $action == 'view') {
 
 	// Button to write into Ledger
 	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-		print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
+		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
+		print $desc;
+		print '</div>';
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 

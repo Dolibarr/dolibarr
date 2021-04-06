@@ -23,8 +23,10 @@
  */
 
 // Define size of logo small and mini
-$maxwidthsmall = 480; $maxheightsmall = 270; // Near 16/9eme
-$maxwidthmini = 128; $maxheightmini = 72; // 16/9eme
+$maxwidthsmall = 480;
+$maxheightsmall = 270; // Near 16/9eme
+$maxwidthmini = 128;
+$maxheightmini = 72; // 16/9eme
 $quality = 80;
 
 
@@ -95,7 +97,7 @@ function image_format_supported($file, $acceptsvg = 0)
 
 
 /**
- *    	Return size of image file on disk (Supported extensions are gif, jpg, png and bmp)
+ *    	Return size of image file on disk (Supported extensions are gif, jpg, png, bmp and webp)
  *
  * 		@param	string	$file		Full path name of file
  * 		@param	bool	$url		Image with url (true or false)
@@ -125,17 +127,19 @@ function dol_getImageSize($file, $url = false)
 
 
 /**
- *    	Resize or crop an image file (Supported extensions are gif, jpg, png and bmp)
+ *  Resize or crop an image file (Supported extensions are gif, jpg, png, bmp and webp)
  *
- *    	@param	string	$file          	Path of file to resize/crop
- * 		@param	int		$mode			0=Resize, 1=Crop
- *    	@param  int		$newWidth      	Largeur maximum que dois faire l'image destination (0=keep ratio)
- *    	@param  int		$newHeight     	Hauteur maximum que dois faire l'image destination (0=keep ratio)
- * 		@param	int		$src_x			Position of croping image in source image (not use if mode=0)
- * 		@param	int		$src_y			Position of croping image in source image (not use if mode=0)
- *		@return	string                  File name if OK, error message if KO
+ *  @param	string	$file          	Path of source file to resize/crop
+ * 	@param	int		$mode			0=Resize, 1=Crop
+ *  @param  int		$newWidth      	Largeur maximum que dois faire l'image destination (0=keep ratio)
+ *  @param  int		$newHeight     	Hauteur maximum que dois faire l'image destination (0=keep ratio)
+ * 	@param	int		$src_x			Position of croping image in source image (not use if mode=0)
+ * 	@param	int		$src_y			Position of croping image in source image (not use if mode=0)
+ * 	@param	string	$filetowrite	Path of file to write (overwrite source file if not provided)
+ *	@return	string                  File name if OK, error message if KO
+ *	@see dol_convert_file()
  */
-function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0)
+function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0, $filetowrite = '')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -157,8 +161,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		return 'This filename '.$file.' does not seem to be an image filename.';
 	} elseif (!is_numeric($newWidth) && !is_numeric($newHeight)) {
 		return 'Wrong value for parameter newWidth or newHeight';
-	} elseif ($mode == 0 && $newWidth <= 0 && $newHeight <= 0) {
-		return 'At least newHeight or newWidth must be defined for resizing';
+	} elseif ($mode == 0 && $newWidth <= 0 && $newHeight <= 0 && (empty($filetowrite) || $filetowrite == $file)) {
+		return 'At least newHeight or newWidth must be defined for resizing, or a target filename must be set to convert';
 	} elseif ($mode == 1 && ($newWidth <= 0 || $newHeight <= 0)) {
 		return 'Both newHeight or newWidth must be defined for croping';
 	}
@@ -170,6 +174,11 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
 	if ($mode == 0) {	// If resize, we check parameters
+		if (!empty($filetowrite) && $filetowrite != $file && $newWidth <= 0 && $newHeight <= 0) {
+			$newWidth = $imgWidth;
+			$newHeight = $imgHeight;
+		}
+
 		if ($newWidth <= 0) {
 			$newWidth = intval(($newHeight / $imgHeight) * $imgWidth); // Keep ratio
 		}
@@ -278,34 +287,36 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 	imagecopyresampled($imgThumb, $img, 0, 0, $src_x, $src_y, $newWidth, $newHeight, ($mode == 0 ? $imgWidth : $newWidth), ($mode == 0 ? $imgHeight : $newHeight)); // Insere l'image de base redimensionnee
 
-	$imgThumbName = $file;
+	$imgTargetName = ($filetowrite ? $filetowrite : $file);
 
 	// Check if permission are ok
-	//$fp = fopen($imgThumbName, "w");
+	//$fp = fopen($imgTargetName, "w");
 	//fclose($fp);
 
-	// Create image on disk
-	switch ($infoImg[2]) {
-		case 1:	// Gif
-			imagegif($imgThumb, $imgThumbName);
+	$newExt = strtolower(pathinfo($imgTargetName, PATHINFO_EXTENSION));
+
+	// Create image on disk (overwrite file if exists)
+	switch ($newExt) {
+		case 'gif':	// Gif
+			imagegif($imgThumb, $imgTargetName);
 			break;
-		case 2:	// Jpg
-			imagejpeg($imgThumb, $imgThumbName, $newquality);
+		case 'jpg':	// Jpg
+			imagejpeg($imgThumb, $imgTargetName, $newquality);
 			break;
-		case 3:	// Png
-			imagepng($imgThumb, $imgThumbName, $newquality);
+		case 'png':	// Png
+			imagepng($imgThumb, $imgTargetName, $newquality);
 			break;
-		case 4:	// Bmp
-			imagewbmp($imgThumb, $imgThumbName);
+		case 'bmp':	// Bmp
+			imagewbmp($imgThumb, $imgTargetName);
 			break;
-		case 18: // Webp
-			imagewebp($imgThumb, $imgThumbName, $newquality);
+		case 'webp': // Webp
+			imagewebp($imgThumb, $imgTargetName, $newquality);
 			break;
 	}
 
 	// Set permissions on file
 	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
+		@chmod($imgTargetName, octdec($conf->global->MAIN_UMASK));
 	}
 
 	// Free memory. This does not delete image.
@@ -314,7 +325,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 
 	clearstatcache(); // File was replaced by a modified one, so we clear file caches.
 
-	return $imgThumbName;
+	return $imgTargetName;
 }
 
 

@@ -55,6 +55,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	 */
 	public function __construct()
 	{
+		global $conf;
 		if (!empty($conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX)) {
 			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_MARS_FORCE_PREFIX;
 		}
@@ -95,7 +96,8 @@ class mod_facture_mars extends ModeleNumRefFactures
 		$langs->load("bills");
 
 		// Check invoice num
-		$fayymm = ''; $max = '';
+		$fayymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefixinvoice) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED) as max"; // This is standard SQL
@@ -107,7 +109,8 @@ class mod_facture_mars extends ModeleNumRefFactures
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$fayymm = substr($row[0], 0, 6); $max = $row[0];
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($fayymm && !preg_match('/'.$this->prefixinvoice.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {
@@ -129,7 +132,8 @@ class mod_facture_mars extends ModeleNumRefFactures
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$fayymm = substr($row[0], 0, 6); $max = $row[0];
+				$fayymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($fayymm && !preg_match('/'.$this->prefixcreditnote.'[0-9][0-9][0-9][0-9]/i', $fayymm)) {

@@ -59,7 +59,7 @@ $title = $langs->trans("MembersStatisticsByProperties");
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
-dol_mkdir($dir);
+//dol_mkdir($dir);
 
 $data = array();
 
@@ -82,8 +82,12 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		if ($obj->code == 'phy') $foundphy++;
-		if ($obj->code == 'mor') $foundmor++;
+		if ($obj->code == 'phy') {
+			$foundphy++;
+		}
+		if ($obj->code == 'mor') {
+			$foundmor++;
+		}
 
 		$data[$obj->code] = array('label'=>$obj->code, 'nb'=>$obj->nb, 'nbsubscriptions'=>$obj->nbsubscriptions, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
 
@@ -113,8 +117,12 @@ if ($resql) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($resql);
 
-		if ($obj->code == 'phy') $foundphy++;
-		if ($obj->code == 'mor') $foundmor++;
+		if ($obj->code == 'phy') {
+			$foundphy++;
+		}
+		if ($obj->code == 'mor') {
+			$foundmor++;
+		}
 
 		$data[$obj->code]['nbactive'] = $obj->nb;
 
@@ -126,7 +134,7 @@ if ($resql) {
 }
 
 
-$head = member_stats_prepare_head($adh);
+$head = member_stats_prepare_head($memberstatic);
 
 print dol_get_fiche_head($head, 'statsbyproperties', '', -1, '');
 
@@ -152,12 +160,16 @@ print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
 print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
-if (!$foundphy) $data[] = array('label'=>'phy', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
-if (!$foundmor) $data[] = array('label'=>'mor', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+if (!$foundphy) {
+	$data[] = array('label'=>'phy', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+}
+if (!$foundmor) {
+	$data[] = array('label'=>'mor', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+}
 
 foreach ($data as $val) {
 	$nb = $val['nb'];
-	$nbsubscriptions = $val['nbsubscriptions'];
+	$nbsubscriptions = isset($val['nbsubscriptions']) ? $val['nbsubscriptions'] : 0;
 	$nbactive = $val['nbactive'];
 
 	print '<tr class="oddeven">';

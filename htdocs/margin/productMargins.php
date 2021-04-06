@@ -195,13 +195,13 @@ if (!empty($TSelectedCats)) {
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
+$sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= " AND d.fk_facture = f.rowid";
 if ($id > 0) {
 	$sql .= " AND d.fk_product =".$id;
 }
 if (!empty($TSelectedCats)) {
-	$sql .= ' AND cp.fk_categorie IN ('.implode(',', $TSelectedCats).')';
+	$sql .= ' AND cp.fk_categorie IN ('.$db->sanitize(implode(',', $TSelectedCats)).')';
 }
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -210,7 +210,9 @@ if (!empty($enddate)) {
 	$sql .= " AND f.datef <= '".$db->idate($enddate)."'";
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) {
+// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($id > 0) {
@@ -308,9 +310,9 @@ if ($result) {
 				//print "<td>".$product_static->getNomUrl(1)."</td>\n";
 			}
 			print '<td class="center">'.$qty.'</td>';
-			print '<td class="nowrap right">'.price(price2num($pv, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num($pa, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num($marge, 'MT')).'</td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($pv, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($pa, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num($marge, 'MT')).'</span></td>';
 			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 			}

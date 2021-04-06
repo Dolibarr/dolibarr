@@ -275,8 +275,10 @@ class FormAccounting extends Form
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
-					$out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
-					$out .= ' ('.$obj->range_account.')';
+					$out .= '>';
+					$titletoshow = dol_string_nohtmltag(($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).' ('.$obj->range_account.')');
+					$out .= dol_escape_htmltag($titletoshow);
+					$out .= '</option>';
 					$i++;
 				}
 				$out .= '</select>';
@@ -330,17 +332,17 @@ class FormAccounting extends Form
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string   $selectid           Preselected id of accounting accounts (depends on $select_in)
-	 * @param string   $htmlname           Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
-	 * @param int      $showempty          1=Add an empty field, 2=Add an empty field+'None' field
-	 * @param array    $event              Event options
-	 * @param int      $select_in          0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
-	 * @param int      $select_out         Set value returned by select. 0=rowid (default), 1=account_number
-	 * @param string   $morecss            More css non HTML object
-	 * @param string   $usecache           Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @return string                      String with HTML select
+	 * @param string   		$selectid          Preselected id of accounting accounts (depends on $select_in)
+	 * @param string   		$htmlname          Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
+	 * @param int|string    $showempty         1=Add an empty field, 2=Add an empty field+'None' field
+	 * @param array    		$event             Event options
+	 * @param int      		$select_in         0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
+	 * @param int      		$select_out        Set value returned by select. 0=rowid (default), 1=account_number
+	 * @param string   		$morecss           More css non HTML object
+	 * @param string   		$usecache          Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @return string       	               String with HTML select
 	 */
-	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '')
+	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -364,7 +366,7 @@ class FormAccounting extends Form
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-			$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+			$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 			$sql .= " AND aa.active = 1";
 			$sql .= " AND aa.entity=".$conf->entity;
 			$sql .= " ORDER BY aa.account_number";
@@ -378,36 +380,44 @@ class FormAccounting extends Form
 				return -1;
 			}
 
-			$selected = $selectid; // selectid can be -1, 0, 123
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (empty($obj->labelshort)) {
-					$labeltoshow = $obj->label;
-				} else {
-					$labeltoshow = $obj->labelshort;
-				}
+			$num_rows = $this->db->num_rows($resql);
 
-				$label = length_accountg($obj->account_number).' - '.$labeltoshow;
-				$label = dol_trunc($label, $trunclength);
+			if ($num_rows == 0 && (empty($conf->global->CHARTOFACCOUNTS) || $conf->global->CHARTOFACCOUNTS < 0)) {
+				$langs->load("errors");
+				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
+			} else {
+				$selected = $selectid; // selectid can be -1, 0, 123
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (empty($obj->labelshort)) {
+						$labeltoshow = $obj->label;
+					} else {
+						$labeltoshow = $obj->labelshort;
+					}
 
-				$select_value_in = $obj->rowid;
-				$select_value_out = $obj->rowid;
+					$label = length_accountg($obj->account_number).' - '.$labeltoshow;
+					$label = dol_trunc($label, $trunclength);
 
-				// Try to guess if we have found default value
-				if ($select_in == 1) {
-					$select_value_in = $obj->account_number;
-				}
-				if ($select_out == 1) {
-					$select_value_out = $obj->account_number;
-				}
-				// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
-				// Because same account_number can be share between different accounting_system and do have the same meaning
-				if ($selectid != '' && $selectid == $select_value_in) {
-					//var_dump("Found ".$selectid." ".$select_value_in);
-					$selected = $select_value_out;
-				}
+					$select_value_in = $obj->rowid;
+					$select_value_out = $obj->rowid;
 
-				$options[$select_value_out] = $label;
+					// Try to guess if we have found default value
+					if ($select_in == 1) {
+						$select_value_in = $obj->account_number;
+					}
+					if ($select_out == 1) {
+						$select_value_out = $obj->account_number;
+					}
+					// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
+					// Because same account_number can be share between different accounting_system and do have the same meaning
+					if ($selectid != '' && $selectid == $select_value_in) {
+						//var_dump("Found ".$selectid." ".$select_value_in);
+						$selected = $select_value_out;
+					}
+
+					$options[$select_value_out] = $label;
+				}
 			}
+
 			$this->db->free($resql);
 
 			if ($usecache) {
@@ -416,7 +426,7 @@ class FormAccounting extends Form
 			}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty > 0 ? 1 : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}

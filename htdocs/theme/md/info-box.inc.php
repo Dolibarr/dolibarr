@@ -375,7 +375,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	content: "\f571";
 }
 .fa-dol-project:before {
-	content: "\f0e8";
+	content: "\f542";
 }
 .fa-dol-commande:before,
 .fa-dol-order_supplier:before {

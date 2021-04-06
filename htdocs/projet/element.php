@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ if (!empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 }
 if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -132,6 +133,9 @@ if (!empty($conf->salaries->enabled)) {
 }
 if (!empty($conf->mrp->enabled)) {
 	$langs->load("mrp");
+}
+if (!empty($conf->eventorganization->enabled)) {
+	$langs->load("eventorganization");
 }
 
 $id = GETPOST('id', 'int');
@@ -218,7 +222,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->rights->projet->all->lire) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = " te.rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = " te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -231,29 +235,36 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Usage
-print '<tr><td class="tdtop">';
-print $langs->trans("Usage");
-print '</td>';
-print '<td>';
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-	$htmltext = $langs->trans("ProjectFollowOpportunity");
-	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-	print '<br>';
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->eventorganization->enabled)) {
+		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+	}
+	print '</td></tr>';
 }
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-	$htmltext = $langs->trans("ProjectFollowTasks");
-	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-	print '<br>';
-}
-if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-	$htmltext = $langs->trans("ProjectBillTimeDescription");
-	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-	print '<br>';
-}
-print '</td></tr>';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -564,7 +575,7 @@ $listofreferent = array(
 'salaries'=>array(
 	'name'=>"Salaries",
 	'title'=>"ListSalariesAssociatedProject",
-	'class'=>'PaymentSalary',
+	'class'=>'Salary',
 	'table'=>'payment_salary',
 	'datefieldname'=>'datev',
 	'margin'=>'minus',

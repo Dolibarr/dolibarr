@@ -26,7 +26,7 @@
  *	\brief      Module to create projects/tasks/gantt diagram. Projects can them be affected to tasks.
  *  \file       htdocs/core/modules/modProjet.class.php
  *	\ingroup    projet
- *	\brief      Fichier de description et activation du module Projet
+ *	\brief      Description and activation file for the module project
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -253,13 +253,17 @@ class modProjet extends DolibarrModules
 		// Add fields for project
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array());
 		// Add extra fields for project
-		$keyforselect = 'projet'; $keyforelement = 'project'; $keyforaliasextra = 'extra';
+		$keyforselect = 'projet';
+		$keyforelement = 'project';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// Add fields for tasks
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pt.rowid'=>'TaskId', 'pt.ref'=>'RefTask', 'pt.label'=>'LabelTask', 'pt.dateo'=>"TaskDateStart", 'pt.datee'=>"TaskDateEnd", 'pt.duration_effective'=>"DurationEffective", 'pt.planned_workload'=>"PlannedWorkload", 'pt.progress'=>"Progress", 'pt.description'=>"TaskDescription"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pt.rowid'=>'projecttask', 'pt.ref'=>'projecttask', 'pt.label'=>'projecttask', 'pt.dateo'=>"projecttask", 'pt.datee'=>"projecttask", 'pt.duration_effective'=>"projecttask", 'pt.planned_workload'=>"projecttask", 'pt.progress'=>"projecttask", 'pt.description'=>"projecttask"));
 		// Add extra fields for task
-		$keyforselect = 'projet_task'; $keyforelement = 'projecttask'; $keyforaliasextra = 'extra2';
+		$keyforselect = 'projet_task';
+		$keyforelement = 'projecttask';
+		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.task_date'=>'TaskTimeDate', 'ptt.task_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));

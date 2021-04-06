@@ -30,6 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies'));
 
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+
 $id = GETPOST('id', 'int');
 $_socid = GETPOST("id", 'int');
 // Security check
@@ -37,15 +40,23 @@ if ($user->socid > 0) {
 	$_socid = $user->socid;
 }
 
+// Security check
+$socid = GETPOST("socid", 'int');
+if ($user->socid > 0) {
+	$action = '';
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'setpricelevel') {
+if ($action == 'setpricelevel' && $user->rights->societe->creer) {
 	$soc = new Societe($db);
 	$soc->fetch($id);
-	$soc->set_price_level($_POST["price_level"], $user);
+	$soc->setPriceLevel(GETPOST("price_level"), $user);
 
 	header("Location: multiprix.php?id=".$id);
 	exit;

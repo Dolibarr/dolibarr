@@ -275,9 +275,9 @@ class Productlot extends CommonObject
 		$sql .= " t.import_key";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($product_id > 0 && $batch != '') {
-			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".$product_id;
+			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".((int) $product_id);
 		} else {
-			$sql .= ' WHERE t.rowid = '.$id;
+			$sql .= ' WHERE t.rowid = '.((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -376,7 +376,7 @@ class Productlot extends CommonObject
 		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
 		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif) ? $this->fk_user_modif : "null").',';
 		$sql .= ' import_key = '.(isset($this->import_key) ? $this->import_key : "null");
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -446,7 +446,7 @@ class Productlot extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

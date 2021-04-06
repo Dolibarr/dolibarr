@@ -92,14 +92,6 @@ if ($id || $ref) {
 	$object->ref = $object->batch; // For document management ( it use $object->ref)
 }
 
-// Protection if external user
-if ($user->socid > 0) {
-	//accessforbidden();
-}
-//$result = restrictedArea($user, 'mymodule', $id);
-
-
-
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
@@ -114,7 +106,21 @@ $usercandelete = $user->rights->produit->supprimer;
 
 $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
 
+$permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
+//$permissiontodelete = $usercandelete;
+
+// Security check
+if (empty($conf->productbatch->enabled)) {
+	accessforbidden('Module not enabled');
+}
+$socid = 0;
+if ($user->socid > 0) { // Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'productbatch');
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -133,18 +139,24 @@ if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/product/stock/productlot_list.php', 1);
 
 	if ($action == 'seteatby' && $user->rights->stock->creer) {
-		$newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editeatby';
+		} else {
+			$action = 'view';
 		}
 	}
 
 	if ($action == 'setsellby' && $user->rights->stock->creer) {
-		$newvalue = dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editsellby';
+		} else {
+			$action = 'view';
 		}
 	}
 
@@ -172,8 +184,9 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($error)
+		if ($error) {
 			$action = 'edit_extras';
+		}
 	}
 
 	// Action to add record
@@ -415,7 +428,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 
-	// Other attributes. Fields from hook formObjectOptions and Extrafields.
+	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
@@ -463,7 +476,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 
 if ($action != 'presend') {

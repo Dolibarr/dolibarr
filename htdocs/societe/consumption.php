@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +146,7 @@ if ($object->client) {
 		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 	}
 	print '</td></tr>';
-	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -182,7 +183,7 @@ if ($object->fournisseur) {
 		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 	}
 	print '</td></tr>';
-	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".$socid;
+	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".((int) $socid);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -228,7 +229,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$documentstatic = new Fichinter($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid"; // Must use left join to work also with option that disable usage of lines.
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
@@ -238,7 +239,7 @@ if ($type_element == 'invoice') { 	// Customer : show products from invoices
 	$documentstatic = new Facture($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture = f.rowid";
 	$where .= " AND f.entity IN (".getEntity('invoice').")";
 	$dateprint = 'f.datef';
@@ -250,7 +251,7 @@ if ($type_element == 'propal') {
 	$documentstatic = new Propal($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_propal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$datePrint = 'c.datep';
@@ -262,7 +263,7 @@ if ($type_element == 'order') {
 	$documentstatic = new Commande($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_commande';
@@ -274,7 +275,7 @@ if ($type_element == 'supplier_invoice') { 	// Supplier : Show products from inv
 	$documentstatic = new FactureFournisseur($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture_fourn = f.rowid";
 	$where .= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datef';
@@ -286,7 +287,7 @@ if ($type_element == 'supplier_proposal') {
 	$documentstatic = new SupplierProposal($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_supplier_proposal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
@@ -298,7 +299,7 @@ if ($type_element == 'supplier_order') { 	// Supplier : Show products from order
 	$documentstatic = new CommandeFournisseur($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
@@ -311,7 +312,7 @@ if ($type_element == 'contract') { 	// Order
 	$documentstaticline = new ContratLigne($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_contrat = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
@@ -472,6 +473,7 @@ if ($sql_select) {
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
 		$documentstatic->paye = $objp->paid;
+		$documentstatic->alreadypaid = $objp->paid;
 
 		if (is_object($documentstaticline)) {
 			$documentstaticline->statut = $objp->status;
@@ -487,6 +489,8 @@ if ($sql_select) {
 		print '<td class="center">';
 		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(5);
+		} elseif ($type_element == 'invoice') {
+			print $documentstatic->getLibStatut(5, $objp->paid);
 		} else {
 			print $documentstatic->getLibStatut(5);
 		}
@@ -496,7 +500,9 @@ if ($sql_select) {
 		print '<td class="tdoverflowmax300">';
 
 		// Define text, description and type
-		$text = ''; $description = ''; $type = 0;
+		$text = '';
+		$description = '';
+		$type = 0;
 
 		// Code to show product duplicated from commonobject->printObjectLine
 		if ($objp->fk_product > 0) {

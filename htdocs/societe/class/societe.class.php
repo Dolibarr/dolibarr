@@ -15,7 +15,7 @@
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -868,6 +868,7 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
+			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
 			$sql .= ", canvas";
 			$sql .= ", status";
@@ -882,6 +883,7 @@ class Societe extends CommonObject
 			$sql .= ", accountancy_code_sell";
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
+			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
 			$sql .= ", ".$this->status;
 			$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
@@ -958,7 +960,7 @@ class Societe extends CommonObject
 	 * @param 	array	$tags		Array of tag to affect to contact
 	 * @return 	int					<0 if KO, >0 if OK
 	 */
-	public function create_individual(User $user, $no_email, $tags = array())
+	public function create_individual(User $user, $no_email = 0, $tags = array())
 	{
 		global $conf;
 
@@ -1612,14 +1614,14 @@ class Societe extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON d.fk_region = r.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON d.fk_region = r.code_region ';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON s.fk_incoterms = i.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_remise as sr ON sr.rowid = (SELECT MAX(rowid) FROM '.MAIN_DB_PREFIX.'societe_remise WHERE fk_soc = s.rowid AND entity IN ('.getEntity('discount').'))';
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid) {
-			$sql .= ' AND s.rowid = '.$rowid;
+			$sql .= ' AND s.rowid = '.((int) $rowid);
 		}
 		if ($ref) {
 			$sql .= " AND s.nom = '".$this->db->escape($ref)."'";
@@ -1812,6 +1814,7 @@ class Societe extends CommonObject
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
 			$result = -3;
 		}
 
@@ -1904,7 +1907,7 @@ class Societe extends CommonObject
 						}
 					} else {
 						$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete;
-						$sql .= " WHERE fk_soc = ".$id;
+						$sql .= " WHERE fk_soc = ".((int) $id);
 						if (!$this->db->query($sql)) {
 							$error++;
 							$this->errors[] = $this->db->lasterror();
@@ -1927,7 +1930,7 @@ class Societe extends CommonObject
 			if (!$error) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
 				$sql .= " SET parent = NULL";
-				$sql .= " WHERE parent = ".$id;
+				$sql .= " WHERE parent = ".((int) $id);
 				if (!$this->db->query($sql)) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
@@ -1937,7 +1940,7 @@ class Societe extends CommonObject
 			// Remove third party
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
-				$sql .= " WHERE rowid = ".$id;
+				$sql .= " WHERE rowid = ".((int) $id);
 				if (!$this->db->query($sql)) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
@@ -1982,7 +1985,7 @@ class Societe extends CommonObject
 				$newclient = 3; //If prospect, we keep prospect tag
 			}
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET client = ".$newclient;
+			$sql .= " SET client = ".((int) $newclient);
 			$sql .= " WHERE rowid = ".$this->id;
 
 			$resql = $this->db->query($sql);
@@ -2269,7 +2272,6 @@ class Societe extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Set the price level
 	 *
@@ -2277,15 +2279,14 @@ class Societe extends CommonObject
 	 * @param 	User	$user			Use making change
 	 * @return	int						<0 if KO, >0 if OK
 	 */
-	public function set_price_level($price_level, User $user)
+	public function setPriceLevel($price_level, User $user)
 	{
-		// phpcs:enable
 		if ($this->id) {
 			$now = dol_now();
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET price_level = '".$this->db->escape($price_level)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET price_level = ".((int) $price_level);
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
@@ -2294,7 +2295,7 @@ class Societe extends CommonObject
 
 			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
 			$sql .= " (datec, fk_soc, price_level, fk_user_author)";
-			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($price_level)."', ".$user->id.")";
+			$sql .= " VALUES ('".$this->db->idate($now)."', ".$this->id.", ".((int) $price_level).", ".$user->id.")";
 
 			if (!$this->db->query($sql)) {
 				dol_print_error($this->db);
@@ -2323,7 +2324,7 @@ class Societe extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
-				$sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
+				$sql .= " WHERE fk_soc = ".$this->id." AND fk_user = ".((int) $commid);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -2386,7 +2387,7 @@ class Societe extends CommonObject
 
 		if ($this->id > 0 && $commid > 0) {
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-			$sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
+			$sql .= " WHERE fk_soc = ".$this->id." AND fk_user = ".((int) $commid);
 
 			if (!$this->db->query($sql)) {
 				dol_syslog(get_class($this)."::del_commercial Erreur");
@@ -3632,7 +3633,7 @@ class Societe extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.datec as date_creation, tms as date_modification,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.rowid = ".$id;
+		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3792,11 +3793,14 @@ class Societe extends CommonObject
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
 		$this->code_fournisseur = -1;
+		$this->typent_code = ($member->morphy == 'phy' ? 'TE_PRIVATE' : 0);
+		$this->typent_id = $this->typent_code ? dol_getIdFromCode($this->db, $this->typent_code, 'c_typent', 'id', 'code') : 0;
 
 		$this->db->begin();
 
 		// Cree et positionne $this->id
 		$result = $this->create($user);
+
 		if ($result >= 0) {
 			// Auto-create contact on thirdparty creation
 			if (!empty($conf->global->THIRDPARTY_DEFAULT_CREATE_CONTACT)) {
@@ -3807,6 +3811,7 @@ class Societe extends CommonObject
 
 				dol_syslog("We ask to create a contact/address too", LOG_DEBUG);
 				$result = $this->create_individual($user);
+
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 					$this->db->rollback();
@@ -4246,7 +4251,7 @@ class Societe extends CommonObject
 			$table = 'supplier_proposal';
 		}
 
-		$sql  = "SELECT rowid, total_ht, total as total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
+		$sql  = "SELECT rowid, total_ht, total_ttc, fk_statut as status FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".$this->id;
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('supplier_proposal').")";
@@ -4613,7 +4618,7 @@ class Societe extends CommonObject
 
 		$resql = $db->query($sql);
 		while ($obj = $db->fetch_object($resql)) {
-			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.$obj->rowid);
+			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.((int) $obj->rowid));
 		}
 
 		/**

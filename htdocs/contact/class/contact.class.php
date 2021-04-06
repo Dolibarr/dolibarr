@@ -1275,7 +1275,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result) {
@@ -1469,9 +1469,13 @@ class Contact extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			if ($withpicto == -2) {
+				$result .= '<!-- picto photo user --><span class="nopadding userimg'.($moreparam ? ' '.$moreparam : '').'">'.Form::showphoto('contact', $this, 0, 0, 0, 'userphoto'.($withpicto == -3 ? 'small' : ''), 'mini', 0, 1).'</span>';
+			} else {
+				$result .= img_object(($notooltip ? '' : $label), ( $this->picto ?  $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			}
 		}
-		if ($withpicto != 2) {
+		if ($withpicto != 2 && $withpicto != -2) {
 			$result .= ($maxlen ?dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs));
 		}
 		$result .= $linkend;
@@ -1647,8 +1651,8 @@ class Contact extends CommonObject
 
 		// Desactive utilisateur
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " SET statut = ".$this->statut;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
@@ -1878,7 +1882,7 @@ class Contact extends CommonObject
 
 		$sql = "SELECT id, code, libelle as label, picto FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 		if ($active >= 0) {
-			$sql .= " WHERE active = ".$active;
+			$sql .= " WHERE active = ".((int) $active);
 		}
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);

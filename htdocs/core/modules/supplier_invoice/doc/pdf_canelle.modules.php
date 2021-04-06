@@ -279,6 +279,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+				if ($heightforinfotot > 220) {
+					$heightforinfotot = 220;
+				}
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
@@ -454,7 +457,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+						$pdf->setPage($pageposafter);
+						$curY = $tab_top_newpage;
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
@@ -665,7 +669,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Total table
-		$col1x = 120; $col2x = 170;
+		$col1x = 120;
+		$col2x = 170;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$col2x -= 20;
 		}
@@ -1018,7 +1023,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf, ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-		$sql .= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".$object->id;
+		$sql .= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".((int) $object->id);
 		$sql .= " ORDER BY p.datep";
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1120,14 +1125,25 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
+		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
+			$object->fetch_projet();
+			if (!empty($object->project->ref)) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+			}
+		}
+
 		if (!empty($conf->global->PDF_SHOW_PROJECT)) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->projet->ref), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 

@@ -32,50 +32,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
 //Activate ProfId
-if ($action == 'setproductionmode')
-{
+if ($action == 'setproductionmode') {
 	$status = GETPOST('status', 'alpha');
 
-	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
-	{
+	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0) {
 		$error = 0;
 
-		if ($status == 1)
-		{
+		if ($status == 1) {
 			$result = dol_mkdir($conf->api->dir_temp);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
 				$error++;
 			}
 		} else {
 			// Delete the cache file otherwise it does not update
 			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailedToDeleteFile", $conf->api->dir_temp.'/routes.php'), null, 'errors');
 				$error++;
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
-	   		exit;
+			exit;
 		}
 	} else {
 		dol_print_error($db);
 	}
 }
 
-if ($action == 'save')
-{
+if ($action == 'save') {
 	dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha'));
 }
 
@@ -110,8 +104,7 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
-if ($production_mode)
-{
+if ($production_mode) {
 	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
@@ -146,19 +139,25 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Show message
 $message = '';
-$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
+//$url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
+$url = $urlwithroot.'/api/index.php/login?login=auserlogin&password=thepassword[&reset=1]';
 $message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
-$message .= img_picto('', 'globe').' '.$url;
+$message .= '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <input type="text" class="quatrevingtpercent" id="urltogettoken" value="'.$url.'"></div>';
 print $message;
+print ajax_autoselect("urltogettoken");
 print '<br>';
 print '<br>';
 
 // Explorer
-print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
-{
+print '<span class="opacitymedium">'.$langs->trans("ApiExporerIs").':</span><br>';
+if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer')) {
 	$url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a></div><br>\n";
+	print '<div class="opacitymediumxxx"><br><span class="opacitymedium">'.$langs->trans("SwaggerDescriptionFile").':</span><br>';
+	$urlswagger = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY=youruserapikey';
+	//$urlswaggerreal = DOL_MAIN_URL_ROOT.'/api/index.php/explorer/swagger.json?DOLAPIKEY='.$user->api_key;
+	print '<div class="urllink soixantepercent">'.img_picto('', 'globe').' <a href="'.$urlswagger.'" target="_blank">'.$urlswagger."</a></div><br>\n";
+	print '</div>';
 } else {
 	$langs->load("errors");
 	print info_admin($langs->trans("ErrorNotAvailableWithThisDistribution"), 0, 0, 'error');

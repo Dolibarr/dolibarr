@@ -59,7 +59,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mailmanspip->enabled)) {
+		if (empty($conf->mailmanspip) || empty($conf->mailmanspip->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -92,10 +92,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
 
 			return $return;
-		}
-
-		// Members
-		elseif ($action == 'MEMBER_VALIDATE') {
+		} elseif ($action == 'MEMBER_VALIDATE') {
+			// Members
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;

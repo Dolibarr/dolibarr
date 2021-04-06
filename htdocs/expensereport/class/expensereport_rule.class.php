@@ -167,7 +167,7 @@ class ExpenseReportRule extends CoreObject
 		if ($fk_user > 0) {
 			$sql .= ' AND (er.is_for_all = 1';
 			$sql .= ' OR er.fk_user = '.$fk_user;
-			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.$fk_user.') )';
+			$sql .= ' OR er.fk_usergroup IN (SELECT ugu.fk_usergroup FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_user = '.((int) $fk_user).') )';
 		}
 		$sql .= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
 

@@ -79,7 +79,7 @@ $permissiontoadd = $user->rights->asset->write; // Used by the include of action
 $permissiontodelete = $user->rights->asset->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->asset->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->asset->write; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
+$upload_dir = $conf->asset->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
 /*

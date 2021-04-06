@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 */
 
 /**
- *	\file       htdocs/core/modules/member/doc/doc_generic_member_odt.modules.php
+ *	\file       htdocs/core/modules/member/doc/doc_generic_member_odt.class.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for members
  */
@@ -131,7 +131,8 @@ class doc_generic_member_odt extends ModelePDFMember
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
 			if (!$tmpdir) {
-				unset($listofdir[$key]); continue;
+				unset($listofdir[$key]);
+				continue;
 			}
 			if (!is_dir($tmpdir)) {
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);

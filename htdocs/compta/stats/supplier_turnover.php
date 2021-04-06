@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file        htdocs/compta/stats/supplier_ca.php
+ *	\file        htdocs/compta/stats/supplier_turnover.php
  *	\brief       Page reporting purchase turnover
  */
 
@@ -47,8 +47,8 @@ if (empty($year)) {
 	$month_current = strftime("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');		// We use timezone of server so report is same from everywhere
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
@@ -69,19 +69,24 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		} else {
 			$month_end = $month_start;
 		}
-		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
+		$date_start = dol_get_first_day($year_start, $month_start, false);
+		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
 	if ($q == 1) {
-		$date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false);
+		$date_start = dol_get_first_day($year_start, 1, false);
+		$date_end = dol_get_last_day($year_start, 3, false);
 	}
 	if ($q == 2) {
-		$date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false);
+		$date_start = dol_get_first_day($year_start, 4, false);
+		$date_end = dol_get_last_day($year_start, 6, false);
 	}
 	if ($q == 3) {
-		$date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false);
+		$date_start = dol_get_first_day($year_start, 7, false);
+		$date_end = dol_get_last_day($year_start, 9, false);
 	}
 	if ($q == 4) {
-		$date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false);
+		$date_start = dol_get_first_day($year_start, 10, false);
+		$date_end = dol_get_last_day($year_start, 12, false);
 	}
 }
 
@@ -115,8 +120,6 @@ if (!empty($conf->accounting->enabled)) {
 }
 
 
-
-
 /*
  * View
  */
@@ -132,7 +135,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '{link1}', '{link2}').')';
 	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
@@ -140,7 +142,6 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("PurchaseTurnoverCollected");
 	$calcmode = $langs->trans("CalcModeEngagement");
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 	$builddate = dol_now();
@@ -151,12 +152,14 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '{link1}', '{link2}').')';
 	$calcmode = str_replace('{link1}', '<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">', $calcmode);
 	$calcmode = str_replace('{link2}', '</a>', $calcmode);
-	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear - 2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start + $nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
-	$description = $langs->trans("RulesPurchaseTurnoverTotalPurchaseJournal");
+	$description = $langs->trans("RulesPurchaseTurnoverOfExpenseAccounts");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 
 $moreparam = array();
 if (!empty($modecompta)) {
@@ -190,12 +193,23 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".$socid;
 	}
 } elseif ($modecompta == "BOOKKEEPING") {
-	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
+	$pcgverid = $conf->global->CHARTOFACCOUNTS;
+	$pcgvercode = dol_getIdFromCode($db, $pcgverid, 'accounting_system', 'rowid', 'pcg_version');
+	if (empty($pcgvercode)) {
+		$pcgvercode = $pcgverid;
+	}
+
+	$sql = "SELECT date_format(b.doc_date, '%Y-%m') as dm, sum(b.debit - b.credit) as amount_ttc";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b,";
+	$sql .= " ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
-	$sql .= " AND aj.entity = ".$conf->entity;
-	$sql .= " AND b.code_journal = aj.code AND aj.nature = 3"; // @todo currently count amount in sale journal, but we need to define a category group for turnover
+	$sql .= " AND b.doc_type = 'supplier_invoice'";
+	$sql .= " AND b.numero_compte = aa.account_number";
+	$sql .= " AND aa.entity = ".$conf->entity;
+	$sql .= " AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+	$sql .= " AND aa.pcg_type = 'EXPENSE'";		// TODO Be able to use a custom group
 }
+//print $sql;
 
 $sql .= " GROUP BY dm";
 $sql .= " ORDER BY dm";
@@ -258,7 +272,13 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="liste_titre right">'.$langs->trans("AmountHT").'</td>';
 	}
-	print '<td class="liste_titre right">'.$langs->trans("AmountTTC").'</td>';
+	print '<td class="liste_titre right">';
+	if ($modecompta == "BOOKKEEPING") {
+		print $langs->trans("Amount");
+	} else {
+		print $langs->trans("AmountTTC");
+	}
+	print '</td>';
 	print '<td class="liste_titre right borderrightlight">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) {
 		print '<td class="liste_titre" width="15">&nbsp;</td>';

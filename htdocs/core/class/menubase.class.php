@@ -294,7 +294,7 @@ class Menubase
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
-					dol_syslog(get_class($this)."::create record added has rowid=".$this->id, LOG_DEBUG);
+					dol_syslog(get_class($this)."::create record added has rowid=".((int) $this->id), LOG_DEBUG);
 
 					return $this->id;
 				} else {
@@ -364,7 +364,7 @@ class Menubase
 		$sql .= " perms='".$this->db->escape($this->perms)."',";
 		$sql .= " enabled='".$this->db->escape($this->enabled)."',";
 		$sql .= " usertype='".$this->db->escape($this->user)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -410,7 +410,7 @@ class Menubase
 		$sql .= " t.usertype as user,";
 		$sql .= " t.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."menu as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -461,7 +461,7 @@ class Menubase
 		//global $conf, $langs;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -578,7 +578,10 @@ class Menubase
 					//var_dump($this->newmenu->liste);
 				} else {
 					// Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
-					$searchlastsub = 0; $lastid = 0; $nextid = 0; $found = 0;
+					$searchlastsub = 0;
+					$lastid = 0;
+					$nextid = 0;
+					$found = 0;
 					foreach ($this->newmenu->liste as $keyparent => $valparent) {
 						//var_dump($valparent);
 						if ($searchlastsub) {    // If we started to search for last submenu

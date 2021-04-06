@@ -181,7 +181,7 @@ class RssParser
 	 * 	@param	string	$urlRSS		Url to parse
 	 * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
 	 * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
-	 * 	@param	string	$cachedir	Directory where to save cache file
+	 * 	@param	string	$cachedir	Directory where to save cache file (For example $conf->externalrss->dir_temp)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
@@ -189,6 +189,7 @@ class RssParser
 		global $conf;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		$rss = '';
 		$str = ''; // This will contain content of feed
@@ -225,21 +226,10 @@ class RssParser
 			$str = file_get_contents($newpathofdestfile);
 		} else {
 			try {
-				ini_set("user_agent", "Dolibarr ERP-CRM RSS reader");
-				ini_set("max_execution_time", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-				ini_set("default_socket_timeout", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-
-				$opts = array('http'=>array('method'=>"GET"));
-				if (!empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)) {
-					$opts['http']['timeout'] = $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+				$result = getURLContent($this->_urlRSS, 'GET', '', 1, array(), array('http', 'https'), 0);
+				if (!empty($result['content'])) {
+					$str = $result['content'];
 				}
-				if (!empty($conf->global->MAIN_PROXY_USE)) {
-					$opts['http']['proxy'] = 'tcp://'.$conf->global->MAIN_PROXY_HOST.':'.$conf->global->MAIN_PROXY_PORT;
-				}
-				//var_dump($opts);exit;
-				$context = stream_context_create($opts);
-
-				$str = file_get_contents($this->_urlRSS, false, $context);
 			} catch (Exception $e) {
 				print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
 			}
@@ -410,9 +400,10 @@ class RssParser
 					}
 				}
 				if (!empty($conf->global->EXTERNALRSS_USE_SIMPLEXML)) {
-					$tmprss = xml2php($rss); $items = $tmprss['entry'];
-				} // With simplexml
-				else {
+					$tmprss = xml2php($rss);
+					$items = $tmprss['entry'];
+				} else {
+					// With simplexml
 					$items = $rss->items; // With xmlparse
 				}
 				//var_dump($items);exit;
@@ -552,45 +543,36 @@ class RssParser
 			if (isset($attrs['rdf:about'])) {
 				$this->current_item['about'] = $attrs['rdf:about'];
 			}
-		}
-
-		// if we're in the default namespace of an RSS feed,
-		//  record textinput or image fields
-		elseif ($this->_format == 'rss' and
+		} elseif ($this->_format == 'rss' and
 		$this->current_namespace == '' and
 		$el == 'textinput') {
+			// if we're in the default namespace of an RSS feed,
+			//  record textinput or image fields
 			$this->intextinput = true;
 		} elseif ($this->_format == 'rss' and
 		$this->current_namespace == '' and
 		$el == 'image') {
 			$this->inimage = true;
-		}
-
-		// handle atom content constructs
-		elseif ($this->_format == 'atom' and in_array($el, $this->_CONTENT_CONSTRUCTS)) {
+		} elseif ($this->_format == 'atom' and in_array($el, $this->_CONTENT_CONSTRUCTS)) {
+			// handle atom content constructs
 			// avoid clashing w/ RSS mod_content
 			if ($el == 'content') {
 				$el = 'atom_content';
 			}
 
 			$this->incontent = $el;
-		}
-
-		// if inside an Atom content construct (e.g. content or summary) field treat tags as text
-		elseif ($this->_format == 'atom' and $this->incontent) {
+		} elseif ($this->_format == 'atom' and $this->incontent) {
+			// if inside an Atom content construct (e.g. content or summary) field treat tags as text
 			// if tags are inlined, then flatten
 			$attrs_str = join(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
 			$this->append_content("<$element $attrs_str>");
 
 			array_unshift($this->stack, $el);
-		}
-
-		// Atom support many links per containging element.
-		// Magpie treats link elements of type rel='alternate'
-		// as being equivalent to RSS's simple link element.
-		//
-		elseif ($this->_format == 'atom' and $el == 'link') {
+		} elseif ($this->_format == 'atom' and $el == 'link') {
+			// Atom support many links per containging element.
+			// Magpie treats link elements of type rel='alternate'
+			// as being equivalent to RSS's simple link element.
 			if (isset($attrs['rel']) && $attrs['rel'] == 'alternate') {
 				$link_el = 'link';
 			} elseif (!isset($attrs['rel'])) {
@@ -600,9 +582,8 @@ class RssParser
 			}
 
 			$this->append($link_el, $attrs['href']);
-		}
-		// set stack[0] to current element
-		else {
+		} else {
+			// set stack[0] to current element
 			array_unshift($this->stack, $el);
 		}
 	}

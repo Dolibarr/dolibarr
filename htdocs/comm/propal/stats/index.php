@@ -38,12 +38,6 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
-if ($mode == 'customer' && !$user->rights->propale->lire) {
-	accessforbidden();
-}
-if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {
-	accessforbidden();
-}
 
 $object_status = GETPOST('object_status', 'intcomma');
 $typent_id = GETPOST('typent_id', 'int');
@@ -66,6 +60,13 @@ $endyear = $year;
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
+if ($mode == 'customer' && !$user->rights->propale->lire) {
+	accessforbidden();
+}
+if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {
+	accessforbidden();
+}
+
 
 /*
  * View
@@ -81,7 +82,7 @@ $langs->loadLangs(array('propal', 'other', 'companies'));
 if ($mode == 'customer') {
 	$picto = 'propal';
 	$title = $langs->trans("ProposalsStatistics");
-	$dir = $conf->propale->dir_temp;
+	$dir = $conf->propal->dir_temp;
 	$cat_type = Categorie::TYPE_CUSTOMER;
 	$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
 }
@@ -103,7 +104,7 @@ dol_mkdir($dir);
 
 $stats = new PropaleStats($db, $socid, ($userid > 0 ? $userid : 0), $mode, ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($object_status != '' && $object_status >= 0) {
-	$stats->where .= ' AND p.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
+	$stats->where .= ' AND p.fk_statut IN ('.$db->sanitize($object_status).')';
 }
 
 // Build graphic number of object
@@ -123,7 +124,8 @@ $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -158,7 +160,8 @@ $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg) {
 	$px2->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -202,7 +205,8 @@ $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg) {
 	$px3->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;

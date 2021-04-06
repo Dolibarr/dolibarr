@@ -147,6 +147,7 @@ if (empty($reshook)) {
 				// and pass CCCNNNNN + (num of company * 100 000 000) as offset to the run_sql as a new parameter to say to update sql on the fly to add offset to rowid and account_parent value.
 				// This is to be sure there is no conflict for each chart of account, whatever is country, whatever is company when multicompany is used.
 				$tmp = file_get_contents($sqlfile);
+				$reg = array();
 				if (preg_match('/-- ADD (\d+) to rowid/ims', $tmp, $reg)) {
 					$offsetforchartofaccount += $reg[1];
 				}
@@ -217,7 +218,7 @@ if ($db->type == 'pgsql') {
 } else {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
 }
-$sql .= " WHERE asy.rowid = ".$pcgver;
+$sql .= " WHERE asy.rowid = ".((int) $pcgver);
 //print $sql;
 if (strlen(trim($search_account))) {
 	$lengthpaddingaccount = 0;
@@ -342,17 +343,18 @@ if ($resql) {
 
 	// Box to select active chart of account
 	print $langs->trans("Selectchartofaccounts")." : ";
-	print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
+	print '<select class="flat minwidth200" name="chartofaccounts" id="chartofaccounts">';
 	$sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
 	dol_syslog('accountancy/admin/account.php $sql='.$sql);
-	print $sql;
+
 	$resqlchart = $db->query($sql);
 	if ($resqlchart) {
 		$numbis = $db->num_rows($resqlchart);
 		$i = 0;
+		print '<option value="-1">&nbsp;</option>';
 		while ($i < $numbis) {
 			$obj = $db->fetch_object($resqlchart);
 
@@ -428,7 +430,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
+		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
 	}
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
@@ -527,11 +529,11 @@ if ($resql) {
 			if (!empty($arrayfields['aa.reconcilable']['checked'])) {
 				print '<td class="center">';
 				if (empty($obj->reconcilable)) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&token='.newToken().'">';
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					print '</a>';
 				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&token='.newToken().'">';
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print '</a>';
 				}
@@ -546,11 +548,11 @@ if ($resql) {
 		if (!empty($arrayfields['aa.active']['checked'])) {
 			print '<td class="center">';
 			if (empty($obj->active)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=0">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=0&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=0">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=0&token='.newToken().'">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
@@ -578,6 +580,10 @@ if ($resql) {
 
 		print "</tr>\n";
 		$i++;
+	}
+
+	if ($num == 0) {
+		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table>";

@@ -16,11 +16,12 @@ $object->bbb = 'bbb';
 $object->thirdparty = new stdClass();
 $tmp = new Societe($db);
 $tmp->name = 'MyBigCompany';
-foreach ($tmp as $key=>$value)
-{
+foreach ($tmp as $key => $value) {
 	if (!in_array($key, array(
 		'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code'
-	))) continue; // Discard if not into a dedicated list
+	))) {
+		continue; // Discard if not into a dedicated list
+	}
 	if (!is_object($value)) $object->thirdparty->{$key} = $value;
 }
 

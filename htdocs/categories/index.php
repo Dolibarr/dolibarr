@@ -5,6 +5,7 @@
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,15 +116,15 @@ if (empty($nosearch)) {
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
 		foreach ($cats as $cat) {
-			$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
-
-			print "\t".'<tr class="oddeven">'."\n";
-			print "\t\t<td>";
 			$categstatic->id = $cat->id;
 			$categstatic->ref = $cat->label;
 			$categstatic->label = $cat->label;
 			$categstatic->type = $cat->type;
 			$categstatic->color = $cat->color;
+			$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
+
+			print "\t".'<tr class="oddeven">'."\n";
+			print "\t\t<td>";
 			print '<span class="noborderoncategories"'.$color.'>';
 			print $categstatic->getNomUrl(1, '');
 			print '</span>';
@@ -151,7 +152,7 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 $fulltree = $cate_arbo;
 
 // Load possible missing includes
-if ($conf->global->CATEGORY_SHOW_COUNTS) {
+if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 	if ($type == Categorie::TYPE_MEMBER) {
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	}
@@ -177,7 +178,7 @@ foreach ($fulltree as $key => $val) {
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$counter = '';
-	if ($conf->global->CATEGORY_SHOW_COUNTS) {
+	if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
 		$elements = $type == Categorie::TYPE_ACCOUNT
 			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"

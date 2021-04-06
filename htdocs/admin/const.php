@@ -237,7 +237,7 @@ $sql .= ", note";
 $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-$sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
 if ((empty($user->entity) || $user->admin) && $debug) {
 } elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
 	// to force for superadmin to debug
@@ -266,16 +266,16 @@ if ($result) {
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
 		print '</td>';
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
 		print '</td>';
 
 		// Date last change
-		print '<td>';
+		print '<td class="nowraponall">';
 		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 

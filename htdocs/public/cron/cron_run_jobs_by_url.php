@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/public/cron/cron_run_jobs.php
+ *  \file       htdocs/public/cron/cron_run_jobs_by_url.php
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
@@ -107,6 +107,8 @@ if ($result < 0) {
 		exit;
 	}
 }
+$user->getrights();
+
 $id = GETPOST('id', 'alpha'); // We accept non numeric id. We will filter later.
 
 

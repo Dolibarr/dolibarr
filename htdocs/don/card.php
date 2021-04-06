@@ -44,7 +44,7 @@ if (!empty($conf->projet->enabled)) {
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-$langs->loadLangs(array("bills", "companies", "donations"));
+$langs->loadLangs(array("bills", "companies", "donations", "users"));
 
 $id = GETPOST('rowid') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -178,6 +178,11 @@ if ($action == 'add') {
 
 	$error = 0;
 
+	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES) && !(GETPOST("socid", 'int') > 0)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
+		$action = "create";
+		$error++;
+	}
 	if (empty($donation_date)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		$action = "create";
@@ -270,7 +275,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 // Remove file in doc form
 /*if ($action == 'remove_file')
 {
-	$object = new Don($db, 0, $_GET['id']);
+	$object = new Don($db, 0, GETPOST('id', 'int'));
 	if ($object->fetch($id))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -324,7 +329,9 @@ if ($action == 'builddoc')
  * View
  */
 
-llxHeader('', $langs->trans("Donation"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
+llxHeader('', $langs->trans("Donation"), $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -346,14 +353,14 @@ if ($action == 'create') {
 	print '<tbody>';
 
 	// Ref
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Company
 	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		// Thirdparty
-		print '<td>'.$langs->trans('Customer').'</td>';
-		if ($soc->id > 0 && !GETPOST('fac_rec', 'alpha')) {
-			print '<td colspan="2">';
+		if ($soc->id > 0) {
+			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
+			print '<td>';
 			print $soc->getNomUrl(1);
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 			// Outstanding Bill
@@ -370,7 +377,8 @@ if ($action == 'create') {
 			print ')';
 			print '</td>';
 		} else {
-			print '<td colspan="2">';
+			print '<td class="fieldrequired">'.$langs->trans('ThirdParty').'</td>';
+			print '<td>';
 			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
 			if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED)) {
@@ -381,12 +389,13 @@ if ($action == 'create') {
 						var socid = $(this).val();
 				        var fac_rec = $(\'#fac_rec\').val();
 						// reload page
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
 					});
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			print '</td>';
 		}
 		print '</tr>'."\n";
@@ -540,11 +549,15 @@ if (!empty($id) && $action == 'edit') {
 	print "</td>";
 	print "</tr>\n";
 
-	if ($object->socid && !empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		$company = new Societe($db);
-		$result = $company->fetch($object->socid);
 
-		print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
+		if ($object->socid > 0) {
+			$result = $company->fetch($object->socid);
+			print $company->getNomUrl(1);
+		}
+		print '</td></tr>';
 	} else {
 		$langs->load("companies");
 		print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
@@ -700,11 +713,15 @@ if (!empty($id) && $action != 'edit') {
 	print yn($object->public);
 	print '</td></tr>';
 
-	if ($object->socid) {
+	if (!empty($conf->societe->enabled) && !empty($conf->global->DONATION_USE_THIRDPARTIES)) {
 		$company = new Societe($db);
-		$result = $company->fetch($object->socid);
 
-		print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td colspan="2">';
+		if ($object->socid > 0) {
+			$result = $company->fetch($object->socid);
+			print $company->getNomUrl(1);
+		}
+		print '</td></tr>';
 	} else {
 		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
@@ -842,7 +859,7 @@ if (!empty($id) && $action != 'edit') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	/*
-	 * Documents generes
+	 * Generated documents
 	 */
 	$filename = dol_sanitizeFileName($object->id);
 	$filedir = $conf->don->dir_output."/".dol_sanitizeFileName($object->id);
