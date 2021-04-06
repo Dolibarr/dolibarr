@@ -39,45 +39,44 @@ class PartnershipUtils
 	var $errors=array();				//!< To return several error codes (or messages)
 
 
-    /**
-     *  Constructor
-     *
-     *  @param	DoliDb		$db      Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-        return 1;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDb		$db      Database handler
+	 */
+	function __construct($db)
+	{
+		$this->db = $db;
+		return 1;
+	}
 
 
-    /**
-     * Action executed by scheduler to cancel status of partnership when subscription is expired + x days. (Max number of cancel per call = $conf->global->PARTNERSHIP_MAX_CANCEL_PER_CALL)
-     * 
-     * CAN BE A CRON TASK
-     *
-     * @return  int                 0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-     */
-    public function doCancelStatusOfPartnership()
-    {
-        global $conf, $langs, $user;
+	/**
+	 * Action executed by scheduler to cancel status of partnership when subscription is expired + x days. (Max number of cancel per call = $conf->global->PARTNERSHIP_MAX_CANCEL_PER_CALL)
+	 *
+	 * CAN BE A CRON TASK
+	 *
+	 * @return  int                 0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function doCancelStatusOfPartnership()
+	{
+		global $conf, $langs, $user;
 
-        $langs->load("agenda");
+		$langs->load("agenda");
 
-        $MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_CANCEL_PER_CALL) ? 100 : $conf->global->PARTNERSHIP_MAX_CANCEL_PER_CALL);       // Limit to 100 per call
+		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_CANCEL_PER_CALL) ? 100 : $conf->global->PARTNERSHIP_MAX_CANCEL_PER_CALL);       // Limit to 100 per call
 
-        $error = 0;
-        $this->output = '';
-        $this->error='';
+		$error = 0;
+		$this->output = '';
+		$this->error='';
 
 
-        dol_syslog(__METHOD__." we cancel status of partnership ", LOG_DEBUG);
+		dol_syslog(__METHOD__." we cancel status of partnership ", LOG_DEBUG);
 
-        $now = dol_now();
-        
-        // En cours de traitement ...
+		$now = dol_now();
 
-        return ($error ? 1: 0);
-    }
+		// En cours de traitement ...
 
+		return ($error ? 1: 0);
+	}
 }
