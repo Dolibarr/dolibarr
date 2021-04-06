@@ -332,19 +332,10 @@ if ($action == "sign") {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 1) {
-					$tmpproposal->statut = 2;
-					if ($tmpproposal->update($user)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					if ($tmpproposal->cloture($user,$tmpproposal::STATUS_SIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
-						//Triger
-						//Notification
-						if (!empty($conf->notification->enabled)) {
-							require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-							$notify = new Notify($db);
-							$formquestion = array_merge($formquestion, array(
-								array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $tmpproposal->fk_soc, $tmpproposal)),
-							));
-						}
+						
 					} else {
 						dol_print_error($db);
 						$error++;
@@ -372,9 +363,8 @@ if ($action == "nosign") {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 1) {
-					$tmpproposal->statut = 3;
-					if ($tmpproposal->update($user)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					if ($tmpproposal->cloture($user,$tmpproposal::STATUS_NOTSIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
 						dol_print_error($db);
