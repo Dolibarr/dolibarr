@@ -160,7 +160,7 @@ if ($socid > 0) {
 	print '<br>';
 
 	$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
-	$sql .= " f.rowid as facid, f.ref, f.total as total_ht,";
+	$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 	$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 	$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
 	$sql .= " sum(d.qty * d.buy_price_ht * (d.situation_percent / 100)) as buying_price,"; // always positive
@@ -179,7 +179,7 @@ if ($socid > 0) {
 	if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 		$sql .= " AND d.buy_price_ht <> 0";
 	}
-	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
+	$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 	$sql .= $db->order($sortfield, $sortorder);
 	// TODO: calculate total to display then restore pagination
 	//$sql.= $db->plimit($conf->liste_limit +1, $offset);

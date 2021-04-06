@@ -248,7 +248,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		$sql = "SELECT f.ref as f_ref, f.total as f_total, f.tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
+		$sql = "SELECT f.ref as f_ref, f.total_ht as f_total, f.total_tva as f_tva FROM ".MAIN_DB_PREFIX."facture f";
 
 		$objexport=new Export($db);
 		//$objexport->load_arrays($user,$datatoexport);
