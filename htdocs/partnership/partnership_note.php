@@ -106,8 +106,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->partnership->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->partnership->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->partnership->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
 
 
 

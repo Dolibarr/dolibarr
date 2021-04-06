@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
 
-$permissiontoadd = $user->rights->partnership->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*

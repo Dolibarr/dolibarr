@@ -178,9 +178,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->partnership->partnership->read;
-$permissiontoadd = $user->rights->partnership->partnership->write;
-$permissiontodelete = $user->rights->partnership->partnership->delete;
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write;
+$permissiontodelete = $user->rights->partnership->delete;
 
 // Security check
 if (empty($conf->partnership->enabled)) {

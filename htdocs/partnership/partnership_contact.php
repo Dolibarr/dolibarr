@@ -83,7 +83,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
 
-$permission = $user->rights->partnership->partnership->write;
+$permission = $user->rights->partnership->write;
 
 /*
  * Add a new contact

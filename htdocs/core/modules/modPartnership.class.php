@@ -241,26 +241,14 @@ class modPartnership extends DolibarrModules
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
+
+		$statusatinstall=0;
+		$arraydate=dol_getdate(dol_now());
+		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+
 		$this->cronjobs = array(
-			//  0 => array(
-			//      'label' => 'MyJob label',
-			//      'jobtype' => 'method',
-			//      'class' => '/partnership/class/partnership.class.php',
-			//      'objectname' => 'Partnership',
-			//      'method' => 'doScheduledJob',
-			//      'parameters' => '',
-			//      'comment' => 'Comment',
-			//      'frequency' => 2,
-			//      'unitfrequency' => 3600,
-			//      'status' => 0,
-			//      'test' => '$conf->partnership->enabled',
-			//      'priority' => 50,
-			//  ),
+			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>$statusatinstall, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
 		);
-		// Example: $this->cronjobs=array(
-		//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'priority'=>50),
-		//    1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'priority'=>50)
-		// );
 
 		// Permissions provided by this module
 		$this->rights = array();
@@ -269,18 +257,15 @@ class modPartnership extends DolibarrModules
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read objects of Partnership'; // Permission label
-		$this->rights[$r][4] = 'partnership'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update objects of Partnership'; // Permission label
-		$this->rights[$r][4] = 'partnership'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete objects of Partnership'; // Permission label
-		$this->rights[$r][4] = 'partnership'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->partnership->level1->level2)
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
@@ -320,7 +305,7 @@ class modPartnership extends DolibarrModules
 			'langs'=>'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1100 + $r,
 			'enabled'=>'$conf->partnership->enabled', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->partnership->partnership->read', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->partnership->read', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -334,7 +319,7 @@ class modPartnership extends DolibarrModules
 			'langs'=>'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1100 + $r,
 			'enabled'=>'$conf->partnership->enabled', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->partnership->partnership->write', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->partnership->write', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -348,7 +333,7 @@ class modPartnership extends DolibarrModules
 			'langs'=>'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1100 + $r,
 			'enabled'=>'$conf->partnership->enabled', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->partnership->partnership->read', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->partnership->read', // Use 'perms'=>'$user->rights->partnership->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);

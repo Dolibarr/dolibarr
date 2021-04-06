@@ -125,11 +125,11 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread = $user->rights->partnership->partnership->read;
-$permissiontoadd = $user->rights->partnership->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->partnership->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->partnership->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->partnership->partnership->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -651,8 +651,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->partnership->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->partnership->partnership->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->partnership->partnership->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->rights->partnership->read; // If you can read, you can build the PDF to read content
+			$delallowed = $user->rights->partnership->write; // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('partnership:Partnership', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

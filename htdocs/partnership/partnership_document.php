@@ -129,7 +129,7 @@ if ($id > 0 || !empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
 
-$permissiontoadd = $user->rights->partnership->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
 
 
 
@@ -231,9 +231,9 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'partnership';
-	//$permission = $user->rights->partnership->partnership->write;
+	//$permission = $user->rights->partnership->write;
 	$permission = 1;
-	//$permtoedit = $user->rights->partnership->partnership->write;
+	//$permtoedit = $user->rights->partnership->write;
 	$permtoedit = 1;
 	$param = '&id='.$object->id;
 
