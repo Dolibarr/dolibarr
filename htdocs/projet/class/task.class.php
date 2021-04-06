@@ -403,7 +403,7 @@ class Task extends CommonObject
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
 			if ($project->fetch($this->fk_project) > 0) {
-				if($project->statut == Project::STATUS_VALIDATED) {
+				if ($project->statut == Project::STATUS_VALIDATED) {
 					$project->getLinesArray(null); // this method does not return <= 0 if fails
 					$projectCompleted = array_reduce(
 						$project->lines,
@@ -418,7 +418,6 @@ class Task extends CommonObject
 						}
 					}
 				}
-
 			} else {
 				$error++;
 			}
