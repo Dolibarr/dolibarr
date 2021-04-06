@@ -72,6 +72,12 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmodsn') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} 
+if ($action == 'setmaskslot') {
+	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'chaine', 0, '', $conf->entity);
+}
+if ($action == 'setmaskssn') {
+	dolibarr_set_const($db, "PRODUCTBATCH_SN_USE_PRODUCT_MASKS", $value, 'chaine', 0, '', $conf->entity);
 }
 
 /*
@@ -176,6 +182,50 @@ foreach ($dirmodels as $reldir) {
 				}
 			}
 			closedir($handle);
+			print '<tr class="oddeven"><td>lot_product</td><td>'."\n";
+			print $langs->trans('CustomMasks');
+			print '</td>';
+
+			// Show example of numbering model
+			print '<td class="nowrap">';
+			$tmp = 'NoExample';
+			if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+			elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+			else print $langs->trans($tmp);
+			print '</td>'."\n";
+
+			print '<td class="center">';
+			if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS == 'true') {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=false">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=true">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			}
+			print '</td>';
+
+			// Info
+			$htmltooltip = '';
+			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+			$nextval = $module->getNextValue($mysoc, $batch);
+			if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+				$htmltooltip .= ''.$langs->trans("NextValue").': ';
+				if ($nextval) {
+					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+						$nextval = $langs->trans($nextval);
+					$htmltooltip .= $nextval.'<br>';
+				} else {
+					$htmltooltip .= $langs->trans($module->error).'<br>';
+				}
+			}
+
+			print '<td class="center">';
+			print $form->textwithpicto('', $htmltooltip, 1, 0);
+			print '</td>';
+
+			print "</tr>\n";
 		}
 	}
 }
@@ -268,6 +318,50 @@ foreach ($dirmodels as $reldir) {
 				}
 			}
 			closedir($handle);
+			print '<tr class="oddeven"><td>sn_product</td><td>'."\n";
+			print $langs->trans('CustomMasks');
+			print '</td>';
+
+			// Show example of numbering model
+			print '<td class="nowrap">';
+			$tmp = 'NoExample';
+			if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+			elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+			else print $langs->trans($tmp);
+			print '</td>'."\n";
+
+			print '<td class="center">';
+			if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS == 'true') {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=false">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=true">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			}
+			print '</td>';
+
+			// Info
+			$htmltooltip = '';
+			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+			$nextval = $module->getNextValue($mysoc, $batch);
+			if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+				$htmltooltip .= ''.$langs->trans("NextValue").': ';
+				if ($nextval) {
+					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+						$nextval = $langs->trans($nextval);
+					$htmltooltip .= $nextval.'<br>';
+				} else {
+					$htmltooltip .= $langs->trans($module->error).'<br>';
+				}
+			}
+
+			print '<td class="center">';
+			print $form->textwithpicto('', $htmltooltip, 1, 0);
+			print '</td>';
+
+			print "</tr>\n";
 		}
 	}
 }
