@@ -1245,7 +1245,8 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
 				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'int'), 'enabled'=>GETPOST('propenabled', 'int'),
 				'position'=>GETPOST('propposition', 'int'), 'notnull'=>GETPOST('propnotnull', 'int'), 'index'=>GETPOST('propindex', 'int'), 'searchall'=>GETPOST('propsearchall', 'int'),
-				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha')
+				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha'),
+				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09')
 			);
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
@@ -1827,11 +1828,6 @@ if ($module == 'initmodule') {
 		$head2 = array();
 		$h = 0;
 
-		$head2[$h][0] = '';
-		$head2[$h][1] = $morehtmlleft;
-		$head2[$h][2] = '';
-		$h++;
-
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("Description");
 		$head2[$h][2] = 'description';
@@ -1877,6 +1873,11 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'widgets';
 		$h++;
 
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=exportimport&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = $langs->trans("Export").'-'.$langs->trans("Import");
+		$head2[$h][2] = 'exportimport';
+		$h++;
+
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=css&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("CSS");
 		$head2[$h][2] = 'css';
@@ -1907,7 +1908,7 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'buildpackage';
 		$h++;
 
-		print '<br>';
+		print '<!-- Section for a given module -->';
 
 		// Note module is inside $dirread
 
@@ -3314,6 +3315,45 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 				}
 				print '</table>';
+			} else {
+				$fullpathoffile = dol_buildpath($file, 0);
+
+				$content = file_get_contents($fullpathoffile);
+
+				// New module
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="savefile">';
+				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+				print '<input type="hidden" name="tab" value="'.$tab.'">';
+				print '<input type="hidden" name="module" value="'.$module.'">';
+
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print '<br>';
+				print '<center>';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print ' &nbsp; ';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '</center>';
+
+				print '</form>';
+			}
+		}
+
+		if ($tab == 'exportimport') {
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+			$exportlist = $moduleobj->export_label;
+			$importlist = $moduleobj->import_label;
+
+			if ($action != 'editfile' || empty($file)) {
+				print '<span class="opacitymedium">'.$langs->transnoentities('ImportExportProfiles').'</span><br>';
+				print '<br>';
+
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '<br>';
 			} else {
 				$fullpathoffile = dol_buildpath($file, 0);
 
