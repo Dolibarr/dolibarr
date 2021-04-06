@@ -746,7 +746,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 *  'position' is the sort order of field.
 		 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 		 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-		 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+		 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
 		 *  'help' is a string visible as a tooltip on field
 		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
@@ -1708,10 +1708,9 @@ $head[$h][2] = 'initmodule';
 $h++;
 
 $linktoenabledisable = '';
-$modulestatusinfo = '';
 
 if (is_array($listofmodules) && count($listofmodules) > 0) {
-	// Define $linktoenabledisable and $modulestatusinfo
+	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
 	$const_name = 'MAIN_MODULE_'.strtoupper($module);
 
@@ -1732,6 +1731,8 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
 		$linktoenabledisable .= '</a>';
 
+		$linktoenabledisable .= $form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
+
 		$objMod = $moduleobj;
 		$backtourlparam = '';
 		$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
@@ -1751,26 +1752,22 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 				} else {
 					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+						$linktoenabledisable .= ' <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 					} else {
 						// Case standard admin page (not a page provided by the
 						// module but a page provided by dolibarr)
 						$urltouse = DOL_URL_ROOT.'/admin/'.$urlpage;
-						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+						$linktoenabledisable .= ' <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 					}
 				}
 			}
 		} elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs)) {
-			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 		}
 	} else {
 		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
-		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
+		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
 		$linktoenabledisable .= "</a>\n";
-	}
-
-	if (!empty($conf->$modulelowercase->enabled)) {
-		$modulestatusinfo = $form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
 	}
 
 	// Loop to show tab of each module
@@ -1779,10 +1776,9 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 		$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
 		$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
 
-		/*if ($tmpmodule == $modulelowercase) {
-			$head[$h][1] .= ' '.$modulestatusinfo;
-			$head[$h][1] .= ' '.$linktoenabledisable;
-		}*/
+		if ($tmpmodulearray['modulenamewithcase'] == $module) {
+			$head[$h][4] = '<span class="inline-block">'.$linktoenabledisable.'</span>';
+		}
 
 		$h++;
 	}
@@ -1792,6 +1788,7 @@ $head[$h][0] = $_SERVER["PHP_SELF"].'?module=deletemodule';
 $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
+
 
 print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
 
@@ -1829,6 +1826,11 @@ if ($module == 'initmodule') {
 
 		$head2 = array();
 		$h = 0;
+
+		$head2[$h][0] = '';
+		$head2[$h][1] = $morehtmlleft;
+		$head2[$h][2] = '';
+		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=description&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("Description");
@@ -1904,10 +1906,6 @@ if ($module == 'initmodule') {
 		$head2[$h][1] = $langs->trans("BuildPackage");
 		$head2[$h][2] = 'buildpackage';
 		$h++;
-
-		// Link to enable / disable
-		print '<div class="center">'.$modulestatusinfo;
-		print ' '.$linktoenabledisable.'</div>';
 
 		print '<br>';
 
@@ -2608,6 +2606,7 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
 							print '<th class="center">'.$langs->trans("CSSViewClass").'</th>';
+							print '<th class="center">'.$langs->trans("CSSListClass").'</th>';
 							print '<th class="center">'.$langs->trans("KeyForTooltip").'</th>';
 							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
@@ -2639,6 +2638,7 @@ if ($module == 'initmodule') {
 								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propcsslist" value="'.dol_escape_htmltag(GETPOST('propcsslist', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
 								//print '<td class="center"><input class="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
@@ -2679,6 +2679,7 @@ if ($module == 'initmodule') {
 									$propisameasure = $propval['isameasure'];
 									$propcss = $propval['css'];
 									$propcssview = $propval['cssview'];
+									$propcsslist = $propval['csslist'];
 									$prophelp = $propval['help'];
 									$propshowoncombobox = $propval['showoncombobox'];
 									//$propdisabled=$propval['disabled'];
@@ -2737,6 +2738,9 @@ if ($module == 'initmodule') {
 									print '</td>';
 									print '<td class="center">';
 									print $propcssview ? dol_escape_htmltag($propcssview) : '';
+									print '</td>';
+									print '<td class="center">';
+									print $propcsslist ? dol_escape_htmltag($propcsslist) : '';
 									print '</td>';
 									print '<td class="tdoverflowmax200">';
 									print $prophelp ? dol_escape_htmltag($prophelp) : '';
