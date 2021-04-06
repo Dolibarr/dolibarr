@@ -524,15 +524,15 @@ if (empty($reshook)) {
 	}
 
 	/*
-	 * Add file in email form
+	 * Action of adding a file in email form
 	 */
-	if (!empty($_POST['addfile'])) {
+	if (GETPOST('addfile')) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// Set tmp user directory
-		dol_add_file_process($upload_dir, 0, 0);
+		dol_add_file_process($upload_dir, 0, 0, 'addedfile', '', null, '', 0);
 
 		$action = "edit";
 	}
@@ -543,7 +543,7 @@ if (empty($reshook)) {
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_remove_file_process($_POST['removedfile'], 0, 0); // We really delete file linked to mailing
+		dol_remove_file_process(GETPOST('removedfile'), 0, 0); // We really delete file linked to mailing
 
 		$action = "edit";
 	}
@@ -1216,7 +1216,7 @@ if ($action == 'create') {
 					$out .= '<br></div>';
 				}
 			} else {
-				$out .= $langs->trans("NoAttachedFiles").'<br>';
+				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
 			// Add link to add file
 			$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
