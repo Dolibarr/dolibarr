@@ -23,6 +23,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -128,6 +129,7 @@ if ($test) {
 print '<br>';
 
 print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
 print '<strong>'.$langs->trans("dolibarr_main_prod").'</strong>: '.$dolibarr_main_prod;
@@ -150,11 +152,36 @@ print '<br>';
 
 print '<br>';
 print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
-// TODO Check permission are read only except for custom dir
-print 'TODO';
+$arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('custom\/'), 'name', SORT_ASC, 4, 1, '', 1);
+$fileswithwritepermission = array();
+foreach ($arrayoffilesinroot as $fileinroot) {
+	// Test permission on file
+	if ($fileinroot['perm'] & 0222) {
+		$fileswithwritepermission[] = $fileinroot['relativename'];
+	}
+}
+if (empty($fileswithwritepermission)) {
+	print img_picto('', 'tick').' '.$langs->trans("NoWritableFilesFoundIntoRootDir");
+} else {
+	print img_warning().' '.$langs->trans("SomeFilesOrDirInRootAreWritable");
+	print '<br>'.$langs->trans("Example").': ';
+	$i = 0;
+	foreach ($fileswithwritepermission as $filewithwritepermission) {
+		if ($i > 0) {
+			print ', ';
+		}
+		print '<span class="opacitymedium">'.$filewithwritepermission.'</span>';
+		if ($i > 20) {
+			print ' ...';
+			break;
+		}
+		$i++;
+	}
+}
 print '<br>';
 
 print '<strong>'.$langs->trans("PermissionsOnFile", $conffile).'</strong>: ';		// $conffile is defined into filefunc.inc.php
@@ -180,6 +207,7 @@ print '<br>';
 
 print '<br>';
 
+print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 
@@ -211,6 +239,7 @@ print '<br>';
 
 print '<br>';
 print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
@@ -228,7 +257,6 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '</div><br>';
 }
 print '<br>';
-// TODO
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
@@ -246,28 +274,26 @@ print '<br>';
 $securityevent = new Events($db);
 $eventstolog = $securityevent->eventstolog;
 
-print '<strong>'.$langs->trans("LogEvents").'</strong>: ';
-// Loop on each event type
-$i = 0;
-foreach ($eventstolog as $key => $arr) {
-	if ($arr['id']) {
-		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
-		if ($value) {
-			if ($i > 0) {
-				print ', ';
+print '<strong>'.$langs->trans("AuditedSecurityEvents").'</strong>: ';
+if (!empty($eventstolog) && is_array($eventstolog)) {
+	// Loop on each event type
+	$i = 0;
+	foreach ($eventstolog as $key => $arr) {
+		if ($arr['id']) {
+			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
+			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			if ($value) {
+				if ($i > 0) {
+					print ', ';
+				}
+				print '<span class="opacitymedium">'.$key.'</span>';
+				$i++;
 			}
-			print '<span class="opacitymedium">'.$key.'</span>';
-			$i++;
 		}
 	}
+} else {
+	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit"));
 }
-
-
-
-
-
-
 
 
 // End of page
