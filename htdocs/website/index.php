@@ -680,7 +680,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 
 		if (!$error) {
-			$tmp = getURLContent($urltograb);
+			$tmp = getURLContent($urltograb, 'GET', '', 1, array(), array('http', 'https'), 0);
 			if ($tmp['curl_error_no']) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
@@ -795,7 +795,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 					}
 
 					/*
-					$tmpgeturl = getURLContent($urltograbbis);
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 					if ($tmpgeturl['curl_error_no'])
 					{
 						$error++;
@@ -860,7 +860,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						continue;
 					}
 
-					$tmpgeturl = getURLContent($urltograbbis);
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 					if ($tmpgeturl['curl_error_no']) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
