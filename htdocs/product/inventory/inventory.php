@@ -107,6 +107,8 @@ if ($action == 'update' && $user->rights->stock->mouvement->creer) {
 	$stockmovment = new MouvementStock($db);
 	$stockmovment->origin = $object;
 
+	$db->begin();
+
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
@@ -118,26 +120,43 @@ if ($action == 'update' && $user->rights->stock->mouvement->creer) {
 		$totalarray = array();
 		while ($i < $num) {
 			$line = $db->fetch_object($resql);
-			$qty_view = $line->qty_view;
 			$qty_stock = $line->qty_stock;
-			$stock_movement_qty = $qty_view - $qty_stock;
-			if ($stock_movement_qty != 0) {
-				if ($stock_movement_qty < 0) {
-					$movement_type = 1;
-				} else {
-					$movement_type = 0;
-				}
-				$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->id), 'INV'.$object->id);
-				if ($idstockmove < 0) {
-					$error++;
-					setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
+			$qty_view = $line->qty_view;		// The quantity viewed by inventorier, the qty we target
+
+			if (!is_null($qty_view)) {
+				$stock_movement_qty = price2num($qty_view - $qty_stock, 'MS');
+				if ($stock_movement_qty != 0) {
+					if ($stock_movement_qty < 0) {
+						$movement_type = 1;
+					} else {
+						$movement_type = 0;
+					}
+
+					$datemovement = '';
+
+					$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->id), 'INV'.$object->id, $datemovement, '', '', $line->batch);
+					if ($idstockmove < 0) {
+						$error++;
+						setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
+						break;
+					}
 				}
 			}
 			$i++;
 		}
+
 		if (!$error) {
 			$object->setRecorded($user);
 		}
+	} else {
+		setEventMessages($db->lasterror, null, 'errors');
+		$error++;
+	}
+
+	if (! $error) {
+		$db->commit();
+	} else {
+		$db->rollbak();
 	}
 }
 
@@ -590,7 +609,7 @@ if ($object->id > 0) {
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.'" value="'.$qty_view.'">';
+				print '<input type="text" class="maxwidth75 right" name="id_'.$obj->rowid.'" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
