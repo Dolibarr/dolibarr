@@ -1645,6 +1645,7 @@ class Form
 			$moreparam = trim(preg_replace('/(\S|^)multiple(\S|$)/', '', $moreparam));
 			$multiple = true;
 		}
+		if ($multiple) $htmlname = str_replace('[]', '', $htmlname);
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT) && !$forcecombo && $new_ajax) {
 			if (empty($htmlid)) $htmlid = $htmlname;
@@ -1732,6 +1733,7 @@ SCRIPT;
 		$out = '';
 		$outarray = array();
 
+		if ($multiple) $htmlname = str_replace('[]', '', $htmlname);
 		if (empty($htmlid)) $htmlid = $htmlname;
 
 		if ($selected === '') $selected = array();
