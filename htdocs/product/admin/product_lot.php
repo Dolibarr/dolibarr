@@ -72,7 +72,7 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmodsn') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} 
+}
 if ($action == 'setmaskslot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
 }
