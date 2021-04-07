@@ -141,3 +141,6 @@ GenerateSitemaps=Generate website sitemap file
 ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
 ConfirmSitemapsCreation=Confirm sitemap generation
 SitemapGenerated=Sitemap Generated
+ImportFavicon=Favicon
+ErrorFaviconType=Favicon must be png
+ErrorFaviconSize=Favicon must be of size 32x32
