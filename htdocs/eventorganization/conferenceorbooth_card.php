@@ -494,6 +494,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	$link_subscription = 'http://localhost/dolibarr/htdocs/public/members/attendee_subscription.php';
+	$link_subscription .= '?id='.GETPOST("id");
 	$object->fields['pubregister'] = array('type'=>'url', 'label'=>'Lien public d\'enregistrement à une conférence', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
 	$object->pubregister = $link_subscription;
 	$keyforbreak='pubregister';

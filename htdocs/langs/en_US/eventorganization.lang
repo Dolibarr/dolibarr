@@ -94,4 +94,6 @@ EvntOrgCancelled = Cancelled
 #
 # Public page
 #
-EventOrgWelcomeMessage = This form allows you to register as a new participant to a conference.
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
+EvntOrgStartDuration = This conference starts on 
+EvntOrgEndDuration =  and ends on

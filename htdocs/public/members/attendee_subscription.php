@@ -63,10 +63,10 @@ if (is_numeric($entity)) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+
 
 // Init vars
 $errmsg = '';
@@ -74,26 +74,15 @@ $num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$id = GETPOST("id");
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other", "eventorganization"));
-
-/* Security check
-if (empty($conf->adherent->enabled)) {
-	accessforbidden('', 0, 0, 1);
-}
-
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-	print $langs->trans("Auto subscription form for public visitors has not been enabled");
-	exit;
-}*/
+$langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
-
-$object = new Adherent($db);
 
 $user->loadDefaultValues();
 
@@ -179,18 +168,14 @@ if (empty($reshook) && $action == 'add') {
 	$urlback = '';
 
 	$db->begin();
-
+    
 	if (!GETPOST("email")) {
 	    $error++;
-	    $errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
+	    $errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	if (!GETPOST("lastname")) {
+	if (!GETPOST("societe")) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
-	}
-	if (!GETPOST("firstname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
 	}
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
@@ -198,213 +183,45 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 	if (!$error) {
-		// Client => fournisseur à 0
-		$thirdparty = new Client($db);
-		// Prospect forcé
-		$thirdparty->fk_prospectlevel = "Prospect";
-		$thirdparty->firstname   = GETPOST("firstname");
-		$thirdparty->lastname    = GETPOST("lastname");
-		$thirdparty->address     = GETPOST("address");
-		$thirdparty->zip         = GETPOST("zipcode");
-		$thirdparty->town        = GETPOST("town");
-		$thirdparty->email       = GETPOST("email");
-		$thirdparty->country_id  = GETPOST("country_id", 'int');
-		$thirdparty->state_id    = GETPOST("state_id", 'int');
+		// Vérifier si client existe 
+		$thirdparty = new Societe($db);
+		$nomsociete = GETPOST("societe");
+		// @todo utiliser fetch avec la "réf" 
+		$resultfetchthirdparty = $thirdparty->fetch('', $nomsociete);
+		if($resultfetchthirdparty<0){
+		    $error++;
+		    $errmsg .= $thirdparty->error;
+		    $res = -1;
+		} elseif($resultfetchthirdparty==0){
+		    // si retour =0 : le créer
+		    $thirdparty->name        = $nomsociete;
+		    $thirdparty->address     = GETPOST("address");
+		    $thirdparty->zip         = GETPOST("zipcode");
+		    $thirdparty->town        = GETPOST("town");
+		    // It's a prospect
+		    $thirdparty->client      = 2;
+		    $thirdparty->fournisseur = 0;
+		    $thirdparty->country_id  = GETPOST("country_id", 'int');
+		    $thirdparty->state_id    = GETPOST("state_id", 'int');
+		    
+		    $res = $thirdparty->create($user);
+		} 
 		
-		// @todo commit to generate the id, remove it ?
-		$db->commit();
-		
-		$db->begin();
-	    // @todo creation of an attendee
-		$confattendee = new ConferenceOrBoothAttendee($db);
-		$confattendee->alreadypaid = 0.0;
-		$confattendee->fk_soc = $thirdparty->rowid;
-		$confattendee->date_subscription = dol_now();
-
-		// Fill array 'array_options' with data from add form
-		$extrafields->fetch_name_optionals_label($adh->table_element);
-		$ret = $extrafields->setOptionalsFromPost(null, $adh);
-		if ($ret < 0) {
-			$error++;
-		}
-
-		$result = $adh->create($user);
-		if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$object = $adh;
-
-			$adht = new AdherentType($db);
-			$adht->fetch($object->typeid);
-
-			if ($object->email) {
-				$subject = '';
-				$msg = '';
-
-				// Send subscription email
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
-				// Get email content from template
-				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
-
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
-				}
-
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
-
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
-
-				if ($subjecttosend && $texttosend) {
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
-
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-				/*if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}*/
-			}
-
-			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
-				  !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
-				// Define link to login card
-				$appli = constant('DOL_APPLICATION_TITLE');
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-					$appli = $conf->global->MAIN_APPLICATION_TITLE;
-					if (preg_match('/\d\.\d/', $appli)) {
-						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-							$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-						}
-					} else {
-						$appli .= " ".DOL_VERSION;
-					}
-				} else {
-					$appli .= " ".DOL_VERSION;
-				}
-
-				$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-				$from = $conf->global->ADHERENT_MAIL_FROM;
-				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
-					$to,
-					$from,
-					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
-					array(),
-					array(),
-					array(),
-					"",
-					"",
-					0,
-					-1
-				);
-
-				if (!$mailfile->sendfile()) {
-					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
-				}
-			}
-
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
-			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added";
-			}
-
-			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} else {
-					dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
-					exit;
-				}
-			}
-
-			if (!empty($entity)) {
-				$urlback .= '&entity='.$entity;
-			}
-			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
+		if ($res < 0){
+		    $error++;
+		    $errmsg .= $thirdparty->error;
 		} else {
-			$error++;
-			$errmsg .= join('<br>', $adh->errors);
+		    // @todo creation of an attendee
+		    $confattendee = new ConferenceOrBoothAttendee($db);
+		    $confattendee->fk_soc = $thirdparty->id;
+		    $confattendee->date_subscription = dol_now();
+		    $confattendee->email = GETPOST("email");
+		    $confattendee->fk_actioncomm = $id;
 		}
 	}
 
 	if (!$error) {
 		$db->commit();
-
 		Header("Location: ".$urlback);
 		exit;
 	} else {
@@ -436,9 +253,12 @@ if (empty($reshook) && $action == 'added') {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$adht = new AdherentType($db);
-$extrafields->fetch_name_optionals_label('adherent'); // fetch optionals attributes and labels
 
+$conference = new ConferenceOrBooth($db);
+$resultconf = $conference->fetch($id);
+if ($resultconf < 0){
+    setEventMessages(null, $object->errors, "errors");
+}
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
@@ -451,7 +271,12 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EventOrgWelcomeMessage");
+print $langs->trans("EvntOrgWelcomeMessage");
+print GETPOST("id").".".'<br>';
+print $langs->trans("EvntOrgStartDuration");
+print dol_print_date($conference->datep);
+print $langs->trans("EvntOrgEndDuration");
+print dol_print_date($conference->datef).".";
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
@@ -496,12 +321,8 @@ jQuery(document).ready(function () {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
-// Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
-// Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // Company
-//print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
