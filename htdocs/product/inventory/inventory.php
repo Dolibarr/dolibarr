@@ -384,6 +384,15 @@ if ($object->id > 0) {
 	print dol_get_fiche_end();
 
 
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="updateinventorylines">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+
+
 	// Buttons for actions
 	if ($action != 'record') {
 		print '<div class="tabsAction">'."\n";
@@ -402,63 +411,70 @@ if ($object->id > 0) {
 				}
 			}
 
-			if ($object->status == Inventory::STATUS_VALIDATED) {
+			// Save
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if ($object->status == Inventory::STATUS_VALIDATED) {
+					if ($permissiontoadd) {
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
+					}
+				}
+
 				if ($permissiontoadd) {
-					/*
-					if (!empty($conf->barcode->enabled)) {
-						print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
-					}
-					if (!empty($conf->productbatch->enabled)) {
-						print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
-					}*/
-					if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
-					}
-				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_cancel">'.$langs->trans("Cancel").'</a>'."\n";
 				}
 			}
-
-			if ($object->status == Inventory::STATUS_VALIDATED) {
-				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_cancel">'.$langs->trans("Cancel").'</a>'."\n";
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Close").'</a>'."\n";
-				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
-				}
-			}
-
-			/*if ($object->status == Inventory::STATUS_VALIDATED)
-			{
-				if ($permissiontoadd)
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("RecordVerb").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('RecordVerb').'</a>'."\n";
-				}
-			}*/
 		}
 		print '</div>'."\n";
 	}
 
-	if ($action == 'updatebyscaning') {
-		print '<div class="div-for-modal">';
 
-		print 'TODO';
+
+	if ($object->status == Inventory::STATUS_VALIDATED) {
+		print '<center>';
+		if ($permissiontoadd) {
+			/*
+			 if (!empty($conf->barcode->enabled)) {
+			 print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
+			 }
+			 if (!empty($conf->productbatch->enabled)) {
+			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
+			 }*/
+			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.$langs->trans("UpdateByScaning").'</a>';
+			}
+		} else {
+			print '<a class="classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+		}
+		print '<br>';
+		print '<br>';
+		print '</center>';
+	}
+
+
+	if ($action == 'updatebyscaning') {
+		print '<div class="div-for-modal-topright" style="padding: 15px">';
+		print '<center><strong>Barcode scanner tool...</strong></center><br>';
+
+		print 'Scan a product barcode<br>';
+		print '<input type="text" name="barcodeproduct" class="width200" autofocus> &nbsp; &nbsp; Qty <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+
+		print '<br>'.$langs->trans("or").'<br>';
+
+		print '<br>';
+
+		print 'Scan a product lot or serial number<br>';
+		print '<input type="text" name="barcodelotserial" class="width200"> &nbsp; &nbsp; Qty <input type="text" name="barcodelotserialqty" class="width50 right" value="1"><br>';
+
+		print '<br>';
+		print '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+
+		// TODO Add javascript so each scan will add qty into the inventory page + an ajax save.
 
 		print '</div>';
 	}
 
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="updateinventorylines">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) {
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	}
 
 	print '<div class="fichecenter">';
 	//print '<div class="fichehalfleft">';
@@ -495,7 +511,7 @@ if ($object->id > 0) {
 		print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? GETPOST('fk_warehouse', 'int') : $object->fk_warehouse), 'fk_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'maxwidth300');
 		print '</td>';
 		print '<td>';
-		print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, 1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
+		print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 		print '</td>';
 		if ($conf->productbatch->enabled) {
 			print '<td>';
@@ -593,14 +609,9 @@ if ($object->id > 0) {
 
 	print '</table>';
 
-	// Save
-	if ($object->status == $object::STATUS_VALIDATED) {
-		print '<div class="center">';
-		print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-		print '</div>';
-	}
-
 	print '</div>';
+
+	print '<center><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
 
 	print '</div>';
 
