@@ -74,10 +74,10 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } 
 if ($action == 'setmaskslot') {
-	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
 }
 if ($action == 'setmaskssn') {
-	dolibarr_set_const($db, "PRODUCTBATCH_SN_USE_PRODUCT_MASKS", $value, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PRODUCTBATCH_SN_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
 }
 
 /*
@@ -195,12 +195,12 @@ foreach ($dirmodels as $reldir) {
 			print '</td>'."\n";
 
 			print '<td class="center">';
-			if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS == 'true') {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=false">';
+			if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=0">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=true">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=1">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			}
@@ -319,12 +319,12 @@ foreach ($dirmodels as $reldir) {
 			print '</td>'."\n";
 
 			print '<td class="center">';
-			if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS == 'true') {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=false">';
+			if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=0">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=true">';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=1">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			}
