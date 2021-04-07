@@ -182,7 +182,7 @@ foreach ($dirmodels as $reldir) {
 				}
 			}
 			closedir($handle);
-			print '<tr class="oddeven"><td>lot_product</td><td>'."\n";
+			print '<tr class="oddeven"><td>Option</td><td>'."\n";
 			print $langs->trans('CustomMasks');
 			print '</td>';
 
@@ -207,19 +207,7 @@ foreach ($dirmodels as $reldir) {
 			print '</td>';
 
 			// Info
-			$htmltooltip = '';
-			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-			$nextval = $module->getNextValue($mysoc, $batch);
-			if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-				$htmltooltip .= ''.$langs->trans("NextValue").': ';
-				if ($nextval) {
-					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-						$nextval = $langs->trans($nextval);
-					$htmltooltip .= $nextval.'<br>';
-				} else {
-					$htmltooltip .= $langs->trans($module->error).'<br>';
-				}
-			}
+			$htmltooltip = $langs->trans("LotProductTooltip");
 
 			print '<td class="center">';
 			print $form->textwithpicto('', $htmltooltip, 1, 0);
@@ -318,7 +306,7 @@ foreach ($dirmodels as $reldir) {
 				}
 			}
 			closedir($handle);
-			print '<tr class="oddeven"><td>sn_product</td><td>'."\n";
+			print '<tr class="oddeven"><td>Option</td><td>'."\n";
 			print $langs->trans('CustomMasks');
 			print '</td>';
 
@@ -343,19 +331,7 @@ foreach ($dirmodels as $reldir) {
 			print '</td>';
 
 			// Info
-			$htmltooltip = '';
-			$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-			$nextval = $module->getNextValue($mysoc, $batch);
-			if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-				$htmltooltip .= ''.$langs->trans("NextValue").': ';
-				if ($nextval) {
-					if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-						$nextval = $langs->trans($nextval);
-					$htmltooltip .= $nextval.'<br>';
-				} else {
-					$htmltooltip .= $langs->trans($module->error).'<br>';
-				}
-			}
+			$htmltooltip = $langs->trans("SNProductTooltip");
 
 			print '<td class="center">';
 			print $form->textwithpicto('', $htmltooltip, 1, 0);
