@@ -1154,7 +1154,9 @@ if ($action == 'create') {
 			print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid', 'int').'">';
 		} else {
 			$events = array();
-			//$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			if (empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT)) {
+				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			}
 			//For external user force the company to user company
 			if (!empty($user->socid)) {
 				print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($user->socid, 'socid', '', 1, 1, 0, $events, 0, 'minwidth300');
@@ -1625,7 +1627,9 @@ if ($id > 0) {
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$events = array(); // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
-			//$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			if (empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT)) {
+				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			}
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
 			print img_picto('', 'company', 'class="paddingrightonly"').$form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');

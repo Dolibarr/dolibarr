@@ -342,7 +342,9 @@ class FormTicket
 				// Company
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 				$events = array();
-				//$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+				if (empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT)) {
+					$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+				}
 				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
