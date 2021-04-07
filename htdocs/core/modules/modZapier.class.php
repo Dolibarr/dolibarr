@@ -242,7 +242,7 @@ class modZapier extends DolibarrModules
 		// Permission array used by this module
 		$this->rights = array();
 
-		$r = 0;
+		$r = 1;
 		// Permission id (must not be already used)
 		$this->rights[$r][0] = $this->numero + $r;
 		// Permission label

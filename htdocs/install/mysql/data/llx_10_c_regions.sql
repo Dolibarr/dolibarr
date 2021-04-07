@@ -49,14 +49,21 @@
 
 -- CONTENT -------------------------------------------------------------------
 -- 
--- Algeria
+-- Algeria -> for Departmements
+-- Andorra -> for Departmements
+-- Angola -> for Departmements
 -- Argentina
--- Australia
--- Austria
--- Barbados
+-- Australia -> for Departmements
+-- Austria -> for Departmements
+-- Barbados -> for Departmements
 -- Belgium
 -- Bolivia
--- Brazil
+-- Brazil -> for Departmements
+-- Canada -> for Departmements
+-- Colombie -> for Departmements
+-- France
+-- Germany -> for Departmements
+
 
 
 -- TEMPLATE ----------------------------------------------------------------------------------------
@@ -65,6 +72,14 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 0
 
 -- Algeria Regions (id country=13)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 13, 1301, '', 0, 'Algerie');
+
+
+-- Andorra Regions (id country=18)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 34, 34000, 'AD', NULL, 'Andorra');
+
+
+-- Angola Regions (id country=35)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 35, 35001, 'AO', NULL, 'Angola');
 
 
 -- Argentina Regions (id country=23)
@@ -117,26 +132,46 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 70, 7001, '', 0, 'Colombie');
 
 
--- Regions France (id country=1)
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   1,'97105',3,'Guadeloupe');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   2,'97209',3,'Martinique');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   3,'97302',3,'Guyane');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   4,'97411',3,'Réunion');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   6,'97601',3,'Mayotte');
+-- France Regions (id country=1)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  1, '97105', 3, 'Guadeloupe');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  2, '97209', 3, 'Martinique');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  3, '97302', 3, 'Guyane');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  4, '97411', 3, 'Réunion');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  6, '97601', 3, 'Mayotte');
 
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  11,'75056',1,'Île-de-France');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  24,'45234',2,'Centre-Val de Loire');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  27,'21231',0,'Bourgogne-Franche-Comté');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  28,'76540',0,'Normandie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  32,'59350',4,'Hauts-de-France');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  44,'67482',2,'Grand Est');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  52,'44109',4,'Pays de la Loire');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  53,'35238',0,'Bretagne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  75,'33063',0,'Nouvelle-Aquitaine');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  76,'31355',1,'Occitanie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  84,'69123',1,'Auvergne-Rhône-Alpes');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  93,'13055',0,'Provence-Alpes-Côte d''Azur');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  94,'2A004',0,'Corse');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 11, '75056', 1, 'Île-de-France');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 24, '45234', 2, 'Centre-Val de Loire');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 27, '21231', 0, 'Bourgogne-Franche-Comté');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 28, '76540', 0, 'Normandie');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 32, '59350', 4, 'Hauts-de-France');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 44, '67482', 2, 'Grand Est');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 52, '44109', 4, 'Pays de la Loire');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 53, '35238', 0, 'Bretagne');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 75, '33063', 0, 'Nouvelle-Aquitaine');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 76, '31355', 1, 'Occitanie');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 84, '69123', 1, 'Auvergne-Rhône-Alpes');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 93, '13055', 0, 'Provence-Alpes-Côte d''Azur');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 94, '2A004', 0, 'Corse');
+
+
+-- Germany Regions (id country=5)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 5, 501, '', 0, 'Deutschland');
+
+
+-- Greece Regions (id_country=102)
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10201, 102, NULL, NULL, 'Αττική', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10202, 102, NULL, NULL, 'Στερεά Ελλάδα', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10203, 102, NULL, NULL, 'Κεντρική Μακεδονία', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10204, 102, NULL, NULL, 'Κρήτη', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10205, 102, NULL, NULL, 'Ανατολική Μακεδονία και Θράκη', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10206, 102, NULL, NULL, 'Ήπειρος', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10207, 102, NULL, NULL, 'Ιόνια νησιά', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10208, 102, NULL, NULL, 'Βόρειο Αιγαίο', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10209, 102, NULL, NULL, 'Πελοπόννησος', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10210, 102, NULL, NULL, 'Νότιο Αιγαίο', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10211, 102, NULL, NULL, 'Δυτική Ελλάδα', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10212, 102, NULL, NULL, 'Θεσσαλία', 1);
+INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10213, 102, NULL, NULL, 'Δυτική Μακεδονία', 1);
 
 
 -- Regions Italy (id country=3)
@@ -183,23 +218,6 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  4, 419, '', 0, 'Pais Vasco', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  4, 420, '', 0, 'Otros', 1);
 
--- Regions Germany (id country=5)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  5, 501, '', 0, 'Deutschland', 1);
-
--- Regions Greece (id_country=102)
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10201, 102, NULL, NULL, 'Αττική', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10202, 102, NULL, NULL, 'Στερεά Ελλάδα', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10203, 102, NULL, NULL, 'Κεντρική Μακεδονία', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10204, 102, NULL, NULL, 'Κρήτη', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10205, 102, NULL, NULL, 'Ανατολική Μακεδονία και Θράκη', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10206, 102, NULL, NULL, 'Ήπειρος', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10207, 102, NULL, NULL, 'Ιόνια νησιά', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10208, 102, NULL, NULL, 'Βόρειο Αιγαίο', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10209, 102, NULL, NULL, 'Πελοπόννησος', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10210, 102, NULL, NULL, 'Νότιο Αιγαίο', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10211, 102, NULL, NULL, 'Δυτική Ελλάδα', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10212, 102, NULL, NULL, 'Θεσσαλία', 1);
-INSERT INTO llx_c_regions ( code_region, fk_pays, cheflieu, tncc, nom, active) values ( 10213, 102, NULL, NULL, 'Δυτική Μακεδονία', 1);
 
 -- Regions Switzerland (id country=6) 
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  6, 601, '', 1, 'Cantons', 1); 
@@ -364,8 +382,6 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 -- Regions United Arab Emirates (rowid country=227)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  227, 22701, '', 0, 'United Arab Emirates', 1);
 
--- Regions Andorra (rowid country=18)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (34, 34000, 'AD', NULL, 'Andorra');
 
 -- Regions Hungary (rowid country=18)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183100, 'HU31', NULL, 'Northern Hungary');
@@ -420,8 +436,6 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 932
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 933, '港',0,'香港特别行政区');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 934, '澳',0,'澳门特别行政区');
 
--- Regions Angola (rowid country=35)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (35, 35001, 'AO', NULL, 'Angola');
 
 -- Regions Taiwan (rowid country=213)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (213, 21301, 'TW', NULL, 'Taiwan');

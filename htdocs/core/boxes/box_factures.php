@@ -89,8 +89,8 @@ class box_factures extends ModeleBoxes
 
 		if ($user->rights->facture->lire) {
 			$sql = "SELECT f.rowid as facid";
-			$sql .= ", f.ref, f.type, f.total as total_ht";
-			$sql .= ", f.tva as total_tva";
+			$sql .= ", f.ref, f.type, f.total_ht";
+			$sql .= ", f.total_tva";
 			$sql .= ", f.total_ttc";
 			$sql .= ", f.datef as df";
 			$sql .= ", f.paye, f.fk_statut as status, f.datec, f.tms";
