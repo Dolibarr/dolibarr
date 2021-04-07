@@ -422,8 +422,7 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0,
-					   $widthTypeOfAutocomplete = 'resolve', $ajax_url = '', $ajax_parameters = array(), $ajax_options = array())
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $ajax_url = '', $ajax_parameters = array(), $ajax_options = array())
 {
 	global $conf;
 
